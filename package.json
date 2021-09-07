@@ -1,0 +1,25 @@
+{
+  "name": "redis-developer-node",
+  "version": "0.1.0",
+  "description": "Developer client for Redis.",
+  "main": "dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc --project ./",
+    "test": "jest"
+  },
+  "author": "Guy Royse <guy@guyroyse.com>",
+  "engines": {
+    "node": ">=12"
+  },
+  "devDependencies": {
+    "@types/jest": "^27.0.1",
+    "jest": "^27.0.6",
+    "nodemon": "^2.0.12",
+    "ts-jest": "^27.0.5",
+    "typescript": "^4.3.5"
+  },
+  "dependencies": {
+    "redis": "^4.0.0-rc.1"
+  }
+}
