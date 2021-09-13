@@ -1,21 +1,16 @@
+import Globals from './globals';
 import Client from '../lib/client';
+
+const globals: Globals = (globalThis as unknown) as Globals;
 
 describe("Client", () => {
 
   let subject: Client;
 
-  beforeAll(async () => {
-    subject = new Client();
-    return subject.open();
-  });
-
   beforeEach(async () => {
-    return subject.execute(['FLUSHALL']);
-  })
-
-  afterAll(async () => {
-    return subject.close();
-  })
+    subject = globals.client;
+    await subject.execute(['FLUSHALL']);
+  });
 
   describe("#execute", () => {
 
