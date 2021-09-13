@@ -6,14 +6,18 @@ export interface SchemaOptions {
   prefix?: string
 }
 
-export class Schema<T> {
-  readonly entityCtor: EntityConstructor<T>;
+export class Schema<TEntity extends Entity> {
+  readonly entityCtor: EntityConstructor<TEntity>;
   private options?: SchemaOptions;
 
-  constructor(ctor: EntityConstructor<T>, schema: any, options?: SchemaOptions ) {
+  constructor(ctor: EntityConstructor<TEntity>, schema: SchemaDefinition, options?: SchemaOptions ) {
 
     this.entityCtor = ctor;
     this.options = options;
+
+    // TODO: copy methods into data or data into methods?
+    // TODO: what happens if there's properties in the data that aren't in the schema?
+    // TODO: should the entity track changes?
 
     for (let key in schema) {
       let value = schema[key];
@@ -32,8 +36,13 @@ export class Schema<T> {
   }
 }
 
-export class RedisId {}
-export class RedisTextField {}
-export class RedisTagField {}
-export class RedisNumericField {}
-export class RedisUserField {}
+export interface SchemaDefinition {
+  [key: string]: RedisField
+}
+
+export interface RedisField {}
+export class RedisId implements RedisField {}
+export class RedisTextField implements RedisField {}
+export class RedisTagField  implements RedisField{}
+export class RedisNumericField implements RedisField {}
+export class RedisUserField implements RedisField {}

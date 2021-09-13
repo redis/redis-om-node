@@ -3,6 +3,7 @@ import { createClient } from 'redis';
 import { RedisClientType } from 'redis/dist/lib/client';
 import { RedisModules } from 'redis/dist/lib/commands';
 import { RedisLuaScripts } from 'redis/dist/lib/lua-script';
+import Entity from './entity';
 
 import Repository from './repository';
 import { Schema } from './schema';
@@ -11,27 +12,23 @@ export default class Client {
 
   readonly redis: RedisClientType<RedisModules, RedisLuaScripts>;
 
-  constructor(url?: string) {
-    if (url) {
-      this.redis = createClient({ socket : { url }});
-    } else {
-      this.redis = createClient();
-    }
+  constructor(url: string = 'redis://localhost:6379') {
+    this.redis = createClient({ socket : { url }});
   }
-  
-  async open() : Promise<void> {
+
+  open() : Promise<void> {
     return this.redis.connect();
   }
 
-  async execute(command: any[]) : Promise<any> {
-    return this.redis.sendCommand(command.map(arg => arg.toString()));
+  execute<TResult>(command: (string|number|boolean)[]) : Promise<TResult> {
+    return this.redis.sendCommand<TResult>(command.map(arg => arg.toString()));
   }
 
-  fetchRepository<T>(schema: Schema<T>) : Repository<T> {
+  fetchRepository<TEntity extends Entity>(schema: Schema<TEntity>) : Repository<TEntity> {
     return new Repository(schema, this);
   }
 
-  async close() : Promise<void> {
+  close() : Promise<void> {
     return this.redis.quit();
   }
 }
