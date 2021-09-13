@@ -1,6 +1,4 @@
 import Client from '../lib/client';
-import { Schema, RedisId, RedisTextField, RedisTagField, RedisNumericField, RedisUserField, SchemaOptions } from '../lib/schema'
-import Entity from '../lib/entity';
 
 describe("Client", () => {
 
@@ -59,89 +57,6 @@ describe("Client", () => {
         ["15.08726745843887329", "37.50266842333162032"],
         null
       ]);
-    });
-  });
-
-  describe("#playground", () => {
-    it('plays', async () => {
-
-      await subject.execute([
-        'HSET', 'test-prefix:12',
-          'id', '12',
-          'title', 'This is a test title',
-          'temperature', 12,
-          'state', 'OH',
-        ]);
-
-      await subject.execute([
-        'HSET', 'test-prefix:13',
-          'id', '13',
-          'title', 'This is an unlucky test title',
-          'temperature', 13,
-          'state', 'WV',
-        ]);
-
-      interface Bigfoot {
-        id: string;
-        title: string;
-        state: string;
-        temperature: number;
-      }
-
-      class Bigfoot extends Entity {
-        get foo(): string {
-          return this.title + ' bob';
-        }
-      }
-
-      let schema = new Schema<Bigfoot>(
-        Bigfoot, {
-          id: new RedisId(),
-          title: new RedisTextField(),
-          state: new RedisTagField(),
-          temperature: new RedisNumericField()
-        }, {
-          prefix: 'test-prefix'
-        });
-
-      let bigfootRepository = subject.fetchRepository<Bigfoot>(schema);
-
-      /*
-      TODO: can we interrogate the interface and default the schema?
-      let bfRepo2 = subject.fetchRepository<BigFoot>(new Schema<Bigfoot>(Bigfoot));
-      let bfRepo3 = subject.fetchRepository<BigFoot>(Bigfoot);
-      */
-
-      let one = await bigfootRepository.fetchById('12');
-      
-      expect(one.id).toBe('12');
-      expect(one.title).toBe('This is a test title');
-      expect(one.state).toBe('OH');
-      expect(one.temperature).toBe(12);
-      expect(one.foo).toBe('This is a test title bob');
-
-      // one.title = 'Changed Title';
-      // one.state = 'NJ';
-      // await one.save();
-      // one.state = 'OH';
-      // await bigfootRepository.save(one);
-
-      // await bigfootRepository.deleteById('12');
-      // await one.delete();
-      // await bigfootRepository.delete(one);
-
-      // await bigfootRepository.deleteAll();
-
-      let many = await bigfootRepository.fetchAll();
-
-      expect(many.length).toBe(2);
-
-      // expect(many[0].id).toBe('12');
-      // expect(many[0].title).toBe('This is a test title');
-      // expect(many[0].state).toBe('OH');
-      // expect(many[0].temperature).toBe(12);
-      // expect(many[0].foo).toBe('This is a test title bob');
-
     });
   });
 });
