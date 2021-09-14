@@ -40,8 +40,8 @@ export default class Repository<TEntity extends Entity> {
 
   async fetch(id: string): Promise<TEntity> {
     let key = this.makeKey(id);
-    let result = await this.redis.hGetAll(key);
-    let entity = new this.schema.entityCtor(id, result);
+    let data = await this.redis.hGetAll(key);
+    let entity = new this.schema.entityCtor(id, data);
     return entity;
   }
 

@@ -1,15 +1,20 @@
 import { v4 } from 'uuid';
 
-export default abstract class Entity {
-  readonly redisData: any;
-  readonly redisId: string;
+export type RedisId = string;
+export type RedisData = {
+  [key: string]: string
+}
 
-  constructor(id: string | null = null, data: any = {}) {
+export default abstract class Entity {
+  readonly redisId: RedisId;
+  readonly redisData: RedisData;
+
+  constructor(id: RedisId | null = null, data: RedisData = {}) {
     this.redisId = id ?? this.generateId();
     this.redisData = data;
   }
 
-  generateId(): string {
+  private generateId(): RedisId {
     let bytes: number[] = [];
     return Buffer.from(v4(null, bytes)).toString('base64').slice(0, 22);
   }
