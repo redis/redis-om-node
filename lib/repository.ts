@@ -1,6 +1,7 @@
 import { RedisClientType } from 'redis/dist/lib/client';
 import { RedisModules } from 'redis/dist/lib/commands';
 import { RedisLuaScripts } from 'redis/dist/lib/lua-script';
+import { WatchError } from 'redis/dist/lib/errors';
 
 import { Schema } from "./schema";
 import Client from "./client";
@@ -15,33 +16,41 @@ export default class Repository<TEntity extends Entity> {
     this.redis = client.redis;
   }
 
-  async fetchById(id: string): Promise<TEntity> {
+  async save(entity: TEntity): Promise<string> {
 
-    let key = `${this.schema.prefix}:${id}`;
+    let key = this.makeKey(entity.redisId);
+
+    // TODO: need to handle the WatchError
+    // TODO: looks like a bug in Node Redis as this doesn't exit
+
+    await this.redis.executeIsolated(async isolatedClient => {
+      await isolatedClient.watch(key);
+      await isolatedClient
+        .multi()
+          .unlink(key)
+          .hSet(key, entity.redisData)
+        .exec();
+    });
+
+    // await this.redis.unlink(key)
+    // await this.redis.hSet(key, entity.redisData);
+
+    return entity.redisId;
+  }
+
+  async fetch(id: string): Promise<TEntity> {
+    let key = this.makeKey(id);
     let result = await this.redis.hGetAll(key);
-    let entity = new this.schema.entityCtor(result);
-
+    let entity = new this.schema.entityCtor(id, result);
     return entity;
   }
 
-  async fetchAll(): Promise<TEntity[]> {
-
-    let results: TEntity[] = [];
-
-    let iterator = this.redis.scanIterator({
-      TYPE: 'hash',
-      MATCH: `${this.schema.prefix}:*`
-    });
-
-    for await (const key of iterator) {
-      let result = await this.redis.hGetAll(key);
-      let entity = new this.schema.entityCtor(result);
-      results.push(entity);
-    }
-
-    return results;
+  async remove(id: string): Promise<void> {
+    let key = this.makeKey(id);
+    await this.redis.unlink(key);
   }
 
-  // TODO: all the crud operations
-  // TODO: search
+  private makeKey(id: string): string {
+    return `${this.schema.prefix}:${id}`;
+  }
 }
