@@ -2,16 +2,13 @@ import Globals from './globals';
 
 import Client from '../lib/client';
 import { Schema, RedisText, RedisTag, RedisNumber } from '../lib/schema'
-import Entity, { RedisId } from '../lib/entity';
+import { Entity, RedisId } from '../lib/entity';
 import Repository from '../lib/repository';
 
-type NullableString = string | null | undefined;
-type NullableNumber = number | null | undefined;
-
 interface Bigfoot {
-  title: NullableString;
-  state: NullableString;
-  temperature: NullableNumber;
+  title?: string | null;
+  state?: string | null;
+  temperature?: number | null;
 }
 
 class Bigfoot extends Entity {}
@@ -59,7 +56,7 @@ describe("Repository", () => {
 
       describe("a simple entity", () => {
         beforeEach(async () => {
-          entity = new Bigfoot();
+          entity = repository.create();
           entity.title = A_TITLE;
           entity.state = A_STATE;
           entity.temperature = A_TEMPERATURE;
@@ -85,7 +82,7 @@ describe("Repository", () => {
   
       describe("a sparsely populated entity", () => {
         beforeEach(async () => {
-          entity = new Bigfoot();
+          entity = repository.create();
           entity.title = A_TITLE;
           entity.state = A_STATE;
           redisId = await repository.save(entity);
@@ -109,7 +106,7 @@ describe("Repository", () => {
   
       describe("a sparsely populated entity with explicit null and undefined", () => {
         beforeEach(async () => {
-          entity = new Bigfoot();
+          entity = repository.create();
           entity.title = A_TITLE;
           entity.state = null;
           entity.temperature = undefined;

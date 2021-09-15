@@ -5,7 +5,7 @@ import { WatchError } from 'redis/dist/lib/errors';
 
 import { Schema } from "./schema";
 import Client from "./client";
-import Entity from './entity';
+import { Entity, RedisId } from './entity';
 
 export default class Repository<TEntity extends Entity> {
   private schema: Schema<TEntity>;
@@ -14,6 +14,11 @@ export default class Repository<TEntity extends Entity> {
   constructor(schema: Schema<TEntity>, client: Client) {
     this.schema = schema;
     this.redis = client.redis;
+  }
+
+  create(): TEntity {
+    let id: RedisId = this.schema.generateId();
+    return new this.schema.entityCtor(id);
   }
 
   async save(entity: TEntity): Promise<string> {

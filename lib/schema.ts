@@ -1,6 +1,6 @@
-import Entity from "./entity";
+import { v4 } from 'uuid';
 
-type EntityConstructor<TEntity> = new (id: string, data: any) => TEntity;
+import { Entity, RedisData, RedisId, EntityConstructor } from "./entity";
 
 export interface SchemaOptions {
   prefix?: string
@@ -38,6 +38,12 @@ export class Schema<TEntity extends Entity> {
   get prefix() : string {
     return this.options?.prefix ?? this.entityCtor.name;
   }
+
+  generateId(): RedisId {
+    let bytes: number[] = [];
+    return Buffer.from(v4(null, bytes)).toString('base64').slice(0, 22);
+  }
+
 }
 
 export interface SchemaDefinition {

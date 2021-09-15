@@ -5,11 +5,13 @@ export type RedisData = {
   [key: string]: string
 }
 
-export default abstract class Entity {
+export type EntityConstructor<TEntity> = new (id: RedisId, data?: RedisData) => TEntity;
+
+export abstract class Entity {
   readonly redisId: RedisId;
   readonly redisData: RedisData;
 
-  constructor(id: RedisId | null = null, data: RedisData = {}) {
+  constructor(id: RedisId, data: RedisData = {}) {
     this.redisId = id ?? this.generateId();
     this.redisData = data;
   }
