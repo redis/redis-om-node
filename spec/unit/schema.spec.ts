@@ -8,12 +8,18 @@ describe("Schema", () => {
 
   describe("the simplest schema", () => {
 
-    class EmptyEntity extends Entity {}
+    interface SimpleEntity {
+      aNumber: number;
+      aText: string;
+      aTag: string;
+    }
 
-    let subject: Schema<EmptyEntity>;
+    class SimpleEntity extends Entity {}
+
+    let subject: Schema<SimpleEntity>;
 
     beforeAll(async () => {
-      subject = new Schema<EmptyEntity>(EmptyEntity, {
+      subject = new Schema<SimpleEntity>(SimpleEntity, {
         aNumber: new RedisNumber(),
         aText: new RedisText(),
         aTag: new RedisTag()
@@ -21,7 +27,27 @@ describe("Schema", () => {
     });
 
     it("has the constructor for the entity",
-      () => expect(subject.entityCtor).toBe(EmptyEntity));
+      () => expect(subject.entityCtor).toBe(SimpleEntity));
+      
+    it("adds the getters from the schema definition to the entity", () => {
+      let entity = new SimpleEntity('foo', { aNumber: '42', aText: 'foo', aTag: 'bar' });
+
+      expect(entity).toHaveProperty('aNumber', 42);
+      expect(entity).toHaveProperty('aText', 'foo');
+      expect(entity).toHaveProperty('aTag', 'bar');
+    });
+
+    it("adds the setters from the schema definition to the entity", () => {
+      let entity = new SimpleEntity('foo');
+
+      entity.aNumber = 23;
+      entity.aText = 'baz';
+      entity.aTag = 'qux';
+      
+      expect(entity.aNumber).toBe(23);
+      expect(entity.aText).toBe('baz');
+      expect(entity.aTag).toBe('qux');
+    });
 
     it("generates the keyspace prefix from the entity constructor name",
       () => expect(subject.prefix).toBe("EmptyEntity"));
