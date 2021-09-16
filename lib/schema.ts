@@ -2,9 +2,16 @@ import { v4 } from 'uuid';
 
 import { Entity, RedisData, RedisId, EntityConstructor } from "./entity";
 
-export interface SchemaOptions {
-  prefix?: string
+export interface SchemaDefinition {
+  [key: string]: Field
 }
+
+export interface SchemaOptions {
+  prefix?: string;
+  idStrategy?: RedisIdStrategy;
+}
+
+export type RedisIdStrategy = () => RedisId;
 
 export class Schema<TEntity extends Entity> {
   readonly entityCtor: EntityConstructor<TEntity>;
@@ -40,14 +47,14 @@ export class Schema<TEntity extends Entity> {
   }
 
   generateId(): RedisId {
-    let bytes: number[] = [];
-    return Buffer.from(v4(null, bytes)).toString('base64').slice(0, 22);
+
+    let defaultStrategy: RedisIdStrategy = () => {
+      let bytes: number[] = [];
+      return Buffer.from(v4(null, bytes)).toString('base64').slice(0, 22);
+    }
+
+    return (this.options?.idStrategy ?? defaultStrategy)();
   }
-
-}
-
-export interface SchemaDefinition {
-  [key: string]: Field
 }
 
 export class Field {}
