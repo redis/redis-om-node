@@ -29,6 +29,7 @@ export class Schema<TEntity extends Entity> {
           let value = this.redisData[field] ?? null;
           if (value === null) return null;
           if (fieldDef instanceof RedisNumber) return Number.parseFloat(value);
+          if (fieldDef instanceof RedisBoolean) return value === '1';
           return value;
         },
         set: function(value) {
@@ -36,6 +37,7 @@ export class Schema<TEntity extends Entity> {
             delete this.redisData[field];
           } else {
             if (fieldDef instanceof RedisNumber) this.redisData[field] = value.toString();
+            else if (fieldDef instanceof RedisBoolean) this.redisData[field] = value ? '1' : '0';
             else this.redisData[field] = value;
           }
         }
@@ -60,8 +62,7 @@ export class Schema<TEntity extends Entity> {
 
 export class Field {}
 
-export class RedisText extends Field {}
-export class RedisTag  extends Field{}
 export class RedisNumber extends Field {}
-export class RedisGeospatial extends Field {}
+export class RedisString extends Field {}
 export class RedisBoolean extends Field {}
+export class RedisGeo extends Field {}

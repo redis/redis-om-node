@@ -1,6 +1,6 @@
-import Globals from '../globals';
-import { RedisNumber, RedisTag, RedisText, Schema } from '../../lib/schema';
-import { Entity } from '../../lib/entity';
+import Globals from './globals';
+import { RedisNumber, RedisString, RedisBoolean, Schema } from '../lib/schema';
+import { Entity } from '../lib/entity';
 
 const globals: Globals = (globalThis as unknown) as Globals;
 
@@ -86,10 +86,10 @@ describe("Schema", () => {
     });
   });
 
-  describe("that defines a text field", () => {
+  describe("that defines a string", () => {
 
     interface TestEntity {
-      aText: string;
+      aString: string;
     }
 
     class TestEntity extends Entity {}
@@ -99,23 +99,23 @@ describe("Schema", () => {
 
     beforeAll(() => {
       subject = new Schema<TestEntity>(TestEntity, {
-        aText: new RedisText()
+        aString: new RedisString()
       });
     });
     
-    beforeEach(() => entity = new TestEntity('foo', { aText: 'foo' }));
+    beforeEach(() => entity = new TestEntity('foo', { aString: 'foo' }));
 
     it("adds the getter and setter for a text field from the schema definition to the entity", () => {
-      expect(entity).toHaveProperty('aText', 'foo');
-      entity.aText = 'baz';
-      expect(entity.aText).toBe('baz');
+      expect(entity).toHaveProperty('aString', 'foo');
+      entity.aString = 'baz';
+      expect(entity.aString).toBe('baz');
     });
   });
 
-  describe("that defines a tag", () => {
+  describe("that defines a boolean", () => {
 
     interface TestEntity {
-      aTag: string;
+      aBoolean: boolean;
     }
 
     class TestEntity extends Entity {}
@@ -125,16 +125,16 @@ describe("Schema", () => {
 
     beforeAll(() => {
       subject = new Schema<TestEntity>(TestEntity, {
-        aTag: new RedisTag()
+        aBoolean: new RedisBoolean()
       });
     });
 
-    beforeEach(() => entity = new TestEntity('foo', { aTag: 'bar' }));
+    beforeEach(() => entity = new TestEntity('foo', { aBoolean: '1' }));
 
     it("adds the getter and setter for a tag field from the schema definition to the entity", () => {
-      expect(entity).toHaveProperty('aTag', 'bar');
-      entity.aTag = 'qux';
-      expect(entity.aTag).toBe('qux');
+      expect(entity).toHaveProperty('aBoolean', true);
+      entity.aBoolean = false;
+      expect(entity.aBoolean).toBe(false);
     });
   });
 });
