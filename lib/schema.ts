@@ -35,7 +35,8 @@ export class Schema<TEntity extends Entity> {
           if ((value ?? null) === null) {
             delete this.redisData[field];
           } else {
-            this.redisData[field] = value;
+            if (fieldDef instanceof RedisNumber) this.redisData[field] = value.toString();
+            else this.redisData[field] = value;
           }
         }
       });

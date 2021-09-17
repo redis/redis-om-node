@@ -11,18 +11,18 @@ describe("Schema", () => {
     interface TestEntity {}
     class TestEntity extends Entity {}
 
-    let subject: Schema<TestEntity>;
+    let schema: Schema<TestEntity>;
 
-    beforeAll(() => subject = new Schema<TestEntity>(TestEntity, {}));
+    beforeAll(() => schema = new Schema<TestEntity>(TestEntity, {}));
     
     it("has the constructor for the entity",
-      () => expect(subject.entityCtor).toBe(TestEntity));
+      () => expect(schema.entityCtor).toBe(TestEntity));
       
     it("generates the keyspace prefix from the entity constructor name",
-      () => expect(subject.prefix).toBe("TestEntity"));
+      () => expect(schema.prefix).toBe("TestEntity"));
 
     it("generates default Redis IDs", () => {
-      let id = subject.generateId();
+      let id = schema.generateId();
       expect(id).toHaveLength(22);
       expect(id).toMatch(/^[A-Za-z0-9+/]{22}$/);
     });
@@ -76,7 +76,7 @@ describe("Schema", () => {
         aNumber: new RedisNumber()
       });
     });
-    
+
     beforeEach(() => entity = new TestEntity('foo', { aNumber: '42' }));
 
     it("adds the getter and setter for a numeric field from the schema definition to the entity", () => {
