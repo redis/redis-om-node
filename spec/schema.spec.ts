@@ -1,5 +1,5 @@
 import Globals from './globals';
-import { RedisNumber, RedisString, RedisBoolean, Schema } from '../lib/schema';
+import { Schema } from '../lib/schema';
 import { Entity } from '../lib/entity';
 
 const globals: Globals = (globalThis as unknown) as Globals;
@@ -73,7 +73,7 @@ describe("Schema", () => {
 
     beforeAll(() => {
       subject = new Schema<TestEntity>(TestEntity, {
-        aNumber: new RedisNumber()
+        aNumber: { type: 'number' }
       });
     });
 
@@ -99,7 +99,7 @@ describe("Schema", () => {
 
     beforeAll(() => {
       subject = new Schema<TestEntity>(TestEntity, {
-        aString: new RedisString()
+        aString: { type: 'string' }
       });
     });
     
@@ -125,7 +125,7 @@ describe("Schema", () => {
 
     beforeAll(() => {
       subject = new Schema<TestEntity>(TestEntity, {
-        aBoolean: new RedisBoolean()
+        aBoolean: { type: 'boolean' }
       });
     });
 

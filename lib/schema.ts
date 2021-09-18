@@ -3,8 +3,26 @@ import { v4 } from 'uuid';
 import { Entity, RedisData, RedisId, EntityConstructor } from "./entity";
 
 export interface SchemaDefinition {
-  [key: string]: Field
+  [key: string]: FieldDefinition
 }
+
+export interface Field {
+  alias?: string;
+}
+
+export interface NumericField extends Field {
+  type: 'number';
+}
+
+export interface StringField extends Field {
+  type: 'string';
+}
+
+export interface BooleanField extends Field {
+  type: 'boolean';
+}
+
+export type FieldDefinition = NumericField | StringField | BooleanField;
 
 export interface SchemaOptions {
   prefix?: string;
@@ -23,23 +41,45 @@ export class Schema<TEntity extends Entity> {
     this.options = options;
 
     for (let field in schemaDef) {
-      let fieldDef = schemaDef[field];
+
+      let fieldDef: FieldDefinition = schemaDef[field];
+      let fieldType = fieldDef.type;
+      let fieldAlias = fieldDef.alias ?? field;
+
+      let numberSerializer = (value: number): string => value.toString();
+      let stringSerializer = (value: string): string => value;
+      let booleanSerializer = (value: boolean): string => value ? '1' : '0';
+      
+      let numberDeserializer = (value: string): number => Number.parseFloat(value);
+      let stringDeserializer = (value: string): string => value;
+      let booleanDeserializer = (value: string): boolean => value === '1';
+
+      let selectedSerializer: (value: any) => string;
+      let selectedDeserializer: (value: string) => any;
+
+      if (fieldType === 'number') {
+        selectedSerializer = numberSerializer;
+        selectedDeserializer = numberDeserializer;
+      } else if (fieldType === 'string') {
+        selectedSerializer = stringSerializer;
+        selectedDeserializer = stringDeserializer;
+      } else if (fieldType === 'boolean') {
+        selectedSerializer = booleanSerializer;
+        selectedDeserializer = booleanDeserializer;
+      } else {
+        // TODO: throw an error, or at least don't define the field
+        return
+      }
+
       Object.defineProperty(this.entityCtor.prototype, field, {
-        get: function () {
-          let value = this.redisData[field] ?? null;
-          if (value === null) return null;
-          if (fieldDef instanceof RedisNumber) return Number.parseFloat(value);
-          if (fieldDef instanceof RedisBoolean) return value === '1';
-          return value;
+        get: function (): any {
+          let value: string = this.redisData[fieldAlias] ?? null;
+          return value === null ? null : selectedDeserializer(value);
         },
-        set: function(value) {
-          if ((value ?? null) === null) {
-            delete this.redisData[field];
-          } else {
-            if (fieldDef instanceof RedisNumber) this.redisData[field] = value.toString();
-            else if (fieldDef instanceof RedisBoolean) this.redisData[field] = value ? '1' : '0';
-            else this.redisData[field] = value;
-          }
+        set: function(value?: any): void {
+          value = value ?? null;
+          if (value === null) delete this.redisData[fieldAlias];
+          else this.redisData[fieldAlias] = selectedSerializer(value);
         }
       });
     }
@@ -59,10 +99,3 @@ export class Schema<TEntity extends Entity> {
     return (this.options?.idStrategy ?? defaultStrategy)();
   }
 }
-
-export class Field {}
-
-export class RedisNumber extends Field {}
-export class RedisString extends Field {}
-export class RedisBoolean extends Field {}
-export class RedisGeo extends Field {}

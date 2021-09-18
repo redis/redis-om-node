@@ -37,9 +37,6 @@ export default class Repository<TEntity extends Entity> {
         .exec();
     });
 
-    // await this.redis.unlink(key)
-    // await this.redis.hSet(key, entity.redisData);
-
     return entity.redisId;
   }
 

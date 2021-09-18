@@ -1,7 +1,7 @@
 import Globals from './globals';
 
 import Client from '../lib/client';
-import { Schema, RedisString, RedisBoolean, RedisNumber } from '../lib/schema'
+import { Schema } from '../lib/schema'
 import { Entity, RedisId } from '../lib/entity';
 import Repository from '../lib/repository';
 
@@ -35,9 +35,9 @@ describe("Repository", () => {
     client = globals.client;
     schema = new Schema<Bigfoot>(
       Bigfoot, {
-        title: new RedisString(),
-        eyewitness: new RedisBoolean(),
-        temperature: new RedisNumber()
+        title: { type: 'string' },
+        eyewitness: { type: 'boolean' },
+        temperature: { type: 'number' }
       });
   });
 

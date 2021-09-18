@@ -1,15 +1,20 @@
 import Globals from './globals';
-import { RedisNumber, RedisString, RedisBoolean, Schema } from '../lib/schema';
+import { Schema } from '../lib/schema';
 import { Entity } from '../lib/entity';
 
 const globals: Globals = (globalThis as unknown) as Globals;
 
 describe("Entity", () => {
 
+  const REDIS_ID = 'foo';
+
   interface TestEntity {
     aNumber?: number | null;
     aString?: string | null;
     aBoolean?: boolean | null;
+    anotherNumber?: number | null;
+    anotherString?: string | null;
+    anotherBoolean?: boolean | null;
   }
 
   class TestEntity extends Entity {}
@@ -18,29 +23,38 @@ describe("Entity", () => {
   let entity: TestEntity;
 
   beforeAll(() => schema = new Schema<TestEntity>(TestEntity, {
-    aNumber: new RedisNumber(),
-    aString: new RedisString(),
-    aBoolean: new RedisBoolean()
+    aNumber: { type: 'number' },
+    aString: { type: 'string' },
+    aBoolean: { type: 'boolean' },
+    anotherNumber: { type: 'number', alias: 'aliasedNumber' },
+    anotherString: { type: 'string', alias: 'aliasedString' },
+    anotherBoolean: { type: 'boolean', alias: 'aliasedBoolean' }
   }));
 
   describe("without data", () => {
-    beforeEach(() => entity = new TestEntity('foo'));
+    beforeEach(() => entity = new TestEntity(REDIS_ID));
   
-    it("has the passed in Redis ID", () => expect(entity.redisId).toBe('foo'));
+    it("has the passed in Redis ID", () => expect(entity.redisId).toBe(REDIS_ID));
     it("returns null for the number property", () => expect(entity.aNumber).toBeNull());
     it("returns null for the string property", () => expect(entity.aString).toBeNull());
     it("returns null for the boolean property", () => expect(entity.aBoolean).toBeNull());
   });
 
   describe("with data", () => {
-    beforeEach(() => entity = new TestEntity('foo', { aNumber: '42', aString: 'bar', aBoolean: '1' }));
+    beforeEach(() => entity = new TestEntity(REDIS_ID, { 
+      aNumber: '42', aString: 'bar', aBoolean: '1',
+      aliasedNumber: '23', aliasedString: 'baz', aliasedBoolean: '0',
+    }));
 
-    it("has the passed in Redis ID", () => expect(entity.redisId).toBe('foo'));
+    it("has the passed in Redis ID", () => expect(entity.redisId).toBe(REDIS_ID));
 
     describe("reading the data", () => {
       it("returns a number for the number property", () => expect(entity.aNumber).toBe(42));
       it("returns a string for the string property", () => expect(entity.aString).toBe('bar'));
       it("returns a boolean for the boolean property", () => expect(entity.aBoolean).toBe(true));
+      it("returns a number for the aliased number property", () => expect(entity.anotherNumber).toBe(23));
+      it("returns a string for the aliased string property", () => expect(entity.anotherString).toBe('baz'));
+      it("returns a boolean for the aliased boolean property", () => expect(entity.anotherBoolean).toBe(false));
     });
   
     describe("changing the data", () => {
