@@ -3,17 +3,46 @@ import { RedisModules } from 'redis/dist/lib/commands';
 import { RedisLuaScripts } from 'redis/dist/lib/lua-script';
 import { WatchError } from 'redis/dist/lib/errors';
 
-import { Schema } from "./schema";
+import { FieldDefinition, Schema, SchemaDefinition, StringField } from "./schema";
 import Client from "./client";
 import { Entity, RedisId } from './entity';
+import { Search } from './search';
 
 export default class Repository<TEntity extends Entity> {
   private schema: Schema<TEntity>;
+  private client: Client;
   private redis: RedisClientType<RedisModules, RedisLuaScripts>;
 
   constructor(schema: Schema<TEntity>, client: Client) {
     this.schema = schema;
+    this.client = client;
     this.redis = client.redis;
+  }
+
+  async createIndex(): Promise<void> {
+
+    let schemaDef: SchemaDefinition = this.schema.definition;
+    let schemaForCreate: string[] = [];
+
+    for (let field in schemaDef) {
+
+      let fieldDef: FieldDefinition = schemaDef[field];
+      let fieldType = fieldDef.type;
+      let fieldAlias = fieldDef.alias ?? field;
+
+      schemaForCreate.push(fieldAlias)
+      if (fieldType === 'number') schemaForCreate.push('NUMERIC')
+      if (fieldType === 'string' && (fieldDef as StringField).textSearch === true) schemaForCreate.push('TEXT')
+      if (fieldType === 'string' && (fieldDef as StringField).textSearch !== true) schemaForCreate.push('TAG')
+      if (fieldType === 'boolean') schemaForCreate.push('TAG')
+    }
+
+    await this.redis.sendCommand([
+        'FT.CREATE', this.schema.indexName, 
+        'ON', 'HASH',
+        'PREFIX', '1', `${this.schema.prefix}:`,
+        'SCHEMA', ...schemaForCreate
+    ]);
   }
 
   create(): TEntity {
@@ -50,6 +79,10 @@ export default class Repository<TEntity extends Entity> {
   async remove(id: string): Promise<void> {
     let key = this.makeKey(id);
     await this.redis.unlink(key);
+  }
+
+  search(): Search<TEntity> {
+    return new Search<TEntity>(this.schema, this.client);
   }
 
   private makeKey(id: string): string {

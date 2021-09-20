@@ -1,6 +1,6 @@
 import { v4 } from 'uuid';
 
-import { Entity, RedisData, RedisId, EntityConstructor } from "./entity";
+import { Entity, RedisId, EntityConstructor } from "./entity";
 
 export interface SchemaDefinition {
   [key: string]: FieldDefinition
@@ -16,6 +16,7 @@ export interface NumericField extends Field {
 
 export interface StringField extends Field {
   type: 'string';
+  textSearch?: boolean;
 }
 
 export interface BooleanField extends Field {
@@ -33,11 +34,13 @@ export type RedisIdStrategy = () => RedisId;
 
 export class Schema<TEntity extends Entity> {
   readonly entityCtor: EntityConstructor<TEntity>;
+  readonly definition: SchemaDefinition
   private options?: SchemaOptions;
 
   constructor(ctor: EntityConstructor<TEntity>, schemaDef: SchemaDefinition, options?: SchemaOptions ) {
 
     this.entityCtor = ctor;
+    this.definition = schemaDef;
     this.options = options;
 
     for (let field in schemaDef) {
@@ -85,8 +88,12 @@ export class Schema<TEntity extends Entity> {
     }
   }
 
-  get prefix() : string {
+  get prefix(): string {
     return this.options?.prefix ?? this.entityCtor.name;
+  }
+
+  get indexName(): string {
+    return `${this.prefix}:index`;
   }
 
   generateId(): RedisId {
