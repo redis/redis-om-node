@@ -1,11 +1,11 @@
 import { EntityData, EntityId } from "./entity-types";
 
 export default abstract class Entity {
-  readonly redisId: EntityId;
-  readonly redisData: EntityData;
+  readonly entityId: EntityId;
+  readonly entityData: EntityData;
 
   constructor(id: EntityId, data: EntityData = {}) {
-    this.redisId = id;
-    this.redisData = data;
+    this.entityId = id;
+    this.entityData = data;
   }
 }

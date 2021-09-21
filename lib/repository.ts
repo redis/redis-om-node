@@ -56,14 +56,14 @@ export default class Repository<TEntity extends Entity> {
 
   async save(entity: TEntity): Promise<string> {
 
-    let key = this.makeKey(entity.redisId);
+    let key = this.makeKey(entity.entityId);
 
     // TODO: need to handle the WatchError
     // TODO: looks like a bug in Node Redis as this doesn't exit
 
-    if (Object.keys(entity.redisData).length === 0) {
+    if (Object.keys(entity.entityData).length === 0) {
       this.redis.unlink(key);
-      return entity.redisId;
+      return entity.entityId;
     }
 
     await this.redis.executeIsolated(async isolatedClient => {
@@ -71,11 +71,11 @@ export default class Repository<TEntity extends Entity> {
       await isolatedClient
         .multi()
           .unlink(key)
-          .hSet(key, entity.redisData)
+          .hSet(key, entity.entityData)
         .exec();
     });
 
-    return entity.redisId;
+    return entity.entityId;
   }
 
   async fetch(id: string): Promise<TEntity> {

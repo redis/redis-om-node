@@ -27,7 +27,7 @@ describe("Repository", () => {
   });
 
   describe("when saving a new entity", () => {
-    let redisId: EntityId;
+    let entityId: EntityId;
     let expectedKey: string;
 
     describe("a simple entity", () => {
@@ -39,8 +39,8 @@ describe("Repository", () => {
         entity.eyewitness = A_BIGFOOT_SIGHTING.eyewitness;
         entity.temperature = A_BIGFOOT_SIGHTING.temperature;
         entity.tags = A_BIGFOOT_SIGHTING.tags;
-        redisId = await repository.save(entity);
-        expectedKey = `Bigfoot:${redisId}`;
+        entityId = await repository.save(entity);
+        expectedKey = `Bigfoot:${entityId}`;
       });
 
       it("creates the expected fields in a Redis Hash", async () => {
@@ -72,8 +72,8 @@ describe("Repository", () => {
         entity.state = A_BIGFOOT_SIGHTING.state;
         entity.eyewitness = A_BIGFOOT_SIGHTING.eyewitness;
         entity.temperature = A_BIGFOOT_SIGHTING.temperature;
-        redisId = await repository.save(entity);
-        expectedKey = `Bigfoot:${redisId}`;
+        entityId = await repository.save(entity);
+        expectedKey = `Bigfoot:${entityId}`;
       });
 
       it("creates the expected fields in a Redis Hash", async () => {
@@ -105,8 +105,8 @@ describe("Repository", () => {
         entity.eyewitness = null;
         entity.temperature = undefined;
         entity.tags = null;
-        redisId = await repository.save(entity);
-        expectedKey = `Bigfoot:${redisId}`;
+        entityId = await repository.save(entity);
+        expectedKey = `Bigfoot:${entityId}`;
       });
 
       it("creates the expected fields in a Redis Hash", async () => {
@@ -130,8 +130,8 @@ describe("Repository", () => {
         entity.eyewitness = null;
         entity.temperature = undefined;
         entity.tags = null;
-        redisId = await repository.save(entity);
-        expectedKey = `Bigfoot:${redisId}`;
+        entityId = await repository.save(entity);
+        expectedKey = `Bigfoot:${entityId}`;
       });
 
       it("creates no fields in a Redis Hash", async () => {

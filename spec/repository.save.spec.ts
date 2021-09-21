@@ -28,7 +28,7 @@ describe("Repository", () => {
 
   describe("when updating an existing entity", () => {
 
-    let redisId: EntityId;
+    let entityId: EntityId;
 
     beforeEach(async () => {
       addBigfootSighting(client, AN_ENTITY_KEY, A_BIGFOOT_SIGHTING);
@@ -43,10 +43,10 @@ describe("Repository", () => {
         entity.eyewitness = ANOTHER_BIGFOOT_SIGHTING.eyewitness;
         entity.temperature = ANOTHER_BIGFOOT_SIGHTING.temperature;
         entity.tags = ANOTHER_BIGFOOT_SIGHTING.tags;
-        redisId = await repository.save(entity);
+        entityId = await repository.save(entity);
       });
 
-      it("returns the Redis ID", () => expect(redisId).toBe(AN_ENTITY_ID))
+      it("returns the Redis ID", () => expect(entityId).toBe(AN_ENTITY_ID))
 
       it("maintains the expected fields in a Redis Hash", async () => {
         let fields = await fetchHashKeys(client, AN_ENTITY_KEY);
@@ -75,10 +75,10 @@ describe("Repository", () => {
       beforeEach(async () => {
         entity.eyewitness = ANOTHER_BIGFOOT_SIGHTING.eyewitness;
         entity.temperature = ANOTHER_BIGFOOT_SIGHTING.temperature;
-        redisId = await repository.save(entity);
+        entityId = await repository.save(entity);
       });
 
-      it("returns the Redis ID", () => expect(redisId).toBe(AN_ENTITY_ID))
+      it("returns the Redis ID", () => expect(entityId).toBe(AN_ENTITY_ID))
 
       it("maintains the expected fields in a Redis Hash", async () => {
         let fields = await fetchHashKeys(client, AN_ENTITY_KEY);
@@ -112,10 +112,10 @@ describe("Repository", () => {
         entity.temperature = undefined;
         entity.tags = null;
 
-        redisId = await repository.save(entity);
+        entityId = await repository.save(entity);
       });
       
-      it("returns the Redis ID", () => expect(redisId).toBe(AN_ENTITY_ID))
+      it("returns the Redis ID", () => expect(entityId).toBe(AN_ENTITY_ID))
       
       it("removes the null and undefined field from the Redis Hash", async () => {
         let fields = await fetchHashKeys(client, AN_ENTITY_KEY);
@@ -138,10 +138,10 @@ describe("Repository", () => {
         entity.temperature = undefined;
         entity.tags = null;
 
-        redisId = await repository.save(entity);
+        entityId = await repository.save(entity);
       });
       
-      it("returns the Redis ID", () => expect(redisId).toBe(AN_ENTITY_ID))
+      it("returns the Redis ID", () => expect(entityId).toBe(AN_ENTITY_ID))
       
       it("removes the null and undefined field from the Redis Hash", async () => {
         let fields = await fetchHashKeys(client, AN_ENTITY_KEY);

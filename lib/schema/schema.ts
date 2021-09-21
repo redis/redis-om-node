@@ -55,13 +55,13 @@ export default class Schema<TEntity extends Entity> {
 
       Object.defineProperty(this.entityCtor.prototype, field, {
         get: function (): any {
-          let value: string = this.redisData[fieldAlias] ?? null;
+          let value: string = this.entityData[fieldAlias] ?? null;
           return value === null ? null : selectedDeserializer(value);
         },
         set: function(value?: any): void {
           value = value ?? null;
-          if (value === null) delete this.redisData[fieldAlias];
-          else this.redisData[fieldAlias] = selectedSerializer(value);
+          if (value === null) delete this.entityData[fieldAlias];
+          else this.entityData[fieldAlias] = selectedSerializer(value);
         }
       });
     }

@@ -55,7 +55,7 @@ describe("Repository", () => {
       });
 
       it("returns the expected entity", () => {
-        expect(entity.redisId).toBe(AN_EMPTY_ENTITY_ID);
+        expect(entity.entityId).toBe(AN_EMPTY_ENTITY_ID);
         expectMatchesSighting(entity, AN_EMPTY_ENTITY_ID, AN_EMPTY_BIGFOOT_SIGHTING);
       });
     });

@@ -242,7 +242,7 @@ describe("Repository", () => {
 });
 
 function sortByRedisId(a: Bigfoot, b: Bigfoot): number {
-  if (a.redisId < b.redisId) return -1
-  if (a.redisId > b.redisId) return 1;
+  if (a.entityId < b.entityId) return -1
+  if (a.entityId > b.entityId) return 1;
   return 0;
 }

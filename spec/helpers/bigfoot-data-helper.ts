@@ -30,7 +30,7 @@ export function createBigfootSchema(): Schema<Bigfoot> {
 }
 
 export function expectMatchesSighting(actualEntity: Bigfoot, expectedId: EntityId, expectedSighting: BigfootSightingData) {
-  expect(actualEntity.redisId).toBe(expectedId);
+  expect(actualEntity.entityId).toBe(expectedId);
   expect(actualEntity.title).toBe(expectedSighting.title ?? null);
   expect(actualEntity.county).toBe(expectedSighting.county ?? null);
   expect(actualEntity.state).toBe(expectedSighting.state ?? null);
