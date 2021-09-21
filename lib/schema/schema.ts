@@ -2,9 +2,19 @@ import { v4 } from 'uuid';
 
 import Entity from "../entity/entity";
 
-import { EntityConstructor, EntityId, EntityIdStrategy, EntityPrefix } from '../entity/entity-types';
+import { EntityConstructor, EntityId, EntityIdStrategy, EntityIndex, EntityPrefix } from '../entity/entity-types';
 import { FieldDefinition, SchemaDefinition } from './schema-definitions';
 import { SchemaOptions } from './schema-options';
+
+let numberSerializer = (value: number): string => value.toString();
+let stringSerializer = (value: string): string => value;
+let booleanSerializer = (value: boolean): string => value ? '1' : '0';
+let arraySerializer = (value: string[]): string => value.join(',');
+
+let numberDeserializer = (value: string): number => Number.parseFloat(value);
+let stringDeserializer = (value: string): string => value;
+let booleanDeserializer = (value: string): boolean => value === '1';
+let arrayDeserializer = (value: string): string[] => value.split(',');
 
 export default class Schema<TEntity extends Entity> {
   readonly entityCtor: EntityConstructor<TEntity>;
@@ -20,32 +30,21 @@ export default class Schema<TEntity extends Entity> {
     for (let field in schemaDef) {
 
       let fieldDef: FieldDefinition = schemaDef[field];
-      let fieldType = fieldDef.type;
       let fieldAlias = fieldDef.alias ?? field;
-
-      let numberSerializer = (value: number): string => value.toString();
-      let stringSerializer = (value: string): string => value;
-      let booleanSerializer = (value: boolean): string => value ? '1' : '0';
-      let arraySerializer = (value: string[]): string => value.join(',');
-      
-      let numberDeserializer = (value: string): number => Number.parseFloat(value);
-      let stringDeserializer = (value: string): string => value;
-      let booleanDeserializer = (value: string): boolean => value === '1';
-      let arrayDeserializer = (value: string): string[] => value.split(',');
 
       let selectedSerializer: (value: any) => string;
       let selectedDeserializer: (value: string) => any;
 
-      if (fieldType === 'number') {
+      if (fieldDef.type === 'number') {
         selectedSerializer = numberSerializer;
         selectedDeserializer = numberDeserializer;
-      } else if (fieldType === 'string') {
+      } else if (fieldDef.type === 'string') {
         selectedSerializer = stringSerializer;
         selectedDeserializer = stringDeserializer;
-      } else if (fieldType === 'boolean') {
+      } else if (fieldDef.type === 'boolean') {
         selectedSerializer = booleanSerializer;
         selectedDeserializer = booleanDeserializer;
-      } else if (fieldType === 'array') {
+      } else if (fieldDef.type === 'array') {
         selectedSerializer = arraySerializer;
         selectedDeserializer = arrayDeserializer;
       } else {
@@ -71,7 +70,7 @@ export default class Schema<TEntity extends Entity> {
     return this.options?.prefix ?? this.entityCtor.name;
   }
 
-  get indexName(): string {
+  get indexName(): EntityIndex {
     return `${this.prefix}:index`;
   }
 
