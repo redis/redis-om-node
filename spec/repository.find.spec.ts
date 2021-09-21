@@ -63,21 +63,6 @@ describe("Repository", () => {
       });
     });
 
-    describe("finding multiple matching strings", () => {
-      beforeEach(async () => {
-        entities = await repository.search()
-          .where('county').is('Ashland')
-          .where('state').is('OH')
-          .run();
-        entities.sort(sortByRedisId);
-      });
-
-      it("returns all the entities matching both strings", () => {
-        expect(entities).toHaveLength(1);
-        expectMatchesSighting(entities[0], ANOTHER_REDIS_ID, ANOTHER_BIGFOOT_SIGHTING);
-      });
-    });
-
     describe("finding a boolean true", () => {
       beforeEach(async () => {
         entities = await repository.search()
@@ -143,13 +128,12 @@ describe("Repository", () => {
         entities.sort(sortByRedisId);
       });
 
-      it("returns all the entities greater than that number", () => {
+      it("returns all the entities greater than or equal to that number", () => {
         expect(entities).toHaveLength(2);
         expectMatchesSighting(entities[0], ANOTHER_REDIS_ID, ANOTHER_BIGFOOT_SIGHTING);
         expectMatchesSighting(entities[1], A_THIRD_REDIS_ID, A_THIRD_BIGFOOT_SIGHTING);
       });
     });
-
 
     describe("finding a number that is less than a number", () => {
       beforeEach(async () => {
@@ -159,7 +143,7 @@ describe("Repository", () => {
         entities.sort(sortByRedisId);
       });
 
-      it("returns all the entities greater than that number", () => {
+      it("returns all the entities less than that number", () => {
         expect(entities).toHaveLength(1);
         expectMatchesSighting(entities[0], A_REDIS_ID, A_BIGFOOT_SIGHTING);
       });
@@ -173,7 +157,7 @@ describe("Repository", () => {
         entities.sort(sortByRedisId);
       });
 
-      it("returns all the entities greater than that number", () => {
+      it("returns all the entities less than or equal to that number", () => {
         expect(entities).toHaveLength(2);
         expectMatchesSighting(entities[0], A_REDIS_ID, A_BIGFOOT_SIGHTING);
         expectMatchesSighting(entities[1], ANOTHER_REDIS_ID, ANOTHER_BIGFOOT_SIGHTING);
@@ -188,7 +172,7 @@ describe("Repository", () => {
         entities.sort(sortByRedisId);
       });
 
-      it("returns all the entities in range", () => {
+      it("returns all the entities in that range", () => {
         expect(entities).toHaveLength(2);
         expectMatchesSighting(entities[0], A_REDIS_ID, A_BIGFOOT_SIGHTING);
         expectMatchesSighting(entities[1], ANOTHER_REDIS_ID, ANOTHER_BIGFOOT_SIGHTING);
@@ -203,9 +187,39 @@ describe("Repository", () => {
         entities.sort(sortByRedisId);
       });
 
-      it("returns all the entities in range", () => {
+      it("returns all the entities in that range", () => {
         expect(entities).toHaveLength(1);
         expectMatchesSighting(entities[0], ANOTHER_REDIS_ID, ANOTHER_BIGFOOT_SIGHTING);
+      });
+    });
+
+    describe("finding entities with a particular tag", () => {
+      beforeEach(async () => {
+        entities = await repository.search()
+          .where('tags').contains('ohio')
+          .run();
+        entities.sort(sortByRedisId);
+      });
+
+      it("returns all the entities thus tagged", () => {
+        expect(entities).toHaveLength(2);
+        expectMatchesSighting(entities[0], A_REDIS_ID, A_BIGFOOT_SIGHTING);
+        expectMatchesSighting(entities[1], ANOTHER_REDIS_ID, ANOTHER_BIGFOOT_SIGHTING);
+      });
+    });
+
+    describe("finding entities with one of the specified tags", () => {
+      beforeEach(async () => {
+        entities = await repository.search()
+          .where('tags').contains('kentucky', 'walmart')
+          .run();
+        entities.sort(sortByRedisId);
+      });
+
+      it("returns all the entities thus tagged", () => {
+        expect(entities).toHaveLength(2);
+        expectMatchesSighting(entities[0], A_REDIS_ID, A_BIGFOOT_SIGHTING);
+        expectMatchesSighting(entities[1], A_THIRD_REDIS_ID, A_THIRD_BIGFOOT_SIGHTING);
       });
     });
 
@@ -219,7 +233,7 @@ describe("Repository", () => {
         entities.sort(sortByRedisId);
       });
 
-      it("returns all the entities", () => {
+      it("returns all the entities that match", () => {
         expect(entities).toHaveLength(1);
         expectMatchesSighting(entities[0], A_THIRD_REDIS_ID, A_THIRD_BIGFOOT_SIGHTING);
       });

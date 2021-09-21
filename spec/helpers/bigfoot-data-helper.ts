@@ -10,6 +10,7 @@ export interface Bigfoot {
   state?: string | null;
   eyewitness?: boolean | null;
   temperature?: number | null;
+  tags?: string[] | null;
 }
 
 export class Bigfoot extends Entity {}
@@ -21,7 +22,8 @@ export function createSchema(): Schema<Bigfoot> {
       county: { type: 'string' },
       state: { type: 'string' },
       eyewitness: { type: 'boolean' },
-      temperature: { type: 'number' }
+      temperature: { type: 'number' },
+      tags: { type: 'array' }
     });
 }
 
@@ -32,6 +34,7 @@ export function expectMatchesSighting(actualEntity: Bigfoot, expectedId: RedisId
   expect(actualEntity.state).toBe(expectedSighting.state ?? null);
   expect(actualEntity.eyewitness).toBe(expectedSighting.eyewitness ?? null);
   expect(actualEntity.temperature).toBe(expectedSighting.temperature ?? null);
+  expect(actualEntity.tags).toEqual(expectedSighting.tags ?? null);
 }
 
 export type BigfootSightingData = {
@@ -40,6 +43,7 @@ export type BigfootSightingData = {
   state?: string;
   eyewitness?: boolean;
   temperature?: number;
+  tags?: string[];
 };
 
 export async function addBigfootSighting(client: Client, key: string, sighting: BigfootSightingData) {
@@ -49,6 +53,7 @@ export async function addBigfootSighting(client: Client, key: string, sighting: 
   if (sighting.state !== undefined) command.push('state', sighting.state);
   if (sighting.eyewitness !== undefined) command.push('eyewitness', sighting.eyewitness ? '1' : '0');
   if (sighting.temperature !== undefined) command.push('temperature', sighting.temperature.toString());
+  if (sighting.tags !== undefined) command.push('tags', sighting.tags.join(','));
   await saveHash(client, key, command);
 };
 
@@ -59,7 +64,8 @@ export const A_BIGFOOT_SIGHTING: BigfootSightingData = {
   county: "Athens",
   state: "OH",
   eyewitness: true,
-  temperature: 75
+  temperature: 75,
+  tags: [ 'walmart', 'ohio' ]
 };
 
 export const ANOTHER_REDIS_ID: RedisId = '2';
@@ -69,7 +75,8 @@ export const ANOTHER_BIGFOOT_SIGHTING : BigfootSightingData= {
   county: "Ashland",
   state: "OH",
   eyewitness: false,
-  temperature: 87
+  temperature: 87,
+  tags: [ 'piggly', 'wiggly', 'ohio' ]
 };
 
 export const A_THIRD_REDIS_ID: RedisId = '3';
@@ -79,7 +86,8 @@ export const A_THIRD_BIGFOOT_SIGHTING: BigfootSightingData = {
   county: "Ashland",
   state: "KY",
   eyewitness: true,
-  temperature: 93
+  temperature: 93,
+  tags: [ 'river', 'kentucky' ]
 };
 
 export const A_PARTIAL_REDIS_ID: RedisId = '4';

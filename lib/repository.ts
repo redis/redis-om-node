@@ -6,7 +6,7 @@ import { WatchError } from 'redis/dist/lib/errors';
 import { FieldDefinition, Schema, SchemaDefinition, StringField } from "./schema";
 import Client from "./client";
 import { Entity, RedisId } from './entity';
-import { Search } from './search';
+import { Search } from './search/search';
 
 export default class Repository<TEntity extends Entity> {
   private schema: Schema<TEntity>;
@@ -35,6 +35,7 @@ export default class Repository<TEntity extends Entity> {
       if (fieldType === 'string' && (fieldDef as StringField).textSearch === true) schemaForCreate.push('TEXT')
       if (fieldType === 'string' && (fieldDef as StringField).textSearch !== true) schemaForCreate.push('TAG')
       if (fieldType === 'boolean') schemaForCreate.push('TAG')
+      if (fieldType === 'array') schemaForCreate.push('TAG')
     }
 
     await this.redis.sendCommand([
@@ -69,7 +70,7 @@ export default class Repository<TEntity extends Entity> {
           .unlink(key)
           .hSet(key, entity.redisData)
         .exec();
-    });  
+    });
 
     return entity.redisId;
   }

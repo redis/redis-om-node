@@ -23,7 +23,11 @@ export interface BooleanField extends Field {
   type: 'boolean';
 }
 
-export type FieldDefinition = NumericField | StringField | BooleanField;
+export interface ArrayField extends Field {
+  type: 'array';
+}
+
+export type FieldDefinition = NumericField | StringField | BooleanField | ArrayField;
 
 export interface SchemaOptions {
   prefix?: string;
@@ -52,10 +56,12 @@ export class Schema<TEntity extends Entity> {
       let numberSerializer = (value: number): string => value.toString();
       let stringSerializer = (value: string): string => value;
       let booleanSerializer = (value: boolean): string => value ? '1' : '0';
+      let arraySerializer = (value: string[]): string => value.join(',');
       
       let numberDeserializer = (value: string): number => Number.parseFloat(value);
       let stringDeserializer = (value: string): string => value;
       let booleanDeserializer = (value: string): boolean => value === '1';
+      let arrayDeserializer = (value: string): string[] => value.split(',');
 
       let selectedSerializer: (value: any) => string;
       let selectedDeserializer: (value: string) => any;
@@ -69,6 +75,9 @@ export class Schema<TEntity extends Entity> {
       } else if (fieldType === 'boolean') {
         selectedSerializer = booleanSerializer;
         selectedDeserializer = booleanDeserializer;
+      } else if (fieldType === 'array') {
+        selectedSerializer = arraySerializer;
+        selectedDeserializer = arrayDeserializer;
       } else {
         // TODO: throw an error, or at least don't define the field
         return

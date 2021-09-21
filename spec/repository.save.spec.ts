@@ -42,6 +42,7 @@ describe("Repository", () => {
         entity.state = ANOTHER_BIGFOOT_SIGHTING.state;
         entity.eyewitness = ANOTHER_BIGFOOT_SIGHTING.eyewitness;
         entity.temperature = ANOTHER_BIGFOOT_SIGHTING.temperature;
+        entity.tags = ANOTHER_BIGFOOT_SIGHTING.tags;
         redisId = await repository.save(entity);
       });
 
@@ -49,22 +50,24 @@ describe("Repository", () => {
 
       it("maintains the expected fields in a Redis Hash", async () => {
         let fields = await fetchHashKeys(client, A_REDIS_KEY);
-        expect(fields).toHaveLength(5);
+        expect(fields).toHaveLength(6);
         expect(fields).toContainEqual('title');
         expect(fields).toContainEqual('county');
         expect(fields).toContainEqual('state');
         expect(fields).toContainEqual('eyewitness');
         expect(fields).toContainEqual('temperature');
+        expect(fields).toContainEqual('tags');
       });
 
       it("updates the expected values in a Redis Hash", async () => {
-        let values = await fetchHashFields(client, A_REDIS_KEY, 'title', 'county', 'state', 'eyewitness', 'temperature');
+        let values = await fetchHashFields(client, A_REDIS_KEY, 'title', 'county', 'state', 'eyewitness', 'temperature', 'tags');
         expect(values).toEqual([
           ANOTHER_BIGFOOT_SIGHTING.title,
           ANOTHER_BIGFOOT_SIGHTING.county,
           ANOTHER_BIGFOOT_SIGHTING.state,
           '0',
-          ANOTHER_BIGFOOT_SIGHTING.temperature?.toString()]);
+          ANOTHER_BIGFOOT_SIGHTING.temperature?.toString(),
+          ANOTHER_BIGFOOT_SIGHTING.tags?.join(',')]);
       });
     });
 
@@ -79,22 +82,24 @@ describe("Repository", () => {
 
       it("maintains the expected fields in a Redis Hash", async () => {
         let fields = await fetchHashKeys(client, A_REDIS_KEY);
-        expect(fields).toHaveLength(5);
+        expect(fields).toHaveLength(6);
         expect(fields).toContainEqual('title');
         expect(fields).toContainEqual('county');
         expect(fields).toContainEqual('state');
         expect(fields).toContainEqual('eyewitness');
         expect(fields).toContainEqual('temperature');
+        expect(fields).toContainEqual('tags');
       });
 
       it("updates the expected values in a Redis Hash", async () => {
-        let values = await fetchHashFields(client, A_REDIS_KEY, 'title', 'county', 'state', 'eyewitness', 'temperature');
+        let values = await fetchHashFields(client, A_REDIS_KEY, 'title', 'county', 'state', 'eyewitness', 'temperature', 'tags');
         expect(values).toEqual([
           A_BIGFOOT_SIGHTING.title,
           A_BIGFOOT_SIGHTING.county,
           A_BIGFOOT_SIGHTING.state,
           '0',
-          ANOTHER_BIGFOOT_SIGHTING.temperature?.toString()]);
+          ANOTHER_BIGFOOT_SIGHTING.temperature?.toString(),
+          A_BIGFOOT_SIGHTING.tags?.join(',')]);
       });
     });
 
@@ -105,6 +110,7 @@ describe("Repository", () => {
         entity.state = undefined;
         entity.eyewitness = null;
         entity.temperature = undefined;
+        entity.tags = null;
 
         redisId = await repository.save(entity);
       });
@@ -118,8 +124,8 @@ describe("Repository", () => {
       });
       
       it("removes the expected values from the Redis Hash", async () => {
-        let values = await fetchHashFields(client, A_REDIS_KEY, 'title', 'county', 'state', 'eyewitness', 'temperature');
-        expect(values).toEqual([ANOTHER_BIGFOOT_SIGHTING.title, null, null, null, null]);
+        let values = await fetchHashFields(client, A_REDIS_KEY, 'title', 'county', 'state', 'eyewitness', 'temperature', 'tags');
+        expect(values).toEqual([ANOTHER_BIGFOOT_SIGHTING.title, null, null, null, null, null]);
       });
     });
 
@@ -130,6 +136,7 @@ describe("Repository", () => {
         entity.state = undefined;
         entity.eyewitness = null;
         entity.temperature = undefined;
+        entity.tags = null;
 
         redisId = await repository.save(entity);
       });

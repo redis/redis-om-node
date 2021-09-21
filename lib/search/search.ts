@@ -2,9 +2,9 @@ import { RedisClientType } from 'redis/dist/lib/client';
 import { RedisModules } from 'redis/dist/lib/commands';
 import { RedisLuaScripts } from 'redis/dist/lib/lua-script';
 
-import { FieldDefinition, Schema } from "./schema";
-import Client from "./client";
-import { Entity, RedisData, RedisId } from './entity';
+import { FieldDefinition, Schema } from "../schema";
+import Client from "../client";
+import { Entity, RedisData, RedisId } from '../entity';
 
 export interface Where<TEntity> {
   isTrue(): Search<TEntity>;
@@ -17,6 +17,7 @@ export interface Where<TEntity> {
   lessThanEqual(value: number): Search<TEntity>;
   inRange(bottom: number, top: number): Search<TEntity>;
   inRangeExclusive(bottom: number, top: number): Search<TEntity>;
+  contains(...value: string[]): Search<TEntity>;
 }
 
 export abstract class Where<TEntity extends Entity> {
@@ -114,6 +115,19 @@ export class WhereNumber<TEntity extends Entity> extends Where<TEntity> {
   }
 }
 
+export class WhereArray<TEntity extends Entity> extends Where<TEntity> {
+  private value?: string[];
+
+  contains(...value: string[]): Search<TEntity> {
+    this.value = value;
+    return this.search;
+  }
+
+  toString(): string {
+    return `@${this.field}:{${this.value?.join('|')}}`
+  }
+}
+
 export class WhereString<TEntity extends Entity> extends Where<TEntity> {
   private value?: string;
 
@@ -138,28 +152,14 @@ export class Search<TEntity extends Entity> {
     this.redis = client.redis;
   }
 
-  where(field: string): WhereString<TEntity> | WhereBoolean<TEntity> | WhereNumber<TEntity> {
+  where(field: string): WhereString<TEntity> | WhereBoolean<TEntity> | WhereNumber<TEntity> | WhereArray<TEntity> {
 
     let fieldDef: FieldDefinition = this.schema.definition[field];
 
-    if (fieldDef.type === 'boolean') {
-      let where: WhereBoolean<TEntity>;
-      where = new WhereBoolean<TEntity>(this, field);
-      this.whereArray.push(where);
-      return where;
-    }
-    
-    if (fieldDef.type === 'number') {
-      let where: WhereNumber<TEntity>;
-      where = new WhereNumber<TEntity>(this, field);
-      this.whereArray.push(where);
-      return where;
-    }
-    
-    let where: WhereString<TEntity>;
-    where = new WhereString<TEntity>(this, field);
-    this.whereArray.push(where);
-    return where;
+    if (fieldDef.type === 'boolean') return this.createWhereBoolean(field);
+    if (fieldDef.type === 'number') return this.createWhereNumber(field);
+    if (fieldDef.type === 'array') return this.createWhereArray(field);
+    return this.createWhereString(field);
   }
 
   async run(): Promise<TEntity[]> {
@@ -171,6 +171,34 @@ export class Search<TEntity extends Entity> {
     let ids = this.extractIds(results);
     let entities = this.extractEntities(results, ids);
     return entities;
+  }
+
+  private createWhereBoolean(field: string): WhereBoolean<TEntity> {
+    let where: WhereBoolean<TEntity>;
+    where = new WhereBoolean<TEntity>(this, field);
+    this.whereArray.push(where);
+    return where;
+  }
+
+  private createWhereNumber(field: string): WhereNumber<TEntity> {
+    let where: WhereNumber<TEntity>;
+    where = new WhereNumber<TEntity>(this, field);
+    this.whereArray.push(where);
+    return where;
+  }
+
+  private createWhereArray(field: string): WhereArray<TEntity> {
+    let where: WhereArray<TEntity>;
+    where = new WhereArray<TEntity>(this, field);
+    this.whereArray.push(where);
+    return where;
+  }
+
+  private createWhereString(field: string): WhereString<TEntity> {
+    let where: WhereString<TEntity>;
+    where = new WhereString<TEntity>(this, field);
+    this.whereArray.push(where);
+    return where;
   }
 
   private get query() : string {
