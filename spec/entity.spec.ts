@@ -1,8 +1,5 @@
-import Globals from './globals';
 import { Schema } from '../lib/schema';
 import { Entity } from '../lib/entity';
-
-const globals: Globals = (globalThis as unknown) as Globals;
 
 describe("Entity", () => {
 

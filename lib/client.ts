@@ -21,7 +21,11 @@ export default class Client {
   }
 
   execute<TResult>(command: (string|number|boolean)[]) : Promise<TResult> {
-    return this.redis.sendCommand<TResult>(command.map(arg => arg.toString()));
+    return this.redis.sendCommand<TResult>(command.map(arg => {
+      if (arg === false) return '0';
+      if (arg === true) return '1';
+      return arg.toString();
+    }));
   }
 
   fetchRepository<TEntity extends Entity>(schema: Schema<TEntity>) : Repository<TEntity> {

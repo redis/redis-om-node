@@ -1,4 +1,7 @@
-import Globals from './globals';
+import Globals from './helpers/globals';
+import { fetchHashKeys, fetchHashFields, keyExists } from './helpers/redis-helper';
+import { addBigfootSighting, Bigfoot, createSchema, expectMatchesSighting,
+  A_BIGFOOT_SIGHTING, } from './helpers/bigfoot-data-helper';
 
 import Client from '../lib/client';
 import { Schema } from '../lib/schema'
@@ -7,18 +10,7 @@ import Repository from '../lib/repository';
 
 const globals: Globals = (globalThis as unknown) as Globals;
 
-const A_TITLE = "Bigfoot was seen out by the Walmart";
-const A_TEMPERATURE = 75;
-
 describe("Repository", () => {
-
-  interface Bigfoot {
-    title?: string | null;
-    eyewitness?: boolean | null;
-    temperature?: number | null;
-  }
-  
-  class Bigfoot extends Entity {}
 
   let client: Client;
   let repository: Repository<Bigfoot>;
@@ -27,74 +19,85 @@ describe("Repository", () => {
 
   beforeAll(() => {
     client = globals.client;
-    schema = new Schema<Bigfoot>(
-      Bigfoot, {
-        title: { type: 'string' },
-        eyewitness: { type: 'boolean' },
-        temperature: { type: 'number' }
-      });
+    schema = createSchema();
   });
 
   beforeEach(async () => {
-    await client.execute(['FLUSHALL']);
     repository = client.fetchRepository<Bigfoot>(schema);
   });
 
   describe("when saving a new entity", () => {
     let redisId: RedisId;
-
     let expectedKey: string;
 
     describe("a simple entity", () => {
       beforeEach(async () => {
         entity = repository.create();
-        entity.title = A_TITLE;
-        entity.eyewitness = true;
-        entity.temperature = A_TEMPERATURE;
+        entity.title = A_BIGFOOT_SIGHTING.title;
+        entity.county = A_BIGFOOT_SIGHTING.county;
+        entity.state = A_BIGFOOT_SIGHTING.state;
+        entity.eyewitness = A_BIGFOOT_SIGHTING.eyewitness;
+        entity.temperature = A_BIGFOOT_SIGHTING.temperature;
         redisId = await repository.save(entity);
         expectedKey = `Bigfoot:${redisId}`;
       });
 
       it("creates the expected fields in a Redis Hash", async () => {
-        let fields = await client.execute<string[]>(['HKEYS', expectedKey]);
-        expect(fields).toHaveLength(3);
+        let fields = await fetchHashKeys(client, expectedKey);
+        expect(fields).toHaveLength(5);
         expect(fields).toContainEqual('title');
+        expect(fields).toContainEqual('county');
+        expect(fields).toContainEqual('state');
         expect(fields).toContainEqual('eyewitness');
         expect(fields).toContainEqual('temperature');
       });
 
       it("stores the expected values in a Redis Hash", async () => {
-        let values = await client.execute<string[]>(['HMGET', expectedKey, 'title', 'eyewitness', 'temperature']);
-        expect(values).toEqual([A_TITLE, '1', `${A_TEMPERATURE}`]);
+        let values = await fetchHashFields(client, expectedKey, 'title', 'county', 'state', 'eyewitness', 'temperature');
+        expect(values).toEqual([
+          A_BIGFOOT_SIGHTING.title,
+          A_BIGFOOT_SIGHTING.county,
+          A_BIGFOOT_SIGHTING.state,
+          '1',
+          A_BIGFOOT_SIGHTING.temperature?.toString()]);
       });
     });
 
     describe("a sparsely populated entity", () => {
       beforeEach(async () => {
         entity = repository.create();
-        entity.title = A_TITLE;
-        entity.eyewitness = false;
+        entity.state = A_BIGFOOT_SIGHTING.state;
+        entity.eyewitness = A_BIGFOOT_SIGHTING.eyewitness;
+        entity.temperature = A_BIGFOOT_SIGHTING.temperature;
         redisId = await repository.save(entity);
         expectedKey = `Bigfoot:${redisId}`;
       });
 
       it("creates the expected fields in a Redis Hash", async () => {
-        let fields = await client.execute<string[]>(['HKEYS', expectedKey]);
-        expect(fields).toHaveLength(2);
-        expect(fields).toContainEqual('title');
+        let fields = await fetchHashKeys(client, expectedKey);
+        expect(fields).toHaveLength(3);
+        expect(fields).toContainEqual('state');
         expect(fields).toContainEqual('eyewitness');
+        expect(fields).toContainEqual('temperature');
       });
 
       it("stores the expected values in a Redis Hash", async () => {
-        let values = await client.execute<string[]>(['HMGET', expectedKey, 'title', 'eyewitness', 'temperature']);
-        expect(values).toEqual([A_TITLE, '0', null]);
+        let values = await fetchHashFields(client, expectedKey, 'title', 'county', 'state', 'eyewitness', 'temperature');
+        expect(values).toEqual([
+          null,
+          null,
+          A_BIGFOOT_SIGHTING.state,
+          '1',
+          A_BIGFOOT_SIGHTING.temperature?.toString()]);
       });
     });
 
     describe("a sparsely populated entity with explicit null and undefined", () => {
       beforeEach(async () => {
         entity = repository.create();
-        entity.title = A_TITLE;
+        entity.title = A_BIGFOOT_SIGHTING.title;
+        entity.county = null;
+        entity.state = undefined;
         entity.eyewitness = null;
         entity.temperature = undefined;
         redisId = await repository.save(entity);
@@ -102,14 +105,42 @@ describe("Repository", () => {
       });
 
       it("creates the expected fields in a Redis Hash", async () => {
-        let fields = await client.execute<string[]>(['HKEYS', expectedKey]);
+        let fields = await fetchHashKeys(client, expectedKey);
         expect(fields).toHaveLength(1);
         expect(fields).toContainEqual('title');
       });
 
       it("stores the expected values in a Redis Hash", async () => {
-        let values = await client.execute<string[]>(['HMGET', expectedKey, 'title', 'eyewitness', 'temperature']);
-        expect(values).toEqual([A_TITLE, null, null]);
+        let values = await fetchHashFields(client, expectedKey, 'title', 'county', 'state', 'eyewitness', 'temperature');
+        expect(values).toEqual([A_BIGFOOT_SIGHTING.title, null, null, null, null]);
+      });
+    });
+
+    describe("an unpopulated entity with all nulls and undefineds", () => {
+      beforeEach(async () => {
+        entity = repository.create();
+        entity.title = undefined;
+        entity.county = null;
+        entity.state = undefined;
+        entity.eyewitness = null;
+        entity.temperature = undefined;
+        redisId = await repository.save(entity);
+        expectedKey = `Bigfoot:${redisId}`;
+      });
+
+      it("creates no fields in a Redis Hash", async () => {
+        let fields = await fetchHashKeys(client, expectedKey);
+        expect(fields).toHaveLength(0);
+      });
+
+      it("stores nothing in the Redis Hash", async () => {
+        let values = await fetchHashFields(client, expectedKey, 'title', 'county', 'state', 'eyewitness', 'temperature');
+        expect(values).toEqual([null, null, null, null, null]);
+      });
+
+      it("doesn't even store the key", async () => {
+        let exists = await keyExists(client, expectedKey);
+        expect(exists).toBe(false);
       });
     });
   });

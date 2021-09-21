@@ -10,7 +10,7 @@ module.exports = {
     "^.+\\.ts$": "ts-jest"
   },
   setupFilesAfterEnv: [
-    '<rootDir>/spec/spec-helper.ts'
+    '<rootDir>/spec/helpers/spec-helper.ts'
   ],
   collectCoverage: false,
   globals: {

@@ -57,6 +57,11 @@ export default class Repository<TEntity extends Entity> {
     // TODO: need to handle the WatchError
     // TODO: looks like a bug in Node Redis as this doesn't exit
 
+    if (Object.keys(entity.redisData).length === 0) {
+      this.redis.unlink(key);
+      return entity.redisId;
+    }
+
     await this.redis.executeIsolated(async isolatedClient => {
       await isolatedClient.watch(key);
       await isolatedClient
@@ -64,7 +69,7 @@ export default class Repository<TEntity extends Entity> {
           .unlink(key)
           .hSet(key, entity.redisData)
         .exec();
-    });
+    });  
 
     return entity.redisId;
   }

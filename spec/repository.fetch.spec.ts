@@ -1,27 +1,16 @@
-import Globals from './globals';
-
+import Globals from './helpers/globals';
+import { addBigfootSighting, Bigfoot, createSchema, expectMatchesSighting,
+  A_BIGFOOT_SIGHTING, A_REDIS_ID, A_REDIS_KEY,
+  A_PARTIAL_BIGFOOT_SIGHTING, A_PARTIAL_REDIS_ID, A_PARTIAL_REDIS_KEY,
+  AN_EMPTY_BIGFOOT_SIGHTING, AN_EMPTY_REDIS_ID } from './helpers/bigfoot-data-helper';
+  
 import Client from '../lib/client';
 import { Schema } from '../lib/schema'
-import { Entity } from '../lib/entity';
 import Repository from '../lib/repository';
 
 const globals: Globals = (globalThis as unknown) as Globals;
 
-const A_TITLE = "Bigfoot was seen out by the Walmart";
-const A_TEMPERATURE = 75;
-
-const REDIS_ID = '1234';
-const REDIS_KEY = `Bigfoot:${REDIS_ID}`;
-
 describe("Repository", () => {
-
-  interface Bigfoot {
-    title?: string | null;
-    eyewitness?: boolean | null;
-    temperature?: number | null;
-  }
-  
-  class Bigfoot extends Entity {}
 
   let client: Client;
   let repository: Repository<Bigfoot>;
@@ -30,68 +19,44 @@ describe("Repository", () => {
 
   beforeAll(() => {
     client = globals.client;
-    schema = new Schema<Bigfoot>(
-      Bigfoot, {
-        title: { type: 'string' },
-        eyewitness: { type: 'boolean' },
-        temperature: { type: 'number' }
-      });
+    schema = createSchema();
   });
 
   beforeEach(async () => {
-    await client.execute(['FLUSHALL']);
     repository = client.fetchRepository<Bigfoot>(schema);
   });
 
   describe("#fetch", () => {
     describe("when fetching a fully populated entity from Redis", () => {
       beforeEach(async () => {
-        await client.execute([
-          'HSET', REDIS_KEY,
-            'title', A_TITLE,
-            'eyewitness', '1',
-            'temperature', A_TEMPERATURE
-          ]);
-
-        entity = await repository.fetch(REDIS_ID);
+        await addBigfootSighting(client, A_REDIS_KEY, A_BIGFOOT_SIGHTING);
+        entity = await repository.fetch(A_REDIS_ID);
       });
 
       it("returns the expected entity", () => {
-        expect(entity.redisId).toBe(REDIS_ID);
-        expect(entity.title).toBe(A_TITLE);
-        expect(entity.eyewitness).toBe(true);
-        expect(entity.temperature).toBe(A_TEMPERATURE);
+        expectMatchesSighting(entity, A_REDIS_ID, A_BIGFOOT_SIGHTING);
       });
     });
 
     describe("when fetching a partially populated entity from Redis", () => {
       beforeEach(async () => {
-        await client.execute([
-          'HSET', REDIS_KEY,
-            'title', A_TITLE
-          ]);
-
-        entity = await repository.fetch(REDIS_ID);
+        await addBigfootSighting(client, A_PARTIAL_REDIS_KEY, A_PARTIAL_BIGFOOT_SIGHTING);
+        entity = await repository.fetch(A_PARTIAL_REDIS_ID);
       });
 
       it("returns the expected entity", () => {
-        expect(entity.redisId).toBe(REDIS_ID);
-        expect(entity.title).toBe(A_TITLE);
-        expect(entity.eyewitness).toBeNull();
-        expect(entity.temperature).toBeNull();
+        expectMatchesSighting(entity, A_PARTIAL_REDIS_ID, A_PARTIAL_BIGFOOT_SIGHTING);
       });
     });
 
     describe("when fetching an unpopulated entity from Redis", () => {
       beforeEach(async () => {
-        entity = await repository.fetch(REDIS_ID);
+        entity = await repository.fetch(AN_EMPTY_REDIS_ID);
       });
 
       it("returns the expected entity", () => {
-        expect(entity.redisId).toBe(REDIS_ID);
-        expect(entity.title).toBeNull();
-        expect(entity.eyewitness).toBeNull();
-        expect(entity.temperature).toBeNull();
+        expect(entity.redisId).toBe(AN_EMPTY_REDIS_ID);
+        expectMatchesSighting(entity, AN_EMPTY_REDIS_ID, AN_EMPTY_BIGFOOT_SIGHTING);
       });
     });
   });

@@ -1,30 +1,16 @@
-import Globals from './globals';
+import Globals from './helpers/globals';
+import { fetchHashKeys, fetchHashFields, keyExists } from './helpers/redis-helper';
+import { addBigfootSighting, Bigfoot, createSchema, expectMatchesSighting,
+  A_BIGFOOT_SIGHTING, A_REDIS_ID, A_REDIS_KEY, ANOTHER_BIGFOOT_SIGHTING} from './helpers/bigfoot-data-helper';
 
 import Client from '../lib/client';
 import { Schema } from '../lib/schema'
-import { Entity, RedisId } from '../lib/entity';
+import { RedisId } from '../lib/entity';
 import Repository from '../lib/repository';
 
 const globals: Globals = (globalThis as unknown) as Globals;
 
-const A_TITLE = "Bigfoot was seen out by the Walmart";
-const A_TEMPERATURE = 75;
-
-const ANOTHER_TITLE = "Bigfoot was seen out by the Piggly Wiggly";
-const ANOTHER_TEMPERATURE = 87;
-
-const REDIS_ID = '1234';
-const REDIS_KEY = `Bigfoot:${REDIS_ID}`;
-
 describe("Repository", () => {
-
-  interface Bigfoot {
-    title?: string | null;
-    eyewitness?: boolean | null;
-    temperature?: number | null;
-  }
-  
-  class Bigfoot extends Entity {}
 
   let client: Client;
   let repository: Repository<Bigfoot>;
@@ -33,16 +19,10 @@ describe("Repository", () => {
 
   beforeAll(() => {
     client = globals.client;
-    schema = new Schema<Bigfoot>(
-      Bigfoot, {
-        title: { type: 'string' },
-        eyewitness: { type: 'boolean' },
-        temperature: { type: 'number' }
-      });
+    schema = createSchema();
   });
 
   beforeEach(async () => {
-    await client.execute(['FLUSHALL']);
     repository = client.fetchRepository<Bigfoot>(schema);
   });
 
@@ -51,85 +31,124 @@ describe("Repository", () => {
     let redisId: RedisId;
 
     beforeEach(async () => {
-      await client.execute([
-        'HSET', REDIS_KEY,
-          'title', A_TITLE,
-          'eyewitness', '1',
-          'temperature', A_TEMPERATURE
-        ]);
-
-      entity = await repository.fetch(REDIS_ID);
+      addBigfootSighting(client, A_REDIS_KEY, A_BIGFOOT_SIGHTING);
+      entity = await repository.fetch(A_REDIS_ID);
     });
 
-    describe("all the fields in the entity", () => {
+    describe("and updating all the fields in the entity", () => {
       beforeEach(async () => {
-        entity.title = ANOTHER_TITLE;
-        entity.eyewitness = false;
-        entity.temperature = ANOTHER_TEMPERATURE;
-
+        entity.title = ANOTHER_BIGFOOT_SIGHTING.title;
+        entity.county = ANOTHER_BIGFOOT_SIGHTING.county;
+        entity.state = ANOTHER_BIGFOOT_SIGHTING.state;
+        entity.eyewitness = ANOTHER_BIGFOOT_SIGHTING.eyewitness;
+        entity.temperature = ANOTHER_BIGFOOT_SIGHTING.temperature;
         redisId = await repository.save(entity);
       });
 
-      it("returns the Redis ID", () => expect(redisId).toBe(REDIS_ID))
+      it("returns the Redis ID", () => expect(redisId).toBe(A_REDIS_ID))
 
       it("maintains the expected fields in a Redis Hash", async () => {
-        let fields = await client.execute<string[]>(['HKEYS', REDIS_KEY]);
-        expect(fields).toHaveLength(3);
+        let fields = await fetchHashKeys(client, A_REDIS_KEY);
+        expect(fields).toHaveLength(5);
         expect(fields).toContainEqual('title');
+        expect(fields).toContainEqual('county');
+        expect(fields).toContainEqual('state');
         expect(fields).toContainEqual('eyewitness');
         expect(fields).toContainEqual('temperature');
       });
 
       it("updates the expected values in a Redis Hash", async () => {
-        let values = await client.execute<string[]>(['HMGET', REDIS_KEY, 'title', 'eyewitness', 'temperature']);
-        expect(values).toEqual([ANOTHER_TITLE, '0', `${ANOTHER_TEMPERATURE}`]);
+        let values = await fetchHashFields(client, A_REDIS_KEY, 'title', 'county', 'state', 'eyewitness', 'temperature');
+        expect(values).toEqual([
+          ANOTHER_BIGFOOT_SIGHTING.title,
+          ANOTHER_BIGFOOT_SIGHTING.county,
+          ANOTHER_BIGFOOT_SIGHTING.state,
+          '0',
+          ANOTHER_BIGFOOT_SIGHTING.temperature?.toString()]);
       });
     });
 
-    describe("some of the fields in the entity", () => {
+    describe("and updating some of the fields in the entity", () => {
       beforeEach(async () => {
-        entity.eyewitness = false;
-        entity.temperature = ANOTHER_TEMPERATURE;
-
+        entity.eyewitness = ANOTHER_BIGFOOT_SIGHTING.eyewitness;
+        entity.temperature = ANOTHER_BIGFOOT_SIGHTING.temperature;
         redisId = await repository.save(entity);
       });
 
-      it("returns the Redis ID", () => expect(redisId).toBe(REDIS_ID))
+      it("returns the Redis ID", () => expect(redisId).toBe(A_REDIS_ID))
 
       it("maintains the expected fields in a Redis Hash", async () => {
-        let fields = await client.execute<string[]>(['HKEYS', REDIS_KEY]);
-        expect(fields).toHaveLength(3);
+        let fields = await fetchHashKeys(client, A_REDIS_KEY);
+        expect(fields).toHaveLength(5);
         expect(fields).toContainEqual('title');
+        expect(fields).toContainEqual('county');
+        expect(fields).toContainEqual('state');
         expect(fields).toContainEqual('eyewitness');
         expect(fields).toContainEqual('temperature');
       });
 
       it("updates the expected values in a Redis Hash", async () => {
-        let values = await client.execute<string[]>(['HMGET', REDIS_KEY, 'title', 'eyewitness', 'temperature']);
-        expect(values).toEqual([A_TITLE, '0', `${ANOTHER_TEMPERATURE}`]);
+        let values = await fetchHashFields(client, A_REDIS_KEY, 'title', 'county', 'state', 'eyewitness', 'temperature');
+        expect(values).toEqual([
+          A_BIGFOOT_SIGHTING.title,
+          A_BIGFOOT_SIGHTING.county,
+          A_BIGFOOT_SIGHTING.state,
+          '0',
+          ANOTHER_BIGFOOT_SIGHTING.temperature?.toString()]);
       });
     });
 
-    describe("some of the fields in the entity to null or undefined", () => {
+    describe("and updating some of the fields in the entity to null or undefined", () => {
       beforeEach(async () => {
-        entity.title = ANOTHER_TITLE;
+        entity.title = ANOTHER_BIGFOOT_SIGHTING.title;
+        entity.county = null;
+        entity.state = undefined;
         entity.eyewitness = null;
         entity.temperature = undefined;
 
         redisId = await repository.save(entity);
       });
       
-      it("returns the Redis ID", () => expect(redisId).toBe(REDIS_ID))
+      it("returns the Redis ID", () => expect(redisId).toBe(A_REDIS_ID))
       
       it("removes the null and undefined field from the Redis Hash", async () => {
-        let fields = await client.execute<string[]>(['HKEYS', REDIS_KEY]);
+        let fields = await fetchHashKeys(client, A_REDIS_KEY);
         expect(fields).toHaveLength(1);
         expect(fields).toContainEqual('title');
       });
       
       it("removes the expected values from the Redis Hash", async () => {
-        let values = await client.execute<string[]>(['HMGET', REDIS_KEY, 'title', 'eyewitness', 'temperature']);
-        expect(values).toEqual([ANOTHER_TITLE, null, null]);
+        let values = await fetchHashFields(client, A_REDIS_KEY, 'title', 'county', 'state', 'eyewitness', 'temperature');
+        expect(values).toEqual([ANOTHER_BIGFOOT_SIGHTING.title, null, null, null, null]);
+      });
+    });
+
+    describe("and updating all of the fields in the entity to null or undefined", () => {
+      beforeEach(async () => {
+        entity.title = undefined;
+        entity.county = null;
+        entity.state = undefined;
+        entity.eyewitness = null;
+        entity.temperature = undefined;
+
+        redisId = await repository.save(entity);
+      });
+      
+      it("returns the Redis ID", () => expect(redisId).toBe(A_REDIS_ID))
+      
+      it("removes the null and undefined field from the Redis Hash", async () => {
+        let fields = await fetchHashKeys(client, A_REDIS_KEY);
+        expect(fields).toHaveLength(0);
+      });
+      
+      it("removes all the values from the Redis Hash", async () => {
+        let values = await fetchHashFields(client, A_REDIS_KEY, 'title', 'county', 'state', 'eyewitness', 'temperature');
+        expect(values).toEqual([null, null, null, null, null]);
+      });
+
+      it("removes the entity from Redis", async () => {
+        let exists = await keyExists(client, A_REDIS_KEY)
+        expect(exists).toBe(false);
       });
     });
   });
