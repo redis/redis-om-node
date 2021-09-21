@@ -6,6 +6,19 @@ import { FieldDefinition, Schema } from "./schema";
 import Client from "./client";
 import { Entity, RedisData, RedisId } from './entity';
 
+export interface Where<TEntity> {
+  isTrue(): Search<TEntity>;
+  isFalse(): Search<TEntity>;
+  is(value: string): Search<TEntity>;
+  equals(value: number): Search<TEntity>;
+  greaterThan(value: number): Search<TEntity>;
+  greaterThanEqual(value: number): Search<TEntity>;
+  lessThan(value: number): Search<TEntity>;
+  lessThanEqual(value: number): Search<TEntity>;
+  inRange(bottom: number, top: number): Search<TEntity>;
+  inRangeExclusive(bottom: number, top: number): Search<TEntity>;
+}
+
 export abstract class Where<TEntity extends Entity> {
   protected search: Search<TEntity>;
   protected field: String;
@@ -36,6 +49,71 @@ export class WhereBoolean<TEntity extends Entity> extends Where<TEntity> {
   }
 }
 
+export class WhereNumber<TEntity extends Entity> extends Where<TEntity> {
+  private bottom: number = Number.NEGATIVE_INFINITY;
+  private top: number = Number.POSITIVE_INFINITY;
+  private exclusive: boolean = false;
+
+  equals(value: number): Search<TEntity> {
+    this.bottom = value;
+    this.top = value;
+    return this.search;
+  }
+
+  greaterThan(value: number): Search<TEntity> {
+    this.bottom = value;
+    this.exclusive = true;
+    return this.search;
+  }
+
+  greaterThanEqual(value: number): Search<TEntity> {
+    this.bottom = value;
+    return this.search;
+  }
+
+  lessThan(value: number): Search<TEntity> {
+    this.top = value;
+    this.exclusive = true;
+    return this.search;
+  }
+
+  lessThanEqual(value: number): Search<TEntity> {
+    this.top = value;
+    return this.search;
+  }
+
+  inRange(bottom: number, top: number): Search<TEntity> {
+    this.bottom = bottom;
+    this.top = top;
+    return this.search;
+  }
+
+  inRangeExclusive(bottom: number, top: number): Search<TEntity> {
+    this.bottom = bottom;
+    this.top = top;
+    this.exclusive = true;
+    return this.search;
+  }
+
+  toString(): string {
+    let bottom = this.makeBottomString();
+    let top = this.makeTopString();
+    return `@${this.field}:[${bottom} ${top}]`
+  }
+
+  private makeBottomString() {
+    if (this.bottom === Number.NEGATIVE_INFINITY) return '-inf';
+    if (this.exclusive) return `(${this.bottom}`;
+    return this.bottom.toString()
+  }
+
+  private makeTopString() {
+    if (this.top === Number.POSITIVE_INFINITY) return '+inf';
+    if (this.exclusive) return `(${this.top}`;
+    return this.top.toString()
+  }
+}
+
 export class WhereString<TEntity extends Entity> extends Where<TEntity> {
   private value?: string;
 
@@ -60,13 +138,20 @@ export class Search<TEntity extends Entity> {
     this.redis = client.redis;
   }
 
-  where(field: string): WhereString<TEntity> | WhereBoolean<TEntity> | any {
+  where(field: string): WhereString<TEntity> | WhereBoolean<TEntity> | WhereNumber<TEntity> {
 
     let fieldDef: FieldDefinition = this.schema.definition[field];
 
     if (fieldDef.type === 'boolean') {
       let where: WhereBoolean<TEntity>;
       where = new WhereBoolean<TEntity>(this, field);
+      this.whereArray.push(where);
+      return where;
+    }
+    
+    if (fieldDef.type === 'number') {
+      let where: WhereNumber<TEntity>;
+      where = new WhereNumber<TEntity>(this, field);
       this.whereArray.push(where);
       return where;
     }
@@ -79,27 +164,36 @@ export class Search<TEntity extends Entity> {
 
   async run(): Promise<TEntity[]> {
 
-    let query: string
+    let command: string[] = ['FT.SEARCH', this.schema.indexName, this.query];
+    let results = await this.redis.sendCommand<any[]>(command);
 
-    if (this.whereArray.length > 0) {
-      query = this.whereArray.map(where => where.toString()).join(' ');
-    } else {
-      query = '*';
-    }
+    let count = this.extractCount(results);
+    let ids = this.extractIds(results);
+    let entities = this.extractEntities(results, ids);
+    return entities;
+  }
 
-    let command: string[] = ['FT.SEARCH', this.schema.indexName, query];
+  private get query() : string {
+    if (this.whereArray.length === 0) return '*';
+    return this.whereArray.map(where => where.toString()).join(' ');
+  }
 
-    let [_, ...foundKeysAndValues] = await this.redis.sendCommand<any[]>(command);
+  private extractCount(results: any[]): number {
+    return results[0];
+  }
 
-    let ids = foundKeysAndValues
+  private extractIds(results: any[]): string[] {
+    let [, ...foundKeysAndValues] = results;
+    return foundKeysAndValues
       .filter((_entry, index) => index % 2 === 0)
-      .map(key => key.replace(/^.*:/, ""));
+      .map(key => (key as string).replace(/^.*:/, ""));
+  }
 
-    let values = foundKeysAndValues
+  private extractEntities(results: any[], ids: string[]): TEntity[] {
+    let [, ...foundKeysAndValues] = results;
+    return foundKeysAndValues
       .filter((_entry, index) => index % 2 !== 0)
-      .map((array, index) => this.arrayToEntity(array, ids[index] as RedisId));
-
-    return values;
+      .map((array, index) => this.arrayToEntity(array as string[], ids[index] as RedisId));
   }
 
   private arrayToEntity(array: string[], id: RedisId): TEntity{

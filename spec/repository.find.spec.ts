@@ -34,7 +34,7 @@ describe("Repository", () => {
       await addBigfootSighting(client, A_THIRD_REDIS_KEY, A_THIRD_BIGFOOT_SIGHTING);
     });
 
-    describe("finding everything", () => {
+    describe("finding all the things", () => {
       beforeEach(async () => {
         entities = await repository.search().run();
         entities.sort(sortByRedisId);
@@ -48,7 +48,7 @@ describe("Repository", () => {
       });
     });
     
-    describe("finding matching a string", () => {
+    describe("finding a matching a string", () => {
       beforeEach(async () => {
         entities = await repository.search()
           .where('state').is('OH')
@@ -63,7 +63,7 @@ describe("Repository", () => {
       });
     });
 
-    describe("finding matching multiple strings", () => {
+    describe("finding multiple matching strings", () => {
       beforeEach(async () => {
         entities = await repository.search()
           .where('county').is('Ashland')
@@ -78,7 +78,7 @@ describe("Repository", () => {
       });
     });
 
-    describe("finding matching a boolean true", () => {
+    describe("finding a boolean true", () => {
       beforeEach(async () => {
         entities = await repository.search()
           .where('eyewitness').isTrue()
@@ -86,14 +86,14 @@ describe("Repository", () => {
         entities.sort(sortByRedisId);
       });
 
-      it("returns all the entities that are true", () => {
+      it("returns all the entities matching a boolean true", () => {
         expect(entities).toHaveLength(2);
         expectMatchesSighting(entities[0], A_REDIS_ID, A_BIGFOOT_SIGHTING);
         expectMatchesSighting(entities[1], A_THIRD_REDIS_ID, A_THIRD_BIGFOOT_SIGHTING);
       });
     });
 
-    describe("finding matching a boolean false", () => {
+    describe("finding a boolean false", () => {
       beforeEach(async () => {
         entities = await repository.search()
           .where('eyewitness').isFalse()
@@ -107,11 +107,114 @@ describe("Repository", () => {
       });
     });
 
-    describe("finding matching a boolean and a string", () => {
+    describe("finding a number that equals a number", () => {
+      beforeEach(async () => {
+        entities = await repository.search()
+          .where('temperature').equals(75)
+          .run();
+        entities.sort(sortByRedisId);
+      });
+
+      it("returns all the entities matching that number", () => {
+        expect(entities).toHaveLength(1);
+        expectMatchesSighting(entities[0], A_REDIS_ID, A_BIGFOOT_SIGHTING);
+      });
+    });
+
+    describe("finding a number that is greater than a number", () => {
+      beforeEach(async () => {
+        entities = await repository.search()
+          .where('temperature').greaterThan(87)
+          .run();
+        entities.sort(sortByRedisId);
+      });
+
+      it("returns all the entities greater than that number", () => {
+        expect(entities).toHaveLength(1);
+        expectMatchesSighting(entities[0], A_THIRD_REDIS_ID, A_THIRD_BIGFOOT_SIGHTING);
+      });
+    });
+
+    describe("finding a number that is greater than or equal to a number", () => {
+      beforeEach(async () => {
+        entities = await repository.search()
+          .where('temperature').greaterThanEqual(87)
+          .run();
+        entities.sort(sortByRedisId);
+      });
+
+      it("returns all the entities greater than that number", () => {
+        expect(entities).toHaveLength(2);
+        expectMatchesSighting(entities[0], ANOTHER_REDIS_ID, ANOTHER_BIGFOOT_SIGHTING);
+        expectMatchesSighting(entities[1], A_THIRD_REDIS_ID, A_THIRD_BIGFOOT_SIGHTING);
+      });
+    });
+
+
+    describe("finding a number that is less than a number", () => {
+      beforeEach(async () => {
+        entities = await repository.search()
+          .where('temperature').lessThan(87)
+          .run();
+        entities.sort(sortByRedisId);
+      });
+
+      it("returns all the entities greater than that number", () => {
+        expect(entities).toHaveLength(1);
+        expectMatchesSighting(entities[0], A_REDIS_ID, A_BIGFOOT_SIGHTING);
+      });
+    });
+
+    describe("finding a number that is less than or equal to a number", () => {
+      beforeEach(async () => {
+        entities = await repository.search()
+          .where('temperature').lessThanEqual(87)
+          .run();
+        entities.sort(sortByRedisId);
+      });
+
+      it("returns all the entities greater than that number", () => {
+        expect(entities).toHaveLength(2);
+        expectMatchesSighting(entities[0], A_REDIS_ID, A_BIGFOOT_SIGHTING);
+        expectMatchesSighting(entities[1], ANOTHER_REDIS_ID, ANOTHER_BIGFOOT_SIGHTING);
+      });
+    });
+
+    describe("finding a number that is in a range to a pair of numbers", () => {
+      beforeEach(async () => {
+        entities = await repository.search()
+          .where('temperature').inRange(75, 87)
+          .run();
+        entities.sort(sortByRedisId);
+      });
+
+      it("returns all the entities in range", () => {
+        expect(entities).toHaveLength(2);
+        expectMatchesSighting(entities[0], A_REDIS_ID, A_BIGFOOT_SIGHTING);
+        expectMatchesSighting(entities[1], ANOTHER_REDIS_ID, ANOTHER_BIGFOOT_SIGHTING);
+      });
+    });
+
+    describe("finding a number that is in a range exclusive to a pair of numbers", () => {
+      beforeEach(async () => {
+        entities = await repository.search()
+          .where('temperature').inRangeExclusive(75, 93)
+          .run();
+        entities.sort(sortByRedisId);
+      });
+
+      it("returns all the entities in range", () => {
+        expect(entities).toHaveLength(1);
+        expectMatchesSighting(entities[0], ANOTHER_REDIS_ID, ANOTHER_BIGFOOT_SIGHTING);
+      });
+    });
+
+    describe("finding entity matching a boolean, a string, and a number", () => {
       beforeEach(async () => {
         entities = await repository.search()
           .where('eyewitness').isTrue()
           .where('county').is('Ashland')
+          .where('temperature').greaterThanEqual(65)
           .run();
         entities.sort(sortByRedisId);
       });
