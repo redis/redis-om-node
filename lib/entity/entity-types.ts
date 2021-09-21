@@ -1,3 +1,4 @@
+export type EntityPrefix = string;
 export type EntityId = string;
 export type EntityKey = string;
 export type EntityData = {
@@ -5,3 +6,5 @@ export type EntityData = {
 }
 
 export type EntityConstructor<TEntity> = new (id: EntityId, data?: EntityData) => TEntity;
+
+export type EntityIdStrategy = () => EntityId;

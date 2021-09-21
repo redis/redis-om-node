@@ -1,8 +1,6 @@
-import { EntityId } from "../entity/entity-types";
+import { EntityIdStrategy, EntityPrefix } from "../entity/entity-types";
 
 export type SchemaOptions = {
-  prefix?: string;
-  idStrategy?: RedisIdStrategy;
+  prefix?: EntityPrefix;
+  idStrategy?: EntityIdStrategy;
 }
-
-export type RedisIdStrategy = () => EntityId;

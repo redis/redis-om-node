@@ -2,13 +2,13 @@ import { v4 } from 'uuid';
 
 import Entity from "../entity/entity";
 
-import { EntityId, EntityConstructor } from '../entity/entity-types';
+import { EntityConstructor, EntityId, EntityIdStrategy, EntityPrefix } from '../entity/entity-types';
 import { FieldDefinition, SchemaDefinition } from './schema-definitions';
-import { RedisIdStrategy, SchemaOptions } from './schema-options';
+import { SchemaOptions } from './schema-options';
 
 export default class Schema<TEntity extends Entity> {
   readonly entityCtor: EntityConstructor<TEntity>;
-  readonly definition: SchemaDefinition
+  readonly definition: SchemaDefinition;
   private options?: SchemaOptions;
 
   constructor(ctor: EntityConstructor<TEntity>, schemaDef: SchemaDefinition, options?: SchemaOptions ) {
@@ -67,7 +67,7 @@ export default class Schema<TEntity extends Entity> {
     }
   }
 
-  get prefix(): string {
+  get prefix(): EntityPrefix {
     return this.options?.prefix ?? this.entityCtor.name;
   }
 
@@ -77,7 +77,7 @@ export default class Schema<TEntity extends Entity> {
 
   generateId(): EntityId {
 
-    let defaultStrategy: RedisIdStrategy = () => {
+    let defaultStrategy: EntityIdStrategy = () => {
       let bytes: number[] = [];
       return Buffer.from(v4(null, bytes)).toString('base64').slice(0, 22);
     }

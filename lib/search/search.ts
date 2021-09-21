@@ -32,7 +32,10 @@ export default class Search<TEntity extends Entity> {
     if (fieldDef.type === 'boolean') return this.createWhereBoolean(field);
     if (fieldDef.type === 'number') return this.createWhereNumber(field);
     if (fieldDef.type === 'array') return this.createWhereArray(field);
-    return this.createWhereString(field);
+    if (fieldDef.type === 'string') return this.createWhereString(field);
+
+    // TODO: Do something better here
+    throw "Invalid field type";
   }
 
   async run(): Promise<TEntity[]> {

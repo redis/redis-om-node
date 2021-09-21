@@ -1,7 +1,6 @@
 import { RedisClientType } from 'redis/dist/lib/client';
 import { RedisModules } from 'redis/dist/lib/commands';
 import { RedisLuaScripts } from 'redis/dist/lib/lua-script';
-import { WatchError } from 'redis/dist/lib/errors';
 
 import Schema from "./schema/schema";
 import Client from "./client";
@@ -54,9 +53,9 @@ export default class Repository<TEntity extends Entity> {
     return new this.schema.entityCtor(id);
   }
 
-  async save(entity: TEntity): Promise<string> {
+  async save(entity: TEntity): Promise<EntityId> {
 
-    let key = this.makeKey(entity.entityId);
+    let key: EntityKey = this.makeKey(entity.entityId);
 
     // TODO: need to handle the WatchError
     // TODO: looks like a bug in Node Redis as this doesn't exit
@@ -78,14 +77,14 @@ export default class Repository<TEntity extends Entity> {
     return entity.entityId;
   }
 
-  async fetch(id: string): Promise<TEntity> {
+  async fetch(id: EntityId): Promise<TEntity> {
     let key = this.makeKey(id);
     let data = await this.redis.hGetAll(key);
     let entity = new this.schema.entityCtor(id, data);
     return entity;
   }
 
-  async remove(id: string): Promise<void> {
+  async remove(id: EntityId): Promise<void> {
     let key = this.makeKey(id);
     await this.redis.unlink(key);
   }
@@ -94,7 +93,7 @@ export default class Repository<TEntity extends Entity> {
     return new Search<TEntity>(this.schema, this.client);
   }
 
-  private makeKey(id: string): EntityKey {
+  private makeKey(id: EntityId): EntityKey {
     return `${this.schema.prefix}:${id}`;
   }
 }
