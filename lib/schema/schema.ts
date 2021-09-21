@@ -52,6 +52,7 @@ export default class Schema<TEntity extends Entity> {
         return
       }
 
+      // TODO: fieldAlias????
       Object.defineProperty(this.entityCtor.prototype, field, {
         get: function (): any {
           let value: string = this.entityData[fieldAlias] ?? null;

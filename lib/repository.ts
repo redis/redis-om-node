@@ -41,7 +41,7 @@ export default class Repository<TEntity extends Entity> {
     }
 
     await this.redis.sendCommand([
-        'FT.CREATE', this.schema.indexName, 
+      'FT.CREATE', this.schema.indexName, 
         'ON', 'HASH',
         'PREFIX', '1', `${this.schema.prefix}:`,
         'SCHEMA', ...schemaForCreate

@@ -29,6 +29,8 @@ export default class Search<TEntity extends Entity> {
 
     let fieldDef = this.schema.definition[field];
 
+    if (fieldDef === undefined) throw new Error(`The field '${field}' is not part of the schema.`);
+
     if (fieldDef.type === 'boolean') return this.createWhereBoolean(field);
     if (fieldDef.type === 'number') return this.createWhereNumber(field);
     if (fieldDef.type === 'array') return this.createWhereArray(field);
@@ -49,38 +51,38 @@ export default class Search<TEntity extends Entity> {
     return entities;
   }
 
+  get query() : string {
+    if (this.whereArray.length === 0) return '*';
+    return this.whereArray.map(where => where.toString()).join(' ');
+  }
+
   private createWhereBoolean(field: string): WhereBoolean<TEntity> {
     let where: WhereBoolean<TEntity>;
     where = new WhereBoolean<TEntity>(this, field);
     this.whereArray.push(where);
     return where;
-  }
+  }  
 
   private createWhereNumber(field: string): WhereNumber<TEntity> {
     let where: WhereNumber<TEntity>;
     where = new WhereNumber<TEntity>(this, field);
     this.whereArray.push(where);
     return where;
-  }
+  }  
 
   private createWhereArray(field: string): WhereArray<TEntity> {
     let where: WhereArray<TEntity>;
     where = new WhereArray<TEntity>(this, field);
     this.whereArray.push(where);
     return where;
-  }
+  }  
 
   private createWhereString(field: string): WhereString<TEntity> {
     let where: WhereString<TEntity>;
     where = new WhereString<TEntity>(this, field);
     this.whereArray.push(where);
     return where;
-  }
-
-  private get query() : string {
-    if (this.whereArray.length === 0) return '*';
-    return this.whereArray.map(where => where.toString()).join(' ');
-  }
+  }  
 
   private extractCount(results: any[]): number {
     return results[0];
