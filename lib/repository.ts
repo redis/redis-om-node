@@ -3,10 +3,13 @@ import { RedisModules } from 'redis/dist/lib/commands';
 import { RedisLuaScripts } from 'redis/dist/lib/lua-script';
 import { WatchError } from 'redis/dist/lib/errors';
 
-import { FieldDefinition, Schema, SchemaDefinition, StringField } from "./schema";
+import Schema from "./schema/schema";
 import Client from "./client";
-import { Entity, RedisId } from './entity';
-import { Search } from './search/search';
+import Entity from './entity/entity';
+import Search from './search/search';
+
+import { FieldDefinition, SchemaDefinition, StringField } from './schema/schema-definitions';
+import { RedisId } from './entity/entity-types';
 
 export default class Repository<TEntity extends Entity> {
   private schema: Schema<TEntity>;

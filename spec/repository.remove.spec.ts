@@ -4,7 +4,7 @@ import { addBigfootSighting, Bigfoot, createSchema,
   A_BIGFOOT_SIGHTING, A_REDIS_ID, A_REDIS_KEY } from './helpers/bigfoot-data-helper';
 
 import Client from '../lib/client';
-import { Schema } from '../lib/schema'
+import Schema from '../lib/schema/schema'
 import Repository from '../lib/repository';
 
 const globals: Globals = (globalThis as unknown) as Globals;

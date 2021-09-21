@@ -1,8 +1,10 @@
 import { saveHash } from './redis-helper';
 
 import Client from "../../lib/client";
-import { Entity, RedisId } from "../../lib/entity";
-import { Schema } from '../../lib/schema';
+import Entity from "../../lib/entity/entity";
+import Schema from '../../lib/schema/schema';
+
+import { RedisId } from '../../lib/entity/entity-types';
 
 export interface Bigfoot {
   title?: string | null;

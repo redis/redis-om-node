@@ -1,12 +1,12 @@
 import Globals from './helpers/globals';
 import { fetchHashKeys, fetchHashFields, keyExists } from './helpers/redis-helper';
-import { addBigfootSighting, Bigfoot, createSchema, expectMatchesSighting,
-  A_BIGFOOT_SIGHTING, } from './helpers/bigfoot-data-helper';
+import { Bigfoot, createSchema, A_BIGFOOT_SIGHTING, } from './helpers/bigfoot-data-helper';
 
 import Client from '../lib/client';
-import { Schema } from '../lib/schema'
-import { Entity, RedisId } from '../lib/entity';
+import Schema from '../lib/schema/schema'
 import Repository from '../lib/repository';
+
+import { RedisId } from '../lib/entity/entity-types';
 
 const globals: Globals = (globalThis as unknown) as Globals;
 

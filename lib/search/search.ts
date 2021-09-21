@@ -2,146 +2,19 @@ import { RedisClientType } from 'redis/dist/lib/client';
 import { RedisModules } from 'redis/dist/lib/commands';
 import { RedisLuaScripts } from 'redis/dist/lib/lua-script';
 
-import { FieldDefinition, Schema } from "../schema";
+import Schema from "../schema/schema";
 import Client from "../client";
-import { Entity, RedisData, RedisId } from '../entity';
+import Entity from '../entity/entity';
 
-export interface Where<TEntity> {
-  isTrue(): Search<TEntity>;
-  isFalse(): Search<TEntity>;
-  is(value: string): Search<TEntity>;
-  equals(value: number): Search<TEntity>;
-  greaterThan(value: number): Search<TEntity>;
-  greaterThanEqual(value: number): Search<TEntity>;
-  lessThan(value: number): Search<TEntity>;
-  lessThanEqual(value: number): Search<TEntity>;
-  inRange(bottom: number, top: number): Search<TEntity>;
-  inRangeExclusive(bottom: number, top: number): Search<TEntity>;
-  contains(...value: string[]): Search<TEntity>;
-}
+import { RedisData, RedisId } from '../entity/entity-types';
 
-export abstract class Where<TEntity extends Entity> {
-  protected search: Search<TEntity>;
-  protected field: String;
+import Where from './where';
+import WhereArray from './where-array';
+import WhereBoolean from './where-boolean';
+import WhereNumber from './where-number';
+import WhereString from './where-string';
 
-  constructor(search: Search<TEntity>, field: string) {
-    this.search = search;
-    this.field = field;
-  }
-
-  abstract toString(): string;
-}
-
-export class WhereBoolean<TEntity extends Entity> extends Where<TEntity> {
-  private value?: boolean;
-
-  isTrue(): Search<TEntity> {
-    this.value = true;
-    return this.search;
-  }
-
-  isFalse(): Search<TEntity> {
-    this.value = false;
-    return this.search;
-  }
-
-  toString(): string {
-    return `@${this.field}:{${this.value ? '1' : '0'}}`
-  }
-}
-
-export class WhereNumber<TEntity extends Entity> extends Where<TEntity> {
-  private bottom: number = Number.NEGATIVE_INFINITY;
-  private top: number = Number.POSITIVE_INFINITY;
-  private exclusive: boolean = false;
-
-  equals(value: number): Search<TEntity> {
-    this.bottom = value;
-    this.top = value;
-    return this.search;
-  }
-
-  greaterThan(value: number): Search<TEntity> {
-    this.bottom = value;
-    this.exclusive = true;
-    return this.search;
-  }
-
-  greaterThanEqual(value: number): Search<TEntity> {
-    this.bottom = value;
-    return this.search;
-  }
-
-  lessThan(value: number): Search<TEntity> {
-    this.top = value;
-    this.exclusive = true;
-    return this.search;
-  }
-
-  lessThanEqual(value: number): Search<TEntity> {
-    this.top = value;
-    return this.search;
-  }
-
-  inRange(bottom: number, top: number): Search<TEntity> {
-    this.bottom = bottom;
-    this.top = top;
-    return this.search;
-  }
-
-  inRangeExclusive(bottom: number, top: number): Search<TEntity> {
-    this.bottom = bottom;
-    this.top = top;
-    this.exclusive = true;
-    return this.search;
-  }
-
-  toString(): string {
-    let bottom = this.makeBottomString();
-    let top = this.makeTopString();
-    return `@${this.field}:[${bottom} ${top}]`
-  }
-
-  private makeBottomString() {
-    if (this.bottom === Number.NEGATIVE_INFINITY) return '-inf';
-    if (this.exclusive) return `(${this.bottom}`;
-    return this.bottom.toString()
-  }
-
-  private makeTopString() {
-    if (this.top === Number.POSITIVE_INFINITY) return '+inf';
-    if (this.exclusive) return `(${this.top}`;
-    return this.top.toString()
-  }
-}
-
-export class WhereArray<TEntity extends Entity> extends Where<TEntity> {
-  private value?: string[];
-
-  contains(...value: string[]): Search<TEntity> {
-    this.value = value;
-    return this.search;
-  }
-
-  toString(): string {
-    return `@${this.field}:{${this.value?.join('|')}}`
-  }
-}
-
-export class WhereString<TEntity extends Entity> extends Where<TEntity> {
-  private value?: string;
-
-  is(value: string): Search<TEntity> {
-    this.value = value;
-    return this.search;
-  }
-
-  toString(): string {
-    return `@${this.field}:{${this.value}}`
-  }
-}
-
-export class Search<TEntity extends Entity> {
+export default class Search<TEntity extends Entity> {
   private schema: Schema<TEntity>;
   private redis: RedisClientType<RedisModules, RedisLuaScripts>;
 
@@ -154,7 +27,7 @@ export class Search<TEntity extends Entity> {
 
   where(field: string): WhereString<TEntity> | WhereBoolean<TEntity> | WhereNumber<TEntity> | WhereArray<TEntity> {
 
-    let fieldDef: FieldDefinition = this.schema.definition[field];
+    let fieldDef = this.schema.definition[field];
 
     if (fieldDef.type === 'boolean') return this.createWhereBoolean(field);
     if (fieldDef.type === 'number') return this.createWhereNumber(field);

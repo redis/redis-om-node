@@ -1,42 +1,12 @@
 import { v4 } from 'uuid';
 
-import { Entity, RedisId, EntityConstructor } from "./entity";
+import Entity from "../entity/entity";
 
-export interface SchemaDefinition {
-  [key: string]: FieldDefinition
-}
+import { RedisId, EntityConstructor } from '../entity/entity-types';
+import { FieldDefinition, SchemaDefinition } from './schema-definitions';
+import { RedisIdStrategy, SchemaOptions } from './schema-options';
 
-export interface Field {
-  alias?: string;
-}
-
-export interface NumericField extends Field {
-  type: 'number';
-}
-
-export interface StringField extends Field {
-  type: 'string';
-  textSearch?: boolean;
-}
-
-export interface BooleanField extends Field {
-  type: 'boolean';
-}
-
-export interface ArrayField extends Field {
-  type: 'array';
-}
-
-export type FieldDefinition = NumericField | StringField | BooleanField | ArrayField;
-
-export interface SchemaOptions {
-  prefix?: string;
-  idStrategy?: RedisIdStrategy;
-}
-
-export type RedisIdStrategy = () => RedisId;
-
-export class Schema<TEntity extends Entity> {
+export default class Schema<TEntity extends Entity> {
   readonly entityCtor: EntityConstructor<TEntity>;
   readonly definition: SchemaDefinition
   private options?: SchemaOptions;

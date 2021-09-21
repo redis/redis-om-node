@@ -3,10 +3,10 @@ import { createClient } from 'redis';
 import { RedisClientType } from 'redis/dist/lib/client';
 import { RedisModules } from 'redis/dist/lib/commands';
 import { RedisLuaScripts } from 'redis/dist/lib/lua-script';
-import { Entity } from './entity';
 
+import Entity from './entity/entity';
 import Repository from './repository';
-import { Schema } from './schema';
+import Schema from './schema/schema';
 
 export default class Client {
 
