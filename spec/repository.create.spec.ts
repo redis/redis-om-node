@@ -1,12 +1,12 @@
 import Globals from './helpers/globals';
 import { fetchHashKeys, fetchHashFields, keyExists } from './helpers/redis-helper';
-import { Bigfoot, createSchema, A_BIGFOOT_SIGHTING, } from './helpers/bigfoot-data-helper';
+import { Bigfoot, createBigfootSchema, A_BIGFOOT_SIGHTING, } from './helpers/bigfoot-data-helper';
 
 import Client from '../lib/client';
 import Schema from '../lib/schema/schema'
 import Repository from '../lib/repository';
 
-import { RedisId } from '../lib/entity/entity-types';
+import { EntityId } from '../lib/entity/entity-types';
 
 const globals: Globals = (globalThis as unknown) as Globals;
 
@@ -19,7 +19,7 @@ describe("Repository", () => {
 
   beforeAll(() => {
     client = globals.client;
-    schema = createSchema();
+    schema = createBigfootSchema();
   });
 
   beforeEach(async () => {
@@ -27,7 +27,7 @@ describe("Repository", () => {
   });
 
   describe("when saving a new entity", () => {
-    let redisId: RedisId;
+    let redisId: EntityId;
     let expectedKey: string;
 
     describe("a simple entity", () => {

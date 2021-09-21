@@ -4,7 +4,7 @@ import Client from "../../lib/client";
 import Entity from "../../lib/entity/entity";
 import Schema from '../../lib/schema/schema';
 
-import { RedisId } from '../../lib/entity/entity-types';
+import { EntityId, EntityKey } from '../../lib/entity/entity-types';
 
 export interface Bigfoot {
   title?: string | null;
@@ -17,7 +17,7 @@ export interface Bigfoot {
 
 export class Bigfoot extends Entity {}
 
-export function createSchema(): Schema<Bigfoot> {
+export function createBigfootSchema(): Schema<Bigfoot> {
   return new Schema<Bigfoot>(
     Bigfoot, {
       title: { type: 'string', textSearch: true },
@@ -29,7 +29,7 @@ export function createSchema(): Schema<Bigfoot> {
     });
 }
 
-export function expectMatchesSighting(actualEntity: Bigfoot, expectedId: RedisId, expectedSighting: BigfootSightingData) {
+export function expectMatchesSighting(actualEntity: Bigfoot, expectedId: EntityId, expectedSighting: BigfootSightingData) {
   expect(actualEntity.redisId).toBe(expectedId);
   expect(actualEntity.title).toBe(expectedSighting.title ?? null);
   expect(actualEntity.county).toBe(expectedSighting.county ?? null);
@@ -59,8 +59,8 @@ export async function addBigfootSighting(client: Client, key: string, sighting: 
   await saveHash(client, key, command);
 };
 
-export const A_REDIS_ID: RedisId = '1';
-export const A_REDIS_KEY: string = `Bigfoot:${A_REDIS_ID}`;
+export const AN_ENTITY_ID: EntityId = '1';
+export const AN_ENTITY_KEY: EntityKey = `Bigfoot:${AN_ENTITY_ID}`;
 export const A_BIGFOOT_SIGHTING: BigfootSightingData = {
   title: "Bigfoot was seen out by the Walmart",
   county: "Athens",
@@ -70,8 +70,8 @@ export const A_BIGFOOT_SIGHTING: BigfootSightingData = {
   tags: [ 'walmart', 'ohio' ]
 };
 
-export const ANOTHER_REDIS_ID: RedisId = '2';
-export const ANOTHER_REDIS_KEY = `Bigfoot:${ANOTHER_REDIS_ID}`;
+export const ANOTHER_ENTITY_ID: EntityId = '2';
+export const ANOTHER_ENTITY_KEY: EntityKey = `Bigfoot:${ANOTHER_ENTITY_ID}`;
 export const ANOTHER_BIGFOOT_SIGHTING : BigfootSightingData= {
   title: "Bigfoot was seen out by the Piggly Wiggly",
   county: "Ashland",
@@ -81,8 +81,8 @@ export const ANOTHER_BIGFOOT_SIGHTING : BigfootSightingData= {
   tags: [ 'piggly', 'wiggly', 'ohio' ]
 };
 
-export const A_THIRD_REDIS_ID: RedisId = '3';
-export const A_THIRD_REDIS_KEY = `Bigfoot:${A_THIRD_REDIS_ID}`;
+export const A_THIRD_ENTITY_ID: EntityId = '3';
+export const A_THIRD_ENTITY_KEY: EntityKey = `Bigfoot:${A_THIRD_ENTITY_ID}`;
 export const A_THIRD_BIGFOOT_SIGHTING: BigfootSightingData = {
   title: "Bigfoot was seen swimming in the river",
   county: "Ashland",
@@ -92,12 +92,12 @@ export const A_THIRD_BIGFOOT_SIGHTING: BigfootSightingData = {
   tags: [ 'river', 'kentucky' ]
 };
 
-export const A_PARTIAL_REDIS_ID: RedisId = '4';
-export const A_PARTIAL_REDIS_KEY: string = `Bigfoot:${A_PARTIAL_REDIS_ID}`;
+export const A_PARTIAL_ENTITY_ID: EntityId = '4';
+export const A_PARTIAL_ENTITY_KEY: EntityKey = `Bigfoot:${A_PARTIAL_ENTITY_ID}`;
 export const A_PARTIAL_BIGFOOT_SIGHTING: BigfootSightingData = {
   title: "Bigfoot was seen lounging in the pond"
 };
 
-export const AN_EMPTY_REDIS_ID: RedisId = '5';
-export const AN_EMPTY_REDIS_KEY: string = `Bigfoot:${AN_EMPTY_REDIS_ID}`;
+export const AN_EMPTY_ENTITY_ID: EntityId = '5';
+export const AN_EMPTY_ENTITY_KEY: EntityKey = `Bigfoot:${AN_EMPTY_ENTITY_ID}`;
 export const AN_EMPTY_BIGFOOT_SIGHTING: BigfootSightingData = {};

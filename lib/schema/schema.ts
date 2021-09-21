@@ -2,7 +2,7 @@ import { v4 } from 'uuid';
 
 import Entity from "../entity/entity";
 
-import { RedisId, EntityConstructor } from '../entity/entity-types';
+import { EntityId, EntityConstructor } from '../entity/entity-types';
 import { FieldDefinition, SchemaDefinition } from './schema-definitions';
 import { RedisIdStrategy, SchemaOptions } from './schema-options';
 
@@ -75,7 +75,7 @@ export default class Schema<TEntity extends Entity> {
     return `${this.prefix}:index`;
   }
 
-  generateId(): RedisId {
+  generateId(): EntityId {
 
     let defaultStrategy: RedisIdStrategy = () => {
       let bytes: number[] = [];

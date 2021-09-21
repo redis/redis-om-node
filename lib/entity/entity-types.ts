@@ -1,6 +1,7 @@
-export type RedisId = string;
-export type RedisData = {
+export type EntityId = string;
+export type EntityKey = string;
+export type EntityData = {
   [key: string]: string
 }
 
-export type EntityConstructor<TEntity> = new (id: RedisId, data?: RedisData) => TEntity;
+export type EntityConstructor<TEntity> = new (id: EntityId, data?: EntityData) => TEntity;

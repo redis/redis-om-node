@@ -6,7 +6,7 @@ import Schema from "../schema/schema";
 import Client from "../client";
 import Entity from '../entity/entity';
 
-import { RedisData, RedisId } from '../entity/entity-types';
+import { EntityData, EntityId } from '../entity/entity-types';
 
 import Where from './where';
 import WhereArray from './where-array';
@@ -94,14 +94,14 @@ export default class Search<TEntity extends Entity> {
     let [, ...foundKeysAndValues] = results;
     return foundKeysAndValues
       .filter((_entry, index) => index % 2 !== 0)
-      .map((array, index) => this.arrayToEntity(array as string[], ids[index] as RedisId));
+      .map((array, index) => this.arrayToEntity(array as string[], ids[index] as EntityId));
   }
 
-  private arrayToEntity(array: string[], id: RedisId): TEntity{
+  private arrayToEntity(array: string[], id: EntityId): TEntity{
     let keys = array.filter((_entry, index) => index % 2 === 0);
     let values = array.filter((_entry, index) => index % 2 !== 0);
     
-    let data: RedisData = keys.reduce((object: any, key, index) => {
+    let data: EntityData = keys.reduce((object: any, key, index) => {
       object[key] = values[index]
       return object
     }, {});

@@ -9,7 +9,7 @@ import Entity from './entity/entity';
 import Search from './search/search';
 
 import { FieldDefinition, SchemaDefinition, StringField } from './schema/schema-definitions';
-import { RedisId } from './entity/entity-types';
+import { EntityId, EntityKey } from './entity/entity-types';
 
 export default class Repository<TEntity extends Entity> {
   private schema: Schema<TEntity>;
@@ -50,7 +50,7 @@ export default class Repository<TEntity extends Entity> {
   }
 
   create(): TEntity {
-    let id: RedisId = this.schema.generateId();
+    let id: EntityId = this.schema.generateId();
     return new this.schema.entityCtor(id);
   }
 
@@ -94,7 +94,7 @@ export default class Repository<TEntity extends Entity> {
     return new Search<TEntity>(this.schema, this.client);
   }
 
-  private makeKey(id: string): string {
+  private makeKey(id: string): EntityKey {
     return `${this.schema.prefix}:${id}`;
   }
 }

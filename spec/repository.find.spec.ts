@@ -1,8 +1,8 @@
 import Globals from './helpers/globals';
-import { addBigfootSighting, expectMatchesSighting, Bigfoot, createSchema,
-  A_BIGFOOT_SIGHTING, A_REDIS_ID, A_REDIS_KEY,
-  ANOTHER_BIGFOOT_SIGHTING, ANOTHER_REDIS_ID, ANOTHER_REDIS_KEY,
-  A_THIRD_BIGFOOT_SIGHTING, A_THIRD_REDIS_ID, A_THIRD_REDIS_KEY } from './helpers/bigfoot-data-helper';
+import { addBigfootSighting, expectMatchesSighting, Bigfoot, createBigfootSchema,
+  A_BIGFOOT_SIGHTING, AN_ENTITY_ID, AN_ENTITY_KEY,
+  ANOTHER_BIGFOOT_SIGHTING, ANOTHER_ENTITY_ID, ANOTHER_ENTITY_KEY,
+  A_THIRD_BIGFOOT_SIGHTING, A_THIRD_ENTITY_ID, A_THIRD_ENTITY_KEY } from './helpers/bigfoot-data-helper';
   
 import Client from '../lib/client';
 import Schema from '../lib/schema/schema'
@@ -19,7 +19,7 @@ describe("Repository", () => {
 
   beforeAll(() => {
     client = globals.client;
-    schema = createSchema();
+    schema = createBigfootSchema();
   });
 
   beforeEach(async () => {
@@ -29,9 +29,9 @@ describe("Repository", () => {
 
   describe("#find", () => {
     beforeEach(async () => {
-      await addBigfootSighting(client, A_REDIS_KEY, A_BIGFOOT_SIGHTING);
-      await addBigfootSighting(client, ANOTHER_REDIS_KEY, ANOTHER_BIGFOOT_SIGHTING);
-      await addBigfootSighting(client, A_THIRD_REDIS_KEY, A_THIRD_BIGFOOT_SIGHTING);
+      await addBigfootSighting(client, AN_ENTITY_KEY, A_BIGFOOT_SIGHTING);
+      await addBigfootSighting(client, ANOTHER_ENTITY_KEY, ANOTHER_BIGFOOT_SIGHTING);
+      await addBigfootSighting(client, A_THIRD_ENTITY_KEY, A_THIRD_BIGFOOT_SIGHTING);
     });
 
     describe("finding all the things", () => {
@@ -42,9 +42,9 @@ describe("Repository", () => {
 
       it("returns all the entities", () => {
         expect(entities).toHaveLength(3);
-        expectMatchesSighting(entities[0], A_REDIS_ID, A_BIGFOOT_SIGHTING);
-        expectMatchesSighting(entities[1], ANOTHER_REDIS_ID, ANOTHER_BIGFOOT_SIGHTING);
-        expectMatchesSighting(entities[2], A_THIRD_REDIS_ID, A_THIRD_BIGFOOT_SIGHTING);
+        expectMatchesSighting(entities[0], AN_ENTITY_ID, A_BIGFOOT_SIGHTING);
+        expectMatchesSighting(entities[1], ANOTHER_ENTITY_ID, ANOTHER_BIGFOOT_SIGHTING);
+        expectMatchesSighting(entities[2], A_THIRD_ENTITY_ID, A_THIRD_BIGFOOT_SIGHTING);
       });
     });
     
@@ -58,8 +58,8 @@ describe("Repository", () => {
 
       it("returns all the entities that match the string", () => {
         expect(entities).toHaveLength(2);
-        expectMatchesSighting(entities[0], A_REDIS_ID, A_BIGFOOT_SIGHTING);
-        expectMatchesSighting(entities[1], ANOTHER_REDIS_ID, ANOTHER_BIGFOOT_SIGHTING);
+        expectMatchesSighting(entities[0], AN_ENTITY_ID, A_BIGFOOT_SIGHTING);
+        expectMatchesSighting(entities[1], ANOTHER_ENTITY_ID, ANOTHER_BIGFOOT_SIGHTING);
       });
     });
 
@@ -73,8 +73,8 @@ describe("Repository", () => {
 
       it("returns all the entities matching a boolean true", () => {
         expect(entities).toHaveLength(2);
-        expectMatchesSighting(entities[0], A_REDIS_ID, A_BIGFOOT_SIGHTING);
-        expectMatchesSighting(entities[1], A_THIRD_REDIS_ID, A_THIRD_BIGFOOT_SIGHTING);
+        expectMatchesSighting(entities[0], AN_ENTITY_ID, A_BIGFOOT_SIGHTING);
+        expectMatchesSighting(entities[1], A_THIRD_ENTITY_ID, A_THIRD_BIGFOOT_SIGHTING);
       });
     });
 
@@ -88,7 +88,7 @@ describe("Repository", () => {
 
       it("returns all the entities matching a boolean false", () => {
         expect(entities).toHaveLength(1);
-        expectMatchesSighting(entities[0], ANOTHER_REDIS_ID, ANOTHER_BIGFOOT_SIGHTING);
+        expectMatchesSighting(entities[0], ANOTHER_ENTITY_ID, ANOTHER_BIGFOOT_SIGHTING);
       });
     });
 
@@ -102,7 +102,7 @@ describe("Repository", () => {
 
       it("returns all the entities matching that number", () => {
         expect(entities).toHaveLength(1);
-        expectMatchesSighting(entities[0], A_REDIS_ID, A_BIGFOOT_SIGHTING);
+        expectMatchesSighting(entities[0], AN_ENTITY_ID, A_BIGFOOT_SIGHTING);
       });
     });
 
@@ -116,7 +116,7 @@ describe("Repository", () => {
 
       it("returns all the entities greater than that number", () => {
         expect(entities).toHaveLength(1);
-        expectMatchesSighting(entities[0], A_THIRD_REDIS_ID, A_THIRD_BIGFOOT_SIGHTING);
+        expectMatchesSighting(entities[0], A_THIRD_ENTITY_ID, A_THIRD_BIGFOOT_SIGHTING);
       });
     });
 
@@ -130,8 +130,8 @@ describe("Repository", () => {
 
       it("returns all the entities greater than or equal to that number", () => {
         expect(entities).toHaveLength(2);
-        expectMatchesSighting(entities[0], ANOTHER_REDIS_ID, ANOTHER_BIGFOOT_SIGHTING);
-        expectMatchesSighting(entities[1], A_THIRD_REDIS_ID, A_THIRD_BIGFOOT_SIGHTING);
+        expectMatchesSighting(entities[0], ANOTHER_ENTITY_ID, ANOTHER_BIGFOOT_SIGHTING);
+        expectMatchesSighting(entities[1], A_THIRD_ENTITY_ID, A_THIRD_BIGFOOT_SIGHTING);
       });
     });
 
@@ -145,7 +145,7 @@ describe("Repository", () => {
 
       it("returns all the entities less than that number", () => {
         expect(entities).toHaveLength(1);
-        expectMatchesSighting(entities[0], A_REDIS_ID, A_BIGFOOT_SIGHTING);
+        expectMatchesSighting(entities[0], AN_ENTITY_ID, A_BIGFOOT_SIGHTING);
       });
     });
 
@@ -159,8 +159,8 @@ describe("Repository", () => {
 
       it("returns all the entities less than or equal to that number", () => {
         expect(entities).toHaveLength(2);
-        expectMatchesSighting(entities[0], A_REDIS_ID, A_BIGFOOT_SIGHTING);
-        expectMatchesSighting(entities[1], ANOTHER_REDIS_ID, ANOTHER_BIGFOOT_SIGHTING);
+        expectMatchesSighting(entities[0], AN_ENTITY_ID, A_BIGFOOT_SIGHTING);
+        expectMatchesSighting(entities[1], ANOTHER_ENTITY_ID, ANOTHER_BIGFOOT_SIGHTING);
       });
     });
 
@@ -174,8 +174,8 @@ describe("Repository", () => {
 
       it("returns all the entities in that range", () => {
         expect(entities).toHaveLength(2);
-        expectMatchesSighting(entities[0], A_REDIS_ID, A_BIGFOOT_SIGHTING);
-        expectMatchesSighting(entities[1], ANOTHER_REDIS_ID, ANOTHER_BIGFOOT_SIGHTING);
+        expectMatchesSighting(entities[0], AN_ENTITY_ID, A_BIGFOOT_SIGHTING);
+        expectMatchesSighting(entities[1], ANOTHER_ENTITY_ID, ANOTHER_BIGFOOT_SIGHTING);
       });
     });
 
@@ -189,7 +189,7 @@ describe("Repository", () => {
 
       it("returns all the entities in that range", () => {
         expect(entities).toHaveLength(1);
-        expectMatchesSighting(entities[0], ANOTHER_REDIS_ID, ANOTHER_BIGFOOT_SIGHTING);
+        expectMatchesSighting(entities[0], ANOTHER_ENTITY_ID, ANOTHER_BIGFOOT_SIGHTING);
       });
     });
 
@@ -203,8 +203,8 @@ describe("Repository", () => {
 
       it("returns all the entities thus tagged", () => {
         expect(entities).toHaveLength(2);
-        expectMatchesSighting(entities[0], A_REDIS_ID, A_BIGFOOT_SIGHTING);
-        expectMatchesSighting(entities[1], ANOTHER_REDIS_ID, ANOTHER_BIGFOOT_SIGHTING);
+        expectMatchesSighting(entities[0], AN_ENTITY_ID, A_BIGFOOT_SIGHTING);
+        expectMatchesSighting(entities[1], ANOTHER_ENTITY_ID, ANOTHER_BIGFOOT_SIGHTING);
       });
     });
 
@@ -218,8 +218,8 @@ describe("Repository", () => {
 
       it("returns all the entities thus tagged", () => {
         expect(entities).toHaveLength(2);
-        expectMatchesSighting(entities[0], A_REDIS_ID, A_BIGFOOT_SIGHTING);
-        expectMatchesSighting(entities[1], A_THIRD_REDIS_ID, A_THIRD_BIGFOOT_SIGHTING);
+        expectMatchesSighting(entities[0], AN_ENTITY_ID, A_BIGFOOT_SIGHTING);
+        expectMatchesSighting(entities[1], A_THIRD_ENTITY_ID, A_THIRD_BIGFOOT_SIGHTING);
       });
     });
 
@@ -235,7 +235,7 @@ describe("Repository", () => {
 
       it("returns all the entities that match", () => {
         expect(entities).toHaveLength(1);
-        expectMatchesSighting(entities[0], A_THIRD_REDIS_ID, A_THIRD_BIGFOOT_SIGHTING);
+        expectMatchesSighting(entities[0], A_THIRD_ENTITY_ID, A_THIRD_BIGFOOT_SIGHTING);
       });
     });
   });
