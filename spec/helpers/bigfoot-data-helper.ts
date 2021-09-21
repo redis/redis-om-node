@@ -29,6 +29,12 @@ export function createBigfootSchema(): Schema<Bigfoot> {
     });
 }
 
+export function sortByEntityId(a: Bigfoot, b: Bigfoot): number {
+  if (a.entityId < b.entityId) return -1
+  if (a.entityId > b.entityId) return 1;
+  return 0;
+}
+
 export function expectMatchesSighting(actualEntity: Bigfoot, expectedId: EntityId, expectedSighting: BigfootSightingData) {
   expect(actualEntity.entityId).toBe(expectedId);
   expect(actualEntity.title).toBe(expectedSighting.title ?? null);

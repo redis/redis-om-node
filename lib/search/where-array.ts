@@ -5,7 +5,12 @@ import Where from "./where";
 export default class WhereArray<TEntity extends Entity> extends Where<TEntity> {
   private value?: string[];
 
-  contains(...value: string[]): Search<TEntity> {
+  contains(value: string): Search<TEntity> {
+    this.value = [value];
+    return this.search;
+  }
+
+  containsOneOf(...value: string[]): Search<TEntity> {
     this.value = value;
     return this.search;
   }

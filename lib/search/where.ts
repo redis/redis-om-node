@@ -12,7 +12,8 @@ interface Where<TEntity> {
   lessThanEqual(value: number): Search<TEntity>;
   inRange(bottom: number, top: number): Search<TEntity>;
   inRangeExclusive(bottom: number, top: number): Search<TEntity>;
-  contains(...value: string[]): Search<TEntity>;
+  contains(value: string): Search<TEntity>;
+  containsOneOf(...value: string[]): Search<TEntity>;
 }
 
 abstract class Where<TEntity extends Entity> {
