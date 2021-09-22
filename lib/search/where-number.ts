@@ -1,8 +1,8 @@
 import Entity from "../entity/entity";
 import Search from "./search";
-import Where from "./where";
+import WhereField from "./where-field";
 
-export default class WhereNumber<TEntity extends Entity> extends Where<TEntity> {
+export default class WhereNumber<TEntity extends Entity> extends WhereField<TEntity> {
   private bottom: number = Number.NEGATIVE_INFINITY;
   private top: number = Number.POSITIVE_INFINITY;
   private exclusive: boolean = false;

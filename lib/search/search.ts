@@ -9,6 +9,8 @@ import Entity from '../entity/entity';
 import { EntityData, EntityId } from '../entity/entity-types';
 
 import Where from './where';
+import WhereAnd from './where-and';
+import WhereField from './where-field';
 import WhereArray from './where-array';
 import WhereBoolean from './where-boolean';
 import WhereNumber from './where-number';
@@ -18,7 +20,7 @@ export default class Search<TEntity extends Entity> {
   private schema: Schema<TEntity>;
   private redis: RedisClientType<RedisModules, RedisLuaScripts>;
 
-  private whereArray: Where<TEntity>[] = [];
+  private rootWhere?: Where;
 
   constructor(schema: Schema<TEntity>, client: Client) {
     this.schema = schema;
@@ -31,13 +33,29 @@ export default class Search<TEntity extends Entity> {
 
     if (fieldDef === undefined) throw new Error(`The field '${field}' is not part of the schema.`);
 
-    if (fieldDef.type === 'boolean') return this.createWhereBoolean(field);
-    if (fieldDef.type === 'number') return this.createWhereNumber(field);
-    if (fieldDef.type === 'array') return this.createWhereArray(field);
-    if (fieldDef.type === 'string') return this.createWhereString(field);
+    let where: WhereField<TEntity>;
 
-    // TODO: Do something better here
-    throw "Invalid field type";
+    if (fieldDef.type === 'array') {
+      where = new WhereArray<TEntity>(this, field);
+    } else if (fieldDef.type === 'boolean') {
+      where = new WhereBoolean<TEntity>(this, field);
+    } else if (fieldDef.type === 'number') {
+      where = new WhereNumber<TEntity>(this, field);
+    } else if (fieldDef.type === 'string') {
+      where = new WhereString<TEntity>(this, field);
+    } else {
+      // TODO: Need to test this somehow
+      // @ts-ignore: This is a trap for JavaScript
+      throw new Error(`The field type of '${fieldDef.type}' is not a valid field type. Valid types include 'array', 'boolean', 'number', and 'string'.`);
+    }
+
+    if (this.rootWhere === undefined) {
+      this.rootWhere = where;
+    } else {
+      this.rootWhere = new WhereAnd(this.rootWhere, where);
+    }
+
+    return where;
   }
 
   async run(): Promise<TEntity[]> {
@@ -52,37 +70,9 @@ export default class Search<TEntity extends Entity> {
   }
 
   get query() : string {
-    if (this.whereArray.length === 0) return '*';
-    return this.whereArray.map(where => where.toString()).join(' ');
+    if (this.rootWhere === undefined) return '*';
+    return this.rootWhere.toString();
   }
-
-  private createWhereBoolean(field: string): WhereBoolean<TEntity> {
-    let where: WhereBoolean<TEntity>;
-    where = new WhereBoolean<TEntity>(this, field);
-    this.whereArray.push(where);
-    return where;
-  }  
-
-  private createWhereNumber(field: string): WhereNumber<TEntity> {
-    let where: WhereNumber<TEntity>;
-    where = new WhereNumber<TEntity>(this, field);
-    this.whereArray.push(where);
-    return where;
-  }  
-
-  private createWhereArray(field: string): WhereArray<TEntity> {
-    let where: WhereArray<TEntity>;
-    where = new WhereArray<TEntity>(this, field);
-    this.whereArray.push(where);
-    return where;
-  }  
-
-  private createWhereString(field: string): WhereString<TEntity> {
-    let where: WhereString<TEntity>;
-    where = new WhereString<TEntity>(this, field);
-    this.whereArray.push(where);
-    return where;
-  }  
 
   private extractCount(results: any[]): number {
     return results[0];

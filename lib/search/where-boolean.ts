@@ -1,8 +1,8 @@
 import Entity from "../entity/entity";
 import Search from "./search";
-import Where from "./where";
+import WhereField from "./where-field";
 
-export default class WhereBoolean<TEntity extends Entity> extends Where<TEntity> {
+export default class WhereBoolean<TEntity extends Entity> extends WhereField<TEntity> {
   private value?: boolean;
 
   isTrue(): Search<TEntity> {
