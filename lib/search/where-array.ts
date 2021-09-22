@@ -16,6 +16,9 @@ export default class WhereArray<TEntity extends Entity> extends Where<TEntity> {
   }
 
   toString(): string {
-    return `@${this.field}:{${this.value?.join('|')}}`
+    let matchPunctuation = /[,.<>{}[\]"':;!@#$%^&*()\-+=~| ]/g;
+    let escapedValue = this.value?.map(s => s.replace(matchPunctuation, '\\$&')).join('|');
+
+    return `@${this.field}:{${escapedValue}}`
   }
 }
