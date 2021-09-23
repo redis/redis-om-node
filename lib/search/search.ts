@@ -18,6 +18,7 @@ import WhereNumber from './where-number';
 import WhereString from './where-string';
 
 type SubSearchFunction<TEntity extends Entity> = (search: Search<TEntity>) => Search<TEntity>
+type AndOrConstructor = new (left: Where, right: Where) => Where;
 
 export default class Search<TEntity extends Entity> {
   private schema: Schema<TEntity>;
@@ -32,99 +33,27 @@ export default class Search<TEntity extends Entity> {
     this.redis = client.redis;
   }
 
-  where(field: string): WhereField<TEntity> {
-    return this.andWhere(field) as WhereField<TEntity>;
+  where(field: string): WhereField<TEntity>;
+  where(subSearchFn: SubSearchFunction<TEntity>): Search<TEntity>;
+  where(fieldOrFn: string | SubSearchFunction<TEntity>): WhereField<TEntity> | Search<TEntity> {
+    return this.anyWhere(WhereAnd, fieldOrFn);
   }
 
   andWhere(field: string): WhereField<TEntity>;
   andWhere(subSearchFn: SubSearchFunction<TEntity>): Search<TEntity>;
   andWhere(fieldOrFn: string | SubSearchFunction<TEntity>): WhereField<TEntity> | Search<TEntity> {
-
-    let where: WhereField<TEntity>;
-
-    if (typeof fieldOrFn === 'string') {
-      let field = fieldOrFn;
-      where = this.createWhere(field);
-  
-      if (this.rootWhere === undefined) {
-        this.rootWhere = where;
-      } else {
-        this.rootWhere = new WhereAnd(this.rootWhere, where);
-      }
-  
-      return where;
-    } else {
-      let subSearchFn = fieldOrFn;
-
-      let subSearch = subSearchFn(new Search<TEntity>(this.schema, this.client));
-  
-      if (subSearch.rootWhere !== undefined) {
-        if (this.rootWhere === undefined) {
-          this.rootWhere = subSearch.rootWhere;
-        } else {
-          this.rootWhere = new WhereAnd(this.rootWhere, subSearch.rootWhere);
-        }
-      }
-
-      return this;
-    }
+    return this.anyWhere(WhereAnd, fieldOrFn);
   }
 
   orWhere(field: string): WhereField<TEntity>;
   orWhere(subSearchFn: SubSearchFunction<TEntity>): Search<TEntity>;
   orWhere(fieldOrFn: string | SubSearchFunction<TEntity>): WhereField<TEntity> | Search<TEntity> {
-
-    let where: WhereField<TEntity>;
-
-    if (typeof fieldOrFn === 'string') {
-      let field = fieldOrFn;
-      where = this.createWhere(field);
-  
-      if (this.rootWhere === undefined) {
-        this.rootWhere = where;
-      } else {
-        this.rootWhere = new WhereOr(this.rootWhere, where);
-      }
-  
-      return where;
-    } else {
-      let subSearchFn = fieldOrFn;
-
-      let subSearch = subSearchFn(new Search<TEntity>(this.schema, this.client));
-  
-      if (subSearch.rootWhere !== undefined) {
-        if (this.rootWhere === undefined) {
-          this.rootWhere = subSearch.rootWhere;
-        } else {
-          this.rootWhere = new WhereOr(this.rootWhere, subSearch.rootWhere);
-        }
-      }
-
-      return this;
-    }
+    return this.anyWhere(WhereOr, fieldOrFn);
   }
 
-  or(...subSearchFn: ((search: Search<TEntity>) => Search<TEntity>)[]): Search<TEntity> {
-    let rootWhere: any;
-
-    subSearchFn.forEach(fn => {
-      let subSearch = fn(new Search<TEntity>(this.schema, this.client));
-      if (subSearch.rootWhere !== undefined) {
-        if (rootWhere === undefined) {
-          rootWhere = subSearch.rootWhere;
-        } else {
-          rootWhere = new WhereOr(rootWhere, subSearch.rootWhere);
-        }
-      }
-    });
-
-    if (this.rootWhere === undefined) {
-      this.rootWhere = rootWhere;
-    } else {
-      this.rootWhere = new WhereAnd(this.rootWhere, rootWhere);
-    }
-
-    return this;
+  get query() : string {
+    if (this.rootWhere === undefined) return '*';
+    return `${this.rootWhere.toString()}`;
   }
 
   async run(): Promise<TEntity[]> {
@@ -136,6 +65,41 @@ export default class Search<TEntity extends Entity> {
     let ids = this.extractIds(results);
     let entities = this.extractEntities(results, ids);
     return entities;
+  }
+
+  private anyWhere(ctor: AndOrConstructor, fieldOrFn: string | SubSearchFunction<TEntity>): WhereField<TEntity> | Search<TEntity> {
+    if (typeof fieldOrFn === 'string') {
+      return this.anyWhereForField(ctor, fieldOrFn);
+    } else {
+      return this.anyWhereForFunction(ctor, fieldOrFn);
+    }
+  }
+
+  private anyWhereForField(ctor: AndOrConstructor, field: string): WhereField<TEntity> {
+    let where = this.createWhere(field);
+
+    if (this.rootWhere === undefined) {
+      this.rootWhere = where;
+    } else {
+      this.rootWhere = new ctor(this.rootWhere, where);
+    }
+
+    return where;
+  }
+
+  private anyWhereForFunction(ctor: AndOrConstructor, subSearchFn: SubSearchFunction<TEntity>): Search<TEntity> {
+    let search = new Search<TEntity>(this.schema, this.client);
+    let subSearch = subSearchFn(search);
+
+    if (subSearch.rootWhere !== undefined) {
+      if (this.rootWhere === undefined) {
+        this.rootWhere = subSearch.rootWhere;
+      } else {
+        this.rootWhere = new ctor(this.rootWhere, subSearch.rootWhere);
+      }
+    }
+
+    return this;
   }
 
   private createWhere(field: string): WhereField<TEntity> {
@@ -160,11 +124,6 @@ export default class Search<TEntity extends Entity> {
     }
 
     return where;
-  }
-
-  get query() : string {
-    if (this.rootWhere === undefined) return '*';
-    return `${this.rootWhere.toString()}`;
   }
 
   private extractCount(results: any[]): number {

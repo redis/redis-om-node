@@ -39,17 +39,17 @@ describe("Search", () => {
     describe("when generating for simple strings", () => {
       it("generates a query matching a string", () => {
         let query = search.where('aString').is('foo').query;
-        expect(query).toBe("@aString:{foo}");
+        expect(query).toBe("(@aString:{foo})");
       });
   
       it("generates a query that escapes punctuation between text", () => {
         let query = search.where('aString').is('foo,bar baz').query;
-        expect(query).toBe("@aString:{foo\\,bar\\ baz}");
+        expect(query).toBe("(@aString:{foo\\,bar\\ baz})");
       });
 
       it("generates a query that escapes all punctuation", () => {
         let query = search.where('aString').is(",.<>{}[]\"':;!@#$%^&*()-+=~| ").query;
-        expect(query).toBe("@aString:{\\,\\.\\<\\>\\{\\}\\[\\]\\\"\\'\\:\\;\\!\\@\\#\\$\\%\\^\\&\\*\\(\\)\\-\\+\\=\\~\\|\\ }");
+        expect(query).toBe("(@aString:{\\,\\.\\<\\>\\{\\}\\[\\]\\\"\\'\\:\\;\\!\\@\\#\\$\\%\\^\\&\\*\\(\\)\\-\\+\\=\\~\\|\\ })");
       });
     });
   });

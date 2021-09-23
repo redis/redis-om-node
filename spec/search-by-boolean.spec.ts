@@ -39,12 +39,12 @@ describe("Search", () => {
     describe("when generating for a boolean", () => {
       it("generates a query matching a boolean set to true", () => {
         let query = search.where('aBoolean').isTrue().query;
-        expect(query).toBe("@aBoolean:{1}");
+        expect(query).toBe("(@aBoolean:{1})");
       });
   
       it("generates a query matching a boolean set to false", () => {
         let query = search.where('aBoolean').isFalse().query;
-        expect(query).toBe("@aBoolean:{0}");
+        expect(query).toBe("(@aBoolean:{0})");
       });
     });
   });

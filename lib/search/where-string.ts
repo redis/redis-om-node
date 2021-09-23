@@ -13,6 +13,6 @@ export default class WhereString<TEntity extends Entity> extends WhereField<TEnt
   toString(): string {
     let matchPunctuation = /[,.<>{}[\]"':;!@#$%^&*()\-+=~| ]/g;
     let escapedValue = this.value?.replace(matchPunctuation, '\\$&');
-    return `@${this.field}:{${escapedValue}}`;
+    return `(@${this.field}:{${escapedValue}})`;
   }
 }

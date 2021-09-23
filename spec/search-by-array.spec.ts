@@ -39,22 +39,22 @@ describe("Search", () => {
     describe("when generating for an array", () => {
       it("generates a query that matches an array that contains the queried value", () => {
         let query = search.where('anArray').contains('foo').query;
-        expect(query).toBe("@anArray:{foo}");
+        expect(query).toBe("(@anArray:{foo})");
       });
 
       it("generates a query that matches an array that contains one of the queried values", () => {
         let query = search.where('anArray').containsOneOf('foo', 'bar', 'baz').query;
-        expect(query).toBe("@anArray:{foo|bar|baz}");
+        expect(query).toBe("(@anArray:{foo|bar|baz})");
       });
 
       it("generates a query that escapes all punctuation", () => {
         let query = search.where('anArray').contains(",.<>{}[]\"':;|!@#$%^&*()-+=~ ").query;
-        expect(query).toBe("@anArray:{\\,\\.\\<\\>\\{\\}\\[\\]\\\"\\'\\:\\;\\|\\!\\@\\#\\$\\%\\^\\&\\*\\(\\)\\-\\+\\=\\~\\ }");
+        expect(query).toBe("(@anArray:{\\,\\.\\<\\>\\{\\}\\[\\]\\\"\\'\\:\\;\\|\\!\\@\\#\\$\\%\\^\\&\\*\\(\\)\\-\\+\\=\\~\\ })");
       });
 
       it("generates a query that escapes all punctuation", () => {
         let query = search.where('anArray').containsOneOf(",.<>{}[]\"':;|", "!@#$%^&*()-+=~ ").query;
-        expect(query).toBe("@anArray:{\\,\\.\\<\\>\\{\\}\\[\\]\\\"\\'\\:\\;\\||\\!\\@\\#\\$\\%\\^\\&\\*\\(\\)\\-\\+\\=\\~\\ }");
+        expect(query).toBe("(@anArray:{\\,\\.\\<\\>\\{\\}\\[\\]\\\"\\'\\:\\;\\||\\!\\@\\#\\$\\%\\^\\&\\*\\(\\)\\-\\+\\=\\~\\ })");
       });
     });
   });

@@ -51,7 +51,7 @@ export default class WhereNumber<TEntity extends Entity> extends WhereField<TEnt
   toString(): string {
     let bottom = this.makeBottomString();
     let top = this.makeTopString();
-    return `@${this.field}:[${bottom} ${top}]`
+    return `(@${this.field}:[${bottom} ${top}])`
   }
 
   private makeBottomString() {

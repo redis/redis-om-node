@@ -16,6 +16,6 @@ export default class WhereBoolean<TEntity extends Entity> extends WhereField<TEn
   }
 
   toString(): string {
-    return `@${this.field}:{${this.value ? '1' : '0'}}`
+    return `(@${this.field}:{${this.value ? '1' : '0'}})`
   }
 }
