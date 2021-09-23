@@ -10,6 +10,7 @@ import { EntityData, EntityId } from '../entity/entity-types';
 
 import Where from './where';
 import WhereAnd from './where-and';
+import WhereOr from './where-or';
 import WhereField from './where-field';
 import WhereArray from './where-array';
 import WhereBoolean from './where-boolean';
@@ -28,7 +29,34 @@ export default class Search<TEntity extends Entity> {
   }
 
   where(field: string): WhereString<TEntity> | WhereBoolean<TEntity> | WhereNumber<TEntity> | WhereArray<TEntity> {
+    return this.andWhere(field);
+  }
 
+  andWhere(field: string): WhereString<TEntity> | WhereBoolean<TEntity> | WhereNumber<TEntity> | WhereArray<TEntity> {
+    let where = this.createWhere(field);
+
+    if (this.rootWhere === undefined) {
+      this.rootWhere = where;
+    } else {
+      this.rootWhere = new WhereAnd(this.rootWhere, where);
+    }
+
+    return where;
+  }
+
+  orWhere(field: string): WhereString<TEntity> | WhereBoolean<TEntity> | WhereNumber<TEntity> | WhereArray<TEntity> {
+    let where = this.createWhere(field);
+
+    if (this.rootWhere === undefined) {
+      this.rootWhere = where;
+    } else {
+      this.rootWhere = new WhereOr(this.rootWhere, where);
+    }
+
+    return where;
+  }
+
+  private createWhere(field: string): WhereField<TEntity> {
     let fieldDef = this.schema.definition[field];
 
     if (fieldDef === undefined) throw new Error(`The field '${field}' is not part of the schema.`);
@@ -47,12 +75,6 @@ export default class Search<TEntity extends Entity> {
       // TODO: Need to test this somehow
       // @ts-ignore: This is a trap for JavaScript
       throw new Error(`The field type of '${fieldDef.type}' is not a valid field type. Valid types include 'array', 'boolean', 'number', and 'string'.`);
-    }
-
-    if (this.rootWhere === undefined) {
-      this.rootWhere = where;
-    } else {
-      this.rootWhere = new WhereAnd(this.rootWhere, where);
     }
 
     return where;

@@ -46,14 +46,6 @@ describe("Search", () => {
         let query = search.where('aBoolean').isFalse().query;
         expect(query).toBe("@aBoolean:{0}");
       });
-  
-      it("generates a query matching multiple booleans", () => {
-        let query = search
-          .where('aBoolean').isTrue()
-          .where('anotherBoolean').isTrue()
-          .where('aThirdBoolean').isFalse().query;
-        expect(query).toBe("@aBoolean:{1} @anotherBoolean:{1} @aThirdBoolean:{0}");
-      });
     });
   });
 });

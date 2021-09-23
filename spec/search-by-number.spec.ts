@@ -71,14 +71,6 @@ describe("Search", () => {
         let query = search.where('aNumber').inRangeExclusive(23, 42).query;
         expect(query).toBe("@aNumber:[(23 (42]");
       });
-
-      it("generates a query that checks multiple numbers", () => {
-        let query = search
-          .where('aNumber').lessThanEqual(42)
-          .where('anotherNumber').equals(23)
-          .where('aThirdNumber').greaterThanEqual(13).query;
-        expect(query).toBe("@aNumber:[-inf 42] @anotherNumber:[23 23] @aThirdNumber:[13 +inf]");
-      });
     });
   });
 });

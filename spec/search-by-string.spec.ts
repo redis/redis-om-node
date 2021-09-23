@@ -42,14 +42,6 @@ describe("Search", () => {
         expect(query).toBe("@aString:{foo}");
       });
   
-      it("generates a query matching multiple strings", () => {
-        let query = search
-          .where('aString').is('foo')
-          .where('anotherString').is('bar')
-          .where('aThirdString').is('baz').query;
-        expect(query).toBe("@aString:{foo} @anotherString:{bar} @aThirdString:{baz}");
-      });
-
       it("generates a query that escapes punctuation between text", () => {
         let query = search.where('aString').is('foo,bar baz').query;
         expect(query).toBe("@aString:{foo\\,bar\\ baz}");

@@ -1,6 +1,6 @@
 import Where from "./where";
 
-export default class WhereAnd extends Where {
+export default class WhereOr extends Where {
   private left: Where;
   private right: Where;
 
@@ -11,6 +11,6 @@ export default class WhereAnd extends Where {
   }
 
   toString(): string {
-    return `${this.left.toString()} ${this.right.toString()}`;
+    return `${this.left.toString()} | ${this.right.toString()}`;
   }
 }

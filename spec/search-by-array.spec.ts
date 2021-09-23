@@ -47,14 +47,6 @@ describe("Search", () => {
         expect(query).toBe("@anArray:{foo|bar|baz}");
       });
 
-      it("generates a query that matches an array that contains all of the queried values", () => {
-        let query = search
-          .where('anArray').contains('foo')
-          .where('anArray').contains('bar')
-          .where('anArray').contains('baz').query;
-        expect(query).toBe("@anArray:{foo} @anArray:{bar} @anArray:{baz}");
-      });
-
       it("generates a query that escapes all punctuation", () => {
         let query = search.where('anArray').contains(",.<>{}[]\"':;|!@#$%^&*()-+=~ ").query;
         expect(query).toBe("@anArray:{\\,\\.\\<\\>\\{\\}\\[\\]\\\"\\'\\:\\;\\|\\!\\@\\#\\$\\%\\^\\&\\*\\(\\)\\-\\+\\=\\~\\ }");
