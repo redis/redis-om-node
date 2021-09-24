@@ -37,7 +37,7 @@ describe("Repository", () => {
     describe("finding an entity matching a string", () => {
       beforeEach(async () => {
         entities = await repository.search()
-          .where('state').is('OH')
+          .where('state').eq('OH')
           .run();
         entities.sort(sortByEntityId);
       });
@@ -52,8 +52,8 @@ describe("Repository", () => {
     describe("finding an entity matching multiple strings", () => {
       beforeEach(async () => {
         entities = await repository.search()
-          .where('county').is('Ashland')
-          .where('state').is('OH')
+          .where('county').eq('Ashland')
+          .where('state').eq('OH')
           .run();
         entities.sort(sortByEntityId);
       });

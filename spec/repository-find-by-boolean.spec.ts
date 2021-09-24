@@ -37,7 +37,7 @@ describe("Repository", () => {
     describe("finding a boolean true", () => {
       beforeEach(async () => {
         entities = await repository.search()
-          .where('eyewitness').isTrue()
+          .where('eyewitness').true()
           .run();
         entities.sort(sortByEntityId);
       });
@@ -52,7 +52,7 @@ describe("Repository", () => {
     describe("finding a boolean false", () => {
       beforeEach(async () => {
         entities = await repository.search()
-          .where('eyewitness').isFalse()
+          .where('eyewitness').false()
           .run();
         entities.sort(sortByEntityId);
       });

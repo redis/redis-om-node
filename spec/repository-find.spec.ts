@@ -51,9 +51,9 @@ describe("Repository", () => {
     describe("finding entity matching a boolean, a string, a number, and an array value", () => {
       beforeEach(async () => {
         entities = await repository.search()
-          .where('eyewitness').isTrue()
-          .where('county').is('Ashland')
-          .where('temperature').greaterThanEqual(65)
+          .where('eyewitness').true()
+          .where('county').eq('Ashland')
+          .where('temperature').gte(65)
           .where('tags').contains('kentucky')
           .run();
         entities.sort(sortByEntityId);

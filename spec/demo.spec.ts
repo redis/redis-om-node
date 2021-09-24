@@ -62,11 +62,9 @@ describe("Demo", () => {
     entity.fullMoon = false;
 
     let entityId = await repository.save(entity);
-    console.log(entityId);
     
     // fetch an entity
     entity = await repository.fetch(entityId);
-    console.log(entity);
 
     // update an entity
     entity.lowTemp = 54;
@@ -79,21 +77,15 @@ describe("Demo", () => {
 
     // search for all entities
     let allEntities = await repository.search().run();
-    console.log(allEntities);
 
-    // showing off the search syntax
-    let search = repository.search()
+    // search for some entities
+    let someEntities = repository.search()
       .where(s => s
-        .where('state').is('OH')
-        .orWhere('state').is('KY')
+        .where('state').equals('OH')
+        .orWhere('state').equals('KY')
       )
       .andWhere('classification').contains('ClassA')
-      .andWhere('fullMoon').isTrue();
-
-    console.log(search.query);
-
-    let someEntities = await search.run();
-    console.log(someEntities);
+      .andWhere('fullMoon').is.true().run();
 
     // close the client
     client.close();

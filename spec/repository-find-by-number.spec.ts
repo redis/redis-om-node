@@ -37,7 +37,7 @@ describe("Repository", () => {
     describe("finding a number that equals a number", () => {
       beforeEach(async () => {
         entities = await repository.search()
-          .where('temperature').equals(75)
+          .where('temperature').eq(75)
           .run();
         entities.sort(sortByEntityId);
       });
@@ -51,7 +51,7 @@ describe("Repository", () => {
     describe("finding a number that is greater than a number", () => {
       beforeEach(async () => {
         entities = await repository.search()
-          .where('temperature').greaterThan(87)
+          .where('temperature').gt(87)
           .run();
         entities.sort(sortByEntityId);
       });
@@ -65,7 +65,7 @@ describe("Repository", () => {
     describe("finding a number that is greater than or equal to a number", () => {
       beforeEach(async () => {
         entities = await repository.search()
-          .where('temperature').greaterThanEqual(87)
+          .where('temperature').gte(87)
           .run();
         entities.sort(sortByEntityId);
       });
@@ -80,7 +80,7 @@ describe("Repository", () => {
     describe("finding a number that is less than a number", () => {
       beforeEach(async () => {
         entities = await repository.search()
-          .where('temperature').lessThan(87)
+          .where('temperature').lt(87)
           .run();
         entities.sort(sortByEntityId);
       });
@@ -94,7 +94,7 @@ describe("Repository", () => {
     describe("finding a number that is less than or equal to a number", () => {
       beforeEach(async () => {
         entities = await repository.search()
-          .where('temperature').lessThanEqual(87)
+          .where('temperature').lte(87)
           .run();
         entities.sort(sortByEntityId);
       });
@@ -109,7 +109,7 @@ describe("Repository", () => {
     describe("finding a number that is in a range to a pair of numbers", () => {
       beforeEach(async () => {
         entities = await repository.search()
-          .where('temperature').inRange(75, 87)
+          .where('temperature').between(75, 87)
           .run();
         entities.sort(sortByEntityId);
       });
@@ -118,20 +118,6 @@ describe("Repository", () => {
         expect(entities).toHaveLength(2);
         expectMatchesSighting(entities[0], AN_ENTITY_ID, A_BIGFOOT_SIGHTING);
         expectMatchesSighting(entities[1], ANOTHER_ENTITY_ID, ANOTHER_BIGFOOT_SIGHTING);
-      });
-    });
-
-    describe("finding a number that is in a range exclusive to a pair of numbers", () => {
-      beforeEach(async () => {
-        entities = await repository.search()
-          .where('temperature').inRangeExclusive(75, 93)
-          .run();
-        entities.sort(sortByEntityId);
-      });
-
-      it("returns all the entities in that range", () => {
-        expect(entities).toHaveLength(1);
-        expectMatchesSighting(entities[0], ANOTHER_ENTITY_ID, ANOTHER_BIGFOOT_SIGHTING);
       });
     });
   });

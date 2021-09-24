@@ -5,17 +5,19 @@ import WhereField from "./where-field";
 export default class WhereBoolean<TEntity extends Entity> extends WhereField<TEntity> {
   private value?: boolean;
 
-  isTrue(): Search<TEntity> {
-    this.value = true;
+  eq(value: boolean): Search<TEntity> {
+    this.value = value;
     return this.search;
   }
 
-  isFalse(): Search<TEntity> {
-    this.value = false;
-    return this.search;
-  }
+  equal(value: boolean): Search<TEntity> { return this.eq(value); }
+  equals(value: boolean): Search<TEntity> { return this.eq(value); }
+  equalTo(value: boolean): Search<TEntity> { return this.eq(value); }
+
+  true(): Search<TEntity> { return this.eq(true); }
+  false(): Search<TEntity> { return this.eq(false); }
 
   toString(): string {
-    return `(@${this.field}:{${this.value ? '1' : '0'}})`
+    return this.buildQuery(`{${this.value ? '1' : '0'}}`);
   }
 }

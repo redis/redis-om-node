@@ -3,66 +3,69 @@ import Search from "./search";
 import WhereField from "./where-field";
 
 export default class WhereNumber<TEntity extends Entity> extends WhereField<TEntity> {
-  private bottom: number = Number.NEGATIVE_INFINITY;
-  private top: number = Number.POSITIVE_INFINITY;
-  private exclusive: boolean = false;
+  private lower: number = Number.NEGATIVE_INFINITY;
+  private upper: number = Number.POSITIVE_INFINITY;
+  private lowerExclusive: boolean = false;
+  private upperExclusive: boolean = false;
 
-  equals(value: number): Search<TEntity> {
-    this.bottom = value;
-    this.top = value;
+  eq(value: number): Search<TEntity> {
+    this.lower = value;
+    this.upper = value;
     return this.search;
   }
 
-  greaterThan(value: number): Search<TEntity> {
-    this.bottom = value;
-    this.exclusive = true;
+  gt(value: number): Search<TEntity> {
+    this.lower = value;
+    this.lowerExclusive = true;
     return this.search;
   }
 
-  greaterThanEqual(value: number): Search<TEntity> {
-    this.bottom = value;
+  gte(value: number): Search<TEntity> {
+    this.lower = value;
     return this.search;
   }
 
-  lessThan(value: number): Search<TEntity> {
-    this.top = value;
-    this.exclusive = true;
+  lt(value: number): Search<TEntity> {
+    this.upper = value;
+    this.upperExclusive = true;
     return this.search;
   }
 
-  lessThanEqual(value: number): Search<TEntity> {
-    this.top = value;
+  lte(value: number): Search<TEntity> {
+    this.upper = value;
     return this.search;
   }
 
-  inRange(bottom: number, top: number): Search<TEntity> {
-    this.bottom = bottom;
-    this.top = top;
+  between(lower: number, upper: number): Search<TEntity> {
+    this.lower = lower;
+    this.upper = upper;
     return this.search;
   }
 
-  inRangeExclusive(bottom: number, top: number): Search<TEntity> {
-    this.bottom = bottom;
-    this.top = top;
-    this.exclusive = true;
-    return this.search;
-  }
+  equal(value: number): Search<TEntity> { return this.eq(value); }
+  equals(value: number): Search<TEntity> { return this.eq(value); }
+  equalTo(value: number): Search<TEntity> { return this.eq(value); }
+
+  greaterThan(value: number): Search<TEntity> { return this.gt(value); }
+  greaterThanOrEqualTo(value: number): Search<TEntity> { return this.gte(value); }
+  lessThan(value: number): Search<TEntity> { return this.lt(value); }
+  lessThanOrEqualTo(value: number): Search<TEntity> { return this.lte(value); }
 
   toString(): string {
-    let bottom = this.makeBottomString();
-    let top = this.makeTopString();
-    return `(@${this.field}:[${bottom} ${top}])`
+    let lower = this.makeLowerString();
+    let upper = this.makeUpperString();
+    return this.buildQuery(`[${lower} ${upper}]`);
   }
 
-  private makeBottomString() {
-    if (this.bottom === Number.NEGATIVE_INFINITY) return '-inf';
-    if (this.exclusive) return `(${this.bottom}`;
-    return this.bottom.toString()
+  private makeLowerString() {
+    if (this.lower === Number.NEGATIVE_INFINITY) return '-inf';
+    if (this.lowerExclusive) return `(${this.lower}`;
+    return this.lower.toString()
   }
 
-  private makeTopString() {
-    if (this.top === Number.POSITIVE_INFINITY) return '+inf';
-    if (this.exclusive) return `(${this.top}`;
-    return this.top.toString()
+  private makeUpperString() {
+    if (this.upper === Number.POSITIVE_INFINITY) return '+inf';
+    if (this.upperExclusive) return `(${this.upper}`;
+    return this.upper.toString()
   }
 }

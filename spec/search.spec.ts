@@ -49,72 +49,72 @@ describe("Search", () => {
 
     it("generates a query using .where", () => {
       let query = search
-        .where('aString').is('foo')
-        .where('aNumber').equals(42)
-        .where('aBoolean').isTrue().query;
+        .where('aString').eq('foo')
+        .where('aNumber').eq(42)
+        .where('aBoolean').true().query;
       expect(query).toBe("( ( (@aString:{foo}) (@aNumber:[42 42]) ) (@aBoolean:{1}) )");
     });
 
     it("generates a query using .andWhere", () => {
       let query = search
-        .where('aString').is('foo')
-        .andWhere('aNumber').equals(42)
-        .andWhere('aBoolean').isTrue().query;
+        .where('aString').eq('foo')
+        .andWhere('aNumber').eq(42)
+        .andWhere('aBoolean').true().query;
       expect(query).toBe("( ( (@aString:{foo}) (@aNumber:[42 42]) ) (@aBoolean:{1}) )");
     });
 
     it("generates a query using .orWhere", () => {
       let query = search
-        .where('aString').is('foo')
+        .where('aString').eq('foo')
         .orWhere('aNumber').equals(42)
-        .orWhere('aBoolean').isTrue().query;
+        .orWhere('aBoolean').true().query;
       expect(query).toBe("( ( (@aString:{foo}) | (@aNumber:[42 42]) ) | (@aBoolean:{1}) )");
     });
 
     it("generates a query using .andWhere and .orWhere", () => {
       let query = search
-        .where('aString').is('foo')
+        .where('aString').eq('foo')
         .andWhere('aNumber').equals(42)
-        .orWhere('aBoolean').isTrue().query;
+        .orWhere('aBoolean').true().query;
       expect(query).toBe("( ( (@aString:{foo}) (@aNumber:[42 42]) ) | (@aBoolean:{1}) )");
     });
 
     it("generates a query using .andWhere with a function", () => {
       let query = search
-        .where('aString').is('foo')
+        .where('aString').eq('foo')
         .andWhere(search => search 
-          .where('aString').is('bar')
+          .where('aString').eq('bar')
           .andWhere('aNumber').equals(42)
-          .orWhere('aBoolean').isTrue()).query;
+          .orWhere('aBoolean').true()).query;
       expect(query).toBe("( (@aString:{foo}) ( ( (@aString:{bar}) (@aNumber:[42 42]) ) | (@aBoolean:{1}) ) )")
     });
 
     it("generates a query using .orWhere with a function", () => {
       let query = search
-        .where('aString').is('foo')
+        .where('aString').eq('foo')
         .orWhere(search => search
-          .where('aString').is('bar')
+          .where('aString').eq('bar')
           .andWhere('aNumber').equals(42)
-          .orWhere('aBoolean').isTrue()).query;
+          .orWhere('aBoolean').true()).query;
       expect(query).toBe("( (@aString:{foo}) | ( ( (@aString:{bar}) (@aNumber:[42 42]) ) | (@aBoolean:{1}) ) )")
     });
 
     it("generates a complex query using all the things", () => {
       let query = search
-        .where('aString').is('foo')
+        .where('aString').eq('foo')
         .andWhere('aNumber').equals(42)
-        .orWhere('aBoolean').isTrue()
+        .orWhere('aBoolean').true()
         .andWhere(search => search
-          .where('aString').is('bar')
+          .where('aString').eq('bar')
           .andWhere('aNumber').equals(23)
-          .andWhere('aBoolean').isFalse()
+          .andWhere('aBoolean').false()
         )
         .orWhere(search => search
-          .where('aString').is('baz')
+          .where('aString').eq('baz')
           .orWhere('aNumber').equals(13)
-          .orWhere('aBoolean').isTrue()
+          .orWhere('aBoolean').true()
           .andWhere(search => search
-            .where('aString').is('qux')
+            .where('aString').eq('qux')
             .andWhere('aNumber').equals(7)
           )
         ).query;
