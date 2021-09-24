@@ -39,15 +39,15 @@ export default class Search<TEntity extends Entity> {
     return this.anyWhere(WhereAnd, fieldOrFn);
   }
 
-  andWhere(field: string): WhereField<TEntity>;
-  andWhere(subSearchFn: SubSearchFunction<TEntity>): Search<TEntity>;
-  andWhere(fieldOrFn: string | SubSearchFunction<TEntity>): WhereField<TEntity> | Search<TEntity> {
+  and(field: string): WhereField<TEntity>;
+  and(subSearchFn: SubSearchFunction<TEntity>): Search<TEntity>;
+  and(fieldOrFn: string | SubSearchFunction<TEntity>): WhereField<TEntity> | Search<TEntity> {
     return this.anyWhere(WhereAnd, fieldOrFn);
   }
 
-  orWhere(field: string): WhereField<TEntity>;
-  orWhere(subSearchFn: SubSearchFunction<TEntity>): Search<TEntity>;
-  orWhere(fieldOrFn: string | SubSearchFunction<TEntity>): WhereField<TEntity> | Search<TEntity> {
+  or(field: string): WhereField<TEntity>;
+  or(subSearchFn: SubSearchFunction<TEntity>): Search<TEntity>;
+  or(fieldOrFn: string | SubSearchFunction<TEntity>): WhereField<TEntity> | Search<TEntity> {
     return this.anyWhere(WhereOr, fieldOrFn);
   }
 

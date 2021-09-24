@@ -82,10 +82,10 @@ describe("Demo", () => {
     let someEntities = repository.search()
       .where(s => s
         .where('state').equals('OH')
-        .orWhere('state').equals('KY')
+        .or('state').equals('KY')
       )
-      .andWhere('classification').contains('ClassA')
-      .andWhere('fullMoon').is.true().run();
+      .and('classification').contains('ClassA')
+      .and('fullMoon').is.true().run();
 
     // close the client
     client.close();
