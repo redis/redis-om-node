@@ -1,12 +1,12 @@
-import Globals from './helpers/globals';
+import Globals from '../helpers/globals';
 import { addBigfootSighting, createBigfootSchema, expectMatchesSighting, sortByEntityId, Bigfoot,
   A_BIGFOOT_SIGHTING, AN_ENTITY_ID, AN_ENTITY_KEY,
   ANOTHER_BIGFOOT_SIGHTING, ANOTHER_ENTITY_ID, ANOTHER_ENTITY_KEY,
-  A_THIRD_BIGFOOT_SIGHTING, A_THIRD_ENTITY_ID, A_THIRD_ENTITY_KEY } from './helpers/bigfoot-data-helper';
+  A_THIRD_BIGFOOT_SIGHTING, A_THIRD_ENTITY_ID, A_THIRD_ENTITY_KEY } from '../helpers/bigfoot-data-helper';
   
-import Client from '../lib/client';
-import Schema from '../lib/schema/schema';
-import Repository from '../lib/repository';
+import Client from '../../lib/client';
+import Schema from '../../lib/schema/schema';
+import Repository from '../../lib/repository/repository';
 
 const globals: Globals = (globalThis as unknown) as Globals;
 
@@ -34,33 +34,32 @@ describe("Repository", () => {
       await addBigfootSighting(client, A_THIRD_ENTITY_KEY, A_THIRD_BIGFOOT_SIGHTING);
     });
 
-    describe("finding entities with a particular tag", () => {
+    describe("finding a boolean true", () => {
       beforeEach(async () => {
         entities = await repository.search()
-          .where('tags').contains('ohio')
+          .where('eyewitness').true()
           .run();
         entities.sort(sortByEntityId);
       });
 
-      it("returns all the entities thus tagged", () => {
-        expect(entities).toHaveLength(2);
-        expectMatchesSighting(entities[0], AN_ENTITY_ID, A_BIGFOOT_SIGHTING);
-        expectMatchesSighting(entities[1], ANOTHER_ENTITY_ID, ANOTHER_BIGFOOT_SIGHTING);
-      });
-    });
-
-    describe("finding entities with one of the specified tags", () => {
-      beforeEach(async () => {
-        entities = await repository.search()
-          .where('tags').containsOneOf('kentucky', 'walmart')
-          .run();
-        entities.sort(sortByEntityId);
-      });
-
-      it("returns all the entities thus tagged", () => {
+      it("returns all the entities matching a boolean true", () => {
         expect(entities).toHaveLength(2);
         expectMatchesSighting(entities[0], AN_ENTITY_ID, A_BIGFOOT_SIGHTING);
         expectMatchesSighting(entities[1], A_THIRD_ENTITY_ID, A_THIRD_BIGFOOT_SIGHTING);
+      });
+    });
+
+    describe("finding a boolean false", () => {
+      beforeEach(async () => {
+        entities = await repository.search()
+          .where('eyewitness').false()
+          .run();
+        entities.sort(sortByEntityId);
+      });
+
+      it("returns all the entities matching a boolean false", () => {
+        expect(entities).toHaveLength(1);
+        expectMatchesSighting(entities[0], ANOTHER_ENTITY_ID, ANOTHER_BIGFOOT_SIGHTING);
       });
     });
   });

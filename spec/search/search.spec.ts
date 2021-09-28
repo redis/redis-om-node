@@ -1,9 +1,9 @@
-import Globals from './helpers/globals';
+import Globals from '../helpers/globals';
 
-import Client from "../lib/client";
-import Entity from "../lib/entity/entity";
-import Schema from "../lib/schema/schema";
-import Search from "../lib/search/search";
+import Client from "../../lib/client";
+import Entity from "../../lib/entity/entity";
+import Schema from "../../lib/schema/schema";
+import Search from "../../lib/search/search";
 
 const globals: Globals = (globalThis as unknown) as Globals;
 

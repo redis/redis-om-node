@@ -1,12 +1,12 @@
-import Globals from './helpers/globals';
+import Globals from '../helpers/globals';
 import { addBigfootSighting, createBigfootSchema, expectMatchesSighting, sortByEntityId, Bigfoot,
   A_BIGFOOT_SIGHTING, AN_ENTITY_ID, AN_ENTITY_KEY,
   ANOTHER_BIGFOOT_SIGHTING, ANOTHER_ENTITY_ID, ANOTHER_ENTITY_KEY,
-  A_THIRD_BIGFOOT_SIGHTING, A_THIRD_ENTITY_ID, A_THIRD_ENTITY_KEY } from './helpers/bigfoot-data-helper';
+  A_THIRD_BIGFOOT_SIGHTING, A_THIRD_ENTITY_ID, A_THIRD_ENTITY_KEY } from '../helpers/bigfoot-data-helper';
   
-import Client from '../lib/client';
-import Schema from '../lib/schema/schema';
-import Repository from '../lib/repository';
+import Client from '../../lib/client';
+import Schema from '../../lib/schema/schema';
+import Repository from '../../lib/repository/repository';
 
 const globals: Globals = (globalThis as unknown) as Globals;
 
@@ -34,32 +34,33 @@ describe("Repository", () => {
       await addBigfootSighting(client, A_THIRD_ENTITY_KEY, A_THIRD_BIGFOOT_SIGHTING);
     });
 
-    describe("finding a boolean true", () => {
+    describe("finding entities with a particular tag", () => {
       beforeEach(async () => {
         entities = await repository.search()
-          .where('eyewitness').true()
+          .where('tags').contains('ohio')
           .run();
         entities.sort(sortByEntityId);
       });
 
-      it("returns all the entities matching a boolean true", () => {
+      it("returns all the entities thus tagged", () => {
         expect(entities).toHaveLength(2);
         expectMatchesSighting(entities[0], AN_ENTITY_ID, A_BIGFOOT_SIGHTING);
-        expectMatchesSighting(entities[1], A_THIRD_ENTITY_ID, A_THIRD_BIGFOOT_SIGHTING);
+        expectMatchesSighting(entities[1], ANOTHER_ENTITY_ID, ANOTHER_BIGFOOT_SIGHTING);
       });
     });
 
-    describe("finding a boolean false", () => {
+    describe("finding entities with one of the specified tags", () => {
       beforeEach(async () => {
         entities = await repository.search()
-          .where('eyewitness').false()
+          .where('tags').containsOneOf('kentucky', 'walmart')
           .run();
         entities.sort(sortByEntityId);
       });
 
-      it("returns all the entities matching a boolean false", () => {
-        expect(entities).toHaveLength(1);
-        expectMatchesSighting(entities[0], ANOTHER_ENTITY_ID, ANOTHER_BIGFOOT_SIGHTING);
+      it("returns all the entities thus tagged", () => {
+        expect(entities).toHaveLength(2);
+        expectMatchesSighting(entities[0], AN_ENTITY_ID, A_BIGFOOT_SIGHTING);
+        expectMatchesSighting(entities[1], A_THIRD_ENTITY_ID, A_THIRD_BIGFOOT_SIGHTING);
       });
     });
   });

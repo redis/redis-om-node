@@ -5,7 +5,7 @@ import { RedisModules } from 'redis/dist/lib/commands';
 import { RedisLuaScripts } from 'redis/dist/lib/lua-script';
 
 import Entity from './entity/entity';
-import Repository from './repository';
+import Repository from './repository/repository';
 import Schema from './schema/schema';
 
 export default class Client {

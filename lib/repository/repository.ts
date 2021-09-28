@@ -2,13 +2,13 @@ import { RedisClientType } from 'redis/dist/lib/client';
 import { RedisModules } from 'redis/dist/lib/commands';
 import { RedisLuaScripts } from 'redis/dist/lib/lua-script';
 
-import Schema from "./schema/schema";
-import Client from "./client";
-import Entity from './entity/entity';
-import Search from './search/search';
+import Schema from "../schema/schema";
+import Client from "../client";
+import Entity from '../entity/entity';
+import Search from '../search/search';
 
-import { FieldDefinition, SchemaDefinition, StringField } from './schema/schema-definitions';
-import { EntityId, EntityKey } from './entity/entity-types';
+import { FieldDefinition, SchemaDefinition, StringField } from '../schema/schema-definitions';
+import { EntityId, EntityKey } from '../entity/entity-types';
 
 export default class Repository<TEntity extends Entity> {
   private schema: Schema<TEntity>;

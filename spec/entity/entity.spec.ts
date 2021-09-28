@@ -1,6 +1,6 @@
-import Schema from '../lib/schema/schema'
-import Entity from '../lib/entity/entity';
-import { EntityId } from '../lib/entity/entity-types';
+import Schema from '../../lib/schema/schema'
+import Entity from '../../lib/entity/entity';
+import { EntityId } from '../../lib/entity/entity-types';
 
 describe("Entity", () => {
 

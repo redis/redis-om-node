@@ -1,11 +1,11 @@
-import Globals from './helpers/globals';
-import { keyExists } from './helpers/redis-helper';
+import Globals from '../helpers/globals';
+import { keyExists } from '../helpers/redis-helper';
 import { addBigfootSighting, Bigfoot, createBigfootSchema,
-  A_BIGFOOT_SIGHTING, AN_ENTITY_ID, AN_ENTITY_KEY } from './helpers/bigfoot-data-helper';
+  A_BIGFOOT_SIGHTING, AN_ENTITY_ID, AN_ENTITY_KEY } from '../helpers/bigfoot-data-helper';
 
-import Client from '../lib/client';
-import Schema from '../lib/schema/schema'
-import Repository from '../lib/repository';
+import Client from '../../lib/client';
+import Schema from '../../lib/schema/schema'
+import Repository from '../../lib/repository/repository';
 
 const globals: Globals = (globalThis as unknown) as Globals;
 

@@ -1,12 +1,12 @@
-import Globals from './helpers/globals';
+import Globals from '../helpers/globals';
 import { addBigfootSighting, Bigfoot, createBigfootSchema, expectMatchesSighting,
   A_BIGFOOT_SIGHTING, AN_ENTITY_ID, AN_ENTITY_KEY,
   A_PARTIAL_BIGFOOT_SIGHTING, A_PARTIAL_ENTITY_ID, A_PARTIAL_ENTITY_KEY,
-  AN_EMPTY_BIGFOOT_SIGHTING, AN_EMPTY_ENTITY_ID } from './helpers/bigfoot-data-helper';
+  AN_EMPTY_BIGFOOT_SIGHTING, AN_EMPTY_ENTITY_ID } from '../helpers/bigfoot-data-helper';
   
-import Client from '../lib/client';
-import Schema from '../lib/schema/schema'
-import Repository from '../lib/repository';
+import Client from '../../lib/client';
+import Schema from '../../lib/schema/schema'
+import Repository from '../../lib/repository/repository';
 
 const globals: Globals = (globalThis as unknown) as Globals;
 

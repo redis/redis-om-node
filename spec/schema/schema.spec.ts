@@ -1,5 +1,5 @@
-import Schema from '../lib/schema/schema';
-import Entity from '../lib/entity/entity';
+import Schema from '../../lib/schema/schema';
+import Entity from '../../lib/entity/entity';
 
 describe("Schema", () => {
 

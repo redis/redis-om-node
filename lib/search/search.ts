@@ -118,7 +118,6 @@ export default class Search<TEntity extends Entity> {
     } else if (fieldDef.type === 'string') {
       where = new WhereString<TEntity>(this, field);
     } else {
-      // TODO: Need to test this somehow
       // @ts-ignore: This is a trap for JavaScript
       throw new Error(`The field type of '${fieldDef.type}' is not a valid field type. Valid types include 'array', 'boolean', 'number', and 'string'.`);
     }
