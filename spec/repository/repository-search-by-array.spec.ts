@@ -27,41 +27,40 @@ describe("Repository", () => {
     await repository.createIndex();
   });
 
-  describe("#find", () => {
+  describe("#search", () => {
     beforeEach(async () => {
       await addBigfootSighting(client, AN_ENTITY_KEY, A_BIGFOOT_SIGHTING);
       await addBigfootSighting(client, ANOTHER_ENTITY_KEY, ANOTHER_BIGFOOT_SIGHTING);
       await addBigfootSighting(client, A_THIRD_ENTITY_KEY, A_THIRD_BIGFOOT_SIGHTING);
     });
 
-    describe("finding all the things", () => {
-      beforeEach(async () => {
-        entities = await repository.search().run();
-        entities.sort(sortByEntityId);
-      });
-
-      it("returns all the entities", () => {
-        expect(entities).toHaveLength(3);
-        expectMatchesSighting(entities[0], AN_ENTITY_ID, A_BIGFOOT_SIGHTING);
-        expectMatchesSighting(entities[1], ANOTHER_ENTITY_ID, ANOTHER_BIGFOOT_SIGHTING);
-        expectMatchesSighting(entities[2], A_THIRD_ENTITY_ID, A_THIRD_BIGFOOT_SIGHTING);
-      });
-    });
-    
-    describe("finding entity matching a boolean, a string, a number, and an array value", () => {
+    describe("finding entities with a particular tag", () => {
       beforeEach(async () => {
         entities = await repository.search()
-          .where('eyewitness').true()
-          .where('county').eq('Ashland')
-          .where('temperature').gte(65)
-          .where('tags').contains('kentucky')
+          .where('tags').contains('ohio')
           .run();
         entities.sort(sortByEntityId);
       });
 
-      it("returns all the entities that match", () => {
-        expect(entities).toHaveLength(1);
-        expectMatchesSighting(entities[0], A_THIRD_ENTITY_ID, A_THIRD_BIGFOOT_SIGHTING);
+      it("returns all the entities thus tagged", () => {
+        expect(entities).toHaveLength(2);
+        expectMatchesSighting(entities[0], AN_ENTITY_ID, A_BIGFOOT_SIGHTING);
+        expectMatchesSighting(entities[1], ANOTHER_ENTITY_ID, ANOTHER_BIGFOOT_SIGHTING);
+      });
+    });
+
+    describe("finding entities with one of the specified tags", () => {
+      beforeEach(async () => {
+        entities = await repository.search()
+          .where('tags').containsOneOf('kentucky', 'walmart')
+          .run();
+        entities.sort(sortByEntityId);
+      });
+
+      it("returns all the entities thus tagged", () => {
+        expect(entities).toHaveLength(2);
+        expectMatchesSighting(entities[0], AN_ENTITY_ID, A_BIGFOOT_SIGHTING);
+        expectMatchesSighting(entities[1], A_THIRD_ENTITY_ID, A_THIRD_BIGFOOT_SIGHTING);
       });
     });
   });

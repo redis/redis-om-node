@@ -27,7 +27,7 @@ describe("Repository", () => {
     await repository.createIndex();
   });
 
-  describe("#find", () => {
+  describe("#search", () => {
     beforeEach(async () => {
       await addBigfootSighting(client, AN_ENTITY_KEY, A_BIGFOOT_SIGHTING);
       await addBigfootSighting(client, ANOTHER_ENTITY_KEY, ANOTHER_BIGFOOT_SIGHTING);
