@@ -22,29 +22,11 @@ export default class Repository<TEntity extends Entity> {
   }
 
   async createIndex(): Promise<void> {
-
-    let schemaDef: SchemaDefinition = this.schema.definition;
-    let schemaForCreate: string[] = [];
-
-    for (let field in schemaDef) {
-
-      let fieldDef: FieldDefinition = schemaDef[field];
-      let fieldType = fieldDef.type;
-      let fieldAlias = fieldDef.alias ?? field;
-
-      schemaForCreate.push(fieldAlias)
-      if (fieldType === 'number') schemaForCreate.push('NUMERIC')
-      if (fieldType === 'string' && (fieldDef as StringField).textSearch === true) schemaForCreate.push('TEXT')
-      if (fieldType === 'string' && (fieldDef as StringField).textSearch !== true) schemaForCreate.push('TAG')
-      if (fieldType === 'boolean') schemaForCreate.push('TAG')
-      if (fieldType === 'array') schemaForCreate.push('TAG')
-    }
-
     await this.redis.sendCommand([
       'FT.CREATE', this.schema.indexName, 
         'ON', 'HASH',
         'PREFIX', '1', `${this.schema.prefix}:`,
-        'SCHEMA', ...schemaForCreate
+        'SCHEMA', ...this.schema.redisSchema
     ]);
   }
 

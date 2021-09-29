@@ -9,6 +9,7 @@ export interface NumericField extends Field {
 export interface StringField extends Field {
   type: 'string';
   textSearch?: boolean;
+  separator?: string;
 }
 
 export interface BooleanField extends Field {
@@ -17,6 +18,7 @@ export interface BooleanField extends Field {
 
 export interface ArrayField extends Field {
   type: 'array';
+  separator?: string;
 }
 
 export type FieldDefinition = NumericField | StringField | BooleanField | ArrayField;

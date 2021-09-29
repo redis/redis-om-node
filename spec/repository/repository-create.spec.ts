@@ -62,7 +62,7 @@ describe("Repository", () => {
           A_BIGFOOT_SIGHTING.state,
           '1',
           A_BIGFOOT_SIGHTING.temperature?.toString(),
-          A_BIGFOOT_SIGHTING.tags?.join(',')]);
+          A_BIGFOOT_SIGHTING.tags?.join('|')]);
       });
     });
 

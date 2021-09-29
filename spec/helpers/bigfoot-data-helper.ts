@@ -61,7 +61,7 @@ export async function addBigfootSighting(client: Client, key: string, sighting: 
   if (sighting.state !== undefined) command.push('state', sighting.state);
   if (sighting.eyewitness !== undefined) command.push('eyewitness', sighting.eyewitness ? '1' : '0');
   if (sighting.temperature !== undefined) command.push('temperature', sighting.temperature.toString());
-  if (sighting.tags !== undefined) command.push('tags', sighting.tags.join(','));
+  if (sighting.tags !== undefined) command.push('tags', sighting.tags.join('|'));
   await saveHash(client, key, command);
 };
 

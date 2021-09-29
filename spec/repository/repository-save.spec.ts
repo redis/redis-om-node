@@ -67,7 +67,7 @@ describe("Repository", () => {
           ANOTHER_BIGFOOT_SIGHTING.state,
           '0',
           ANOTHER_BIGFOOT_SIGHTING.temperature?.toString(),
-          ANOTHER_BIGFOOT_SIGHTING.tags?.join(',')]);
+          ANOTHER_BIGFOOT_SIGHTING.tags?.join('|')]);
       });
     });
 
@@ -99,7 +99,7 @@ describe("Repository", () => {
           A_BIGFOOT_SIGHTING.state,
           '0',
           ANOTHER_BIGFOOT_SIGHTING.temperature?.toString(),
-          A_BIGFOOT_SIGHTING.tags?.join(',')]);
+          A_BIGFOOT_SIGHTING.tags?.join('|')]);
       });
     });
 

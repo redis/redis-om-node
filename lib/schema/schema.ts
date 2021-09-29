@@ -3,18 +3,18 @@ import { v4 } from 'uuid';
 import Entity from "../entity/entity";
 
 import { EntityConstructor, EntityId, EntityIdStrategy, EntityIndex, EntityPrefix } from '../entity/entity-types';
-import { FieldDefinition, SchemaDefinition } from './schema-definitions';
+import { ArrayField, FieldDefinition, SchemaDefinition, StringField } from './schema-definitions';
 import { SchemaOptions } from './schema-options';
 
 let numberSerializer = (value: number): string => value.toString();
 let stringSerializer = (value: string): string => value;
 let booleanSerializer = (value: boolean): string => value ? '1' : '0';
-let arraySerializer = (value: string[]): string => value.join(',');
+let arraySerializer = (separator: string) => (value: string[]): string => value.join(separator);
 
 let numberDeserializer = (value: string): number => Number.parseFloat(value);
 let stringDeserializer = (value: string): string => value;
 let booleanDeserializer = (value: string): boolean => value === '1';
-let arrayDeserializer = (value: string): string[] => value.split(',');
+let arrayDeserializer = (separator: string) => (value: string): string[] => value.split(separator);
 
 export default class Schema<TEntity extends Entity> {
   readonly entityCtor: EntityConstructor<TEntity>;
@@ -45,14 +45,13 @@ export default class Schema<TEntity extends Entity> {
         selectedSerializer = booleanSerializer;
         selectedDeserializer = booleanDeserializer;
       } else if (fieldDef.type === 'array') {
-        selectedSerializer = arraySerializer;
-        selectedDeserializer = arrayDeserializer;
+        selectedSerializer = arraySerializer(fieldDef.separator ?? '|');
+        selectedDeserializer = arrayDeserializer(fieldDef.separator ?? '|');
       } else {
         // TODO: throw an error, or at least don't define the field
         return
       }
 
-      // TODO: fieldAlias????
       Object.defineProperty(this.entityCtor.prototype, field, {
         get: function (): any {
           let value: string = this.entityData[fieldAlias] ?? null;
@@ -73,6 +72,45 @@ export default class Schema<TEntity extends Entity> {
 
   get indexName(): EntityIndex {
     return `${this.prefix}:index`;
+  }
+
+  get redisSchema(): string[] {
+
+    let redisSchema: string[] = [];
+
+    for (let field in this.definition) {
+
+      let fieldDef: FieldDefinition = this.definition[field];
+      let fieldType = fieldDef.type;
+      let fieldAlias = fieldDef.alias ?? field;
+
+      redisSchema.push(fieldAlias)
+      if (fieldType === 'number') {
+        redisSchema.push('NUMERIC');
+      }
+
+      if (fieldType === 'string' && (fieldDef as StringField).textSearch === true) {
+        redisSchema.push('TEXT');
+      }
+
+      if (fieldType === 'string' && (fieldDef as StringField).textSearch !== true) {
+        redisSchema.push('TAG');
+        redisSchema.push('SEPARATOR');
+        redisSchema.push((fieldDef as StringField).separator ?? '|');
+      }
+
+      if (fieldType === 'boolean') {
+        redisSchema.push('TAG');
+      }
+
+      if (fieldType === 'array') {
+        redisSchema.push('TAG');
+        redisSchema.push('SEPARATOR');
+        redisSchema.push((fieldDef as StringField).separator ?? '|');
+      }
+    }
+
+    return redisSchema;
   }
 
   generateId(): EntityId {
