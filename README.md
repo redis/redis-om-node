@@ -14,6 +14,25 @@ search.where('aString').does.not.equal('foo');
 search.where('aString').is.equalTo('foo');
 search.where('aString').is.not.equalTo('foo');
 
+// string with full text search
+search.where('aString').match('foo');
+search.where('aString').not.match('foo');
+search.where('aString').matches('foo');
+search.where('aString').does.match('foo');
+search.where('aString').does.not.match('foo');
+
+search.where('aString').exact.match('foo');
+search.where('aString').not.exact.match('foo');
+search.where('aString').exactly.matches('foo');
+search.where('aString').does.exactly.match('foo');
+search.where('aString').does.not.exactly.match('foo');
+
+search.where('aString').matchExact('foo');
+search.where('aString').not.matchExact('foo');
+search.where('aString').matchesExactly('foo');
+search.where('aString').does.matchExactly('foo');
+search.where('aString').does.not.matchExactly('foo');
+
 // booleans
 search.where('aBoolean').eq(true);
 search.where('aBoolean').not.eq(true);

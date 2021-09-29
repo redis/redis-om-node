@@ -11,7 +11,6 @@ interface TestEntity {
   aString: string;
   aNumber: number;
   aBoolean: boolean;
-  anArray: string[];
 }
 
 class TestEntity extends Entity {}
@@ -28,8 +27,7 @@ describe("Search", () => {
       TestEntity, {
         aString: { type: 'string' },
         aNumber: { type: 'number' },
-        aBoolean: { type: 'boolean' },
-        anArray: { type: 'array' }
+        aBoolean: { type: 'boolean' }
       });
   })
 

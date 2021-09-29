@@ -106,7 +106,7 @@ describe("Repository", () => {
       });
     });
 
-    describe("finding a number that is in a range to a pair of numbers", () => {
+    describe("finding a number that is between a pair of numbers", () => {
       beforeEach(async () => {
         entities = await repository.search()
           .where('temperature').between(75, 87)

@@ -1,6 +1,7 @@
 import Entity from "../entity/entity";
 import Search from "./search";
 import Where from "./where";
+import WhereText from "./where-text";
 
 interface WhereField<TEntity> extends Where {
   
@@ -8,7 +9,16 @@ interface WhereField<TEntity> extends Where {
   equal(value: string | number | boolean): Search<TEntity>;
   equals(value: string | number | boolean): Search<TEntity>;
   equalTo(value: string | number | boolean): Search<TEntity>;
-  
+
+  match(value: string): Search<TEntity>;
+  matches(value: string): Search<TEntity>;
+  matchExact(value: string): Search<TEntity>;
+  matchExactly(value: string): Search<TEntity>;
+  matchesExactly(value: string): Search<TEntity>;
+
+  readonly exact: WhereText<TEntity>;
+  readonly exactly: WhereText<TEntity>;
+
   true(): Search<TEntity>;
   false(): Search<TEntity>;
 

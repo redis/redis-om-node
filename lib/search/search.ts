@@ -16,6 +16,7 @@ import WhereArray from './where-array';
 import WhereBoolean from './where-boolean';
 import WhereNumber from './where-number';
 import WhereString from './where-string';
+import WhereText from './where-text';
 
 type SubSearchFunction<TEntity extends Entity> = (search: Search<TEntity>) => Search<TEntity>
 type AndOrConstructor = new (left: Where, right: Where) => Where;
@@ -115,7 +116,9 @@ export default class Search<TEntity extends Entity> {
       where = new WhereBoolean<TEntity>(this, field);
     } else if (fieldDef.type === 'number') {
       where = new WhereNumber<TEntity>(this, field);
-    } else if (fieldDef.type === 'string') {
+    } else if (fieldDef.type === 'string' && fieldDef.textSearch === true) {
+      where = new WhereText<TEntity>(this, field);
+    } else if (fieldDef.type === 'string' && fieldDef.textSearch !== true) {
       where = new WhereString<TEntity>(this, field);
     } else {
       // @ts-ignore: This is a trap for JavaScript
