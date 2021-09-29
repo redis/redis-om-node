@@ -48,8 +48,8 @@ export default class Schema<TEntity extends Entity> {
         selectedSerializer = arraySerializer(fieldDef.separator ?? '|');
         selectedDeserializer = arrayDeserializer(fieldDef.separator ?? '|');
       } else {
-        // TODO: throw an error, or at least don't define the field
-        return
+        // @ts-ignore: JavaScript trap
+        throw(`The field '${field}' is configured with a type of '${fieldDef.type}'. Valid types include 'array', 'boolean', 'number', and 'string'.`);
       }
 
       Object.defineProperty(this.entityCtor.prototype, field, {
@@ -106,7 +106,7 @@ export default class Schema<TEntity extends Entity> {
       if (fieldType === 'array') {
         redisSchema.push('TAG');
         redisSchema.push('SEPARATOR');
-        redisSchema.push((fieldDef as StringField).separator ?? '|');
+        redisSchema.push((fieldDef as ArrayField).separator ?? '|');
       }
     }
 

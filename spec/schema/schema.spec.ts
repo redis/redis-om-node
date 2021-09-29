@@ -31,6 +31,30 @@ describe("Schema", () => {
     });
   });
 
+  describe("that is misconfigured", () => {
+
+    interface TestEntity {}
+    class TestEntity extends Entity {}
+
+    it("throws an exception when the type is missing on the field definition", () => {
+      expect(() => {
+        new Schema<TestEntity>(TestEntity, {
+          // @ts-ignore: JavaScript test
+          aField: {}
+        });
+      }).toThrow("The field 'aField' is configured with a type of 'undefined'. Valid types include 'array', 'boolean', 'number', and 'string'.");
+    });  
+
+    it("throws an exception when the type is invalid on the field definition", () => {
+      expect(() => {
+        new Schema<TestEntity>(TestEntity, {
+          // @ts-ignore: JavaScript test
+          aField: { type: 'foo' }
+        });
+      }).toThrow("The field 'aField' is configured with a type of 'foo'. Valid types include 'array', 'boolean', 'number', and 'string'.");
+    });
+  });
+
   describe("that overrides the keyspace prefix", () => {
 
     interface TestEntity {}

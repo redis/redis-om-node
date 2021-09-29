@@ -1,13 +1,13 @@
 import { RedisClientType } from 'redis/dist/lib/client';
 import { RedisModules } from 'redis/dist/lib/commands';
 import { RedisLuaScripts } from 'redis/dist/lib/lua-script';
+import { WatchError } from 'redis/dist/lib/errors';
 
 import Schema from "../schema/schema";
 import Client from "../client";
 import Entity from '../entity/entity';
 import Search from '../search/search';
 
-import { FieldDefinition, SchemaDefinition, StringField } from '../schema/schema-definitions';
 import { EntityId, EntityKey } from '../entity/entity-types';
 
 export default class Repository<TEntity extends Entity> {
@@ -39,22 +39,24 @@ export default class Repository<TEntity extends Entity> {
 
     let key: EntityKey = this.makeKey(entity.entityId);
 
-    // TODO: need to handle the WatchError
-    // TODO: looks like a bug in Node Redis as this doesn't exit
-
     if (Object.keys(entity.entityData).length === 0) {
       this.redis.unlink(key);
       return entity.entityId;
     }
-
-    await this.redis.executeIsolated(async isolatedClient => {
-      await isolatedClient.watch(key);
-      await isolatedClient
-        .multi()
-          .unlink(key)
-          .hSet(key, entity.entityData)
-        .exec();
-    });
+    
+    // TODO: looks like a bug in Node Redis as this doesn't exit
+    try {
+      await this.redis.executeIsolated(async isolatedClient => {
+        await isolatedClient.watch(key);
+        await isolatedClient
+          .multi()
+            .unlink(key)
+            .hSet(key, entity.entityData)
+          .exec();
+      });
+    } catch (error) {
+      if (error instanceof WatchError) throw new Error("This entity was changed by another client while saving. Save aborted.")
+    }
 
     return entity.entityId;
   }
