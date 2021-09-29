@@ -71,7 +71,7 @@ export default class Schema<TEntity extends Entity> {
   }
 
   get indexName(): EntityIndex {
-    return `${this.prefix}:index`;
+    return this.options?.indexName ?? `${this.prefix}:index`;
   }
 
   get redisSchema(): string[] {

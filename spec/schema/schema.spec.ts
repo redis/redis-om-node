@@ -21,6 +21,9 @@ describe("Schema", () => {
     it("generates the keyspace prefix from the entity constructor name",
       () => expect(schema.prefix).toBe("TestEntity"));
 
+    it("generates the index name from the entity constructor name",
+      () => expect(schema.indexName).toBe("TestEntity:index"));
+
     it("generates default Redis IDs", () => {
       let id = schema.generateId();
       expect(id).toHaveLength(22);
@@ -39,6 +42,22 @@ describe("Schema", () => {
     
     it("generates the keyspace prefix from the configuration",
       () => expect(schema.prefix).toBe("test-prefix"));
+
+    it("generates the index name from the configured prefix",
+      () => expect(schema.indexName).toBe("test-prefix:index"));
+  });
+
+  describe("that overrides the index name", () => {
+
+    interface TestEntity {}
+    class TestEntity extends Entity {}
+
+    let schema: Schema<TestEntity>;
+
+    beforeAll(() => schema = new Schema<TestEntity>(TestEntity, {}, { indexName: 'test-index' }));
+    
+    it("generates the index name from the configured prefix",
+      () => expect(schema.indexName).toBe("test-index"));
   });
 
   describe("that overrides the id generation strategy", () => {

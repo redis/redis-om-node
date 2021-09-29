@@ -165,7 +165,7 @@ describe("Schema", () => {
       entity = new TestEntity('foo', entityData)
     });
 
-    it("adds the getter and setter for the from the schema definition to the entity", () => {
+    it("adds the getter and setter for the field from the schema definition to the entity", () => {
       expect(entity).toHaveProperty('aField', data.expectedPropertyValue);
       entity.aField = data.providedAlternatePropertyValue;
       expect(entity.aField).toEqual(data.expectedAlternatePropertyValue);
