@@ -30,7 +30,7 @@ export default class Repository<TEntity extends Entity> {
     ]);
   }
 
-  create(): TEntity {
+  createEntity(): TEntity {
     let id: EntityId = this.schema.generateId();
     return new this.schema.entityCtor(id);
   }

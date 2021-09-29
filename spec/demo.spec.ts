@@ -53,7 +53,7 @@ describe("Demo", () => {
     await repository.createIndex();
 
     // create an entity
-    let entity = await repository.create();
+    let entity = await repository.createEntity();
     entity.id = '8086';
     entity.title = "Bigfoot by the Walmart";
     entity.classification = [ 'ClassA', 'ClassB' ];
