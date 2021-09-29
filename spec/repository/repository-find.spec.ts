@@ -27,6 +27,39 @@ describe("Repository", () => {
     await repository.createIndex();
   });
 
+  describe("created index", () => {
+
+    let result: any;
+
+    beforeEach(async () => result = await client.redis.sendCommand<any>(['FT.INFO', 'Bigfoot:index']));
+
+    it("has the expected name", () => {
+      let indexName = result[1];
+      expect(indexName).toBe('Bigfoot:index');
+    });
+
+    it("has the expected key type", () => {
+      let keyType = result[5][1];
+      expect(keyType).toBe('HASH');
+    });
+
+    it("has the expected prefixes", () => {
+      let prefixes = result[5][3];
+      expect(prefixes).toEqual([ 'Bigfoot:' ]);
+    });
+
+    it("has the expected fields", () => {
+      let fields = result[7];
+      expect(fields).toHaveLength(6);
+      expect(fields[0]).toEqual([ 'title', 'type', 'TEXT', 'WEIGHT', '1' ]);
+      expect(fields[1]).toEqual([ 'county', 'type', 'TAG', 'SEPARATOR', '|' ]);
+      expect(fields[2]).toEqual([ 'state', 'type', 'TAG', 'SEPARATOR', '|' ]);
+      expect(fields[3]).toEqual([ 'eyewitness', 'type', 'TAG', 'SEPARATOR', ',' ]);
+      expect(fields[4]).toEqual([ 'temperature', 'type', 'NUMERIC' ]);
+      expect(fields[5]).toEqual([ 'tags', 'type', 'TAG', 'SEPARATOR', '|' ]);
+    });
+  });
+
   describe("#find", () => {
     beforeEach(async () => {
       await addBigfootSighting(client, AN_ENTITY_KEY, A_BIGFOOT_SIGHTING);
