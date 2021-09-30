@@ -4,7 +4,6 @@ import WhereField from "./where-field";
 
 export default class WhereArray<TEntity extends Entity> extends WhereField<TEntity> {
   private value?: string[];
-  private all: boolean = false;
 
   contain(value: string): Search<TEntity> {
     this.value = [value];

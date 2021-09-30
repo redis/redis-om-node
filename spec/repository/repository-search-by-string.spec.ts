@@ -2,7 +2,8 @@ import Globals from '../helpers/globals';
 import { addBigfootSighting, createBigfootSchema, expectMatchesSighting, sortByEntityId, Bigfoot,
   A_BIGFOOT_SIGHTING, AN_ENTITY_ID, AN_ENTITY_KEY,
   ANOTHER_BIGFOOT_SIGHTING, ANOTHER_ENTITY_ID, ANOTHER_ENTITY_KEY,
-  A_THIRD_BIGFOOT_SIGHTING, A_THIRD_ENTITY_KEY } from '../helpers/bigfoot-data-helper';
+  A_THIRD_BIGFOOT_SIGHTING, A_THIRD_ENTITY_KEY,
+  AN_ESCAPED_BIGFOOT_SIGHTING, AN_ESCAPED_ENTITY_ID, AN_ESCAPED_ENTITY_KEY } from '../helpers/bigfoot-data-helper';
   
 import Client from '../../lib/client';
 import Schema from '../../lib/schema/schema';
@@ -61,6 +62,22 @@ describe("Repository", () => {
       it("returns all the entities that match the string", () => {
         expect(entities).toHaveLength(1);
         expectMatchesSighting(entities[0], ANOTHER_ENTITY_ID, ANOTHER_BIGFOOT_SIGHTING);
+      });
+    });
+
+    describe("finding all the entities that match a string with escaped punctuation", () => {
+      beforeEach(async () => {
+        await addBigfootSighting(client, AN_ESCAPED_ENTITY_KEY, AN_ESCAPED_BIGFOOT_SIGHTING);
+        entities = await repository.search()
+          .where('county').eq("Ash ,.<>{}[]\"':;!@#$%^&*()-+=~ land") // has TAG separator of |
+          .where('state').eq("K ,.<>{}[]\"':;!@#$%^*()-+=~| Y")       // has TAG separator of &
+          .run();
+        entities.sort(sortByEntityId);
+      });
+
+      it("returns the entity that matches the string", () => {
+        expect(entities).toHaveLength(1);
+        expectMatchesSighting(entities[0], AN_ESCAPED_ENTITY_ID, AN_ESCAPED_BIGFOOT_SIGHTING);
       });
     });
   });
