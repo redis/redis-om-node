@@ -28,6 +28,35 @@ export function createBigfootSchema(): Schema<Bigfoot> {
       temperature: { type: 'number' },
       tags: { type: 'array' },
       moreTags: { type: 'array', separator: '&' }
+    }, {
+      dataStructure: 'HASH'
+    });
+  }
+  
+export interface BigfootJson {
+  title?: string | null;
+  county?: string | null;
+  state?: string | null;
+  eyewitness?: boolean | null;
+  temperature?: number | null;
+  tags?: string[] | null;
+  moreTags?: string[] | null;
+}
+
+export class BigfootJson extends Entity {}
+
+export function createBigfootJsonSchema(): Schema<Bigfoot> {
+  return new Schema<BigfootJson>(
+    BigfootJson, {
+      title: { path: '$.title', type: 'string', textSearch: true },
+      county: { path: '$.county', type: 'string' },
+      state: { path: '$.state', type: 'string', separator: '&' },
+      eyewitness: { path: '$.eyewitness', type: 'boolean' },
+      temperature: { path: '$.temperature', type: 'number' },
+      tags: { path: '$.tags', type: 'array' },
+      moreTags: { path: '$.moreTags', type: 'array', separator: '&' }
+    }, {
+      dataStructure: 'JSON'
     });
 }
 

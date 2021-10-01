@@ -24,7 +24,7 @@ export default class Repository<TEntity extends Entity> {
   async createIndex(): Promise<void> {
     await this.redis.sendCommand([
       'FT.CREATE', this.schema.indexName, 
-        'ON', 'HASH',
+        'ON', this.schema.dataStructure,
         'PREFIX', '1', `${this.schema.prefix}:`,
         'SCHEMA', ...this.schema.redisSchema
     ]);
