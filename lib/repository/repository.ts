@@ -1,7 +1,6 @@
-import { RedisClientType } from 'redis/dist/lib/client';
-import { RedisModules } from 'redis/dist/lib/commands';
-import { RedisLuaScripts } from 'redis/dist/lib/lua-script';
 import { WatchError } from 'redis/dist/lib/errors';
+
+import RedisShim from '../redis/redis-shim';
 
 import Schema from "../schema/schema";
 import Client from "../client";
@@ -13,7 +12,7 @@ import { EntityId, EntityKey } from '../entity/entity-types';
 export default class Repository<TEntity extends Entity> {
   private schema: Schema<TEntity>;
   private client: Client;
-  private redis: RedisClientType<RedisModules, RedisLuaScripts>;
+  private redis: RedisShim;
 
   constructor(schema: Schema<TEntity>, client: Client) {
     this.schema = schema;
@@ -22,12 +21,11 @@ export default class Repository<TEntity extends Entity> {
   }
 
   async createIndex(): Promise<void> {
-    await this.redis.sendCommand([
-      'FT.CREATE', this.schema.indexName, 
-        'ON', this.schema.dataStructure,
-        'PREFIX', '1', `${this.schema.prefix}:`,
-        'SCHEMA', ...this.schema.redisSchema
-    ]);
+    await this.redis.createIndex(
+      this.schema.indexName,
+      this.schema.dataStructure,
+      this.schema.prefix,
+      this.schema.redisSchema);
   }
 
   createEntity(): TEntity {
@@ -40,30 +38,17 @@ export default class Repository<TEntity extends Entity> {
     let key: EntityKey = this.makeKey(entity.entityId);
 
     if (Object.keys(entity.entityData).length === 0) {
-      this.redis.unlink(key);
+      await this.redis.unlink(key);
       return entity.entityId;
     }
-    
-    // TODO: looks like a bug in Node Redis as this doesn't exit
-    try {
-      await this.redis.executeIsolated(async isolatedClient => {
-        await isolatedClient.watch(key);
-        await isolatedClient
-          .multi()
-            .unlink(key)
-            .hSet(key, entity.entityData)
-          .exec();
-      });
-    } catch (error) {
-      if (error instanceof WatchError) throw new Error("This entity was changed by another client while saving. Save aborted.")
-    }
 
+    await this.redis.hsetall(key, entity.entityData);
     return entity.entityId;
   }
 
   async fetch(id: EntityId): Promise<TEntity> {
     let key = this.makeKey(id);
-    let data = await this.redis.hGetAll(key);
+    let data = await this.redis.hgetall(key);
     let entity = new this.schema.entityCtor(id, data);
     return entity;
   }

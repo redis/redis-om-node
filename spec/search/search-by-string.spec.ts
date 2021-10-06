@@ -1,12 +1,8 @@
-import Globals from '../helpers/globals';
-
 import Client from "../../lib/client";
 import Entity from "../../lib/entity/entity";
 import Schema from "../../lib/schema/schema";
 import Search from "../../lib/search/search";
 import WhereField from '../../lib/search/where-field';
-
-const globals: Globals = (globalThis as unknown) as Globals;
 
 interface TestEntity {
   aString: string;
@@ -19,7 +15,7 @@ describe("Search", () => {
   let schema: Schema<TestEntity>;
 
   beforeAll(() => {
-    client = globals.client;
+    client = new Client();
     schema = new Schema<TestEntity>(
       TestEntity, {
         aString: { type: 'string' }

@@ -1,22 +1,29 @@
 module.exports = {
+
   roots: [
     "<rootDir>/lib/",
     "<rootDir>/spec/"
   ],
-  testMatch: [
-    "**/*.spec.ts"
-  ],
-  transform: {
-    "^.+\\.ts$": "ts-jest"
-  },
-  setupFilesAfterEnv: [
-    '<rootDir>/spec/helpers/spec-helper.ts'
-  ],
-  collectCoverage: false,
+
+  clearMocks: true,
+  
+  collectCoverage: true,
+  coverageDirectory: "coverage",
+
   globals: {
     "ts-jest": {
       tsconfig: "tsconfig.json",
+      diagnostics: true
     },
   },
+
+  testMatch: [
+    "**/*.spec.ts"
+  ],
+
+  transform: {
+    "^.+\\.ts$": "ts-jest"
+  },
+
   detectOpenHandles: true
 }

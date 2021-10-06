@@ -1,12 +1,8 @@
-import Globals from '../helpers/globals';
-
 import Client from "../../lib/client";
 import Entity from "../../lib/entity/entity";
 import Schema from "../../lib/schema/schema";
 import Search from "../../lib/search/search";
 import WhereField from '../../lib/search/where-field';
-
-const globals: Globals = (globalThis as unknown) as Globals;
 
 interface TestEntity {
   aNumber: number;
@@ -18,8 +14,8 @@ describe("Search", () => {
   let client: Client;
   let schema: Schema<TestEntity>;
 
-  beforeAll(() => {
-    client = globals.client;
+  beforeAll(async () => {
+    client = new Client();
     schema = new Schema<TestEntity>(
       TestEntity, {
         aNumber: { type: 'number' }

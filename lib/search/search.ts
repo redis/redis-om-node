@@ -1,6 +1,4 @@
-import { RedisClientType } from 'redis/dist/lib/client';
-import { RedisModules } from 'redis/dist/lib/commands';
-import { RedisLuaScripts } from 'redis/dist/lib/lua-script';
+import RedisShim from '../redis/redis-shim';
 
 import Schema from "../schema/schema";
 import Client from "../client";
@@ -24,7 +22,7 @@ type AndOrConstructor = new (left: Where, right: Where) => Where;
 export default class Search<TEntity extends Entity> {
   private schema: Schema<TEntity>;
   private client: Client;
-  private redis: RedisClientType<RedisModules, RedisLuaScripts>;
+  private redis: RedisShim;
 
   private rootWhere?: Where;
 
@@ -60,7 +58,7 @@ export default class Search<TEntity extends Entity> {
   async run(): Promise<TEntity[]> {
 
     let command: string[] = ['FT.SEARCH', this.schema.indexName, this.query];
-    let results = await this.redis.sendCommand<any[]>(command);
+    let results = await this.redis.execute<any[]>(command);
 
     let count = this.extractCount(results);
     let ids = this.extractIds(results);

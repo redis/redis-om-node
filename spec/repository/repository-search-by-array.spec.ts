@@ -1,4 +1,3 @@
-import Globals from '../helpers/globals';
 import { addBigfootSighting, createBigfootSchema, expectMatchesSighting, sortByEntityId, Bigfoot,
   A_BIGFOOT_SIGHTING, AN_ENTITY_ID, AN_ENTITY_KEY,
   ANOTHER_BIGFOOT_SIGHTING, ANOTHER_ENTITY_ID, ANOTHER_ENTITY_KEY,
@@ -9,8 +8,6 @@ import Client from '../../lib/client';
 import Schema from '../../lib/schema/schema';
 import Repository from '../../lib/repository/repository';
 
-const globals: Globals = (globalThis as unknown) as Globals;
-
 describe("Repository", () => {
 
   let client: Client;
@@ -18,15 +15,19 @@ describe("Repository", () => {
   let schema: Schema<Bigfoot>;
   let entities: Bigfoot[];
 
-  beforeAll(() => {
-    client = globals.client;
+  beforeAll(async () => {
+    client = new Client();
+    await client.open();
     schema = createBigfootSchema();
   });
 
   beforeEach(async () => {
+    await client.execute(['FLUSHALL']);
     repository = client.fetchRepository<Bigfoot>(schema);
     await repository.createIndex();
   });
+
+  afterAll(async () => await client.close());
 
   describe("#search", () => {
     beforeEach(async () => {

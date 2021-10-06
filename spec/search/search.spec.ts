@@ -1,11 +1,12 @@
-import Globals from '../helpers/globals';
+import { mocked } from 'ts-jest/utils';
 
 import Client from "../../lib/client";
 import Entity from "../../lib/entity/entity";
 import Schema from "../../lib/schema/schema";
 import Search from "../../lib/search/search";
 
-const globals: Globals = (globalThis as unknown) as Globals;
+jest.mock('../../lib/client');
+
 
 interface TestEntity {
   aString: string;
@@ -21,15 +22,15 @@ describe("Search", () => {
   let schema: Schema<TestEntity>;
   let search: Search<TestEntity>;
 
-  beforeAll(() => {
-    client = globals.client;
+  beforeAll(async () => {
+    client = new Client();
     schema = new Schema<TestEntity>(
       TestEntity, {
         aString: { type: 'string' },
         aNumber: { type: 'number' },
         aBoolean: { type: 'boolean' }
       });
-  })
+  });
 
   describe("#query", () => {
     beforeEach(() => {

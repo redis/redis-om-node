@@ -1,11 +1,8 @@
-import Globals from '../helpers/globals';
 import { createBigfootSchema, createBigfootJsonSchema, Bigfoot, BigfootJson } from '../helpers/bigfoot-data-helper';
   
 import Client from '../../lib/client';
 import Schema from '../../lib/schema/schema';
 import Repository from '../../lib/repository/repository';
-
-const globals: Globals = (globalThis as unknown) as Globals;
 
 describe("Repository", () => {
 
@@ -18,16 +15,20 @@ describe("Repository", () => {
       let schema: Schema<Bigfoot>;
       let result: string[];
 
-      beforeAll(() => {
-        client = globals.client;
+      beforeAll(async () => {
+        client = new Client();
+        await client.open();
         schema = createBigfootSchema();
       });
     
       beforeEach(async () => {
+        await client.execute(['FLUSHALL']);
         repository = client.fetchRepository<Bigfoot>(schema);
         await repository.createIndex();
-        result = await client.redis.sendCommand<string[]>(['FT.INFO', 'Bigfoot:index']);
+        result = await client.redis.execute<string[]>(['FT.INFO', 'Bigfoot:index']);
       });
+
+      afterAll(async () => await client.close());
   
       it("has the expected name", () => {
         let indexName = result[1];
@@ -62,16 +63,20 @@ describe("Repository", () => {
       let schema: Schema<BigfootJson>;
       let result: string[];
 
-      beforeAll(() => {
-        client = globals.client;
+      beforeAll(async () => {
+        client = new Client();
+        await client.open();
         schema = createBigfootJsonSchema();
       });
     
       beforeEach(async () => {
+        await client.execute(['FLUSHALL']);
         repository = client.fetchRepository<BigfootJson>(schema);
         await repository.createIndex();
-        result = await client.redis.sendCommand<string[]>(['FT.INFO', 'BigfootJson:index']);
+        result = await client.redis.execute<string[]>(['FT.INFO', 'BigfootJson:index']);
       });
+  
+      afterAll(async () => await client.close());
   
       it("has the expected name", () => {
         let indexName = result[1];

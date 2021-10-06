@@ -1,4 +1,3 @@
-import Globals from '../helpers/globals';
 import { fetchHashKeys, fetchHashFields, keyExists } from '../helpers/redis-helper';
 import { addBigfootSighting, Bigfoot, createBigfootSchema,
   A_BIGFOOT_SIGHTING, AN_ENTITY_ID, AN_ENTITY_KEY, ANOTHER_BIGFOOT_SIGHTING} from '../helpers/bigfoot-data-helper';
@@ -9,8 +8,6 @@ import Repository from '../../lib/repository/repository';
 
 import { EntityId } from '../../lib/entity/entity-types';
 
-const globals: Globals = (globalThis as unknown) as Globals;
-
 describe("Repository", () => {
 
   let client: Client;
@@ -18,14 +15,19 @@ describe("Repository", () => {
   let schema: Schema<Bigfoot>;
   let entity: Bigfoot;
 
-  beforeAll(() => {
-    client = globals.client;
+  beforeAll(async () => {
+    client = new Client();
+    await client.open();
     schema = createBigfootSchema();
   });
 
   beforeEach(async () => {
+    await client.execute(['FLUSHALL']);
     repository = client.fetchRepository<Bigfoot>(schema);
+    await repository.createIndex();
   });
+
+  afterAll(async () => await client.close());
 
   describe("#save", () => {
 
