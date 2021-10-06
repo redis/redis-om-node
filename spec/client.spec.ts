@@ -2,89 +2,325 @@ import { mocked } from 'ts-jest/utils';
 
 import RedisShim from '../lib/redis/redis-shim';
 import Client from '../lib/client';
+import Repository from '../lib/repository/repository';
+import Entity from '../lib/entity/entity';
+import Schema from '../lib/schema/schema';
 
 jest.mock('../lib/redis/redis-shim');
+jest.mock('../lib/repository/repository');
 
 
-beforeEach(() => mocked(RedisShim).mockClear());
+beforeEach(() => mocked(RedisShim).mockReset());
 
 describe("Client", () => {
 
   let client: Client;
 
-  describe("when created", () => {
-    beforeEach(async () => client = new Client());
+  beforeEach(async () => client = new Client());
 
-    it("constructs a new RedisShim", () => {
-      expect(RedisShim).toHaveBeenCalled();
-    });
-
-    describe("and opened with no URL specified", () => {
+  describe("#open", () => {
+    describe("when called without a url", () => {
       beforeEach(async () => await client.open());
 
-      it("opens the shim with the default url", () => {
-        expect(RedisShim.prototype.open).toHaveBeenCalledWith('redis://localhost:6379');
-      });
-
-      describe("and closed", () => {
-        beforeEach(async () => await client.close());
-        it("closes the shim", () => {
-          expect(RedisShim.prototype.close).toHaveBeenCalled();
-        }); 
-      });
+      it("constructs a new RedisShim", () => expect(RedisShim).toHaveBeenCalled());
+      it("opens the shim with the default url", async () =>
+        expect(RedisShim.prototype.open).toHaveBeenCalledWith('redis://localhost:6379'));
     });
 
-    describe("and opened with a URL", () => {
-      beforeEach(async () => await client.open('redis://foo.bar:1234'));
+    describe("when called with a url", () => {
+      beforeEach(async () => await client.open('foo'));
 
-      it("opens the shim with the default url", () => {
-        expect(RedisShim.prototype.open).toHaveBeenCalledWith('redis://foo.bar:1234');
-      });
+      it("constructs a new RedisShim", () => expect(RedisShim).toHaveBeenCalled());
+      it("opens the shim with the default url", async () =>
+        expect(RedisShim.prototype.open).toHaveBeenCalledWith('foo'));
+    });
+
+    describe("when called on an already open client", () => {
+      beforeEach(async () => await client.open('foo'));
+
+      it("errors when called on an open client", async () =>
+        expect(async () => await client.open())
+          .rejects.toThrow("Redis connection is already open."));
     });
   });
 
-    //   describe("#execute", () => {
+  describe("#close", () => {
+    describe("when called on an open client", () => {
+      beforeEach(async () => {
+        await client.open();
+        await client.close();
+      });
+      
+      it("closes the shim", () => expect(RedisShim.prototype.close).toHaveBeenCalled());
+    });
 
-    //     it('executes a Redis command that returns null', async () => {
-    //       let result = client.execute<string|null>(['GET', 'foo']);
-    //       return expect(result).resolves.toBeNull();
-    //     });
+    describe("when called on an already closed client", () => {
+      beforeEach(async () => {
+        await client.open();
+        await client.close();
+      });
+      
+      it("errors when called on a closed client", () => 
+        expect(async () => await client.close())
+          .rejects.toThrow("Redis connection needs opened."));
+    });
     
-    //     it('executes a Redis command that returns OK', async () => {
-    //       let result = client.execute<string|null>(['SET', 'foo', 'bar']);
-    //       return expect(result).resolves.toBe('OK');
-    //     });
+    it("errors when called on a new client", async () =>
+      expect(async () => await client.close())
+        .rejects.toThrow("Redis connection needs opened."));
+  });
+  
+  describe("#execute", () => {
+    describe("when called on an open client", () => {
+      beforeEach(async () => {
+        await client.open();
+      });
+
+      it("passes the command to the shim", async () => {
+        await client.execute([ 'foo', 'bar', 'baz' ]);
+        expect(RedisShim.prototype.execute).toHaveBeenCalledWith([ 'foo', 'bar', 'baz' ]);
+      });
+
+      it("transforms numbers to strings before giving them to the shim", async () => {
+        await client.execute([ 1, 2, 3 ]);
+        expect(RedisShim.prototype.execute).toHaveBeenCalledWith([ '1', '2', '3' ]);
+      });
+
+      it("transforms booleans to strings before giving them to the shim", async () => {
+        await client.execute([ true, false, true ]);
+        expect(RedisShim.prototype.execute).toHaveBeenCalledWith([ '1', '0', '1' ]);
+      });
+    });
+
+    describe("when called on a closed client", () => {
+      beforeEach(async () => {
+        await client.open();
+        await client.close();
+      });
+      
+      it("errors when called on a closed client", () => 
+      expect(async () => await client.execute([ 'foo', 'bar', 'baz' ]))
+        .rejects.toThrow("Redis connection needs opened."));
+    });
     
-    //     it('executes a Redis command that returns a string', async () => {
-    //       await client.execute(['SET', 'foo', 'bar']);
-    //       let result = client.execute<string|null>(['GET', 'foo'])
-    //       return expect(result).resolves.toBe('bar');
-    //     });
+    it("errors when called on a new client", async () =>
+      expect(async () => await client.execute([ 'foo', 'bar', 'baz' ]))
+        .rejects.toThrow("Redis connection needs opened."));
+  });
+
+  describe("#unlink", () => {
+    describe("when called on an open client", () => {
+      beforeEach(async () => {
+        await client.open();
+      });
+
+      it("passes the command to the shim", async () => {
+        await client.unlink('foo');
+        expect(RedisShim.prototype.unlink).toHaveBeenCalledWith('foo');
+      });
+    });
+
+    describe("when called on a closed client", () => {
+      beforeEach(async () => {
+        await client.open();
+        await client.close();
+      });
+      
+      it("errors when called on a closed client", () => 
+      expect(async () => await client.unlink('foo'))
+        .rejects.toThrow("Redis connection needs opened."));
+    });
     
-    //     it('executes a Redis command that returns an array with nulls', async () => {
-    //       await client.execute(['SET', 'a', '1']);
-    //       await client.execute(['SET', 'b', '2']);
-    //       let result = client.execute<(string)[]>(['MGET', 'a', 'b', 'c'])
-    //       return expect(result).resolves.toEqual(['1', '2', null]);
-    //     });
+    it("errors when called on a new client", async () =>
+      expect(async () => await client.unlink('foo'))
+        .rejects.toThrow("Redis connection needs opened."));
+  });
+
+  describe("#hgetall", () => {
+    describe("when called on an open client", () => {
+      beforeEach(async () => {
+        await client.open();
+      });
+
+      it("passes the command to the shim", async () => {
+        await client.hgetall('foo');
+        expect(RedisShim.prototype.hgetall).toHaveBeenCalledWith('foo');
+      });
+    });
+
+    describe("when called on a closed client", () => {
+      beforeEach(async () => {
+        await client.open();
+        await client.close();
+      });
+      
+      it("errors when called on a closed client", () => 
+        expect(async () => await client.hgetall('foo'))
+          .rejects.toThrow("Redis connection needs opened."));
+    });
     
-    //     it('executes a Redis command that returns complex data', async () => {
-    //       await client.execute([
-    //         'GEOADD', 'foo',
-    //           13.361389, 38.115556, 'Palermo',
-    //           15.087269, 37.502669, 'Catania']);
+    it("errors when called on a new client", async () =>
+      expect(async () => await client.hgetall('foo'))
+        .rejects.toThrow("Redis connection needs opened."));
+  });
+
+  describe("#hsetall", () => {
+    describe("when called on an open client", () => {
+      beforeEach(async () => {
+        await client.open();
+      });
+
+      it("passes the command to the shim", async () => {
+        await client.hsetall('foo', { foo: 'bar', baz: 'qux' });
+        expect(RedisShim.prototype.hsetall).toHaveBeenCalledWith('foo', { foo: 'bar', baz: 'qux' });
+      });
+    });
+
+    describe("when called on a closed client", () => {
+      beforeEach(async () => {
+        await client.open();
+        await client.close();
+      });
+      
+      it("errors when called on a closed client", () => 
+      expect(async () => await client.hsetall('foo', { foo: 'bar', baz: 'qux' }))
+        .rejects.toThrow("Redis connection needs opened."));
+    });
     
-    //       let result = client.execute<string[][]>([
-    //         'GEOPOS', 'foo',
-    //           'Palermo', 'Catania', 'Columbus'])
+    it("errors when called on a new client", async () =>
+      expect(async () => await client.hsetall('foo', { foo: 'bar', baz: 'qux' }))
+        .rejects.toThrow("Redis connection needs opened."));
+  });
+
+  describe("#createIndex", () => {
+    describe("when called on an open client", () => {
+      beforeEach(async () => {
+        await client.open();
+      });
+
+      it("passes the command to the shim", async () => {
+        await client.createIndex('index', 'HASH', 'prefix', [ 'foo', 'bar', 'baz' ]);
+        expect(RedisShim.prototype.execute).toHaveBeenCalledWith([
+          'FT.CREATE', 'index',
+            'ON', 'HASH',
+            'PREFIX', '1', 'prefix',
+            'SCHEMA', 'foo', 'bar', 'baz'
+        ]);
+      });
+    });
+
+    describe("when called on a closed client", () => {
+      beforeEach(async () => {
+        await client.open();
+        await client.close();
+      });
+      
+      it("errors when called on a closed client", () => 
+        expect(async () => await client.createIndex('index', 'HASH', 'prefix', [ 'foo', 'bar', 'baz' ]))
+          .rejects.toThrow("Redis connection needs opened."));
+    });
     
-    //       return expect(result).resolves.toEqual([
-    //         ["13.36138933897018433", "38.11555639549629859"],
-    //         ["15.08726745843887329", "37.50266842333162032"],
-    //         null
-    //       ]);
-    //     });
-    //   });
-    // });
-  // });
+    it("errors when called on a new client", async () =>
+      expect(async () => await client.createIndex('index', 'HASH', 'prefix', [ 'foo', 'bar', 'baz' ]))
+        .rejects.toThrow("Redis connection needs opened."));
+  });
+
+  describe("#dropIndex", () => {
+    describe("when called on an open client", () => {
+      beforeEach(async () => {
+        await client.open();
+      });
+
+      it("passes the command to the shim", async () => {
+        await client.dropIndex('index');
+        expect(RedisShim.prototype.execute).toHaveBeenCalledWith([ 'FT.DROPINDEX', 'index' ]);
+      });
+    });
+
+    describe("when called on a closed client", () => {
+      beforeEach(async () => {
+        await client.open();
+        await client.close();
+      });
+      
+      it("errors when called on a closed client", () => 
+        expect(async () => await client.dropIndex('index'))
+          .rejects.toThrow("Redis connection needs opened."));
+    });
+    
+    it("errors when called on a new client", async () =>
+      expect(async () => await client.dropIndex('index'))
+        .rejects.toThrow("Redis connection needs opened."));
+  });
+
+  describe("#search", () => {
+    describe("when called on an open client", () => {
+      beforeEach(async () => {
+        await client.open();
+      });
+
+      it("passes the command to the shim", async () => {
+        await client.search('index', 'query');
+        expect(RedisShim.prototype.execute).toHaveBeenCalledWith([ 'FT.SEARCH', 'index', 'query' ]);
+      });
+    });
+
+    describe("when called on a closed client", () => {
+      beforeEach(async () => {
+        await client.open();
+        await client.close();
+      });
+      
+      it("errors when called on a closed client", () => 
+        expect(async () => await client.search('index', 'query'))
+          .rejects.toThrow("Redis connection needs opened."));
+    });
+    
+    it("errors when called on a new client", async () =>
+      expect(async () => await client.search('index', 'query'))
+        .rejects.toThrow("Redis connection needs opened."));
+  });
+
+  describe("#fetchRepository", () => {
+
+    class TestEntity extends Entity {};
+
+    let repository: Repository<TestEntity>;
+    let schema: Schema<TestEntity>;
+
+    beforeAll(() => {
+      schema = new Schema(TestEntity, {});
+    });
+
+    describe("when called on an open client", () => {
+
+      beforeEach(async () => {
+        await client.open();
+        repository = await client.fetchRepository(schema);
+      });
+      
+      it("creates a repository with the schema and client", async () => {
+        expect(Repository).toHaveBeenCalledWith(schema, client);
+      });
+
+      it("returns a repository", async () => {
+        expect(repository).toBeInstanceOf(Repository);
+      });
+    });
+
+    describe("when called on a closed client", () => {
+      beforeEach(async () => {
+        await client.open();
+        await client.close();
+      });
+      
+      it("errors when called on a closed client", () => 
+        expect(async () => await client.fetchRepository(schema))
+          .rejects.toThrow("Redis connection needs opened."));
+    });
+    
+    it("errors when called on a new client", async () =>
+      expect(async () => await client.fetchRepository(schema))
+        .rejects.toThrow("Redis connection needs opened."));
+  });
 });

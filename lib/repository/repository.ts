@@ -1,7 +1,3 @@
-import { WatchError } from 'redis/dist/lib/errors';
-
-import RedisShim from '../redis/redis-shim';
-
 import Schema from "../schema/schema";
 import Client from "../client";
 import Entity from '../entity/entity';
@@ -12,19 +8,17 @@ import { EntityId, EntityKey } from '../entity/entity-types';
 export default class Repository<TEntity extends Entity> {
   private schema: Schema<TEntity>;
   private client: Client;
-  private redis: RedisShim;
 
   constructor(schema: Schema<TEntity>, client: Client) {
     this.schema = schema;
     this.client = client;
-    this.redis = client.redis;
   }
 
   async createIndex(): Promise<void> {
-    await this.redis.createIndex(
+    await this.client.createIndex(
       this.schema.indexName,
       this.schema.dataStructure,
-      this.schema.prefix,
+      `${this.schema.prefix}:`,
       this.schema.redisSchema);
   }
 
@@ -38,24 +32,24 @@ export default class Repository<TEntity extends Entity> {
     let key: EntityKey = this.makeKey(entity.entityId);
 
     if (Object.keys(entity.entityData).length === 0) {
-      await this.redis.unlink(key);
+      await this.client.unlink(key);
       return entity.entityId;
     }
 
-    await this.redis.hsetall(key, entity.entityData);
+    await this.client.hsetall(key, entity.entityData);
     return entity.entityId;
   }
 
   async fetch(id: EntityId): Promise<TEntity> {
     let key = this.makeKey(id);
-    let data = await this.redis.hgetall(key);
+    let data = await this.client.hgetall(key);
     let entity = new this.schema.entityCtor(id, data);
     return entity;
   }
 
   async remove(id: EntityId): Promise<void> {
     let key = this.makeKey(id);
-    await this.redis.unlink(key);
+    await this.client.unlink(key);
   }
 
   search(): Search<TEntity> {

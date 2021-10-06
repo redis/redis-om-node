@@ -1,5 +1,3 @@
-import RedisShim from '../redis/redis-shim';
-
 import Schema from "../schema/schema";
 import Client from "../client";
 import Entity from '../entity/entity';
@@ -22,14 +20,12 @@ type AndOrConstructor = new (left: Where, right: Where) => Where;
 export default class Search<TEntity extends Entity> {
   private schema: Schema<TEntity>;
   private client: Client;
-  private redis: RedisShim;
 
   private rootWhere?: Where;
 
   constructor(schema: Schema<TEntity>, client: Client) {
     this.schema = schema;
     this.client = client;
-    this.redis = client.redis;
   }
 
   where(field: string): WhereField<TEntity>;
@@ -57,8 +53,7 @@ export default class Search<TEntity extends Entity> {
 
   async run(): Promise<TEntity[]> {
 
-    let command: string[] = ['FT.SEARCH', this.schema.indexName, this.query];
-    let results = await this.redis.execute<any[]>(command);
+    let results = await this.client.search(this.schema.indexName, this.query);
 
     let count = this.extractCount(results);
     let ids = this.extractIds(results);

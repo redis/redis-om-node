@@ -25,7 +25,7 @@ describe("Repository", () => {
         await client.execute(['FLUSHALL']);
         repository = client.fetchRepository<Bigfoot>(schema);
         await repository.createIndex();
-        result = await client.redis.execute<string[]>(['FT.INFO', 'Bigfoot:index']);
+        result = await client.execute<string[]>(['FT.INFO', 'Bigfoot:index']);
       });
 
       afterAll(async () => await client.close());
@@ -73,7 +73,7 @@ describe("Repository", () => {
         await client.execute(['FLUSHALL']);
         repository = client.fetchRepository<BigfootJson>(schema);
         await repository.createIndex();
-        result = await client.redis.execute<string[]>(['FT.INFO', 'BigfootJson:index']);
+        result = await client.execute<string[]>(['FT.INFO', 'BigfootJson:index']);
       });
   
       afterAll(async () => await client.close());
