@@ -1,8 +1,13 @@
+import { mocked } from 'ts-jest/utils';
+
 import Client from "../../lib/client";
 import Entity from "../../lib/entity/entity";
 import Schema from "../../lib/schema/schema";
 import Search from "../../lib/search/search";
 import WhereField from '../../lib/search/where-field';
+
+jest.mock('../../lib/client');
+
 
 interface TestEntity {
   aNumber: number;
@@ -10,9 +15,13 @@ interface TestEntity {
 
 class TestEntity extends Entity {}
 
+beforeEach(() => mocked(Client).mockReset());
+
 describe("Search", () => {
   let client: Client;
   let schema: Schema<TestEntity>;
+  let search: Search<TestEntity>;
+  let where: WhereField<TestEntity>;
 
   beforeAll(async () => {
     client = new Client();
@@ -22,10 +31,12 @@ describe("Search", () => {
       });
   });
 
-  describe("#query", () => {
-    let search: Search<TestEntity>;
-    let where: WhereField<TestEntity>;
+  beforeEach(() => {
+    search = new Search<TestEntity>(schema, client);
+    where = search.where('aNumber');
+  });
 
+  describe("#query", () => {
     const AN_EQUAL_QUERY = "(@aNumber:[42 42])";
     const A_NEGATED_EQUAL_QUERY = "(-@aNumber:[42 42])";
     const A_GT_QUERY = "(@aNumber:[(42 +inf])";
@@ -38,11 +49,6 @@ describe("Search", () => {
     const A_NEGATED_LTE_QUERY = "(-@aNumber:[-inf 42])";
     const A_BETWEEN_QUERY = "(@aNumber:[23 42])";
     const A_NEGATED_BETWEEN_QUERY = "(-@aNumber:[23 42])";
-
-    beforeEach(() => {
-      search = new Search<TestEntity>(schema, client);
-      where = search.where('aNumber');
-    });
 
     describe("when generating a query with a number", () => {
 

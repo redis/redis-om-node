@@ -1,64 +1,79 @@
-import { addBigfootSighting, Bigfoot, createBigfootSchema, expectMatchesSighting,
-  A_BIGFOOT_SIGHTING, AN_ENTITY_ID, AN_ENTITY_KEY,
-  A_PARTIAL_BIGFOOT_SIGHTING, A_PARTIAL_ENTITY_ID, A_PARTIAL_ENTITY_KEY,
-  AN_EMPTY_BIGFOOT_SIGHTING, AN_EMPTY_ENTITY_ID } from '../helpers/bigfoot-data-helper';
-  
+import { mocked } from 'ts-jest/utils';
+
 import Client from '../../lib/client';
-import Schema from '../../lib/schema/schema'
 import Repository from '../../lib/repository/repository';
+import { EntityId } from '../../lib/entity/entity-types';
+
+import TestEntity from '../helpers/test-entity';
+import { testSchema } from '../helpers/test-schema';
+
+jest.mock('../../lib/client');
+
+
+beforeEach(() => mocked(Client).mockReset());
 
 describe("Repository", () => {
 
   let client: Client;
-  let repository: Repository<Bigfoot>;
-  let schema: Schema<Bigfoot>;
-  let entity: Bigfoot;
-
-  beforeAll(async () => {
-    client = new Client();
-    await client.open();
-    schema = createBigfootSchema();
-  });
-
-  beforeEach(async () => {
-    await client.execute(['FLUSHALL']);
-    repository = client.fetchRepository<Bigfoot>(schema);
-    await repository.createIndex();
-  });
-
-  afterAll(async () => await client.close());
+  let repository: Repository<TestEntity>;
+  let entity: TestEntity;
+  let entityId: EntityId;
 
   describe("#fetch", () => {
-    describe("when fetching a fully populated entity from Redis", () => {
-      beforeEach(async () => {
-        await addBigfootSighting(client, AN_ENTITY_KEY, A_BIGFOOT_SIGHTING);
-        entity = await repository.fetch(AN_ENTITY_ID);
-      });
 
-      it("returns the expected entity", () => {
-        expectMatchesSighting(entity, AN_ENTITY_ID, A_BIGFOOT_SIGHTING);
-      });
+    beforeAll(() => client = new Client());
+
+    beforeEach(async () => {
+      repository = new Repository(testSchema, client);
+      entityId = 'foo';
     });
 
-    describe("when fetching a partially populated entity from Redis", () => {
+    describe("when fetching a fully populated entity", () => {
       beforeEach(async () => {
-        await addBigfootSighting(client, A_PARTIAL_ENTITY_KEY, A_PARTIAL_BIGFOOT_SIGHTING);
-        entity = await repository.fetch(A_PARTIAL_ENTITY_ID);
+        mocked(Client.prototype.hgetall).mockResolvedValue({
+          aString: 'foo', aNumber: '42', aBoolean: '0', anArray: 'bar|baz|qux'
+        })
+        entity = await repository.fetch(entityId);
       });
 
-      it("returns the expected entity", () => {
-        expectMatchesSighting(entity, A_PARTIAL_ENTITY_ID, A_PARTIAL_BIGFOOT_SIGHTING);
+      it("returns and entity with the expected id", () => expect(entity.entityId).toBe(entityId));
+      it("returns and entity with the expected properties", () => {
+        expect(entity.aString).toBe('foo');
+        expect(entity.aNumber).toBe(42);
+        expect(entity.aBoolean).toBe(false);
+        expect(entity.anArray).toEqual([ 'bar', 'baz', 'qux' ]);
       });
     });
-
-    describe("when fetching an unpopulated entity from Redis", () => {
+  
+    describe("when fetching a partialy populated entity", () => {
       beforeEach(async () => {
-        entity = await repository.fetch(AN_EMPTY_ENTITY_ID);
+        mocked(Client.prototype.hgetall).mockResolvedValue({
+          aString: 'foo', aNumber: '42'
+        })
+        entity = await repository.fetch(entityId);
       });
 
-      it("returns the expected entity", () => {
-        expect(entity.entityId).toBe(AN_EMPTY_ENTITY_ID);
-        expectMatchesSighting(entity, AN_EMPTY_ENTITY_ID, AN_EMPTY_BIGFOOT_SIGHTING);
+      it("returns and entity with the expected id", () => expect(entity.entityId).toBe(entityId));
+      it("returns and entity with some of the properties set to null", () => {
+        expect(entity.aString).toBe('foo');
+        expect(entity.aNumber).toBe(42);
+        expect(entity.aBoolean).toBeNull();
+        expect(entity.anArray).toBeNull();
+      });
+    });
+  
+    describe("when fetching an unpopulated entity", () => {
+      beforeEach(async () => {
+        mocked(Client.prototype.hgetall).mockResolvedValue({})
+        entity = await repository.fetch(entityId);
+      });
+
+      it("returns and entity with the expected id", () => expect(entity.entityId).toBe(entityId));
+      it("returns and entity with the expected properties", () => {
+        expect(entity.aString).toBeNull();
+        expect(entity.aNumber).toBeNull();
+        expect(entity.aBoolean).toBeNull();
+        expect(entity.anArray).toBeNull();
       });
     });
   });

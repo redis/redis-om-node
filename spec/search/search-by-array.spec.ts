@@ -1,8 +1,13 @@
+import { mocked } from 'ts-jest/utils';
+
 import Client from "../../lib/client";
 import Entity from "../../lib/entity/entity";
 import Schema from "../../lib/schema/schema";
 import Search from "../../lib/search/search";
 import WhereField from '../../lib/search/where-field';
+
+jest.mock('../../lib/client');
+
 
 interface TestEntity {
   anArray: string[];
@@ -10,10 +15,13 @@ interface TestEntity {
 
 class TestEntity extends Entity {}
 
-describe("Search", () => {
+beforeEach(() => mocked(Client).mockReset());
 
+describe("Search", () => {
   let client: Client;
   let schema: Schema<TestEntity>;
+  let search: Search<TestEntity>;
+  let where: WhereField<TestEntity>;
 
   beforeAll(() => {
     client = new Client();
@@ -23,19 +31,16 @@ describe("Search", () => {
       });
   })
 
-  describe("#query", () => {
-    let search: Search<TestEntity>;
-    let where: WhereField<TestEntity>;
+  beforeEach(() => {
+    search = new Search<TestEntity>(schema, client);
+    where = search.where('anArray');
+  });
 
+  describe("#query", () => {
     const A_CONTAINS_QUERY = "(@anArray:{foo})";
     const A_NEGATED_CONTAINS_QUERY = "(-@anArray:{foo})";
     const A_CONTAINS_ONE_QUERY = "(@anArray:{foo|bar|baz})";
     const A_NEGATED_CONTAINS_ONE_QUERY = "(-@anArray:{foo|bar|baz})";
-
-    beforeEach(() => {
-      search = new Search<TestEntity>(schema, client);
-      where = search.where('anArray');
-    });
 
     describe("when generating for an array", () => {
 

@@ -16,8 +16,9 @@ interface TestEntity {
 
 class TestEntity extends Entity {}
 
-describe("Search", () => {
+beforeEach(() => mocked(Client).mockReset());
 
+describe("Search", () => {
   let client: Client;
   let schema: Schema<TestEntity>;
   let search: Search<TestEntity>;
@@ -32,11 +33,11 @@ describe("Search", () => {
       });
   });
 
-  describe("#query", () => {
-    beforeEach(() => {
-      search = new Search<TestEntity>(schema, client);
-    });
+  beforeEach(() => {
+    search = new Search<TestEntity>(schema, client);
+  });
 
+  describe("#query", () => {
     it("generates a query matching all items", () => {
       expect(search.query).toBe("*");
     });

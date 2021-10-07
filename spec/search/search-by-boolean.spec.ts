@@ -15,9 +15,13 @@ interface TestEntity {
 
 class TestEntity extends Entity {}
 
+beforeEach(() => mocked(Client).mockReset());
+
 describe("Search", () => {
   let client: Client;
   let schema: Schema<TestEntity>;
+  let search: Search<TestEntity>;
+  let where: WhereField<TestEntity>;
 
   beforeAll(() => {
     client = new Client();
@@ -27,19 +31,16 @@ describe("Search", () => {
       });
   });
 
-  describe("#query", () => {
-    let search: Search<TestEntity>;
-    let where: WhereField<TestEntity>;
+  beforeEach(() => {
+    search = new Search<TestEntity>(schema, client);
+    where = search.where('aBoolean');
+  });
 
+  describe("#query", () => {
     const A_TRUE_QUERY = "(@aBoolean:{1})";
     const A_FALSE_QUERY = "(@aBoolean:{0})";
     const A_NEGATED_TRUE_QUERY = "(-@aBoolean:{1})";
     const A_NEGATED_FALSE_QUERY = "(-@aBoolean:{0})";
-
-    beforeEach(() => {
-      search = new Search<TestEntity>(schema, client);
-      where = search.where('aBoolean');
-    });
 
     describe("when generating a query with a boolean", () => {
 

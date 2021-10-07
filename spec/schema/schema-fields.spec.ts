@@ -190,102 +190,102 @@ describe("Schema", () => {
     ["that defines an unconfigured boolean for JSON", {
       ...BOOLEAN_JSON_DEFAULTS,
       schemaDef: { 
-        aField: { path: '$.jsonField', type: 'boolean' }
+        aField: { type: 'boolean' }
       } as SchemaDefinition,
-      expectedRedisSchema: ['$.jsonField', 'AS', 'aField', 'TAG']
+      expectedRedisSchema: ['$.aField', 'AS', 'aField', 'TAG']
     }],
 
     ["that defines an aliased boolean for JSON", {
       ...BOOLEAN_JSON_DEFAULTS,
       schemaDef: {
-        aField: { path: '$.jsonField', type: 'boolean', alias: 'anotherField' }
+        aField: { type: 'boolean', alias: 'anotherField' }
       } as SchemaDefinition,
       providedEntityFieldName: 'anotherField',
-      expectedRedisSchema: ['$.jsonField', 'AS', 'anotherField', 'TAG']
+      expectedRedisSchema: ['$.anotherField', 'AS', 'anotherField', 'TAG']
     }],
 
     ["that defines an unconfigured number for JSON", {
       ...NUMBER_JSON_DEFAULTS,
       schemaDef: { 
-        aField: { path: '$.jsonField', type: 'number' }
+        aField: { type: 'number' }
       } as SchemaDefinition,
-      expectedRedisSchema: ['$.jsonField', 'AS', 'aField', 'NUMERIC']
+      expectedRedisSchema: ['$.aField', 'AS', 'aField', 'NUMERIC']
     }],
 
     ["that defines an aliased number for JSON", {
       ...NUMBER_JSON_DEFAULTS,
       schemaDef: {
-        aField: { path: '$.jsonField', type: 'number', alias: 'anotherField' }
+        aField: { type: 'number', alias: 'anotherField' }
       } as SchemaDefinition,
       providedEntityFieldName: 'anotherField',
-      expectedRedisSchema: ['$.jsonField', 'AS', 'anotherField', 'NUMERIC']
+      expectedRedisSchema: ['$.anotherField', 'AS', 'anotherField', 'NUMERIC']
     }],
 
     ["that defines an unconfigured string for JSON", {
       ...STRING_JSON_DEFAULTS,
       schemaDef: { 
-        aField: { path: '$.jsonField', type: 'string' }
+        aField: { type: 'string' }
       } as SchemaDefinition,
-      expectedRedisSchema: ['$.jsonField', 'AS', 'aField', 'TAG', 'SEPARATOR', '|']
+      expectedRedisSchema: ['$.aField', 'AS', 'aField', 'TAG', 'SEPARATOR', '|']
     }],
 
     ["that defines an aliased string for JSON", {
       ...STRING_JSON_DEFAULTS,
       schemaDef: { 
-        aField: { path: '$.jsonField', type: 'string', alias: 'anotherField' }
+        aField: { type: 'string', alias: 'anotherField' }
       } as SchemaDefinition,
       providedEntityFieldName: 'anotherField',
-      expectedRedisSchema: ['$.jsonField', 'AS', 'anotherField', 'TAG', 'SEPARATOR', '|']
+      expectedRedisSchema: ['$.anotherField', 'AS', 'anotherField', 'TAG', 'SEPARATOR', '|']
     }],
 
     ["that defines a string configured for full text search for JSON", {
       ...STRING_JSON_DEFAULTS,
       schemaDef: { 
-        aField: { path: '$.jsonField', type: 'string', textSearch: true }
+        aField: { type: 'string', textSearch: true }
       } as SchemaDefinition,
-      expectedRedisSchema: ['$.jsonField', 'AS', 'aField', 'TEXT']
+      expectedRedisSchema: ['$.aField', 'AS', 'aField', 'TEXT']
     }],
 
     ["that defines a string *not* configured for full text search for JSON", {
       ...STRING_JSON_DEFAULTS,
       schemaDef: { 
-        aField: { path: '$.jsonField', type: 'string', textSearch: false }
+        aField: { type: 'string', textSearch: false }
       } as SchemaDefinition,
-      expectedRedisSchema: ['$.jsonField', 'AS', 'aField', 'TAG', 'SEPARATOR', '|']
+      expectedRedisSchema: ['$.aField', 'AS', 'aField', 'TAG', 'SEPARATOR', '|']
     }],
 
     ["that defines a string configured with an alternative separator for JSON", {
       ...STRING_JSON_DEFAULTS,
       schemaDef: { 
-        aField: { path: '$.jsonField', type: 'string', separator: ';' }
+        aField: { type: 'string', separator: ';' }
       } as SchemaDefinition,
-      expectedRedisSchema: ['$.jsonField', 'AS', 'aField', 'TAG', 'SEPARATOR', ';']
+      expectedRedisSchema: ['$.aField', 'AS', 'aField', 'TAG', 'SEPARATOR', ';']
     }],
 
     ["that defines an unconfigured array for JSON", {
       ...ARRAY_JSON_DEFAULTS,
       schemaDef: { 
-        aField: { path: '$.jsonField', type: 'array' }
+        aField: { type: 'array' }
       } as SchemaDefinition,
-      expectedRedisSchema: ['$.jsonField', 'AS', 'aField', 'TAG', 'SEPARATOR', '|']
+      expectedRedisSchema: ['$.aField', 'AS', 'aField', 'TAG', 'SEPARATOR', '|']
     }],
 
     ["that defines an aliased array for JSON", {
       ...ARRAY_JSON_DEFAULTS,
       schemaDef: { 
-        aField: { path: '$.jsonField', type: 'array', alias: 'anotherField' }
+        aField: { type: 'array', alias: 'anotherField' }
       } as SchemaDefinition,
       providedEntityFieldName: 'anotherField',
-      expectedRedisSchema: ['$.jsonField', 'AS', 'anotherField', 'TAG', 'SEPARATOR', '|']
+      expectedRedisSchema: ['$.anotherField', 'AS', 'anotherField', 'TAG', 'SEPARATOR', '|']
     }],
 
     ["that defines an array configured with an alternative separator for JSON", {
       ...ARRAY_JSON_DEFAULTS,
       schemaDef: { 
-        aField: { path: '$.jsonField', type: 'array', separator: ';'}
+        aField: { type: 'array', separator: ';'}
       } as SchemaDefinition,
       providedEntityFieldValue: 'foo;bar;baz',
-      expectedRedisSchema: ['$.jsonField', 'AS', 'aField', 'TAG', 'SEPARATOR', ';']
+      expectedRedisSchema: ['$.aField', 'AS', 'aField', 'TAG', 'SEPARATOR', ';']
     }]
   ])("%s", (_, data) => {
 

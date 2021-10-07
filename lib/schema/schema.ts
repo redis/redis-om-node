@@ -3,7 +3,7 @@ import { v4 } from 'uuid';
 import Entity from "../entity/entity";
 
 import { EntityConstructor, EntityId, EntityIdStrategy, EntityIndex, EntityPrefix } from '../entity/entity-types';
-import { JsonField, FieldDefinition, SchemaDefinition, StringField } from './schema-definitions';
+import { FieldDefinition, SchemaDefinition, StringField } from './schema-definitions';
 import { EntityDataStructure, SchemaOptions } from './schema-options';
 
 let numberSerializer = (value: number): string => value.toString();
@@ -52,7 +52,7 @@ export default class Schema<TEntity extends Entity> {
       let fieldAlias = fieldDef.alias ?? field;
 
       if (this.dataStructure === 'JSON') {
-        let fieldPath = (fieldDef as JsonField).path;
+        let fieldPath = `\$.${fieldAlias}`;
         redisSchema.push(fieldPath, 'AS');
       }
 
@@ -102,6 +102,7 @@ export default class Schema<TEntity extends Entity> {
       let { serializer, deserializer } = this.selectSerializers(field, fieldDef);
 
       Object.defineProperty(this.entityCtor.prototype, field, {
+        configurable: true,
         get: function (): any {
           let value: string = this.entityData[fieldAlias] ?? null;
           return value === null ? null : deserializer(value);

@@ -1,8 +1,13 @@
+import { mocked } from 'ts-jest/utils';
+
 import Client from "../../lib/client";
 import Entity from "../../lib/entity/entity";
 import Schema from "../../lib/schema/schema";
 import Search from "../../lib/search/search";
 import WhereField from '../../lib/search/where-field';
+
+jest.mock('../../lib/client');
+
 
 interface TestEntity {
   aString: string;
@@ -10,9 +15,13 @@ interface TestEntity {
 
 class TestEntity extends Entity {}
 
+beforeEach(() => mocked(Client).mockReset());
+
 describe("Search", () => {
   let client: Client;
   let schema: Schema<TestEntity>;
+  let search: Search<TestEntity>;
+  let where: WhereField<TestEntity>;
 
   beforeAll(() => {
     client = new Client();
@@ -22,17 +31,14 @@ describe("Search", () => {
       });
   });
 
-  describe("#query", () => {
-    let search: Search<TestEntity>;
-    let where: WhereField<TestEntity>;
+  beforeEach(() => {
+    search = new Search<TestEntity>(schema, client);
+    where = search.where('aString');
+  });
 
+  describe("#query", () => {
     const A_STRING_QUERY = "(@aString:{foo})";
     const A_NEGATED_STRING_QUERY = "(-@aString:{foo})";
-
-    beforeEach(() => {
-      search = new Search<TestEntity>(schema, client);
-      where = search.where('aString');
-    });
 
     describe("when generating for a query with a string", () => {
 

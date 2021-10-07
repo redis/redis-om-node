@@ -48,13 +48,13 @@ export class BigfootJson extends Entity {}
 export function createBigfootJsonSchema(): Schema<Bigfoot> {
   return new Schema<BigfootJson>(
     BigfootJson, {
-      title: { path: '$.title', type: 'string', textSearch: true },
-      county: { path: '$.county', type: 'string' },
-      state: { path: '$.state', type: 'string', separator: '&' },
-      eyewitness: { path: '$.eyewitness', type: 'boolean' },
-      temperature: { path: '$.temperature', type: 'number' },
-      tags: { path: '$.tags', type: 'array' },
-      moreTags: { path: '$.moreTags', type: 'array', separator: '&' }
+      title: { type: 'string', textSearch: true },
+      county: { type: 'string' },
+      state: { type: 'string', separator: '&' },
+      eyewitness: { type: 'boolean' },
+      temperature: { type: 'number' },
+      tags: { type: 'array' },
+      moreTags: { type: 'array', separator: '&' }
     }, {
       dataStructure: 'JSON'
     });

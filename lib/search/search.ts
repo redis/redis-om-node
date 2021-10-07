@@ -52,7 +52,6 @@ export default class Search<TEntity extends Entity> {
   }
 
   async run(): Promise<TEntity[]> {
-
     let results = await this.client.search(this.schema.indexName, this.query);
 
     let count = this.extractCount(results);
@@ -101,24 +100,14 @@ export default class Search<TEntity extends Entity> {
 
     if (fieldDef === undefined) throw new Error(`The field '${field}' is not part of the schema.`);
 
-    let where: WhereField<TEntity>;
+    if (fieldDef.type === 'array') return new WhereArray<TEntity>(this, field);
+    if (fieldDef.type === 'boolean') return new WhereBoolean<TEntity>(this, field);
+    if (fieldDef.type === 'number') return new WhereNumber<TEntity>(this, field);
+    if (fieldDef.type === 'string' && fieldDef.textSearch === true)return new WhereText<TEntity>(this, field);
+    if (fieldDef.type === 'string' && fieldDef.textSearch !== true) return new WhereString<TEntity>(this, field);
 
-    if (fieldDef.type === 'array') {
-      where = new WhereArray<TEntity>(this, field);
-    } else if (fieldDef.type === 'boolean') {
-      where = new WhereBoolean<TEntity>(this, field);
-    } else if (fieldDef.type === 'number') {
-      where = new WhereNumber<TEntity>(this, field);
-    } else if (fieldDef.type === 'string' && fieldDef.textSearch === true) {
-      where = new WhereText<TEntity>(this, field);
-    } else if (fieldDef.type === 'string' && fieldDef.textSearch !== true) {
-      where = new WhereString<TEntity>(this, field);
-    } else {
-      // @ts-ignore: This is a trap for JavaScript
-      throw new Error(`The field type of '${fieldDef.type}' is not a valid field type. Valid types include 'array', 'boolean', 'number', and 'string'.`);
-    }
-
-    return where;
+    // @ts-ignore: This is a trap for JavaScript
+    throw new Error(`The field type of '${fieldDef.type}' is not a valid field type. Valid types include 'array', 'boolean', 'number', and 'string'.`);
   }
 
   private extractCount(results: any[]): number {

@@ -1,11 +1,11 @@
 import { addBigfootSighting, createBigfootSchema, expectMatchesSighting, sortByEntityId, Bigfoot,
   A_BIGFOOT_SIGHTING, AN_ENTITY_ID, AN_ENTITY_KEY,
   ANOTHER_BIGFOOT_SIGHTING, ANOTHER_ENTITY_ID, ANOTHER_ENTITY_KEY,
-  A_THIRD_BIGFOOT_SIGHTING, A_THIRD_ENTITY_ID, A_THIRD_ENTITY_KEY } from '../helpers/bigfoot-data-helper';
+  A_THIRD_BIGFOOT_SIGHTING, A_THIRD_ENTITY_ID, A_THIRD_ENTITY_KEY } from './helpers/bigfoot-data-helper';
   
-import Client from '../../lib/client';
-import Schema from '../../lib/schema/schema';
-import Repository from '../../lib/repository/repository';
+import Client from '../lib/client';
+import Schema from '../lib/schema/schema';
+import Repository from '../lib/repository/repository';
 
 describe("Repository", () => {
 
