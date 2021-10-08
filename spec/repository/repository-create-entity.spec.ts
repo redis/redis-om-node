@@ -3,8 +3,7 @@ import { mocked } from 'ts-jest/utils';
 import Client from '../../lib/client';
 import Repository from '../../lib/repository/repository';
 
-import TestEntity from '../helpers/test-entity';
-import { testSchema } from '../helpers/test-schema';
+import { simpleSchema, SimpleEntity } from '../helpers/test-entity-and-schema';
 
 jest.mock('../../lib/client');
 
@@ -14,15 +13,15 @@ beforeEach(() => mocked(Client).mockReset());
 describe("Repository", () => {
 
   let client: Client;
-  let repository: Repository<TestEntity>;
-  let entity: TestEntity;
+  let repository: Repository<SimpleEntity>;
+  let entity: SimpleEntity;
 
   describe('#createEntity', () => {
 
     beforeAll(() => client = new Client());
 
     beforeEach(() => {
-      repository = new Repository(testSchema, client);
+      repository = new Repository(simpleSchema, client);
       entity = repository.createEntity();
     })
 
@@ -32,7 +31,7 @@ describe("Repository", () => {
     });
 
     it("is of the expected type", () => {
-      expect(entity).toBeInstanceOf(TestEntity);
+      expect(entity).toBeInstanceOf(SimpleEntity);
     });
   });
 });

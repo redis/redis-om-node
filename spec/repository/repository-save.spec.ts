@@ -4,8 +4,7 @@ import Client from '../../lib/client';
 import Repository from '../../lib/repository/repository';
 import { EntityId } from '../../lib/entity/entity-types';
 
-import TestEntity from '../helpers/test-entity';
-import { testSchema } from '../helpers/test-schema';
+import { simpleSchema, SimpleEntity } from '../helpers/test-entity-and-schema';
 
 jest.mock('../../lib/client');
 
@@ -15,8 +14,8 @@ beforeEach(() => mocked(Client).mockReset());
 describe("Repository", () => {
 
   let client: Client;
-  let repository: Repository<TestEntity>;
-  let entity: TestEntity;
+  let repository: Repository<SimpleEntity>;
+  let entity: SimpleEntity;
   let entityId: EntityId;
   let expectedKey: string;
 
@@ -25,7 +24,7 @@ describe("Repository", () => {
     beforeAll(() => client = new Client());
 
     beforeEach(async () => {
-      repository = new Repository(testSchema, client);
+      repository = new Repository(simpleSchema, client);
       entity = repository.createEntity();
     });
 
@@ -36,7 +35,7 @@ describe("Repository", () => {
         entity.aBoolean = false;
         entity.anArray = [ 'bar', 'baz', 'qux' ];
         entityId = await repository.save(entity);
-        expectedKey = `TestEntity:${entityId}`;
+        expectedKey = `SimpleEntity:${entityId}`;
       });
 
       it("returns the entity id", () => expect(entityId).toBe(entity.entityId));
@@ -51,7 +50,7 @@ describe("Repository", () => {
         entity.aBoolean = null;
         entity.anArray = null;
         entityId = await repository.save(entity);
-        expectedKey = `TestEntity:${entityId}`;
+        expectedKey = `SimpleEntity:${entityId}`;
       });
 
       it("returns the entity id", () => expect(entityId).toBe(entity.entityId));
@@ -66,7 +65,7 @@ describe("Repository", () => {
         entity.aBoolean = null;
         entity.anArray = null;
         entityId = await repository.save(entity);
-        expectedKey = `TestEntity:${entityId}`;
+        expectedKey = `SimpleEntity:${entityId}`;
       });
 
       it("returns the entity id", () => expect(entityId).toBe(entity.entityId));

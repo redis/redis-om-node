@@ -1,42 +1,17 @@
-import Schema from '../../lib/schema/schema'
-import Entity from '../../lib/entity/entity';
 import { EntityId } from '../../lib/entity/entity-types';
+import { AliasedEntity, SimpleEntity } from '../helpers/test-entity-and-schema';
 
 describe("Entity", () => {
 
-  const ENTITY_ID: EntityId = 'foo';
-
-  interface TestEntity {
-    aNumber?: number | null;
-    aString?: string | null;
-    aBoolean?: boolean | null;
-    anArray?: string[] | null;
-    anotherNumber?: number | null;
-    anotherString?: string | null;
-    anotherBoolean?: boolean | null;
-    anotherArray?: string[] | null;
-  }
-
-  class TestEntity extends Entity {}
-
-  let schema: Schema<TestEntity>;
-  let entity: TestEntity;
-
-  beforeAll(() => schema = new Schema<TestEntity>(TestEntity, {
-    aNumber: { type: 'number' },
-    aString: { type: 'string' },
-    aBoolean: { type: 'boolean' },
-    anArray: { type: 'array' },
-    anotherNumber: { type: 'number', alias: 'aliasedNumber' },
-    anotherString: { type: 'string', alias: 'aliasedString' },
-    anotherBoolean: { type: 'boolean', alias: 'aliasedBoolean' },
-    anotherArray: { type: 'array', alias: 'aliasedArray' }
-  }));
-
-  describe("without data", () => {
-    beforeEach(() => entity = new TestEntity(ENTITY_ID));
+  let entityId: EntityId = 'foo';
   
-    it("has the passed in Redis ID", () => expect(entity.entityId).toBe(ENTITY_ID));
+  describe("without data", () => {
+
+    let entity: SimpleEntity;
+
+    beforeEach(() => entity = new SimpleEntity(entityId));
+  
+    it("has the passed in Redis ID", () => expect(entity.entityId).toBe(entityId));
     it("returns null for the number property", () => expect(entity.aNumber).toBeNull());
     it("returns null for the string property", () => expect(entity.aString).toBeNull());
     it("returns null for the boolean property", () => expect(entity.aBoolean).toBeNull());
@@ -44,36 +19,35 @@ describe("Entity", () => {
   });
 
   describe("with data", () => {
-    beforeEach(() => entity = new TestEntity(ENTITY_ID, { 
-      aNumber: '42', aString: 'bar', aBoolean: '1', anArray: 'foo|bar|baz',
-      aliasedNumber: '23', aliasedString: 'baz', aliasedBoolean: '0', aliasedArray: 'bar|baz|qux',
-    }));
 
-    it("has the passed in Redis ID", () => expect(entity.entityId).toBe(ENTITY_ID));
+    let entity: SimpleEntity;
 
-    describe("reading the data", () => {
-      it("returns a number for the number property", () => expect(entity.aNumber).toBe(42));
-      it("returns a string for the string property", () => expect(entity.aString).toBe('bar'));
-      it("returns a boolean for the boolean property", () => expect(entity.aBoolean).toBe(true));
-      it("returns an array for the array property", () => expect(entity.anArray).toEqual([ 'foo', 'bar', 'baz' ]));
-      it("returns a number for the aliased number property", () => expect(entity.anotherNumber).toBe(23));
-      it("returns a string for the aliased string property", () => expect(entity.anotherString).toBe('baz'));
-      it("returns a boolean for the aliased boolean property", () => expect(entity.anotherBoolean).toBe(false));
-      it("returns an array for the aliased array property", () => expect(entity.anotherArray).toEqual([ 'bar', 'baz', 'qux' ]));
-    });
-  
+    beforeEach(() => entity = new SimpleEntity(entityId,
+      { aNumber: '42', aString: 'foo', aBoolean: '0', anArray: 'foo|bar|baz' }));
+
+    it("has the passed in Redis ID", () => expect(entity.entityId).toBe(entityId));
+    it("returns a number for the number property", () => expect(entity.aNumber).toBe(42));
+    it("returns a string for the string property", () => expect(entity.aString).toBe('foo'));
+    it("returns a boolean for the boolean property", () => expect(entity.aBoolean).toBe(false));
+    it("returns an array for the array property", () => expect(entity.anArray).toEqual([ 'foo', 'bar', 'baz' ]));
+
     describe("changing the data", () => {
       it("stores a string when the number property is changed", () => {
-        entity.aNumber = 23;
-        expect(entity.entityData.aNumber).toBe('23');
+        entity.aNumber = 13;
+        expect(entity.entityData.aNumber).toBe('13');
       });
 
       it("stores a string when the string property is changed", () => {
-        entity.aString = 'qux';
-        expect(entity.entityData.aString).toBe('qux');
+        entity.aString = 'bar';
+        expect(entity.entityData.aString).toBe('bar');
       });
 
-      it("stores a string when the booelan property is changed", () => {
+      it("stores a string when the booelan property is changed to true", () => {
+        entity.aBoolean = true;
+        expect(entity.entityData.aBoolean).toBe('1');
+      });
+
+      it("stores a string when the booelan property is changed to false", () => {
         entity.aBoolean = false;
         expect(entity.entityData.aBoolean).toBe('0');
       });
@@ -89,18 +63,87 @@ describe("Entity", () => {
         entity.aNumber = null;
         entity.aString = null;
         entity.aBoolean = null;
+        entity.anArray = null;
         expect(entity.entityData.aNumber).toBeUndefined();
         expect(entity.entityData.aString).toBeUndefined();
         expect(entity.entityData.aBoolean).toBeUndefined();
+        expect(entity.entityData.anArray).toBeUndefined();
       });
-
+      
       it("removes undefined properties", () => {
         entity.aNumber = undefined;
         entity.aString = undefined;
         entity.aBoolean = undefined;
+        entity.anArray = undefined;
         expect(entity.entityData.aNumber).toBeUndefined();
         expect(entity.entityData.aString).toBeUndefined();
         expect(entity.entityData.aBoolean).toBeUndefined();
+        expect(entity.entityData.anArray).toBeUndefined();
+      });
+    });
+  });
+
+  describe("with aliased data", () => {
+
+    let entity: AliasedEntity;
+
+    beforeEach(() => entity = new AliasedEntity(entityId,
+      { anotherNumber: '23', anotherString: 'bar', anotherBoolean: '1', anotherArray: 'bar|baz|qux' }));
+
+    it("has the passed in Redis ID", () => expect(entity.entityId).toBe(entityId));
+    it("returns a number for the number property", () => expect(entity.aNumber).toBe(23));
+    it("returns a string for the string property", () => expect(entity.aString).toBe('bar'));
+    it("returns a boolean for the boolean property", () => expect(entity.aBoolean).toBe(true));
+    it("returns an array for the array property", () => expect(entity.anArray).toEqual([ 'bar', 'baz', 'qux' ]));
+
+    describe("changing the data", () => {
+      it("stores a string when the number property is changed", () => {
+        entity.aNumber = 13;
+        expect(entity.entityData.anotherNumber).toBe('13');
+      });
+
+      it("stores a string when the string property is changed", () => {
+        entity.aString = 'baz';
+        expect(entity.entityData.anotherString).toBe('baz');
+      });
+
+      it("stores a string when the booelan property is changed to true", () => {
+        entity.aBoolean = true;
+        expect(entity.entityData.anotherBoolean).toBe('1');
+      });
+
+      it("stores a string when the booelan property is changed to false", () => {
+        entity.aBoolean = false;
+        expect(entity.entityData.anotherBoolean).toBe('0');
+      });
+
+      it("stores a string when the array property is changed", () => {
+        entity.anArray = [ 'baz', 'qux', 'quux' ];
+        expect(entity.entityData.anotherArray).toBe('baz|qux|quux');
+      });
+    });
+  
+    describe("deleting the data", () => {
+      it("removes nulled properties", () => {
+        entity.aNumber = null;
+        entity.aString = null;
+        entity.aBoolean = null;
+        entity.anArray = null;
+        expect(entity.entityData.anotherNumber).toBeUndefined();
+        expect(entity.entityData.anotherString).toBeUndefined();
+        expect(entity.entityData.anotherBoolean).toBeUndefined();
+        expect(entity.entityData.anotherArray).toBeUndefined();
+      });
+      
+      it("removes undefined properties", () => {
+        entity.aNumber = undefined;
+        entity.aString = undefined;
+        entity.aBoolean = undefined;
+        entity.anArray = undefined;
+        expect(entity.entityData.anotherNumber).toBeUndefined();
+        expect(entity.entityData.anotherString).toBeUndefined();
+        expect(entity.entityData.anotherBoolean).toBeUndefined();
+        expect(entity.entityData.anotherArray).toBeUndefined();
       });
     });
   });

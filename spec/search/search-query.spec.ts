@@ -1,43 +1,26 @@
 import { mocked } from 'ts-jest/utils';
 
 import Client from "../../lib/client";
-import Entity from "../../lib/entity/entity";
-import Schema from "../../lib/schema/schema";
 import Search from "../../lib/search/search";
+
+import { simpleSchema, SimpleEntity } from "../helpers/test-entity-and-schema";
 
 jest.mock('../../lib/client');
 
 
-interface TestEntity {
-  aString: string;
-  aNumber: number;
-  aBoolean: boolean;
-}
-
-class TestEntity extends Entity {}
-
 beforeEach(() => mocked(Client).mockReset());
 
 describe("Search", () => {
-  let client: Client;
-  let schema: Schema<TestEntity>;
-  let search: Search<TestEntity>;
-
-  beforeAll(async () => {
-    client = new Client();
-    schema = new Schema<TestEntity>(
-      TestEntity, {
-        aString: { type: 'string' },
-        aNumber: { type: 'number' },
-        aBoolean: { type: 'boolean' }
-      });
-  });
-
-  beforeEach(() => {
-    search = new Search<TestEntity>(schema, client);
-  });
-
+  
   describe("#query", () => {
+
+    let client: Client;
+    let search: Search<SimpleEntity>;
+
+    beforeAll(() => client = new Client());
+    
+    beforeEach(() => search = new Search<SimpleEntity>(simpleSchema, client));
+    
     it("generates a query matching all items", () => {
       expect(search.query).toBe("*");
     });
@@ -51,24 +34,27 @@ describe("Search", () => {
       let query = search
         .where('aString').eq('foo')
         .where('aNumber').eq(42)
-        .where('aBoolean').true().query;
-      expect(query).toBe("( ( (@aString:{foo}) (@aNumber:[42 42]) ) (@aBoolean:{1}) )");
+        .where('aBoolean').true()
+        .where('anArray').containsOneOf('foo', 'bar').query;
+      expect(query).toBe("( ( ( (@aString:{foo}) (@aNumber:[42 42]) ) (@aBoolean:{1}) ) (@anArray:{foo|bar}) )");
     });
 
     it("generates a query using .and", () => {
       let query = search
         .where('aString').eq('foo')
         .and('aNumber').eq(42)
-        .and('aBoolean').true().query;
-      expect(query).toBe("( ( (@aString:{foo}) (@aNumber:[42 42]) ) (@aBoolean:{1}) )");
+        .and('aBoolean').true()
+        .and('anArray').containsOneOf('foo', 'bar').query;
+        expect(query).toBe("( ( ( (@aString:{foo}) (@aNumber:[42 42]) ) (@aBoolean:{1}) ) (@anArray:{foo|bar}) )");
     });
 
     it("generates a query using .or", () => {
       let query = search
         .where('aString').eq('foo')
         .or('aNumber').equals(42)
-        .or('aBoolean').true().query;
-      expect(query).toBe("( ( (@aString:{foo}) | (@aNumber:[42 42]) ) | (@aBoolean:{1}) )");
+        .or('aBoolean').true()
+        .or('anArray').containsOneOf('foo', 'bar').query;
+      expect(query).toBe("( ( ( (@aString:{foo}) | (@aNumber:[42 42]) ) | (@aBoolean:{1}) ) | (@anArray:{foo|bar}) )");
     });
 
     it("generates a query using .and and .or", () => {

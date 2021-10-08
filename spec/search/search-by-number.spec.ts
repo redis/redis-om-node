@@ -1,42 +1,23 @@
 import { mocked } from 'ts-jest/utils';
 
 import Client from "../../lib/client";
-import Entity from "../../lib/entity/entity";
-import Schema from "../../lib/schema/schema";
 import Search from "../../lib/search/search";
 import WhereField from '../../lib/search/where-field';
+
+import { simpleSchema, SimpleEntity } from "../helpers/test-entity-and-schema";
 
 jest.mock('../../lib/client');
 
 
-interface TestEntity {
-  aNumber: number;
-}
-
-class TestEntity extends Entity {}
-
 beforeEach(() => mocked(Client).mockReset());
 
 describe("Search", () => {
-  let client: Client;
-  let schema: Schema<TestEntity>;
-  let search: Search<TestEntity>;
-  let where: WhereField<TestEntity>;
-
-  beforeAll(async () => {
-    client = new Client();
-    schema = new Schema<TestEntity>(
-      TestEntity, {
-        aNumber: { type: 'number' }
-      });
-  });
-
-  beforeEach(() => {
-    search = new Search<TestEntity>(schema, client);
-    where = search.where('aNumber');
-  });
-
   describe("#query", () => {
+
+    let client: Client;
+    let search: Search<SimpleEntity>;
+    let where: WhereField<SimpleEntity>;
+
     const AN_EQUAL_QUERY = "(@aNumber:[42 42])";
     const A_NEGATED_EQUAL_QUERY = "(-@aNumber:[42 42])";
     const A_GT_QUERY = "(@aNumber:[(42 +inf])";
@@ -50,9 +31,16 @@ describe("Search", () => {
     const A_BETWEEN_QUERY = "(@aNumber:[23 42])";
     const A_NEGATED_BETWEEN_QUERY = "(-@aNumber:[23 42])";
 
+    beforeAll(() => client = new Client());
+
+    beforeEach(() => {
+      search = new Search<SimpleEntity>(simpleSchema, client);
+      where = search.where('aNumber');
+    });
+
     describe("when generating a query with a number", () => {
 
-      type RangeChecker = (search: Search<TestEntity>) => void;
+      type RangeChecker = (search: Search<SimpleEntity>) => void;
       const expectToBeEqualQuery: RangeChecker = search => expect(search.query).toBe(AN_EQUAL_QUERY);
       const expectToBeNegatedEqualQuery: RangeChecker = search => expect(search.query).toBe(A_NEGATED_EQUAL_QUERY);
       const expectToBeGTQuery: RangeChecker = search => expect(search.query).toBe(A_GT_QUERY);

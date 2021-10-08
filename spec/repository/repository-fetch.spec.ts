@@ -4,8 +4,7 @@ import Client from '../../lib/client';
 import Repository from '../../lib/repository/repository';
 import { EntityId } from '../../lib/entity/entity-types';
 
-import TestEntity from '../helpers/test-entity';
-import { testSchema } from '../helpers/test-schema';
+import { simpleSchema, SimpleEntity } from '../helpers/test-entity-and-schema';
 
 jest.mock('../../lib/client');
 
@@ -15,8 +14,8 @@ beforeEach(() => mocked(Client).mockReset());
 describe("Repository", () => {
 
   let client: Client;
-  let repository: Repository<TestEntity>;
-  let entity: TestEntity;
+  let repository: Repository<SimpleEntity>;
+  let entity: SimpleEntity;
   let entityId: EntityId;
 
   describe("#fetch", () => {
@@ -24,7 +23,7 @@ describe("Repository", () => {
     beforeAll(() => client = new Client());
 
     beforeEach(async () => {
-      repository = new Repository(testSchema, client);
+      repository = new Repository(simpleSchema, client);
       entityId = 'foo';
     });
 

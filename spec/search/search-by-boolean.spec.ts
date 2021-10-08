@@ -1,50 +1,38 @@
 import { mocked } from 'ts-jest/utils';
 
 import Client from "../../lib/client";
-import Entity from "../../lib/entity/entity";
-import Schema from "../../lib/schema/schema";
 import Search from "../../lib/search/search";
 import WhereField from '../../lib/search/where-field';
+
+import { simpleSchema, SimpleEntity } from "../helpers/test-entity-and-schema";
 
 jest.mock('../../lib/client');
 
 
-interface TestEntity {
-  aBoolean: boolean;
-}
-
-class TestEntity extends Entity {}
-
 beforeEach(() => mocked(Client).mockReset());
 
 describe("Search", () => {
-  let client: Client;
-  let schema: Schema<TestEntity>;
-  let search: Search<TestEntity>;
-  let where: WhereField<TestEntity>;
-
-  beforeAll(() => {
-    client = new Client();
-    schema = new Schema<TestEntity>(
-      TestEntity, {
-        aBoolean: { type: 'boolean' }
-      });
-  });
-
-  beforeEach(() => {
-    search = new Search<TestEntity>(schema, client);
-    where = search.where('aBoolean');
-  });
-
   describe("#query", () => {
+
+    let client: Client;
+    let search: Search<SimpleEntity>;
+    let where: WhereField<SimpleEntity>;
+
     const A_TRUE_QUERY = "(@aBoolean:{1})";
     const A_FALSE_QUERY = "(@aBoolean:{0})";
     const A_NEGATED_TRUE_QUERY = "(-@aBoolean:{1})";
     const A_NEGATED_FALSE_QUERY = "(-@aBoolean:{0})";
 
+    beforeAll(() => client = new Client());
+  
+    beforeEach(() => {
+      search = new Search<SimpleEntity>(simpleSchema, client);
+      where = search.where('aBoolean');
+    });  
+
     describe("when generating a query with a boolean", () => {
 
-      type BooleanChecker = (search: Search<TestEntity>) => void;
+      type BooleanChecker = (search: Search<SimpleEntity>) => void;
       const expectToBeTrueQuery: BooleanChecker = search => expect(search.query).toBe(A_TRUE_QUERY);
       const expectToBeFalseQuery: BooleanChecker = search => expect(search.query).toBe(A_FALSE_QUERY);
       const expectToBeNegatedTrueQuery: BooleanChecker = search => expect(search.query).toBe(A_NEGATED_TRUE_QUERY);
