@@ -3,7 +3,7 @@ import Search from "./search";
 import WhereField from "./where-field";
 
 export default class WhereBoolean<TEntity extends Entity> extends WhereField<TEntity> {
-  private value?: boolean;
+  private value!: boolean;
 
   eq(value: boolean): Search<TEntity> {
     this.value = value;

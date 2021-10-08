@@ -84,7 +84,9 @@ export default class Search<TEntity extends Entity> {
     let search = new Search<TEntity>(this.schema, this.client);
     let subSearch = subSearchFn(search);
 
-    if (subSearch.rootWhere !== undefined) {
+    if (subSearch.rootWhere === undefined) {
+      throw new Error("Sub-search without and root where was somehow defined.");
+    } else {
       if (this.rootWhere === undefined) {
         this.rootWhere = subSearch.rootWhere;
       } else {

@@ -85,6 +85,15 @@ describe("Search", () => {
       expect(query).toBe("( (@aString:{foo}) | ( ( (@aString:{bar}) (@aNumber:[42 42]) ) | (@aBoolean:{1}) ) )")
     });
 
+    it("generates a query using .where with a function", () => {
+      let query = search
+        .where(search => search
+          .where('aString').eq('foo')
+          .and('aNumber').equals(42)
+          .or('aBoolean').true()).query;
+      expect(query).toBe("( ( (@aString:{foo}) (@aNumber:[42 42]) ) | (@aBoolean:{1}) )")
+    });
+
     it("generates a complex query using all the things", () => {
       let query = search
         .where('aString').eq('foo')

@@ -3,7 +3,7 @@ import Search from "./search";
 import WhereField from "./where-field";
 
 export default class WhereText<TEntity extends Entity> extends WhereField<TEntity> {
-  private value?: string;
+  private value!: string;
   private exactValue = false;
 
   match(value: string): Search<TEntity> {
@@ -32,7 +32,7 @@ export default class WhereText<TEntity extends Entity> extends WhereField<TEntit
 
   toString(): string {
     let matchPunctuation = /[,.<>{}[\]"':;!@#$%^&*()\-+=~|]/g;
-    let escapedValue = this.value?.replace(matchPunctuation, '\\$&');
+    let escapedValue = this.value.replace(matchPunctuation, '\\$&');
 
     if (this.exactValue) {
       return this.buildQuery(`"${escapedValue}"`);

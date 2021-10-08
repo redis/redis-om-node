@@ -3,7 +3,7 @@ import Search from "./search";
 import WhereField from "./where-field";
 
 export default class WhereString<TEntity extends Entity> extends WhereField<TEntity> {
-  private value?: string;
+  private value!: string;
 
   eq(value: string): Search<TEntity> {
     this.value = value;
@@ -16,7 +16,7 @@ export default class WhereString<TEntity extends Entity> extends WhereField<TEnt
 
   toString(): string {
     let matchPunctuation = /[,.<>{}[\]"':;!@#$%^&*()\-+=~| ]/g;
-    let escapedValue = this.value?.replace(matchPunctuation, '\\$&');
+    let escapedValue = this.value.replace(matchPunctuation, '\\$&');
     return this.buildQuery(`{${escapedValue}}`);
   }
 }
