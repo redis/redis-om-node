@@ -6,9 +6,9 @@
   "types": "./dist/index.d.ts",
   "scripts": {
     "build": "tsc --project ./",
-    "test": "jest",
+    "test": "jest --watchAll",
     "test-unit": "jest --selectProjects unit --watchAll",
-    "test-functional": "jest --selectProjects functional"
+    "test-functional": "jest --selectProjects functional --watchAll"
   },
   "author": "Guy Royse <guy@guyroyse.com>",
   "engines": {
