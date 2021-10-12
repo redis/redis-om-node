@@ -21,7 +21,7 @@ describe("create and drop index on JSON", () => {
   });
 
   afterAll(async () => await client.close());
-  
+
   describe("when the index is created", () => {
     beforeEach(async () => {
       await client.execute(['FLUSHALL']);
