@@ -50,6 +50,18 @@ export default class Client {
     await this.shim!.hsetall(key, data)
   }
 
+  async jsonget(key: string): Promise<{ [key: string]: any }> {
+    this.validateShimOpen();
+    let json = await this.shim!.execute<string>([ 'JSON.GET', key, '.' ]);
+    return JSON.parse(json);
+  }
+
+  async jsonset(key: string, data: { [key: string]: any }) {
+    this.validateShimOpen();
+    let json = JSON.stringify(data);
+    await this.shim!.execute<string>([ 'JSON.SET', key, '.', json ]);
+  }
+
   async createIndex(indexName: string, dataStructure: "HASH" | "JSON", prefix: string, schema: string[]) {
     this.validateShimOpen();
     await this.shim!.execute([

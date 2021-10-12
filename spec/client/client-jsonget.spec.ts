@@ -11,24 +11,24 @@ beforeEach(() => mocked(RedisShim).mockReset());
 describe("Client", () => {
 
   let client: Client;
-  let result: { [key: string]: string };
+  let result: { [key: string]: any };
 
   beforeEach(async () => client = new Client());
 
-  describe("#hgetall", () => {
+  describe("#jsonget", () => {
     describe("when called on an open client", () => {
       beforeEach(async () => {
         await client.open();
-        mocked(RedisShim.prototype.hgetall).mockResolvedValue({ foo: 'bar', baz: 'qux' });
-        result = await client.hgetall('foo');
+        mocked(RedisShim.prototype.execute).mockResolvedValue('{ "foo": "bar", "bar": 42, "baz": true, "qux": null }');
+        result = await client.jsonget('foo');
       });
 
       it("passes the command to the shim", async () => {
-        expect(RedisShim.prototype.hgetall).toHaveBeenCalledWith('foo');
+        expect(RedisShim.prototype.execute).toHaveBeenCalledWith([ 'JSON.GET', 'foo', '.' ]);
       });
 
-      it("returns the value from the shim", async () => {
-        expect(result).toEqual({ foo: 'bar', baz: 'qux' });
+      it("returns the JSON", async () => {
+        expect(result).toEqual({ foo: 'bar', bar: 42, baz: true, qux: null });
       });
     });
 
@@ -39,12 +39,12 @@ describe("Client", () => {
       });
       
       it("errors when called on a closed client", () => 
-        expect(async () => await client.hgetall('foo'))
+        expect(async () => await client.jsonget('foo'))
           .rejects.toThrow("Redis connection needs opened."));
     });
     
     it("errors when called on a new client", async () =>
-      expect(async () => await client.hgetall('foo'))
+      expect(async () => await client.jsonget('foo'))
         .rejects.toThrow("Redis connection needs opened."));
   });
 });

@@ -34,6 +34,12 @@ describe("Client", () => {
         await client.execute([ true, false, true ]);
         expect(RedisShim.prototype.execute).toHaveBeenCalledWith([ '1', '0', '1' ]);
       });
+
+      it("returns what the shim returns", async () => {
+        mocked(RedisShim.prototype.execute).mockResolvedValue('foo');
+        let result = await client.execute<string>([ 'foo', 'bar', 'baz' ]);
+        expect(result).toBe('foo');
+      });
     });
 
     describe("when called on a closed client", () => {
