@@ -1,9 +1,9 @@
-import { createJsonEntitySchema, JsonEntity } from './helpers/data-helper';
-import { fetchIndexInfo  } from './helpers/redis-helper';
+import { createJsonEntitySchema, JsonEntity } from '../helpers/data-helper';
+import { fetchIndexInfo  } from '../helpers/redis-helper';
   
-import Client from '../lib/client';
-import Schema from '../lib/schema/schema';
-import Repository from '../lib/repository/repository';
+import Client from '../../lib/client';
+import Schema from '../../lib/schema/schema';
+import Repository from '../../lib/repository/repository';
 
 describe("create index on JSON", () => {
 
