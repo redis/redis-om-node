@@ -16,3 +16,8 @@ export async function fetchHashKeys(client: Client, key: string): Promise<string
 export async function fetchHashFields(client: Client, key: string, ...fields: string[]): Promise<string[]> {
   return await client.execute(['HMGET', key, ...fields]);
 }
+
+export async function fetchIndexInfo(client: Client, indexName: string): Promise<string[]> {
+  return await client.execute<string[]>(['FT.INFO', indexName]);
+
+}

@@ -1,4 +1,5 @@
-import { createBigfootSchema, createBigfootJsonSchema, Bigfoot, BigfootJson } from './helpers/bigfoot-data-helper';
+import { createHashEntitySchema, HashEntity } from './helpers/data-helper';
+import { fetchIndexInfo  } from './helpers/redis-helper';
   
 import Client from '../lib/client';
 import Schema from '../lib/schema/schema';
@@ -7,28 +8,28 @@ import Repository from '../lib/repository/repository';
 describe("create index on hash", () => {
 
   let client: Client;
-  let repository: Repository<Bigfoot>;
-  let schema: Schema<Bigfoot>;
+  let repository: Repository<HashEntity>;
+  let schema: Schema<HashEntity>;
   let result: string[];
 
   beforeAll(async () => {
     client = new Client();
     await client.open();
-    schema = createBigfootSchema();
+    schema = createHashEntitySchema();
   });
 
   beforeEach(async () => {
     await client.execute(['FLUSHALL']);
-    repository = client.fetchRepository<Bigfoot>(schema);
+    repository = client.fetchRepository<HashEntity>(schema);
     await repository.createIndex();
-    result = await client.execute<string[]>(['FT.INFO', 'Bigfoot:index']);
+    result = await fetchIndexInfo(client, 'HashEntity:index');
   });
 
   afterAll(async () => await client.close());
 
   it("has the expected name", () => {
     let indexName = result[1];
-    expect(indexName).toBe('Bigfoot:index');
+    expect(indexName).toBe('HashEntity:index');
   });
 
   it("has the expected key type", () => {
@@ -38,18 +39,21 @@ describe("create index on hash", () => {
 
   it("has the expected prefixes", () => {
     let prefixes = result[5][3];
-    expect(prefixes).toEqual([ 'Bigfoot:' ]);
+    expect(prefixes).toEqual([ 'HashEntity:' ]);
   });
 
   it("has the expected fields", () => {
     let fields = result[7];
-    expect(fields).toHaveLength(7);
-    expect(fields[0]).toEqual([ 'title', 'type', 'TEXT', 'WEIGHT', '1' ]);
-    expect(fields[1]).toEqual([ 'county', 'type', 'TAG', 'SEPARATOR', '|' ]);
-    expect(fields[2]).toEqual([ 'state', 'type', 'TAG', 'SEPARATOR', '&' ]);
-    expect(fields[3]).toEqual([ 'eyewitness', 'type', 'TAG', 'SEPARATOR', ',' ]);
-    expect(fields[4]).toEqual([ 'temperature', 'type', 'NUMERIC' ]);
-    expect(fields[5]).toEqual([ 'tags', 'type', 'TAG', 'SEPARATOR', '|' ]);
-    expect(fields[6]).toEqual([ 'moreTags', 'type', 'TAG', 'SEPARATOR', '&' ]);
+    expect(fields).toHaveLength(10);
+    expect(fields[0]).toEqual([ 'aString', 'type', 'TAG', 'SEPARATOR', '|' ]);
+    expect(fields[1]).toEqual([ 'anotherString', 'type', 'TAG', 'SEPARATOR', '|' ]);
+    expect(fields[2]).toEqual([ 'aFullTextString', 'type', 'TEXT', 'WEIGHT', '1' ]);
+    expect(fields[3]).toEqual([ 'anotherFullTextString', 'type', 'TEXT', 'WEIGHT', '1' ]);
+    expect(fields[4]).toEqual([ 'aNumber', 'type', 'NUMERIC' ]);
+    expect(fields[5]).toEqual([ 'anotherNumber', 'type', 'NUMERIC' ]);
+    expect(fields[6]).toEqual([ 'aBoolean', 'type', 'TAG', 'SEPARATOR', ',' ]);
+    expect(fields[7]).toEqual([ 'anotherBoolean', 'type', 'TAG', 'SEPARATOR', ',' ]);
+    expect(fields[8]).toEqual([ 'anArray', 'type', 'TAG', 'SEPARATOR', '|' ]);
+    expect(fields[9]).toEqual([ 'anotherArray', 'type', 'TAG', 'SEPARATOR', '|' ]);
   });
 });
