@@ -46,7 +46,12 @@ export default class Repository<TEntity extends Entity> {
 
   async fetch(id: EntityId): Promise<TEntity> {
     let key = this.makeKey(id);
-    let data = await this.client.hgetall(key);
+    let data;
+    if (this.schema.dataStructure === 'JSON') {
+      data = await this.client.jsonget(key);
+    } else {
+      data = await this.client.hgetall(key);
+    }
     let entity = new this.schema.entityCtor(id, data);
     return entity;
   }

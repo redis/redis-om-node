@@ -4,7 +4,7 @@ import Client from '../../lib/client';
 import Repository from '../../lib/repository/repository';
 import { EntityId } from '../../lib/entity/entity-types';
 
-import { simpleSchema, SimpleEntity } from '../helpers/test-entity-and-schema';
+import { simpleHashSchema, simpleJsonSchema, SimpleHashEntity, SimpleJsonEntity } from '../helpers/test-entity-and-schema';
 
 jest.mock('../../lib/client');
 
@@ -14,65 +14,90 @@ beforeEach(() => mocked(Client).mockReset());
 describe("Repository", () => {
 
   let client: Client;
-  let repository: Repository<SimpleEntity>;
-  let entity: SimpleEntity;
-  let entityId: EntityId;
+  let entityId: EntityId = 'foo';
 
   describe("#fetch", () => {
 
     beforeAll(() => client = new Client());
 
-    beforeEach(async () => {
-      repository = new Repository(simpleSchema, client);
-      entityId = 'foo';
-    });
+    describe.each([
 
-    describe("when fetching a fully populated entity", () => {
+      ["when fetching a fully populated entity from a hash", {
+        mockedData: { aString: 'foo', aNumber: '42', aBoolean: '0', anArray: 'bar|baz|qux' },
+        expectedString: 'foo', expectedNumber: 42, expectedBoolean: false, expectedArray: [ 'bar', 'baz', 'qux' ]
+      }],
+
+      [ "when fetching a partially populated entity from a hash", {
+        mockedData: { aString: 'foo', aNumber: '42' },
+        expectedString: 'foo', expectedNumber: 42, expectedBoolean: null, expectedArray: null
+      }],
+
+      [ "when fetching a empty entity from a hash", {
+        mockedData: {},
+        expectedString: null, expectedNumber: null, expectedBoolean: null, expectedArray: null
+      }]
+
+    ])("%s", (_, data) => {
+
+      let repository: Repository<SimpleHashEntity>;
+      let entity: SimpleHashEntity;
+    
       beforeEach(async () => {
-        mocked(Client.prototype.hgetall).mockResolvedValue({
-          aString: 'foo', aNumber: '42', aBoolean: '0', anArray: 'bar|baz|qux'
-        })
+        repository = new Repository(simpleHashSchema, client);
+        mocked(Client.prototype.hgetall).mockResolvedValue(data.mockedData)
         entity = await repository.fetch(entityId);
       });
 
-      it("returns and entity with the expected id", () => expect(entity.entityId).toBe(entityId));
-      it("returns and entity with the expected properties", () => {
-        expect(entity.aString).toBe('foo');
-        expect(entity.aNumber).toBe(42);
-        expect(entity.aBoolean).toBe(false);
-        expect(entity.anArray).toEqual([ 'bar', 'baz', 'qux' ]);
+      it("returns an entity with the expected id", () => expect(entity.entityId).toBe(entityId));
+
+      it("returns an entity with the expected properties", () => {
+        expect(entity.aString).toBe(data.expectedString);
+        expect(entity.aNumber).toBe(data.expectedNumber);
+        expect(entity.aBoolean).toBe(data.expectedBoolean);
+        expect(entity.anArray).toEqual(data.expectedArray);
       });
     });
-  
-    describe("when fetching a partialy populated entity", () => {
+
+    describe.each([
+
+      ["when fetching a fully populated entity from JSON", {
+        mockedData: { aString: 'foo', aNumber: 42, aBoolean: false, anArray: 'bar|baz|qux' },
+        expectedString: 'foo', expectedNumber: 42, expectedBoolean: false, expectedArray: [ 'bar', 'baz', 'qux' ]
+      }],
+
+      [ "when fetching a partially populated entity from JSON", {
+        mockedData: { aString: 'foo', aNumber: 42 },
+        expectedString: 'foo', expectedNumber: 42, expectedBoolean: null, expectedArray: null
+      }],
+
+      [ "when fetching a empty entity from JSON", {
+        mockedData: {},
+        expectedString: null, expectedNumber: null, expectedBoolean: null, expectedArray: null
+      }],
+      
+      [ "when fetching a fully populated entity from JSON with nulls", {
+        mockedData: { aString: 'foo', aNumber: 42, aBoolean: null, anArray: null },
+        expectedString: 'foo', expectedNumber: 42, expectedBoolean: null, expectedArray: null
+      }]
+
+    ])("%s", (_, data: any) => {
+
+      let repository: Repository<SimpleJsonEntity>;
+      let entity: SimpleJsonEntity;
+
       beforeEach(async () => {
-        mocked(Client.prototype.hgetall).mockResolvedValue({
-          aString: 'foo', aNumber: '42'
-        })
+        repository = new Repository(simpleJsonSchema, client);
+        mocked(Client.prototype.jsonget).mockResolvedValue(data.mockedData)
         entity = await repository.fetch(entityId);
       });
 
-      it("returns and entity with the expected id", () => expect(entity.entityId).toBe(entityId));
-      it("returns and entity with some of the properties set to null", () => {
-        expect(entity.aString).toBe('foo');
-        expect(entity.aNumber).toBe(42);
-        expect(entity.aBoolean).toBeNull();
-        expect(entity.anArray).toBeNull();
-      });
-    });
-  
-    describe("when fetching an unpopulated entity", () => {
-      beforeEach(async () => {
-        mocked(Client.prototype.hgetall).mockResolvedValue({})
-        entity = await repository.fetch(entityId);
-      });
+      it("returns an entity with the expected id", () => expect(entity.entityId).toBe(entityId));
 
-      it("returns and entity with the expected id", () => expect(entity.entityId).toBe(entityId));
-      it("returns and entity with the expected properties", () => {
-        expect(entity.aString).toBeNull();
-        expect(entity.aNumber).toBeNull();
-        expect(entity.aBoolean).toBeNull();
-        expect(entity.anArray).toBeNull();
+      it("returns an entity with the expected properties", () => {
+        expect(entity.aString).toBe(data.expectedString);
+        expect(entity.aNumber).toBe(data.expectedNumber);
+        expect(entity.aBoolean).toBe(data.expectedBoolean);
+        expect(entity.anArray).toEqual(data.expectedArray);
       });
     });
   });
