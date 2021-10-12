@@ -14,12 +14,16 @@ export default class Repository<TEntity extends Entity> {
     this.client = client;
   }
 
-  async createIndex(): Promise<void> {
+  async createIndex() {
     await this.client.createIndex(
       this.schema.indexName,
       this.schema.dataStructure,
       `${this.schema.prefix}:`,
       this.schema.redisSchema);
+  }
+
+  async dropIndex() {
+    await this.client.dropIndex(this.schema.indexName);
   }
 
   createEntity(): TEntity {

@@ -19,5 +19,4 @@ export async function fetchHashFields(client: Client, key: string, ...fields: st
 
 export async function fetchIndexInfo(client: Client, indexName: string): Promise<string[]> {
   return await client.execute<string[]>(['FT.INFO', indexName]);
-
 }
