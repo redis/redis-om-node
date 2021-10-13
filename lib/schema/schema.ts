@@ -101,18 +101,51 @@ export default class Schema<TEntity extends Entity> {
       let fieldAlias = fieldDef.alias ?? field;
       let { serializer, deserializer } = this.selectSerializers(field, fieldDef);
 
-      Object.defineProperty(this.entityCtor.prototype, field, {
-        configurable: true,
-        get: function (): any {
-          let value: string = this.entityData[fieldAlias] ?? null;
-          return value === null ? null : deserializer(value);
-        },
-        set: function(value?: any): void {
-          value = value ?? null;
-          if (value === null) delete this.entityData[fieldAlias];
-          else this.entityData[fieldAlias] = serializer(value);
-        }
-      });
+      if (this.dataStructure === 'HASH') {
+
+        Object.defineProperty(this.entityCtor.prototype, field, {
+          configurable: true,
+          get: function (): any {
+            let value: string = this.entityData[fieldAlias] ?? null;
+            return value === null ? null : deserializer(value);
+          },
+          set: function(value?: any): void {
+            value = value ?? null;
+            if (value === null) delete this.entityData[fieldAlias];
+            else this.entityData[fieldAlias] = serializer(value);
+          }
+        });
+
+      } else if (fieldDef.type === 'array') {
+
+        let serializer = arraySerializer(fieldDef.separator ?? '|');
+        let deserializer = arrayDeserializer(fieldDef.separator ?? '|');
+
+        Object.defineProperty(this.entityCtor.prototype, field, {
+          configurable: true,
+          get: function (): any {
+            let value: string = this.entityData[fieldAlias] ?? null;
+            return value === null ? null : deserializer(value);
+          },
+          set: function(value?: any): void {
+            value = value ?? null;
+            if (value === null) this.entityData[fieldAlias] = null;
+            else this.entityData[fieldAlias] = serializer(value);
+          }
+        });
+
+      } else {
+
+        Object.defineProperty(this.entityCtor.prototype, field, {
+          configurable: true,
+          get: function (): any {
+            return this.entityData[fieldAlias] ?? null;
+          },
+          set: function(value?: any): void {
+            this.entityData[fieldAlias] = value ?? null;
+          }
+        });
+      }
     }
   }
 

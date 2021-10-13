@@ -54,7 +54,7 @@ describe("Schema", () => {
 
   let BOOLEAN_JSON_DEFAULTS = {
     ...JSON_DEFAULTS,
-    providedEntityFieldValue: '1',
+    providedEntityFieldValue: true,
     expectedPropertyValue: true,
     providedAlternatePropertyValue: false,
     expectedAlternatePropertyValue: false
@@ -62,7 +62,7 @@ describe("Schema", () => {
 
   let NUMBER_JSON_DEFAULTS = {
     ...JSON_DEFAULTS,
-    providedEntityFieldValue: '42',
+    providedEntityFieldValue: 42,
     expectedPropertyValue: 42,
     providedAlternatePropertyValue: 23,
     expectedAlternatePropertyValue: 23

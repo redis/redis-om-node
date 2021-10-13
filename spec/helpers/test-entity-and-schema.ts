@@ -36,7 +36,7 @@ export const simpleSchema = new Schema(SimpleEntity, {
   anArray: { type: 'array' }
 });
 
-export const simpleHashSchema = new Schema(SimpleJsonEntity, {
+export const simpleHashSchema = new Schema(SimpleHashEntity, {
   aString: { type: 'string' },
   aNumber: { type: 'number' },
   aBoolean: { type: 'boolean' },

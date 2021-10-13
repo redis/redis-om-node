@@ -45,7 +45,7 @@ export default class Client {
     return await this.shim!.hgetall(key);
   }
 
-  async hsetall(key: string, data: { [key: string]: string }) {
+  async hsetall(key: string, data: { [key: string]: any }) {
     this.validateShimOpen();
     await this.shim!.hsetall(key, data)
   }

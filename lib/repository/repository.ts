@@ -40,7 +40,12 @@ export default class Repository<TEntity extends Entity> {
       return entity.entityId;
     }
 
-    await this.client.hsetall(key, entity.entityData);
+    if (this.schema.dataStructure === 'JSON') {
+      await this.client.jsonset(key, entity.entityData);
+    } else {
+      await this.client.hsetall(key, entity.entityData);
+    }
+
     return entity.entityId;
   }
 
