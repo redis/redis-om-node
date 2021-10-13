@@ -2,7 +2,9 @@ import Client from '../../lib/client';
 import Schema from '../../lib/schema/schema'
 import Repository from '../../lib/repository/repository';
 
-import { ANOTHER_ENTITY, AN_ENTITY, AN_ESCAPED_ENTITY, A_THIRD_ENTITY, createHashEntitySchema, expectEntityMatches, HashEntity, loadTestData, sortByEntityId } from '../helpers/data-helper';
+import { ANOTHER_ENTITY, AN_ENTITY, AN_ESCAPED_ENTITY, A_THIRD_ENTITY,
+  createHashEntitySchema, expectEntityMatches, HashEntity,
+  loadTestHash, sortByEntityId } from '../helpers/data-helper';
 
 describe("search for hashes", () => {
 
@@ -15,10 +17,10 @@ describe("search for hashes", () => {
     client = new Client();
     await client.open();
     await client.execute(['FLUSHALL']);
-    await loadTestData(client, 'HashEntity:1', AN_ENTITY);
-    await loadTestData(client, 'HashEntity:2', ANOTHER_ENTITY);
-    await loadTestData(client, 'HashEntity:3', A_THIRD_ENTITY);
-    await loadTestData(client, 'HashEntity:4', AN_ESCAPED_ENTITY);
+    await loadTestHash(client, 'HashEntity:1', AN_ENTITY);
+    await loadTestHash(client, 'HashEntity:2', ANOTHER_ENTITY);
+    await loadTestHash(client, 'HashEntity:3', A_THIRD_ENTITY);
+    await loadTestHash(client, 'HashEntity:4', AN_ESCAPED_ENTITY);
     
     schema = createHashEntitySchema();
     repository = client.fetchRepository<HashEntity>(schema);
@@ -55,6 +57,7 @@ describe("search for hashes", () => {
 
   it("searches a string with full text", async () => {
     entities = await repository.search().where('aFullTextString').matches('quick').run();
+    entities.sort(sortByEntityId);
     expect(entities).toHaveLength(2);
     expect(entities[0].entityId).toBe('1');
     expect(entities[1].entityId).toBe('2');
@@ -64,6 +67,7 @@ describe("search for hashes", () => {
 
   it("searches a number", async () => {
     entities = await repository.search().where('aNumber').lte(23).run();
+    entities.sort(sortByEntityId);
     expect(entities).toHaveLength(2);
     expect(entities[0].entityId).toBe('2');
     expect(entities[1].entityId).toBe('3');
@@ -73,6 +77,7 @@ describe("search for hashes", () => {
 
   it("searches a boolean", async () => {
     entities = await repository.search().where('aBoolean').true().run();
+    entities.sort(sortByEntityId);
     expect(entities).toHaveLength(2);
     expect(entities[0].entityId).toBe('1');
     expect(entities[1].entityId).toBe('2');
@@ -82,6 +87,7 @@ describe("search for hashes", () => {
 
   it("searches an array", async () => {
     entities = await repository.search().where('anArray').contains('charlie').run();
+    entities.sort(sortByEntityId);
     expect(entities).toHaveLength(3);
     expect(entities[0].entityId).toBe('1');
     expect(entities[1].entityId).toBe('2');

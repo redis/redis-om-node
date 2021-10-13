@@ -1,5 +1,5 @@
 import { fetchHashKeys, fetchHashFields, keyExists } from '../helpers/redis-helper';
-import { HashEntity, AN_ENTITY, A_PARTIAL_ENTITY, AN_EMPTY_ENTITY, createHashEntitySchema, loadTestData, ANOTHER_ENTITY, A_THIRD_ENTITY} from '../helpers/data-helper';
+import { HashEntity, AN_ENTITY, A_PARTIAL_ENTITY, AN_EMPTY_ENTITY, createHashEntitySchema, loadTestHash, ANOTHER_ENTITY, A_THIRD_ENTITY} from '../helpers/data-helper';
 
 import Client from '../../lib/client';
 import Schema from '../../lib/schema/schema'
@@ -26,7 +26,7 @@ describe("update hash", () => {
   
   beforeEach(async () => {
     await client.execute(['FLUSHALL']);
-    await loadTestData(client, 'HashEntity:full', AN_ENTITY);
+    await loadTestHash(client, 'HashEntity:full', AN_ENTITY);
   });
 
   afterAll(async () => await client.close());

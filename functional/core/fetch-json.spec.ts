@@ -1,26 +1,26 @@
 import { AN_EMPTY_ENTITY, AN_ENTITY, A_PARTIAL_ENTITY,
-  createHashEntitySchema, expectEntityMatches, HashEntity, loadTestHash } from '../helpers/data-helper';
+  createJsonEntitySchema, expectEntityMatches, JsonEntity, loadTestJson } from '../helpers/data-helper';
 
 import Client from '../../lib/client';
 import Schema from '../../lib/schema/schema'
 import Repository from '../../lib/repository/repository';
 
-describe("fetch hash", () => {
+describe("fetch JSON", () => {
 
   let client: Client;
-  let repository: Repository<HashEntity>;
-  let schema: Schema<HashEntity>;
+  let repository: Repository<JsonEntity>;
+  let schema: Schema<JsonEntity>;
 
   beforeAll(async () => {
     client = new Client();
     await client.open();
     await client.execute(['FLUSHALL']);
-    await loadTestHash(client, 'HashEntity:full', AN_ENTITY);
-    await loadTestHash(client, 'HashEntity:partial', A_PARTIAL_ENTITY);
-    await loadTestHash(client, 'HashEntity:empty', AN_EMPTY_ENTITY);
-    
-    schema = createHashEntitySchema();
-    repository = client.fetchRepository<HashEntity>(schema);
+    await loadTestJson(client, 'JsonEntity:full', AN_ENTITY);
+    await loadTestJson(client, 'JsonEntity:partial', A_PARTIAL_ENTITY);
+    await loadTestJson(client, 'JsonEntity:empty', AN_EMPTY_ENTITY);
+
+    schema = createJsonEntitySchema();
+    repository = client.fetchRepository<JsonEntity>(schema);
   });
 
   afterAll(async () => await client.close());

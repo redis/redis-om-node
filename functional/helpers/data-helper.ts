@@ -1,4 +1,4 @@
-import { saveHash } from './redis-helper';
+import { saveHash, saveJson } from './redis-helper';
 
 import Client from "../../lib/client";
 import Entity from "../../lib/entity/entity";
@@ -121,7 +121,7 @@ export const AN_ESCAPED_ENTITY: CommonEntityData = {
   anArray: [ 'alfa ,.<>{}[]"\':;!@#$%^&*()-+=~ bravo', 'charlie delta' ]
 };
 
-export async function loadTestData(client: Client, key: string, data: CommonEntityData) {
+export async function loadTestHash(client: Client, key: string, data: CommonEntityData) {
 
   let command: string[] = [];
 
@@ -136,9 +136,25 @@ export async function loadTestData(client: Client, key: string, data: CommonEnti
     } else {
       command.push(field, value);
     }
-  };
+  }
 
   if (command.length > 0) await saveHash(client, key, command);
+}
+
+export async function loadTestJson(client: Client, key: string, data: CommonEntityData) {
+
+  let json: any = {};
+
+  for (let field in data) {
+    let value = (data as any)[field];
+    if (Array.isArray(value)) {
+      json[field] = value.join('|');
+    } else {
+      json[field] = value;
+    }
+  }
+
+  await saveJson(client, key, JSON.stringify(json));
 }
 
 export function expectEntityMatches(entity: CommonEntity, data: CommonEntityData ) {

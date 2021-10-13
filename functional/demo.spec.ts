@@ -1,5 +1,5 @@
 import Client from '../lib/client';
-import Schema from '../lib/schema/schema'
+import Schema from '../lib/schema/schema';
 import Entity from '../lib/entity/entity';
 
 describe("Demo", () => {
