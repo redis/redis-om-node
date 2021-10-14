@@ -3,18 +3,9 @@ import { v4 } from 'uuid';
 import Entity from "../entity/entity";
 
 import { EntityConstructor, EntityId, EntityIdStrategy, EntityIndex, EntityPrefix } from '../entity/entity-types';
-import { FieldDefinition, SchemaDefinition, StringField } from './schema-definitions';
+import SchemaBuilder from './schema-builder';
+import { FieldDefinition, SchemaDefinition } from './schema-definitions';
 import { EntityDataStructure, SchemaOptions } from './schema-options';
-
-let numberSerializer = (value: number): string => value.toString();
-let stringSerializer = (value: string): string => value;
-let booleanSerializer = (value: boolean): string => value ? '1' : '0';
-let arraySerializer = (separator: string) => (value: string[]): string => value.join(separator);
-
-let numberDeserializer = (value: string): number => Number.parseFloat(value);
-let stringDeserializer = (value: string): string => value;
-let booleanDeserializer = (value: string): boolean => value === '1';
-let arrayDeserializer = (separator: string) => (value: string): string[] => value.split(separator);
 
 export default class Schema<TEntity extends Entity> {
   readonly entityCtor: EntityConstructor<TEntity>;
@@ -30,49 +21,10 @@ export default class Schema<TEntity extends Entity> {
     this.defineProperties();
   }
 
-  get prefix(): EntityPrefix {
-    return this.options?.prefix ?? this.entityCtor.name;
-  }
-
-  get indexName(): EntityIndex {
-    return this.options?.indexName ?? `${this.prefix}:index`;
-  }
-
-  get dataStructure(): EntityDataStructure {
-    return this.options?.dataStructure ?? 'HASH';
-  }
-
-  get redisSchema(): string[] {
-
-    let redisSchema: string[] = [];
-
-    for (let field in this.definition) {
-      let fieldDef: FieldDefinition = this.definition[field];
-      let fieldType = fieldDef.type;
-      let fieldAlias = fieldDef.alias ?? field;
-
-      if (this.dataStructure === 'JSON') {
-        let fieldPath = `\$.${fieldAlias}`;
-        redisSchema.push(fieldPath, 'AS');
-      }
-
-      redisSchema.push(fieldAlias)
-
-      if (fieldType === 'boolean') redisSchema.push('TAG');
-      if (fieldType === 'number') redisSchema.push('NUMERIC');
-      if (fieldType === 'array')
-        redisSchema.push('TAG', 'SEPARATOR', (fieldDef as StringField).separator ?? '|');
-
-      if (fieldType === 'string') {
-        if ((fieldDef as StringField).textSearch)
-          redisSchema.push('TEXT');
-        else
-          redisSchema.push('TAG', 'SEPARATOR', (fieldDef as StringField).separator ?? '|');
-      }
-    }
-
-    return redisSchema;
-  }
+  get prefix(): EntityPrefix { return this.options?.prefix ?? this.entityCtor.name; }
+  get indexName(): EntityIndex { return this.options?.indexName ?? `${this.prefix}:index`; }
+  get dataStructure(): EntityDataStructure { return this.options?.dataStructure ?? 'HASH'; }
+  get redisSchema(): string[] { return new SchemaBuilder(this).redisSchema; }
 
   generateId(): EntityId {
 
@@ -84,92 +36,46 @@ export default class Schema<TEntity extends Entity> {
     return (this.options?.idStrategy ?? defaultStrategy)();
   }
 
-  private validateOptions() {
-    if (!['HASH', 'JSON'].includes(this.dataStructure))
-      throw `'${this.dataStructure}' in an invalid data structure. Valid data structures are 'HASH' and 'JSON'.`;
-
-    if (this.options?.idStrategy && !(this.options.idStrategy instanceof Function))
-      throw "ID strategy must be a function that takes no arguments and returns a string.";
-  
-    if (this.prefix === '') throw `Prefix must be a non-empty string.`;
-    if (this.indexName === '') throw `Index name must be a non-empty string.`;
-  }
-
   private defineProperties() {
+    let entityName = this.entityCtor.name;
     for (let field in this.definition) {
+      this.validateFieldDef(field);
+
       let fieldDef: FieldDefinition = this.definition[field];
       let fieldAlias = fieldDef.alias ?? field;
-      let { serializer, deserializer } = this.selectSerializers(field, fieldDef);
 
-      if (this.dataStructure === 'HASH') {
-
-        Object.defineProperty(this.entityCtor.prototype, field, {
-          configurable: true,
-          get: function (): any {
-            let value: string = this.entityData[fieldAlias] ?? null;
-            return value === null ? null : deserializer(value);
-          },
-          set: function(value?: any): void {
-            value = value ?? null;
-            if (value === null) delete this.entityData[fieldAlias];
-            else this.entityData[fieldAlias] = serializer(value);
+      Object.defineProperty(this.entityCtor.prototype, field, {
+        configurable: true,
+        get: function (): any {
+          return this.entityData[fieldAlias] ?? null;
+        },
+        set: function(value: any): void {
+          if (value === undefined) {
+            throw Error(`Property '${field}' on entity of type '${entityName}' cannot be set to undefined. Use null instead.`);
+          } else if (value === null) {
+            delete this.entityData[fieldAlias];
+          } else {
+            this.entityData[fieldAlias] = value;
           }
-        });
-
-      } else if (fieldDef.type === 'array') {
-
-        let serializer = arraySerializer(fieldDef.separator ?? '|');
-        let deserializer = arrayDeserializer(fieldDef.separator ?? '|');
-
-        Object.defineProperty(this.entityCtor.prototype, field, {
-          configurable: true,
-          get: function (): any {
-            let value: string = this.entityData[fieldAlias] ?? null;
-            return value === null ? null : deserializer(value);
-          },
-          set: function(value?: any): void {
-            value = value ?? null;
-            if (value === null) this.entityData[fieldAlias] = null;
-            else this.entityData[fieldAlias] = serializer(value);
-          }
-        });
-
-      } else {
-
-        Object.defineProperty(this.entityCtor.prototype, field, {
-          configurable: true,
-          get: function (): any {
-            return this.entityData[fieldAlias] ?? null;
-          },
-          set: function(value?: any): void {
-            this.entityData[fieldAlias] = value ?? null;
-          }
-        });
-      }
+        }
+      });
     }
   }
 
-  private selectSerializers(field: string, fieldDef: FieldDefinition) {
-    let serializer: (value: any) => string;
-    let deserializer: (value: string) => any;
+  private validateOptions() {
+    if (!['HASH', 'JSON'].includes(this.dataStructure))
+      throw Error(`'${this.dataStructure}' in an invalid data structure. Valid data structures are 'HASH' and 'JSON'.`);
 
-    if (fieldDef.type === 'number') {
-      serializer = numberSerializer;
-      deserializer = numberDeserializer;
-    } else if (fieldDef.type === 'string') {
-      serializer = stringSerializer;
-      deserializer = stringDeserializer;
-    } else if (fieldDef.type === 'boolean') {
-      serializer = booleanSerializer;
-      deserializer = booleanDeserializer;
-    } else if (fieldDef.type === 'array') {
-      serializer = arraySerializer(fieldDef.separator ?? '|');
-      deserializer = arrayDeserializer(fieldDef.separator ?? '|');
-    } else {
-      // @ts-ignore: JavaScript trap
-      throw(`The field '${field}' is configured with a type of '${fieldDef.type}'. Valid types include 'array', 'boolean', 'number', and 'string'.`);
-    }
+    if (this.options?.idStrategy && !(this.options.idStrategy instanceof Function))
+      throw Error("ID strategy must be a function that takes no arguments and returns a string.");
+  
+    if (this.prefix === '') throw Error(`Prefix must be a non-empty string.`);
+    if (this.indexName === '') throw Error(`Index name must be a non-empty string.`);
+  }
 
-    return { serializer, deserializer };
+  private validateFieldDef(field: string) {
+    let fieldDef: FieldDefinition = this.definition[field];
+    if (!['array', 'boolean', 'number', 'string'].includes(fieldDef.type))
+      throw Error(`The field '${field}' is configured with a type of '${fieldDef.type}'. Valid types include 'array', 'boolean', 'number', and 'string'.`);
   }
 }

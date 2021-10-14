@@ -22,7 +22,7 @@ describe("Schema", () => {
 
   let BOOLEAN_HASH_DEFAULTS = {
     ...HASH_DEFAULTS,
-    providedEntityFieldValue: '1',
+    providedEntityFieldValue: true,
     expectedPropertyValue: true,
     providedAlternatePropertyValue: false,
     expectedAlternatePropertyValue: false
@@ -30,7 +30,7 @@ describe("Schema", () => {
 
   let NUMBER_HASH_DEFAULTS = {
     ...HASH_DEFAULTS,
-    providedEntityFieldValue: '42',
+    providedEntityFieldValue: 42,
     expectedPropertyValue: 42,
     providedAlternatePropertyValue: 23,
     expectedAlternatePropertyValue: 23
@@ -46,7 +46,7 @@ describe("Schema", () => {
 
   let ARRAY_HASH_DEFAULTS = {
     ...HASH_DEFAULTS,
-    providedEntityFieldValue: 'foo|bar|baz',
+    providedEntityFieldValue: ['foo', 'bar', 'baz'],
     expectedPropertyValue: ['foo', 'bar', 'baz'],
     providedAlternatePropertyValue: ['bar', 'baz', 'qux'],
     expectedAlternatePropertyValue: ['bar', 'baz', 'qux']
@@ -78,7 +78,7 @@ describe("Schema", () => {
 
   let ARRAY_JSON_DEFAULTS = {
     ...JSON_DEFAULTS,
-    providedEntityFieldValue: 'foo|bar|baz',
+    providedEntityFieldValue: ['foo', 'bar', 'baz'],
     expectedPropertyValue: ['foo', 'bar', 'baz'],
     providedAlternatePropertyValue: ['bar', 'baz', 'qux'],
     expectedAlternatePropertyValue: ['bar', 'baz', 'qux']
@@ -183,7 +183,7 @@ describe("Schema", () => {
       schemaDef: { 
         aField: { type: 'array', separator: ';'}
       } as SchemaDefinition,
-      providedEntityFieldValue: 'foo;bar;baz',
+      providedEntityFieldValue: [ 'foo', 'bar', 'baz' ],
       expectedRedisSchema: ['aField', 'TAG', 'SEPARATOR', ';']
     }],
 
@@ -267,7 +267,7 @@ describe("Schema", () => {
       schemaDef: { 
         aField: { type: 'array' }
       } as SchemaDefinition,
-      expectedRedisSchema: ['$.aField', 'AS', 'aField', 'TAG', 'SEPARATOR', '|']
+      expectedRedisSchema: ['$.aField[*]', 'AS', 'aField', 'TAG']
     }],
 
     ["that defines an aliased array for JSON", {
@@ -276,16 +276,15 @@ describe("Schema", () => {
         aField: { type: 'array', alias: 'anotherField' }
       } as SchemaDefinition,
       providedEntityFieldName: 'anotherField',
-      expectedRedisSchema: ['$.anotherField', 'AS', 'anotherField', 'TAG', 'SEPARATOR', '|']
+      expectedRedisSchema: ['$.anotherField[*]', 'AS', 'anotherField', 'TAG']
     }],
 
-    ["that defines an array configured with an alternative separator for JSON", {
+    ["that defines an array configured with an ignored separator for JSON", {
       ...ARRAY_JSON_DEFAULTS,
       schemaDef: { 
-        aField: { type: 'array', separator: ';'}
+        aField: { type: 'array', separator: ';' }
       } as SchemaDefinition,
-      providedEntityFieldValue: 'foo;bar;baz',
-      expectedRedisSchema: ['$.aField', 'AS', 'aField', 'TAG', 'SEPARATOR', ';']
+      expectedRedisSchema: ['$.aField[*]', 'AS', 'aField', 'TAG']
     }]
   ])("%s", (_, data) => {
 

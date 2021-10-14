@@ -3,15 +3,22 @@ import Client from "../client";
 import Entity from '../entity/entity';
 import Search from '../search/search';
 
-import { EntityId, EntityKey } from '../entity/entity-types';
+import { EntityData, EntityId, EntityKey } from '../entity/entity-types';
+import HashConverter from "./hash-converter";
+import JsonConverter from "./json-converter";
+
 
 export default class Repository<TEntity extends Entity> {
   private schema: Schema<TEntity>;
   private client: Client;
+  private jsonConverter: JsonConverter;
+  private hashConverter: HashConverter;
 
   constructor(schema: Schema<TEntity>, client: Client) {
     this.schema = schema;
     this.client = client;
+    this.jsonConverter = new JsonConverter(this.schema.definition);
+    this.hashConverter = new HashConverter(this.schema.definition);
   }
 
   async createIndex() {
@@ -41,9 +48,11 @@ export default class Repository<TEntity extends Entity> {
     }
 
     if (this.schema.dataStructure === 'JSON') {
-      await this.client.jsonset(key, entity.entityData);
+      let jsonData = this.jsonConverter.toJsonData(entity.entityData);
+      await this.client.jsonset(key, jsonData);
     } else {
-      await this.client.hsetall(key, entity.entityData);
+      let hashData = this.hashConverter.toHashData(entity.entityData);
+      await this.client.hsetall(key, hashData);
     }
 
     return entity.entityId;
@@ -51,13 +60,17 @@ export default class Repository<TEntity extends Entity> {
 
   async fetch(id: EntityId): Promise<TEntity> {
     let key = this.makeKey(id);
-    let data;
+    let entityData: EntityData = {};
+    
     if (this.schema.dataStructure === 'JSON') {
-      data = await this.client.jsonget(key);
+      let jsonData = await this.client.jsonget(key);
+      entityData = this.jsonConverter.toEntityData(jsonData);
     } else {
-      data = await this.client.hgetall(key);
+      let hashData = await this.client.hgetall(key);
+      entityData = this.hashConverter.toEntityData(hashData);
     }
-    let entity = new this.schema.entityCtor(id, data);
+
+    let entity = new this.schema.entityCtor(id, entityData);
     return entity;
   }
 

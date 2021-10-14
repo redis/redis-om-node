@@ -1,5 +1,5 @@
 import Schema from "../schema/schema";
-import Client from "../client";
+import Client, { HashData } from "../client";
 import Entity from '../entity/entity';
 
 import { EntityData, EntityId } from '../entity/entity-types';
@@ -13,6 +13,7 @@ import WhereBoolean from './where-boolean';
 import WhereNumber from './where-number';
 import WhereString from './where-string';
 import WhereText from './where-text';
+import HashConverter from "../repository/hash-converter";
 
 type SubSearchFunction<TEntity extends Entity> = (search: Search<TEntity>) => Search<TEntity>
 type AndOrConstructor = new (left: Where, right: Where) => Where;
@@ -52,6 +53,8 @@ export default class Search<TEntity extends Entity> {
   }
 
   async run(): Promise<TEntity[]> {
+    // TODO: need to handle JSON results too
+
     let results = await this.client.search(this.schema.indexName, this.query);
 
     let count = this.extractCount(results);
@@ -134,11 +137,13 @@ export default class Search<TEntity extends Entity> {
     let keys = array.filter((_entry, index) => index % 2 === 0);
     let values = array.filter((_entry, index) => index % 2 !== 0);
     
-    let data: EntityData = keys.reduce((object: any, key, index) => {
+    let hashData: HashData = keys.reduce((object: any, key, index) => {
       object[key] = values[index]
       return object
     }, {});
+
+    let entityData: EntityData = new HashConverter(this.schema.definition).toEntityData(hashData);
     
-    return new this.schema.entityCtor(id, data);
+    return new this.schema.entityCtor(id, entityData);
   }
 }

@@ -54,16 +54,16 @@ function createSchemaOfType<TEntity extends Entity>(ctor: EntityConstructor<TEnt
 }
 
 type CommonEntityData = {
-  aString?: string;
-  anotherString?: string;
-  aFullTextString?: string;
-  anotherFullTextString?: string;
-  aNumber?: number;
-  anotherNumber?: number;
-  aBoolean?: boolean;
-  anotherBoolean?: boolean;
-  anArray?: string[];
-  anotherArray?: string[];  
+  aString: string | null;
+  anotherString: string | null;
+  aFullTextString: string | null;
+  anotherFullTextString: string | null;
+  aNumber: number | null;
+  anotherNumber: number | null;
+  aBoolean: boolean | null;
+  anotherBoolean: boolean | null;
+  anArray: string[] | null;
+  anotherArray: string[] | null;  
 };
 
 export const AN_ENTITY: CommonEntityData = {
@@ -107,18 +107,41 @@ export const A_THIRD_ENTITY: CommonEntityData = {
 
 export const A_PARTIAL_ENTITY: CommonEntityData = {
   aString: 'foo',
+  anotherString: null,
   aFullTextString: 'The quick brown fox jumped over the lazy dog.',
+  anotherFullTextString: null,
   aNumber: 42,
+  anotherNumber: null,
   aBoolean: true,
+  anotherBoolean: null,
   anArray: [ 'alfa', 'bravo', 'charlie'],
+  anotherArray: null
 };
 
-export const AN_EMPTY_ENTITY: CommonEntityData = {};
+export const AN_EMPTY_ENTITY: CommonEntityData = {
+  aString: null,
+  anotherString: null,
+  aFullTextString: null,
+  anotherFullTextString: null,
+  aNumber: null,
+  anotherNumber: null,
+  aBoolean: null,
+  anotherBoolean: null,
+  anArray: null,
+  anotherArray: null
+};
 
 export const AN_ESCAPED_ENTITY: CommonEntityData = {
   aString: "foo ,.<>{}[]\"':;!@#$%^*()-+=~& bar",
+  anotherString: null,
   aFullTextString: "zany ,.<>{}[]\"':;!@#$%^&*()-+=~| fox",
-  anArray: [ 'alfa ,.<>{}[]"\':;!@#$%^&*()-+=~ bravo', 'charlie delta' ]
+  anotherFullTextString: null,
+  aNumber: null,
+  anotherNumber: null,
+  aBoolean: null,
+  anotherBoolean: null,
+  anArray: [ 'alfa ,.<>{}[]"\':;!@#$%^&*()-+=~ bravo', 'charlie delta' ],
+  anotherArray: null
 };
 
 export async function loadTestHash(client: Client, key: string, data: CommonEntityData) {
@@ -127,14 +150,11 @@ export async function loadTestHash(client: Client, key: string, data: CommonEnti
 
   for (let field in data) {
     let value = (data as any)[field];
-    if (typeof value === 'boolean') {
-      command.push(field, value ? '1' : '0');
-    } else if (typeof value === 'number') {
-      command.push(field, value.toString());
-    } else if (Array.isArray(value)) {
-      command.push(field, value.join('|'));
-    } else {
-      command.push(field, value);
+    if (value !== null) {
+      if (typeof value === 'boolean') command.push(field, value ? '1' : '0');
+      if (typeof value === 'number') command.push(field, value.toString());
+      if (typeof value === 'string') command.push(field, value);
+      if (Array.isArray(value)) command.push(field, value.join('|'));
     }
   }
 
@@ -147,11 +167,7 @@ export async function loadTestJson(client: Client, key: string, data: CommonEnti
 
   for (let field in data) {
     let value = (data as any)[field];
-    if (Array.isArray(value)) {
-      json[field] = value.join('|');
-    } else {
-      json[field] = value;
-    }
+    if (value !== null) json[field] = value;
   }
 
   await saveJson(client, key, JSON.stringify(json));

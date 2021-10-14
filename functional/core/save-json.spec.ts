@@ -1,4 +1,4 @@
-import { fetchJson } from '../helpers/redis-helper';
+import { fetchJson, keyExists } from '../helpers/redis-helper';
 import { JsonEntity, AN_ENTITY, A_PARTIAL_ENTITY, AN_EMPTY_ENTITY, createJsonEntitySchema} from '../helpers/data-helper';
 
 import Client from '../../lib/client';
@@ -58,8 +58,8 @@ describe("save JSON", () => {
       expect(data.anotherNumber).toBe(AN_ENTITY.anotherNumber);
       expect(data.aBoolean).toBe(AN_ENTITY.aBoolean);
       expect(data.anotherBoolean).toBe(AN_ENTITY.anotherBoolean);
-      expect(data.anArray).toBe(AN_ENTITY.anArray?.join('|'));
-      expect(data.anotherArray).toBe(AN_ENTITY.anotherArray?.join('|'));
+      expect(data.anArray).toEqual(AN_ENTITY.anArray);
+      expect(data.anotherArray).toEqual(AN_ENTITY.anotherArray);
     });
   });
 
@@ -83,16 +83,16 @@ describe("save JSON", () => {
     it("creates the expected JSON", async () => {
       let json = await fetchJson(client, entityKey);
       let data = JSON.parse(json);
-      expect(data.aString).toBe(A_PARTIAL_ENTITY.aString ?? null);
-      expect(data.anotherString).toBe(A_PARTIAL_ENTITY.anotherString ?? null);
-      expect(data.aFullTextString).toBe(A_PARTIAL_ENTITY.aFullTextString ?? null);
-      expect(data.anotherFullTextString).toBe(A_PARTIAL_ENTITY.anotherFullTextString ?? null);
-      expect(data.aNumber).toBe(A_PARTIAL_ENTITY.aNumber ?? null);
-      expect(data.anotherNumber).toBe(A_PARTIAL_ENTITY.anotherNumber ?? null);
-      expect(data.aBoolean).toBe(A_PARTIAL_ENTITY.aBoolean ?? null);
-      expect(data.anotherBoolean).toBe(A_PARTIAL_ENTITY.anotherBoolean ?? null);
-      expect(data.anArray).toBe(A_PARTIAL_ENTITY.anArray?.join('|') ?? null);
-      expect(data.anotherArray).toBe(A_PARTIAL_ENTITY.anotherArray?.join('|') ?? null);
+      expect(data.aString).toBe(A_PARTIAL_ENTITY.aString);
+      expect(data.anotherString).toBeUndefined();
+      expect(data.aFullTextString).toBe(A_PARTIAL_ENTITY.aFullTextString);
+      expect(data.anotherFullTextString).toBeUndefined();
+      expect(data.aNumber).toBe(A_PARTIAL_ENTITY.aNumber);
+      expect(data.anotherNumber).toBeUndefined();
+      expect(data.aBoolean).toBe(A_PARTIAL_ENTITY.aBoolean);
+      expect(data.anotherBoolean).toBeUndefined();
+      expect(data.anArray).toEqual(A_PARTIAL_ENTITY.anArray);
+      expect(data.anotherArray).toBeUndefined();
     });
   });
 
@@ -113,19 +113,9 @@ describe("save JSON", () => {
       entityKey = `JsonEntity:${entityId}`;
     });
 
-    it("creates the expected JSON", async () => {
-      let json = await fetchJson(client, entityKey);
-      let data = JSON.parse(json);
-      expect(data.aString).toBe(AN_EMPTY_ENTITY.aString ?? null);
-      expect(data.anotherString).toBe(AN_EMPTY_ENTITY.anotherString ?? null);
-      expect(data.aFullTextString).toBe(AN_EMPTY_ENTITY.aFullTextString ?? null);
-      expect(data.anotherFullTextString).toBe(AN_EMPTY_ENTITY.anotherFullTextString ?? null);
-      expect(data.aNumber).toBe(AN_EMPTY_ENTITY.aNumber ?? null);
-      expect(data.anotherNumber).toBe(AN_EMPTY_ENTITY.anotherNumber ?? null);
-      expect(data.aBoolean).toBe(AN_EMPTY_ENTITY.aBoolean ?? null);
-      expect(data.anotherBoolean).toBe(AN_EMPTY_ENTITY.anotherBoolean ?? null);
-      expect(data.anArray).toBe(AN_EMPTY_ENTITY.anArray?.join('|') ?? null);
-      expect(data.anotherArray).toBe(AN_EMPTY_ENTITY.anotherArray?.join('|') ?? null);
+    it("does not save JSON", async () => {
+      let exists = await keyExists(client, entityKey);
+      expect(exists).toBe(false);
     });
   });
 });

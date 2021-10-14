@@ -61,7 +61,7 @@ describe("Repository", () => {
     describe.each([
 
       ["when fetching a fully populated entity from JSON", {
-        mockedData: { aString: 'foo', aNumber: 42, aBoolean: false, anArray: 'bar|baz|qux' },
+        mockedData: { aString: 'foo', aNumber: 42, aBoolean: false, anArray: [ "bar", "baz", "qux" ] },
         expectedString: 'foo', expectedNumber: 42, expectedBoolean: false, expectedArray: [ 'bar', 'baz', 'qux' ]
       }],
 
@@ -70,12 +70,17 @@ describe("Repository", () => {
         expectedString: 'foo', expectedNumber: 42, expectedBoolean: null, expectedArray: null
       }],
 
-      [ "when fetching a empty entity from JSON", {
+      [ "when fetching an empty entity from JSON", {
         mockedData: {},
         expectedString: null, expectedNumber: null, expectedBoolean: null, expectedArray: null
       }],
       
-      [ "when fetching a fully populated entity from JSON with nulls", {
+      [ "when fetching a missing entity from JSON", {
+        mockedData: null,
+        expectedString: null, expectedNumber: null, expectedBoolean: null, expectedArray: null
+      }],
+      
+      [ "when fetching an entity from JSON with nulls", {
         mockedData: { aString: 'foo', aNumber: 42, aBoolean: null, anArray: null },
         expectedString: 'foo', expectedNumber: 42, expectedBoolean: null, expectedArray: null
       }]

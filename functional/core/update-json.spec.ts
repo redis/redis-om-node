@@ -1,4 +1,4 @@
-import { fetchJson } from '../helpers/redis-helper';
+import { fetchJson, keyExists } from '../helpers/redis-helper';
 import { JsonEntity, AN_ENTITY, A_PARTIAL_ENTITY, AN_EMPTY_ENTITY, createJsonEntitySchema, loadTestJson, ANOTHER_ENTITY, A_THIRD_ENTITY} from '../helpers/data-helper';
 
 import Client from '../../lib/client';
@@ -61,8 +61,8 @@ describe("update JSON", () => {
       expect(data.anotherNumber).toBe(ANOTHER_ENTITY.anotherNumber);
       expect(data.aBoolean).toBe(ANOTHER_ENTITY.aBoolean);
       expect(data.anotherBoolean).toBe(ANOTHER_ENTITY.anotherBoolean);
-      expect(data.anArray).toBe(ANOTHER_ENTITY.anArray?.join('|'));
-      expect(data.anotherArray).toBe(ANOTHER_ENTITY.anotherArray?.join('|'));
+      expect(data.anArray).toEqual(ANOTHER_ENTITY.anArray);
+      expect(data.anotherArray).toEqual(ANOTHER_ENTITY.anotherArray);
     });
   });
 
@@ -89,15 +89,15 @@ describe("update JSON", () => {
       let json = await fetchJson(client, entityKey);
       let data = JSON.parse(json);
       expect(data.aString).toBe(ANOTHER_ENTITY.aString);
-      expect(data.anotherString).toBeNull()
+      expect(data.anotherString).toBeUndefined()
       expect(data.aFullTextString).toBe(ANOTHER_ENTITY.aFullTextString);
-      expect(data.anotherFullTextString).toBeNull();
+      expect(data.anotherFullTextString).toBeUndefined();
       expect(data.aNumber).toBe(ANOTHER_ENTITY.aNumber);
-      expect(data.anotherNumber).toBeNull();
+      expect(data.anotherNumber).toBeUndefined();
       expect(data.aBoolean).toBe(ANOTHER_ENTITY.aBoolean);
-      expect(data.anotherBoolean).toBeNull();
-      expect(data.anArray).toBe(ANOTHER_ENTITY.anArray?.join('|'));
-      expect(data.anotherArray).toBeNull();
+      expect(data.anotherBoolean).toBeUndefined();
+      expect(data.anArray).toEqual(ANOTHER_ENTITY.anArray);
+      expect(data.anotherArray).toBeUndefined();
     });
   });
 
@@ -120,19 +120,9 @@ describe("update JSON", () => {
 
     it("returns the expected entity id", () => expect(entityId).toBe('full'));
 
-    it("creates the expected JSON", async () => {
-      let json = await fetchJson(client, entityKey);
-      let data = JSON.parse(json);
-      expect(data.aString).toBeNull();
-      expect(data.anotherString).toBeNull()
-      expect(data.aFullTextString).toBeNull();
-      expect(data.anotherFullTextString).toBeNull();
-      expect(data.aNumber).toBeNull();
-      expect(data.anotherNumber).toBeNull();
-      expect(data.aBoolean).toBeNull();
-      expect(data.anotherBoolean).toBeNull();
-      expect(data.anArray).toBeNull();
-      expect(data.anotherArray).toBeNull();
+    it("removes the key from Redis", async () => {
+      let exists = await keyExists(client, entityKey);
+      expect(exists).toBe(false);
     });
   });
 });

@@ -55,8 +55,8 @@ describe("create and drop index on JSON", () => {
       expect(fields[5]).toEqual([ 'anotherNumber', 'type', 'NUMERIC' ]);
       expect(fields[6]).toEqual([ 'aBoolean', 'type', 'TAG', 'SEPARATOR', ',' ]);
       expect(fields[7]).toEqual([ 'anotherBoolean', 'type', 'TAG', 'SEPARATOR', ',' ]);
-      expect(fields[8]).toEqual([ 'anArray', 'type', 'TAG', 'SEPARATOR', '|' ]);
-      expect(fields[9]).toEqual([ 'anotherArray', 'type', 'TAG', 'SEPARATOR', '|' ]);
+      expect(fields[8]).toEqual([ 'anArray', 'type', 'TAG', 'SEPARATOR', ',' ]);
+      expect(fields[9]).toEqual([ 'anotherArray', 'type', 'TAG', 'SEPARATOR', ',' ]);
     });
 
     describe("when the index is dropped", () => {

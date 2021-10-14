@@ -85,17 +85,12 @@ describe("Repository", () => {
 
         ["when saving a fully populated entity", {
           providedString: 'foo', providedNumber: 42, providedBoolean: false, providedArray: [ 'bar', 'baz', 'qux' ],
-          expectedData: { aString: 'foo', aNumber: 42, aBoolean: false, anArray: 'bar|baz|qux' }
+          expectedData: { aString: 'foo', aNumber: 42, aBoolean: false, anArray: [ 'bar', 'baz', 'qux' ] }
         }],
   
         [ "when saving a partially populated entity", {
           providedString: 'foo', providedNumber: 42, providedBoolean: null, providedArray: null,
-          expectedData: { aString: 'foo', aNumber: 42, aBoolean: null, anArray: null }
-        }],
-
-        [ "when saving an empty entity", {
-          providedString: null, providedNumber: null, providedBoolean: null, providedArray: null,
-          expectedData: { aString: null, aNumber: null, aBoolean: null, anArray: null }
+          expectedData: { aString: 'foo', aNumber: 42 }
         }]
 
       ])("%s", (_, data) => {
@@ -112,6 +107,21 @@ describe("Repository", () => {
         it("returns the entity id", () => expect(entityId).toBe(entity.entityId));
         it("saves the entity data to the key", () =>
           expect(Client.prototype.jsonset).toHaveBeenCalledWith(expectedKey, data.expectedData));
+      });
+
+      describe("when saving an empty entity", () => {
+        beforeEach(async () => {
+          entity.aString = null;
+          entity.aNumber = null;
+          entity.aBoolean = null;
+          entity.anArray = null;
+          entityId = await repository.save(entity);
+          expectedKey = `SimpleJsonEntity:${entityId}`;
+        });
+  
+        it("returns the entity id", () => expect(entityId).toBe(entity.entityId));
+        it("unlinks the key", () =>
+          expect(Client.prototype.unlink).toHaveBeenCalledWith(expectedKey));
       });
     });
   });

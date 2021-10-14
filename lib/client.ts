@@ -5,6 +5,9 @@ import Repository from './repository/repository';
 import Schema from './schema/schema';
 import RedisError from './errors';
 
+export type HashData = { [key: string ]: any };
+export type JsonData = { [key: string ]: any };
+
 export default class Client {
   private shim?: RedisShim;
 
@@ -40,23 +43,23 @@ export default class Client {
     await this.shim!.unlink(key);
   }
 
-  async hgetall(key: string) {
+  async hgetall(key: string): Promise<HashData> {
     this.validateShimOpen();
     return await this.shim!.hgetall(key);
   }
 
-  async hsetall(key: string, data: { [key: string]: any }) {
+  async hsetall(key: string, data: HashData) {
     this.validateShimOpen();
     await this.shim!.hsetall(key, data)
   }
 
-  async jsonget(key: string): Promise<{ [key: string]: any }> {
+  async jsonget(key: string): Promise<JsonData> {
     this.validateShimOpen();
     let json = await this.shim!.execute<string>([ 'JSON.GET', key, '.' ]);
     return JSON.parse(json);
   }
 
-  async jsonset(key: string, data: { [key: string]: any }) {
+  async jsonset(key: string, data: JsonData) {
     this.validateShimOpen();
     let json = JSON.stringify(data);
     await this.shim!.execute<string>([ 'JSON.SET', key, '.', json ]);
