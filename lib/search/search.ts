@@ -12,7 +12,7 @@ import WhereNumber from './where-number';
 import WhereString from './where-string';
 import WhereText from './where-text';
 
-import { HashSearchResultsConverter, JsonSearchResultsConverter, SearchResultsConverter } from "./results-converter";
+import { HashSearchResultsConverter, JsonSearchResultsConverter } from "./results-converter";
 
 type SubSearchFunction<TEntity extends Entity> = (search: Search<TEntity>) => Search<TEntity>
 type AndOrConstructor = new (left: Where, right: Where) => Where;
@@ -26,6 +26,18 @@ export default class Search<TEntity extends Entity> {
   constructor(schema: Schema<TEntity>, client: Client) {
     this.schema = schema;
     this.client = client;
+  }
+
+  get query() : string {
+    if (this.rootWhere === undefined) return '*';
+    return `${this.rootWhere.toString()}`;
+  }
+
+  async run(): Promise<TEntity[]> {
+    let results = await this.client.search(this.schema.indexName, this.query);
+    return this.schema.dataStructure === 'JSON'
+      ? new JsonSearchResultsConverter(this.schema, results).entities
+      : new HashSearchResultsConverter(this.schema, results).entities
   }
 
   where(field: string): WhereField<TEntity>;
@@ -44,18 +56,6 @@ export default class Search<TEntity extends Entity> {
   or(subSearchFn: SubSearchFunction<TEntity>): Search<TEntity>;
   or(fieldOrFn: string | SubSearchFunction<TEntity>): WhereField<TEntity> | Search<TEntity> {
     return this.anyWhere(WhereOr, fieldOrFn);
-  }
-
-  get query() : string {
-    if (this.rootWhere === undefined) return '*';
-    return `${this.rootWhere.toString()}`;
-  }
-
-  async run(): Promise<TEntity[]> {
-    let results = await this.client.search(this.schema.indexName, this.query);
-    return this.schema.dataStructure === 'JSON'
-      ? new JsonSearchResultsConverter(this.schema, results).entities
-      : new HashSearchResultsConverter(this.schema, results).entities
   }
 
   private anyWhere(ctor: AndOrConstructor, fieldOrFn: string | SubSearchFunction<TEntity>): WhereField<TEntity> | Search<TEntity> {
