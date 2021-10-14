@@ -2,7 +2,7 @@ import Schema from "../schema/schema";
 import Client, { HashData } from "../client";
 import Entity from '../entity/entity';
 
-import { EntityData, EntityId } from '../entity/entity-types';
+import { EntityData } from '../entity/entity-types';
 
 import Where from './where';
 import WhereAnd from './where-and';
@@ -130,10 +130,10 @@ export default class Search<TEntity extends Entity> {
     let [, ...foundKeysAndValues] = results;
     return foundKeysAndValues
       .filter((_entry, index) => index % 2 !== 0)
-      .map((array, index) => this.arrayToEntity(array as string[], ids[index] as EntityId));
+      .map((array, index) => this.arrayToEntity(array as string[], ids[index] as string));
   }
 
-  private arrayToEntity(array: string[], id: EntityId): TEntity{
+  private arrayToEntity(array: string[], id: string): TEntity{
     let keys = array.filter((_entry, index) => index % 2 === 0);
     let values = array.filter((_entry, index) => index % 2 !== 0);
     

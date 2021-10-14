@@ -1,11 +1,10 @@
 import { saveHash, saveJson } from './redis-helper';
 
-import Client from "../../lib/client";
+import Client, { SearchDataStructure } from "../../lib/client";
 import Entity from "../../lib/entity/entity";
 import Schema from '../../lib/schema/schema';
 
 import { EntityConstructor } from '../../lib/entity/entity-types';
-import { EntityDataStructure } from '../../lib/schema/schema-options';
 
 interface CommonEntity {
   aString?: string | null;
@@ -35,7 +34,7 @@ export function createJsonEntitySchema() : Schema<JsonEntity> {
   return createSchemaOfType<JsonEntity>(JsonEntity, 'JSON');
 }
 
-function createSchemaOfType<TEntity extends Entity>(ctor: EntityConstructor<TEntity>, dataStructure: EntityDataStructure) : Schema<TEntity> {
+function createSchemaOfType<TEntity extends Entity>(ctor: EntityConstructor<TEntity>, dataStructure: SearchDataStructure) : Schema<TEntity> {
   return new Schema<TEntity>(
     ctor, {
       aString: { type: 'string' },

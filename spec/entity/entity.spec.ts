@@ -1,9 +1,8 @@
-import { EntityId } from '../../lib/entity/entity-types';
 import { AliasedEntity, SimpleEntity } from '../helpers/test-entity-and-schema';
 
 describe("Entity", () => {
 
-  let entityId: EntityId = 'foo';
+  let entityId = 'foo';
   
   describe("without data", () => {
 

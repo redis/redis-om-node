@@ -26,3 +26,5 @@ export type FieldDefinition = NumericField | StringField | BooleanField | ArrayF
 export type SchemaDefinition = {
   [key: string]: FieldDefinition
 }
+
+export type IdStrategy = () => string;

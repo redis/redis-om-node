@@ -3,7 +3,7 @@ import Client from "../client";
 import Entity from '../entity/entity';
 import Search from '../search/search';
 
-import { EntityData, EntityId, EntityKey } from '../entity/entity-types';
+import { EntityData } from '../entity/entity-types';
 import HashConverter from "./hash-converter";
 import JsonConverter from "./json-converter";
 
@@ -34,13 +34,13 @@ export default class Repository<TEntity extends Entity> {
   }
 
   createEntity(): TEntity {
-    let id: EntityId = this.schema.generateId();
+    let id = this.schema.generateId();
     return new this.schema.entityCtor(id);
   }
 
-  async save(entity: TEntity): Promise<EntityId> {
+  async save(entity: TEntity): Promise<string> {
 
-    let key: EntityKey = this.makeKey(entity.entityId);
+    let key = this.makeKey(entity.entityId);
 
     if (Object.keys(entity.entityData).length === 0) {
       await this.client.unlink(key);
@@ -58,7 +58,7 @@ export default class Repository<TEntity extends Entity> {
     return entity.entityId;
   }
 
-  async fetch(id: EntityId): Promise<TEntity> {
+  async fetch(id: string): Promise<TEntity> {
     let key = this.makeKey(id);
     let entityData: EntityData = {};
     
@@ -74,7 +74,7 @@ export default class Repository<TEntity extends Entity> {
     return entity;
   }
 
-  async remove(id: EntityId): Promise<void> {
+  async remove(id: string): Promise<void> {
     let key = this.makeKey(id);
     await this.client.unlink(key);
   }
@@ -83,7 +83,7 @@ export default class Repository<TEntity extends Entity> {
     return new Search<TEntity>(this.schema, this.client);
   }
 
-  private makeKey(id: EntityId): EntityKey {
+  private makeKey(id: string): string {
     return `${this.schema.prefix}:${id}`;
   }
 }

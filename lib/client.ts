@@ -7,6 +7,7 @@ import RedisError from './errors';
 
 export type HashData = { [key: string ]: any };
 export type JsonData = { [key: string ]: any };
+export type SearchDataStructure = 'HASH' | 'JSON';
 
 export default class Client {
   private shim?: RedisShim;
@@ -65,7 +66,7 @@ export default class Client {
     await this.shim!.execute<string>([ 'JSON.SET', key, '.', json ]);
   }
 
-  async createIndex(indexName: string, dataStructure: "HASH" | "JSON", prefix: string, schema: string[]) {
+  async createIndex(indexName: string, dataStructure: SearchDataStructure, prefix: string, schema: string[]) {
     this.validateShimOpen();
     await this.shim!.execute([
       'FT.CREATE', indexName, 

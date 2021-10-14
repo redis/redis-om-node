@@ -1,11 +1,12 @@
 import { v4 } from 'uuid';
+import { SearchDataStructure } from '../client';
 
 import Entity from "../entity/entity";
 
-import { EntityConstructor, EntityId, EntityIdStrategy, EntityIndex, EntityPrefix } from '../entity/entity-types';
+import { EntityConstructor } from '../entity/entity-types';
 import SchemaBuilder from './schema-builder';
-import { FieldDefinition, SchemaDefinition } from './schema-definitions';
-import { EntityDataStructure, SchemaOptions } from './schema-options';
+import { FieldDefinition, IdStrategy, SchemaDefinition } from './schema-definitions';
+import { SchemaOptions } from './schema-options';
 
 export default class Schema<TEntity extends Entity> {
   readonly entityCtor: EntityConstructor<TEntity>;
@@ -21,14 +22,14 @@ export default class Schema<TEntity extends Entity> {
     this.defineProperties();
   }
 
-  get prefix(): EntityPrefix { return this.options?.prefix ?? this.entityCtor.name; }
-  get indexName(): EntityIndex { return this.options?.indexName ?? `${this.prefix}:index`; }
-  get dataStructure(): EntityDataStructure { return this.options?.dataStructure ?? 'HASH'; }
+  get prefix(): string { return this.options?.prefix ?? this.entityCtor.name; }
+  get indexName(): string { return this.options?.indexName ?? `${this.prefix}:index`; }
+  get dataStructure(): SearchDataStructure { return this.options?.dataStructure ?? 'HASH'; }
   get redisSchema(): string[] { return new SchemaBuilder(this).redisSchema; }
 
-  generateId(): EntityId {
+  generateId(): string {
 
-    let defaultStrategy: EntityIdStrategy = () => {
+    let defaultStrategy: IdStrategy = () => {
       let bytes: number[] = [];
       return Buffer.from(v4(null, bytes)).toString('base64').slice(0, 22);
     }

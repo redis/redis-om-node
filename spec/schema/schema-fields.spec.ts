@@ -2,7 +2,7 @@ import Schema from '../../lib/schema/schema';
 import Entity from '../../lib/entity/entity';
 import { EntityData } from '../../lib/entity/entity-types';
 import { SchemaDefinition } from '../../lib/schema/schema-definitions';
-import { EntityDataStructure } from '../../lib/schema/schema-options';
+import { SearchDataStructure } from '../../lib/client';
 
 describe("Schema", () => {
 
@@ -12,12 +12,12 @@ describe("Schema", () => {
 
   let HASH_DEFAULTS = {
     ...DEFAULTS,
-    providedDataStructure: 'HASH' as EntityDataStructure
+    providedDataStructure: 'HASH' as SearchDataStructure
   }
 
   let JSON_DEFAULTS = {
     ...DEFAULTS,
-    providedDataStructure: 'JSON' as EntityDataStructure
+    providedDataStructure: 'JSON' as SearchDataStructure
   }
 
   let BOOLEAN_HASH_DEFAULTS = {

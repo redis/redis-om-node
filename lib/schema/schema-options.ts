@@ -1,10 +1,9 @@
-import { EntityIdStrategy, EntityIndex, EntityPrefix } from "../entity/entity-types";
-
-export type EntityDataStructure = "HASH" | "JSON";
+import { SearchDataStructure } from "../client";
+import { IdStrategy } from "./schema-definitions";
 
 export type SchemaOptions = {
-  prefix?: EntityPrefix;
-  idStrategy?: EntityIdStrategy;
-  indexName?: EntityIndex;
-  dataStructure?: EntityDataStructure;
+  prefix?: string;
+  indexName?: string;
+  dataStructure?: SearchDataStructure;
+  idStrategy?: IdStrategy;
 }

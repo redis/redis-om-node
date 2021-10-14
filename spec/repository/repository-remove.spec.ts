@@ -2,7 +2,6 @@ import { mocked } from 'ts-jest/utils';
 
 import Client from '../../lib/client';
 import Repository from '../../lib/repository/repository';
-import { EntityId } from '../../lib/entity/entity-types';
 
 import { simpleHashSchema, simpleJsonSchema, SimpleHashEntity, SimpleJsonEntity } from '../helpers/test-entity-and-schema';
 
@@ -14,7 +13,7 @@ beforeEach(() => mocked(Client).mockReset());
 describe("Repository", () => {
 
   let client: Client;
-  let entityId: EntityId = 'foo';
+  let entityId = 'foo';
 
   describe("#remove", () => {
 

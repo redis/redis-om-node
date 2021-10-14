@@ -1,7 +1,2 @@
-export type EntityPrefix = string;
-export type EntityId = string;
-export type EntityKey = string;
-export type EntityIndex = string;
 export type EntityData = { [key: string]: string | number | boolean | string[] };
-export type EntityConstructor<TEntity> = new (id: EntityId, data?: EntityData) => TEntity;
-export type EntityIdStrategy = () => EntityId;
+export type EntityConstructor<TEntity> = new (id: string, data?: EntityData) => TEntity;

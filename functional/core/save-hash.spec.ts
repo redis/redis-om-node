@@ -5,16 +5,14 @@ import Client from '../../lib/client';
 import Schema from '../../lib/schema/schema'
 import Repository from '../../lib/repository/repository';
 
-import { EntityId, EntityKey } from '../../lib/entity/entity-types';
-
 describe("save hash", () => {
 
   let client: Client;
   let repository: Repository<HashEntity>;
   let schema: Schema<HashEntity>;
   let entity: HashEntity;
-  let entityId: EntityId;
-  let entityKey: EntityKey;
+  let entityId: string;
+  let entityKey: string;
 
   beforeAll(async () => {
     client = new Client();

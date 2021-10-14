@@ -50,6 +50,7 @@ describe("Demo", () => {
     
     let repository = client.fetchRepository<BigfootSighting>(schema);
 
+    await repository.dropIndex();
     await repository.createIndex();
 
     // create an entity

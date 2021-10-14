@@ -1,11 +1,9 @@
 import { fetchHashKeys, fetchHashFields, keyExists } from '../helpers/redis-helper';
-import { HashEntity, AN_ENTITY, A_PARTIAL_ENTITY, AN_EMPTY_ENTITY, createHashEntitySchema, loadTestHash, ANOTHER_ENTITY, A_THIRD_ENTITY} from '../helpers/data-helper';
+import { HashEntity, AN_ENTITY, createHashEntitySchema, loadTestHash, ANOTHER_ENTITY } from '../helpers/data-helper';
 
 import Client from '../../lib/client';
 import Schema from '../../lib/schema/schema'
 import Repository from '../../lib/repository/repository';
-
-import { EntityId, EntityKey } from '../../lib/entity/entity-types';
 
 describe("update hash", () => {
 
@@ -13,8 +11,8 @@ describe("update hash", () => {
   let repository: Repository<HashEntity>;
   let schema: Schema<HashEntity>;
   let entity: HashEntity;
-  let entityId: EntityId;
-  let entityKey: EntityKey;
+  let entityId: string;
+  let entityKey: string;
 
   beforeAll(async () => {
     client = new Client();

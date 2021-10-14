@@ -5,16 +5,14 @@ import Client from '../../lib/client';
 import Schema from '../../lib/schema/schema'
 import Repository from '../../lib/repository/repository';
 
-import { EntityId, EntityKey } from '../../lib/entity/entity-types';
-
 describe("update JSON", () => {
 
   let client: Client;
   let repository: Repository<JsonEntity>;
   let schema: Schema<JsonEntity>;
   let entity: JsonEntity;
-  let entityId: EntityId;
-  let entityKey: EntityKey;
+  let entityId: string;
+  let entityKey: string;
 
   beforeAll(async () => {
     client = new Client();
