@@ -47,16 +47,16 @@ describe("create and drop index on hash", () => {
     it("has the expected fields", () => {
       let fields = result[7];
       expect(fields).toHaveLength(10);
-      expect(fields[0]).toEqual([ 'aString', 'type', 'TAG', 'SEPARATOR', '|' ]);
-      expect(fields[1]).toEqual([ 'anotherString', 'type', 'TAG', 'SEPARATOR', '|' ]);
-      expect(fields[2]).toEqual([ 'aFullTextString', 'type', 'TEXT', 'WEIGHT', '1' ]);
-      expect(fields[3]).toEqual([ 'anotherFullTextString', 'type', 'TEXT', 'WEIGHT', '1' ]);
-      expect(fields[4]).toEqual([ 'aNumber', 'type', 'NUMERIC' ]);
-      expect(fields[5]).toEqual([ 'anotherNumber', 'type', 'NUMERIC' ]);
-      expect(fields[6]).toEqual([ 'aBoolean', 'type', 'TAG', 'SEPARATOR', ',' ]);
-      expect(fields[7]).toEqual([ 'anotherBoolean', 'type', 'TAG', 'SEPARATOR', ',' ]);
-      expect(fields[8]).toEqual([ 'anArray', 'type', 'TAG', 'SEPARATOR', '|' ]);
-      expect(fields[9]).toEqual([ 'anotherArray', 'type', 'TAG', 'SEPARATOR', '|' ]);
+      expect(fields[0]).toEqual([ 'identifier', 'aString', 'attribute', 'aString', 'type', 'TAG', 'SEPARATOR', '|' ]);
+      expect(fields[1]).toEqual([ 'identifier', 'anotherString', 'attribute', 'anotherString', 'type', 'TAG', 'SEPARATOR', '|' ]);
+      expect(fields[2]).toEqual([ 'identifier', 'aFullTextString', 'attribute', 'aFullTextString', 'type', 'TEXT', 'WEIGHT', '1' ]);
+      expect(fields[3]).toEqual([ 'identifier', 'anotherFullTextString', 'attribute', 'anotherFullTextString', 'type', 'TEXT', 'WEIGHT', '1' ]);
+      expect(fields[4]).toEqual([ 'identifier', 'aNumber', 'attribute', 'aNumber', 'type', 'NUMERIC' ]);
+      expect(fields[5]).toEqual([ 'identifier', 'anotherNumber', 'attribute', 'anotherNumber', 'type', 'NUMERIC' ]);
+      expect(fields[6]).toEqual([ 'identifier', 'aBoolean', 'attribute', 'aBoolean', 'type', 'TAG', 'SEPARATOR', ',' ]);
+      expect(fields[7]).toEqual([ 'identifier', 'anotherBoolean', 'attribute', 'anotherBoolean', 'type', 'TAG', 'SEPARATOR', ',' ]);
+      expect(fields[8]).toEqual([ 'identifier', 'anArray', 'attribute', 'anArray', 'type', 'TAG', 'SEPARATOR', '|' ]);
+      expect(fields[9]).toEqual([ 'identifier', 'anotherArray', 'attribute', 'anotherArray', 'type', 'TAG', 'SEPARATOR', '|' ]);
     });
 
     describe("when the index is dropped", () => {

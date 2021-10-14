@@ -2,8 +2,8 @@ import Entity from "../entity/entity";
 import Search from "./search";
 import WhereField from "./where-field";
 
-export default class WhereBoolean<TEntity extends Entity> extends WhereField<TEntity> {
-  private value!: boolean;
+export abstract class WhereBoolean<TEntity extends Entity> extends WhereField<TEntity> {
+  protected value!: boolean;
 
   eq(value: boolean): Search<TEntity> {
     this.value = value;
@@ -17,7 +17,17 @@ export default class WhereBoolean<TEntity extends Entity> extends WhereField<TEn
   true(): Search<TEntity> { return this.eq(true); }
   false(): Search<TEntity> { return this.eq(false); }
 
+  abstract toString(): string;
+}
+
+export class WhereHashBoolean<TEntity extends Entity> extends WhereBoolean<TEntity> {
   toString(): string {
     return this.buildQuery(`{${this.value ? '1' : '0'}}`);
+  }
+}
+
+export class WhereJsonBoolean<TEntity extends Entity> extends WhereBoolean<TEntity> {
+  toString(): string {
+    return this.buildQuery(`{${this.value}}`);
   }
 }

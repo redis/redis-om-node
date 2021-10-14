@@ -1,19 +1,18 @@
 import Schema from "../schema/schema";
-import Client, { HashData } from "../client";
+import Client from "../client";
 import Entity from '../entity/entity';
-
-import { EntityData } from '../entity/entity-types';
 
 import Where from './where';
 import WhereAnd from './where-and';
 import WhereOr from './where-or';
 import WhereField from './where-field';
 import WhereArray from './where-array';
-import WhereBoolean from './where-boolean';
+import { WhereHashBoolean, WhereJsonBoolean } from './where-boolean';
 import WhereNumber from './where-number';
 import WhereString from './where-string';
 import WhereText from './where-text';
-import HashConverter from "../repository/hash-converter";
+
+import { HashSearchResultsConverter, JsonSearchResultsConverter, SearchResultsConverter } from "./results-converter";
 
 type SubSearchFunction<TEntity extends Entity> = (search: Search<TEntity>) => Search<TEntity>
 type AndOrConstructor = new (left: Where, right: Where) => Where;
@@ -53,14 +52,10 @@ export default class Search<TEntity extends Entity> {
   }
 
   async run(): Promise<TEntity[]> {
-    // TODO: need to handle JSON results too
-
     let results = await this.client.search(this.schema.indexName, this.query);
-
-    let count = this.extractCount(results);
-    let ids = this.extractIds(results);
-    let entities = this.extractEntities(results, ids);
-    return entities;
+    return this.schema.dataStructure === 'JSON'
+      ? new JsonSearchResultsConverter(this.schema, results).entities
+      : new HashSearchResultsConverter(this.schema, results).entities
   }
 
   private anyWhere(ctor: AndOrConstructor, fieldOrFn: string | SubSearchFunction<TEntity>): WhereField<TEntity> | Search<TEntity> {
@@ -105,45 +100,25 @@ export default class Search<TEntity extends Entity> {
 
     if (fieldDef === undefined) throw new Error(`The field '${field}' is not part of the schema.`);
 
-    if (fieldDef.type === 'array') return new WhereArray<TEntity>(this, field);
-    if (fieldDef.type === 'boolean') return new WhereBoolean<TEntity>(this, field);
-    if (fieldDef.type === 'number') return new WhereNumber<TEntity>(this, field);
-    if (fieldDef.type === 'string' && fieldDef.textSearch === true)return new WhereText<TEntity>(this, field);
-    if (fieldDef.type === 'string' && fieldDef.textSearch !== true) return new WhereString<TEntity>(this, field);
+    if (fieldDef.type === 'array')
+      return new WhereArray<TEntity>(this, field);
+
+    if (fieldDef.type === 'boolean' && this.schema.dataStructure === 'HASH')
+      return new WhereHashBoolean<TEntity>(this, field);
+
+    if (fieldDef.type === 'boolean' && this.schema.dataStructure === 'JSON')
+      return new WhereJsonBoolean<TEntity>(this, field);
+
+    if (fieldDef.type === 'number')
+      return new WhereNumber<TEntity>(this, field);
+
+    if (fieldDef.type === 'string' && fieldDef.textSearch === true)
+      return new WhereText<TEntity>(this, field);
+
+    if (fieldDef.type === 'string' && fieldDef.textSearch !== true)
+      return new WhereString<TEntity>(this, field);
 
     // @ts-ignore: This is a trap for JavaScript
     throw new Error(`The field type of '${fieldDef.type}' is not a valid field type. Valid types include 'array', 'boolean', 'number', and 'string'.`);
-  }
-
-  private extractCount(results: any[]): number {
-    return results[0];
-  }
-
-  private extractIds(results: any[]): string[] {
-    let [, ...foundKeysAndValues] = results;
-    return foundKeysAndValues
-      .filter((_entry, index) => index % 2 === 0)
-      .map(key => (key as string).replace(/^.*:/, ""));
-  }
-
-  private extractEntities(results: any[], ids: string[]): TEntity[] {
-    let [, ...foundKeysAndValues] = results;
-    return foundKeysAndValues
-      .filter((_entry, index) => index % 2 !== 0)
-      .map((array, index) => this.arrayToEntity(array as string[], ids[index] as string));
-  }
-
-  private arrayToEntity(array: string[], id: string): TEntity{
-    let keys = array.filter((_entry, index) => index % 2 === 0);
-    let values = array.filter((_entry, index) => index % 2 !== 0);
-    
-    let hashData: HashData = keys.reduce((object: any, key, index) => {
-      object[key] = values[index]
-      return object
-    }, {});
-
-    let entityData: EntityData = new HashConverter(this.schema.definition).toEntityData(hashData);
-    
-    return new this.schema.entityCtor(id, entityData);
   }
 }

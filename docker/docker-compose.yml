@@ -1,7 +1,7 @@
 version: "3.9"
 services:
   redis:
-    image: "redislabs/redismod:preview"
+    image: "redislabs/redismod:edge"
     ports:
       - "6379:6379"
     volumes:

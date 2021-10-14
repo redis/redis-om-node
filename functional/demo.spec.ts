@@ -33,6 +33,7 @@ describe("Demo", () => {
     // get a client and open it
     let client = new Client();
     await client.open();
+    await client.execute(['FLUSHALL']);
 
     let schema = new Schema<BigfootSighting>(
       BigfootSighting, {
@@ -50,7 +51,6 @@ describe("Demo", () => {
     
     let repository = client.fetchRepository<BigfootSighting>(schema);
 
-    await repository.dropIndex();
     await repository.createIndex();
 
     // create an entity
