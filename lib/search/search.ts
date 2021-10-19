@@ -33,20 +33,23 @@ export default class Search<TEntity extends Entity> {
     return `${this.rootWhere.toString()}`;
   }
 
+  async return(offset: number, pageSize: number): Promise<TEntity[]> {
+    let searchResults = await this.client.search(this.schema.indexName, this.query, offset, pageSize);
+    let entities = this.schema.dataStructure === 'JSON'
+      ? new JsonSearchResultsConverter(this.schema, searchResults).entities
+      : new HashSearchResultsConverter(this.schema, searchResults).entities;
+
+    return entities;
+  }
+
   async returnAll(options = { pageSize: 10 }): Promise<TEntity[]> {
     let entities: TEntity[] = [];
     let offset = 0;
     let pageSize = options.pageSize;
 
     while (true) {
-
-      let searchResults = await this.client.search(this.schema.indexName, this.query, offset, pageSize);
-      let foundEntities = this.schema.dataStructure === 'JSON'
-        ? new JsonSearchResultsConverter(this.schema, searchResults).entities
-        : new HashSearchResultsConverter(this.schema, searchResults).entities;
-
+      let foundEntities = await this.return(offset, pageSize);
       entities.push(...foundEntities);
-
       if (foundEntities.length < pageSize) break;
       offset += pageSize;
     }
