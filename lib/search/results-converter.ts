@@ -17,7 +17,7 @@ export abstract class SearchResultsConverter<TEntity extends Entity> {
 
   get count(): number {
     let [count] = this.results;
-    return count;
+    return Number.parseInt(count);
   }
 
   get ids(): string[] {

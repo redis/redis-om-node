@@ -42,7 +42,8 @@ describe("Search", () => {
 
         it("askes the client for results", () => {
           expect(Client.prototype.search).toHaveBeenCalledTimes(1);
-          expect(Client.prototype.search).toHaveBeenCalledWith('SimpleHashEntity:index', '*', 0, 5);
+          expect(Client.prototype.search).toHaveBeenCalledWith(
+            'SimpleHashEntity:index', '*', 0, 5);
         });
 
         it("returns no results", () => expect(entities).toHaveLength(0));
@@ -56,7 +57,8 @@ describe("Search", () => {
 
         it("askes the client for results", () => {
           expect(Client.prototype.search).toHaveBeenCalledTimes(1);
-          expect(Client.prototype.search).toHaveBeenCalledWith('SimpleHashEntity:index', '*', 0, 5);
+          expect(Client.prototype.search).toHaveBeenCalledWith(
+            'SimpleHashEntity:index', '*', 0, 5);
         });
 
         it("returns the expected single result", () => {
@@ -73,7 +75,8 @@ describe("Search", () => {
 
         it("askes the client for results", () => {
           expect(Client.prototype.search).toHaveBeenCalledTimes(1);
-          expect(Client.prototype.search).toHaveBeenCalledWith('SimpleHashEntity:index', '*', 0, 5);
+          expect(Client.prototype.search).toHaveBeenCalledWith(
+            'SimpleHashEntity:index', '*', 0, 5);
         });
 
         it("returns all the results", async () => {
@@ -99,7 +102,8 @@ describe("Search", () => {
 
         it("askes the client for results", () => {
           expect(Client.prototype.search).toHaveBeenCalledTimes(1);
-          expect(Client.prototype.search).toHaveBeenCalledWith('SimpleJsonEntity:index', '*', 0, 5);
+          expect(Client.prototype.search).toHaveBeenCalledWith(
+            'SimpleJsonEntity:index', '*', 0, 5);
         });
 
         it("returns no results", async () => expect(entities).toHaveLength(0));
@@ -113,7 +117,8 @@ describe("Search", () => {
 
         it("askes the client for results", () => {
           expect(Client.prototype.search).toHaveBeenCalledTimes(1);
-          expect(Client.prototype.search).toHaveBeenCalledWith('SimpleJsonEntity:index', '*', 0, 5);
+          expect(Client.prototype.search).toHaveBeenCalledWith(
+            'SimpleJsonEntity:index', '*', 0, 5);
         });
 
         it("returns the expected single result", () => {
@@ -130,7 +135,8 @@ describe("Search", () => {
 
         it("askes the client for results", () => {
           expect(Client.prototype.search).toHaveBeenCalledTimes(1);
-          expect(Client.prototype.search).toHaveBeenCalledWith('SimpleJsonEntity:index', '*', 0, 5);
+          expect(Client.prototype.search).toHaveBeenCalledWith(
+            'SimpleJsonEntity:index', '*', 0, 5);
         });
 
         it("returns all the expected results", () => {

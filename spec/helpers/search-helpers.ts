@@ -54,6 +54,10 @@ export function mockClientSearchToReturnNothing() {
   mocked(Client.prototype.search).mockResolvedValue(['0']);
 }
 
+export function mockClientSearchToReturnCountOf(count: number) {
+  mocked(Client.prototype.search).mockResolvedValue([count.toString()]);
+}
+
 export function mockClientSearchToReturnSingleHash() {
   mocked(Client.prototype.search)
     .mockResolvedValueOnce([

@@ -83,10 +83,7 @@ export default class Client {
 
   async search(indexName: string, query: string, offset: number, count: number) {
     this.validateShimOpen();
-    return await this.shim!.execute<any[]>([
-      'FT.SEARCH', indexName, query,
-      'LIMIT', offset.toString(), count.toString()
-    ]);
+    return await this.shim!.execute<any[]>(['FT.SEARCH', indexName, query, 'LIMIT', offset.toString(), count.toString()]);
   }
 
   private validateShimClosed() {

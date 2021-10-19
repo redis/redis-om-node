@@ -33,14 +33,19 @@ export default class Search<TEntity extends Entity> {
     return `${this.rootWhere.toString()}`;
   }
 
+  async count(): Promise<number> {
+    let searchResults = await this.client.search(this.schema.indexName, this.query, 0, 0);
+    return this.schema.dataStructure === 'JSON'
+      ? new JsonSearchResultsConverter(this.schema, searchResults).count
+      : new HashSearchResultsConverter(this.schema, searchResults).count;
+  }
+
   async return(offset: number, pageSize: number): Promise<TEntity[]> {
     let searchResults = await this.client.search(this.schema.indexName, this.query, offset, pageSize);
-    let entities = this.schema.dataStructure === 'JSON'
+    return this.schema.dataStructure === 'JSON'
       ? new JsonSearchResultsConverter(this.schema, searchResults).entities
       : new HashSearchResultsConverter(this.schema, searchResults).entities;
-
-    return entities;
-  }
+  }    
 
   async returnAll(options = { pageSize: 10 }): Promise<TEntity[]> {
     let entities: TEntity[] = [];
@@ -52,10 +57,10 @@ export default class Search<TEntity extends Entity> {
       entities.push(...foundEntities);
       if (foundEntities.length < pageSize) break;
       offset += pageSize;
-    }
+    }  
 
     return entities;
-  }
+  }  
 
   where(field: string): WhereField<TEntity>;
   where(subSearchFn: SubSearchFunction<TEntity>): Search<TEntity>;
