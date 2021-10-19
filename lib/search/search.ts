@@ -34,10 +34,23 @@ export default class Search<TEntity extends Entity> {
   }
 
   async return(): Promise<TEntity[]> {
-    let results = await this.client.search(this.schema.indexName, this.query, 0, 10);
-    return this.schema.dataStructure === 'JSON'
-      ? new JsonSearchResultsConverter(this.schema, results).entities
-      : new HashSearchResultsConverter(this.schema, results).entities
+    let entities: TEntity[] = [];
+    let offset = 0;
+    let pageSize = 10;
+
+    while (true) {
+
+      let searchResults = await this.client.search(this.schema.indexName, this.query, offset, pageSize);
+      let foundEntities = this.schema.dataStructure === 'JSON'
+        ? new JsonSearchResultsConverter(this.schema, searchResults).entities
+        : new HashSearchResultsConverter(this.schema, searchResults).entities;
+
+      if (foundEntities.length === 0) break;
+      offset += pageSize;
+      entities.push(...foundEntities);
+    }
+
+    return entities;
   }
 
   where(field: string): WhereField<TEntity>;
