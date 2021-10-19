@@ -28,7 +28,7 @@ describe("Search", () => {
       describe("when querying no results", () => {
         beforeEach(async () => {
           mocked(Client.prototype.search).mockResolvedValue(['0']);
-          entities = await search.return();
+          entities = await search.returnAll();
         });
 
         it("askes the client for a single page of results", () => {
@@ -50,7 +50,7 @@ describe("Search", () => {
                 'aBoolean', '0',
                 'anArray', 'foo|bar|baz' ]])
             .mockResolvedValue(['1']);
-          entities = await search.return();
+          entities = await search.returnAll();
         });
 
         it("askes the client for a a single page of results", () => {
@@ -97,7 +97,7 @@ describe("Search", () => {
                 'aBoolean', '0',
                 'anArray', 'baz|qux|quux' ]])
             .mockResolvedValue(['3']);
-          entities = await search.return();
+          entities = await search.returnAll();
         });
 
         it("askes the client for a single page of results", () => {
@@ -166,7 +166,7 @@ describe("Search", () => {
                 'aBoolean', '0',
                 'anArray', 'quux|quuux|quuuux' ]])
             .mockResolvedValue(['5']);
-          entities = await search.return({ pageSize: 2 });
+          entities = await search.returnAll({ pageSize: 2 });
         });
 
         it("askes the client for multiple pages of results", () => {
@@ -224,7 +224,7 @@ describe("Search", () => {
       describe("when querying no results", () => {
         beforeEach(async () => {
           mocked(Client.prototype.search).mockResolvedValue(['0']);
-          entities = await search.return();
+          entities = await search.returnAll();
         });
 
         it("askes the client for a single page of results", () => {
@@ -248,7 +248,7 @@ describe("Search", () => {
                 "aBoolean": false,
                 "anArray": [ "foo", "bar", "baz" ] }`]])
               .mockResolvedValue(['1']);
-          entities = await search.return();
+          entities = await search.returnAll();
         });
 
         it("askes the client for a single page of results", () => {
@@ -295,7 +295,7 @@ describe("Search", () => {
                 "aBoolean": false,
                 "anArray": [ "baz", "qux", "quux" ] }`]])
             .mockResolvedValue(['3']);
-          entities = await search.return();
+          entities = await search.returnAll();
         });
 
         it("askes the client for a single page of results", () => {
@@ -364,7 +364,7 @@ describe("Search", () => {
                 "aBoolean": false,
                 "anArray": [ "quux", "quuux", "quuuux" ] }`]])
             .mockResolvedValue(['5']);
-          entities = await search.return({ pageSize: 2 });
+          entities = await search.returnAll({ pageSize: 2 });
         });
 
         it("askes the client for a multiple pages of results", () => {

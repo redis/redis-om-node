@@ -33,7 +33,7 @@ export default class Search<TEntity extends Entity> {
     return `${this.rootWhere.toString()}`;
   }
 
-  async return(options = { pageSize: 10 }): Promise<TEntity[]> {
+  async returnAll(options = { pageSize: 10 }): Promise<TEntity[]> {
     let entities: TEntity[] = [];
     let offset = 0;
     let pageSize = options.pageSize;
