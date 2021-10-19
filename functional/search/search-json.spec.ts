@@ -48,6 +48,24 @@ describe("search for JSON documents", () => {
     expectEntityMatches(entities[3], AN_ESCAPED_ENTITY);
   });
 
+  it("performs a paginated search", async () => {
+
+    entities = await repository.search().return({ pageSize: 2 });
+    entities.sort(sortByEntityId);
+
+    expect(entities).toHaveLength(4);
+
+    expect(entities[0].entityId).toBe('1');
+    expect(entities[1].entityId).toBe('2');
+    expect(entities[2].entityId).toBe('3');
+    expect(entities[3].entityId).toBe('4');
+
+    expectEntityMatches(entities[0], AN_ENTITY);
+    expectEntityMatches(entities[1], ANOTHER_ENTITY);
+    expectEntityMatches(entities[2], A_THIRD_ENTITY);
+    expectEntityMatches(entities[3], AN_ESCAPED_ENTITY);
+  });
+
   it("searches a string", async () => {
     entities = await repository.search().where('aString').eq('foo').return();
     expect(entities).toHaveLength(1);

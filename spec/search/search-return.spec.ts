@@ -53,10 +53,9 @@ describe("Search", () => {
           entities = await search.return();
         });
 
-        it("askes the client for a two pages of results", () => {
-          expect(Client.prototype.search).toHaveBeenCalledTimes(2);
+        it("askes the client for a a single page of results", () => {
+          expect(Client.prototype.search).toHaveBeenCalledTimes(1);
           expect(Client.prototype.search).toHaveBeenCalledWith('SimpleHashEntity:index', '*', 0, 10);
-          expect(Client.prototype.search).toHaveBeenCalledWith('SimpleHashEntity:index', '*', 10, 10);
         });
 
         it("returns a single result", async () => expect(entities).toHaveLength(1));
@@ -101,10 +100,9 @@ describe("Search", () => {
           entities = await search.return();
         });
 
-        it("askes the client for two pages of results", () => {
-          expect(Client.prototype.search).toHaveBeenCalledTimes(2);
+        it("askes the client for a single page of results", () => {
+          expect(Client.prototype.search).toHaveBeenCalledTimes(1);
           expect(Client.prototype.search).toHaveBeenCalledWith('SimpleHashEntity:index', '*', 0, 10);
-          expect(Client.prototype.search).toHaveBeenCalledWith('SimpleHashEntity:index', '*', 10, 10);
         });
 
         it("returns all the results", async () => expect(entities).toHaveLength(3));
@@ -168,15 +166,14 @@ describe("Search", () => {
                 'aBoolean', '0',
                 'anArray', 'quux|quuux|quuuux' ]])
             .mockResolvedValue(['5']);
-          entities = await search.return();
+          entities = await search.return({ pageSize: 2 });
         });
 
-        it("askes the client for a multiple pages of results", () => {
-          expect(Client.prototype.search).toHaveBeenCalledTimes(4);
-          expect(Client.prototype.search).toHaveBeenCalledWith('SimpleHashEntity:index', '*', 0, 10);
-          expect(Client.prototype.search).toHaveBeenCalledWith('SimpleHashEntity:index', '*', 10, 10);
-          expect(Client.prototype.search).toHaveBeenCalledWith('SimpleHashEntity:index', '*', 20, 10);
-          expect(Client.prototype.search).toHaveBeenCalledWith('SimpleHashEntity:index', '*', 30, 10);
+        it("askes the client for multiple pages of results", () => {
+          expect(Client.prototype.search).toHaveBeenCalledTimes(3);
+          expect(Client.prototype.search).toHaveBeenCalledWith('SimpleHashEntity:index', '*', 0, 2);
+          expect(Client.prototype.search).toHaveBeenCalledWith('SimpleHashEntity:index', '*', 2, 2);
+          expect(Client.prototype.search).toHaveBeenCalledWith('SimpleHashEntity:index', '*', 4, 2);
         });
 
         it("returns all the results", async () => expect(entities).toHaveLength(5));
@@ -254,10 +251,9 @@ describe("Search", () => {
           entities = await search.return();
         });
 
-        it("askes the client for two pages of results", () => {
-          expect(Client.prototype.search).toHaveBeenCalledTimes(2);
+        it("askes the client for a single page of results", () => {
+          expect(Client.prototype.search).toHaveBeenCalledTimes(1);
           expect(Client.prototype.search).toHaveBeenCalledWith('SimpleJsonEntity:index', '*', 0, 10);
-          expect(Client.prototype.search).toHaveBeenCalledWith('SimpleJsonEntity:index', '*', 10, 10);
         });
 
         it("returns a single result", async () => expect(entities).toHaveLength(1));
@@ -302,10 +298,9 @@ describe("Search", () => {
           entities = await search.return();
         });
 
-        it("askes the client for two pages of results", () => {
-          expect(Client.prototype.search).toHaveBeenCalledTimes(2);
+        it("askes the client for a single page of results", () => {
+          expect(Client.prototype.search).toHaveBeenCalledTimes(1);
           expect(Client.prototype.search).toHaveBeenCalledWith('SimpleJsonEntity:index', '*', 0, 10);
-          expect(Client.prototype.search).toHaveBeenCalledWith('SimpleJsonEntity:index', '*', 10, 10);
         });
 
         it("returns all the results", async () => expect(entities).toHaveLength(3));
@@ -369,15 +364,14 @@ describe("Search", () => {
                 "aBoolean": false,
                 "anArray": [ "quux", "quuux", "quuuux" ] }`]])
             .mockResolvedValue(['5']);
-          entities = await search.return();
+          entities = await search.return({ pageSize: 2 });
         });
 
         it("askes the client for a multiple pages of results", () => {
-          expect(Client.prototype.search).toHaveBeenCalledTimes(4);
-          expect(Client.prototype.search).toHaveBeenCalledWith('SimpleJsonEntity:index', '*', 0, 10);
-          expect(Client.prototype.search).toHaveBeenCalledWith('SimpleJsonEntity:index', '*', 10, 10);
-          expect(Client.prototype.search).toHaveBeenCalledWith('SimpleJsonEntity:index', '*', 20, 10);
-          expect(Client.prototype.search).toHaveBeenCalledWith('SimpleJsonEntity:index', '*', 30, 10);
+          expect(Client.prototype.search).toHaveBeenCalledTimes(3);
+          expect(Client.prototype.search).toHaveBeenCalledWith('SimpleJsonEntity:index', '*', 0, 2);
+          expect(Client.prototype.search).toHaveBeenCalledWith('SimpleJsonEntity:index', '*', 2, 2);
+          expect(Client.prototype.search).toHaveBeenCalledWith('SimpleJsonEntity:index', '*', 4, 2);
         });
 
         it("returns all the results", async () => expect(entities).toHaveLength(5));
