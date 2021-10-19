@@ -81,9 +81,12 @@ export default class Client {
     await this.shim!.execute([ 'FT.DROPINDEX', indexName ]);
   }
 
-  async search(indexName: string, query: string) {
+  async search(indexName: string, query: string, offset: number, count: number) {
     this.validateShimOpen();
-    return await this.shim!.execute<any[]>([ 'FT.SEARCH', indexName, query ]);
+    return await this.shim!.execute<any[]>([
+      'FT.SEARCH', indexName, query,
+      'LIMIT', offset.toString(), count.toString()
+    ]);
   }
 
   private validateShimClosed() {

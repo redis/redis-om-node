@@ -14,7 +14,7 @@ describe("Search", () => {
 
   let client: Client;
 
-  describe("#run", () => {
+  describe("#return", () => {
 
     beforeAll(() => client = new Client());
 
@@ -27,7 +27,7 @@ describe("Search", () => {
       describe("when querying no results", () => {
         beforeEach(async () => {
           mocked(Client.prototype.search).mockResolvedValue(['0']);
-          entities = await search.run();
+          entities = await search.return();
         });
 
         it("returns no results", async () => {
@@ -44,7 +44,7 @@ describe("Search", () => {
               'aNumber', '42',
               'aBoolean', '0',
               'anArray', 'foo|bar|baz' ]]);
-          entities = await search.run();
+          entities = await search.return();
         });
 
         it("returns a single result", async () => expect(entities).toHaveLength(1));
@@ -84,7 +84,7 @@ describe("Search", () => {
               'aNumber', '13',
               'aBoolean', '0',
               'anArray', 'baz|qux|quux' ]]);
-          entities = await search.run();
+          entities = await search.return();
         });
 
         it("returns all the results", async () => expect(entities).toHaveLength(3));
@@ -123,7 +123,7 @@ describe("Search", () => {
       describe("when querying no results", () => {
         beforeEach(async () => {
           mocked(Client.prototype.search).mockResolvedValue(['0']);
-          entities = await search.run();
+          entities = await search.return();
         });
 
         it("returns no results", async () => {
@@ -140,7 +140,7 @@ describe("Search", () => {
               "aNumber": 42,
               "aBoolean": false,
               "anArray": [ "foo", "bar", "baz" ] }`]]);
-          entities = await search.run();
+          entities = await search.return();
         });
 
         it("returns a single result", async () => expect(entities).toHaveLength(1));
@@ -180,7 +180,7 @@ describe("Search", () => {
               "aNumber": 13,
               "aBoolean": false,
               "anArray": [ "baz", "qux", "quux" ] }`]]);
-          entities = await search.run();
+          entities = await search.return();
         });
 
         it("returns all the results", async () => expect(entities).toHaveLength(3));

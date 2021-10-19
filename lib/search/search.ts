@@ -33,8 +33,8 @@ export default class Search<TEntity extends Entity> {
     return `${this.rootWhere.toString()}`;
   }
 
-  async run(): Promise<TEntity[]> {
-    let results = await this.client.search(this.schema.indexName, this.query);
+  async return(): Promise<TEntity[]> {
+    let results = await this.client.search(this.schema.indexName, this.query, 0, 10);
     return this.schema.dataStructure === 'JSON'
       ? new JsonSearchResultsConverter(this.schema, results).entities
       : new HashSearchResultsConverter(this.schema, results).entities

@@ -20,9 +20,9 @@ describe("Client", () => {
         await client.open();
       });
 
-      it("passes the command to the shim", async () => {
-        await client.search('index', 'query');
-        expect(RedisShim.prototype.execute).toHaveBeenCalledWith([ 'FT.SEARCH', 'index', 'query' ]);
+      it("passes the command to the shim with specified limits", async () => {
+        await client.search('index', 'query', 0, 5);
+        expect(RedisShim.prototype.execute).toHaveBeenCalledWith([ 'FT.SEARCH', 'index', 'query', 'LIMIT', '0', '5' ]);
       });
     });
 
@@ -33,12 +33,12 @@ describe("Client", () => {
       });
       
       it("errors when called on a closed client", () => 
-        expect(async () => await client.search('index', 'query'))
+        expect(async () => await client.search('index', 'query', 0, 10))
           .rejects.toThrow("Redis connection needs opened."));
     });
     
     it("errors when called on a new client", async () =>
-      expect(async () => await client.search('index', 'query'))
+      expect(async () => await client.search('index', 'query', 0, 10))
         .rejects.toThrow("Redis connection needs opened."));
   });
 });

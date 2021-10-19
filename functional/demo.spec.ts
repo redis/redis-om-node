@@ -76,7 +76,7 @@ describe("Demo", () => {
     await repository.remove(entityId);
 
     // search for all entities
-    let allEntities = await repository.search().run();
+    let allEntities = await repository.search().return();
 
     // search for some entities
     let someEntities = repository.search()
@@ -85,7 +85,7 @@ describe("Demo", () => {
         .or('state').equals('KY')
       )
       .and('classification').contains('ClassA')
-      .and('fullMoon').is.true().run();
+      .and('fullMoon').is.true().return();
 
     // close the client
     client.close();

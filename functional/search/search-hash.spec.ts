@@ -32,7 +32,7 @@ describe("search for hashes", () => {
 
   it("performs a wildcard search", async () => {
 
-    entities = await repository.search().run();
+    entities = await repository.search().return();
     entities.sort(sortByEntityId);
 
     expect(entities).toHaveLength(4);
@@ -49,14 +49,14 @@ describe("search for hashes", () => {
   });
 
   it("searches a string", async () => {
-    entities = await repository.search().where('aString').eq('foo').run();
+    entities = await repository.search().where('aString').eq('foo').return();
     expect(entities).toHaveLength(1);
     expect(entities[0].entityId).toBe('1');
     expectEntityMatches(entities[0], AN_ENTITY);
   });
 
   it("searches a string with full text", async () => {
-    entities = await repository.search().where('aFullTextString').matches('quick').run();
+    entities = await repository.search().where('aFullTextString').matches('quick').return();
     entities.sort(sortByEntityId);
     expect(entities).toHaveLength(2);
     expect(entities[0].entityId).toBe('1');
@@ -66,7 +66,7 @@ describe("search for hashes", () => {
   });
 
   it("searches a number", async () => {
-    entities = await repository.search().where('aNumber').lte(23).run();
+    entities = await repository.search().where('aNumber').lte(23).return();
     entities.sort(sortByEntityId);
     expect(entities).toHaveLength(2);
     expect(entities[0].entityId).toBe('2');
@@ -76,7 +76,7 @@ describe("search for hashes", () => {
   });
 
   it("searches a boolean", async () => {
-    entities = await repository.search().where('aBoolean').true().run();
+    entities = await repository.search().where('aBoolean').true().return();
     entities.sort(sortByEntityId);
     expect(entities).toHaveLength(2);
     expect(entities[0].entityId).toBe('1');
@@ -86,7 +86,7 @@ describe("search for hashes", () => {
   });
 
   it("searches an array", async () => {
-    entities = await repository.search().where('anArray').contains('charlie').run();
+    entities = await repository.search().where('anArray').contains('charlie').return();
     entities.sort(sortByEntityId);
     expect(entities).toHaveLength(3);
     expect(entities[0].entityId).toBe('1');
@@ -104,7 +104,7 @@ describe("search for hashes", () => {
       .and('aNumber').gte(42)
       .and('aBoolean').true()
       .and('anArray').contains('alfa')
-      .run();
+      .return();
 
     expect(entities).toHaveLength(1);
     expect(entities[0].entityId).toBe('1');
@@ -112,21 +112,21 @@ describe("search for hashes", () => {
   });
 
   it("searches a string with escaped punctuation", async () => {
-    entities = await repository.search().where('aString').equals('foo ,.<>{}[]"\':;!@#$%^*()-+=~& bar').run();
+    entities = await repository.search().where('aString').equals('foo ,.<>{}[]"\':;!@#$%^*()-+=~& bar').return();
     expect(entities).toHaveLength(1);
     expect(entities[0].entityId).toBe('4');
     expectEntityMatches(entities[0], AN_ESCAPED_ENTITY);
   });
 
   it("searches a string with full text with escaped punctuation", async () => {
-    entities = await repository.search().where('aFullTextString').matches('zany').run();
+    entities = await repository.search().where('aFullTextString').matches('zany').return();
     expect(entities).toHaveLength(1);
     expect(entities[0].entityId).toBe('4');
     expectEntityMatches(entities[0], AN_ESCAPED_ENTITY);
   });
 
   it("searches an array with escaped punctuation", async () => {
-    entities = await repository.search().where('anArray').contains('alfa ,.<>{}[]"\':;!@#$%^&*()-+=~ bravo').run();
+    entities = await repository.search().where('anArray').contains('alfa ,.<>{}[]"\':;!@#$%^&*()-+=~ bravo').return();
     expect(entities).toHaveLength(1);
     expect(entities[0].entityId).toBe('4');
     expectEntityMatches(entities[0], AN_ESCAPED_ENTITY);
