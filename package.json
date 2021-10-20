@@ -1,5 +1,5 @@
 {
-  "name": "redis-developer-node",
+  "name": "redis-om",
   "version": "0.1.0",
   "description": "Developer client for Redis.",
   "main": "dist/index.js",
@@ -10,7 +10,10 @@
     "test-unit": "jest --selectProjects unit --watchAll",
     "test-functional": "jest --selectProjects functional --watchAll --runInBand"
   },
-  "author": "Guy Royse <guy@guyroyse.com>",
+  "repository": "github:redis-developer/redis-om-node",
+  "keywords": [ "redis", "orm" ],
+  "license": "UNLICENSED",
+  "author": "Guy Royse <guy@guyroyse.com> (http://guyroyse.com/)",
   "engines": {
     "node": ">=12"
   },
