@@ -25,12 +25,7 @@ describe("Repository", () => {
       entity = repository.createEntity();
     })
 
-    it("has a generated entity id", () => {
-      expect(entity.entityId).toBeUlid();
-    });
-
-    it("is of the expected type", () => {
-      expect(entity).toBeInstanceOf(SimpleEntity);
-    });
+    it("has a generated entity id", () => expect(entity.entityId).toBeUlid());
+    it("is of the expected type", () => expect(entity).toBeInstanceOf(SimpleEntity));
   });
 });

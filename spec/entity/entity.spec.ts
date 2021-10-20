@@ -27,7 +27,7 @@ describe("Entity", () => {
     it("has the passed in Redis ID", () => expect(entity.entityId).toBe(entityId));
     it("returns a number for the number property", () => expect(entity.aNumber).toBe(42));
     it("returns a string for the string property", () => expect(entity.aString).toBe('foo'));
-    it("returns a boolean for the boolean property", () => expect(entity.aBoolean).toBe(false));
+    it("returns a boolean for the boolean property", () => expect(entity.aBoolean).toBeFalse());
     it("returns an array for the array property", () => expect(entity.anArray).toEqual([ 'foo', 'bar', 'baz' ]));
 
     describe("changing the data", () => {
@@ -43,12 +43,12 @@ describe("Entity", () => {
 
       it("stores a boolean when the booelan property is changed to true", () => {
         entity.aBoolean = true;
-        expect(entity.entityData.aBoolean).toBe(true);
+        expect(entity.entityData.aBoolean).toBeTrue();
       });
 
       it("stores a boolean when the booelan property is changed to false", () => {
         entity.aBoolean = false;
-        expect(entity.entityData.aBoolean).toBe(false);
+        expect(entity.entityData.aBoolean).toBeFalse();
       });
 
       it("stores an array when the array property is changed", () => {
@@ -95,7 +95,7 @@ describe("Entity", () => {
     it("has the passed in Redis ID", () => expect(entity.entityId).toBe(entityId));
     it("returns a number for the number property", () => expect(entity.aNumber).toBe(23));
     it("returns a string for the string property", () => expect(entity.aString).toBe('bar'));
-    it("returns a boolean for the boolean property", () => expect(entity.aBoolean).toBe(true));
+    it("returns a boolean for the boolean property", () => expect(entity.aBoolean).toBeTrue());
     it("returns an array for the array property", () => expect(entity.anArray).toEqual([ 'bar', 'baz', 'qux' ]));
 
     describe("changing the data", () => {
@@ -111,12 +111,12 @@ describe("Entity", () => {
 
       it("stores a boolean when the booelan property is changed to true", () => {
         entity.aBoolean = true;
-        expect(entity.entityData.anotherBoolean).toBe(true);
+        expect(entity.entityData.anotherBoolean).toBeTrue();
       });
 
       it("stores a boolean when the booelan property is changed to false", () => {
         entity.aBoolean = false;
-        expect(entity.entityData.anotherBoolean).toBe(false);
+        expect(entity.entityData.anotherBoolean).toBeFalse();
       });
 
       it("stores an array when the array property is changed", () => {
