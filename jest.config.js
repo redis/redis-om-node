@@ -1,7 +1,7 @@
 module.exports = {
   projects: [{
     displayName: "unit",
-    roots: [ "<rootDir>/lib/", "<rootDir>/spec/" ],
+    roots: [ "<rootDir>/src/", "<rootDir>/test/unit/" ],
     clearMocks: true,
     collectCoverage: true,
     coverageDirectory: "coverage",
@@ -11,13 +11,13 @@ module.exports = {
         diagnostics: true
       },
     },
-    setupFilesAfterEnv: [ "<rootDir>/spec/helpers/setup-jest.ts" ],
+    setupFilesAfterEnv: [ "<rootDir>/test/helpers/custom-matchers.ts" ],
     testMatch: [ "**/*.spec.ts" ],
     transform: { "^.+\\.ts$": "ts-jest" },
     detectOpenHandles: true
   }, {
     displayName: "functional",
-    roots: [ "<rootDir>/lib/", "<rootDir>/functional/" ],
+    roots: [ "<rootDir>/src/", "<rootDir>/test/functional/" ],
     clearMocks: true,
     collectCoverage: true,
     coverageDirectory: "coverage",
@@ -27,6 +27,7 @@ module.exports = {
         diagnostics: true
       },
     },
+    setupFilesAfterEnv: [ "<rootDir>/test/helpers/custom-matchers.ts" ],
     testMatch: [ "**/*.spec.ts" ],
     transform: { "^.+\\.ts$": "ts-jest" },
     detectOpenHandles: true
