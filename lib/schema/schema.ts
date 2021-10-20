@@ -1,4 +1,4 @@
-import { v4 } from 'uuid';
+import { ulid } from 'ulid'
 import { SearchDataStructure } from '../client';
 
 import Entity from "../entity/entity";
@@ -28,13 +28,8 @@ export default class Schema<TEntity extends Entity> {
   get redisSchema(): string[] { return new SchemaBuilder(this).redisSchema; }
 
   generateId(): string {
-
-    let defaultStrategy: IdStrategy = () => {
-      let bytes: number[] = [];
-      return Buffer.from(v4(null, bytes)).toString('base64').slice(0, 22);
-    }
-
-    return (this.options?.idStrategy ?? defaultStrategy)();
+    let ulidStrategy: IdStrategy = () => ulid();
+    return (this.options?.idStrategy ?? ulidStrategy)();
   }
 
   private defineProperties() {

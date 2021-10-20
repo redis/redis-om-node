@@ -11,6 +11,7 @@ module.exports = {
         diagnostics: true
       },
     },
+    setupFilesAfterEnv: [ "<rootDir>/spec/helpers/setup-jest.ts" ],
     testMatch: [ "**/*.spec.ts" ],
     transform: { "^.+\\.ts$": "ts-jest" },
     detectOpenHandles: true

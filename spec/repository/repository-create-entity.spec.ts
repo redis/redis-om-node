@@ -26,8 +26,7 @@ describe("Repository", () => {
     })
 
     it("has a generated entity id", () => {
-      expect(entity.entityId).toHaveLength(22);
-      expect(entity.entityId).toMatch(/^[A-Za-z0-9+/]{22}$/);
+      expect(entity.entityId).toBeUlid();
     });
 
     it("is of the expected type", () => {

@@ -24,6 +24,6 @@
   },
   "dependencies": {
     "redis": "^4.0.0-rc.1",
-    "uuid": "^8.3.2"
+    "ulid": "^2.3.0"
   }
 }

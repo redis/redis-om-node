@@ -28,8 +28,9 @@ describe("Schema", () => {
 
     it("generates default Redis IDs", () => {
       let id = schema.generateId();
-      expect(id).toHaveLength(22);
-      expect(id).toMatch(/^[A-Za-z0-9+/]{22}$/);
+      expect(id).toBeUlid();
+      // expect(id).toHaveLength(26);
+      // expect(id).toMatch(/^[0-9ABCDEFGHJKMNPQRSTVWXYZ]{26}$/);
     });
   });
 
