@@ -45,7 +45,7 @@ export default class Search<TEntity extends Entity> {
     return this.schema.dataStructure === 'JSON'
       ? new JsonSearchResultsConverter(this.schema, searchResults).entities
       : new HashSearchResultsConverter(this.schema, searchResults).entities;
-  }    
+  }
 
   async returnAll(options = { pageSize: 10 }): Promise<TEntity[]> {
     let entities: TEntity[] = [];
@@ -57,10 +57,10 @@ export default class Search<TEntity extends Entity> {
       entities.push(...foundEntities);
       if (foundEntities.length < pageSize) break;
       offset += pageSize;
-    }  
+    }
 
     return entities;
-  }  
+  }
 
   where(field: string): WhereField<TEntity>;
   where(subSearchFn: SubSearchFunction<TEntity>): Search<TEntity>;
