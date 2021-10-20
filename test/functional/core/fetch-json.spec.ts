@@ -1,5 +1,5 @@
 import { AN_EMPTY_ENTITY, AN_ENTITY, A_PARTIAL_ENTITY,
-  createJsonEntitySchema, expectEntityMatches, JsonEntity, loadTestJson } from '../helpers/data-helper';
+  createJsonEntitySchema, JsonEntity, loadTestJson } from '../helpers/data-helper';
 
 import Client from '../../../src/client';
 import Schema from '../../../src/schema/schema';
@@ -28,18 +28,18 @@ describe("fetch JSON", () => {
   it("fetches a fully populated entity from Redis", async () => {
     let entity = await repository.fetch('full');
     expect(entity.entityId).toBe('full');
-    expectEntityMatches(entity, AN_ENTITY);
+    expect(entity).toEqual(expect.objectContaining(AN_ENTITY));
   });
 
   it("fetches a partially populated entity from Redis", async () => {
     let entity = await repository.fetch('partial');
     expect(entity.entityId).toBe('partial');
-    expectEntityMatches(entity, A_PARTIAL_ENTITY);
+    expect(entity).toEqual(expect.objectContaining(A_PARTIAL_ENTITY));
   });
 
   it("fetches an empty entity from Redis", async () => {
     let entity = await repository.fetch('empty');
     expect(entity.entityId).toBe('empty');
-    expectEntityMatches(entity, AN_EMPTY_ENTITY);
+    expect(entity).toEqual(expect.objectContaining(AN_EMPTY_ENTITY));
   });
 });

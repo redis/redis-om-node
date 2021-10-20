@@ -51,16 +51,7 @@ describe("update JSON", () => {
     it("creates the expected JSON", async () => {
       let json = await fetchJson(client, entityKey);
       let data = JSON.parse(json);
-      expect(data.aString).toBe(ANOTHER_ENTITY.aString);
-      expect(data.anotherString).toBe(ANOTHER_ENTITY.anotherString);
-      expect(data.aFullTextString).toBe(ANOTHER_ENTITY.aFullTextString);
-      expect(data.anotherFullTextString).toBe(ANOTHER_ENTITY.anotherFullTextString);
-      expect(data.aNumber).toBe(ANOTHER_ENTITY.aNumber);
-      expect(data.anotherNumber).toBe(ANOTHER_ENTITY.anotherNumber);
-      expect(data.aBoolean).toBe(ANOTHER_ENTITY.aBoolean);
-      expect(data.anotherBoolean).toBe(ANOTHER_ENTITY.anotherBoolean);
-      expect(data.anArray).toEqual(ANOTHER_ENTITY.anArray);
-      expect(data.anotherArray).toEqual(ANOTHER_ENTITY.anotherArray);
+      expect(data).toEqual(expect.objectContaining(ANOTHER_ENTITY));
     });
   });
 
@@ -120,7 +111,7 @@ describe("update JSON", () => {
 
     it("removes the key from Redis", async () => {
       let exists = await keyExists(client, entityKey);
-      expect(exists).toBe(false);
+      expect(exists).toBeFalse();
     });
   });
 });

@@ -42,14 +42,6 @@ export const SIMPLE_ENTITY_5 = {
   anArray: [ 'quux', 'quuux', 'quuuux' ]
 }
 
-export function expectEntityMatches(actual: any, expected: any) {
-  expect(actual.entityId).toBe(expected.entityId);
-  expect(actual.aString).toBe(expected.aString);
-  expect(actual.aNumber).toBe(expected.aNumber);
-  expect(actual.aBoolean).toBe(expected.aBoolean);
-  expect(actual.anArray).toEqual(expected.anArray);
-}
-
 export function mockClientSearchToReturnNothing() {
   mocked(Client.prototype.search).mockResolvedValue(['0']);
 }

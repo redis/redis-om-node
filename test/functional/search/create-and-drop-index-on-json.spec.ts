@@ -47,16 +47,18 @@ describe("create and drop index on JSON", () => {
     it("has the expected fields", () => {
       let fields = result[7];
       expect(fields).toHaveLength(10);
-      expect(fields[0]).toEqual([ 'identifier', '$.aString', 'attribute', 'aString', 'type', 'TAG', 'SEPARATOR', '|' ]);
-      expect(fields[1]).toEqual([ 'identifier', '$.anotherString', 'attribute', 'anotherString', 'type', 'TAG', 'SEPARATOR', '|' ]);
-      expect(fields[2]).toEqual([ 'identifier', '$.aFullTextString', 'attribute', 'aFullTextString', 'type', 'TEXT', 'WEIGHT', '1' ]);
-      expect(fields[3]).toEqual([ 'identifier', '$.anotherFullTextString', 'attribute', 'anotherFullTextString', 'type', 'TEXT', 'WEIGHT', '1' ]);
-      expect(fields[4]).toEqual([ 'identifier', '$.aNumber', 'attribute', 'aNumber', 'type', 'NUMERIC' ]);
-      expect(fields[5]).toEqual([ 'identifier', '$.anotherNumber', 'attribute', 'anotherNumber', 'type', 'NUMERIC' ]);
-      expect(fields[6]).toEqual([ 'identifier', '$.aBoolean', 'attribute', 'aBoolean', 'type', 'TAG', 'SEPARATOR', '' ]);
-      expect(fields[7]).toEqual([ 'identifier', '$.anotherBoolean', 'attribute', 'anotherBoolean', 'type', 'TAG', 'SEPARATOR', '' ]);
-      expect(fields[8]).toEqual([ 'identifier', '$.anArray[*]', 'attribute', 'anArray', 'type', 'TAG', 'SEPARATOR', '' ]);
-      expect(fields[9]).toEqual([ 'identifier', '$.anotherArray[*]', 'attribute', 'anotherArray', 'type', 'TAG', 'SEPARATOR', '' ]);
+      expect(fields).toEqual([
+        [ 'identifier', '$.aString', 'attribute', 'aString', 'type', 'TAG', 'SEPARATOR', '|' ],
+        [ 'identifier', '$.anotherString', 'attribute', 'anotherString', 'type', 'TAG', 'SEPARATOR', '|' ],
+        [ 'identifier', '$.aFullTextString', 'attribute', 'aFullTextString', 'type', 'TEXT', 'WEIGHT', '1' ],
+        [ 'identifier', '$.anotherFullTextString', 'attribute', 'anotherFullTextString', 'type', 'TEXT', 'WEIGHT', '1' ],
+        [ 'identifier', '$.aNumber', 'attribute', 'aNumber', 'type', 'NUMERIC' ],
+        [ 'identifier', '$.anotherNumber', 'attribute', 'anotherNumber', 'type', 'NUMERIC' ],
+        [ 'identifier', '$.aBoolean', 'attribute', 'aBoolean', 'type', 'TAG', 'SEPARATOR', '' ],
+        [ 'identifier', '$.anotherBoolean', 'attribute', 'anotherBoolean', 'type', 'TAG', 'SEPARATOR', '' ],
+        [ 'identifier', '$.anArray[*]', 'attribute', 'anArray', 'type', 'TAG', 'SEPARATOR', '' ],
+        [ 'identifier', '$.anotherArray[*]', 'attribute', 'anotherArray', 'type', 'TAG', 'SEPARATOR', '' ]
+      ]);
     });
 
     describe("when the index is dropped", () => {

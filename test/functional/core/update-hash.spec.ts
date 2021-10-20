@@ -53,16 +53,9 @@ describe("update hash", () => {
     it("preserves the expected fields in a hash", async () => {
       let fields = await fetchHashKeys(client, entityKey);
       expect(fields).toHaveLength(10);
-      expect(fields).toContainEqual('aString');
-      expect(fields).toContainEqual('anotherString');
-      expect(fields).toContainEqual('aFullTextString');
-      expect(fields).toContainEqual('anotherFullTextString');
-      expect(fields).toContainEqual('aNumber');
-      expect(fields).toContainEqual('anotherNumber');
-      expect(fields).toContainEqual('aBoolean');
-      expect(fields).toContainEqual('anotherBoolean');
-      expect(fields).toContainEqual('anArray');
-      expect(fields).toContainEqual('anotherArray');
+      expect(fields).toEqual(expect.arrayContaining([ 'aString', 'anotherString',
+        'aFullTextString', 'anotherFullTextString', 'aNumber', 'anotherNumber',
+        'aBoolean', 'anotherBoolean', 'anArray', 'anotherArray' ]));
     });
 
     it("updates the expected fields in the hash", async () => {
@@ -108,11 +101,7 @@ describe("update hash", () => {
     it("removes the nulled fields from the hash", async () => {
       let fields = await fetchHashKeys(client, entityKey);
       expect(fields).toHaveLength(5);
-      expect(fields).toContainEqual('aString');
-      expect(fields).toContainEqual('aFullTextString');
-      expect(fields).toContainEqual('aNumber');
-      expect(fields).toContainEqual('aBoolean');
-      expect(fields).toContainEqual('anArray');
+      expect(fields).toEqual(expect.arrayContaining([ 'aString', 'aFullTextString', 'aNumber', 'aBoolean', 'anArray' ]));
     });
 
     it("updates the expected fields in the hash", async () => {
@@ -150,7 +139,7 @@ describe("update hash", () => {
       expect(entityId).toBe('full');
     });
 
-    it("remnoves all the fields in a hash", async () => {
+    it("removes all the fields in a hash", async () => {
       let fields = await fetchHashKeys(client, entityKey);
       expect(fields).toHaveLength(0);
     });
@@ -162,9 +151,9 @@ describe("update hash", () => {
       expect(values).toEqual([ null, null, null, null, null, null, null, null, null, null ]);
     });
 
-    it("removes then entire hash", async () => {
+    it("removes the entire hash", async () => {
       let exists = await keyExists(client, entityKey);
-      expect(exists).toBe(false);
+      expect(exists).toBeFalse();
     });
   });
 });

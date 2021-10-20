@@ -4,15 +4,10 @@ import Client from "../../../src/client";
 import Search from "../../../src/search/search";
 
 import { simpleHashSchema, SimpleHashEntity, SimpleJsonEntity, simpleJsonSchema } from "../helpers/test-entity-and-schema";
-import { expectEntityMatches,
-  mockClientSearchToReturnMultipleHashes,
-  mockClientSearchToReturnMultipleJsonStrings,
-  mockClientSearchToReturnNothing,
-  mockClientSearchToReturnSingleHash,
-  mockClientSearchToReturnSingleJsonString,
-  SIMPLE_ENTITY_1,
-  SIMPLE_ENTITY_2,
-  SIMPLE_ENTITY_3 } from "../helpers/search-helpers";
+import { mockClientSearchToReturnNothing,
+  mockClientSearchToReturnSingleHash, mockClientSearchToReturnSingleJsonString,
+  mockClientSearchToReturnMultipleHashes, mockClientSearchToReturnMultipleJsonStrings,
+  SIMPLE_ENTITY_1, SIMPLE_ENTITY_2, SIMPLE_ENTITY_3 } from '../helpers/search-helpers';
 
 jest.mock('../../../src/client');
 
@@ -63,7 +58,9 @@ describe("Search", () => {
 
         it("returns the expected single result", () => {
           expect(entities).toHaveLength(1);
-          expectEntityMatches(entities[0], SIMPLE_ENTITY_1)
+          expect(entities).toEqual(expect.arrayContaining([
+            expect.objectContaining(SIMPLE_ENTITY_1)
+          ]));
         });
       });
 
@@ -80,10 +77,12 @@ describe("Search", () => {
         });
 
         it("returns all the results", async () => {
-          expect(entities).toHaveLength(3)
-          expectEntityMatches(entities[0], SIMPLE_ENTITY_1);
-          expectEntityMatches(entities[1], SIMPLE_ENTITY_2);
-          expectEntityMatches(entities[2], SIMPLE_ENTITY_3);
+          expect(entities).toHaveLength(3);
+          expect(entities).toEqual(expect.arrayContaining([
+            expect.objectContaining(SIMPLE_ENTITY_1),
+            expect.objectContaining(SIMPLE_ENTITY_2),
+            expect.objectContaining(SIMPLE_ENTITY_3)
+          ]));
         });
       });
     });
@@ -123,7 +122,9 @@ describe("Search", () => {
 
         it("returns the expected single result", () => {
           expect(entities).toHaveLength(1);
-          expectEntityMatches(entities[0], SIMPLE_ENTITY_1)
+          expect(entities).toEqual(expect.arrayContaining([
+            expect.objectContaining(SIMPLE_ENTITY_1)
+          ]));
         });
       });
 
@@ -141,9 +142,11 @@ describe("Search", () => {
 
         it("returns all the expected results", () => {
           expect(entities).toHaveLength(3);
-          expectEntityMatches(entities[0], SIMPLE_ENTITY_1)
-          expectEntityMatches(entities[1], SIMPLE_ENTITY_2)
-          expectEntityMatches(entities[2], SIMPLE_ENTITY_3)
+          expect(entities).toEqual(expect.arrayContaining([
+            expect.objectContaining(SIMPLE_ENTITY_1),
+            expect.objectContaining(SIMPLE_ENTITY_2),
+            expect.objectContaining(SIMPLE_ENTITY_3)
+          ]));
         });
       });
     });

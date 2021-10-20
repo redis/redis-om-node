@@ -171,22 +171,3 @@ export async function loadTestJson(client: Client, key: string, data: CommonEnti
 
   await saveJson(client, key, JSON.stringify(json));
 }
-
-export function expectEntityMatches(entity: CommonEntity, data: CommonEntityData ) {
-  expect(entity.aString).toBe(data.aString ?? null);
-  expect(entity.anotherString).toBe(data.anotherString ?? null);
-  expect(entity.aFullTextString).toBe(data.aFullTextString ?? null);
-  expect(entity.anotherFullTextString).toBe(data.anotherFullTextString ?? null);
-  expect(entity.aNumber).toBe(data.aNumber ?? null);
-  expect(entity.anotherNumber).toBe(data.anotherNumber ?? null);
-  expect(entity.aBoolean).toBe(data.aBoolean ?? null);
-  expect(entity.anotherBoolean).toBe(data.anotherBoolean ?? null);
-  expect(entity.anArray).toEqual(data.anArray ?? null);
-  expect(entity.anotherArray).toEqual(data.anotherArray ?? null);
-}
-
-export function sortByEntityId(a: Entity, b: Entity): number {
-  if (a.entityId < b.entityId) return -1
-  if (a.entityId > b.entityId) return 1;
-  return 0;
-}

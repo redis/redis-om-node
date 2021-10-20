@@ -48,16 +48,7 @@ describe("save JSON", () => {
     it("creates the expected JSON", async () => {
       let json = await fetchJson(client, entityKey);
       let data = JSON.parse(json);
-      expect(data.aString).toBe(AN_ENTITY.aString);
-      expect(data.anotherString).toBe(AN_ENTITY.anotherString);
-      expect(data.aFullTextString).toBe(AN_ENTITY.aFullTextString);
-      expect(data.anotherFullTextString).toBe(AN_ENTITY.anotherFullTextString);
-      expect(data.aNumber).toBe(AN_ENTITY.aNumber);
-      expect(data.anotherNumber).toBe(AN_ENTITY.anotherNumber);
-      expect(data.aBoolean).toBe(AN_ENTITY.aBoolean);
-      expect(data.anotherBoolean).toBe(AN_ENTITY.anotherBoolean);
-      expect(data.anArray).toEqual(AN_ENTITY.anArray);
-      expect(data.anotherArray).toEqual(AN_ENTITY.anotherArray);
+      expect(data).toEqual(expect.objectContaining(AN_ENTITY));
     });
   });
 
@@ -113,7 +104,7 @@ describe("save JSON", () => {
 
     it("does not save JSON", async () => {
       let exists = await keyExists(client, entityKey);
-      expect(exists).toBe(false);
+      expect(exists).toBeFalse();
     });
   });
 });

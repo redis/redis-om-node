@@ -48,34 +48,26 @@ describe("save hash", () => {
     it("creates the expected fields in a hash", async () => {
       let fields = await fetchHashKeys(client, entityKey);
       expect(fields).toHaveLength(10);
-      expect(fields).toContainEqual('aString');
-      expect(fields).toContainEqual('anotherString');
-      expect(fields).toContainEqual('aFullTextString');
-      expect(fields).toContainEqual('anotherFullTextString');
-      expect(fields).toContainEqual('aNumber');
-      expect(fields).toContainEqual('anotherNumber');
-      expect(fields).toContainEqual('aBoolean');
-      expect(fields).toContainEqual('anotherBoolean');
-      expect(fields).toContainEqual('anArray');
-      expect(fields).toContainEqual('anotherArray');
+      expect(fields).toEqual(expect.arrayContaining([ 'aString', 'anotherString',
+        'aFullTextString', 'anotherFullTextString', 'aNumber', 'anotherNumber',
+        'aBoolean', 'anotherBoolean', 'anArray', 'anotherArray' ]));
     });
 
     it("stores the expected values in the hash", async () => {
       let values = await fetchHashFields(client, entityKey, 'aString', 'anotherString',
         'aFullTextString', 'anotherFullTextString', 'aNumber', 'anotherNumber',
         'aBoolean', 'anotherBoolean', 'anArray', 'anotherArray');
-      expect(values).toEqual([
-        AN_ENTITY.aString,
-        AN_ENTITY.anotherString,
-        AN_ENTITY.aFullTextString,
-        AN_ENTITY.anotherFullTextString,
-        AN_ENTITY.aNumber?.toString(),
-        AN_ENTITY.anotherNumber?.toString(),
-        AN_ENTITY.aBoolean ? '1' : '0',
-        AN_ENTITY.anotherBoolean ? '1' : '0',
-        AN_ENTITY.anArray?.join('|'),
-        AN_ENTITY.anotherArray?.join('|')
-      ]);
+        expect(values).toEqual([
+          AN_ENTITY.aString,
+          AN_ENTITY.anotherString,
+          AN_ENTITY.aFullTextString,
+          AN_ENTITY.anotherFullTextString,
+          AN_ENTITY.aNumber?.toString(),
+          AN_ENTITY.anotherNumber?.toString(),
+          AN_ENTITY.aBoolean ? '1' : '0',
+          AN_ENTITY.anotherBoolean ? '1' : '0',
+          AN_ENTITY.anArray?.join('|'),
+          AN_ENTITY.anotherArray?.join('|') ]);
     });
   });
 
@@ -99,11 +91,7 @@ describe("save hash", () => {
     it("creates the expected fields in a hash", async () => {
       let fields = await fetchHashKeys(client, entityKey);
       expect(fields).toHaveLength(5);
-      expect(fields).toContainEqual('aString');
-      expect(fields).toContainEqual('aFullTextString');
-      expect(fields).toContainEqual('aNumber');
-      expect(fields).toContainEqual('aBoolean');
-      expect(fields).toContainEqual('anArray');
+      expect(fields).toEqual(expect.arrayContaining([ 'aString', 'aFullTextString', 'aNumber', 'aBoolean', 'anArray' ]));
     });
 
     it("stores the expected values in the hash", async () => {
@@ -151,7 +139,7 @@ describe("save hash", () => {
 
     it("stores no hash at all", async () => {
       let exists = await keyExists(client, entityKey);
-      expect(exists).toBe(false);
+      expect(exists).toBeFalse();
     });
   });
 });

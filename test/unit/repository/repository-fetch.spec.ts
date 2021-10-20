@@ -23,17 +23,17 @@ describe("Repository", () => {
 
       ["when fetching a fully populated entity from a hash", {
         mockedData: { aString: 'foo', aNumber: '42', aBoolean: '0', anArray: 'bar|baz|qux' },
-        expectedString: 'foo', expectedNumber: 42, expectedBoolean: false, expectedArray: [ 'bar', 'baz', 'qux' ]
+        expectedData: { aString: 'foo', aNumber: 42, aBoolean: false, anArray: [ 'bar', 'baz', 'qux' ] }
       }],
 
       [ "when fetching a partially populated entity from a hash", {
         mockedData: { aString: 'foo', aNumber: '42' },
-        expectedString: 'foo', expectedNumber: 42, expectedBoolean: null, expectedArray: null
+        expectedData: { aString: 'foo', aNumber: 42, aBoolean: null, anArray: null }
       }],
 
       [ "when fetching a empty entity from a hash", {
         mockedData: {},
-        expectedString: null, expectedNumber: null, expectedBoolean: null, expectedArray: null
+        expectedData: { aString: null, aNumber: null, aBoolean: null, anArray: null }
       }]
 
     ])("%s", (_, data) => {
@@ -47,41 +47,35 @@ describe("Repository", () => {
         entity = await repository.fetch(entityId);
       });
 
-      it("returns an entity with the expected id", () => expect(entity.entityId).toBe(entityId));
-
-      it("returns an entity with the expected properties", () => {
-        expect(entity.aString).toBe(data.expectedString);
-        expect(entity.aNumber).toBe(data.expectedNumber);
-        expect(entity.aBoolean).toBe(data.expectedBoolean);
-        expect(entity.anArray).toEqual(data.expectedArray);
-      });
+      it("returns the expected entity", () =>
+        expect(entity).toEqual(expect.objectContaining({ entityId, ...data.expectedData })));
     });
 
     describe.each([
 
       ["when fetching a fully populated entity from JSON", {
         mockedData: { aString: 'foo', aNumber: 42, aBoolean: false, anArray: [ "bar", "baz", "qux" ] },
-        expectedString: 'foo', expectedNumber: 42, expectedBoolean: false, expectedArray: [ 'bar', 'baz', 'qux' ]
+        expectedData: { aString: 'foo', aNumber: 42, aBoolean: false, anArray: [ 'bar', 'baz', 'qux' ] }
       }],
 
       [ "when fetching a partially populated entity from JSON", {
         mockedData: { aString: 'foo', aNumber: 42 },
-        expectedString: 'foo', expectedNumber: 42, expectedBoolean: null, expectedArray: null
+        expectedData: { aString: 'foo', aNumber: 42, aBoolean: null, anArray: null }
       }],
 
       [ "when fetching an empty entity from JSON", {
         mockedData: {},
-        expectedString: null, expectedNumber: null, expectedBoolean: null, expectedArray: null
+        expectedData: { aString: null, aNumber: null, aBoolean: null, anArray: null }
       }],
       
       [ "when fetching a missing entity from JSON", {
         mockedData: null,
-        expectedString: null, expectedNumber: null, expectedBoolean: null, expectedArray: null
+        expectedData: { aString: null, aNumber: null, aBoolean: null, anArray: null }
       }],
       
       [ "when fetching an entity from JSON with nulls", {
         mockedData: { aString: 'foo', aNumber: 42, aBoolean: null, anArray: null },
-        expectedString: 'foo', expectedNumber: 42, expectedBoolean: null, expectedArray: null
+        expectedData: { aString: 'foo', aNumber: 42, aBoolean: null, anArray: null }
       }]
 
     ])("%s", (_, data: any) => {
@@ -95,14 +89,8 @@ describe("Repository", () => {
         entity = await repository.fetch(entityId);
       });
 
-      it("returns an entity with the expected id", () => expect(entity.entityId).toBe(entityId));
-
-      it("returns an entity with the expected properties", () => {
-        expect(entity.aString).toBe(data.expectedString);
-        expect(entity.aNumber).toBe(data.expectedNumber);
-        expect(entity.aBoolean).toBe(data.expectedBoolean);
-        expect(entity.anArray).toEqual(data.expectedArray);
-      });
+      it("returns the expected entity", () =>
+        expect(entity).toEqual(expect.objectContaining({ entityId, ...data.expectedData })));
     });
   });
 });
