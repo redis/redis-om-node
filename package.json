@@ -11,8 +11,9 @@
     "test-functional": "jest --selectProjects functional --watchAll --runInBand"
   },
   "repository": "github:redis-developer/redis-om-node",
+  "homepage": "https://github.com/redis-developer/redis-om-node#readme",
   "keywords": [ "redis", "orm" ],
-  "license": "UNLICENSED",
+  "license": "BSD-3-Clause",
   "author": "Guy Royse <guy@guyroyse.com> (http://guyroyse.com/)",
   "engines": {
     "node": ">=12"
