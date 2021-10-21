@@ -5,7 +5,7 @@
   "main": "dist/index.js",
   "types": "./dist/index.d.ts",
   "scripts": {
-    "build": "tsc --project ./",
+    "build": "rm -rf ./dist && tsc --project ./",
     "test-all": "jest --watchAll --runInBand",
     "test-unit": "jest --selectProjects unit --watchAll",
     "test-functional": "jest --selectProjects functional --watchAll --runInBand"
