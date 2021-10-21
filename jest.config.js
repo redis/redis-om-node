@@ -1,10 +1,10 @@
 module.exports = {
   projects: [{
     displayName: "unit",
-    roots: [ "<rootDir>/src/", "<rootDir>/test/unit/" ],
+    roots: [ "<rootDir>/lib/", "<rootDir>/spec/unit/" ],
     clearMocks: true,
     collectCoverage: true,
-    coverageDirectory: "coverage",
+    coverageDirectory: "coverage/unit",
     globals: {
       "ts-jest": {
         tsconfig: "tsconfig.json",
@@ -16,10 +16,10 @@ module.exports = {
     detectOpenHandles: true
   }, {
     displayName: "functional",
-    roots: [ "<rootDir>/src/", "<rootDir>/test/functional/" ],
+    roots: [ "<rootDir>/lib/", "<rootDir>/spec/functional/" ],
     clearMocks: true,
     collectCoverage: true,
-    coverageDirectory: "coverage",
+    coverageDirectory: "coverage/functional",
     globals: {
       "ts-jest": {
         tsconfig: "tsconfig.json",
