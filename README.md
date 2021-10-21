@@ -1,10 +1,7 @@
 <div align="center">
   <br/>
   <br/>
-  <img width="360" src="logo-color.svg" alt="Redis OM" /><br/>
-  <img width="360" src="logo-gray.svg" alt="Redis OM" /><br/>
-  <img width="360" src="logo-dark.svg" alt="Redis OM" /><br/>
-  <img width="360" src="logo-light.svg" alt="Redis OM" /><br/>
+  <img width="360" src="logo.svg" alt="Redis OM" />
   <br/>
   <br/>
 </div>
