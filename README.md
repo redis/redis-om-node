@@ -126,3 +126,10 @@ search
   );
 
 ```
+
+
+
+<!-- Badges -->
+
+[license-image]: https://img.shields.io/badge/License-BSD%203--Clause-blue.svg
+[license-url]: LICENSE
