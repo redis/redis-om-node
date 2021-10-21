@@ -25,7 +25,7 @@ describe("Repository", () => {
       entity = repository.createEntity();
     })
 
-    it("has a generated entity id", () => expect(entity.entityId).toBeUlid());
+    it("has a generated entity id", () => expect(entity.entityId).toMatch(/^[0-9ABCDEFGHJKMNPQRSTVWXYZ]{26}$/));
     it("is of the expected type", () => expect(entity).toBeInstanceOf(SimpleEntity));
   });
 });

@@ -139,7 +139,7 @@ describe("save hash", () => {
 
     it("stores no hash at all", async () => {
       let exists = await keyExists(client, entityKey);
-      expect(exists).toBeFalse();
+      expect(exists).toBe(false);
     });
   });
 });

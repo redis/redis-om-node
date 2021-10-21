@@ -26,7 +26,7 @@ describe("Schema", () => {
     it("generates the index name from the entity constructor name", () =>
       expect(schema.indexName).toBe("TestEntity:index"));
 
-    it("generates default Redis IDs", () => expect(schema.generateId()).toBeUlid());
+    it("generates default Redis IDs", () => expect(schema.generateId()).toMatch(/^[0-9ABCDEFGHJKMNPQRSTVWXYZ]{26}$/));
   });
 
   describe("that overrides the data structure to be JSON", () => {

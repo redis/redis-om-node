@@ -11,7 +11,6 @@ module.exports = {
         diagnostics: true
       },
     },
-    setupFilesAfterEnv: [ "<rootDir>/test/helpers/custom-matchers.ts" ],
     testMatch: [ "**/*.spec.ts" ],
     transform: { "^.+\\.ts$": "ts-jest" },
     detectOpenHandles: true
@@ -27,7 +26,6 @@ module.exports = {
         diagnostics: true
       },
     },
-    setupFilesAfterEnv: [ "<rootDir>/test/helpers/custom-matchers.ts" ],
     testMatch: [ "**/*.spec.ts" ],
     transform: { "^.+\\.ts$": "ts-jest" },
     detectOpenHandles: true

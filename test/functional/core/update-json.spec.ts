@@ -111,7 +111,7 @@ describe("update JSON", () => {
 
     it("removes the key from Redis", async () => {
       let exists = await keyExists(client, entityKey);
-      expect(exists).toBeFalse();
+      expect(exists).toBe(false);
     });
   });
 });

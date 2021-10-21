@@ -104,7 +104,7 @@ describe("save JSON", () => {
 
     it("does not save JSON", async () => {
       let exists = await keyExists(client, entityKey);
-      expect(exists).toBeFalse();
+      expect(exists).toBe(false);
     });
   });
 });

@@ -153,7 +153,7 @@ describe("update hash", () => {
 
     it("removes the entire hash", async () => {
       let exists = await keyExists(client, entityKey);
-      expect(exists).toBeFalse();
+      expect(exists).toBe(false);
     });
   });
 });
