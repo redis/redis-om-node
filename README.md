@@ -6,7 +6,11 @@
   <br/>
 </div>
 
-# Redis OM for Node.js
+[![License][license-image]][license-url]
+
+# Object Mapping (and more) for Redis!
+
+Redis OM for Node.js (prounced _ohm_) makes it super simple to write applications the store and retrieve data from Redis.
 
 ## Query Syntax
 
