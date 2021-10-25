@@ -8,9 +8,87 @@
 
 [![License][license-image]][license-url]
 
-# Object Mapping (and more) for Redis!
+# Redis ŌM for Node.js
 
-Redis OM for Node.js (prounced _ohm_) makes it super simple to write applications the store and retrieve data from Redis.
+## Object Mapping (and more) for Redis!
+
+Redis ŌM (prounced _REDiss OHM_) makes it easy to add Redis to your Node.js appliction by mapping the Redis data structures you know and love to classes that you define. No more pesky, low-level commands, just pure code with a fluent interface.
+
+## Before We Get Started
+
+Before we get started there's a couple things you should know:
+
+  1. This is a *preview*.
+  2. **This is a preview**.
+  3. This. Is. A. Preview.
+
+This is a preview. This code is not production ready and all manner of Bad Things™ might happen if you use it. Things like:
+
+  - Changes to interfaces and behavior that break your code upon upgrade.
+  - Bugs, both garden variety and [Heisenbugs](https://en.wikipedia.org/wiki/Heisenbug), that crash your application.
+  - Execution of the [HCF instruction](https://en.wikipedia.org/wiki/Halt_and_Catch_Fire_(computing)).
+
+Likely there are bugs. If you find one, open an issue or—better yet—send me a pull request. Likely there will be changes. If you have a brilliant idea for one, let me know by opening an issue.
+
+By using and abusing this software you are helping to improve it. This is greatly appreciated.
+
+Caveats done. Now, on with *how* to use Redis ŌM!
+
+## Getting Started
+
+First things first, get yourself a Node.js project. There are lots of ways to do this but I'm gonna go with a classic:
+
+    $ npm init
+
+Once you have that sweet, sweet `package.json`, let's add our newest favorite package to it:
+
+    $ npm install redis-om --save
+
+Of course, you'll need some Redis, preferrably with [RediSearch](https://oss.redis.com/redisearch/) and [RedisJSON](https://oss.redis.com/redisjson/) installed. The easiest way to do this is to setup a free [Redis Cloud](https://redis.com/try-free/) instance. But, you can also use Docker:
+
+    $ docker run -p 6379:6379 redislabs/redismod:preview
+
+Excellent. Set up done. Let's write some code!
+
+## Connect to Redis
+
+We'll start by connecting to Redis and running some arbitray Redis commands. This is just to show how to connect to Redis and to make sure everything is working:
+
+```javascript
+import { Client } from 'redis-om'
+
+(async () => {
+
+  // create and open a client
+  let client = new Client()
+  await client.open('redis://localhost:6379')
+  
+  let result
+
+  result = await client.execute(['PING']) // PONG
+  result = await client.execute([
+    'HSET', 'foo', 'bar', 'baz', 'qux', 42]) // 2
+  result = await client.execute([
+    'HGETALL', 'foo'])  // [ 'bar', 'baz', 'qux', '42' ]
+
+  await client.close()
+})()
+```
+
+When you open a Redis client, you hand it a URL. The basic format for this URL is:
+
+    redis://username:password@host:port
+
+This should be plenty for now, but if you need more, the full specification for the URL is [defined with the IANA](https://www.iana.org/assignments/uri-schemes/prov/redis). And yes, there is a [TLS version](https://www.iana.org/assignments/uri-schemes/prov/rediss) as well.
+
+If you don't provide a URL, it defaults to `redis://localhost:6379`.
+
+## Define a Schema
+
+## Create, Read, Update, and Delete
+
+## Search!
+
 
 ## Query Syntax
 
