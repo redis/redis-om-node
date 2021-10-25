@@ -77,6 +77,9 @@ let { Client } = require('redis-om')
 })()
 ```
 
+<details>
+<summary>See it in TypeScript...</summary>
+
 ```typescript
 import { Client } from 'redis-om';
 
@@ -99,6 +102,8 @@ import { Client } from 'redis-om';
 
 })();
 ```
+</details>
+<br/>
 
 When you open a Redis client, you hand it a URL. The basic format for this URL is:
 
