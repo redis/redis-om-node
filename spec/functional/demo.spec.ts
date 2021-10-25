@@ -34,7 +34,8 @@ describe("Demo", () => {
     // get a client and open it
     let client = new Client();
     await client.open();
-    await client.execute(['FLUSHALL']);
+    await client.execute<void>(['FLUSHALL']);
+    await client.execute<string>(['PING']);
 
     let schema = new Schema<BigfootSighting>(
       BigfootSighting, {

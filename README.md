@@ -103,7 +103,6 @@ import { Client } from 'redis-om';
 })();
 ```
 </details>
-<br/>
 
 When you open a Redis client, you hand it a URL. The basic format for this URL is:
 
