@@ -55,24 +55,49 @@ Excellent. Set up done. Let's write some code!
 We'll start by connecting to Redis and running some arbitray Redis commands. This is just to show how to connect to Redis and to make sure everything is working:
 
 ```javascript
-import { Client } from 'redis-om'
+let { Client } = require('redis-om')
 
-(async () => {
+(async function() {
 
   // create and open a client
   let client = new Client()
   await client.open('redis://localhost:6379')
-  
+
+  // execute some commands
   let result
+  result = await client.execute(['PING']) // 'PONG'
+  result = await client.execute(
+    ['HSET', 'foo', 'bar', 'baz', 'qux', 42]) // 2
+  result = await client.execute(
+    ['HGETALL', 'foo'])  // [ 'bar', 'baz', 'qux', '42' ]
 
-  result = await client.execute(['PING']) // PONG
-  result = await client.execute([
-    'HSET', 'foo', 'bar', 'baz', 'qux', 42]) // 2
-  result = await client.execute([
-    'HGETALL', 'foo'])  // [ 'bar', 'baz', 'qux', '42' ]
-
+  // close the client
   await client.close()
+
 })()
+```
+
+```typescript
+import { Client } from 'redis-om';
+
+(async function() {
+
+  // create and open a client
+  let client = new Client();
+  await client.open('redis://localhost:6379');
+
+  // execute some commands
+  let result: number | string | string[];
+  result = await client.execute<string>(['PING']); // 'PONG'
+  result = await client.execute<number>(
+    ['HSET', 'foo', 'bar', 'baz', 'qux', 42]); // 2
+  result = await client.execute<string[]>(
+    ['HGETALL', 'foo']);  // [ 'bar', 'baz', 'qux', '42' ]
+
+  // close the client
+  await client.close();
+
+})();
 ```
 
 When you open a Redis client, you hand it a URL. The basic format for this URL is:
@@ -87,8 +112,9 @@ If you don't provide a URL, it defaults to `redis://localhost:6379`.
 
 ## Create, Read, Update, and Delete
 
-## Search!
+## Using JSON
 
+## Search!
 
 ## Query Syntax
 
