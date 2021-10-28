@@ -371,7 +371,7 @@ await repository.dropIndex();
 await repository.createIndex();
 ```
 
-## Finding Everything
+## Finding All The Things (and Returning Them)
 
 Once you have an index created (or recreated) you can search. The most basic search is just to return everything. This will return all of the albums that you've put in Redis:
 
@@ -379,9 +379,9 @@ Once you have an index created (or recreated) you can search. The most basic sea
 let albums = await repository.search().returnAll()
 ```
 
-## Pagination
+### Pagination
 
-It's possible that you have a *lot* of albums. In that case, you can page through the results. Just pass in the zero-based offset and the number of results you want:
+It's possible that you have a *lot* of albums, I know I do. In that case, you can page through the results. Just pass in the zero-based offset and the number of results you want:
 
 ```javascript
 let offset = 100
@@ -389,9 +389,9 @@ let count = 25
 let albums = await repository.search().return(offset, count)
 ```
 
-Don't worry if your offset is greater than the number of entities. If it is, you just get an empty array back.
+Don't worry if your offset is greater than the number of entities. If it is, you just get an empty array back. No harm, no foul.
 
-## Counting
+### Counting
 
 Sometimes you just want to know how many entities you have. For that you can call `.count`:
 
@@ -401,29 +401,160 @@ let count = await repository.search().count()
 
 ## Finding Specific Things
 
-Talk about fluent interfaces here and the types you can match on.
+It's all fine an dandy to return all the things. But that's usually not what you want to do. You want to find *specific* things. Redis ŌM will let you find those specific things by [strings](#searching-on-whole-strings), [numbers](#searching-on-numbers), and [booleans](#searching-on-booleans). You can also search for strings that are in an [array](#searching-arrays) or even perform [full-text search](#full-text-search) within strings.
 
-### Searching on Strings
+And it does it with a fluent interface that allows, but does not demand, code that reads like a sentence. See below for exhaustive examples of all the syntax available to you.
+
+### Searching on Whole Strings
+
+You can search for a whole string. This syntax will not search for partial strings or words within a string. If you want to do that, check out [Full-Text Search](#full-text-search).
 
 ```javascript
-let albums = await repository.search.where('title').eq("The Righteous & The Butterfly")
+let albums
 
+// find all albums where the artist is 'Mushroomhead'
+albums = await repository.search.where('artist').eq('Mushroomhead').returnAll()
 
-search.where('aString').eq('foo');
-search.where('aString').not.eq('foo');
-search.where('aString').equals('foo');
-search.where('aString').does.equal('foo');
-search.where('aString').does.not.equal('foo');
-search.where('aString').is.equalTo('foo');
-search.where('aString').is.not.equalTo('foo');
+// find all albums where the artist is *not* 'Mushroomhead'
+albums = await repository.search.where('artist').not.eq('Mushroomhead').returnAll()
 
+// fluent alternatives that do the same thing
+albums = await repository.search.where('artist').equals('Mushroomhead').returnAll()
+albums = await repository.search.where('artist').does.equal('Mushroomhead').returnAll()
+albums = await repository.search.where('artist').is.equalTo('Mushroomhead').returnAll()
+albums = await repository.search.where('artist').does.not.equal('Mushroomhead').returnAll()
+albums = await repository.search.where('artist').is.not.equalTo('Mushroomhead').returnAll()
 ```
 
-NOTE: Matches the whole string only.
+### Searching on Numbers
 
-### Full Text Search
+You can search against fields that contain numbers—both intergers and floating-point numbers—with all the comparisons you'd expect to see:
 
-By default, a string can match only the entire string. So, if the title of your album is "The Righteous & The Butterfly" then to find that album using it's title, you'll need to provide the entire string. However, you can configure a string for full-text search in the schema by setting `textSearch` to `true`.
+```javascript
+let albums
+
+// find all albums where the year is ===, >, >=, <, and <= 1984
+albums = await repository.search.where('year').eq(1984).returnAll()
+albums = await repository.search.where('year').gt(1984).returnAll()
+albums = await repository.search.where('year').gte(1984).returnAll()
+albums = await repository.search.where('year').lt(1984).returnAll()
+albums = await repository.search.where('year').lte(1984).returnAll()
+
+// find all albums where year is between 1980 and 1989 inclusive
+albums = await repository.search.where('year').between(1980, 1989).returnAll()
+
+// find all albums where the year is *not* ===, >, >=, <, and <= 1984
+albums = await repository.search.where('year').not.eq(1984).returnAll()
+albums = await repository.search.where('year').not.gt(1984).returnAll()
+albums = await repository.search.where('year').not.gte(1984).returnAll()
+albums = await repository.search.where('year').not.lt(1984).returnAll()
+albums = await repository.search.where('year').not.lte(1984).returnAll()
+
+// find all albums where year is *not* between 1980 and 1989 inclusive
+albums = await repository.search.where('year').not.between(1980, 1989);
+
+// fluent alternatives that do the same thing
+albums = await repository.search.where('year').equals(1984).returnAll()
+albums = await repository.search.where('year').does.equal(1984).returnAll()
+albums = await repository.search.where('year').does.not.equal(1984).returnAll()
+albums = await repository.search.where('year').is.equalTo(1984).returnAll()
+albums = await repository.search.where('year').is.not.equalTo(1984).returnAll()
+
+albums = await repository.search.where('year').greaterThan(1984).returnAll()
+albums = await repository.search.where('year').is.greaterThan(1984).returnAll()
+albums = await repository.search.where('year').is.not.greaterThan(1984).returnAll()
+
+albums = await repository.search.where('year').greaterThanOrEqualTo(1984).returnAll()
+albums = await repository.search.where('year').is.greaterThanOrEqualTo(1984).returnAll()
+albums = await repository.search.where('year').is.not.greaterThanOrEqualTo(1984).returnAll()
+
+albums = await repository.search.where('year').lessThan(1984).returnAll()
+albums = await repository.search.where('year').is.lessThan(1984).returnAll()
+albums = await repository.search.where('year').is.not.lessThan(1984).returnAll()
+
+albums = await repository.search.where('year').lessThanOrEqualTo(1984).returnAll()
+albums = await repository.search.where('year').is.lessThanOrEqualTo(1984).returnAll()
+albums = await repository.search.where('year').is.not.lessThanOrEqualTo(1984).returnAll()
+
+albums = await repository.search.where('year').is.between(1980, 1989).returnAll()
+albums = await repository.search.where('year').is.not.between(1980, 1989).returnAll()
+```
+
+### Searching on Booleans
+
+You can search against fields that contain booleans:
+
+```javascript
+let albums
+
+// find all albums where outOfPublication is true
+albums = await repository.search.where('outOfPublication').true().returnAll()
+
+// find all albums where outOfPublication is false
+albums = await repository.search.where('outOfPublication').false().returnAll()
+```
+
+You can negate boolean searches. This might seem odd, but if your field is `null` then it would match on a `.not` query:
+
+```javascript
+// find all albums where outOfPublication is false or null
+albums = await repository.search.where('outOfPublication').not.true().returnAll()
+
+// find all albums where outOfPublication is true or null
+albums = await repository.search.where('outOfPublication').not.false().returnAll()
+```
+
+Amd, of course, there's lots of syntactic sugar to make this fluent:
+
+```javascript
+albums = await repository.search.where('outOfPublication').eq(true).returnAll()
+albums = await repository.search.where('outOfPublication').equals(true).returnAll()
+albums = await repository.search.where('outOfPublication').does.equal(true).returnAll()
+albums = await repository.search.where('outOfPublication').is.equalTo(true).returnAll()
+
+albums = await repository.search.where('outOfPublication').true().returnAll()
+albums = await repository.search.where('outOfPublication').false().returnAll()
+albums = await repository.search.where('outOfPublication').is.true().returnAll()
+albums = await repository.search.where('outOfPublication').is.false().returnAll()
+
+albums = await repository.search.where('outOfPublication').not.eq(true).returnAll()
+albums = await repository.search.where('outOfPublication').does.not.equal(true).returnAll()
+albums = await repository.search.where('outOfPublication').is.not.equalTo(true).returnAll()
+albums = await repository.search.where('outOfPublication').is.not.true().returnAll()
+albums = await repository.search.where('outOfPublication').is.not.false().returnAll()
+```
+
+### Searching Arrays
+
+You can search on whole string that are in an array:
+
+```javascript
+let albums
+
+// find all albums where genres contains the string 'rock'
+albums = await repository.search.where('genres').contain('rock').returnAll()
+
+// find all albums where genres contains the string 'rock', 'metal', or 'blues'
+albums = await repository.search.where('genres').containOneOf('rock', 'metal', 'blues').returnAll()
+
+// find all albums where genres does *not* contain the string 'rock'
+albums = await repository.search.where('genres').not.contain('rock').returnAll()
+
+// find all albums where genres does *not* contain the string 'rock', 'metal', and 'blues'
+albums = await repository.search.where('genres').not.containOneOf('rock', 'metal', 'blues').returnAll()
+
+// alternative syntaxes
+albums = await repository.search.where('genres').contains('rock').returnAll()
+albums = await repository.search.where('genres').containsOneOf('rock', 'metal', 'blues').returnAll()
+albums = await repository.search.where('genres').does.contain('rock').returnAll()
+albums = await repository.search.where('genres').does.not.contain('rock').returnAll()
+albums = await repository.search.where('genres').does.containOneOf('rock', 'metal', 'blues').returnAll()
+albums = await repository.search.where('genres').does.not.containOneOf('rock', 'metal', 'blues').returnAll()
+```
+
+### Full-Text Search
+
+By default, a string matches the entire string. So, if the title of your album is "The Righteous & The Butterfly", to find that album using it's title, you'll need to provide the entire string. However, you can configure a string for full-text search in the schema by setting `textSearch` to `true`:
 
 ```javascript
   ...
@@ -431,154 +562,96 @@ By default, a string can match only the entire string. So, if the title of your 
   ...
 ```
 
-```javascript
-search.where('aString').match('foo')
-search.where('aString').matchExact('foo')
-
-
-search.where('aString').match('foo');
-search.where('aString').not.match('foo');
-search.where('aString').matches('foo');
-search.where('aString').does.match('foo');
-search.where('aString').does.not.match('foo');
-
-search.where('aString').exact.match('foo');
-search.where('aString').not.exact.match('foo');
-search.where('aString').exactly.matches('foo');
-search.where('aString').does.exactly.match('foo');
-search.where('aString').does.not.exactly.match('foo');
-
-search.where('aString').matchExact('foo');
-search.where('aString').not.matchExact('foo');
-search.where('aString').matchesExactly('foo');
-search.where('aString').does.matchExactly('foo');
-search.where('aString').does.not.matchExactly('foo');
-
-
-```
-
-NOTE: does full text search with stemming, give => gave. Exactly turns this off.
-
-### Searching on Numbers
+Doing this gives you the full power of [RediSearch][redisearch-url] by enabling full-text search against the string instead of just matching the whole string. Full-text search is pretty clever. It understands that certain words (like *a*, *an*, or *the*) are common and ignores them. It understands how words related to each other and so if you search for 'give' it matches 'gave', 'gives', 'given', and 'giving' too. Plus, you can override this to do exact matches of a word or phrase.
 
 ```javascript
-search.where('aNumber').eq(42)
-search.where('aNumber').gt(42)
-search.where('aNumber').gte(42)
-search.where('aNumber').lt(42)
-search.where('aNumber').lte(42)
-search.where('aNumber').between(23, 42)
+let albums
 
+// finds all albums where the title contains the word 'butterfly'
+albums = await repository.search.where('title').match('butterfly').returnAll()
 
-search.where('aNumber').eq(42);
-search.where('aNumber').not.eq(42);
-search.where('aNumber').equals(42);
-search.where('aNumber').does.equal(42);
-search.where('aNumber').does.not.equal(42);
-search.where('aNumber').is.equalTo(42);
-search.where('aNumber').is.not.equalTo(42);
-
-search.where('aNumber').gt(42);
-search.where('aNumber').not.gt(42);
-search.where('aNumber').greaterThan(42);
-search.where('aNumber').is.greaterThan(42);
-search.where('aNumber').is.not.greaterThan(42);
-
-search.where('aNumber').gte(42);
-search.where('aNumber').not.gte(42);
-search.where('aNumber').greaterThanOrEqualTo(42);
-search.where('aNumber').is.greaterThanOrEqualTo(42);
-search.where('aNumber').is.not.greaterThanOrEqualTo(42);
-
-search.where('aNumber').lt(42);
-search.where('aNumber').not.lt(42);
-search.where('aNumber').lessThan(42);
-search.where('aNumber').is.lessThan(42);
-search.where('aNumber').is.not.lessThan(42);
-
-search.where('aNumber').lte(42);
-search.where('aNumber').not.lte(42);
-search.where('aNumber').lessThanOrEqualTo(42);
-search.where('aNumber').is.lessThanOrEqualTo(42);
-search.where('aNumber').is.not.lessThanOrEqualTo(42);
-
-search.where('aNumber').between(23, 42);
-search.where('aNumber').not.between(23, 42);
-search.where('aNumber').is.between(23, 42);
-search.where('aNumber').is.not.between(23, 42);
-
-
+// finds all albums where the title contains the exact phrase 'beautiful stories'
+albums = await repository.search.where('title').matchExact('beautiful stories').returnAll()
 ```
 
-Works on non-integers as well
-
-### Searching on Booleans
+Redis ŌM also exposes word prefix searches from RediSearch. If you are looking for a word that starts with a particular value, just tack a `*` on the end and it'll match accordingly:
 
 ```javascript
-search.where('aBoolean').eq(true)
-search.where('aBoolean').true()
-search.where('aBoolean').false()
-
-
-search.where('aBoolean').eq(true);
-search.where('aBoolean').not.eq(true);
-search.where('aBoolean').equals(true);
-search.where('aBoolean').does.equal(true);
-search.where('aBoolean').does.not.equal(true);
-search.where('aBoolean').is.equalTo(true);
-search.where('aBoolean').is.not.equalTo(true);
-
-search.where('aBoolean').true();
-search.where('aBoolean').false();
-search.where('aBoolean').is.true();
-search.where('aBoolean').is.false();
-search.where('aBoolean').is.not.true();
-search.where('aBoolean').is.not.false();
-
-
-
+// finds all albums where the title contains a word that starts with 'right'
+albums = await repository.search.where('title').match('right*').returnAll()
 ```
 
-### Searching Arrays
+But don't not combine these. I repeat, **DO NOT COMBINE THESE**. Prefix searches and exact matches are not compatible. If you try to exactly match a prefixed search, you'll get an error.
 
 ```javascript
-search.where('anArray').contains('foo')
-search.where('anArray').containsOneOf('foo', 'bar', 'baz')
-
-search.where('anArray').contains('foo');
-search.where('anArray').does.contain('foo');
-search.where('anArray').does.not.contain('foo');
-
-search.where('anArray').containsOneOf('foo', 'bar', 'baz');
-search.where('anArray').does.containOneOf('foo', 'bar', 'baz');
-search.where('anArray').does.not.containOneOf('foo', 'bar', 'baz');
-
-
+// THIS WILL ERROR
+albums = await repository.search.where('title').matchExact('beautiful sto*').returnAll()
 ```
 
+Again, there are several alternatives to make this a bit more fluent and negation is available:
+
+```javascript
+albums = await repository.search.where('title').not.match('butterfly').returnAll()
+albums = await repository.search.where('title').matches('butterfly').returnAll()
+albums = await repository.search.where('title').does.match('butterfly').returnAll()
+albums = await repository.search.where('title').does.not.match('butterfly').returnAll()
+
+albums = await repository.search.where('title').exact.match('beautiful stories').returnAll()
+albums = await repository.search.where('title').not.exact.match('beautiful stories').returnAll()
+albums = await repository.search.where('title').exactly.matches('beautiful stories').returnAll()
+albums = await repository.search.where('title').does.exactly.match('beautiful stories').returnAll()
+albums = await repository.search.where('title').does.not.exactly.match('beautiful stories').returnAll()
+
+albums = await repository.search.where('title').not.matchExact('beautiful stories').returnAll()
+albums = await repository.search.where('title').matchesExactly('beautiful stories').returnAll()
+albums = await repository.search.where('title').does.matchExactly('beautiful stories').returnAll()
+albums = await repository.search.where('title').does.not.matchExactly('beautiful stories').returnAll()
+```
 
 ### Chaining Searches
 
+So far we've been doing searches that match on a single field. However, we often want to query on multiple field. No problem:
+
+```javascript
+let albums = await repository.search
+  .where('artist').equals('Mushroomhread')
+  .or('title').matches('butterfly')
+  .and('year').is.greaterThan(1990).returnAll()
+```
+
+These are executed in order from left to right and ignore any order of operations. So this query will match an arist of 'Mushroomhead' OR a title matching 'butterfly' before it goes on to match that the year is greater than 1990.
+
+If you'd like to change this you can nest queries:
+
 ```javascript
 search
-  .where('aString').eq('foo')
-  .or('aString').eq('bar')
-  .and('aBoolean').eq(true)
-
-search
-  .where(search => search
-    .where('aString').equals('foo')
-    .or('aString').equals('bar')
+  .where('title').matches('butterfly').returnAll()
+  .or(search => search
+    .where('artist').equals('Mushroomhead')
+    .and('year').is.greaterThan(1990)
   )
-  .and(search => search
-    .where('anArray').contains('baz')
-    .or('aBoolean').is.true()
-  );
 ```
+
+This query finds all Mushroomhead albums after 1990 or albums that have butterfly in the title.
 
 # Combining RedisJSON and RediSearch
 
+One final note. All of the search capabilites of RediSearch that Redis ŌM exposes work with Hashes. But, RediSearch also plays nice with RedisJSON. All you need to do to use search with RedisJSON is to enabled it in the schema:
 
+
+```javascript
+let schema = new Schema(Album, {
+  artist: { type: 'string' },
+  title: { type: 'string' },
+  year: { type: 'number' },
+  genres: { type: 'array' },
+  outOfPublication: { type: 'boolean' }
+}, {
+  dataStructure: 'JSON'
+})
+```
+
+Everything else just works the same.
 
 
 <!-- Links, Badges, and Whatnot -->
