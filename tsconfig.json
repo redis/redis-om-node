@@ -16,5 +16,9 @@
   "exclude": [
     "node_modules",
     "spec/**/*.spec.ts"
-  ]
+  ],
+  "typedocOptions": {
+    "entryPoints": ["lib/index.ts"],
+    "out": "docs"
+  }
 }
