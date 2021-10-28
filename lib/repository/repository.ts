@@ -3,7 +3,7 @@ import Client from "../client";
 import Entity from '../entity/entity';
 import Search from '../search/search';
 
-import { EntityData } from '../entity/entity-types';
+import { EntityData } from '../entity/entity';
 import HashConverter from "./hash-converter";
 import JsonConverter from "./json-converter";
 

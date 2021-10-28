@@ -1,5 +1,5 @@
 import { JsonData } from "../client";
-import { EntityData } from "../entity/entity-types";
+import { EntityData } from '../entity/entity';
 import { SchemaDefinition } from "../schema/schema-definitions";
 
 export default class JsonConverter {

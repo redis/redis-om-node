@@ -1,4 +1,4 @@
-import { EntityData } from '../entity/entity-types';
+import { EntityData } from '../entity/entity';
 import { ArrayField, SchemaDefinition } from "../schema/schema-definitions";
 import { HashData } from '../client';
 

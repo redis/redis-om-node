@@ -18,7 +18,12 @@
     "spec/**/*.spec.ts"
   ],
   "typedocOptions": {
-    "entryPoints": ["lib/index.ts"],
-    "out": "docs"
+    "entryPoints": [
+      "lib/index.ts"
+    ],
+    "out": "docs",
+    "excludePrivate": true,
+    "excludeInternal": true,
+    "readme": "none"
   }
 }

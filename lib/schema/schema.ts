@@ -2,17 +2,33 @@ import { ulid } from 'ulid'
 import { SearchDataStructure } from '../client';
 
 import Entity from "../entity/entity";
+import { EntityConstructor } from '../entity/entity';
 
-import { EntityConstructor } from '../entity/entity-types';
 import SchemaBuilder from './schema-builder';
 import { FieldDefinition, IdStrategy, SchemaDefinition } from './schema-definitions';
 import { SchemaOptions } from './schema-options';
 
+/**
+ * Defines a schema that determines how an {@link Entity}
+ * is mapped to Redis data structures.
+ *  
+ * @template TEntity The {@link Entity} this Schema defines.
+ */
 export default class Schema<TEntity extends Entity> {
+  /** @internal */
   readonly entityCtor: EntityConstructor<TEntity>;
+
+  /** @internal */
   readonly definition: SchemaDefinition;
+
   private options?: SchemaOptions;
 
+  /**
+   * @template TEntity The {@link Entity} this Schema defines.
+   * @param ctor A constructor that creates an {@link Entity} of type TEntity.
+   * @param schemaDef Defines all of the fields for the Schema and how they are mapped to Redis.
+   * @param options Additional options for this Schema.
+   */
   constructor(ctor: EntityConstructor<TEntity>, schemaDef: SchemaDefinition, options?: SchemaOptions ) {
     this.entityCtor = ctor;
     this.definition = schemaDef;
@@ -22,11 +38,23 @@ export default class Schema<TEntity extends Entity> {
     this.defineProperties();
   }
 
+  /** The configured keyspace prefix in Redis for this Schema. */
   get prefix(): string { return this.options?.prefix ?? this.entityCtor.name; }
+
+  /** The configured name for the RediSearch index for this Schema. */
   get indexName(): string { return this.options?.indexName ?? `${this.prefix}:index`; }
+
+  /**
+   * The configured data structure, either `HASH` or `JSON`, that this Schema uses
+   * to store {@link Entity | Entities} in Redis.
+   * */
   get dataStructure(): SearchDataStructure { return this.options?.dataStructure ?? 'HASH'; }
   get redisSchema(): string[] { return new SchemaBuilder(this).redisSchema; }
 
+  /**
+   * Generates a unique string using the configured {@link IdStrategy}.
+   * @returns 
+   */
   generateId(): string {
     let ulidStrategy: IdStrategy = () => ulid();
     return (this.options?.idStrategy ?? ulidStrategy)();
