@@ -2,21 +2,15 @@
 
 # Class: Search<TEntity\>
 
+Entry point to fluent search. Requires the RediSearch or RedisJSON is installed.
+
 ## Type parameters
 
-| Name | Type |
-| :------ | :------ |
-| `TEntity` | extends [`Entity`](Entity.md) |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `TEntity` | extends [`Entity`](Entity.md) | The type of [Entity](Entity.md) being sought. |
 
 ## Table of contents
-
-### Constructors
-
-- [constructor](Search.md#constructor)
-
-### Accessors
-
-- [query](Search.md#query)
 
 ### Methods
 
@@ -27,78 +21,49 @@
 - [returnAll](Search.md#returnall)
 - [where](Search.md#where)
 
-## Constructors
-
-### constructor
-
-• **new Search**<`TEntity`\>(`schema`, `client`)
-
-#### Type parameters
-
-| Name | Type |
-| :------ | :------ |
-| `TEntity` | extends [`Entity`](Entity.md)<`TEntity`\> |
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `schema` | [`Schema`](Schema.md)<`TEntity`\> |
-| `client` | [`Client`](Client.md) |
-
-#### Defined in
-
-[lib/search/search.ts:26](https://github.com/redis-developer/redis-om-node/blob/b9319e2/lib/search/search.ts#L26)
-
-## Accessors
-
-### query
-
-• `get` **query**(): `string`
-
-#### Returns
-
-`string`
-
-#### Defined in
-
-[lib/search/search.ts:31](https://github.com/redis-developer/redis-om-node/blob/b9319e2/lib/search/search.ts#L31)
-
 ## Methods
 
 ### and
 
 ▸ **and**(`field`): [`WhereField`](WhereField.md)<`TEntity`\>
 
+Sets up a query matching a particular field as a logical AND.
+
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `field` | `string` |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `field` | `string` | The field to filter on. |
 
 #### Returns
 
 [`WhereField`](WhereField.md)<`TEntity`\>
 
+A subclass of [WhereField](WhereField.md) matching the type of the field.
+
 #### Defined in
 
-[lib/search/search.ts:71](https://github.com/redis-developer/redis-om-node/blob/b9319e2/lib/search/search.ts#L71)
+[lib/search/search.ts:124](https://github.com/redis-developer/redis-om-node/blob/8f6d2ee/lib/search/search.ts#L124)
 
 ▸ **and**(`subSearchFn`): [`Search`](Search.md)<`TEntity`\>
 
+Sets up a nested search as a logical AND.
+
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `subSearchFn` | `SubSearchFunction`<`TEntity`\> |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `subSearchFn` | [`SubSearchFunction`](../README.md#subsearchfunction)<`TEntity`\> | A function that takes a [Search](Search.md) and returns another [Search](Search.md). |
 
 #### Returns
 
 [`Search`](Search.md)<`TEntity`\>
 
+`this`.
+
 #### Defined in
 
-[lib/search/search.ts:72](https://github.com/redis-developer/redis-om-node/blob/b9319e2/lib/search/search.ts#L72)
+[lib/search/search.ts:131](https://github.com/redis-developer/redis-om-node/blob/8f6d2ee/lib/search/search.ts#L131)
 
 ___
 
@@ -106,13 +71,15 @@ ___
 
 ▸ **count**(): `Promise`<`number`\>
 
+Returns the number of [Entities](Entity.md) that match this query.
+
 #### Returns
 
 `Promise`<`number`\>
 
 #### Defined in
 
-[lib/search/search.ts:36](https://github.com/redis-developer/redis-om-node/blob/b9319e2/lib/search/search.ts#L36)
+[lib/search/search.ts:51](https://github.com/redis-developer/redis-om-node/blob/8f6d2ee/lib/search/search.ts#L51)
 
 ___
 
@@ -120,35 +87,43 @@ ___
 
 ▸ **or**(`field`): [`WhereField`](WhereField.md)<`TEntity`\>
 
+Sets up a query matching a particular field as a logical OR.
+
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `field` | `string` |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `field` | `string` | The field to filter on. |
 
 #### Returns
 
 [`WhereField`](WhereField.md)<`TEntity`\>
 
+A subclass of [WhereField](WhereField.md) matching the type of the field.
+
 #### Defined in
 
-[lib/search/search.ts:77](https://github.com/redis-developer/redis-om-node/blob/b9319e2/lib/search/search.ts#L77)
+[lib/search/search.ts:141](https://github.com/redis-developer/redis-om-node/blob/8f6d2ee/lib/search/search.ts#L141)
 
 ▸ **or**(`subSearchFn`): [`Search`](Search.md)<`TEntity`\>
 
+Sets up a nested search as a logical OR.
+
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `subSearchFn` | `SubSearchFunction`<`TEntity`\> |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `subSearchFn` | [`SubSearchFunction`](../README.md#subsearchfunction)<`TEntity`\> | A function that takes a [Search](Search.md) and returns another [Search](Search.md). |
 
 #### Returns
 
 [`Search`](Search.md)<`TEntity`\>
 
+`this`.
+
 #### Defined in
 
-[lib/search/search.ts:78](https://github.com/redis-developer/redis-om-node/blob/b9319e2/lib/search/search.ts#L78)
+[lib/search/search.ts:148](https://github.com/redis-developer/redis-om-node/blob/8f6d2ee/lib/search/search.ts#L148)
 
 ___
 
@@ -156,20 +131,24 @@ ___
 
 ▸ **return**(`offset`, `pageSize`): `Promise`<`TEntity`[]\>
 
+Returns a page of [Entities](Entity.md) that match this query.
+
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `offset` | `number` |
-| `pageSize` | `number` |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `offset` | `number` | The offset for where to start returning [Entities](Entity.md). |
+| `pageSize` | `number` | The number of [Entities](Entity.md) to return. |
 
 #### Returns
 
 `Promise`<`TEntity`[]\>
 
+An array of [Entities](Entity.md) matching the query.
+
 #### Defined in
 
-[lib/search/search.ts:43](https://github.com/redis-developer/redis-om-node/blob/b9319e2/lib/search/search.ts#L43)
+[lib/search/search.ts:64](https://github.com/redis-developer/redis-om-node/blob/8f6d2ee/lib/search/search.ts#L64)
 
 ___
 
@@ -177,20 +156,31 @@ ___
 
 ▸ **returnAll**(`options?`): `Promise`<`TEntity`[]\>
 
+Returns all the [Entities](Entity.md) that match this query. This method
+makes multiple calls to Redis until all the [Entities](Entity.md) are returned.
+You can specify the batch size by setting the `pageSize` property on the
+options:
+
+```typescript
+let entities = await repository.search().returnAll({ pageSize: 100 });
+```
+
 #### Parameters
 
-| Name | Type | Default value |
-| :------ | :------ | :------ |
-| `options` | `Object` | `undefined` |
-| `options.pageSize` | `number` | `10` |
+| Name | Type | Default value | Description |
+| :------ | :------ | :------ | :------ |
+| `options` | `Object` | `undefined` | Options for the call. |
+| `options.pageSize` | `number` | `10` | Number of [Entities](Entity.md) returned per batch. |
 
 #### Returns
 
 `Promise`<`TEntity`[]\>
 
+An array of [Entities](Entity.md) matching the query.
+
 #### Defined in
 
-[lib/search/search.ts:50](https://github.com/redis-developer/redis-om-node/blob/b9319e2/lib/search/search.ts#L50)
+[lib/search/search.ts:85](https://github.com/redis-developer/redis-om-node/blob/8f6d2ee/lib/search/search.ts#L85)
 
 ___
 
@@ -198,32 +188,42 @@ ___
 
 ▸ **where**(`field`): [`WhereField`](WhereField.md)<`TEntity`\>
 
+Sets up a query matching a particular field. If there are multiple calls
+to [Search.where](Search.md#where), they are treated logically as AND.
+
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `field` | `string` |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `field` | `string` | The field to filter on. |
 
 #### Returns
 
 [`WhereField`](WhereField.md)<`TEntity`\>
 
+A subclass of [WhereField](WhereField.md) matching the type of the field.
+
 #### Defined in
 
-[lib/search/search.ts:65](https://github.com/redis-developer/redis-om-node/blob/b9319e2/lib/search/search.ts#L65)
+[lib/search/search.ts:106](https://github.com/redis-developer/redis-om-node/blob/8f6d2ee/lib/search/search.ts#L106)
 
 ▸ **where**(`subSearchFn`): [`Search`](Search.md)<`TEntity`\>
 
+Sets up a nested search. If there are multiple calls to [Search.where](Search.md#where),
+they are treated logically as AND.
+
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `subSearchFn` | `SubSearchFunction`<`TEntity`\> |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `subSearchFn` | [`SubSearchFunction`](../README.md#subsearchfunction)<`TEntity`\> | A function that takes a [Search](Search.md) and returns another [Search](Search.md). |
 
 #### Returns
 
 [`Search`](Search.md)<`TEntity`\>
 
+`this`.
+
 #### Defined in
 
-[lib/search/search.ts:66](https://github.com/redis-developer/redis-om-node/blob/b9319e2/lib/search/search.ts#L66)
+[lib/search/search.ts:114](https://github.com/redis-developer/redis-om-node/blob/8f6d2ee/lib/search/search.ts#L114)

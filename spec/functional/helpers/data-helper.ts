@@ -1,10 +1,8 @@
 import { saveHash, saveJson } from './redis-helper';
 
 import Client, { SearchDataStructure } from "../../../lib/client";
-import Entity from "../../../lib/entity/entity";
+import Entity, { EntityConstructor } from "../../../lib/entity/entity";
 import Schema from '../../../lib/schema/schema';
-
-import { EntityConstructor } from '../../../lib/entity/entity-types';
 
 interface CommonEntity {
   aString?: string | null;

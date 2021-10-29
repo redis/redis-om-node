@@ -1,6 +1,5 @@
 import Schema from '../../../lib/schema/schema';
-import Entity from '../../../lib/entity/entity';
-import { EntityData } from '../../../lib/entity/entity-types';
+import Entity, { EntityData } from '../../../lib/entity/entity';
 import { SchemaDefinition } from '../../../lib/schema/schema-definitions';
 import { SearchDataStructure } from '../../../lib/client';
 

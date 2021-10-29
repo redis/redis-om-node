@@ -59,7 +59,7 @@ export type FieldDefinition = NumericField | StringField | BooleanField | ArrayF
 export type SchemaDefinition = {
   /**
    * The key determines the propery name that is added to the {@link Entity}. The property
-   * contains a {@link FieldDefinition} that tell Redis ŌM how to map the property to Redis.
+   * contains a {@link FieldDefinition} that tell Redis OM how to map the property to Redis.
    */
   [key: string]: FieldDefinition
 }

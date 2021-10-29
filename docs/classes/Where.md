@@ -2,15 +2,13 @@
 
 # Class: Where
 
+Abstract base class used extensively with [Search](Search.md).
+
 ## Hierarchy
 
 - **`Where`**
 
   ↳ [`WhereField`](WhereField.md)
-
-  ↳ [`WhereAnd`](WhereAnd.md)
-
-  ↳ [`WhereOr`](WhereOr.md)
 
 ## Table of contents
 
@@ -34,10 +32,12 @@
 
 ▸ `Abstract` **toString**(): `string`
 
+Converts this [Where](Where.md) into a partion of a RediSearch query.
+
 #### Returns
 
 `string`
 
 #### Defined in
 
-[lib/search/where.ts:2](https://github.com/redis-developer/redis-om-node/blob/b9319e2/lib/search/where.ts#L2)
+[lib/search/where.ts:8](https://github.com/redis-developer/redis-om-node/blob/8f6d2ee/lib/search/where.ts#L8)

@@ -13,14 +13,12 @@ redis-om
 - [Schema](classes/Schema.md)
 - [Search](classes/Search.md)
 - [Where](classes/Where.md)
-- [WhereAnd](classes/WhereAnd.md)
 - [WhereArray](classes/WhereArray.md)
 - [WhereBoolean](classes/WhereBoolean.md)
 - [WhereField](classes/WhereField.md)
 - [WhereHashBoolean](classes/WhereHashBoolean.md)
 - [WhereJsonBoolean](classes/WhereJsonBoolean.md)
 - [WhereNumber](classes/WhereNumber.md)
-- [WhereOr](classes/WhereOr.md)
 - [WhereString](classes/WhereString.md)
 - [WhereText](classes/WhereText.md)
 
@@ -41,6 +39,7 @@ redis-om
 - [SchemaDefinition](README.md#schemadefinition)
 - [SchemaOptions](README.md#schemaoptions)
 - [SearchDataStructure](README.md#searchdatastructure)
+- [SubSearchFunction](README.md#subsearchfunction)
 
 ## Type aliases
 
@@ -69,7 +68,7 @@ A constructor that creates an [Entity](classes/Entity.md) of type TEntity.
 
 #### Defined in
 
-[lib/entity/entity.ts:10](https://github.com/redis-developer/redis-om-node/blob/b9319e2/lib/entity/entity.ts#L10)
+[lib/entity/entity.ts:10](https://github.com/redis-developer/redis-om-node/blob/8f6d2ee/lib/entity/entity.ts#L10)
 
 ___
 
@@ -85,7 +84,7 @@ A JavaScript object containing the underlying data of an [Entity](classes/Entity
 
 #### Defined in
 
-[lib/entity/entity.ts:4](https://github.com/redis-developer/redis-om-node/blob/b9319e2/lib/entity/entity.ts#L4)
+[lib/entity/entity.ts:4](https://github.com/redis-developer/redis-om-node/blob/8f6d2ee/lib/entity/entity.ts#L4)
 
 ___
 
@@ -97,7 +96,7 @@ Contains instructions telling how to map a property on an [Entity](classes/Entit
 
 #### Defined in
 
-[lib/schema/schema-definitions.ts:54](https://github.com/redis-developer/redis-om-node/blob/b9319e2/lib/schema/schema-definitions.ts#L54)
+[lib/schema/schema-definitions.ts:54](https://github.com/redis-developer/redis-om-node/blob/8f6d2ee/lib/schema/schema-definitions.ts#L54)
 
 ___
 
@@ -117,7 +116,7 @@ A function that generates random [Entity IDs](classes/Entity.md#entityid).
 
 #### Defined in
 
-[lib/schema/schema-definitions.ts:68](https://github.com/redis-developer/redis-om-node/blob/b9319e2/lib/schema/schema-definitions.ts#L68)
+[lib/schema/schema-definitions.ts:68](https://github.com/redis-developer/redis-om-node/blob/8f6d2ee/lib/schema/schema-definitions.ts#L68)
 
 ___
 
@@ -132,11 +131,11 @@ Group of [FieldDefinition](README.md#fielddefinition)s that define the schema fo
 ▪ [key: `string`]: [`FieldDefinition`](README.md#fielddefinition)
 
 The key determines the propery name that is added to the [Entity](classes/Entity.md). The property
-contains a [FieldDefinition](README.md#fielddefinition) that tell Redis ŌM how to map the property to Redis.
+contains a [FieldDefinition](README.md#fielddefinition) that tell Redis OM how to map the property to Redis.
 
 #### Defined in
 
-[lib/schema/schema-definitions.ts:59](https://github.com/redis-developer/redis-om-node/blob/b9319e2/lib/schema/schema-definitions.ts#L59)
+[lib/schema/schema-definitions.ts:59](https://github.com/redis-developer/redis-om-node/blob/8f6d2ee/lib/schema/schema-definitions.ts#L59)
 
 ___
 
@@ -157,7 +156,7 @@ Configuration options for a [Schema](classes/Schema.md).
 
 #### Defined in
 
-[lib/schema/schema-options.ts:7](https://github.com/redis-developer/redis-om-node/blob/b9319e2/lib/schema/schema-options.ts#L7)
+[lib/schema/schema-options.ts:7](https://github.com/redis-developer/redis-om-node/blob/8f6d2ee/lib/schema/schema-options.ts#L7)
 
 ___
 
@@ -169,4 +168,36 @@ The type of data structure in Redis to map objects to.
 
 #### Defined in
 
-[lib/client.ts:21](https://github.com/redis-developer/redis-om-node/blob/b9319e2/lib/client.ts#L21)
+[lib/client.ts:21](https://github.com/redis-developer/redis-om-node/blob/8f6d2ee/lib/client.ts#L21)
+
+___
+
+### SubSearchFunction
+
+Ƭ **SubSearchFunction**<`TEntity`\>: (`search`: [`Search`](classes/Search.md)<`TEntity`\>) => [`Search`](classes/Search.md)<`TEntity`\>
+
+#### Type parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `TEntity` | extends [`Entity`](classes/Entity.md) | The type of [Entity](classes/Entity.md) being sought. |
+
+#### Type declaration
+
+▸ (`search`): [`Search`](classes/Search.md)<`TEntity`\>
+
+A function that takes a [Search](classes/Search.md) and returns a [Search](classes/Search.md). Used in nested queries.
+
+##### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `search` | [`Search`](classes/Search.md)<`TEntity`\> |
+
+##### Returns
+
+[`Search`](classes/Search.md)<`TEntity`\>
+
+#### Defined in
+
+[lib/search/search.ts:21](https://github.com/redis-developer/redis-om-node/blob/8f6d2ee/lib/search/search.ts#L21)

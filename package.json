@@ -1,7 +1,7 @@
 {
   "name": "redis-om",
   "version": "0.1.0",
-  "description": "Developer client for Redis.",
+  "description": "Object mapping, and more, for Redis and Node.js. Written in TypeScript.",
   "main": "dist/index.js",
   "types": "./dist/index.d.ts",
   "scripts": {

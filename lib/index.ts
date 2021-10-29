@@ -6,11 +6,9 @@ import Schema from "./schema/schema";
 import { SchemaDefinition, FieldDefinition, Field, NumericField, StringField, BooleanField, ArrayField,
   IdStrategy } from "./schema/schema-definitions";
 import { SchemaOptions } from "./schema/schema-options";
-import Search from "./search/search";
+import Search, { SubSearchFunction } from "./search/search";
 import Where from "./search/where";
 import WhereField from "./search/where-field";
-import WhereAnd from './search/where-and';
-import WhereOr from './search/where-or';
 import WhereArray from './search/where-array';
 import { WhereBoolean, WhereHashBoolean, WhereJsonBoolean } from './search/where-boolean';
 import WhereNumber from './search/where-number';
@@ -25,5 +23,8 @@ export {
   Repository,
   Schema, SchemaDefinition, SchemaOptions,
   FieldDefinition, Field, NumericField, StringField, BooleanField, ArrayField, IdStrategy,
-  Search, Where, WhereField, WhereAnd, WhereOr,
-  WhereArray, WhereBoolean, WhereHashBoolean, WhereJsonBoolean, WhereNumber, WhereString, WhereText };
+  Search, SubSearchFunction,
+  Where, WhereField, WhereArray,
+  WhereBoolean, WhereHashBoolean, WhereJsonBoolean,
+  WhereNumber, WhereString, WhereText
+};
