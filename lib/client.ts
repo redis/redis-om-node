@@ -5,22 +5,40 @@ import Repository from './repository/repository';
 import Schema from './schema/schema';
 import RedisError from './errors';
 
-/** @internal */
+/**
+ * Alias for any old JavaScript object.
+ * @internal
+ */
 export type HashData = { [key: string ]: any };
 
-/** @internal */
+/**
+ * Alias for any old JavaScript object.
+ * @internal
+ */
 export type JsonData = { [key: string ]: any };
 
-/** @internal */
+/** The type of data structure in Redis to map objects to. */
 export type SearchDataStructure = 'HASH' | 'JSON';
 
-/** Class containing a connection to Redis. */
+/**
+ * A Client is the starting point for working with Redis OM. Clients manage the
+ * connection to Redis and provide limited functionality for executing Redis commands.
+ * Create a client and open it before you use it:
+ * 
+ * ```typescript
+ * let client = new Client();
+ * await client.open();
+ * ```
+ * 
+ * A Client is primarily used by a {@link Repository} and a client is required in
+ * its constructor.
+ */
 export default class Client {
   private shim?: RedisShim;
 
   /**
    * Open a connection to Redis at the provided URL.
-   * @param url Defaults to *redis://localhost:6379*.
+   * @param url A URL to Redis as defined with the [IANA](https://www.iana.org/assignments/uri-schemes/prov/redis).
    */
   async open(url: string = 'redis://localhost:6379') {
     this.validateShimClosed();

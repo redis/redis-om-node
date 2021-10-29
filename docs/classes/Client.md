@@ -1,0 +1,132 @@
+[redis-om](../README.md) / Client
+
+# Class: Client
+
+A Client is the starting point for working with Redis OM. Clients manage the
+connection to Redis and provide limited functionality for executing Redis commands.
+Create a client and open it before you use it:
+
+```typescript
+let client = new Client();
+await client.open();
+```
+
+A Client is primarily used by a [Repository](Repository.md) and a client is required in
+its constructor.
+
+## Table of contents
+
+### Constructors
+
+- [constructor](Client.md#constructor)
+
+### Methods
+
+- [close](Client.md#close)
+- [execute](Client.md#execute)
+- [fetchRepository](Client.md#fetchrepository)
+- [open](Client.md#open)
+
+## Constructors
+
+### constructor
+
+• **new Client**()
+
+## Methods
+
+### close
+
+▸ **close**(): `Promise`<`void`\>
+
+Close the connection to Redis.
+
+#### Returns
+
+`Promise`<`void`\>
+
+#### Defined in
+
+[lib/client.ts:79](https://github.com/redis-developer/redis-om-node/blob/d4db235/lib/client.ts#L79)
+
+___
+
+### execute
+
+▸ **execute**<`TResult`\>(`command`): `Promise`<`TResult`\>
+
+Execute an arbitrary Redis command.
+
+#### Type parameters
+
+| Name | Description |
+| :------ | :------ |
+| `TResult` | Expect result type such as `string`, `string[]`, or whatever complex type Redis returns. |
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `command` | (`string` \| `number` \| `boolean`)[] | The command to execute. |
+
+#### Returns
+
+`Promise`<`TResult`\>
+
+The raw results of calling the Redis command.
+
+#### Defined in
+
+[lib/client.ts:56](https://github.com/redis-developer/redis-om-node/blob/d4db235/lib/client.ts#L56)
+
+___
+
+### fetchRepository
+
+▸ **fetchRepository**<`TEntity`\>(`schema`): [`Repository`](Repository.md)<`TEntity`\>
+
+Creates a repository for the given schema.
+
+#### Type parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `TEntity` | extends [`Entity`](Entity.md)<`TEntity`\> | The entity type for this {@lin Schema} and [Repository](Repository.md). |
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `schema` | [`Schema`](Schema.md)<`TEntity`\> | The schema. |
+
+#### Returns
+
+[`Repository`](Repository.md)<`TEntity`\>
+
+A repository for the provided schema.
+
+#### Defined in
+
+[lib/client.ts:71](https://github.com/redis-developer/redis-om-node/blob/d4db235/lib/client.ts#L71)
+
+___
+
+### open
+
+▸ **open**(`url?`): `Promise`<`void`\>
+
+Open a connection to Redis at the provided URL.
+
+#### Parameters
+
+| Name | Type | Default value | Description |
+| :------ | :------ | :------ | :------ |
+| `url` | `string` | `'redis://localhost:6379'` | A URL to Redis as defined with the [IANA](https://www.iana.org/assignments/uri-schemes/prov/redis). |
+
+#### Returns
+
+`Promise`<`void`\>
+
+#### Defined in
+
+[lib/client.ts:43](https://github.com/redis-developer/redis-om-node/blob/d4db235/lib/client.ts#L43)

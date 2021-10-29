@@ -9,16 +9,37 @@ import { FieldDefinition, IdStrategy, SchemaDefinition } from './schema-definiti
 import { SchemaOptions } from './schema-options';
 
 /**
- * Defines a schema that determines how an {@link Entity}
- * is mapped to Redis data structures.
+ * Defines a schema that determines how an {@link Entity} is mapped to Redis
+ * data structures. Construct by passing in an {@link EntityConstructor}, 
+ * a {@link SchemaDefinition}, and {@link SchemaOptions}:
+ * 
+ * ```typescript
+ * let schema = new Schema(Foo, {
+ *   aString: { type: 'string' },
+ *   aNumber: { type: 'number' },
+ *   aBoolean: { type: 'boolean' },
+ *   anArray: { type: 'array' }
+ * }, {
+ *   dataStructure: 'JSON
+ * });
+ * ```
+ * 
+ * A Schema is primarily used by a {@link Repository} and a schema is required in
+ * its constructor.
  *  
  * @template TEntity The {@link Entity} this Schema defines.
  */
 export default class Schema<TEntity extends Entity> {
-  /** @internal */
+  /**
+   * The provided {@link EntityConstructor}.
+   * @internal
+   */
   readonly entityCtor: EntityConstructor<TEntity>;
 
-  /** @internal */
+  /**
+   * The provided {@link SchemaDefinition}.
+   * @internal
+   */
   readonly definition: SchemaDefinition;
 
   private options?: SchemaOptions;
@@ -45,8 +66,8 @@ export default class Schema<TEntity extends Entity> {
   get indexName(): string { return this.options?.indexName ?? `${this.prefix}:index`; }
 
   /**
-   * The configured data structure, either `HASH` or `JSON`, that this Schema uses
-   * to store {@link Entity | Entities} in Redis.
+   * The configured data structure, a string with the value of either `HASH` or `JSON`,
+   * that this Schema uses to store {@link Entity | Entities} in Redis.
    * */
   get dataStructure(): SearchDataStructure { return this.options?.dataStructure ?? 'HASH'; }
   get redisSchema(): string[] { return new SchemaBuilder(this).redisSchema; }

@@ -1,5 +1,5 @@
-import Client from "./client";
-import Entity from "./entity/entity";
+import Client, { SearchDataStructure, HashData, JsonData } from "./client";
+import Entity, { EntityConstructor, EntityData } from "./entity/entity";
 import RedisError from "./errors";
 import Repository from "./repository/repository";
 import Schema from "./schema/schema";
@@ -19,7 +19,11 @@ import WhereText from './search/where-text';
 
 
 export {
-  Client, Entity, Repository, Schema, RedisError, Search, SchemaOptions, IdStrategy,
-  SchemaDefinition, FieldDefinition, Field, NumericField, StringField, BooleanField, ArrayField,
-  Where, WhereField, WhereAnd, WhereOr, WhereArray, WhereBoolean, WhereHashBoolean, WhereJsonBoolean,
-  WhereNumber, WhereString, WhereText };
+  Client, SearchDataStructure, HashData, JsonData, 
+  Entity, EntityConstructor, EntityData,
+  RedisError,
+  Repository,
+  Schema, SchemaDefinition, SchemaOptions,
+  FieldDefinition, Field, NumericField, StringField, BooleanField, ArrayField, IdStrategy,
+  Search, Where, WhereField, WhereAnd, WhereOr,
+  WhereArray, WhereBoolean, WhereHashBoolean, WhereJsonBoolean, WhereNumber, WhereString, WhereText };
