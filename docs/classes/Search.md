@@ -48,7 +48,7 @@
 
 #### Defined in
 
-[lib/search/search.ts:26](https://github.com/redis-developer/redis-om-node/blob/d4db235/lib/search/search.ts#L26)
+[lib/search/search.ts:26](https://github.com/redis-developer/redis-om-node/blob/b9319e2/lib/search/search.ts#L26)
 
 ## Accessors
 
@@ -62,7 +62,7 @@
 
 #### Defined in
 
-[lib/search/search.ts:31](https://github.com/redis-developer/redis-om-node/blob/d4db235/lib/search/search.ts#L31)
+[lib/search/search.ts:31](https://github.com/redis-developer/redis-om-node/blob/b9319e2/lib/search/search.ts#L31)
 
 ## Methods
 
@@ -82,7 +82,7 @@
 
 #### Defined in
 
-[lib/search/search.ts:71](https://github.com/redis-developer/redis-om-node/blob/d4db235/lib/search/search.ts#L71)
+[lib/search/search.ts:71](https://github.com/redis-developer/redis-om-node/blob/b9319e2/lib/search/search.ts#L71)
 
 ▸ **and**(`subSearchFn`): [`Search`](Search.md)<`TEntity`\>
 
@@ -98,7 +98,7 @@
 
 #### Defined in
 
-[lib/search/search.ts:72](https://github.com/redis-developer/redis-om-node/blob/d4db235/lib/search/search.ts#L72)
+[lib/search/search.ts:72](https://github.com/redis-developer/redis-om-node/blob/b9319e2/lib/search/search.ts#L72)
 
 ___
 
@@ -112,7 +112,7 @@ ___
 
 #### Defined in
 
-[lib/search/search.ts:36](https://github.com/redis-developer/redis-om-node/blob/d4db235/lib/search/search.ts#L36)
+[lib/search/search.ts:36](https://github.com/redis-developer/redis-om-node/blob/b9319e2/lib/search/search.ts#L36)
 
 ___
 
@@ -132,7 +132,7 @@ ___
 
 #### Defined in
 
-[lib/search/search.ts:77](https://github.com/redis-developer/redis-om-node/blob/d4db235/lib/search/search.ts#L77)
+[lib/search/search.ts:77](https://github.com/redis-developer/redis-om-node/blob/b9319e2/lib/search/search.ts#L77)
 
 ▸ **or**(`subSearchFn`): [`Search`](Search.md)<`TEntity`\>
 
@@ -148,7 +148,7 @@ ___
 
 #### Defined in
 
-[lib/search/search.ts:78](https://github.com/redis-developer/redis-om-node/blob/d4db235/lib/search/search.ts#L78)
+[lib/search/search.ts:78](https://github.com/redis-developer/redis-om-node/blob/b9319e2/lib/search/search.ts#L78)
 
 ___
 
@@ -169,7 +169,7 @@ ___
 
 #### Defined in
 
-[lib/search/search.ts:43](https://github.com/redis-developer/redis-om-node/blob/d4db235/lib/search/search.ts#L43)
+[lib/search/search.ts:43](https://github.com/redis-developer/redis-om-node/blob/b9319e2/lib/search/search.ts#L43)
 
 ___
 
@@ -190,7 +190,7 @@ ___
 
 #### Defined in
 
-[lib/search/search.ts:50](https://github.com/redis-developer/redis-om-node/blob/d4db235/lib/search/search.ts#L50)
+[lib/search/search.ts:50](https://github.com/redis-developer/redis-om-node/blob/b9319e2/lib/search/search.ts#L50)
 
 ___
 
@@ -210,7 +210,7 @@ ___
 
 #### Defined in
 
-[lib/search/search.ts:65](https://github.com/redis-developer/redis-om-node/blob/d4db235/lib/search/search.ts#L65)
+[lib/search/search.ts:65](https://github.com/redis-developer/redis-om-node/blob/b9319e2/lib/search/search.ts#L65)
 
 ▸ **where**(`subSearchFn`): [`Search`](Search.md)<`TEntity`\>
 
@@ -226,4 +226,4 @@ ___
 
 #### Defined in
 
-[lib/search/search.ts:66](https://github.com/redis-developer/redis-om-node/blob/d4db235/lib/search/search.ts#L66)
+[lib/search/search.ts:66](https://github.com/redis-developer/redis-om-node/blob/b9319e2/lib/search/search.ts#L66)

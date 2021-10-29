@@ -37,7 +37,7 @@
 
 #### Defined in
 
-[lib/search/where-and.ts:7](https://github.com/redis-developer/redis-om-node/blob/d4db235/lib/search/where-and.ts#L7)
+[lib/search/where-and.ts:7](https://github.com/redis-developer/redis-om-node/blob/b9319e2/lib/search/where-and.ts#L7)
 
 ## Methods
 
@@ -55,4 +55,4 @@
 
 #### Defined in
 
-[lib/search/where-and.ts:13](https://github.com/redis-developer/redis-om-node/blob/d4db235/lib/search/where-and.ts#L13)
+[lib/search/where-and.ts:13](https://github.com/redis-developer/redis-om-node/blob/b9319e2/lib/search/where-and.ts#L13)

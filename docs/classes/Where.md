@@ -40,4 +40,4 @@
 
 #### Defined in
 
-[lib/search/where.ts:2](https://github.com/redis-developer/redis-om-node/blob/d4db235/lib/search/where.ts#L2)
+[lib/search/where.ts:2](https://github.com/redis-developer/redis-om-node/blob/b9319e2/lib/search/where.ts#L2)

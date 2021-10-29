@@ -85,7 +85,7 @@ Excellent. Set up done. Let's write some code!
 
 # Connect to Redis with a Client
 
-You connect to Redis using a [*client*](docs/client.md). The `Client` class has methods to open, close, and excute raw commands against Redis.
+You connect to Redis using a [*client*](docs/classes/Client.md). The `Client` class has methods to open, close, and excute raw commands against Redis.
 
 ```javascript
 let { Client } = require('redis-om')
@@ -149,19 +149,19 @@ If you don't provide a URL, it defaults to `redis://localhost:6379`.
 
 # Define an Entity and a Schema
 
-Ok. Let's start doing some object mapping. We'll start by defining an [*entity*](docs/entity.md) and a [*schema*](docs/schema.md).
+Ok. Let's start doing some object mapping. We'll start by defining an [*entity*](docs/classes/Entity.md) and a [*schema*](docs/classes/Schema.md).
 
 ```javascript
 import { Entity, Schema } from 'redis-om'
 ```
 
-[Entities](docs/entity.md) are the classes that you work with. The thing being created, read, updated, and deleted. Any class that extends `Entity` is an entity. Usually, you'll define an entity with a single line of code:
+[Entities](docs/classes/Entity.md) are the classes that you work with. The thing being created, read, updated, and deleted. Any class that extends `Entity` is an entity. Usually, you'll define an entity with a single line of code:
 
 ```javascript
 class Album extends Entity {}
 ```
 
-[Schemas](docs/schema.md) define the fields on your entity, their types, and how they are mapped internally to Redis. By default, entities map to Hashes in Redis but you can also use JSON, more on that later.:
+[Schemas](docs/classes/Schema.md) define the fields on your entity, their types, and how they are mapped internally to Redis. By default, entities map to Hashes in Redis but you can also use JSON, more on that later.:
 
 ```javascript
 let schema = new Schema(Album, {
@@ -175,11 +175,11 @@ let schema = new Schema(Album, {
 
 When you create a `Schema`, it modifies the entity you handed it, adding getters and setters for the properties you define. The type those getters and setters accept and return are defined with the type parameter above. Valid values are: `string`, `number`, `boolean`, or `array`. The first three do exactly waht you think they do—they define a property that is a String, Number, or Boolean. `array` specifically defines an array of Strings.
 
-There are several other options available when defining a schema for your entity. Check them out in the [detailed documentation](docs/schema.md) for the `Schema` class.
+There are several other options available when defining a schema for your entity. Check them out in the [detailed documentation](docs/classes/Schema.md) for the `Schema` class.
 
 # Reading and Writing with Repository
 
-Now that we have a client and a schema we have what we need to make a [*repository*](docs/repository.md). A repository provides the means to read, write, and remove entities. Creating a repository is pretty straightforward:
+Now that we have a client and a schema we have what we need to make a [*repository*](docs/classes/Repository.md). A repository provides the means to read, write, and remove entities. Creating a repository is pretty straightforward:
 
 ```javascript
 import { Repository } from 'redis-om'

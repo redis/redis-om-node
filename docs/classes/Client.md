@@ -11,7 +11,7 @@ let client = new Client();
 await client.open();
 ```
 
-A Client is primarily used by a [Repository](Repository.md) and a client is required in
+A Client is primarily used by a [Repository](Repository.md) which requires a client in
 its constructor.
 
 ## Table of contents
@@ -47,7 +47,7 @@ Close the connection to Redis.
 
 #### Defined in
 
-[lib/client.ts:79](https://github.com/redis-developer/redis-om-node/blob/d4db235/lib/client.ts#L79)
+[lib/client.ts:79](https://github.com/redis-developer/redis-om-node/blob/b9319e2/lib/client.ts#L79)
 
 ___
 
@@ -77,7 +77,7 @@ The raw results of calling the Redis command.
 
 #### Defined in
 
-[lib/client.ts:56](https://github.com/redis-developer/redis-om-node/blob/d4db235/lib/client.ts#L56)
+[lib/client.ts:56](https://github.com/redis-developer/redis-om-node/blob/b9319e2/lib/client.ts#L56)
 
 ___
 
@@ -107,7 +107,7 @@ A repository for the provided schema.
 
 #### Defined in
 
-[lib/client.ts:71](https://github.com/redis-developer/redis-om-node/blob/d4db235/lib/client.ts#L71)
+[lib/client.ts:71](https://github.com/redis-developer/redis-om-node/blob/b9319e2/lib/client.ts#L71)
 
 ___
 
@@ -129,4 +129,4 @@ Open a connection to Redis at the provided URL.
 
 #### Defined in
 
-[lib/client.ts:43](https://github.com/redis-developer/redis-om-node/blob/d4db235/lib/client.ts#L43)
+[lib/client.ts:43](https://github.com/redis-developer/redis-om-node/blob/b9319e2/lib/client.ts#L43)

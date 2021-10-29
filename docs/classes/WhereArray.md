@@ -90,7 +90,7 @@
 
 #### Defined in
 
-[lib/search/where-field.ts:55](https://github.com/redis-developer/redis-om-node/blob/d4db235/lib/search/where-field.ts#L55)
+[lib/search/where-field.ts:55](https://github.com/redis-developer/redis-om-node/blob/b9319e2/lib/search/where-field.ts#L55)
 
 ## Properties
 
@@ -104,7 +104,7 @@
 
 #### Defined in
 
-[lib/search/where-field.ts:19](https://github.com/redis-developer/redis-om-node/blob/d4db235/lib/search/where-field.ts#L19)
+[lib/search/where-field.ts:19](https://github.com/redis-developer/redis-om-node/blob/b9319e2/lib/search/where-field.ts#L19)
 
 ___
 
@@ -118,7 +118,7 @@ ___
 
 #### Defined in
 
-[lib/search/where-field.ts:20](https://github.com/redis-developer/redis-om-node/blob/d4db235/lib/search/where-field.ts#L20)
+[lib/search/where-field.ts:20](https://github.com/redis-developer/redis-om-node/blob/b9319e2/lib/search/where-field.ts#L20)
 
 ___
 
@@ -132,7 +132,7 @@ ___
 
 #### Defined in
 
-[lib/search/where-field.ts:53](https://github.com/redis-developer/redis-om-node/blob/d4db235/lib/search/where-field.ts#L53)
+[lib/search/where-field.ts:53](https://github.com/redis-developer/redis-om-node/blob/b9319e2/lib/search/where-field.ts#L53)
 
 ___
 
@@ -146,7 +146,7 @@ ___
 
 #### Defined in
 
-[lib/search/where-field.ts:52](https://github.com/redis-developer/redis-om-node/blob/d4db235/lib/search/where-field.ts#L52)
+[lib/search/where-field.ts:52](https://github.com/redis-developer/redis-om-node/blob/b9319e2/lib/search/where-field.ts#L52)
 
 ## Accessors
 
@@ -164,7 +164,7 @@ WhereField.does
 
 #### Defined in
 
-[lib/search/where-field.ts:64](https://github.com/redis-developer/redis-om-node/blob/d4db235/lib/search/where-field.ts#L64)
+[lib/search/where-field.ts:64](https://github.com/redis-developer/redis-om-node/blob/b9319e2/lib/search/where-field.ts#L64)
 
 ___
 
@@ -182,7 +182,7 @@ WhereField.is
 
 #### Defined in
 
-[lib/search/where-field.ts:60](https://github.com/redis-developer/redis-om-node/blob/d4db235/lib/search/where-field.ts#L60)
+[lib/search/where-field.ts:60](https://github.com/redis-developer/redis-om-node/blob/b9319e2/lib/search/where-field.ts#L60)
 
 ___
 
@@ -200,7 +200,7 @@ WhereField.not
 
 #### Defined in
 
-[lib/search/where-field.ts:68](https://github.com/redis-developer/redis-om-node/blob/d4db235/lib/search/where-field.ts#L68)
+[lib/search/where-field.ts:68](https://github.com/redis-developer/redis-om-node/blob/b9319e2/lib/search/where-field.ts#L68)
 
 ## Methods
 
@@ -225,7 +225,7 @@ WhereField.not
 
 #### Defined in
 
-[lib/search/where-field.ts:37](https://github.com/redis-developer/redis-om-node/blob/d4db235/lib/search/where-field.ts#L37)
+[lib/search/where-field.ts:37](https://github.com/redis-developer/redis-om-node/blob/b9319e2/lib/search/where-field.ts#L37)
 
 ___
 
@@ -249,7 +249,7 @@ ___
 
 #### Defined in
 
-[lib/search/where-field.ts:79](https://github.com/redis-developer/redis-om-node/blob/d4db235/lib/search/where-field.ts#L79)
+[lib/search/where-field.ts:79](https://github.com/redis-developer/redis-om-node/blob/b9319e2/lib/search/where-field.ts#L79)
 
 ___
 
@@ -273,7 +273,7 @@ ___
 
 #### Defined in
 
-[lib/search/where-array.ts:8](https://github.com/redis-developer/redis-om-node/blob/d4db235/lib/search/where-array.ts#L8)
+[lib/search/where-array.ts:8](https://github.com/redis-developer/redis-om-node/blob/b9319e2/lib/search/where-array.ts#L8)
 
 ___
 
@@ -297,7 +297,7 @@ ___
 
 #### Defined in
 
-[lib/search/where-field.ts:42](https://github.com/redis-developer/redis-om-node/blob/d4db235/lib/search/where-field.ts#L42)
+[lib/search/where-field.ts:42](https://github.com/redis-developer/redis-om-node/blob/b9319e2/lib/search/where-field.ts#L42)
 
 ___
 
@@ -321,7 +321,7 @@ ___
 
 #### Defined in
 
-[lib/search/where-array.ts:20](https://github.com/redis-developer/redis-om-node/blob/d4db235/lib/search/where-array.ts#L20)
+[lib/search/where-array.ts:20](https://github.com/redis-developer/redis-om-node/blob/b9319e2/lib/search/where-array.ts#L20)
 
 ___
 
@@ -345,7 +345,7 @@ ___
 
 #### Defined in
 
-[lib/search/where-array.ts:13](https://github.com/redis-developer/redis-om-node/blob/d4db235/lib/search/where-array.ts#L13)
+[lib/search/where-array.ts:13](https://github.com/redis-developer/redis-om-node/blob/b9319e2/lib/search/where-array.ts#L13)
 
 ___
 
@@ -369,7 +369,7 @@ ___
 
 #### Defined in
 
-[lib/search/where-field.ts:43](https://github.com/redis-developer/redis-om-node/blob/d4db235/lib/search/where-field.ts#L43)
+[lib/search/where-field.ts:43](https://github.com/redis-developer/redis-om-node/blob/b9319e2/lib/search/where-field.ts#L43)
 
 ___
 
@@ -393,7 +393,7 @@ ___
 
 #### Defined in
 
-[lib/search/where-array.ts:15](https://github.com/redis-developer/redis-om-node/blob/d4db235/lib/search/where-array.ts#L15)
+[lib/search/where-array.ts:15](https://github.com/redis-developer/redis-om-node/blob/b9319e2/lib/search/where-array.ts#L15)
 
 ___
 
@@ -417,7 +417,7 @@ ___
 
 #### Defined in
 
-[lib/search/where-field.ts:8](https://github.com/redis-developer/redis-om-node/blob/d4db235/lib/search/where-field.ts#L8)
+[lib/search/where-field.ts:8](https://github.com/redis-developer/redis-om-node/blob/b9319e2/lib/search/where-field.ts#L8)
 
 ___
 
@@ -441,7 +441,7 @@ ___
 
 #### Defined in
 
-[lib/search/where-field.ts:9](https://github.com/redis-developer/redis-om-node/blob/d4db235/lib/search/where-field.ts#L9)
+[lib/search/where-field.ts:9](https://github.com/redis-developer/redis-om-node/blob/b9319e2/lib/search/where-field.ts#L9)
 
 ___
 
@@ -465,7 +465,7 @@ ___
 
 #### Defined in
 
-[lib/search/where-field.ts:11](https://github.com/redis-developer/redis-om-node/blob/d4db235/lib/search/where-field.ts#L11)
+[lib/search/where-field.ts:11](https://github.com/redis-developer/redis-om-node/blob/b9319e2/lib/search/where-field.ts#L11)
 
 ___
 
@@ -489,7 +489,7 @@ ___
 
 #### Defined in
 
-[lib/search/where-field.ts:10](https://github.com/redis-developer/redis-om-node/blob/d4db235/lib/search/where-field.ts#L10)
+[lib/search/where-field.ts:10](https://github.com/redis-developer/redis-om-node/blob/b9319e2/lib/search/where-field.ts#L10)
 
 ___
 
@@ -507,7 +507,7 @@ ___
 
 #### Defined in
 
-[lib/search/where-field.ts:23](https://github.com/redis-developer/redis-om-node/blob/d4db235/lib/search/where-field.ts#L23)
+[lib/search/where-field.ts:23](https://github.com/redis-developer/redis-om-node/blob/b9319e2/lib/search/where-field.ts#L23)
 
 ___
 
@@ -531,7 +531,7 @@ ___
 
 #### Defined in
 
-[lib/search/where-field.ts:26](https://github.com/redis-developer/redis-om-node/blob/d4db235/lib/search/where-field.ts#L26)
+[lib/search/where-field.ts:26](https://github.com/redis-developer/redis-om-node/blob/b9319e2/lib/search/where-field.ts#L26)
 
 ___
 
@@ -555,7 +555,7 @@ ___
 
 #### Defined in
 
-[lib/search/where-field.ts:29](https://github.com/redis-developer/redis-om-node/blob/d4db235/lib/search/where-field.ts#L29)
+[lib/search/where-field.ts:29](https://github.com/redis-developer/redis-om-node/blob/b9319e2/lib/search/where-field.ts#L29)
 
 ___
 
@@ -579,7 +579,7 @@ ___
 
 #### Defined in
 
-[lib/search/where-field.ts:25](https://github.com/redis-developer/redis-om-node/blob/d4db235/lib/search/where-field.ts#L25)
+[lib/search/where-field.ts:25](https://github.com/redis-developer/redis-om-node/blob/b9319e2/lib/search/where-field.ts#L25)
 
 ___
 
@@ -603,7 +603,7 @@ ___
 
 #### Defined in
 
-[lib/search/where-field.ts:28](https://github.com/redis-developer/redis-om-node/blob/d4db235/lib/search/where-field.ts#L28)
+[lib/search/where-field.ts:28](https://github.com/redis-developer/redis-om-node/blob/b9319e2/lib/search/where-field.ts#L28)
 
 ___
 
@@ -627,7 +627,7 @@ ___
 
 #### Defined in
 
-[lib/search/where-field.ts:32](https://github.com/redis-developer/redis-om-node/blob/d4db235/lib/search/where-field.ts#L32)
+[lib/search/where-field.ts:32](https://github.com/redis-developer/redis-om-node/blob/b9319e2/lib/search/where-field.ts#L32)
 
 ___
 
@@ -651,7 +651,7 @@ ___
 
 #### Defined in
 
-[lib/search/where-field.ts:35](https://github.com/redis-developer/redis-om-node/blob/d4db235/lib/search/where-field.ts#L35)
+[lib/search/where-field.ts:35](https://github.com/redis-developer/redis-om-node/blob/b9319e2/lib/search/where-field.ts#L35)
 
 ___
 
@@ -675,7 +675,7 @@ ___
 
 #### Defined in
 
-[lib/search/where-field.ts:31](https://github.com/redis-developer/redis-om-node/blob/d4db235/lib/search/where-field.ts#L31)
+[lib/search/where-field.ts:31](https://github.com/redis-developer/redis-om-node/blob/b9319e2/lib/search/where-field.ts#L31)
 
 ___
 
@@ -699,7 +699,7 @@ ___
 
 #### Defined in
 
-[lib/search/where-field.ts:34](https://github.com/redis-developer/redis-om-node/blob/d4db235/lib/search/where-field.ts#L34)
+[lib/search/where-field.ts:34](https://github.com/redis-developer/redis-om-node/blob/b9319e2/lib/search/where-field.ts#L34)
 
 ___
 
@@ -723,7 +723,7 @@ ___
 
 #### Defined in
 
-[lib/search/where-field.ts:13](https://github.com/redis-developer/redis-om-node/blob/d4db235/lib/search/where-field.ts#L13)
+[lib/search/where-field.ts:13](https://github.com/redis-developer/redis-om-node/blob/b9319e2/lib/search/where-field.ts#L13)
 
 ___
 
@@ -747,7 +747,7 @@ ___
 
 #### Defined in
 
-[lib/search/where-field.ts:15](https://github.com/redis-developer/redis-om-node/blob/d4db235/lib/search/where-field.ts#L15)
+[lib/search/where-field.ts:15](https://github.com/redis-developer/redis-om-node/blob/b9319e2/lib/search/where-field.ts#L15)
 
 ___
 
@@ -771,7 +771,7 @@ ___
 
 #### Defined in
 
-[lib/search/where-field.ts:16](https://github.com/redis-developer/redis-om-node/blob/d4db235/lib/search/where-field.ts#L16)
+[lib/search/where-field.ts:16](https://github.com/redis-developer/redis-om-node/blob/b9319e2/lib/search/where-field.ts#L16)
 
 ___
 
@@ -795,7 +795,7 @@ ___
 
 #### Defined in
 
-[lib/search/where-field.ts:14](https://github.com/redis-developer/redis-om-node/blob/d4db235/lib/search/where-field.ts#L14)
+[lib/search/where-field.ts:14](https://github.com/redis-developer/redis-om-node/blob/b9319e2/lib/search/where-field.ts#L14)
 
 ___
 
@@ -819,7 +819,7 @@ ___
 
 #### Defined in
 
-[lib/search/where-field.ts:17](https://github.com/redis-developer/redis-om-node/blob/d4db235/lib/search/where-field.ts#L17)
+[lib/search/where-field.ts:17](https://github.com/redis-developer/redis-om-node/blob/b9319e2/lib/search/where-field.ts#L17)
 
 ___
 
@@ -837,7 +837,7 @@ ___
 
 #### Defined in
 
-[lib/search/where-field.ts:75](https://github.com/redis-developer/redis-om-node/blob/d4db235/lib/search/where-field.ts#L75)
+[lib/search/where-field.ts:75](https://github.com/redis-developer/redis-om-node/blob/b9319e2/lib/search/where-field.ts#L75)
 
 ___
 
@@ -855,7 +855,7 @@ ___
 
 #### Defined in
 
-[lib/search/where-array.ts:22](https://github.com/redis-developer/redis-om-node/blob/d4db235/lib/search/where-array.ts#L22)
+[lib/search/where-array.ts:22](https://github.com/redis-developer/redis-om-node/blob/b9319e2/lib/search/where-array.ts#L22)
 
 ___
 
@@ -873,4 +873,4 @@ ___
 
 #### Defined in
 
-[lib/search/where-field.ts:22](https://github.com/redis-developer/redis-om-node/blob/d4db235/lib/search/where-field.ts#L22)
+[lib/search/where-field.ts:22](https://github.com/redis-developer/redis-om-node/blob/b9319e2/lib/search/where-field.ts#L22)

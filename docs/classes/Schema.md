@@ -17,7 +17,7 @@ let schema = new Schema(Foo, {
 });
 ```
 
-A Schema is primarily used by a [Repository](Repository.md) and a schema is required in
+A Schema is primarily used by a [Repository](Repository.md) which requires a Schema in
 its constructor.
 
 ## Type parameters
@@ -37,7 +37,6 @@ its constructor.
 - [dataStructure](Schema.md#datastructure)
 - [indexName](Schema.md#indexname)
 - [prefix](Schema.md#prefix)
-- [redisSchema](Schema.md#redisschema)
 
 ### Methods
 
@@ -65,7 +64,7 @@ its constructor.
 
 #### Defined in
 
-[lib/schema/schema.ts:53](https://github.com/redis-developer/redis-om-node/blob/d4db235/lib/schema/schema.ts#L53)
+[lib/schema/schema.ts:53](https://github.com/redis-developer/redis-om-node/blob/b9319e2/lib/schema/schema.ts#L53)
 
 ## Accessors
 
@@ -82,7 +81,7 @@ that this Schema uses to store [Entities](Entity.md) in Redis.
 
 #### Defined in
 
-[lib/schema/schema.ts:72](https://github.com/redis-developer/redis-om-node/blob/d4db235/lib/schema/schema.ts#L72)
+[lib/schema/schema.ts:72](https://github.com/redis-developer/redis-om-node/blob/b9319e2/lib/schema/schema.ts#L72)
 
 ___
 
@@ -98,7 +97,7 @@ The configured name for the RediSearch index for this Schema.
 
 #### Defined in
 
-[lib/schema/schema.ts:66](https://github.com/redis-developer/redis-om-node/blob/d4db235/lib/schema/schema.ts#L66)
+[lib/schema/schema.ts:66](https://github.com/redis-developer/redis-om-node/blob/b9319e2/lib/schema/schema.ts#L66)
 
 ___
 
@@ -114,21 +113,7 @@ The configured keyspace prefix in Redis for this Schema.
 
 #### Defined in
 
-[lib/schema/schema.ts:63](https://github.com/redis-developer/redis-om-node/blob/d4db235/lib/schema/schema.ts#L63)
-
-___
-
-### redisSchema
-
-• `get` **redisSchema**(): `string`[]
-
-#### Returns
-
-`string`[]
-
-#### Defined in
-
-[lib/schema/schema.ts:73](https://github.com/redis-developer/redis-om-node/blob/d4db235/lib/schema/schema.ts#L73)
+[lib/schema/schema.ts:63](https://github.com/redis-developer/redis-om-node/blob/b9319e2/lib/schema/schema.ts#L63)
 
 ## Methods
 
@@ -144,4 +129,4 @@ Generates a unique string using the configured [IdStrategy](../README.md#idstrat
 
 #### Defined in
 
-[lib/schema/schema.ts:79](https://github.com/redis-developer/redis-om-node/blob/d4db235/lib/schema/schema.ts#L79)
+[lib/schema/schema.ts:81](https://github.com/redis-developer/redis-om-node/blob/b9319e2/lib/schema/schema.ts#L81)
