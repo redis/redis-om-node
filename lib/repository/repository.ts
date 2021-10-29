@@ -20,7 +20,7 @@ import JsonConverter from "./json-converter";
  * let foo = await repository.fetch('01FK6TCJBDK41RJ766A4SBWDJ9');
  * foo.aString = 'bar';
  * foo.aBoolean = false;
- * await repositroy.save(foo);
+ * await repository.save(foo);
  * ```
  * 
  * Be sure to use the repository to create a new instance of {@link Entity} you want
@@ -30,7 +30,7 @@ import JsonConverter from "./json-converter";
  * let foo = await repository.createEntity();
  * foo.aString = 'bar';
  * foo.aBoolean = false;
- * await repositroy.save(foo);
+ * await repository.save(foo);
  * ```
  * 
  * If you want to the {@link Repository.search} method, you need to create an index
@@ -40,7 +40,7 @@ import JsonConverter from "./json-converter";
  * await repository.createIndex();
  * let entities = await repository.search()
  *   .where('aString').eq('bar')
- *   .and('Aboolean).is.false().returnAll();
+ *   .and('aBoolean').is.false().returnAll();
  * ```
  * 
  * @template TEntity The type of {@link Entity} that this repository manages.
@@ -54,7 +54,7 @@ export default class Repository<TEntity extends Entity> {
   /**
    * Constructs a new Repository.
    * @template TEntity The type of {@link Entity} that this repository manages.
-   * @param schema The schema for this Repository.
+   * @param schema The {@link Schema} for this Repository.
    * @param client An open {@link Client}.
    */
   constructor(schema: Schema<TEntity>, client: Client) {

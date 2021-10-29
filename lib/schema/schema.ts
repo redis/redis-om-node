@@ -24,7 +24,7 @@ import { SchemaOptions } from './schema-options';
  * });
  * ```
  * 
- * A Schema is primarily used by a {@link Repository} and a schema is required in
+ * A Schema is primarily used by a {@link Repository} which requires a Schema in
  * its constructor.
  *  
  * @template TEntity The {@link Entity} this Schema defines.
@@ -70,6 +70,8 @@ export default class Schema<TEntity extends Entity> {
    * that this Schema uses to store {@link Entity | Entities} in Redis.
    * */
   get dataStructure(): SearchDataStructure { return this.options?.dataStructure ?? 'HASH'; }
+
+  /** @internal */
   get redisSchema(): string[] { return new SchemaBuilder(this).redisSchema; }
 
   /**

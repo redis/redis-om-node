@@ -30,7 +30,7 @@ export type SearchDataStructure = 'HASH' | 'JSON';
  * await client.open();
  * ```
  * 
- * A Client is primarily used by a {@link Repository} and a client is required in
+ * A Client is primarily used by a {@link Repository} which requires a client in
  * its constructor.
  */
 export default class Client {
