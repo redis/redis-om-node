@@ -2,6 +2,10 @@
 
 # Class: WhereField<TEntity\>
 
+Abstract base class that all fields you want to filter
+with extend. When you call [Search.where](Search.md#where), a
+subclass of this is returned.
+
 ## Type parameters
 
 | Name |
@@ -14,28 +18,12 @@
 
   ↳ **`WhereField`**
 
-  ↳↳ [`WhereArray`](WhereArray.md)
-
-  ↳↳ [`WhereBoolean`](WhereBoolean.md)
-
-  ↳↳ [`WhereNumber`](WhereNumber.md)
-
-  ↳↳ [`WhereString`](WhereString.md)
-
-  ↳↳ [`WhereText`](WhereText.md)
-
 ## Table of contents
-
-### Constructors
-
-- [constructor](WhereField.md#constructor)
 
 ### Properties
 
 - [exact](WhereField.md#exact)
 - [exactly](WhereField.md#exactly)
-- [field](WhereField.md#field)
-- [search](WhereField.md#search)
 
 ### Accessors
 
@@ -46,7 +34,6 @@
 ### Methods
 
 - [between](WhereField.md#between)
-- [buildQuery](WhereField.md#buildquery)
 - [contain](WhereField.md#contain)
 - [containAllOf](WhereField.md#containallof)
 - [containOneOf](WhereField.md#containoneof)
@@ -71,76 +58,28 @@
 - [matchExactly](WhereField.md#matchexactly)
 - [matches](WhereField.md#matches)
 - [matchesExactly](WhereField.md#matchesexactly)
-- [negate](WhereField.md#negate)
 - [toString](WhereField.md#tostring)
 - [true](WhereField.md#true)
-
-## Constructors
-
-### constructor
-
-• **new WhereField**<`TEntity`\>(`search`, `field`)
-
-#### Type parameters
-
-| Name | Type |
-| :------ | :------ |
-| `TEntity` | extends [`Entity`](Entity.md)<`TEntity`\> |
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `search` | [`Search`](Search.md)<`TEntity`\> |
-| `field` | `string` |
-
-#### Inherited from
-
-[Where](Where.md).[constructor](Where.md#constructor)
-
-#### Defined in
-
-[lib/search/where-field.ts:55](https://github.com/redis-developer/redis-om-node/blob/8f6d2ee/lib/search/where-field.ts#L55)
 
 ## Properties
 
 ### exact
 
-• `Readonly` **exact**: [`WhereText`](WhereText.md)<`TEntity`\>
+• `Readonly` **exact**: [`WhereField`](WhereField.md)<`TEntity`\>
 
 #### Defined in
 
-[lib/search/where-field.ts:19](https://github.com/redis-developer/redis-om-node/blob/8f6d2ee/lib/search/where-field.ts#L19)
+[lib/search/where-field.ts:45](https://github.com/redis-developer/redis-om-node/blob/3cf5542/lib/search/where-field.ts#L45)
 
 ___
 
 ### exactly
 
-• `Readonly` **exactly**: [`WhereText`](WhereText.md)<`TEntity`\>
+• `Readonly` **exactly**: [`WhereField`](WhereField.md)<`TEntity`\>
 
 #### Defined in
 
-[lib/search/where-field.ts:20](https://github.com/redis-developer/redis-om-node/blob/8f6d2ee/lib/search/where-field.ts#L20)
-
-___
-
-### field
-
-• `Protected` **field**: `String`
-
-#### Defined in
-
-[lib/search/where-field.ts:53](https://github.com/redis-developer/redis-om-node/blob/8f6d2ee/lib/search/where-field.ts#L53)
-
-___
-
-### search
-
-• `Protected` **search**: [`Search`](Search.md)<`TEntity`\>
-
-#### Defined in
-
-[lib/search/where-field.ts:52](https://github.com/redis-developer/redis-om-node/blob/8f6d2ee/lib/search/where-field.ts#L52)
+[lib/search/where-field.ts:46](https://github.com/redis-developer/redis-om-node/blob/3cf5542/lib/search/where-field.ts#L46)
 
 ## Accessors
 
@@ -148,13 +87,17 @@ ___
 
 • `get` **does**(): `this`
 
+Returns the current instance. Syntactic sugar to make your code more fluent.
+
 #### Returns
 
 `this`
 
+this
+
 #### Defined in
 
-[lib/search/where-field.ts:64](https://github.com/redis-developer/redis-om-node/blob/8f6d2ee/lib/search/where-field.ts#L64)
+[lib/search/where-field.ts:107](https://github.com/redis-developer/redis-om-node/blob/3cf5542/lib/search/where-field.ts#L107)
 
 ___
 
@@ -162,13 +105,17 @@ ___
 
 • `get` **is**(): `this`
 
+Returns the current instance. Syntactic sugar to make your code more fluent.
+
 #### Returns
 
 `this`
 
+this
+
 #### Defined in
 
-[lib/search/where-field.ts:60](https://github.com/redis-developer/redis-om-node/blob/8f6d2ee/lib/search/where-field.ts#L60)
+[lib/search/where-field.ts:99](https://github.com/redis-developer/redis-om-node/blob/3cf5542/lib/search/where-field.ts#L99)
 
 ___
 
@@ -176,13 +123,18 @@ ___
 
 • `get` **not**(): `this`
 
+Negates the query on the field, cause it to match when the condition is
+*not* met. Calling this multiple times will negate the negation.
+
 #### Returns
 
 `this`
 
+this
+
 #### Defined in
 
-[lib/search/where-field.ts:68](https://github.com/redis-developer/redis-om-node/blob/8f6d2ee/lib/search/where-field.ts#L68)
+[lib/search/where-field.ts:116](https://github.com/redis-developer/redis-om-node/blob/3cf5542/lib/search/where-field.ts#L116)
 
 ## Methods
 
@@ -203,27 +155,7 @@ ___
 
 #### Defined in
 
-[lib/search/where-field.ts:37](https://github.com/redis-developer/redis-om-node/blob/8f6d2ee/lib/search/where-field.ts#L37)
-
-___
-
-### buildQuery
-
-▸ `Protected` **buildQuery**(`valuePortion`): `string`
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `valuePortion` | `string` |
-
-#### Returns
-
-`string`
-
-#### Defined in
-
-[lib/search/where-field.ts:79](https://github.com/redis-developer/redis-om-node/blob/8f6d2ee/lib/search/where-field.ts#L79)
+[lib/search/where-field.ts:63](https://github.com/redis-developer/redis-om-node/blob/3cf5542/lib/search/where-field.ts#L63)
 
 ___
 
@@ -243,7 +175,7 @@ ___
 
 #### Defined in
 
-[lib/search/where-field.ts:39](https://github.com/redis-developer/redis-om-node/blob/8f6d2ee/lib/search/where-field.ts#L39)
+[lib/search/where-field.ts:65](https://github.com/redis-developer/redis-om-node/blob/3cf5542/lib/search/where-field.ts#L65)
 
 ___
 
@@ -263,7 +195,7 @@ ___
 
 #### Defined in
 
-[lib/search/where-field.ts:42](https://github.com/redis-developer/redis-om-node/blob/8f6d2ee/lib/search/where-field.ts#L42)
+[lib/search/where-field.ts:68](https://github.com/redis-developer/redis-om-node/blob/3cf5542/lib/search/where-field.ts#L68)
 
 ___
 
@@ -283,7 +215,7 @@ ___
 
 #### Defined in
 
-[lib/search/where-field.ts:45](https://github.com/redis-developer/redis-om-node/blob/8f6d2ee/lib/search/where-field.ts#L45)
+[lib/search/where-field.ts:71](https://github.com/redis-developer/redis-om-node/blob/3cf5542/lib/search/where-field.ts#L71)
 
 ___
 
@@ -303,7 +235,7 @@ ___
 
 #### Defined in
 
-[lib/search/where-field.ts:40](https://github.com/redis-developer/redis-om-node/blob/8f6d2ee/lib/search/where-field.ts#L40)
+[lib/search/where-field.ts:66](https://github.com/redis-developer/redis-om-node/blob/3cf5542/lib/search/where-field.ts#L66)
 
 ___
 
@@ -323,7 +255,7 @@ ___
 
 #### Defined in
 
-[lib/search/where-field.ts:43](https://github.com/redis-developer/redis-om-node/blob/8f6d2ee/lib/search/where-field.ts#L43)
+[lib/search/where-field.ts:69](https://github.com/redis-developer/redis-om-node/blob/3cf5542/lib/search/where-field.ts#L69)
 
 ___
 
@@ -343,7 +275,7 @@ ___
 
 #### Defined in
 
-[lib/search/where-field.ts:46](https://github.com/redis-developer/redis-om-node/blob/8f6d2ee/lib/search/where-field.ts#L46)
+[lib/search/where-field.ts:72](https://github.com/redis-developer/redis-om-node/blob/3cf5542/lib/search/where-field.ts#L72)
 
 ___
 
@@ -351,19 +283,23 @@ ___
 
 ▸ **eq**(`value`): [`Search`](Search.md)<`TEntity`\>
 
+Adds an equals comparisson to the query.
+
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `value` | `string` \| `number` \| `boolean` |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `value` | `string` \| `number` \| `boolean` | The value to be compared |
 
 #### Returns
 
 [`Search`](Search.md)<`TEntity`\>
 
+The [Search](Search.md) that was called to create this [WhereField](WhereField.md).
+
 #### Defined in
 
-[lib/search/where-field.ts:8](https://github.com/redis-developer/redis-om-node/blob/8f6d2ee/lib/search/where-field.ts#L8)
+[lib/search/where-field.ts:16](https://github.com/redis-developer/redis-om-node/blob/3cf5542/lib/search/where-field.ts#L16)
 
 ___
 
@@ -371,19 +307,23 @@ ___
 
 ▸ **equal**(`value`): [`Search`](Search.md)<`TEntity`\>
 
+Adds an equals comparisson to the query.
+
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `value` | `string` \| `number` \| `boolean` |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `value` | `string` \| `number` \| `boolean` | The value to be compared |
 
 #### Returns
 
 [`Search`](Search.md)<`TEntity`\>
 
+The [Search](Search.md) that was called to create this [WhereField](WhereField.md).
+
 #### Defined in
 
-[lib/search/where-field.ts:9](https://github.com/redis-developer/redis-om-node/blob/8f6d2ee/lib/search/where-field.ts#L9)
+[lib/search/where-field.ts:23](https://github.com/redis-developer/redis-om-node/blob/3cf5542/lib/search/where-field.ts#L23)
 
 ___
 
@@ -391,19 +331,23 @@ ___
 
 ▸ **equalTo**(`value`): [`Search`](Search.md)<`TEntity`\>
 
+Adds an equals comparisson to the query.
+
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `value` | `string` \| `number` \| `boolean` |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `value` | `string` \| `number` \| `boolean` | The value to be compared |
 
 #### Returns
 
 [`Search`](Search.md)<`TEntity`\>
 
+The [Search](Search.md) that was called to create this [WhereField](WhereField.md).
+
 #### Defined in
 
-[lib/search/where-field.ts:11](https://github.com/redis-developer/redis-om-node/blob/8f6d2ee/lib/search/where-field.ts#L11)
+[lib/search/where-field.ts:37](https://github.com/redis-developer/redis-om-node/blob/3cf5542/lib/search/where-field.ts#L37)
 
 ___
 
@@ -411,19 +355,23 @@ ___
 
 ▸ **equals**(`value`): [`Search`](Search.md)<`TEntity`\>
 
+Adds an equals comparisson to the query.
+
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `value` | `string` \| `number` \| `boolean` |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `value` | `string` \| `number` \| `boolean` | The value to be compared |
 
 #### Returns
 
 [`Search`](Search.md)<`TEntity`\>
 
+The [Search](Search.md) that was called to create this [WhereField](WhereField.md).
+
 #### Defined in
 
-[lib/search/where-field.ts:10](https://github.com/redis-developer/redis-om-node/blob/8f6d2ee/lib/search/where-field.ts#L10)
+[lib/search/where-field.ts:30](https://github.com/redis-developer/redis-om-node/blob/3cf5542/lib/search/where-field.ts#L30)
 
 ___
 
@@ -437,7 +385,7 @@ ___
 
 #### Defined in
 
-[lib/search/where-field.ts:23](https://github.com/redis-developer/redis-om-node/blob/8f6d2ee/lib/search/where-field.ts#L23)
+[lib/search/where-field.ts:49](https://github.com/redis-developer/redis-om-node/blob/3cf5542/lib/search/where-field.ts#L49)
 
 ___
 
@@ -457,7 +405,7 @@ ___
 
 #### Defined in
 
-[lib/search/where-field.ts:26](https://github.com/redis-developer/redis-om-node/blob/8f6d2ee/lib/search/where-field.ts#L26)
+[lib/search/where-field.ts:52](https://github.com/redis-developer/redis-om-node/blob/3cf5542/lib/search/where-field.ts#L52)
 
 ___
 
@@ -477,7 +425,7 @@ ___
 
 #### Defined in
 
-[lib/search/where-field.ts:29](https://github.com/redis-developer/redis-om-node/blob/8f6d2ee/lib/search/where-field.ts#L29)
+[lib/search/where-field.ts:55](https://github.com/redis-developer/redis-om-node/blob/3cf5542/lib/search/where-field.ts#L55)
 
 ___
 
@@ -497,7 +445,7 @@ ___
 
 #### Defined in
 
-[lib/search/where-field.ts:25](https://github.com/redis-developer/redis-om-node/blob/8f6d2ee/lib/search/where-field.ts#L25)
+[lib/search/where-field.ts:51](https://github.com/redis-developer/redis-om-node/blob/3cf5542/lib/search/where-field.ts#L51)
 
 ___
 
@@ -517,7 +465,7 @@ ___
 
 #### Defined in
 
-[lib/search/where-field.ts:28](https://github.com/redis-developer/redis-om-node/blob/8f6d2ee/lib/search/where-field.ts#L28)
+[lib/search/where-field.ts:54](https://github.com/redis-developer/redis-om-node/blob/3cf5542/lib/search/where-field.ts#L54)
 
 ___
 
@@ -537,7 +485,7 @@ ___
 
 #### Defined in
 
-[lib/search/where-field.ts:32](https://github.com/redis-developer/redis-om-node/blob/8f6d2ee/lib/search/where-field.ts#L32)
+[lib/search/where-field.ts:58](https://github.com/redis-developer/redis-om-node/blob/3cf5542/lib/search/where-field.ts#L58)
 
 ___
 
@@ -557,7 +505,7 @@ ___
 
 #### Defined in
 
-[lib/search/where-field.ts:35](https://github.com/redis-developer/redis-om-node/blob/8f6d2ee/lib/search/where-field.ts#L35)
+[lib/search/where-field.ts:61](https://github.com/redis-developer/redis-om-node/blob/3cf5542/lib/search/where-field.ts#L61)
 
 ___
 
@@ -577,7 +525,7 @@ ___
 
 #### Defined in
 
-[lib/search/where-field.ts:31](https://github.com/redis-developer/redis-om-node/blob/8f6d2ee/lib/search/where-field.ts#L31)
+[lib/search/where-field.ts:57](https://github.com/redis-developer/redis-om-node/blob/3cf5542/lib/search/where-field.ts#L57)
 
 ___
 
@@ -597,7 +545,7 @@ ___
 
 #### Defined in
 
-[lib/search/where-field.ts:34](https://github.com/redis-developer/redis-om-node/blob/8f6d2ee/lib/search/where-field.ts#L34)
+[lib/search/where-field.ts:60](https://github.com/redis-developer/redis-om-node/blob/3cf5542/lib/search/where-field.ts#L60)
 
 ___
 
@@ -617,7 +565,7 @@ ___
 
 #### Defined in
 
-[lib/search/where-field.ts:13](https://github.com/redis-developer/redis-om-node/blob/8f6d2ee/lib/search/where-field.ts#L13)
+[lib/search/where-field.ts:39](https://github.com/redis-developer/redis-om-node/blob/3cf5542/lib/search/where-field.ts#L39)
 
 ___
 
@@ -637,7 +585,7 @@ ___
 
 #### Defined in
 
-[lib/search/where-field.ts:15](https://github.com/redis-developer/redis-om-node/blob/8f6d2ee/lib/search/where-field.ts#L15)
+[lib/search/where-field.ts:41](https://github.com/redis-developer/redis-om-node/blob/3cf5542/lib/search/where-field.ts#L41)
 
 ___
 
@@ -657,7 +605,7 @@ ___
 
 #### Defined in
 
-[lib/search/where-field.ts:16](https://github.com/redis-developer/redis-om-node/blob/8f6d2ee/lib/search/where-field.ts#L16)
+[lib/search/where-field.ts:42](https://github.com/redis-developer/redis-om-node/blob/3cf5542/lib/search/where-field.ts#L42)
 
 ___
 
@@ -677,7 +625,7 @@ ___
 
 #### Defined in
 
-[lib/search/where-field.ts:14](https://github.com/redis-developer/redis-om-node/blob/8f6d2ee/lib/search/where-field.ts#L14)
+[lib/search/where-field.ts:40](https://github.com/redis-developer/redis-om-node/blob/3cf5542/lib/search/where-field.ts#L40)
 
 ___
 
@@ -697,21 +645,7 @@ ___
 
 #### Defined in
 
-[lib/search/where-field.ts:17](https://github.com/redis-developer/redis-om-node/blob/8f6d2ee/lib/search/where-field.ts#L17)
-
-___
-
-### negate
-
-▸ `Protected` **negate**(): `void`
-
-#### Returns
-
-`void`
-
-#### Defined in
-
-[lib/search/where-field.ts:75](https://github.com/redis-developer/redis-om-node/blob/8f6d2ee/lib/search/where-field.ts#L75)
+[lib/search/where-field.ts:43](https://github.com/redis-developer/redis-om-node/blob/3cf5542/lib/search/where-field.ts#L43)
 
 ___
 
@@ -719,7 +653,7 @@ ___
 
 ▸ `Abstract` **toString**(): `string`
 
-Converts this [Where](Where.md) into a partion of a RediSearch query.
+Converts this [Where](Where.md) into a portion of a RediSearch query.
 
 #### Returns
 
@@ -731,7 +665,7 @@ Converts this [Where](Where.md) into a partion of a RediSearch query.
 
 #### Defined in
 
-[lib/search/where-field.ts:73](https://github.com/redis-developer/redis-om-node/blob/8f6d2ee/lib/search/where-field.ts#L73)
+[lib/search/where-field.ts:121](https://github.com/redis-developer/redis-om-node/blob/3cf5542/lib/search/where-field.ts#L121)
 
 ___
 
@@ -745,4 +679,4 @@ ___
 
 #### Defined in
 
-[lib/search/where-field.ts:22](https://github.com/redis-developer/redis-om-node/blob/8f6d2ee/lib/search/where-field.ts#L22)
+[lib/search/where-field.ts:48](https://github.com/redis-developer/redis-om-node/blob/3cf5542/lib/search/where-field.ts#L48)

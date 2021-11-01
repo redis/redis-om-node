@@ -34,7 +34,7 @@ The default field name in Redis is the key name defined in the
 
 #### Defined in
 
-[lib/schema/schema-definitions.ts:7](https://github.com/redis-developer/redis-om-node/blob/8f6d2ee/lib/schema/schema-definitions.ts#L7)
+[lib/schema/schema-definitions.ts:7](https://github.com/redis-developer/redis-om-node/blob/3cf5542/lib/schema/schema-definitions.ts#L7)
 
 ___
 
@@ -49,7 +49,7 @@ here to avoid those problems. Defaults to `|`.
 
 #### Defined in
 
-[lib/schema/schema-definitions.ts:30](https://github.com/redis-developer/redis-om-node/blob/8f6d2ee/lib/schema/schema-definitions.ts#L30)
+[lib/schema/schema-definitions.ts:30](https://github.com/redis-developer/redis-om-node/blob/3cf5542/lib/schema/schema-definitions.ts#L30)
 
 ___
 
@@ -61,7 +61,7 @@ Enables full-text search on this field when set to `true`. Defaults to `false`.
 
 #### Defined in
 
-[lib/schema/schema-definitions.ts:22](https://github.com/redis-developer/redis-om-node/blob/8f6d2ee/lib/schema/schema-definitions.ts#L22)
+[lib/schema/schema-definitions.ts:22](https://github.com/redis-developer/redis-om-node/blob/3cf5542/lib/schema/schema-definitions.ts#L22)
 
 ___
 
@@ -73,4 +73,4 @@ Yep. It's a string.
 
 #### Defined in
 
-[lib/schema/schema-definitions.ts:19](https://github.com/redis-developer/redis-om-node/blob/8f6d2ee/lib/schema/schema-definitions.ts#L19)
+[lib/schema/schema-definitions.ts:19](https://github.com/redis-developer/redis-om-node/blob/3cf5542/lib/schema/schema-definitions.ts#L19)

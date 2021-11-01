@@ -3,7 +3,7 @@
  */
 export abstract class Where {
   /**
-   * Converts this {@link Where} into a partion of a RediSearch query.
+   * Converts this {@link Where} into a portion of a RediSearch query.
    */
   abstract toString(): string;
 }

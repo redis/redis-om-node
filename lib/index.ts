@@ -24,7 +24,8 @@ export {
   Schema, SchemaDefinition, SchemaOptions,
   FieldDefinition, Field, NumericField, StringField, BooleanField, ArrayField, IdStrategy,
   Search, SubSearchFunction,
-  Where, WhereField, WhereArray,
-  WhereBoolean, WhereHashBoolean, WhereJsonBoolean,
-  WhereNumber, WhereString, WhereText
+  Where, WhereField,
+  // WhereArray,
+  // WhereBoolean, WhereHashBoolean, WhereJsonBoolean,
+  // WhereNumber, WhereString, WhereText
 };

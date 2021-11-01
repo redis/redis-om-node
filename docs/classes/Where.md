@@ -32,7 +32,7 @@ Abstract base class used extensively with [Search](Search.md).
 
 ▸ `Abstract` **toString**(): `string`
 
-Converts this [Where](Where.md) into a partion of a RediSearch query.
+Converts this [Where](Where.md) into a portion of a RediSearch query.
 
 #### Returns
 
@@ -40,4 +40,4 @@ Converts this [Where](Where.md) into a partion of a RediSearch query.
 
 #### Defined in
 
-[lib/search/where.ts:8](https://github.com/redis-developer/redis-om-node/blob/8f6d2ee/lib/search/where.ts#L8)
+[lib/search/where.ts:8](https://github.com/redis-developer/redis-om-node/blob/3cf5542/lib/search/where.ts#L8)
