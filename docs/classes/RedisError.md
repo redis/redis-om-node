@@ -44,7 +44,7 @@ Error.constructor
 
 #### Defined in
 
-[lib/errors.ts:2](https://github.com/redis-developer/redis-om-node/blob/3cf5542/lib/errors.ts#L2)
+[lib/errors.ts:2](https://github.com/redis-developer/redis-om-node/blob/e0e2e98/lib/errors.ts#L2)
 
 ## Properties
 

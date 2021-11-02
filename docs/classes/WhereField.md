@@ -35,10 +35,8 @@ subclass of this is returned.
 
 - [between](WhereField.md#between)
 - [contain](WhereField.md#contain)
-- [containAllOf](WhereField.md#containallof)
 - [containOneOf](WhereField.md#containoneof)
 - [contains](WhereField.md#contains)
-- [containsAllOf](WhereField.md#containsallof)
 - [containsOneOf](WhereField.md#containsoneof)
 - [eq](WhereField.md#eq)
 - [equal](WhereField.md#equal)
@@ -67,9 +65,14 @@ subclass of this is returned.
 
 • `Readonly` **exact**: [`WhereField`](WhereField.md)<`TEntity`\>
 
+Makes a call to [WhereField.match](WhereField.md#match) a [WhereField.matchExact](WhereField.md#matchexact) call. Calling
+this multiple times will have no effect.
+
+**`returns`** this.
+
 #### Defined in
 
-[lib/search/where-field.ts:45](https://github.com/redis-developer/redis-om-node/blob/3cf5542/lib/search/where-field.ts#L45)
+[lib/search/where-field.ts:79](https://github.com/redis-developer/redis-om-node/blob/e0e2e98/lib/search/where-field.ts#L79)
 
 ___
 
@@ -77,9 +80,14 @@ ___
 
 • `Readonly` **exactly**: [`WhereField`](WhereField.md)<`TEntity`\>
 
+Makes a call to [WhereField.match](WhereField.md#match) a [WhereField.matchExact](WhereField.md#matchexact) call. Calling
+this multiple times will have no effect.
+
+**`returns`** this.
+
 #### Defined in
 
-[lib/search/where-field.ts:46](https://github.com/redis-developer/redis-om-node/blob/3cf5542/lib/search/where-field.ts#L46)
+[lib/search/where-field.ts:86](https://github.com/redis-developer/redis-om-node/blob/e0e2e98/lib/search/where-field.ts#L86)
 
 ## Accessors
 
@@ -97,7 +105,7 @@ this
 
 #### Defined in
 
-[lib/search/where-field.ts:107](https://github.com/redis-developer/redis-om-node/blob/3cf5542/lib/search/where-field.ts#L107)
+[lib/search/where-field.ts:227](https://github.com/redis-developer/redis-om-node/blob/e0e2e98/lib/search/where-field.ts#L227)
 
 ___
 
@@ -115,7 +123,7 @@ this
 
 #### Defined in
 
-[lib/search/where-field.ts:99](https://github.com/redis-developer/redis-om-node/blob/3cf5542/lib/search/where-field.ts#L99)
+[lib/search/where-field.ts:219](https://github.com/redis-developer/redis-om-node/blob/e0e2e98/lib/search/where-field.ts#L219)
 
 ___
 
@@ -134,7 +142,7 @@ this
 
 #### Defined in
 
-[lib/search/where-field.ts:116](https://github.com/redis-developer/redis-om-node/blob/3cf5542/lib/search/where-field.ts#L116)
+[lib/search/where-field.ts:236](https://github.com/redis-developer/redis-om-node/blob/e0e2e98/lib/search/where-field.ts#L236)
 
 ## Methods
 
@@ -142,20 +150,24 @@ this
 
 ▸ **between**(`lower`, `upper`): [`Search`](Search.md)<`TEntity`\>
 
+Adds an inclusive range comparison against a field to the search query.
+
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `lower` | `number` |
-| `upper` | `number` |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `lower` | `number` | The lower bound of the range. |
+| `upper` | `number` | The upper bound of the range. |
 
 #### Returns
 
 [`Search`](Search.md)<`TEntity`\>
 
+The [Search](Search.md) that was called to create this [WhereField](WhereField.md).
+
 #### Defined in
 
-[lib/search/where-field.ts:63](https://github.com/redis-developer/redis-om-node/blob/3cf5542/lib/search/where-field.ts#L63)
+[lib/search/where-field.ts:162](https://github.com/redis-developer/redis-om-node/blob/e0e2e98/lib/search/where-field.ts#L162)
 
 ___
 
@@ -163,39 +175,23 @@ ___
 
 ▸ **contain**(`value`): [`Search`](Search.md)<`TEntity`\>
 
+Adds a whole-string match for a value within an array to the search query.
+
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `value` | `string` |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `value` | `string` | The string to be matched. |
 
 #### Returns
 
 [`Search`](Search.md)<`TEntity`\>
 
-#### Defined in
-
-[lib/search/where-field.ts:65](https://github.com/redis-developer/redis-om-node/blob/3cf5542/lib/search/where-field.ts#L65)
-
-___
-
-### containAllOf
-
-▸ **containAllOf**(...`value`): [`Search`](Search.md)<`TEntity`\>
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `...value` | `string`[] |
-
-#### Returns
-
-[`Search`](Search.md)<`TEntity`\>
+The [Search](Search.md) that was called to create this [WhereField](WhereField.md).
 
 #### Defined in
 
-[lib/search/where-field.ts:68](https://github.com/redis-developer/redis-om-node/blob/3cf5542/lib/search/where-field.ts#L68)
+[lib/search/where-field.ts:169](https://github.com/redis-developer/redis-om-node/blob/e0e2e98/lib/search/where-field.ts#L169)
 
 ___
 
@@ -203,19 +199,24 @@ ___
 
 ▸ **containOneOf**(...`value`): [`Search`](Search.md)<`TEntity`\>
 
+Adds a whole-string match against an array to the query. If any of the provided
+strings in `value` is matched in the array, this matched.
+
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `...value` | `string`[] |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `...value` | `string`[] | An array of strings that you want to match one of. |
 
 #### Returns
 
 [`Search`](Search.md)<`TEntity`\>
 
+The [Search](Search.md) that was called to create this [WhereField](WhereField.md).
+
 #### Defined in
 
-[lib/search/where-field.ts:71](https://github.com/redis-developer/redis-om-node/blob/3cf5542/lib/search/where-field.ts#L71)
+[lib/search/where-field.ts:184](https://github.com/redis-developer/redis-om-node/blob/e0e2e98/lib/search/where-field.ts#L184)
 
 ___
 
@@ -223,39 +224,23 @@ ___
 
 ▸ **contains**(`value`): [`Search`](Search.md)<`TEntity`\>
 
+Adds a whole-string match for a value within an array to the search query.
+
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `value` | `string` |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `value` | `string` | The string to be matched. |
 
 #### Returns
 
 [`Search`](Search.md)<`TEntity`\>
 
-#### Defined in
-
-[lib/search/where-field.ts:66](https://github.com/redis-developer/redis-om-node/blob/3cf5542/lib/search/where-field.ts#L66)
-
-___
-
-### containsAllOf
-
-▸ **containsAllOf**(...`value`): [`Search`](Search.md)<`TEntity`\>
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `...value` | `string`[] |
-
-#### Returns
-
-[`Search`](Search.md)<`TEntity`\>
+The [Search](Search.md) that was called to create this [WhereField](WhereField.md).
 
 #### Defined in
 
-[lib/search/where-field.ts:69](https://github.com/redis-developer/redis-om-node/blob/3cf5542/lib/search/where-field.ts#L69)
+[lib/search/where-field.ts:176](https://github.com/redis-developer/redis-om-node/blob/e0e2e98/lib/search/where-field.ts#L176)
 
 ___
 
@@ -263,19 +248,24 @@ ___
 
 ▸ **containsOneOf**(...`value`): [`Search`](Search.md)<`TEntity`\>
 
+Adds a whole-string match against an array to the query. If any of the provided
+strings in `value` is matched in the array, this matched.
+
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `...value` | `string`[] |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `...value` | `string`[] | An array of strings that you want to match one of. |
 
 #### Returns
 
 [`Search`](Search.md)<`TEntity`\>
 
+The [Search](Search.md) that was called to create this [WhereField](WhereField.md).
+
 #### Defined in
 
-[lib/search/where-field.ts:72](https://github.com/redis-developer/redis-om-node/blob/3cf5542/lib/search/where-field.ts#L72)
+[lib/search/where-field.ts:192](https://github.com/redis-developer/redis-om-node/blob/e0e2e98/lib/search/where-field.ts#L192)
 
 ___
 
@@ -283,7 +273,7 @@ ___
 
 ▸ **eq**(`value`): [`Search`](Search.md)<`TEntity`\>
 
-Adds an equals comparisson to the query.
+Adds an equals comparison to the query.
 
 #### Parameters
 
@@ -299,7 +289,7 @@ The [Search](Search.md) that was called to create this [WhereField](WhereField.m
 
 #### Defined in
 
-[lib/search/where-field.ts:16](https://github.com/redis-developer/redis-om-node/blob/3cf5542/lib/search/where-field.ts#L16)
+[lib/search/where-field.ts:16](https://github.com/redis-developer/redis-om-node/blob/e0e2e98/lib/search/where-field.ts#L16)
 
 ___
 
@@ -307,7 +297,7 @@ ___
 
 ▸ **equal**(`value`): [`Search`](Search.md)<`TEntity`\>
 
-Adds an equals comparisson to the query.
+Adds an equals comparison to the query.
 
 #### Parameters
 
@@ -323,7 +313,7 @@ The [Search](Search.md) that was called to create this [WhereField](WhereField.m
 
 #### Defined in
 
-[lib/search/where-field.ts:23](https://github.com/redis-developer/redis-om-node/blob/3cf5542/lib/search/where-field.ts#L23)
+[lib/search/where-field.ts:23](https://github.com/redis-developer/redis-om-node/blob/e0e2e98/lib/search/where-field.ts#L23)
 
 ___
 
@@ -331,7 +321,7 @@ ___
 
 ▸ **equalTo**(`value`): [`Search`](Search.md)<`TEntity`\>
 
-Adds an equals comparisson to the query.
+Adds an equals comparison to the query.
 
 #### Parameters
 
@@ -347,7 +337,7 @@ The [Search](Search.md) that was called to create this [WhereField](WhereField.m
 
 #### Defined in
 
-[lib/search/where-field.ts:37](https://github.com/redis-developer/redis-om-node/blob/3cf5542/lib/search/where-field.ts#L37)
+[lib/search/where-field.ts:37](https://github.com/redis-developer/redis-om-node/blob/e0e2e98/lib/search/where-field.ts#L37)
 
 ___
 
@@ -355,7 +345,7 @@ ___
 
 ▸ **equals**(`value`): [`Search`](Search.md)<`TEntity`\>
 
-Adds an equals comparisson to the query.
+Adds an equals comparison to the query.
 
 #### Parameters
 
@@ -371,7 +361,7 @@ The [Search](Search.md) that was called to create this [WhereField](WhereField.m
 
 #### Defined in
 
-[lib/search/where-field.ts:30](https://github.com/redis-developer/redis-om-node/blob/3cf5542/lib/search/where-field.ts#L30)
+[lib/search/where-field.ts:30](https://github.com/redis-developer/redis-om-node/blob/e0e2e98/lib/search/where-field.ts#L30)
 
 ___
 
@@ -379,13 +369,17 @@ ___
 
 ▸ **false**(): [`Search`](Search.md)<`TEntity`\>
 
+Adds a boolean match with a value of `false` to the query.
+
 #### Returns
 
 [`Search`](Search.md)<`TEntity`\>
 
+The [Search](Search.md) that was called to create this [WhereField](WhereField.md).
+
 #### Defined in
 
-[lib/search/where-field.ts:49](https://github.com/redis-developer/redis-om-node/blob/3cf5542/lib/search/where-field.ts#L49)
+[lib/search/where-field.ts:98](https://github.com/redis-developer/redis-om-node/blob/e0e2e98/lib/search/where-field.ts#L98)
 
 ___
 
@@ -393,19 +387,23 @@ ___
 
 ▸ **greaterThan**(`value`): [`Search`](Search.md)<`TEntity`\>
 
+Adds a greater than comparison against a field to the search query.
+
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `value` | `number` |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `value` | `number` | The number to compare against. |
 
 #### Returns
 
 [`Search`](Search.md)<`TEntity`\>
 
+The [Search](Search.md) that was called to create this [WhereField](WhereField.md).
+
 #### Defined in
 
-[lib/search/where-field.ts:52](https://github.com/redis-developer/redis-om-node/blob/3cf5542/lib/search/where-field.ts#L52)
+[lib/search/where-field.ts:112](https://github.com/redis-developer/redis-om-node/blob/e0e2e98/lib/search/where-field.ts#L112)
 
 ___
 
@@ -413,19 +411,23 @@ ___
 
 ▸ **greaterThanOrEqualTo**(`value`): [`Search`](Search.md)<`TEntity`\>
 
+Adds a greater than or equal to comparison against a field to the search query.
+
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `value` | `number` |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `value` | `number` | The number to compare against. |
 
 #### Returns
 
 [`Search`](Search.md)<`TEntity`\>
 
+The [Search](Search.md) that was called to create this [WhereField](WhereField.md).
+
 #### Defined in
 
-[lib/search/where-field.ts:55](https://github.com/redis-developer/redis-om-node/blob/3cf5542/lib/search/where-field.ts#L55)
+[lib/search/where-field.ts:126](https://github.com/redis-developer/redis-om-node/blob/e0e2e98/lib/search/where-field.ts#L126)
 
 ___
 
@@ -433,19 +435,23 @@ ___
 
 ▸ **gt**(`value`): [`Search`](Search.md)<`TEntity`\>
 
+Adds a greater than comparison against a field to the search query.
+
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `value` | `number` |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `value` | `number` | The number to compare against. |
 
 #### Returns
 
 [`Search`](Search.md)<`TEntity`\>
 
+The [Search](Search.md) that was called to create this [WhereField](WhereField.md).
+
 #### Defined in
 
-[lib/search/where-field.ts:51](https://github.com/redis-developer/redis-om-node/blob/3cf5542/lib/search/where-field.ts#L51)
+[lib/search/where-field.ts:105](https://github.com/redis-developer/redis-om-node/blob/e0e2e98/lib/search/where-field.ts#L105)
 
 ___
 
@@ -453,19 +459,23 @@ ___
 
 ▸ **gte**(`value`): [`Search`](Search.md)<`TEntity`\>
 
+Adds a greater than or equal to comparison against a field to the search query.
+
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `value` | `number` |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `value` | `number` | The number to compare against. |
 
 #### Returns
 
 [`Search`](Search.md)<`TEntity`\>
 
+The [Search](Search.md) that was called to create this [WhereField](WhereField.md).
+
 #### Defined in
 
-[lib/search/where-field.ts:54](https://github.com/redis-developer/redis-om-node/blob/3cf5542/lib/search/where-field.ts#L54)
+[lib/search/where-field.ts:119](https://github.com/redis-developer/redis-om-node/blob/e0e2e98/lib/search/where-field.ts#L119)
 
 ___
 
@@ -473,19 +483,23 @@ ___
 
 ▸ **lessThan**(`value`): [`Search`](Search.md)<`TEntity`\>
 
+Adds a less than comparison against a field to the search query.
+
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `value` | `number` |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `value` | `number` | The number to compare against. |
 
 #### Returns
 
 [`Search`](Search.md)<`TEntity`\>
 
+The [Search](Search.md) that was called to create this [WhereField](WhereField.md).
+
 #### Defined in
 
-[lib/search/where-field.ts:58](https://github.com/redis-developer/redis-om-node/blob/3cf5542/lib/search/where-field.ts#L58)
+[lib/search/where-field.ts:140](https://github.com/redis-developer/redis-om-node/blob/e0e2e98/lib/search/where-field.ts#L140)
 
 ___
 
@@ -493,19 +507,23 @@ ___
 
 ▸ **lessThanOrEqualTo**(`value`): [`Search`](Search.md)<`TEntity`\>
 
+Adds a less than or equal to comparison against a field to the search query.
+
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `value` | `number` |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `value` | `number` | The number to compare against. |
 
 #### Returns
 
 [`Search`](Search.md)<`TEntity`\>
 
+The [Search](Search.md) that was called to create this [WhereField](WhereField.md).
+
 #### Defined in
 
-[lib/search/where-field.ts:61](https://github.com/redis-developer/redis-om-node/blob/3cf5542/lib/search/where-field.ts#L61)
+[lib/search/where-field.ts:154](https://github.com/redis-developer/redis-om-node/blob/e0e2e98/lib/search/where-field.ts#L154)
 
 ___
 
@@ -513,19 +531,23 @@ ___
 
 ▸ **lt**(`value`): [`Search`](Search.md)<`TEntity`\>
 
+Adds a less than comparison against a field to the search query.
+
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `value` | `number` |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `value` | `number` | The number to compare against. |
 
 #### Returns
 
 [`Search`](Search.md)<`TEntity`\>
 
+The [Search](Search.md) that was called to create this [WhereField](WhereField.md).
+
 #### Defined in
 
-[lib/search/where-field.ts:57](https://github.com/redis-developer/redis-om-node/blob/3cf5542/lib/search/where-field.ts#L57)
+[lib/search/where-field.ts:133](https://github.com/redis-developer/redis-om-node/blob/e0e2e98/lib/search/where-field.ts#L133)
 
 ___
 
@@ -533,19 +555,23 @@ ___
 
 ▸ **lte**(`value`): [`Search`](Search.md)<`TEntity`\>
 
+Adds a less than or equal to comparison against a field to the search query.
+
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `value` | `number` |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `value` | `number` | The number to compare against. |
 
 #### Returns
 
 [`Search`](Search.md)<`TEntity`\>
 
+The [Search](Search.md) that was called to create this [WhereField](WhereField.md).
+
 #### Defined in
 
-[lib/search/where-field.ts:60](https://github.com/redis-developer/redis-om-node/blob/3cf5542/lib/search/where-field.ts#L60)
+[lib/search/where-field.ts:147](https://github.com/redis-developer/redis-om-node/blob/e0e2e98/lib/search/where-field.ts#L147)
 
 ___
 
@@ -553,19 +579,23 @@ ___
 
 ▸ **match**(`value`): [`Search`](Search.md)<`TEntity`\>
 
+Adds a full-text search comparison to the query.
+
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `value` | `string` |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `value` | `string` | The word or phrase sought. |
 
 #### Returns
 
 [`Search`](Search.md)<`TEntity`\>
 
+The [Search](Search.md) that was called to create this [WhereField](WhereField.md).
+
 #### Defined in
 
-[lib/search/where-field.ts:39](https://github.com/redis-developer/redis-om-node/blob/3cf5542/lib/search/where-field.ts#L39)
+[lib/search/where-field.ts:44](https://github.com/redis-developer/redis-om-node/blob/e0e2e98/lib/search/where-field.ts#L44)
 
 ___
 
@@ -573,19 +603,23 @@ ___
 
 ▸ **matchExact**(`value`): [`Search`](Search.md)<`TEntity`\>
 
+Adds a full-text search comparison to the query that matches an exact word or phrase.
+
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `value` | `string` |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `value` | `string` | The word or phrase sought. |
 
 #### Returns
 
 [`Search`](Search.md)<`TEntity`\>
 
+The [Search](Search.md) that was called to create this [WhereField](WhereField.md).
+
 #### Defined in
 
-[lib/search/where-field.ts:41](https://github.com/redis-developer/redis-om-node/blob/3cf5542/lib/search/where-field.ts#L41)
+[lib/search/where-field.ts:58](https://github.com/redis-developer/redis-om-node/blob/e0e2e98/lib/search/where-field.ts#L58)
 
 ___
 
@@ -593,19 +627,23 @@ ___
 
 ▸ **matchExactly**(`value`): [`Search`](Search.md)<`TEntity`\>
 
+Adds a full-text search comparison to the query that matches an exact word or phrase.
+
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `value` | `string` |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `value` | `string` | The word or phrase sought. |
 
 #### Returns
 
 [`Search`](Search.md)<`TEntity`\>
 
+The [Search](Search.md) that was called to create this [WhereField](WhereField.md).
+
 #### Defined in
 
-[lib/search/where-field.ts:42](https://github.com/redis-developer/redis-om-node/blob/3cf5542/lib/search/where-field.ts#L42)
+[lib/search/where-field.ts:65](https://github.com/redis-developer/redis-om-node/blob/e0e2e98/lib/search/where-field.ts#L65)
 
 ___
 
@@ -613,19 +651,23 @@ ___
 
 ▸ **matches**(`value`): [`Search`](Search.md)<`TEntity`\>
 
+Adds a full-text search comparison to the query.
+
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `value` | `string` |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `value` | `string` | The word or phrase sought. |
 
 #### Returns
 
 [`Search`](Search.md)<`TEntity`\>
 
+The [Search](Search.md) that was called to create this [WhereField](WhereField.md).
+
 #### Defined in
 
-[lib/search/where-field.ts:40](https://github.com/redis-developer/redis-om-node/blob/3cf5542/lib/search/where-field.ts#L40)
+[lib/search/where-field.ts:51](https://github.com/redis-developer/redis-om-node/blob/e0e2e98/lib/search/where-field.ts#L51)
 
 ___
 
@@ -633,19 +675,23 @@ ___
 
 ▸ **matchesExactly**(`value`): [`Search`](Search.md)<`TEntity`\>
 
+Adds a full-text search comparison to the query that matches an exact word or phrase.
+
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `value` | `string` |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `value` | `string` | The word or phrase sought. |
 
 #### Returns
 
 [`Search`](Search.md)<`TEntity`\>
 
+The [Search](Search.md) that was called to create this [WhereField](WhereField.md).
+
 #### Defined in
 
-[lib/search/where-field.ts:43](https://github.com/redis-developer/redis-om-node/blob/3cf5542/lib/search/where-field.ts#L43)
+[lib/search/where-field.ts:72](https://github.com/redis-developer/redis-om-node/blob/e0e2e98/lib/search/where-field.ts#L72)
 
 ___
 
@@ -665,7 +711,7 @@ Converts this [Where](Where.md) into a portion of a RediSearch query.
 
 #### Defined in
 
-[lib/search/where-field.ts:121](https://github.com/redis-developer/redis-om-node/blob/3cf5542/lib/search/where-field.ts#L121)
+[lib/search/where-field.ts:241](https://github.com/redis-developer/redis-om-node/blob/e0e2e98/lib/search/where-field.ts#L241)
 
 ___
 
@@ -673,10 +719,14 @@ ___
 
 ▸ **true**(): [`Search`](Search.md)<`TEntity`\>
 
+Adds a boolean match with a value of `true` to the query.
+
 #### Returns
 
 [`Search`](Search.md)<`TEntity`\>
 
+The [Search](Search.md) that was called to create this [WhereField](WhereField.md).
+
 #### Defined in
 
-[lib/search/where-field.ts:48](https://github.com/redis-developer/redis-om-node/blob/3cf5542/lib/search/where-field.ts#L48)
+[lib/search/where-field.ts:92](https://github.com/redis-developer/redis-om-node/blob/e0e2e98/lib/search/where-field.ts#L92)

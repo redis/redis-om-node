@@ -33,4 +33,4 @@ The default field name in Redis is the key name defined in the
 
 #### Defined in
 
-[lib/schema/schema-definitions.ts:7](https://github.com/redis-developer/redis-om-node/blob/3cf5542/lib/schema/schema-definitions.ts#L7)
+[lib/schema/schema-definitions.ts:7](https://github.com/redis-developer/redis-om-node/blob/e0e2e98/lib/schema/schema-definitions.ts#L7)

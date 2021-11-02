@@ -9,66 +9,186 @@ import Where from "./where";
 interface WhereField<TEntity> extends Where {
 
   /**
-   * Adds an equals comparisson to the query.
+   * Adds an equals comparison to the query.
    * @param value The value to be compared
    * @returns The {@link Search} that was called to create this {@link WhereField}.
    */
   eq(value: string | number | boolean): Search<TEntity>;
 
   /**
-   * Adds an equals comparisson to the query.
+   * Adds an equals comparison to the query.
    * @param value The value to be compared
    * @returns The {@link Search} that was called to create this {@link WhereField}.
    */
   equal(value: string | number | boolean): Search<TEntity>;
 
   /**
-   * Adds an equals comparisson to the query.
+   * Adds an equals comparison to the query.
    * @param value The value to be compared
    * @returns The {@link Search} that was called to create this {@link WhereField}.
    */
   equals(value: string | number | boolean): Search<TEntity>;
 
   /**
-   * Adds an equals comparisson to the query.
+   * Adds an equals comparison to the query.
    * @param value The value to be compared
    * @returns The {@link Search} that was called to create this {@link WhereField}.
    */
   equalTo(value: string | number | boolean): Search<TEntity>;
 
+  /**
+   * Adds a full-text search comparison to the query.
+   * @param value The word or phrase sought.
+   * @returns The {@link Search} that was called to create this {@link WhereField}.
+   */
   match(value: string): Search<TEntity>;
+
+  /**
+   * Adds a full-text search comparison to the query.
+   * @param value The word or phrase sought.
+   * @returns The {@link Search} that was called to create this {@link WhereField}.
+   */
   matches(value: string): Search<TEntity>;
+
+  /**
+   * Adds a full-text search comparison to the query that matches an exact word or phrase.
+   * @param value The word or phrase sought.
+   * @returns The {@link Search} that was called to create this {@link WhereField}.
+   */
   matchExact(value: string): Search<TEntity>;
+
+  /**
+   * Adds a full-text search comparison to the query that matches an exact word or phrase.
+   * @param value The word or phrase sought.
+   * @returns The {@link Search} that was called to create this {@link WhereField}.
+   */
   matchExactly(value: string): Search<TEntity>;
+
+  /**
+   * Adds a full-text search comparison to the query that matches an exact word or phrase.
+   * @param value The word or phrase sought.
+   * @returns The {@link Search} that was called to create this {@link WhereField}.
+   */
   matchesExactly(value: string): Search<TEntity>;
 
+  /**
+   * Makes a call to {@link WhereField.match} a {@link WhereField.matchExact} call. Calling
+   * this multiple times will have no effect.
+   * @returns this.
+   */
   readonly exact: WhereField<TEntity>;
+
+  /**
+   * Makes a call to {@link WhereField.match} a {@link WhereField.matchExact} call. Calling
+   * this multiple times will have no effect.
+   * @returns this.
+   */
   readonly exactly: WhereField<TEntity>;
 
+  /**
+   * Adds a boolean match with a value of `true` to the query.
+   * @returns The {@link Search} that was called to create this {@link WhereField}.
+   */
   true(): Search<TEntity>;
+
+  /**
+   * Adds a boolean match with a value of `false` to the query.
+   * @returns The {@link Search} that was called to create this {@link WhereField}.
+   */
   false(): Search<TEntity>;
 
+  /**
+   * Adds a greater than comparison against a field to the search query.
+   * @param value The number to compare against.
+   * @returns The {@link Search} that was called to create this {@link WhereField}.
+   */
   gt(value: number): Search<TEntity>;
+
+  /**
+   * Adds a greater than comparison against a field to the search query.
+   * @param value The number to compare against.
+   * @returns The {@link Search} that was called to create this {@link WhereField}.
+   */
   greaterThan(value: number): Search<TEntity>;
 
+  /**
+   * Adds a greater than or equal to comparison against a field to the search query.
+   * @param value The number to compare against.
+   * @returns The {@link Search} that was called to create this {@link WhereField}.
+   */
   gte(value: number): Search<TEntity>;
+
+  /**
+   * Adds a greater than or equal to comparison against a field to the search query.
+   * @param value The number to compare against.
+   * @returns The {@link Search} that was called to create this {@link WhereField}.
+   */
   greaterThanOrEqualTo(value: number): Search<TEntity>;
 
+  /**
+   * Adds a less than comparison against a field to the search query.
+   * @param value The number to compare against.
+   * @returns The {@link Search} that was called to create this {@link WhereField}.
+   */
   lt(value: number): Search<TEntity>;
+
+  /**
+   * Adds a less than comparison against a field to the search query.
+   * @param value The number to compare against.
+   * @returns The {@link Search} that was called to create this {@link WhereField}.
+   */
   lessThan(value: number): Search<TEntity>;
 
+  /**
+   * Adds a less than or equal to comparison against a field to the search query.
+   * @param value The number to compare against.
+   * @returns The {@link Search} that was called to create this {@link WhereField}.
+   */
   lte(value: number): Search<TEntity>;
+
+  /**
+   * Adds a less than or equal to comparison against a field to the search query.
+   * @param value The number to compare against.
+   * @returns The {@link Search} that was called to create this {@link WhereField}.
+   */
   lessThanOrEqualTo(value: number): Search<TEntity>;
 
+  /**
+   * Adds an inclusive range comparison against a field to the search query.
+   * @param lower The lower bound of the range.
+   * @param upper The upper bound of the range.
+   * @returns The {@link Search} that was called to create this {@link WhereField}.
+   */
   between(lower: number, upper: number): Search<TEntity>;
 
+  /**
+   * Adds a whole-string match for a value within an array to the search query.
+   * @param value The string to be matched.
+   * @returns The {@link Search} that was called to create this {@link WhereField}.
+   */
   contain(value: string): Search<TEntity>;
+
+  /**
+   * Adds a whole-string match for a value within an array to the search query.
+   * @param value The string to be matched.
+   * @returns The {@link Search} that was called to create this {@link WhereField}.
+   */
   contains(value: string): Search<TEntity>;
 
-  containAllOf(...value: string[]): Search<TEntity>;
-  containsAllOf(...value: string[]): Search<TEntity>;
-
+  /**
+   * Adds a whole-string match against an array to the query. If any of the provided
+   * strings in `value` is matched in the array, this matched.
+   * @param value An array of strings that you want to match one of.
+   * @returns The {@link Search} that was called to create this {@link WhereField}.
+   */
   containOneOf(...value: string[]): Search<TEntity>;
+
+  /**
+   * Adds a whole-string match against an array to the query. If any of the provided
+   * strings in `value` is matched in the array, this matched.
+   * @param value An array of strings that you want to match one of.
+   * @returns The {@link Search} that was called to create this {@link WhereField}.
+   */
   containsOneOf(...value: string[]): Search<TEntity>;
 }
 
