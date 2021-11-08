@@ -6,11 +6,52 @@
   <br/>
 </div>
 
+<p align="center">
+    <p align="center">
+        Object mapping, and more, for Redis and .NET
+    </p>
+</p>
+
+---
 [![License][license-image]][license-url]
 
-# Redis OM for Node.js
+**Redis OM Node.js** makes it easy to model Redis data in your Node.js Applications.
 
-## Object Mapping (and more) for Redis!
+[Redis OM .NET][redis-om-dotnet] | **Redis OM Node.js** | [Redis OM Python][redis-om-python] | [Redis OM Spring][redis-om-spring]
+
+<details>
+  <summary><strong>Table of contents</strong></summary>
+
+  - 💡 [Redis OM for Node.js](#redis-om-for-node.js)
+  - ⚠️ [Before We Get Started](#before-we-get-started)
+  - 🏁 [Getting Started](#getting-started)
+  - 🔌 [Connect to Redis with a Client](#connect-to-redis-with-a-client)
+    - [Redis Connection Strings](#redis-connection-strings)
+  - 📇 [Define an Entity and a Schema](#define-an-entity-and-a-schema)
+  - 🖋 [Reading and Writing with Repository](#reading-and-writing-with-repository)
+    - [Missing Entities and Null Values](#missing-entities-and-null-values)
+    - [A Note for TypeScript Users](#a-note-for-typescript-users)
+  - 🧮 [Embedding Your Own Logic into Entities](#embedding-your-own-logic-into-entities)
+  - 📄 [Using RedisJSON](#using-redisjson)
+  - 🔎 [Using RediSearch](#using-redisearch)
+    - [Build the Index](#build-the-index)
+    - [Finding All The Things (and Returning Them)](#finding-all-the-things-(and-returning-them))
+      - [Pagination](#pagination)
+      - [Counting](#counting)
+    - [Finding Specific Things](#finding-specific-things)
+      - [Searching on Whole Strings](#searching-on-whole-strings)
+      - [Searching on Numbers](#searching-on-numbers)
+      - [Searching on Booleans](#searching-on-booleans)
+      - [Searching Arrays](#searching-arrays)
+      - [Full-Text Search](#full-text-search)
+      - [Chaining Searches](#chaining-searches)
+  - 👊 [Combining RedisJSON and RediSearch](#combining-redisjson-and-redisearch)
+  - 📚 [Documentation](#documentation)
+  - ⛏️ [Troubleshooting](#troubleshooting)
+  - ❤️ [Contributing](#contributing)
+</details>
+
+## 💡 Redis OM for Node.js
 
 Redis OM (prounced _REDiss OHM_) makes it easy to add Redis to your Node.js appliction by mapping the Redis data structures you know and love to classes that you define. No more pesky, low-level commands, just pure code with a fluent interface.
 
@@ -47,7 +88,7 @@ let albums = await repository.search()
 
 Pretty cool, right? Read on for details.
 
-# Before We Get Started
+## ⚠️ Before We Get Started
 
 Before we get started there's a couple things you should know:
 
@@ -57,9 +98,9 @@ Before we get started there's a couple things you should know:
 
 This is a preview. This code is not production ready and all manner of Bad Things™ might happen if you use it. Things like:
 
-  - Changes to interfaces and behavior that break your code upon upgrade.
-  - Bugs, both garden variety and [Heisenbugs](https://en.wikipedia.org/wiki/Heisenbug), that crash your application.
-  - Execution of the [HCF instruction](https://en.wikipedia.org/wiki/Halt_and_Catch_Fire_(computing)).
+  - [Changes to interfaces and behavior that break your code upon upgrade.](changes to interfaces and behavior that break your code upon upgrade.)
+  - [Bugs, both garden variety and [Heisenbugs](https://en.wikipedia.org/wiki/Heisenbug), that crash your ](bugs, both garden variety and [heisenbugs](https://en.wikipedia.org/wiki/heisenbug), that crash your )application.
+  - [Execution of the [HCF instruction](https://en.wikipedia.org/wiki/Halt_and_Catch_Fire_(computing)).](execution of the [hcf instruction](https://en.wikipedia.org/wiki/halt_and_catch_fire_(computing)).)
 
 Likely there are bugs. If you find one, open an issue or—better yet—send me a pull request. Likely there will be changes. If you have a brilliant idea for one, let me know by opening an issue.
 
@@ -67,7 +108,7 @@ By using and abusing this software you are helping to improve it. This is greatl
 
 Caveats done. Now, on with *how* to use Redis OM!
 
-# Getting Started
+## 🏁 Getting Started
 
 First things first, get yourself a Node.js project. There are lots of ways to do this but I'm gonna go with a classic:
 
@@ -75,7 +116,7 @@ First things first, get yourself a Node.js project. There are lots of ways to do
 
 Once you have that sweet, sweet `package.json`, let's add our newest favorite package to it:
 
-    $ npm install redis-om --save
+    $ npm install redis-om --[save](save)
 
 Of course, you'll need some Redis, preferrably with [RediSearch][redisearch-url] and [RedisJSON][redis-json-url] installed. The easiest way to do this is to setup a free [Redis Cloud][redis-cloud-url] instance. But, you can also use Docker:
 
@@ -83,7 +124,7 @@ Of course, you'll need some Redis, preferrably with [RediSearch][redisearch-url]
 
 Excellent. Set up done. Let's write some code!
 
-# Connect to Redis with a Client
+## 🔌 Connect to Redis with a Client
 
 You connect to Redis using a [*client*](docs/classes/Client.md). The `Client` class has methods to open, close, and excute raw commands against Redis.
 
@@ -137,7 +178,7 @@ import { Client } from 'redis-om';
 
 Mostly you'll use `.open`, `.close` and `.fetchRepository` (which we'll talk about soon enough). But, on occasion you might need to talk to Redis directly. The `.execute` method allows you to do that.
 
-## Redis Connection Strings
+### Redis Connection Strings
 
 When you open a Redis client, you hand it a URL. The basic format for this URL is:
 
@@ -147,7 +188,7 @@ This is the bulk of what you will need, but if you want more, the full specifica
 
 If you don't provide a URL, it defaults to `redis://localhost:6379`.
 
-# Define an Entity and a Schema
+## 📇 Define an Entity and a Schema
 
 Ok. Let's start doing some object mapping. We'll start by defining an [*entity*](docs/classes/Entity.md) and a [*schema*](docs/classes/Schema.md).
 
@@ -177,7 +218,7 @@ When you create a `Schema`, it modifies the entity you handed it, adding getters
 
 There are several other options available when defining a schema for your entity. Check them out in the [detailed documentation](docs/classes/Schema.md) for the `Schema` class.
 
-# Reading and Writing with Repository
+## 🖋 Reading and Writing with Repository
 
 Now that we have a client and a schema we have what we need to make a [*repository*](docs/classes/Repository.md). A repository provides the means to read, write, and remove entities. Creating a repository is pretty straightforward:
 
@@ -233,7 +274,7 @@ Or `.remove` it:
 await repository.remove('01FJYWEYRHYFT8YTEGQBABJ43J')
 ```
 
-## Missing Entities and Null Values
+### Missing Entities and Null Values
 
 Redis, and by extension Redis OM, doesn't differentiate between missing and null. Missing fields in Redis are returned as `null` and missing keys return `null`. So, if you fetch an entity that doesn't exists, it will happily return you an entity full of nulls:
 
@@ -263,7 +304,7 @@ let exists = await client.execute(['EXISTS', 'Album:01FJYWEYRHYFT8YTEGQBABJ43J']
 
 It does this becuase Redis doesn't dinstinguish between missing and null. You could have an entity that is all nulls. Or you could not. Redis doesn't know which is your intention and so always returns something when you call `.fetch`.
 
-## A Note for TypeScript Users
+### A Note for TypeScript Users
 
 When you define an entity and schema in TypeScript, all is well. But when you go to *use* that entity, you might have a problem. You'll get an error accessing the properties that the schema added to the entity. This code won't work:
 
@@ -298,7 +339,7 @@ let schema = new Schema(Album, {
 })
 ```
 
-# Embedding Your Own Logic into Entities
+## 🧮 Embedding Your Own Logic into Entities
 
 You might be looking at how you define an entity and be thinking it's a bit odd. Just an empty class? Really? Well, this class can contain additional logic that works with the data it retrieves from Redis. Which can be pretty useful.
 
@@ -325,7 +366,7 @@ class Album extends Entity {
 }
 ```
 
-# Using RedisJSON
+## 📄 Using RedisJSON
 
 By default, Redis OM stores your entities in Hashes. But if your using [RedisJSON][redis-json-url], you can instead choose to sotre your entites as JSON. It works exactly the same as using Hashes, but when you defined you schema, you pass in an option telling it to use JSON:
 
@@ -343,7 +384,7 @@ let schema = new Schema(Album, {
 
 Everything else just works the same.
 
-# Using RediSearch
+## 🔎 Using RediSearch
 
 Using [RediSearch][redisearch-url] with Redis OM is where the power of this fully armed and operational battlestation starts to become apparent. If you have RediSearch installed on your Redis server you can use the search capabilites of Redis OM. This enables commands like:
 
@@ -356,7 +397,7 @@ let albums = await repository.search()
 
 Let's explore this in full.
 
-## Build the Index
+### Build the Index
 
 To use search you have to build an index. If you don't you'll get errors. To build an index, just call `.createIndex` on your repository:
 
@@ -371,7 +412,7 @@ await repository.dropIndex();
 await repository.createIndex();
 ```
 
-## Finding All The Things (and Returning Them)
+### Finding All The Things (and Returning Them)
 
 Once you have an index created (or recreated) you can search. The most basic search is just to return everything. This will return all of the albums that you've put in Redis:
 
@@ -379,7 +420,7 @@ Once you have an index created (or recreated) you can search. The most basic sea
 let albums = await repository.search().returnAll()
 ```
 
-### Pagination
+#### Pagination
 
 It's possible that you have a *lot* of albums, I know I do. In that case, you can page through the results. Just pass in the zero-based offset and the number of results you want:
 
@@ -391,7 +432,7 @@ let albums = await repository.search().return(offset, count)
 
 Don't worry if your offset is greater than the number of entities. If it is, you just get an empty array back. No harm, no foul.
 
-### Counting
+#### Counting
 
 Sometimes you just want to know how many entities you have. For that you can call `.count`:
 
@@ -399,13 +440,13 @@ Sometimes you just want to know how many entities you have. For that you can cal
 let count = await repository.search().count()
 ```
 
-## Finding Specific Things
+### Finding Specific Things
 
 It's all fine an dandy to return all the things. But that's usually not what you want to do. You want to find *specific* things. Redis OM will let you find those specific things by [strings](#searching-on-whole-strings), [numbers](#searching-on-numbers), and [booleans](#searching-on-booleans). You can also search for strings that are in an [array](#searching-arrays) or even perform [full-text search](#full-text-search) within strings.
 
 And it does it with a fluent interface that allows, but does not demand, code that reads like a sentence. See below for exhaustive examples of all the syntax available to you.
 
-### Searching on Whole Strings
+#### Searching on Whole Strings
 
 You can search for a whole string. This syntax will not search for partial strings or words within a string. If you want to do that, check out [Full-Text Search](#full-text-search).
 
@@ -426,7 +467,7 @@ albums = await repository.search.where('artist').does.not.equal('Mushroomhead').
 albums = await repository.search.where('artist').is.not.equalTo('Mushroomhead').returnAll()
 ```
 
-### Searching on Numbers
+#### Searching on Numbers
 
 You can search against fields that contain numbers—both intergers and floating-point numbers—with all the comparisons you'd expect to see:
 
@@ -480,7 +521,7 @@ albums = await repository.search.where('year').is.between(1980, 1989).returnAll(
 albums = await repository.search.where('year').is.not.between(1980, 1989).returnAll()
 ```
 
-### Searching on Booleans
+#### Searching on Booleans
 
 You can search against fields that contain booleans:
 
@@ -524,7 +565,7 @@ albums = await repository.search.where('outOfPublication').is.not.true().returnA
 albums = await repository.search.where('outOfPublication').is.not.false().returnAll()
 ```
 
-### Searching Arrays
+#### Searching Arrays
 
 You can search on whole string that are in an array:
 
@@ -552,7 +593,7 @@ albums = await repository.search.where('genres').does.containOneOf('rock', 'meta
 albums = await repository.search.where('genres').does.not.containOneOf('rock', 'metal', 'blues').returnAll()
 ```
 
-### Full-Text Search
+#### Full-Text Search
 
 By default, a string matches the entire string. So, if the title of your album is "The Righteous & The Butterfly", to find that album using it's title, you'll need to provide the entire string. However, you can configure a string for full-text search in the schema by setting `textSearch` to `true`:
 
@@ -608,7 +649,7 @@ albums = await repository.search.where('title').does.matchExactly('beautiful sto
 albums = await repository.search.where('title').does.not.matchExactly('beautiful stories').returnAll()
 ```
 
-### Chaining Searches
+#### Chaining Searches
 
 So far we've been doing searches that match on a single field. However, we often want to query on multiple field. No problem:
 
@@ -634,7 +675,7 @@ search
 
 This query finds all Mushroomhead albums after 1990 or albums that have butterfly in the title.
 
-# Combining RedisJSON and RediSearch
+## 👊 Combining RedisJSON and RediSearch
 
 One final note. All of the search capabilites of RediSearch that Redis OM exposes work with Hashes. But, RediSearch also plays nice with RedisJSON. All you need to do to use search with RedisJSON is to enabled it in the schema:
 
@@ -653,11 +694,28 @@ let schema = new Schema(Album, {
 
 Everything else just works the same.
 
+## 📚 Documentation
 
-<!-- Links, Badges, and Whatnot -->
+This README just scratches the surface. You can find complete documentation in the [Redis OM .NET docs site](https://redis-developer.github.io/redis-om-dotnet).
+
+## ⛏️ Troubleshooting
+
+I'll eventually have a FAQ full of answered questions, but since this is a new library, nobody has asked anything yet, frequently or otherwise. So, if you run into a problem, open an issue. Or, if your not sure it's actually a bug and you don't want to clutter up the issue tracker, hit me up on the [Redis Discord Server](http://discord.gg/redis) and ask there.
+
+## ❤️ Contributing
+
+Contributions are always appreciated. I take PayPal and Bitcoin. Just kidding, I'd would sincerly appreciate your help in making this software better. Here's a couple ways to help:
+
+- **[Bug reports**: This is a new project. You're gonna find them. Open and issue and I'll look into it or ](bug reports**: this is a new project. you're gonna find them. open and issue and i'll look into it or )hunt down the problem and send me a pull request.
+- **[Documentation**: You can improve the life of a lot of developers by fixing typos, grammar, and bad jokes. ](documentation**: you can improve the life of a lot of developers by fixing typos, grammar, and bad jokes. )Or by just pointing out where a little more detail would help. Open an issue or send a pull request.
+
+<!-- [Links, Badges, and Whatnot -->](links, badges, and whatnot -->)
 
 [license-image]: https://img.shields.io/badge/License-BSD%203--Clause-blue.svg
 [license-url]: LICENSE
 [redis-cloud-url]: https://redis.com/try-free/
 [redisearch-url]: https://oss.redis.com/redisearch/
 [redis-json-url]: https://oss.redis.com/redisjson/
+[redis-om-dotnet]: https://github.com/redis/redis-om-dotnet
+[redis-om-python]: https://github.com/redis/redis-om-python
+[redis-om-spring]: https://github.com/redis/redis-om-spring
