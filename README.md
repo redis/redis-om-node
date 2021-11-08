@@ -22,8 +22,8 @@
 <details>
   <summary><strong>Table of contents</strong></summary>
 
-  - 💡 [Redis OM for Node.js](#-redis-om-for-node.js)
-  - ⚠️ [Before We Get Started](#-before-we-get-started)
+  - 💡 [Redis OM for Node.js](#-redis-om-for-nodejs)
+  - ⚠️ [Before We Get Started](#%EF%B8%8F-before-we-get-started)
   - 🏁 [Getting Started](#-getting-started)
   - 🔌 [Connect to Redis with a Client](#-connect-to-redis-with-a-client)
     - [Redis Connection Strings](#redis-connection-strings)
@@ -35,7 +35,7 @@
   - 📄 [Using RedisJSON](#-using-redisjson)
   - 🔎 [Using RediSearch](#-using-redisearch)
     - [Build the Index](#build-the-index)
-    - [Finding All The Things (and Returning Them)](#finding-all-the-things-(and-returning-them))
+    - [Finding All The Things (and Returning Them)](#finding-all-the-things-and-returning-them)
       - [Pagination](#pagination)
       - [Counting](#counting)
     - [Finding Specific Things](#finding-specific-things)
@@ -47,8 +47,8 @@
       - [Chaining Searches](#chaining-searches)
   - 👊 [Combining RedisJSON and RediSearch](#-combining-redisjson-and-redisearch)
   - 📚 [Documentation](#-documentation)
-  - ⛏️ [Troubleshooting](#-troubleshooting)
-  - ❤️ [Contributing](#-contributing)
+  - ⛏️ [Troubleshooting](#%EF%B8%8F-troubleshooting)
+  - ❤️ [Contributing](#%EF%B8%8F-contributing)
 </details>
 
 ## 💡 Redis OM for Node.js
