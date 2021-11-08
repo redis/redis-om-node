@@ -1,16 +1,15 @@
 import { createClient } from 'redis';
 
 import { RedisClientType } from 'redis/dist/lib/client';
-import { RedisModules } from 'redis/dist/lib/commands';
-import { RedisLuaScripts } from 'redis/dist/lib/lua-script';
+import { RedisScripts, RedisModules } from 'redis/dist/lib/commands';
 import RedisError from '../errors';
 
 export default class RedisShim {
 
-  private redis!: RedisClientType<RedisModules, RedisLuaScripts>;
+  private redis!: RedisClientType<RedisModules, RedisScripts>;
 
   async open(url: string) {
-    this.redis = createClient({ socket : { url }});
+    this.redis = createClient({ url });
     await this.redis.connect();
   }
 

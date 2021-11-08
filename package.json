@@ -33,7 +33,7 @@
     "typescript": "^4.4.3"
   },
   "dependencies": {
-    "redis": "^4.0.0-rc.1",
+    "redis": "^4.0.0-rc.3",
     "ulid": "^2.3.0"
   }
 }
