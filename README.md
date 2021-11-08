@@ -22,18 +22,18 @@
 <details>
   <summary><strong>Table of contents</strong></summary>
 
-  - 💡 [Redis OM for Node.js](#redis-om-for-node.js)
-  - ⚠️ [Before We Get Started](#before-we-get-started)
-  - 🏁 [Getting Started](#getting-started)
-  - 🔌 [Connect to Redis with a Client](#connect-to-redis-with-a-client)
+  - 💡 [Redis OM for Node.js](#-redis-om-for-node.js)
+  - ⚠️ [Before We Get Started](#-before-we-get-started)
+  - 🏁 [Getting Started](#-getting-started)
+  - 🔌 [Connect to Redis with a Client](#-connect-to-redis-with-a-client)
     - [Redis Connection Strings](#redis-connection-strings)
-  - 📇 [Define an Entity and a Schema](#define-an-entity-and-a-schema)
-  - 🖋 [Reading and Writing with Repository](#reading-and-writing-with-repository)
+  - 📇 [Define an Entity and a Schema](#-define-an-entity-and-a-schema)
+  - 🖋 [Reading and Writing with Repository](#-reading-and-writing-with-repository)
     - [Missing Entities and Null Values](#missing-entities-and-null-values)
     - [A Note for TypeScript Users](#a-note-for-typescript-users)
-  - 🧮 [Embedding Your Own Logic into Entities](#embedding-your-own-logic-into-entities)
-  - 📄 [Using RedisJSON](#using-redisjson)
-  - 🔎 [Using RediSearch](#using-redisearch)
+  - 🧮 [Embedding Your Own Logic into Entities](#-embedding-your-own-logic-into-entities)
+  - 📄 [Using RedisJSON](#-using-redisjson)
+  - 🔎 [Using RediSearch](#-using-redisearch)
     - [Build the Index](#build-the-index)
     - [Finding All The Things (and Returning Them)](#finding-all-the-things-(and-returning-them))
       - [Pagination](#pagination)
@@ -45,10 +45,10 @@
       - [Searching Arrays](#searching-arrays)
       - [Full-Text Search](#full-text-search)
       - [Chaining Searches](#chaining-searches)
-  - 👊 [Combining RedisJSON and RediSearch](#combining-redisjson-and-redisearch)
-  - 📚 [Documentation](#documentation)
-  - ⛏️ [Troubleshooting](#troubleshooting)
-  - ❤️ [Contributing](#contributing)
+  - 👊 [Combining RedisJSON and RediSearch](#-combining-redisjson-and-redisearch)
+  - 📚 [Documentation](#-documentation)
+  - ⛏️ [Troubleshooting](#-troubleshooting)
+  - ❤️ [Contributing](#-contributing)
 </details>
 
 ## 💡 Redis OM for Node.js
