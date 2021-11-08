@@ -81,8 +81,16 @@ export default class Repository<TEntity extends Entity> {
    * because your {@link Entity} has changed. Requires that RediSearch or RedisJSON is installed
    * on your instance of Redis.
    */
-   async dropIndex() {
-    await this.client.dropIndex(this.schema.indexName);
+  async dropIndex() {
+    try {
+      await this.client.dropIndex(this.schema.indexName);
+    } catch (e) {
+      if (e instanceof Error && e.message === "Unknown Index name") {
+        // no-op: the thing we are dropping doesn't exist
+      } else {
+        throw e
+      }
+    }
   }
 
   /**
