@@ -98,11 +98,11 @@ Before we get started there's a couple things you should know:
 
 This is a preview. This code is not production ready and all manner of Bad Things™ might happen if you use it. Things like:
 
-  - [Changes to interfaces and behavior that break your code upon upgrade.](changes to interfaces and behavior that break your code upon upgrade.)
-  - [Bugs, both garden variety and [Heisenbugs](https://en.wikipedia.org/wiki/Heisenbug), that crash your ](bugs, both garden variety and [heisenbugs](https://en.wikipedia.org/wiki/heisenbug), that crash your )application.
-  - [Execution of the [HCF instruction](https://en.wikipedia.org/wiki/Halt_and_Catch_Fire_(computing)).](execution of the [hcf instruction](https://en.wikipedia.org/wiki/halt_and_catch_fire_(computing)).)
+  - Changes to interfaces and behavior that break your code upon upgrade.
+  - Bugs, both garden variety and [Heisenbugs](https://en.wikipedia.org/wiki/Heisenbug), that crash your application.
+  - Execution of the [HCF instruction](https://en.wikipedia.org/wiki/Halt_and_Catch_Fire_(computing).
 
-Likely there are bugs. If you find one, open an issue or—better yet—send me a pull request. Likely there will be changes. If you have a brilliant idea for one, let me know by opening an issue.
+Likely there are bugs. If you find one, open an issue or—better yet—send me a pull request. Likely there will be changes. If you have a brilliant idea for one, let me know by opening an issue. Of just hop on our [Discord server][discord-url] and suggest it there.
 
 By using and abusing this software you are helping to improve it. This is greatly appreciated.
 
@@ -202,7 +202,7 @@ import { Entity, Schema } from 'redis-om'
 class Album extends Entity {}
 ```
 
-[Schemas](docs/classes/Schema.md) define the fields on your entity, their types, and how they are mapped internally to Redis. By default, entities map to Hashes in Redis but you can also use JSON, more on that later.:
+[Schemas](docs/classes/Schema.md) define the fields on your entity, their types, and how they are mapped internally to Redis. By default, entities map to Hashes in Redis but you can also use JSON, more on that later:
 
 ```javascript
 let schema = new Schema(Album, {
@@ -214,7 +214,7 @@ let schema = new Schema(Album, {
 })
 ```
 
-When you create a `Schema`, it modifies the entity you handed it, adding getters and setters for the properties you define. The type those getters and setters accept and return are defined with the type parameter above. Valid values are: `string`, `number`, `boolean`, or `array`. The first three do exactly waht you think they do—they define a property that is a String, Number, or Boolean. `array` specifically defines an array of Strings.
+When you create a `Schema`, it modifies the entity you handed it, adding getters and setters for the properties you define. The type those getters and setters accept and return are defined with the type parameter above. Valid values are: `string`, `number`, `boolean`, or `array`. The first three do exactly what you think—they define a property that is a String, a Number, or a Boolean. `array` specifically defines an array of Strings.
 
 There are several other options available when defining a schema for your entity. Check them out in the [detailed documentation](docs/classes/Schema.md) for the `Schema` class.
 
@@ -235,7 +235,7 @@ let album = repository.createEntity()
 album.entityId // '01FJYWEYRHYFT8YTEGQBABJ43J'
 ```
 
-Note that entities created by `.createEntity` are not saved to Redis, at least not yet. They've only been instantiated and populated with an entity ID. This ID is a [ULID](https://github.com/ulid/spec) and is unique id representing that object. To create a new entity *and* save it to Redis, we need to set all the properties on the entity and call `.save`:
+Note that entities created by `.createEntity` are not saved to Redis, at least not yet. They've only been instantiated and populated with an entity ID. This ID is a [ULID](https://github.com/ulid/spec) and is a unique id representing that object. To create a new entity *and* save it to Redis, we need to set all the properties on the entity that we care about and call `.save`:
 
 ```javascript
 let album = repository.createEntity()
@@ -317,7 +317,7 @@ album.genres = [ 'metal' ]                    // Property 'genres' does not exis
 album.outOfPublication = true                 // Property 'outOfPublication' does not exist on type 'Album'
 ```
 
-To fix this, add an interface with the same name as your entity. On that interface, add all the properties you provided to the schema:
+To fix this—without resorting to `// @ts-ignore`—add an interface with the same name as your entity. On that interface, add all the properties you provided to the schema:
 
 ```typescript
 interface Album {
@@ -341,7 +341,7 @@ let schema = new Schema(Album, {
 
 ## 🧮 Embedding Your Own Logic into Entities
 
-You might be looking at how you define an entity and be thinking it's a bit odd. Just an empty class? Really? Well, this class can contain additional logic that works with the data it retrieves from Redis. Which can be pretty useful.
+You might be looking at how you define an entity and think it's a bit odd. Just an empty class? Really? Well, this class can contain additional logic that works with the data it retrieves from Redis. Which can be pretty useful.
 
 You can use this to created computed fields and add domain logic:
 
@@ -350,6 +350,7 @@ class Album extends Entity {
   get is70sRock() {
     return this.year >= 1970 && this.year < 1980 && this.genres.includes('rock')
   }
+
   makeItRock() {
     this.genres.push('rock');
   }
@@ -368,7 +369,7 @@ class Album extends Entity {
 
 ## 📄 Using RedisJSON
 
-By default, Redis OM stores your entities in Hashes. But if your using [RedisJSON][redis-json-url], you can instead choose to sotre your entites as JSON. It works exactly the same as using Hashes, but when you defined you schema, you pass in an option telling it to use JSON:
+By default, Redis OM stores your entities in Hashes. But if your using [RedisJSON][redis-json-url], you can instead choose to store your entities as JSON. It works exactly the same as using Hashes, but when you defined you schema, just pass in an option telling it to use JSON:
 
 ```javascript
 let schema = new Schema(Album, {
@@ -382,7 +383,7 @@ let schema = new Schema(Album, {
 })
 ```
 
-Everything else just works the same.
+Everything else works the same.
 
 ## 🔎 Using RediSearch
 
@@ -414,7 +415,7 @@ await repository.createIndex();
 
 ### Finding All The Things (and Returning Them)
 
-Once you have an index created (or recreated) you can search. The most basic search is just to return everything. This will return all of the albums that you've put in Redis:
+Once you have an index created (or recreated) you can search. The most basic search is to just return all the things. This will return all of the albums that you've put in Redis:
 
 ```javascript
 let albums = await repository.search().returnAll()
@@ -442,7 +443,7 @@ let count = await repository.search().count()
 
 ### Finding Specific Things
 
-It's all fine an dandy to return all the things. But that's usually not what you want to do. You want to find *specific* things. Redis OM will let you find those specific things by [strings](#searching-on-whole-strings), [numbers](#searching-on-numbers), and [booleans](#searching-on-booleans). You can also search for strings that are in an [array](#searching-arrays) or even perform [full-text search](#full-text-search) within strings.
+It's all fine an dandy to return all the things. But that's not what you usually want to do. You want to find *specific* things. Redis OM will let you find those specific things by [strings](#searching-on-whole-strings), [numbers](#searching-on-numbers), and [booleans](#searching-on-booleans). You can also search for strings that are in an [array](#searching-arrays) or even perform [full-text search](#full-text-search) within strings.
 
 And it does it with a fluent interface that allows, but does not demand, code that reads like a sentence. See below for exhaustive examples of all the syntax available to you.
 
@@ -545,7 +546,7 @@ albums = await repository.search.where('outOfPublication').not.true().returnAll(
 albums = await repository.search.where('outOfPublication').not.false().returnAll()
 ```
 
-Amd, of course, there's lots of syntactic sugar to make this fluent:
+And, of course, there's lots of syntactic sugar to make this fluent:
 
 ```javascript
 albums = await repository.search.where('outOfPublication').eq(true).returnAll()
@@ -567,7 +568,7 @@ albums = await repository.search.where('outOfPublication').is.not.false().return
 
 #### Searching Arrays
 
-You can search on whole string that are in an array:
+You can search on whole strings that are in an array:
 
 ```javascript
 let albums
@@ -603,13 +604,16 @@ By default, a string matches the entire string. So, if the title of your album i
   ...
 ```
 
-Doing this gives you the full power of [RediSearch][redisearch-url] by enabling full-text search against the string instead of just matching the whole string. Full-text search is pretty clever. It understands that certain words (like *a*, *an*, or *the*) are common and ignores them. It understands how words related to each other and so if you search for 'give' it matches 'gave', 'gives', 'given', and 'giving' too. Plus, you can override this to do exact matches of a word or phrase.
+Doing this gives you the full power of [RediSearch][redisearch-url] by enabling full-text search against that string instead of matching the whole string. Full-text search is pretty clever. It understands that certain words (like *a*, *an*, or *the*) are common and ignores them. It understands how words relate to each other and so if you search for 'give' it matches 'gave', 'gives', 'given', and 'giving' too. Plus, if you need to, you can override this to do exact matches of a word or phrase.
 
 ```javascript
 let albums
 
 // finds all albums where the title contains the word 'butterfly'
 albums = await repository.search.where('title').match('butterfly').returnAll()
+
+// finds all albums where the title contains the the words 'beautiful' and 'children'
+albums = await repository.search.where('title').match('beautiful children').returnAll()
 
 // finds all albums where the title contains the exact phrase 'beautiful stories'
 albums = await repository.search.where('title').matchExact('beautiful stories').returnAll()
@@ -629,7 +633,7 @@ But don't not combine these. I repeat, **DO NOT COMBINE THESE**. Prefix searches
 albums = await repository.search.where('title').matchExact('beautiful sto*').returnAll()
 ```
 
-Again, there are several alternatives to make this a bit more fluent and negation is available:
+Again, there are several alternatives to make this a bit more fluent and, of course, negation is available:
 
 ```javascript
 albums = await repository.search.where('title').not.match('butterfly').returnAll()
@@ -651,7 +655,7 @@ albums = await repository.search.where('title').does.not.matchExactly('beautiful
 
 #### Chaining Searches
 
-So far we've been doing searches that match on a single field. However, we often want to query on multiple field. No problem:
+So far we've been doing searches that match on a single field. However, we often want to query on multiple field. Not a problem:
 
 ```javascript
 let albums = await repository.search
@@ -662,7 +666,7 @@ let albums = await repository.search
 
 These are executed in order from left to right and ignore any order of operations. So this query will match an arist of 'Mushroomhead' OR a title matching 'butterfly' before it goes on to match that the year is greater than 1990.
 
-If you'd like to change this you can nest queries:
+If you'd like to change this you can nest your queries:
 
 ```javascript
 search
@@ -677,7 +681,7 @@ This query finds all Mushroomhead albums after 1990 or albums that have butterfl
 
 ## 👊 Combining RedisJSON and RediSearch
 
-One final note. All of the search capabilites of RediSearch that Redis OM exposes work with Hashes. But, RediSearch also plays nice with RedisJSON. All you need to do to use search with RedisJSON is to enabled it in the schema:
+One final note. All of the search capabilites of RediSearch that Redis OM exposes work with Hashes. But, RediSearch also plays nice with RedisJSON. All you need to do to use search with RedisJSON is to enable it in the schema:
 
 
 ```javascript
@@ -696,23 +700,24 @@ Everything else just works the same.
 
 ## 📚 Documentation
 
-This README just scratches the surface. You can find complete documentation in the [Redis OM .NET docs site](https://redis-developer.github.io/redis-om-dotnet).
+This README is pretty extensive, but if you want to check out every last corner of Redis OM for Node.js, take a look at the complete [API documentation](/docs).
 
 ## ⛏️ Troubleshooting
 
-I'll eventually have a FAQ full of answered questions, but since this is a new library, nobody has asked anything yet, frequently or otherwise. So, if you run into a problem, open an issue. Or, if your not sure it's actually a bug and you don't want to clutter up the issue tracker, hit me up on the [Redis Discord Server](http://discord.gg/redis) and ask there.
+I'll eventually have a FAQ full of answered questions, but since this is a new library, nobody has asked anything yet, frequently or otherwise. So, if you run into a problem, open an issue. Even cooler, dive into the code and send a pull request. If you just want to ping somebody, hit me up on the [Redis Discord server][discord-url].
 
 ## ❤️ Contributing
 
 Contributions are always appreciated. I take PayPal and Bitcoin. Just kidding, I'd would sincerly appreciate your help in making this software better. Here's a couple ways to help:
 
-- **[Bug reports**: This is a new project. You're gonna find them. Open and issue and I'll look into it or ](bug reports**: this is a new project. you're gonna find them. open and issue and i'll look into it or )hunt down the problem and send me a pull request.
-- **[Documentation**: You can improve the life of a lot of developers by fixing typos, grammar, and bad jokes. ](documentation**: you can improve the life of a lot of developers by fixing typos, grammar, and bad jokes. )Or by just pointing out where a little more detail would help. Open an issue or send a pull request.
+- **Bug reports**: This is a new project. You're gonna find them. Open and issue and I'll look into it. Or hunt down the problem and send me a pull request.
+- **Documentation**: You can improve the life of a lot of developers by fixing typos, grammar, and bad jokes Or by just pointing out where a little more detail would help. Again, open an issue or send a pull request.
 
-<!-- [Links, Badges, and Whatnot -->](links, badges, and whatnot -->)
+<!-- Links, Badges, and Whatnot -->
 
 [license-image]: https://img.shields.io/badge/License-BSD%203--Clause-blue.svg
 [license-url]: LICENSE
+[discord-url]: http://discord.gg/redis
 [redis-cloud-url]: https://redis.com/try-free/
 [redisearch-url]: https://oss.redis.com/redisearch/
 [redis-json-url]: https://oss.redis.com/redisjson/
