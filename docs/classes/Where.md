@@ -40,4 +40,4 @@ Converts this [Where](Where.md) into a portion of a RediSearch query.
 
 #### Defined in
 
-[lib/search/where.ts:8](https://github.com/redis-developer/redis-om-node/blob/e0e2e98/lib/search/where.ts#L8)
+[lib/search/where.ts:8](https://github.com/redis-developer/redis-om-node/blob/c1e8c89/lib/search/where.ts#L8)
