@@ -43,7 +43,7 @@ A subclass of [WhereField](WhereField.md) matching the type of the field.
 
 #### Defined in
 
-[lib/search/search.ts:124](https://github.com/redis/redis-om-node/blob/68e0efb/lib/search/search.ts#L124)
+[lib/search/search.ts:124](https://github.com/redis/redis-om-node/blob/20e6b1d/lib/search/search.ts#L124)
 
 ▸ **and**(`subSearchFn`): [`Search`](Search.md)<`TEntity`\>
 
@@ -63,7 +63,7 @@ Sets up a nested search as a logical AND.
 
 #### Defined in
 
-[lib/search/search.ts:131](https://github.com/redis/redis-om-node/blob/68e0efb/lib/search/search.ts#L131)
+[lib/search/search.ts:131](https://github.com/redis/redis-om-node/blob/20e6b1d/lib/search/search.ts#L131)
 
 ___
 
@@ -79,7 +79,7 @@ Returns the number of [Entities](Entity.md) that match this query.
 
 #### Defined in
 
-[lib/search/search.ts:51](https://github.com/redis/redis-om-node/blob/68e0efb/lib/search/search.ts#L51)
+[lib/search/search.ts:51](https://github.com/redis/redis-om-node/blob/20e6b1d/lib/search/search.ts#L51)
 
 ___
 
@@ -103,7 +103,7 @@ A subclass of [WhereField](WhereField.md) matching the type of the field.
 
 #### Defined in
 
-[lib/search/search.ts:141](https://github.com/redis/redis-om-node/blob/68e0efb/lib/search/search.ts#L141)
+[lib/search/search.ts:141](https://github.com/redis/redis-om-node/blob/20e6b1d/lib/search/search.ts#L141)
 
 ▸ **or**(`subSearchFn`): [`Search`](Search.md)<`TEntity`\>
 
@@ -123,7 +123,7 @@ Sets up a nested search as a logical OR.
 
 #### Defined in
 
-[lib/search/search.ts:148](https://github.com/redis/redis-om-node/blob/68e0efb/lib/search/search.ts#L148)
+[lib/search/search.ts:148](https://github.com/redis/redis-om-node/blob/20e6b1d/lib/search/search.ts#L148)
 
 ___
 
@@ -148,7 +148,7 @@ An array of [Entities](Entity.md) matching the query.
 
 #### Defined in
 
-[lib/search/search.ts:64](https://github.com/redis/redis-om-node/blob/68e0efb/lib/search/search.ts#L64)
+[lib/search/search.ts:64](https://github.com/redis/redis-om-node/blob/20e6b1d/lib/search/search.ts#L64)
 
 ___
 
@@ -180,7 +180,7 @@ An array of [Entities](Entity.md) matching the query.
 
 #### Defined in
 
-[lib/search/search.ts:85](https://github.com/redis/redis-om-node/blob/68e0efb/lib/search/search.ts#L85)
+[lib/search/search.ts:85](https://github.com/redis/redis-om-node/blob/20e6b1d/lib/search/search.ts#L85)
 
 ___
 
@@ -205,7 +205,7 @@ A subclass of [WhereField](WhereField.md) matching the type of the field.
 
 #### Defined in
 
-[lib/search/search.ts:106](https://github.com/redis/redis-om-node/blob/68e0efb/lib/search/search.ts#L106)
+[lib/search/search.ts:106](https://github.com/redis/redis-om-node/blob/20e6b1d/lib/search/search.ts#L106)
 
 ▸ **where**(`subSearchFn`): [`Search`](Search.md)<`TEntity`\>
 
@@ -226,4 +226,4 @@ they are treated logically as AND.
 
 #### Defined in
 
-[lib/search/search.ts:114](https://github.com/redis/redis-om-node/blob/68e0efb/lib/search/search.ts#L114)
+[lib/search/search.ts:114](https://github.com/redis/redis-om-node/blob/20e6b1d/lib/search/search.ts#L114)
