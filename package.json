@@ -11,8 +11,8 @@
     "test-unit": "jest --selectProjects unit --watchAll",
     "test-functional": "jest --selectProjects functional --watchAll --runInBand"
   },
-  "repository": "github:redis-developer/redis-om-node",
-  "homepage": "https://github.com/redis-developer/redis-om-node#readme",
+  "repository": "github:redis/redis-om-node",
+  "homepage": "https://github.com/redis/redis-om-node#readme",
   "keywords": [
     "redis",
     "orm"

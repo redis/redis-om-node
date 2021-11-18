@@ -64,7 +64,7 @@ its constructor.
 
 #### Defined in
 
-[lib/schema/schema.ts:53](https://github.com/redis-developer/redis-om-node/blob/c1e8c89/lib/schema/schema.ts#L53)
+[lib/schema/schema.ts:53](https://github.com/redis/redis-om-node/blob/68e0efb/lib/schema/schema.ts#L53)
 
 ## Accessors
 
@@ -81,7 +81,7 @@ that this Schema uses to store [Entities](Entity.md) in Redis.
 
 #### Defined in
 
-[lib/schema/schema.ts:72](https://github.com/redis-developer/redis-om-node/blob/c1e8c89/lib/schema/schema.ts#L72)
+[lib/schema/schema.ts:72](https://github.com/redis/redis-om-node/blob/68e0efb/lib/schema/schema.ts#L72)
 
 ___
 
@@ -97,7 +97,7 @@ The configured name for the RediSearch index for this Schema.
 
 #### Defined in
 
-[lib/schema/schema.ts:66](https://github.com/redis-developer/redis-om-node/blob/c1e8c89/lib/schema/schema.ts#L66)
+[lib/schema/schema.ts:66](https://github.com/redis/redis-om-node/blob/68e0efb/lib/schema/schema.ts#L66)
 
 ___
 
@@ -113,7 +113,7 @@ The configured keyspace prefix in Redis for this Schema.
 
 #### Defined in
 
-[lib/schema/schema.ts:63](https://github.com/redis-developer/redis-om-node/blob/c1e8c89/lib/schema/schema.ts#L63)
+[lib/schema/schema.ts:63](https://github.com/redis/redis-om-node/blob/68e0efb/lib/schema/schema.ts#L63)
 
 ## Methods
 
@@ -129,4 +129,4 @@ Generates a unique string using the configured [IdStrategy](../README.md#idstrat
 
 #### Defined in
 
-[lib/schema/schema.ts:81](https://github.com/redis-developer/redis-om-node/blob/c1e8c89/lib/schema/schema.ts#L81)
+[lib/schema/schema.ts:81](https://github.com/redis/redis-om-node/blob/68e0efb/lib/schema/schema.ts#L81)
