@@ -100,7 +100,7 @@ This is a preview. This code is not production-ready and all manner of Bad Thing
 
   - Changes to interfaces and behavior that break your code upon upgrade.
   - Bugs, both garden variety and [Heisenbugs](https://en.wikipedia.org/wiki/Heisenbug), that crash your application.
-  - Execution of the [HCF instruction](https://en.wikipedia.org/wiki/Halt_and_Catch_Fire_(computing).
+  - Execution of the [HCF instruction](https://en.wikipedia.org/wiki/Halt_and_Catch_Fire_(computing)).
 
 Likely there are bugs. If you find one, open an issue or—better yet—send me a pull request. Likely there will be changes. If you have a brilliant idea for one, let me know by opening an issue. Or just hop on our [Discord server][discord-url] and suggest it there.
 
