@@ -116,7 +116,7 @@ First things first, get yourself a Node.js project. There are lots of ways to do
 
 Once you have that sweet, sweet `package.json`, let's add our newest favorite package to it:
 
-    $ npm install redis-om --[save](save)
+    $ npm install redis-om --save
 
 Of course, you'll need some Redis, preferably with [RediSearch][redisearch-url] and [RedisJSON][redis-json-url] installed. The easiest way to do this is to set up a free [Redis Cloud][redis-cloud-url] instance. But, you can also use Docker:
 
