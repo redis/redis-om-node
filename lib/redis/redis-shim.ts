@@ -1,7 +1,7 @@
-import { createClient } from 'redis';
+import { createClient } from '@node-redis/client';
 
-import { RedisClientType } from 'redis/dist/lib/client';
-import { RedisScripts, RedisModules } from 'redis/dist/lib/commands';
+import { RedisClientType, } from '@node-redis/client/dist/lib/client';
+import { RedisScripts, RedisModules } from '@node-redis/client/dist/lib/commands';
 import RedisError from '../errors';
 
 export default class RedisShim {
@@ -17,16 +17,16 @@ export default class RedisShim {
     await this.redis.quit();
   }
 
-  async execute<TResult>(command: string[]) : Promise<TResult> {
-    return await this.redis.sendCommand<TResult>(command);
+  execute<TResult>(command: string[]) : Promise<TResult> {
+    return this.redis.sendCommand<TResult>(command);
   }
 
   async unlink(key: string) {
     await this.redis.unlink(key);
   }
 
-  async hgetall(key: string) {
-    return await this.redis.hGetAll(key);
+  hgetall(key: string) {
+    return this.redis.hGetAll(key);
   }
 
   async hsetall(key: string, data: { [key: string]: string }) {

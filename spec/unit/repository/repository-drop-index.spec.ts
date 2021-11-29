@@ -1,5 +1,4 @@
 import { mocked } from 'ts-jest/utils';
-import ReplyError from 'redis/dist/lib/errors';
 
 import Client from '../../../lib/client';
 import Repository from '../../../lib/repository/repository';
