@@ -13,6 +13,7 @@
 </p>
 
 ---
+[![NPM][package-image]][package-url]
 [![License][license-image]][license-url]
 
 **Redis OM Node.js** makes it easy to model Redis data in your Node.js applications.
@@ -715,6 +716,8 @@ Contributions are always appreciated. I take PayPal and Bitcoin. Just kidding, I
 
 <!-- Links, Badges, and Whatnot -->
 
+[package-image]: https://img.shields.io/npm/v/redis-om.svg
+[package-url]: https://www.npmjs.com/package/redis-om
 [license-image]: https://img.shields.io/badge/License-BSD%203--Clause-blue.svg
 [license-url]: LICENSE
 [discord-url]: http://discord.gg/redis
