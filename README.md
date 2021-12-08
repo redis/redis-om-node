@@ -731,7 +731,7 @@ Contributions are always appreciated. I take PayPal and Bitcoin. Just kidding, I
 [youtube-shield]: https://img.shields.io/youtube/channel/views/UCD78lHSwYqMlyetR0_P4Vig?style=social
 
 [package-url]: https://www.npmjs.com/package/redis-om
-[build-url]: https://github.com/redis/redis-om-node/actions/workflows/test.yml
+[build-url]: https://github.com/redis/redis-om-node/actions/workflows/ci.yml
 [license-url]: LICENSE
 [discord-url]: http://discord.gg/redis
 [twitch-url]: https://www.twitch.tv/redisinc
