@@ -1,0 +1,32 @@
+name: Test
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  test-all:
+    name: 
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [12, 14, 16]
+
+    steps:
+      - name: Check Out
+      - uses: actions/checkout@v2
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v2.3.0
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Update npm
+        run: npm install --global npm
+
+      - name: Install Packages
+        run: npm ci
+
+      - name: Run Unit tests
+        run: npm run test-unit
