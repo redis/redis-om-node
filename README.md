@@ -18,9 +18,6 @@
 [![YouTube][youtube-shield]][youtube-url]
 [![Twitter][twitter-shield]][twitter-url]
 
-<br/>
-<br/>
-
 [![NPM][package-shield]][package-url]
 [![Build][build-shield]][build-url]
 [![License][license-shield]][license-url]
