@@ -24,7 +24,7 @@ jobs:
           --health-timeout 5s
           --health-retries 5
     steps:
-      - name: Check Out
+      - name: Checkout
         uses: actions/checkout@v2
 
       - name: Use Node.js ${{ matrix.node-version }}
@@ -35,8 +35,8 @@ jobs:
       - name: Update npm
         run: npm install --global npm
 
-      - name: Install Packages
+      - name: Install packages
         run: npm ci
 
-      - name: Run Unit tests
+      - name: Run all tests
         run: npm run test-all
