@@ -13,9 +13,10 @@
 </p>
 
 ---
-[![Build][build-image]][build-url]
 [![NPM][package-image]][package-url]
 [![License][license-image]][license-url]
+[![Build][build-image]][build-url]
+[![Discord][discord-image]][discord-url]
 
 **Redis OM Node.js** makes it easy to model Redis data in your Node.js applications.
 
@@ -717,14 +718,16 @@ Contributions are always appreciated. I take PayPal and Bitcoin. Just kidding, I
 
 <!-- Links, Badges, and Whatnot -->
 
-[package-image]: https://img.shields.io/npm/v/redis-om.svg
-[package-url]: https://www.npmjs.com/package/redis-om
-[license-image]: https://img.shields.io/badge/License-BSD%203--Clause-blue.svg
-[license-url]: LICENSE
-[build-image]: https://img.shields.io/github/workflow/status/redis/redis-om-node/Test/main.svg
-[build-url]: https://github.com/redis/redis-om-node/actions/workflows/test.yml
+[package-image]: https://img.shields.io/npm/v/redis-om
+[license-image]: https://img.shields.io/npm/l/redis-om
+[build-image]: https://img.shields.io/github/workflow/status/redis/redis-om-node/Test/main
+[discord-image]: https://img.shields.io/discord/697882427875393627
 
+[package-url]: https://www.npmjs.com/package/redis-om
+[license-url]: LICENSE
+[build-url]: https://github.com/redis/redis-om-node/actions/workflows/test.yml
 [discord-url]: http://discord.gg/redis
+
 [redis-cloud-url]: https://redis.com/try-free/
 [redisearch-url]: https://oss.redis.com/redisearch/
 [redis-json-url]: https://oss.redis.com/redisjson/
