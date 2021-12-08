@@ -12,7 +12,7 @@ jobs:
     strategy:
       matrix:
         node-version: [12, 14, 16]
-        redismod: [ "preview" ]
+        redismod: [ "edge" ]
     services:
       redis:
         image: redislabs/redismod:${{ matrix.redismod }}
