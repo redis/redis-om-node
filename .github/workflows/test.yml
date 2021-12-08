@@ -7,7 +7,7 @@ on:
 
 jobs:
   test-all:
-    name: 
+    name: Test All
     runs-on: ubuntu-latest
     strategy:
       matrix:
