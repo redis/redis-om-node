@@ -12,6 +12,17 @@ jobs:
     strategy:
       matrix:
         node-version: [12, 14, 16]
+        redismod: [ "preview" ]
+    services:
+      redis:
+        image: redislabs/redismod:${{ matrix.redismod }}
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli PING"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     steps:
       - name: Check Out
         uses: actions/checkout@v2
