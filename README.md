@@ -13,10 +13,14 @@
 </p>
 
 ---
-[![NPM][package-image]][package-url]
-[![License][license-image]][license-url]
-[![Build][build-image]][build-url]
-[![Discord][discord-image]][discord-url]
+[![NPM][package-shield]][package-url]
+[![Build][build-shield]][build-url]
+[![License][license-shield]][license-url]
+&nbsp;&nbsp;&nbsp;&nbsp;
+[![Discord][discord-shield]][discord-url]
+[![Twitch][twitch-shield]][twitch-url]
+[![YouTube][youtube-shield]][youtube-url]
+[![Twitter][twitter-shield]][twitter-url]
 
 **Redis OM Node.js** makes it easy to model Redis data in your Node.js applications.
 
@@ -718,15 +722,21 @@ Contributions are always appreciated. I take PayPal and Bitcoin. Just kidding, I
 
 <!-- Links, Badges, and Whatnot -->
 
-[package-image]: https://img.shields.io/npm/v/redis-om
-[license-image]: https://img.shields.io/npm/l/redis-om
-[build-image]: https://img.shields.io/github/workflow/status/redis/redis-om-node/CI/main
-[discord-image]: https://img.shields.io/discord/697882427875393627
+[package-shield]: https://img.shields.io/npm/v/redis-om?logo=npm
+[build-shield]: https://img.shields.io/github/workflow/status/redis/redis-om-node/CI/main
+[license-shield]: https://img.shields.io/npm/l/redis-om
+[discord-shield]: https://img.shields.io/discord/697882427875393627?style=social&logo=discord
+[twitch-shield]: https://img.shields.io/twitch/status/redisinc?style=social
+[twitter-shield]: https://img.shields.io/twitter/follow/redisinc?style=social
+[youtube-shield]: https://img.shields.io/youtube/channel/views/UCD78lHSwYqMlyetR0_P4Vig?style=social
 
 [package-url]: https://www.npmjs.com/package/redis-om
-[license-url]: LICENSE
 [build-url]: https://github.com/redis/redis-om-node/actions/workflows/test.yml
+[license-url]: LICENSE
 [discord-url]: http://discord.gg/redis
+[twitch-url]: https://www.twitch.tv/redisinc
+[twitter-url]: https://twitter.com/redisinc
+[youtube-url]: https://www.youtube.com/redisinc
 
 [redis-cloud-url]: https://redis.com/try-free/
 [redisearch-url]: https://oss.redis.com/redisearch/
