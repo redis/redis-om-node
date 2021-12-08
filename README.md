@@ -13,14 +13,17 @@
 </p>
 
 ---
-[![NPM][package-shield]][package-url]
-[![Build][build-shield]][build-url]
-[![License][license-shield]][license-url]
-&nbsp;&nbsp;&nbsp;&nbsp;
 [![Discord][discord-shield]][discord-url]
 [![Twitch][twitch-shield]][twitch-url]
 [![YouTube][youtube-shield]][youtube-url]
 [![Twitter][twitter-shield]][twitter-url]
+
+<br/>
+<br/>
+
+[![NPM][package-shield]][package-url]
+[![Build][build-shield]][build-url]
+[![License][license-shield]][license-url]
 
 **Redis OM Node.js** makes it easy to model Redis data in your Node.js applications.
 
