@@ -1,0 +1,42 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  test-all:
+    name: Test All
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [12, 14, 16]
+        redismod: [ "preview" ]
+    services:
+      redis:
+        image: redislabs/redismod:${{ matrix.redismod }}
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli PING"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v2.3.0
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Update npm
+        run: npm install --global npm
+
+      - name: Install packages
+        run: npm ci
+
+      - name: Run all tests
+        run: npm run test-all
