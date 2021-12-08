@@ -720,7 +720,7 @@ Contributions are always appreciated. I take PayPal and Bitcoin. Just kidding, I
 
 [package-image]: https://img.shields.io/npm/v/redis-om
 [license-image]: https://img.shields.io/npm/l/redis-om
-[build-image]: https://img.shields.io/github/workflow/status/redis/redis-om-node/Test/main
+[build-image]: https://img.shields.io/github/workflow/status/redis/redis-om-node/CI/main
 [discord-image]: https://img.shields.io/discord/697882427875393627
 
 [package-url]: https://www.npmjs.com/package/redis-om
