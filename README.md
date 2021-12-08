@@ -13,6 +13,7 @@
 </p>
 
 ---
+[![Build][build-image]][build-url]
 [![NPM][package-image]][package-url]
 [![License][license-image]][license-url]
 
@@ -720,6 +721,9 @@ Contributions are always appreciated. I take PayPal and Bitcoin. Just kidding, I
 [package-url]: https://www.npmjs.com/package/redis-om
 [license-image]: https://img.shields.io/badge/License-BSD%203--Clause-blue.svg
 [license-url]: LICENSE
+[build-image]: https://img.shields.io/github/workflow/status/redis/redis-om-node/Test/main.svg
+[build-url]: https://github.com/redis/redis-om-node/actions/workflows/test.yml
+
 [discord-url]: http://discord.gg/redis
 [redis-cloud-url]: https://redis.com/try-free/
 [redisearch-url]: https://oss.redis.com/redisearch/
