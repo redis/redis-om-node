@@ -22,6 +22,7 @@ export default class WhereText<TEntity extends Entity> extends WhereField<TEntit
 
   get exact() {
     this.exactValue = true
+    this.search.noStopWords()
     return this;
   }
 
