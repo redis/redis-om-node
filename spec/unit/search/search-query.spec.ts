@@ -20,9 +20,9 @@ describe("Search", () => {
     describe("when querying against hashes", () => {
 
       let search: Search<SimpleHashEntity>;
-      
+
       beforeEach(() => search = new Search<SimpleHashEntity>(simpleHashSchema, client));
-      
+
       it("generates a query matching all items", () => {
         expect(search.query).toBe("*");
       });
@@ -39,6 +39,11 @@ describe("Search", () => {
           .where('aBoolean').true()
           .where('anArray').containsOneOf('foo', 'bar').query;
         expect(query).toBe("( ( ( (@aString:{foo}) (@aNumber:[42 42]) ) (@aBoolean:{1}) ) (@anArray:{foo|bar}) )");
+      });
+
+      it("generates a query using .noStopWords", () => {
+        let query = search.where('aString').eq('foo').noStopWords().query;
+        expect(query).toBe("(@aString:{foo}) NOSTOPWORDS");
       });
 
       it("generates a query using .and", () => {

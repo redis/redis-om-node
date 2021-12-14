@@ -31,6 +31,7 @@ export default class Search<TEntity extends Entity> {
   private client: Client;
 
   private rootWhere?: Where;
+  private stopWords = true;
 
   /** @internal */
   constructor(schema: Schema<TEntity>, client: Client) {
@@ -41,7 +42,9 @@ export default class Search<TEntity extends Entity> {
   /** @internal */
   get query() : string {
     if (this.rootWhere === undefined) return '*';
-    return `${this.rootWhere.toString()}`;
+    let query = `${this.rootWhere.toString()}`;
+    if (this.stopWords) return query;
+    return `${query} NOSTOPWORDS`;
   }
 
   /**
@@ -148,6 +151,11 @@ export default class Search<TEntity extends Entity> {
   or(subSearchFn: SubSearchFunction<TEntity>): Search<TEntity>;
   or(fieldOrFn: string | SubSearchFunction<TEntity>): WhereField<TEntity> | Search<TEntity> {
     return this.anyWhere(WhereOr, fieldOrFn);
+  }
+
+  noStopWords() {
+    this.stopWords = false;
+    return this;
   }
 
   private anyWhere(ctor: AndOrConstructor, fieldOrFn: string | SubSearchFunction<TEntity>): WhereField<TEntity> | Search<TEntity> {
