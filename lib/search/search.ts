@@ -153,6 +153,11 @@ export default class Search<TEntity extends Entity> {
     return this.anyWhere(WhereOr, fieldOrFn);
   }
 
+  /**
+   * Sometimes you want the search to *not* ignore the stop words. Call this
+   * when that's what you want.
+   * @returns `this`.
+   */
   noStopWords() {
     this.stopWords = false;
     return this;
