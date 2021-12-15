@@ -72,6 +72,24 @@ describe("search for JSON documents", () => {
     ]));
   });
 
+  it("searches a string with full text and an exact match", async () => {
+    entities = await repository.search().where('aFullTextString').exactly.matches('lazy dog').returnAll();
+
+    expect(entities).toHaveLength(1);
+    expect(entities).toEqual(expect.arrayContaining([
+      expect.objectContaining({ entityId: '1', ...AN_ENTITY })
+    ]));
+  });
+
+  it("searches a string with full text, an exact match, and stop words", async () => {
+    entities = await repository.search().where('aFullTextString').exactly.matches('the lazy dog').returnAll();
+
+    expect(entities).toHaveLength(1);
+    expect(entities).toEqual(expect.arrayContaining([
+      expect.objectContaining({ entityId: '1', ...AN_ENTITY }),
+    ]));
+  });
+
   it("searches a number", async () => {
     entities = await repository.search().where('aNumber').lte(23).returnAll();
 
