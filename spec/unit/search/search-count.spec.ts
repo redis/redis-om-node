@@ -27,66 +27,34 @@ describe("Search", () => {
       beforeEach(async () => {
         mockClientSearchToReturnCountOf(3);
         search = new Search<SimpleHashEntity>(simpleHashSchema, client)
+        actualCount = await search.count();
       });
 
-      describe("and using stop words", () => {
-        beforeEach(async () => actualCount = await search.count());
-  
-        it("askes the client for results", () => {
-          expect(Client.prototype.search).toHaveBeenCalledTimes(1);
-          expect(Client.prototype.search).toHaveBeenCalledWith({
-            indexName: 'SimpleHashEntity:index', query, offset, count, noStopWords: false });
-        });
-
-        it("returns the expected count", () => expect(actualCount).toBe(3));
+      it("askes the client for results", () => {
+        expect(Client.prototype.search).toHaveBeenCalledTimes(1);
+        expect(Client.prototype.search).toHaveBeenCalledWith({
+          indexName: 'SimpleHashEntity:index', query, offset, count });
       });
 
-      describe("and *not* using stop words", () => {
-        beforeEach(async () => actualCount = await search.noStopWords().count());
-  
-        it("askes the client for results", () => {
-          expect(Client.prototype.search).toHaveBeenCalledTimes(1);
-          expect(Client.prototype.search).toHaveBeenCalledWith({
-            indexName: 'SimpleHashEntity:index', query, offset, count, noStopWords: true });
-        });
-
-        it("returns the expected count", () => expect(actualCount).toBe(3));
-
-      });
-
+      it("returns the expected count", () => expect(actualCount).toBe(3));
     });
 
     describe("when running against JSON objects", () => {
       let search: Search<SimpleJsonEntity>;
 
-      beforeEach(() => {
+      beforeEach(async () => {
         mockClientSearchToReturnCountOf(3);
-        search = new Search<SimpleJsonEntity>(simpleJsonSchema, client)
+        search = new Search<SimpleJsonEntity>(simpleJsonSchema, client);
+        actualCount = await search.count();
       });
 
-      describe("and using stop words", () => {
-        beforeEach(async () => actualCount = await search.count())
-
-        it("askes the client for results", () => {
-          expect(Client.prototype.search).toHaveBeenCalledTimes(1);
-          expect(Client.prototype.search).toHaveBeenCalledWith({
-            indexName: 'SimpleJsonEntity:index', query, offset, count, noStopWords: false });
-        });
+      it("askes the client for results", () => {
+        expect(Client.prototype.search).toHaveBeenCalledTimes(1);
+        expect(Client.prototype.search).toHaveBeenCalledWith({
+          indexName: 'SimpleJsonEntity:index', query, offset, count });
+      });
   
-        it("returns the expected count", () => expect(actualCount).toBe(3));
-      });
-
-      describe("and *not* using stop words", () => {
-        beforeEach(async () => actualCount = await search.noStopWords().count())
-
-        it("askes the client for results", () => {
-          expect(Client.prototype.search).toHaveBeenCalledTimes(1);
-          expect(Client.prototype.search).toHaveBeenCalledWith({
-            indexName: 'SimpleJsonEntity:index', query, offset, count, noStopWords: true });
-        });
-  
-        it("returns the expected count", () => expect(actualCount).toBe(3));
-      });
+      it("returns the expected count", () => expect(actualCount).toBe(3));
     });
   });
 });

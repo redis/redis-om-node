@@ -40,7 +40,7 @@ describe("Search", () => {
         it("askes the client for a single page of results", () => {
           expect(Client.prototype.search).toHaveBeenCalledTimes(1);
           expect(Client.prototype.search).toHaveBeenCalledWith({
-            indexName, query, offset: 0, count: 10, noStopWords: false });
+            indexName, query, offset: 0, count: 10 });
         });
 
         it("returns no results", () => expect(entities).toHaveLength(0));
@@ -55,7 +55,7 @@ describe("Search", () => {
         it("askes the client for a a single page of results", () => {
           expect(Client.prototype.search).toHaveBeenCalledTimes(1);
           expect(Client.prototype.search).toHaveBeenCalledWith({
-            indexName, query, offset: 0, count: 10, noStopWords: false });
+            indexName, query, offset: 0, count: 10 });
         });
 
         it("returns the expected single result", () => {
@@ -75,7 +75,7 @@ describe("Search", () => {
         it("askes the client for a single page of results", () => {
           expect(Client.prototype.search).toHaveBeenCalledTimes(1);
           expect(Client.prototype.search).toHaveBeenCalledWith({
-            indexName, query, offset: 0, count: 10, noStopWords: false });
+            indexName, query, offset: 0, count: 10 });
         });
 
         it("returns all the results", async () => {
@@ -97,7 +97,7 @@ describe("Search", () => {
         it("askes the client for multiple pages of results", () => {
           expect(Client.prototype.search).toHaveBeenCalledTimes(3);
           expect(Client.prototype.search).toHaveBeenCalledWith({
-            indexName, query, offset: 0, count: 2, noStopWords: false });
+            indexName, query, offset: 0, count: 2 });
         });
 
         it("returns all the results", async () => {
@@ -109,23 +109,6 @@ describe("Search", () => {
             expect.objectContaining(SIMPLE_ENTITY_4),
             expect.objectContaining(SIMPLE_ENTITY_5)
           ]));
-        });
-      });
-
-      describe("when querying multiple results that cross the page boundry and use stop words", () => {
-        beforeEach(async () => {
-          mockClientSearchToReturnPaginatedHashes();
-          entities = await search.noStopWords().returnAll({ pageSize: 2 });
-        });
-
-        it("askes the client for multiple pages of results", () => {
-          expect(Client.prototype.search).toHaveBeenCalledTimes(3);
-          expect(Client.prototype.search).toHaveBeenCalledWith({
-            indexName, query, offset: 0, count: 2, noStopWords: true });
-          expect(Client.prototype.search).toHaveBeenCalledWith({
-            indexName, query, offset: 2, count: 2, noStopWords: true });
-          expect(Client.prototype.search).toHaveBeenCalledWith({
-            indexName, query, offset: 4, count: 2, noStopWords: true });
         });
       });
     });
@@ -146,7 +129,7 @@ describe("Search", () => {
         it("askes the client for a single page of results", () => {
           expect(Client.prototype.search).toHaveBeenCalledTimes(1);
           expect(Client.prototype.search).toHaveBeenCalledWith({
-            indexName, query, offset: 0, count: 10, noStopWords: false });
+            indexName, query, offset: 0, count: 10 });
         });
 
         it("returns no results", () => expect(entities).toHaveLength(0))
@@ -161,7 +144,7 @@ describe("Search", () => {
         it("askes the client for a single page of results", () => {
           expect(Client.prototype.search).toHaveBeenCalledTimes(1);
           expect(Client.prototype.search).toHaveBeenCalledWith({
-            indexName, query, offset: 0, count: 10, noStopWords: false });
+            indexName, query, offset: 0, count: 10 });
         });
 
         it("returns the expected single result", () => {
@@ -181,7 +164,7 @@ describe("Search", () => {
         it("askes the client for a single page of results", () => {
           expect(Client.prototype.search).toHaveBeenCalledTimes(1);
           expect(Client.prototype.search).toHaveBeenCalledWith({
-            indexName, query, offset: 0, count: 10, noStopWords: false });
+            indexName, query, offset: 0, count: 10 });
         });
 
         it("returns all the results", async () => {
@@ -203,11 +186,11 @@ describe("Search", () => {
         it("askes the client for a multiple pages of results", () => {
           expect(Client.prototype.search).toHaveBeenCalledTimes(3);
           expect(Client.prototype.search).toHaveBeenCalledWith({
-            indexName, query, offset: 0, count: 2, noStopWords: false });
+            indexName, query, offset: 0, count: 2 });
           expect(Client.prototype.search).toHaveBeenCalledWith({
-            indexName, query, offset: 2, count: 2, noStopWords: false });
+            indexName, query, offset: 2, count: 2 });
           expect(Client.prototype.search).toHaveBeenCalledWith({
-            indexName, query, offset: 4, count: 2, noStopWords: false });
+            indexName, query, offset: 4, count: 2 });
         });
 
         it("returns all the results", async () => {
@@ -219,23 +202,6 @@ describe("Search", () => {
             expect.objectContaining(SIMPLE_ENTITY_4),
             expect.objectContaining(SIMPLE_ENTITY_5)
           ]));
-        });
-      });
-
-      describe("when querying multiple results that cross the page boundry and use stop words", () => {
-        beforeEach(async () => {
-          mockClientSearchToReturnPaginatedJsonStrings();
-          entities = await search.noStopWords().returnAll({ pageSize: 2 });
-        });
-
-        it("askes the client for multiple pages of results", () => {
-          expect(Client.prototype.search).toHaveBeenCalledTimes(3);
-          expect(Client.prototype.search).toHaveBeenCalledWith({
-            indexName, query, offset: 0, count: 2, noStopWords: true });
-          expect(Client.prototype.search).toHaveBeenCalledWith({
-            indexName, query, offset: 2, count: 2, noStopWords: true });
-          expect(Client.prototype.search).toHaveBeenCalledWith({
-            indexName, query, offset: 4, count: 2, noStopWords: true });
         });
       });
     });

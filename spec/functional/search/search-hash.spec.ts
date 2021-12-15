@@ -63,17 +63,7 @@ describe("search for hashes", () => {
   });
 
   it("searches a string with full text", async () => {
-    entities = await repository.search().where('aFullTextString').matches('quick').returnAll();
-
-    expect(entities).toHaveLength(2);
-    expect(entities).toEqual(expect.arrayContaining([
-      expect.objectContaining({ entityId: '1', ...AN_ENTITY }),
-      expect.objectContaining({ entityId: '2', ...ANOTHER_ENTITY })
-    ]));
-  });
-
-  it("searches a string with full text and an exact match", async () => {
-    entities = await repository.search().where('aFullTextString').exactly.matches('lazy').returnAll();
+    entities = await repository.search().where('aFullTextString').matches('brown quick').returnAll();
 
     expect(entities).toHaveLength(1);
     expect(entities).toEqual(expect.arrayContaining([
@@ -81,8 +71,26 @@ describe("search for hashes", () => {
     ]));
   });
 
+  it("searches a string with full text and an exact match", async () => {
+    entities = await repository.search().where('aFullTextString').exactly.matches('quick brown').returnAll();
+
+    expect(entities).toHaveLength(1);
+    expect(entities).toEqual(expect.arrayContaining([
+      expect.objectContaining({ entityId: '1', ...AN_ENTITY })
+    ]));
+  });
+
+  it("searches a string with full text and stop words", async () => {
+    entities = await repository.search().where('aFullTextString').matches('brown quick the').returnAll();
+
+    expect(entities).toHaveLength(1);
+    expect(entities).toEqual(expect.arrayContaining([
+      expect.objectContaining({ entityId: '1', ...AN_ENTITY }),
+    ]));
+  });
+
   it("searches a string with full text, an exact match, and stop words", async () => {
-    entities = await repository.search().where('aFullTextString').exactly.matches('the lazy dog').returnAll();
+    entities = await repository.search().where('aFullTextString').exactly.matches('the quick brown').returnAll();
 
     expect(entities).toHaveLength(1);
     expect(entities).toEqual(expect.arrayContaining([

@@ -31,7 +31,6 @@ export default class Search<TEntity extends Entity> {
   private client: Client;
 
   private rootWhere?: Where;
-  private useStopWords = true;
 
   /** @internal */
   constructor(schema: Schema<TEntity>, client: Client) {
@@ -50,8 +49,8 @@ export default class Search<TEntity extends Entity> {
    * @returns 
    */
   async count(): Promise<number> {
-    let searchResults = await this.client.search({
-      indexName: this.schema.indexName, query: this.query, offset: 0, count: 0, noStopWords: !this.useStopWords });
+    let { schema: { indexName }, query } = this
+    let searchResults = await this.client.search({ indexName, query, offset: 0, count: 0 });
     return this.schema.dataStructure === 'JSON'
       ? new JsonSearchResultsConverter(this.schema, searchResults).count
       : new HashSearchResultsConverter(this.schema, searchResults).count;
@@ -65,7 +64,7 @@ export default class Search<TEntity extends Entity> {
    */
   async return(offset: number, count: number): Promise<TEntity[]> {
     let { schema: { indexName }, query } = this
-    let searchResults = await this.client.search({ indexName, query, offset, count, noStopWords: !this.useStopWords });
+    let searchResults = await this.client.search({ indexName, query, offset, count });
     return this.schema.dataStructure === 'JSON'
       ? new JsonSearchResultsConverter(this.schema, searchResults).entities
       : new HashSearchResultsConverter(this.schema, searchResults).entities;
@@ -151,16 +150,6 @@ export default class Search<TEntity extends Entity> {
   or(subSearchFn: SubSearchFunction<TEntity>): Search<TEntity>;
   or(fieldOrFn: string | SubSearchFunction<TEntity>): WhereField<TEntity> | Search<TEntity> {
     return this.anyWhere(WhereOr, fieldOrFn);
-  }
-
-  /**
-   * Sometimes you want the search to *not* ignore the stop words. Get this
-   * when that's what you want.
-   * @returns `this`.
-   */
-  noStopWords() {
-    this.useStopWords = false;
-    return this;
   }
 
   private anyWhere(ctor: AndOrConstructor, fieldOrFn: string | SubSearchFunction<TEntity>): WhereField<TEntity> | Search<TEntity> {

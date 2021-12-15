@@ -25,8 +25,7 @@ type SearchOptions = {
   indexName: string,
   query: string,
   offset: number,
-  count: number,
-  noStopWords?: boolean
+  count: number
 }
 
 /**
@@ -111,14 +110,10 @@ export default class Client {
   /** @internal */
   async search(options: SearchOptions) {
     this.validateShimOpen();
-    let { indexName, query, offset, count, noStopWords } = options
-    
-    let args = []
-    args.push('FT.SEARCH', indexName, query)
-    if (!!noStopWords) args.push('NOSTOPWORDS')
-    args.push('LIMIT', offset.toString(), count.toString())
-    
-    return await this.shim!.execute<any[]>(args);
+    let { indexName, query, offset, count } = options
+    return await this.shim!.execute<any[]>([
+      'FT.SEARCH', indexName, query,
+      'LIMIT', offset.toString(), count.toString() ]);
   }
 
   /** @internal */
