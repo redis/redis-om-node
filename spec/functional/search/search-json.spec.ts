@@ -89,13 +89,10 @@ describe("search for JSON documents", () => {
     ]));
   });
 
-  it("searches a string with full text, an exact match, and stop words", async () => {
-    entities = await repository.search().where('aFullTextString').exactly.matches('the quick brown').returnAll();
-
-    expect(entities).toHaveLength(1);
-    expect(entities).toEqual(expect.arrayContaining([
-      expect.objectContaining({ entityId: '1', ...AN_ENTITY }),
-    ]));
+  it("throws an error when searching a string with full text, an exact match, and stop words", async () => {
+    expect(async () => {
+      entities = await repository.search().where('aFullTextString').exactly.matches('the quick brown').returnAll();
+    }).rejects.toThrow(`The query to RediSearch had a syntax error: "Syntax error at offset 19 near the".\nThis is often the result of using a stop word in the query. Either change the query to not use a stop word or change the stop words in the schema definition. By default the stop words are: a, is, the, an, and, are, as, at, be, but, by, for, if, in, into, it, no, not, of,on, or, such, that, their, then, there, these, they, this, to, as, will, and with.`)
   });
 
   it("searches a number", async () => {
