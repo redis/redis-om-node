@@ -38,7 +38,8 @@ describe("Search", () => {
 
         it("askes the client for results", () => {
           expect(Client.prototype.search).toHaveBeenCalledTimes(1);
-          expect(Client.prototype.search).toHaveBeenCalledWith({ indexName, query, offset: 0, count: 5 });
+          expect(Client.prototype.search).toHaveBeenCalledWith({
+            indexName, query, offset: 0, count: 5, noStopWords: false });
         });
 
         it("returns no results", () => expect(entities).toHaveLength(0));
@@ -52,7 +53,8 @@ describe("Search", () => {
 
         it("askes the client for results", () => {
           expect(Client.prototype.search).toHaveBeenCalledTimes(1);
-          expect(Client.prototype.search).toHaveBeenCalledWith({ indexName, query, offset: 0, count: 5 });
+          expect(Client.prototype.search).toHaveBeenCalledWith({
+            indexName, query, offset: 0, count: 5, noStopWords: false });
         });
 
         it("returns the expected single result", () => {
@@ -71,7 +73,8 @@ describe("Search", () => {
 
         it("askes the client for results", () => {
           expect(Client.prototype.search).toHaveBeenCalledTimes(1);
-          expect(Client.prototype.search).toHaveBeenCalledWith({ indexName, query, offset: 0, count: 5 });
+          expect(Client.prototype.search).toHaveBeenCalledWith({
+            indexName, query, offset: 0, count: 5, noStopWords: false });
         });
 
         it("returns all the results", async () => {
@@ -81,6 +84,19 @@ describe("Search", () => {
             expect.objectContaining(SIMPLE_ENTITY_2),
             expect.objectContaining(SIMPLE_ENTITY_3)
           ]));
+        });
+      });
+
+      describe("when querying without stopwords", () => {
+        beforeEach(async () => {
+          mockClientSearchToReturnNothing();
+          entities = await search.noStopWords().return(0, 5);
+        });
+
+        it("askes the client for results", () => {
+          expect(Client.prototype.search).toHaveBeenCalledTimes(1);
+          expect(Client.prototype.search).toHaveBeenCalledWith({
+            indexName, query, offset: 0, count: 5, noStopWords: true });
         });
       });
     });
@@ -100,7 +116,8 @@ describe("Search", () => {
 
         it("askes the client for results", () => {
           expect(Client.prototype.search).toHaveBeenCalledTimes(1);
-          expect(Client.prototype.search).toHaveBeenCalledWith({ indexName, query, offset: 0, count: 5 });
+          expect(Client.prototype.search).toHaveBeenCalledWith({
+            indexName, query, offset: 0, count: 5, noStopWords: false });
         });
 
         it("returns no results", async () => expect(entities).toHaveLength(0));
@@ -114,7 +131,8 @@ describe("Search", () => {
 
         it("askes the client for results", () => {
           expect(Client.prototype.search).toHaveBeenCalledTimes(1);
-          expect(Client.prototype.search).toHaveBeenCalledWith({ indexName, query, offset: 0, count: 5 });
+          expect(Client.prototype.search).toHaveBeenCalledWith({
+            indexName, query, offset: 0, count: 5, noStopWords: false });
         });
 
         it("returns the expected single result", () => {
@@ -133,7 +151,8 @@ describe("Search", () => {
 
         it("askes the client for results", () => {
           expect(Client.prototype.search).toHaveBeenCalledTimes(1);
-          expect(Client.prototype.search).toHaveBeenCalledWith({ indexName, query, offset: 0, count: 5 });
+          expect(Client.prototype.search).toHaveBeenCalledWith({
+            indexName, query, offset: 0, count: 5, noStopWords: false });
         });
 
         it("returns all the expected results", () => {
@@ -143,6 +162,19 @@ describe("Search", () => {
             expect.objectContaining(SIMPLE_ENTITY_2),
             expect.objectContaining(SIMPLE_ENTITY_3)
           ]));
+        });
+      });
+
+      describe("when querying without stop words", () => {
+        beforeEach(async () => {
+          mockClientSearchToReturnNothing();
+          entities = await search.noStopWords().return(0, 5);
+        });
+
+        it("askes the client for results", () => {
+          expect(Client.prototype.search).toHaveBeenCalledTimes(1);
+          expect(Client.prototype.search).toHaveBeenCalledWith({
+            indexName, query, offset: 0, count: 5, noStopWords: true });
         });
       });
     });
