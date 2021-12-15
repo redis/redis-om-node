@@ -32,8 +32,8 @@ describe("Search", () => {
 
       it("askes the client for results", () => {
         expect(Client.prototype.search).toHaveBeenCalledTimes(1);
-        expect(Client.prototype.search).toHaveBeenCalledWith(
-          'SimpleHashEntity:index', '*', 0, 0);
+        expect(Client.prototype.search).toHaveBeenCalledWith({
+          indexName: 'SimpleHashEntity:index', query: '*', offset: 0, count: 0 });
       });
 
       it("returns the expected count", () => expect(count).toBe(3));
@@ -50,8 +50,8 @@ describe("Search", () => {
 
       it("askes the client for results", () => {
         expect(Client.prototype.search).toHaveBeenCalledTimes(1);
-        expect(Client.prototype.search).toHaveBeenCalledWith(
-          'SimpleJsonEntity:index', '*', 0, 0);
+        expect(Client.prototype.search).toHaveBeenCalledWith({
+          indexName: 'SimpleJsonEntity:index', query: '*', offset: 0, count: 0 });
       });
 
       it("returns the expected count", () => expect(count).toBe(3));

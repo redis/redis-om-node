@@ -42,9 +42,7 @@ export default class Search<TEntity extends Entity> {
   /** @internal */
   get query() : string {
     if (this.rootWhere === undefined) return '*';
-    let query = `${this.rootWhere.toString()}`;
-    if (this.stopWords) return query;
-    return `${query} NOSTOPWORDS`;
+    return `${this.rootWhere.toString()}`;
   }
 
   /**
@@ -52,7 +50,8 @@ export default class Search<TEntity extends Entity> {
    * @returns 
    */
   async count(): Promise<number> {
-    let searchResults = await this.client.search(this.schema.indexName, this.query, 0, 0);
+    let searchResults = await this.client.search({
+      indexName: this.schema.indexName, query: this.query, offset: 0, count: 0 });
     return this.schema.dataStructure === 'JSON'
       ? new JsonSearchResultsConverter(this.schema, searchResults).count
       : new HashSearchResultsConverter(this.schema, searchResults).count;
@@ -64,8 +63,9 @@ export default class Search<TEntity extends Entity> {
    * @param pageSize The number of {@link Entity | Entities} to return.
    * @returns An array of {@link Entity | Entities} matching the query.
    */
-  async return(offset: number, pageSize: number): Promise<TEntity[]> {
-    let searchResults = await this.client.search(this.schema.indexName, this.query, offset, pageSize);
+  async return(offset: number, count: number): Promise<TEntity[]> {
+    let { schema: { indexName }, query } = this
+    let searchResults = await this.client.search({ indexName, query, offset, count });
     return this.schema.dataStructure === 'JSON'
       ? new JsonSearchResultsConverter(this.schema, searchResults).entities
       : new HashSearchResultsConverter(this.schema, searchResults).entities;

@@ -20,8 +20,8 @@ describe("Search", () => {
 
     const A_TEXT_QUERY = "(@aString:'foo')";
     const A_NEGATED_TEXT_QUERY = "(-@aString:'foo')";
-    const AN_EXACT_TEXT_QUERY = '(@aString:"foo") NOSTOPWORDS';
-    const A_NEGATED_EXACT_TEXT_QUERY = '(-@aString:"foo") NOSTOPWORDS';
+    const AN_EXACT_TEXT_QUERY = '(@aString:"foo")';
+    const A_NEGATED_EXACT_TEXT_QUERY = '(-@aString:"foo")';
 
     beforeAll(() => client = new Client());
   
@@ -63,7 +63,7 @@ describe("Search", () => {
 
       it("generates a query that escapes all punctuation for an exact match", () => {
         let query = where.exact.match(",.<>{}[]\"':;!@#$%^&*()-+=~|").query;
-        expect(query).toBe('(@aString:"\\,\\.\\<\\>\\{\\}\\[\\]\\"\\\'\\:\\;\\!\\@\\#\\$\\%\\^\\&\\*\\(\\)\\-\\+\\=\\~\\|") NOSTOPWORDS');
+        expect(query).toBe('(@aString:"\\,\\.\\<\\>\\{\\}\\[\\]\\"\\\'\\:\\;\\!\\@\\#\\$\\%\\^\\&\\*\\(\\)\\-\\+\\=\\~\\|")');
       });
     });
   });

@@ -21,8 +21,13 @@ describe("Client", () => {
       });
 
       it("passes the command to the shim with specified limits", async () => {
-        await client.search('index', 'query', 0, 5);
+        await client.search({ indexName: 'index', query: 'query', offset: 0, count: 5 });
         expect(RedisShim.prototype.execute).toHaveBeenCalledWith([ 'FT.SEARCH', 'index', 'query', 'LIMIT', '0', '5' ]);
+      });
+
+      it("passes the command to the shim with specified limits and no stop words", async () => {
+        await client.search({ indexName: 'index', query: 'query', offset: 0, count: 5, noStopWords: true })
+        expect(RedisShim.prototype.execute).toHaveBeenCalledWith([ 'FT.SEARCH', 'index', 'query', 'NOSTOPWORDS', 'LIMIT', '0', '5' ]);
       });
     });
 
@@ -33,12 +38,12 @@ describe("Client", () => {
       });
       
       it("errors when called on a closed client", () => 
-        expect(async () => await client.search('index', 'query', 0, 10))
+        expect(async () => await client.search({ indexName: 'index', query: 'query', offset: 0, count: 10 }))
           .rejects.toThrow("Redis connection needs opened."));
     });
     
     it("errors when called on a new client", async () =>
-      expect(async () => await client.search('index', 'query', 0, 10))
+      expect(async () => await client.search({ indexName: 'index', query: 'query', offset: 0, count: 10 }))
         .rejects.toThrow("Redis connection needs opened."));
   });
 });

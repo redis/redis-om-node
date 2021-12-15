@@ -20,6 +20,15 @@ export type JsonData = { [key: string ]: any };
 /** The type of data structure in Redis to map objects to. */
 export type SearchDataStructure = 'HASH' | 'JSON';
 
+/** @internal */
+type SearchOptions = {
+  indexName: string,
+  query: string,
+  offset: number,
+  count: number,
+  noStopWords?: boolean
+}
+
 /**
  * A Client is the starting point for working with Redis OM. Clients manage the
  * connection to Redis and provide limited functionality for executing Redis commands.
@@ -100,9 +109,16 @@ export default class Client {
   }
   
   /** @internal */
-  async search(indexName: string, query: string, offset: number, count: number) {
+  async search(options: SearchOptions) {
     this.validateShimOpen();
-    return await this.shim!.execute<any[]>(['FT.SEARCH', indexName, query, 'LIMIT', offset.toString(), count.toString()]);
+    let { indexName, query, offset, count, noStopWords } = options
+    
+    let args = []
+    args.push('FT.SEARCH', indexName, query)
+    if (!!noStopWords) args.push('NOSTOPWORDS')
+    args.push('LIMIT', offset.toString(), count.toString())
+    
+    return await this.shim!.execute<any[]>(args);
   }
 
   /** @internal */

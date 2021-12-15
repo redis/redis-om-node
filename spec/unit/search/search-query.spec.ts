@@ -43,7 +43,7 @@ describe("Search", () => {
 
       it("generates a query using .noStopWords", () => {
         let query = search.where('aString').eq('foo').noStopWords().query;
-        expect(query).toBe("(@aString:{foo}) NOSTOPWORDS");
+        expect(query).toBe("(@aString:{foo})");
       });
 
       it("generates a query using .and", () => {
