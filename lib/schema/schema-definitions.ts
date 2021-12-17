@@ -66,3 +66,6 @@ export type SchemaDefinition = {
 
 /** A function that generates random {@link Entity.entityId | Entity IDs}. */
 export type IdStrategy = () => string;
+
+/** Valid values for how to use stop words for a given {@link Schema}. */
+export type StopWordOptions = 'OFF' | 'DEFAULT' | 'CUSTOM';

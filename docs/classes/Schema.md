@@ -37,6 +37,8 @@ its constructor.
 - [dataStructure](Schema.md#datastructure)
 - [indexName](Schema.md#indexname)
 - [prefix](Schema.md#prefix)
+- [stopWords](Schema.md#stopwords)
+- [useStopWords](Schema.md#usestopwords)
 
 ### Methods
 
@@ -64,7 +66,7 @@ its constructor.
 
 #### Defined in
 
-[lib/schema/schema.ts:53](https://github.com/redis/redis-om-node/blob/20e6b1d/lib/schema/schema.ts#L53)
+[lib/schema/schema.ts:53](https://github.com/redis/redis-om-node/blob/609ec96/lib/schema/schema.ts#L53)
 
 ## Accessors
 
@@ -81,7 +83,7 @@ that this Schema uses to store [Entities](Entity.md) in Redis.
 
 #### Defined in
 
-[lib/schema/schema.ts:72](https://github.com/redis/redis-om-node/blob/20e6b1d/lib/schema/schema.ts#L72)
+[lib/schema/schema.ts:72](https://github.com/redis/redis-om-node/blob/609ec96/lib/schema/schema.ts#L72)
 
 ___
 
@@ -97,7 +99,7 @@ The configured name for the RediSearch index for this Schema.
 
 #### Defined in
 
-[lib/schema/schema.ts:66](https://github.com/redis/redis-om-node/blob/20e6b1d/lib/schema/schema.ts#L66)
+[lib/schema/schema.ts:66](https://github.com/redis/redis-om-node/blob/609ec96/lib/schema/schema.ts#L66)
 
 ___
 
@@ -113,7 +115,42 @@ The configured keyspace prefix in Redis for this Schema.
 
 #### Defined in
 
-[lib/schema/schema.ts:63](https://github.com/redis/redis-om-node/blob/20e6b1d/lib/schema/schema.ts#L63)
+[lib/schema/schema.ts:63](https://github.com/redis/redis-om-node/blob/609ec96/lib/schema/schema.ts#L63)
+
+___
+
+### stopWords
+
+• `get` **stopWords**(): `string`[]
+
+The configured stop words. Ignored if [Schema.useStopWords](Schema.md#usestopwords) is anything other
+than `CUSTOM`.
+
+#### Returns
+
+`string`[]
+
+#### Defined in
+
+[lib/schema/schema.ts:85](https://github.com/redis/redis-om-node/blob/609ec96/lib/schema/schema.ts#L85)
+
+___
+
+### useStopWords
+
+• `get` **useStopWords**(): [`StopWordOptions`](../README.md#stopwordoptions)
+
+The configured usage of stop words, a string with the value of either `OFF`, `DEFAULT`,
+or `CUSTOM`. See {@link SchemaOptions.useStopWords} and {@link SchemaOptions.stopWords}
+for more details.
+
+#### Returns
+
+[`StopWordOptions`](../README.md#stopwordoptions)
+
+#### Defined in
+
+[lib/schema/schema.ts:79](https://github.com/redis/redis-om-node/blob/609ec96/lib/schema/schema.ts#L79)
 
 ## Methods
 
@@ -129,4 +166,4 @@ Generates a unique string using the configured [IdStrategy](../README.md#idstrat
 
 #### Defined in
 
-[lib/schema/schema.ts:81](https://github.com/redis/redis-om-node/blob/20e6b1d/lib/schema/schema.ts#L81)
+[lib/schema/schema.ts:94](https://github.com/redis/redis-om-node/blob/609ec96/lib/schema/schema.ts#L94)

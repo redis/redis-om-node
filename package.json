@@ -6,6 +6,8 @@
   "types": "./dist/index.d.ts",
   "files": [ 
     "README.md",
+    "CHANGELOG",
+    "LICENSE",
     "logo.svg",
     "dist/**/*",
     "docs/**/*" ],

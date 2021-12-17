@@ -32,6 +32,7 @@ redis-om
 - [SchemaDefinition](README.md#schemadefinition)
 - [SchemaOptions](README.md#schemaoptions)
 - [SearchDataStructure](README.md#searchdatastructure)
+- [StopWordOptions](README.md#stopwordoptions)
 - [SubSearchFunction](README.md#subsearchfunction)
 
 ## Type aliases
@@ -61,7 +62,7 @@ A constructor that creates an [Entity](classes/Entity.md) of type TEntity.
 
 #### Defined in
 
-[lib/entity/entity.ts:10](https://github.com/redis/redis-om-node/blob/20e6b1d/lib/entity/entity.ts#L10)
+[lib/entity/entity.ts:10](https://github.com/redis/redis-om-node/blob/609ec96/lib/entity/entity.ts#L10)
 
 ___
 
@@ -77,7 +78,7 @@ A JavaScript object containing the underlying data of an [Entity](classes/Entity
 
 #### Defined in
 
-[lib/entity/entity.ts:4](https://github.com/redis/redis-om-node/blob/20e6b1d/lib/entity/entity.ts#L4)
+[lib/entity/entity.ts:4](https://github.com/redis/redis-om-node/blob/609ec96/lib/entity/entity.ts#L4)
 
 ___
 
@@ -89,7 +90,7 @@ Contains instructions telling how to map a property on an [Entity](classes/Entit
 
 #### Defined in
 
-[lib/schema/schema-definitions.ts:54](https://github.com/redis/redis-om-node/blob/20e6b1d/lib/schema/schema-definitions.ts#L54)
+[lib/schema/schema-definitions.ts:54](https://github.com/redis/redis-om-node/blob/609ec96/lib/schema/schema-definitions.ts#L54)
 
 ___
 
@@ -109,7 +110,7 @@ A function that generates random [Entity IDs](classes/Entity.md#entityid).
 
 #### Defined in
 
-[lib/schema/schema-definitions.ts:68](https://github.com/redis/redis-om-node/blob/20e6b1d/lib/schema/schema-definitions.ts#L68)
+[lib/schema/schema-definitions.ts:68](https://github.com/redis/redis-om-node/blob/609ec96/lib/schema/schema-definitions.ts#L68)
 
 ___
 
@@ -128,7 +129,7 @@ contains a [FieldDefinition](README.md#fielddefinition) that tell Redis OM how t
 
 #### Defined in
 
-[lib/schema/schema-definitions.ts:59](https://github.com/redis/redis-om-node/blob/20e6b1d/lib/schema/schema-definitions.ts#L59)
+[lib/schema/schema-definitions.ts:59](https://github.com/redis/redis-om-node/blob/609ec96/lib/schema/schema-definitions.ts#L59)
 
 ___
 
@@ -146,10 +147,12 @@ Configuration options for a [Schema](classes/Schema.md).
 | `idStrategy?` | [`IdStrategy`](README.md#idstrategy) | A function that generates a random [Entity ID](classes/Entity.md#entityid). Defaults to a function that generates [ULIDs](https://github.com/ulid/spec). Combined with prefix to generate a Redis key. If prefix is `Foo` and idStratgey returns `12345` then the generated key would be `Foo:12345`. |
 | `indexName?` | `string` | The name used by RediSearch to store the index for this [Schema](classes/Schema.md). Defaults to prefix followed by `:index`. So, for a prefix of `Foo`, it would use `Foo:index`. |
 | `prefix?` | `string` | The string that comes before the ID when creating Redis keys for [Entities](classes/Entity.md). Defaults to the class name of the [Entity](classes/Entity.md). Combined with the results of idStrategy to generate a key. If prefix is `Foo` and idStrategy returns `12345` then the generated key would be `Foo:12345`. |
+| `stopWords?` | `string`[] | Stop words to be used by this schema. If `useStopWords` is anything other than `CUSTOM`, this option is ignored. |
+| `useStopWords?` | [`StopWordOptions`](README.md#stopwordoptions) | Configures the usage of stop words. Valid values are `OFF`, `DEFAULT`, and `CUSTOM`. Setting this to `OFF` disables all stop words. Setting this to `DEFAULT` uses the stop words intrinsic to RediSearch. Setting this to `CUSTOM` tells RediSearch to use the stop words in `stopWords`. |
 
 #### Defined in
 
-[lib/schema/schema-options.ts:7](https://github.com/redis/redis-om-node/blob/20e6b1d/lib/schema/schema-options.ts#L7)
+[lib/schema/schema-options.ts:7](https://github.com/redis/redis-om-node/blob/609ec96/lib/schema/schema-options.ts#L7)
 
 ___
 
@@ -161,7 +164,19 @@ The type of data structure in Redis to map objects to.
 
 #### Defined in
 
-[lib/client.ts:21](https://github.com/redis/redis-om-node/blob/20e6b1d/lib/client.ts#L21)
+[lib/client.ts:21](https://github.com/redis/redis-om-node/blob/609ec96/lib/client.ts#L21)
+
+___
+
+### StopWordOptions
+
+Ƭ **StopWordOptions**: ``"OFF"`` \| ``"DEFAULT"`` \| ``"CUSTOM"``
+
+Valid values for how to use stop words for a given [Schema](classes/Schema.md).
+
+#### Defined in
+
+[lib/schema/schema-definitions.ts:71](https://github.com/redis/redis-om-node/blob/609ec96/lib/schema/schema-definitions.ts#L71)
 
 ___
 
@@ -193,4 +208,4 @@ A function that takes a [Search](classes/Search.md) and returns a [Search](class
 
 #### Defined in
 
-[lib/search/search.ts:21](https://github.com/redis/redis-om-node/blob/20e6b1d/lib/search/search.ts#L21)
+[lib/search/search.ts:22](https://github.com/redis/redis-om-node/blob/609ec96/lib/search/search.ts#L22)

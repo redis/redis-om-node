@@ -1,10 +1,5 @@
 import { SearchDataStructure } from "../client";
-import { IdStrategy } from "./schema-definitions";
-
-/**
- * Valid values for how to use stop words for a given schema.
- */
-export type StopWordOptions = "OFF" | "DEFAULT" | "CUSTOM";
+import { IdStrategy, StopWordOptions } from "./schema-definitions";
 
 /**
  * Configuration options for a {@link Schema}.
@@ -38,14 +33,14 @@ export type SchemaOptions = {
 
   /**
    * Configures the usage of stop words. Valid values are `OFF`, `DEFAULT`, and `CUSTOM`. 
-   * Setting this of `OFF` disables all stop words. Setting this to `DEFAULT` uses the
+   * Setting this to `OFF` disables all stop words. Setting this to `DEFAULT` uses the
    * stop words intrinsic to RediSearch. Setting this to `CUSTOM` tells RediSearch to
-   * use the stop words in {@link SchemaOptions.stopWords}.
+   * use the stop words in `stopWords`.
    */
   useStopWords?: StopWordOptions;
 
   /**
-   * Stop words to be used by this schema. If {@link SchemaOptions.useStopWords} is
+   * Stop words to be used by this schema. If `useStopWords` is
    * anything other than `CUSTOM`, this option is ignored.
    */
   stopWords?: string[]

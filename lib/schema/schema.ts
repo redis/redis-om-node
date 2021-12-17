@@ -5,8 +5,8 @@ import Entity from "../entity/entity";
 import { EntityConstructor } from '../entity/entity';
 
 import SchemaBuilder from './schema-builder';
-import { FieldDefinition, IdStrategy, SchemaDefinition } from './schema-definitions';
-import { SchemaOptions, StopWordOptions } from './schema-options';
+import { FieldDefinition, IdStrategy, SchemaDefinition, StopWordOptions } from './schema-definitions';
+import { SchemaOptions } from './schema-options';
 
 /**
  * Defines a schema that determines how an {@link Entity} is mapped to Redis
