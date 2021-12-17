@@ -20,7 +20,7 @@ describe("Client", () => {
         await client.open();
       });
 
-      it("passes the command to the shim", async () => {
+      it("passes a command to the shim", async () => {
         await client.createIndex({
             indexName: 'index', dataStructure: 'HASH', prefix: 'prefix',
             schema: [ 'foo', 'bar', 'baz' ] });
@@ -28,6 +28,32 @@ describe("Client", () => {
           'FT.CREATE', 'index',
             'ON', 'HASH',
             'PREFIX', '1', 'prefix',
+            'SCHEMA', 'foo', 'bar', 'baz'
+        ]);
+      });
+
+      it("passes a command with stop words to the shim", async () => {
+        await client.createIndex({
+            indexName: 'index', dataStructure: 'HASH', prefix: 'prefix',
+            schema: [ 'foo', 'bar', 'baz' ], stopWords: [ 'bar', 'baz', 'qux' ] });
+        expect(RedisShim.prototype.execute).toHaveBeenCalledWith([
+          'FT.CREATE', 'index',
+            'ON', 'HASH',
+            'PREFIX', '1', 'prefix',
+            'STOPWORDS', '3', 'bar', 'baz', 'qux',
+            'SCHEMA', 'foo', 'bar', 'baz'
+        ]);
+      });
+
+      it("passes a command with zero stop words to the shim", async () => {
+        await client.createIndex({
+            indexName: 'index', dataStructure: 'HASH', prefix: 'prefix',
+            schema: [ 'foo', 'bar', 'baz' ], stopWords: [] });
+        expect(RedisShim.prototype.execute).toHaveBeenCalledWith([
+          'FT.CREATE', 'index',
+            'ON', 'HASH',
+            'PREFIX', '1', 'prefix',
+            'STOPWORDS', '0',
             'SCHEMA', 'foo', 'bar', 'baz'
         ]);
       });

@@ -21,7 +21,7 @@ export type JsonData = { [key: string ]: any };
 export type SearchDataStructure = 'HASH' | 'JSON';
 
 /** @internal */
-type CreateIndexOptions = {
+export type CreateIndexOptions = {
   indexName: string,
   dataStructure: SearchDataStructure,
   prefix: string,
@@ -30,7 +30,7 @@ type CreateIndexOptions = {
 }
 
 /** @internal */
-type SearchOptions = {
+export type SearchOptions = {
   indexName: string,
   query: string,
   offset: number,
@@ -102,13 +102,19 @@ export default class Client {
   /** @internal */
   async createIndex(options: CreateIndexOptions) {
     this.validateShimOpen();
-    let { indexName, dataStructure, prefix, schema } = options;
-    await this.shim!.execute([
-      'FT.CREATE', indexName, 
+
+    let { indexName, dataStructure, prefix, schema, stopWords } = options;
+    let command = [
+      'FT.CREATE', indexName,
       'ON', dataStructure,
-      'PREFIX', '1', `${prefix}`,
-      'SCHEMA', ...schema
-    ]);
+      'PREFIX', '1', `${prefix}` ];
+
+    if (stopWords !== undefined)
+      command.push('STOPWORDS', `${stopWords.length}`, ...stopWords );
+
+    command.push('SCHEMA', ...schema);
+
+    await this.shim!.execute(command);
   }
 
   /** @internal */

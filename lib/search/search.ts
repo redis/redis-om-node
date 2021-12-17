@@ -1,5 +1,5 @@
 import Schema from "../schema/schema";
-import Client from "../client";
+import Client, { SearchOptions } from "../client";
 import Entity from '../entity/entity';
 
 import Where from './where';
@@ -152,11 +152,16 @@ export default class Search<TEntity extends Entity> {
   }
 
   private async callSearch(offset = 0, count = 0) {
-    let searchResults
-    let { schema: { indexName }, query } = this
+    let options: SearchOptions = { 
+      indexName: this.schema.indexName,
+      query: this.query,
+      offset,
+      count
+    };
 
+    let searchResults
     try {
-      searchResults = await this.client.search({ indexName, query, offset, count });
+      searchResults = await this.client.search(options);
     } catch (error) {
       let message = (error as Error).message
       if (message.startsWith("Syntax error")) {

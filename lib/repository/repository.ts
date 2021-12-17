@@ -1,5 +1,5 @@
 import Schema from "../schema/schema";
-import Client from "../client";
+import Client, { CreateIndexOptions } from "../client";
 import Entity from '../entity/entity';
 import Search from '../search/search';
 
@@ -69,8 +69,17 @@ export default class Repository<TEntity extends Entity> {
    * that RediSearch or RedisJSON is installed on your instance of Redis.
    */
   async createIndex() {
-    let { indexName, dataStructure, prefix, redisSchema } = this.schema
-    await this.client.createIndex({ indexName, dataStructure, prefix: `${prefix}:`, schema: redisSchema });
+    let options : CreateIndexOptions = {
+      indexName: this.schema.indexName,
+      dataStructure: this.schema.dataStructure,
+      prefix: `${this.schema.prefix}:`,
+      schema: this.schema.redisSchema
+    };
+
+    if (this.schema.useStopWords === 'OFF') options.stopWords = []
+    if (this.schema.useStopWords === 'CUSTOM') options.stopWords = this.schema.stopWords
+
+    await this.client.createIndex(options);
   }
 
   /**
