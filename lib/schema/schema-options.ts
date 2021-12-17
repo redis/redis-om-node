@@ -1,6 +1,9 @@
 import { SearchDataStructure } from "../client";
 import { IdStrategy } from "./schema-definitions";
 
+/**
+ * Valid values for how to use stop words for a given schema.
+ */
 export type StopWordOptions = "OFF" | "DEFAULT" | "CUSTOM";
 
 /**
