@@ -5,7 +5,7 @@ import Entity from "../entity/entity";
 import { EntityConstructor } from '../entity/entity';
 
 import SchemaBuilder from './schema-builder';
-import { FieldDefinition, IdStrategy, SchemaDefinition } from './schema-definitions';
+import { FieldDefinition, IdStrategy, SchemaDefinition, StopWordOptions } from './schema-definitions';
 import { SchemaOptions } from './schema-options';
 
 /**
@@ -20,7 +20,7 @@ import { SchemaOptions } from './schema-options';
  *   aBoolean: { type: 'boolean' },
  *   anArray: { type: 'array' }
  * }, {
- *   dataStructure: 'JSON
+ *   dataStructure: 'JSON'
  * });
  * ```
  * 
@@ -71,6 +71,19 @@ export default class Schema<TEntity extends Entity> {
    * */
   get dataStructure(): SearchDataStructure { return this.options?.dataStructure ?? 'HASH'; }
 
+  /**
+   * The configured usage of stop words, a string with the value of either `OFF`, `DEFAULT`,
+   * or `CUSTOM`. See {@link SchemaOptions.useStopWords} and {@link SchemaOptions.stopWords}
+   * for more details.
+   */
+  get useStopWords(): StopWordOptions { return this.options?.useStopWords ?? 'DEFAULT'; }
+
+  /**
+   * The configured stop words. Ignored if {@link Schema.useStopWords} is anything other
+   * than `CUSTOM`.
+   */
+  get stopWords(): string[] { return this.options?.stopWords ?? []; }
+
   /** @internal */
   get redisSchema(): string[] { return new SchemaBuilder(this).redisSchema; }
 
@@ -112,6 +125,9 @@ export default class Schema<TEntity extends Entity> {
   private validateOptions() {
     if (!['HASH', 'JSON'].includes(this.dataStructure))
       throw Error(`'${this.dataStructure}' in an invalid data structure. Valid data structures are 'HASH' and 'JSON'.`);
+
+    if (!['OFF', 'DEFAULT', 'CUSTOM'].includes(this.useStopWords))
+      throw Error(`'${this.useStopWords}' in an invalid value for stop words. Valid values are 'OFF', 'DEFAULT', and 'CUSTOM'.`);
 
     if (this.options?.idStrategy && !(this.options.idStrategy instanceof Function))
       throw Error("ID strategy must be a function that takes no arguments and returns a string.");

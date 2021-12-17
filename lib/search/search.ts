@@ -1,5 +1,5 @@
 import Schema from "../schema/schema";
-import Client from "../client";
+import Client, { SearchOptions } from "../client";
 import Entity from '../entity/entity';
 
 import Where from './where';
@@ -13,6 +13,7 @@ import WhereString from './where-string';
 import WhereText from './where-text';
 
 import { HashSearchResultsConverter, JsonSearchResultsConverter } from "./results-converter";
+import { RedisError } from "..";
 
 /**
  * A function that takes a {@link Search} and returns a {@link Search}. Used in nested queries.
@@ -49,7 +50,7 @@ export default class Search<TEntity extends Entity> {
    * @returns 
    */
   async count(): Promise<number> {
-    let searchResults = await this.client.search(this.schema.indexName, this.query, 0, 0);
+    let searchResults = await this.callSearch()
     return this.schema.dataStructure === 'JSON'
       ? new JsonSearchResultsConverter(this.schema, searchResults).count
       : new HashSearchResultsConverter(this.schema, searchResults).count;
@@ -61,8 +62,8 @@ export default class Search<TEntity extends Entity> {
    * @param pageSize The number of {@link Entity | Entities} to return.
    * @returns An array of {@link Entity | Entities} matching the query.
    */
-  async return(offset: number, pageSize: number): Promise<TEntity[]> {
-    let searchResults = await this.client.search(this.schema.indexName, this.query, offset, pageSize);
+  async return(offset: number, count: number): Promise<TEntity[]> {
+    let searchResults = await this.callSearch(offset, count)
     return this.schema.dataStructure === 'JSON'
       ? new JsonSearchResultsConverter(this.schema, searchResults).entities
       : new HashSearchResultsConverter(this.schema, searchResults).entities;
@@ -148,6 +149,27 @@ export default class Search<TEntity extends Entity> {
   or(subSearchFn: SubSearchFunction<TEntity>): Search<TEntity>;
   or(fieldOrFn: string | SubSearchFunction<TEntity>): WhereField<TEntity> | Search<TEntity> {
     return this.anyWhere(WhereOr, fieldOrFn);
+  }
+
+  private async callSearch(offset = 0, count = 0) {
+    let options: SearchOptions = { 
+      indexName: this.schema.indexName,
+      query: this.query,
+      offset,
+      count
+    };
+
+    let searchResults
+    try {
+      searchResults = await this.client.search(options);
+    } catch (error) {
+      let message = (error as Error).message
+      if (message.startsWith("Syntax error")) {
+        throw new RedisError(`The query to RediSearch had a syntax error: "${message}".\nThis is often the result of using a stop word in the query. Either change the query to not use a stop word or change the stop words in the schema definition. You can check the RediSearch source for the default stop words at: https://github.com/RediSearch/RediSearch/blob/master/src/stopwords.h.`)
+      }
+      throw error
+    }
+    return searchResults
   }
 
   private anyWhere(ctor: AndOrConstructor, fieldOrFn: string | SubSearchFunction<TEntity>): WhereField<TEntity> | Search<TEntity> {

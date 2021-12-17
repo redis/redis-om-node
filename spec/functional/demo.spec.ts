@@ -49,6 +49,8 @@ describe("Demo", () => {
         highTemp: { type: 'number' },
         lowTemp: { type: 'number' },
         fullMoon: { type: 'boolean' }
+      }, {
+        useStopWords: 'OFF'
       });
     
     let repository: Repository<BigfootSighting> = client.fetchRepository<BigfootSighting>(schema);
@@ -59,7 +61,7 @@ describe("Demo", () => {
     let entity = await repository.createEntity();
     entity.id = '8086';
     entity.title = "Bigfoot by the Walmart";
-    entity.classification = [ 'ClassA', 'ClassB' ];
+    entity.classification = [ 'Class A', 'Class B' ];
     entity.highTemp = 78;
     entity.fullMoon = false;
 
@@ -86,7 +88,8 @@ describe("Demo", () => {
         .where('state').equals('OH')
         .or('state').equals('KY')
       )
-      .and('classification').contains('ClassA')
+      .and('classification').contains('Class A')
+      .and('title').matchesExactly('the walmart')
       .and('fullMoon').is.true().returnAll();
 
     // close the client

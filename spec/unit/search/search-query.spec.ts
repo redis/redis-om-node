@@ -20,9 +20,9 @@ describe("Search", () => {
     describe("when querying against hashes", () => {
 
       let search: Search<SimpleHashEntity>;
-      
+
       beforeEach(() => search = new Search<SimpleHashEntity>(simpleHashSchema, client));
-      
+
       it("generates a query matching all items", () => {
         expect(search.query).toBe("*");
       });

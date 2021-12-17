@@ -12,8 +12,7 @@ export default class WhereText<TEntity extends Entity> extends WhereField<TEntit
   }
 
   matchExact(value: string): Search<TEntity> {
-    this.value = value;
-    this.exactValue = true;
+    this.exact.value = value
     return this.search;
   }
 

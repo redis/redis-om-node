@@ -63,13 +63,36 @@ describe("search for hashes", () => {
   });
 
   it("searches a string with full text", async () => {
-    entities = await repository.search().where('aFullTextString').matches('quick').returnAll();
+    entities = await repository.search().where('aFullTextString').matches('brown quick').returnAll();
 
-    expect(entities).toHaveLength(2);
+    expect(entities).toHaveLength(1);
+    expect(entities).toEqual(expect.arrayContaining([
+      expect.objectContaining({ entityId: '1', ...AN_ENTITY })
+    ]));
+  });
+
+  it("searches a string with full text and an exact match", async () => {
+    entities = await repository.search().where('aFullTextString').exactly.matches('quick brown').returnAll();
+
+    expect(entities).toHaveLength(1);
+    expect(entities).toEqual(expect.arrayContaining([
+      expect.objectContaining({ entityId: '1', ...AN_ENTITY })
+    ]));
+  });
+
+  it("searches a string with full text and stop words", async () => {
+    entities = await repository.search().where('aFullTextString').matches('brown quick the').returnAll();
+
+    expect(entities).toHaveLength(1);
     expect(entities).toEqual(expect.arrayContaining([
       expect.objectContaining({ entityId: '1', ...AN_ENTITY }),
-      expect.objectContaining({ entityId: '2', ...ANOTHER_ENTITY })
     ]));
+  });
+
+  it("throw an error when searching a string with full text, an exact match, and stop words", async () => {
+    expect(async () => {
+      entities = await repository.search().where('aFullTextString').exactly.matches('the quick brown').returnAll();
+    }).rejects.toThrow(`The query to RediSearch had a syntax error: "Syntax error at offset 19 near the".\nThis is often the result of using a stop word in the query. Either change the query to not use a stop word or change the stop words in the schema definition. You can check the RediSearch source for the default stop words at: https://github.com/RediSearch/RediSearch/blob/master/src/stopwords.h`)
   });
 
   it("searches a number", async () => {

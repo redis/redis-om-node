@@ -17,6 +17,8 @@ export interface SimpleJsonEntity extends SimpleEntity {}
 
 export class FullTextEntity extends Entity {}
 export class AliasedEntity extends Entity {}
+export class StopWordsOffEntity extends Entity {}
+export class CustomStopWordsEntity extends Entity {}
 
 export interface FullTextEntity {
   aString?: string | null;
@@ -63,4 +65,17 @@ export const aliasedSchema = new Schema(AliasedEntity, {
   aNumber: { type: 'number', alias: 'anotherNumber' },
   aBoolean: { type: 'boolean', alias: 'anotherBoolean' },
   anArray: { type: 'array', alias: 'anotherArray' }
+});
+
+export const stopWordsOffSchema = new Schema(StopWordsOffEntity, {
+  aString: { type: 'string', textSearch: true }
+}, {
+  useStopWords: 'OFF'
+});
+
+export const customStopWordsSchema = new Schema(CustomStopWordsEntity, {
+  aString: { type: 'string', textSearch: true }
+}, {
+  useStopWords: 'CUSTOM',
+  stopWords: [ 'foo', 'bar', 'baz' ]
 });
