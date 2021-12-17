@@ -13,7 +13,7 @@ let schema = new Schema(Foo, {
   aBoolean: { type: 'boolean' },
   anArray: { type: 'array' }
 }, {
-  dataStructure: 'JSON
+  dataStructure: 'JSON'
 });
 ```
 
