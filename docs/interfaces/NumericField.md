@@ -32,7 +32,7 @@ The default field name in Redis is the key name defined in the
 
 #### Defined in
 
-[lib/schema/schema-definitions.ts:7](https://github.com/redis/redis-om-node/blob/609ec96/lib/schema/schema-definitions.ts#L7)
+[lib/schema/schema-definitions.ts:7](https://github.com/redis/redis-om-node/blob/2dfb2f0/lib/schema/schema-definitions.ts#L7)
 
 ___
 
@@ -44,4 +44,4 @@ Yep. It's a number.
 
 #### Defined in
 
-[lib/schema/schema-definitions.ts:13](https://github.com/redis/redis-om-node/blob/609ec96/lib/schema/schema-definitions.ts#L13)
+[lib/schema/schema-definitions.ts:13](https://github.com/redis/redis-om-node/blob/2dfb2f0/lib/schema/schema-definitions.ts#L13)

@@ -13,7 +13,7 @@ let schema = new Schema(Foo, {
   aBoolean: { type: 'boolean' },
   anArray: { type: 'array' }
 }, {
-  dataStructure: 'JSON'
+  dataStructure: 'JSON
 });
 ```
 
@@ -66,7 +66,7 @@ its constructor.
 
 #### Defined in
 
-[lib/schema/schema.ts:53](https://github.com/redis/redis-om-node/blob/609ec96/lib/schema/schema.ts#L53)
+[lib/schema/schema.ts:53](https://github.com/redis/redis-om-node/blob/2dfb2f0/lib/schema/schema.ts#L53)
 
 ## Accessors
 
@@ -83,7 +83,7 @@ that this Schema uses to store [Entities](Entity.md) in Redis.
 
 #### Defined in
 
-[lib/schema/schema.ts:72](https://github.com/redis/redis-om-node/blob/609ec96/lib/schema/schema.ts#L72)
+[lib/schema/schema.ts:72](https://github.com/redis/redis-om-node/blob/2dfb2f0/lib/schema/schema.ts#L72)
 
 ___
 
@@ -99,7 +99,7 @@ The configured name for the RediSearch index for this Schema.
 
 #### Defined in
 
-[lib/schema/schema.ts:66](https://github.com/redis/redis-om-node/blob/609ec96/lib/schema/schema.ts#L66)
+[lib/schema/schema.ts:66](https://github.com/redis/redis-om-node/blob/2dfb2f0/lib/schema/schema.ts#L66)
 
 ___
 
@@ -115,7 +115,7 @@ The configured keyspace prefix in Redis for this Schema.
 
 #### Defined in
 
-[lib/schema/schema.ts:63](https://github.com/redis/redis-om-node/blob/609ec96/lib/schema/schema.ts#L63)
+[lib/schema/schema.ts:63](https://github.com/redis/redis-om-node/blob/2dfb2f0/lib/schema/schema.ts#L63)
 
 ___
 
@@ -132,7 +132,7 @@ than `CUSTOM`.
 
 #### Defined in
 
-[lib/schema/schema.ts:85](https://github.com/redis/redis-om-node/blob/609ec96/lib/schema/schema.ts#L85)
+[lib/schema/schema.ts:85](https://github.com/redis/redis-om-node/blob/2dfb2f0/lib/schema/schema.ts#L85)
 
 ___
 
@@ -150,7 +150,7 @@ for more details.
 
 #### Defined in
 
-[lib/schema/schema.ts:79](https://github.com/redis/redis-om-node/blob/609ec96/lib/schema/schema.ts#L79)
+[lib/schema/schema.ts:79](https://github.com/redis/redis-om-node/blob/2dfb2f0/lib/schema/schema.ts#L79)
 
 ## Methods
 
@@ -166,4 +166,4 @@ Generates a unique string using the configured [IdStrategy](../README.md#idstrat
 
 #### Defined in
 
-[lib/schema/schema.ts:94](https://github.com/redis/redis-om-node/blob/609ec96/lib/schema/schema.ts#L94)
+[lib/schema/schema.ts:94](https://github.com/redis/redis-om-node/blob/2dfb2f0/lib/schema/schema.ts#L94)

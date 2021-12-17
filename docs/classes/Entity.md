@@ -25,4 +25,4 @@ The generated entity ID.
 
 #### Defined in
 
-[lib/entity/entity.ts:22](https://github.com/redis/redis-om-node/blob/609ec96/lib/entity/entity.ts#L22)
+[lib/entity/entity.ts:22](https://github.com/redis/redis-om-node/blob/2dfb2f0/lib/entity/entity.ts#L22)
