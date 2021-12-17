@@ -1,0 +1,13 @@
+# Changelog
+
+*Functional* changes to the public interface of Redis OM for Node.js will be listed here, by version. *Non-functional* changes may also be included, if they are particulary noteworthy or might impact developers using Redis OM.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and Redis OM adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## 0.1.4 - 2021-12-17
+### Added
+- This CHANGELOG file because communicating changes matters.
+- Ability to specify and override default stop word behavior when defining a Schema.
+
+### Fixed
+- Doing an exact match with a stop word used to generate a cryptic error. RediSearch does not permit the searching for stop words within an exact match. This error was capture, and a better error is presented that directs the user to either change their stop words or not use stop words in their query.
