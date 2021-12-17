@@ -85,7 +85,7 @@ describe("search for JSON documents", () => {
 
     expect(entities).toHaveLength(1);
     expect(entities).toEqual(expect.arrayContaining([
-      expect.objectContaining({ entityId: '1', ...AN_ENTITY }),
+      expect.objectContaining({ entityId: '1', ...AN_ENTITY })
     ]));
   });
 
