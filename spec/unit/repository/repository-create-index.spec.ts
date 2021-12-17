@@ -25,12 +25,9 @@ describe("Repository", () => {
     });
 
     it("asks the client to create the index with data from the schema", () => {
-      expect(Client.prototype.createIndex).toHaveBeenCalledWith(
-        simpleSchema.indexName,
-        simpleSchema.dataStructure,
-        `${simpleSchema.prefix}:`,
-        simpleSchema.redisSchema
-      );
+      expect(Client.prototype.createIndex).toHaveBeenCalledWith({
+        indexName: simpleSchema.indexName, dataStructure: simpleSchema.dataStructure,
+        prefix: `${simpleSchema.prefix}:`, schema: simpleSchema.redisSchema });
     });
   });
 });

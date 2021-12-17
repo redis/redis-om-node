@@ -69,11 +69,8 @@ export default class Repository<TEntity extends Entity> {
    * that RediSearch or RedisJSON is installed on your instance of Redis.
    */
   async createIndex() {
-    await this.client.createIndex(
-      this.schema.indexName,
-      this.schema.dataStructure,
-      `${this.schema.prefix}:`,
-      this.schema.redisSchema);
+    let { indexName, dataStructure, prefix, redisSchema } = this.schema
+    await this.client.createIndex({ indexName, dataStructure, prefix: `${prefix}:`, schema: redisSchema });
   }
 
   /**

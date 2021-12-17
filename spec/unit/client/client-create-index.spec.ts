@@ -21,7 +21,9 @@ describe("Client", () => {
       });
 
       it("passes the command to the shim", async () => {
-        await client.createIndex('index', 'HASH', 'prefix', [ 'foo', 'bar', 'baz' ]);
+        await client.createIndex({
+            indexName: 'index', dataStructure: 'HASH', prefix: 'prefix',
+            schema: [ 'foo', 'bar', 'baz' ] });
         expect(RedisShim.prototype.execute).toHaveBeenCalledWith([
           'FT.CREATE', 'index',
             'ON', 'HASH',
@@ -38,12 +40,16 @@ describe("Client", () => {
       });
       
       it("errors when called on a closed client", () => 
-        expect(async () => await client.createIndex('index', 'HASH', 'prefix', [ 'foo', 'bar', 'baz' ]))
+        expect(async () => await client.createIndex({
+            indexName: 'index', dataStructure: 'HASH', prefix: 'prefix',
+            schema: [ 'foo', 'bar', 'baz' ] }))
           .rejects.toThrow("Redis connection needs opened."));
     });
     
     it("errors when called on a new client", async () =>
-      expect(async () => await client.createIndex('index', 'HASH', 'prefix', [ 'foo', 'bar', 'baz' ]))
+      expect(async () => await client.createIndex({
+          indexName: 'index', dataStructure: 'HASH', prefix: 'prefix',
+          schema: [ 'foo', 'bar', 'baz' ] }))
         .rejects.toThrow("Redis connection needs opened."));
   });
 });
