@@ -20,7 +20,7 @@ import { SchemaOptions } from './schema-options';
  *   aBoolean: { type: 'boolean' },
  *   anArray: { type: 'array' }
  * }, {
- *   dataStructure: 'JSON
+ *   dataStructure: 'JSON'
  * });
  * ```
  * 
