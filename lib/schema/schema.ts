@@ -1,4 +1,5 @@
 import { ulid } from 'ulid'
+import { RedisError } from '..';
 import { SearchDataStructure } from '../client';
 
 import Entity from "../entity/entity";
@@ -102,6 +103,7 @@ export default class Schema<TEntity extends Entity> {
       this.validateFieldDef(field);
 
       let fieldDef: FieldDefinition = this.definition[field];
+      let fieldType = fieldDef.type;
       let fieldAlias = fieldDef.alias ?? field;
 
       Object.defineProperty(this.entityCtor.prototype, field, {
@@ -115,7 +117,12 @@ export default class Schema<TEntity extends Entity> {
           } else if (value === null) {
             delete this.entityData[fieldAlias];
           } else {
-            this.entityData[fieldAlias] = value;
+            let valueType = Array.isArray(value) ? 'array' : typeof(value)
+            if (fieldType === valueType) {
+              this.entityData[fieldAlias] = value;
+            } else {
+              throw new RedisError(`Property '${field}' expected type of '${fieldType}' but received type of '${valueType}'.`);
+            }
           }
         }
       });
