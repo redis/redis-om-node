@@ -6,6 +6,7 @@ import Search from '../search/search';
 import { EntityData } from '../entity/entity';
 import HashConverter from "./hash-converter";
 import JsonConverter from "./json-converter";
+import { JsonData } from "..";
 
 /**
  * A repository is the main interaction point for reading, writing, and
@@ -103,9 +104,15 @@ export default class Repository<TEntity extends Entity> {
    * Creates an empty {@link Entity} with a populated {@link Entity.entityId} property.
    * @returns A newly created Entity.
    */
-  createEntity(): TEntity {
+  createEntity(data: Record<string, any> = {}): TEntity {
     let id = this.schema.generateId();
-    return new this.schema.entityCtor(id);
+    let entity = new this.schema.entityCtor(id);
+    for (let key in data) {
+      if (this.schema.entityCtor.prototype.hasOwnProperty(key)) {
+        (entity as Record<string, any>)[key] = data[key]
+      }
+    }
+    return entity;
   }
 
   /**
