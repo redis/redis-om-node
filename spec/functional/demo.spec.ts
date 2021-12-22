@@ -100,7 +100,7 @@ describe("Demo", () => {
     await repository.remove(entityId);
 
     // search for all entities
-    let allEntities = await repository.search().returnAll();
+    let allEntities = await repository.search().all();
 
     // search for some entities
     let someEntities = repository.search()

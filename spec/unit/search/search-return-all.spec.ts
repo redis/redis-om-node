@@ -34,7 +34,7 @@ describe("Search", () => {
       describe("when querying no results", () => {
         beforeEach(async () => {
           mockClientSearchToReturnNothing();
-          entities = await search.returnAll();
+          entities = await search.return.all();
         });
 
         it("askes the client for a single page of results", () => {
@@ -49,7 +49,7 @@ describe("Search", () => {
       describe("when querying a single result", () => {
         beforeEach(async () => {
           mockClientSearchToReturnSingleHash();
-          entities = await search.returnAll();
+          entities = await search.return.all();
         });
 
         it("askes the client for a a single page of results", () => {
@@ -69,7 +69,7 @@ describe("Search", () => {
       describe("when querying multiple results", () => {
         beforeEach(async () => {
           mockClientSearchToReturnMultipleHashes();
-          entities = await search.returnAll();
+          entities = await search.return.all();
         });
 
         it("askes the client for a single page of results", () => {
@@ -91,31 +91,7 @@ describe("Search", () => {
       describe("when querying multiple results that cross the page boundry", () => {
         beforeEach(async () => {
           mockClientSearchToReturnPaginatedHashes();
-          entities = await search.returnAll({ pageSize: 2 });
-        });
-
-        it("askes the client for multiple pages of results", () => {
-          expect(Client.prototype.search).toHaveBeenCalledTimes(3);
-          expect(Client.prototype.search).toHaveBeenCalledWith({
-            indexName, query, offset: 0, count: 2 });
-        });
-
-        it("returns all the results", async () => {
-          expect(entities).toHaveLength(5);
-          expect(entities).toEqual(expect.arrayContaining([
-            expect.objectContaining(SIMPLE_ENTITY_1),
-            expect.objectContaining(SIMPLE_ENTITY_2),
-            expect.objectContaining(SIMPLE_ENTITY_3),
-            expect.objectContaining(SIMPLE_ENTITY_4),
-            expect.objectContaining(SIMPLE_ENTITY_5)
-          ]));
-        });
-      });
-
-      describe("when querying using the .all alias", () => {
-        beforeEach(async () => {
-          mockClientSearchToReturnPaginatedHashes();
-          entities = await search.all({ pageSize: 2 });
+          entities = await search.return.all({ pageSize: 2 });
         });
 
         it("askes the client for multiple pages of results", () => {
@@ -147,7 +123,7 @@ describe("Search", () => {
       describe("when querying no results", () => {
         beforeEach(async () => {
           mockClientSearchToReturnNothing();
-          entities = await search.returnAll();
+          entities = await search.return.all();
         });
 
         it("askes the client for a single page of results", () => {
@@ -162,7 +138,7 @@ describe("Search", () => {
       describe("when querying a single result", () => {
         beforeEach(async () => {
           mockClientSearchToReturnSingleJsonString();
-          entities = await search.returnAll();
+          entities = await search.return.all();
         });
 
         it("askes the client for a single page of results", () => {
@@ -182,7 +158,7 @@ describe("Search", () => {
       describe("when querying multiple results", () => {
         beforeEach(async () => {
           mockClientSearchToReturnMultipleJsonStrings();
-          entities = await search.returnAll();
+          entities = await search.return.all();
         });
 
         it("askes the client for a single page of results", () => {
@@ -204,35 +180,7 @@ describe("Search", () => {
       describe("when querying multiple results that cross the page boundry", () => {
         beforeEach(async () => {
           mockClientSearchToReturnPaginatedJsonStrings();
-          entities = await search.returnAll({ pageSize: 2 });
-        });
-
-        it("askes the client for a multiple pages of results", () => {
-          expect(Client.prototype.search).toHaveBeenCalledTimes(3);
-          expect(Client.prototype.search).toHaveBeenCalledWith({
-            indexName, query, offset: 0, count: 2 });
-          expect(Client.prototype.search).toHaveBeenCalledWith({
-            indexName, query, offset: 2, count: 2 });
-          expect(Client.prototype.search).toHaveBeenCalledWith({
-            indexName, query, offset: 4, count: 2 });
-        });
-
-        it("returns all the results", async () => {
-          expect(entities).toHaveLength(5);
-          expect(entities).toEqual(expect.arrayContaining([
-            expect.objectContaining(SIMPLE_ENTITY_1),
-            expect.objectContaining(SIMPLE_ENTITY_2),
-            expect.objectContaining(SIMPLE_ENTITY_3),
-            expect.objectContaining(SIMPLE_ENTITY_4),
-            expect.objectContaining(SIMPLE_ENTITY_5)
-          ]));
-        });
-      });
-
-      describe("when querying using the .all alias", () => {
-        beforeEach(async () => {
-          mockClientSearchToReturnPaginatedJsonStrings();
-          entities = await search.all({ pageSize: 2 });
+          entities = await search.return.all({ pageSize: 2 });
         });
 
         it("askes the client for a multiple pages of results", () => {

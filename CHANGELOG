@@ -9,7 +9,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ### Added
 - Added ability to pass in initial values when creating an Entity with .createEntity.
 - Added .createAndSave method to Repository that does exactly what you think it does.
-- Added .all as an alias to .returnAll to Search.
+
+### Changed
+- More fluent interface on .return.all(), return.page(), and return.count() on Search.
+- Replace .return with .returnPage in Search class.
 
 ## 0.1.4 - 2021-12-17
 ### Added
