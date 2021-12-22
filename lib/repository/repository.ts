@@ -6,7 +6,6 @@ import Search from '../search/search';
 import { EntityData } from '../entity/entity';
 import HashConverter from "./hash-converter";
 import JsonConverter from "./json-converter";
-import { JsonData } from "..";
 
 /**
  * A repository is the main interaction point for reading, writing, and
@@ -101,7 +100,7 @@ export default class Repository<TEntity extends Entity> {
   }
 
   /**
-   * Creates an empty {@link Entity} with a populated {@link Entity.entityId} property.
+   * Creates an {@link Entity} with a populated {@link Entity.entityId} property.
    * @param data Optional values with which to initialize the entity.
    * @returns A newly created Entity.
    */
@@ -140,6 +139,18 @@ export default class Repository<TEntity extends Entity> {
     }
 
     return entity.entityId;
+  }
+
+  /**
+   * Creates and saves an {@link Entity}. Equivalent of calling {@link Entity.createEntity}
+   * followed by {@link Entity.save}.
+   * @param data Optional values with which to initialize the entity.
+   * @returns The newly created and saved Entity.
+   */
+   async createAndSave(data: Record<string, any> = {}): Promise<TEntity> {
+    let entity = this.createEntity(data);
+    await this.save(entity)
+    return entity
   }
 
   /**

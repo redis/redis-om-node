@@ -66,7 +66,27 @@ describe("Demo", () => {
     entity.fullMoon = false;
 
     let entityId = await repository.save(entity);
-    
+
+    // create an entity (#2)
+    entity = await repository.createEntity({
+      id: '8086',
+      title: "Bigfoot by the Walmart",
+      classification: [ 'Class A', 'Class B' ],
+      highTemp: 78,
+      fullMoon: false
+    });
+
+    entityId = await repository.save(entity);
+
+    // create an entity (#3)
+    entity = await repository.createAndSave({
+      id: '8086',
+      title: "Bigfoot by the Walmart",
+      classification: [ 'Class A', 'Class B' ],
+      highTemp: 78,
+      fullMoon: false
+    });
+
     // fetch an entity
     entity = await repository.fetch(entityId);
 
