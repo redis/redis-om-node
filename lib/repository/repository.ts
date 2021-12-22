@@ -102,6 +102,7 @@ export default class Repository<TEntity extends Entity> {
 
   /**
    * Creates an empty {@link Entity} with a populated {@link Entity.entityId} property.
+   * @param data Optional values with which to initialize the entity.
    * @returns A newly created Entity.
    */
   createEntity(data: Record<string, any> = {}): TEntity {

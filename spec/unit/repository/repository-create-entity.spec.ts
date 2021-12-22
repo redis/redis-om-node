@@ -97,5 +97,15 @@ describe("Repository", () => {
         expect(entity.anArray).toEqual([ 'bar', 'baz', 'qux' ]);
       });
     });
+
+    it("complains when creating an entity with mismatched data", () => {
+      repository = new Repository(simpleSchema, client);
+      expect(() => entity = repository.createEntity({
+          aBoolean: 42,
+          aNumber: 'foo',
+          aString: [ 'bar', 'baz', 'qux' ],
+          anArray: true
+        })).toThrowError();
+    });
   });
 });

@@ -57,7 +57,7 @@ describe("Entity", () => {
       });
     });
 
-    describe("changing the to mismatched types", () => {
+    describe("changing to mismatched types", () => {
       it("complains when not a number", () => {
         // @ts-ignore: JavaScript
         expect(() => entity.aNumber = 'foo')
@@ -104,6 +104,12 @@ describe("Entity", () => {
         // @ts-ignore: JavaScript
         expect(() => entity.anArray = true)
           .toThrow("Property 'anArray' expected type of 'array' but received type of 'boolean'.")
+      });
+
+      it("converts non-string values in arrays to strings", () => {
+        // @ts-ignore: JavaScript
+        entity.anArray = [ 42, true, 23, false ];
+        expect(entity.entityData.anArray).toEqual([ '42', 'true', '23', 'false' ])
       });
     });
 

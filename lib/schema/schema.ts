@@ -117,9 +117,14 @@ export default class Schema<TEntity extends Entity> {
           } else if (value === null) {
             delete this.entityData[fieldAlias];
           } else {
-            let valueType = Array.isArray(value) ? 'array' : typeof(value)
+            let isArray = Array.isArray(value);
+            let valueType = isArray ? 'array' : typeof(value)
             if (fieldType === valueType) {
-              this.entityData[fieldAlias] = value;
+              if (isArray) {
+                this.entityData[fieldAlias] = value.map((v: any) => v.toString());
+              } else {
+                this.entityData[fieldAlias] = value;
+              }
             } else {
               throw new RedisError(`Property '${field}' expected type of '${fieldType}' but received type of '${valueType}'.`);
             }
