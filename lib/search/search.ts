@@ -99,6 +99,13 @@ export default class Search<TEntity extends Entity> {
   }
 
   /**
+   * Alias for {@link Search.returnAll}.
+   */
+  async all(options = { pageSize: 10 }): Promise<TEntity[]> {
+    return await this.returnAll(options)
+  }
+
+  /**
    * Sets up a query matching a particular field. If there are multiple calls
    * to {@link Search.where}, they are treated logically as AND.
    * @param field The field to filter on.
