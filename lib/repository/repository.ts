@@ -104,7 +104,7 @@ export default class Repository<TEntity extends Entity> {
    * @param data Optional values with which to initialize the entity.
    * @returns A newly created Entity.
    */
-  createEntity(data: Record<string, any> = {}): TEntity {
+  createEntity(data: EntityData = {}): TEntity {
     let id = this.schema.generateId();
     let entity = new this.schema.entityCtor(id);
     for (let key in data) {
@@ -142,12 +142,12 @@ export default class Repository<TEntity extends Entity> {
   }
 
   /**
-   * Creates and saves an {@link Entity}. Equivalent of calling {@link Entity.createEntity}
-   * followed by {@link Entity.save}.
+   * Creates and saves an {@link Entity}. Equivalent of calling
+   * {@link Repository.createEntity} followed by {@link Repository.save}.
    * @param data Optional values with which to initialize the entity.
    * @returns The newly created and saved Entity.
    */
-   async createAndSave(data: Record<string, any> = {}): Promise<TEntity> {
+   async createAndSave(data: EntityData = {}): Promise<TEntity> {
     let entity = this.createEntity(data);
     await this.save(entity)
     return entity
