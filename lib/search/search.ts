@@ -46,6 +46,14 @@ export default class Search<TEntity extends Entity> {
   }
 
   /**
+   * Returns the current instance. Syntactic sugar to make your code more fluent.
+   * @returns this
+   */
+  get return() : Search<TEntity> {
+    return this;
+  }
+
+  /**
    * Returns the number of {@link Entity | Entities} that match this query.
    * @returns 
    */
@@ -62,7 +70,7 @@ export default class Search<TEntity extends Entity> {
    * @param pageSize The number of {@link Entity | Entities} to return.
    * @returns An array of {@link Entity | Entities} matching the query.
    */
-  async return(offset: number, count: number): Promise<TEntity[]> {
+  async page(offset: number, count: number): Promise<TEntity[]> {
     let searchResults = await this.callSearch(offset, count)
     return this.schema.dataStructure === 'JSON'
       ? new JsonSearchResultsConverter(this.schema, searchResults).entities
@@ -83,19 +91,40 @@ export default class Search<TEntity extends Entity> {
    * @param options.pageSize Number of {@link Entity | Entities} returned per batch.
    * @returns An array of {@link Entity | Entities} matching the query.
    */
-  async returnAll(options = { pageSize: 10 }): Promise<TEntity[]> {
+  async all(options = { pageSize: 10 }): Promise<TEntity[]> {
     let entities: TEntity[] = [];
     let offset = 0;
     let pageSize = options.pageSize;
 
     while (true) {
-      let foundEntities = await this.return(offset, pageSize);
+      let foundEntities = await this.page(offset, pageSize);
       entities.push(...foundEntities);
       if (foundEntities.length < pageSize) break;
       offset += pageSize;
     }
 
     return entities;
+  }
+
+  /**
+   * Alias for {@link Search.count}.
+   */
+   async returnCount(): Promise<number> {
+    return await this.count();
+  }
+
+  /**
+   * Alias for {@link Search.page}.
+   */
+   async returnPage(offset: number, count: number): Promise<TEntity[]> {
+    return await this.page(offset, count);
+  }
+
+  /**
+   * Alias for {@link Search.all}.
+   */
+  async returnAll(options = { pageSize: 10 }): Promise<TEntity[]> {
+    return await this.all(options)
   }
 
   /**

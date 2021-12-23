@@ -30,17 +30,18 @@ describe("save hash", () => {
 
   describe("when saving a fully populated entity to redis", () => {
     beforeEach(async () => {
-      entity = repository.createEntity();
-      entity.aString = AN_ENTITY.aString;
-      entity.anotherString = AN_ENTITY.anotherString;
-      entity.aFullTextString = AN_ENTITY.aFullTextString;
-      entity.anotherFullTextString = AN_ENTITY.anotherFullTextString;
-      entity.aNumber = AN_ENTITY.aNumber;
-      entity.anotherNumber = AN_ENTITY.anotherNumber;
-      entity.aBoolean = AN_ENTITY.aBoolean;
-      entity.anotherBoolean = AN_ENTITY.anotherBoolean;
-      entity.anArray = AN_ENTITY.anArray;
-      entity.anotherArray = AN_ENTITY.anotherArray;
+      entity = repository.createEntity({
+        aString: AN_ENTITY.aString,
+        anotherString: AN_ENTITY.anotherString,
+        aFullTextString: AN_ENTITY.aFullTextString,
+        anotherFullTextString: AN_ENTITY.anotherFullTextString,
+        aNumber: AN_ENTITY.aNumber,
+        anotherNumber: AN_ENTITY.anotherNumber,
+        aBoolean: AN_ENTITY.aBoolean,
+        anotherBoolean: AN_ENTITY.anotherBoolean,
+        anArray: AN_ENTITY.anArray,
+        anotherArray: AN_ENTITY.anotherArray
+      });
       entityId = await repository.save(entity);
       entityKey = `HashEntity:${entityId}`;
     });
@@ -73,17 +74,18 @@ describe("save hash", () => {
 
   describe("when saving a partially populated entity to redis", () => {
     beforeEach(async () => {
-      entity = repository.createEntity();
-      entity.aString = A_PARTIAL_ENTITY.aString;
-      entity.anotherString = A_PARTIAL_ENTITY.anotherString;
-      entity.aFullTextString = A_PARTIAL_ENTITY.aFullTextString;
-      entity.anotherFullTextString = A_PARTIAL_ENTITY.anotherFullTextString;
-      entity.aNumber = A_PARTIAL_ENTITY.aNumber;
-      entity.anotherNumber = A_PARTIAL_ENTITY.anotherNumber;
-      entity.aBoolean = A_PARTIAL_ENTITY.aBoolean;
-      entity.anotherBoolean = A_PARTIAL_ENTITY.anotherBoolean;
-      entity.anArray = A_PARTIAL_ENTITY.anArray;
-      entity.anotherArray = A_PARTIAL_ENTITY.anotherArray;
+      entity = repository.createEntity({
+        aString: A_PARTIAL_ENTITY.aString,
+        anotherString: A_PARTIAL_ENTITY.anotherString,
+        aFullTextString: A_PARTIAL_ENTITY.aFullTextString,
+        anotherFullTextString: A_PARTIAL_ENTITY.anotherFullTextString,
+        aNumber: A_PARTIAL_ENTITY.aNumber,
+        anotherNumber: A_PARTIAL_ENTITY.anotherNumber,
+        aBoolean: A_PARTIAL_ENTITY.aBoolean,
+        anotherBoolean: A_PARTIAL_ENTITY.anotherBoolean,
+        anArray: A_PARTIAL_ENTITY.anArray,
+        anotherArray: A_PARTIAL_ENTITY.anotherArray
+      });
       entityId = await repository.save(entity);
       entityKey = `HashEntity:${entityId}`;
     });
@@ -110,17 +112,18 @@ describe("save hash", () => {
 
   describe("when saving an empty entity to redis", () => {
     beforeEach(async () => {
-      entity = repository.createEntity();
-      entity.aString = AN_EMPTY_ENTITY.aString;
-      entity.anotherString = AN_EMPTY_ENTITY.anotherString;
-      entity.aFullTextString = AN_EMPTY_ENTITY.aFullTextString;
-      entity.anotherFullTextString = AN_EMPTY_ENTITY.anotherFullTextString;
-      entity.aNumber = AN_EMPTY_ENTITY.aNumber;
-      entity.anotherNumber = AN_EMPTY_ENTITY.anotherNumber;
-      entity.aBoolean = AN_EMPTY_ENTITY.aBoolean;
-      entity.anotherBoolean = AN_EMPTY_ENTITY.anotherBoolean;
-      entity.anArray = AN_EMPTY_ENTITY.anArray;
-      entity.anotherArray = AN_EMPTY_ENTITY.anotherArray;
+      entity = repository.createEntity({
+        aString: AN_EMPTY_ENTITY.aString,
+        anotherString: AN_EMPTY_ENTITY.anotherString,
+        aFullTextString: AN_EMPTY_ENTITY.aFullTextString,
+        anotherFullTextString: AN_EMPTY_ENTITY.anotherFullTextString,
+        aNumber: AN_EMPTY_ENTITY.aNumber,
+        anotherNumber: AN_EMPTY_ENTITY.anotherNumber,
+        aBoolean: AN_EMPTY_ENTITY.aBoolean,
+        anotherBoolean: AN_EMPTY_ENTITY.anotherBoolean,
+        anArray: AN_EMPTY_ENTITY.anArray,
+        anotherArray: AN_EMPTY_ENTITY.anotherArray
+      });
       entityId = await repository.save(entity);
       entityKey = `HashEntity:${entityId}`;
     });

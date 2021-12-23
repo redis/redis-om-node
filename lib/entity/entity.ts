@@ -1,7 +1,7 @@
 /**
  * A JavaScript object containing the underlying data of an {@link Entity}.
  */
-export type EntityData = { [key: string]: string | number | boolean | string[] };
+export type EntityData = Record<string, number | boolean | string | string[]>;
 
 /** 
  * A constructor that creates an {@link Entity} of type TEntity.

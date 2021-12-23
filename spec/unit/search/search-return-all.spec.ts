@@ -34,7 +34,7 @@ describe("Search", () => {
       describe("when querying no results", () => {
         beforeEach(async () => {
           mockClientSearchToReturnNothing();
-          entities = await search.returnAll();
+          entities = await search.return.all();
         });
 
         it("askes the client for a single page of results", () => {
@@ -49,7 +49,7 @@ describe("Search", () => {
       describe("when querying a single result", () => {
         beforeEach(async () => {
           mockClientSearchToReturnSingleHash();
-          entities = await search.returnAll();
+          entities = await search.return.all();
         });
 
         it("askes the client for a a single page of results", () => {
@@ -69,7 +69,7 @@ describe("Search", () => {
       describe("when querying multiple results", () => {
         beforeEach(async () => {
           mockClientSearchToReturnMultipleHashes();
-          entities = await search.returnAll();
+          entities = await search.return.all();
         });
 
         it("askes the client for a single page of results", () => {
@@ -91,7 +91,7 @@ describe("Search", () => {
       describe("when querying multiple results that cross the page boundry", () => {
         beforeEach(async () => {
           mockClientSearchToReturnPaginatedHashes();
-          entities = await search.returnAll({ pageSize: 2 });
+          entities = await search.return.all({ pageSize: 2 });
         });
 
         it("askes the client for multiple pages of results", () => {
@@ -123,7 +123,7 @@ describe("Search", () => {
       describe("when querying no results", () => {
         beforeEach(async () => {
           mockClientSearchToReturnNothing();
-          entities = await search.returnAll();
+          entities = await search.return.all();
         });
 
         it("askes the client for a single page of results", () => {
@@ -138,7 +138,7 @@ describe("Search", () => {
       describe("when querying a single result", () => {
         beforeEach(async () => {
           mockClientSearchToReturnSingleJsonString();
-          entities = await search.returnAll();
+          entities = await search.return.all();
         });
 
         it("askes the client for a single page of results", () => {
@@ -158,7 +158,7 @@ describe("Search", () => {
       describe("when querying multiple results", () => {
         beforeEach(async () => {
           mockClientSearchToReturnMultipleJsonStrings();
-          entities = await search.returnAll();
+          entities = await search.return.all();
         });
 
         it("askes the client for a single page of results", () => {
@@ -180,7 +180,7 @@ describe("Search", () => {
       describe("when querying multiple results that cross the page boundry", () => {
         beforeEach(async () => {
           mockClientSearchToReturnPaginatedJsonStrings();
-          entities = await search.returnAll({ pageSize: 2 });
+          entities = await search.return.all({ pageSize: 2 });
         });
 
         it("askes the client for a multiple pages of results", () => {

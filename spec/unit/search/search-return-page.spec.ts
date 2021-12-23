@@ -33,7 +33,7 @@ describe("Search", () => {
       describe("when querying no results", () => {
         beforeEach(async () => {
           mockClientSearchToReturnNothing();
-          entities = await search.return(0, 5);
+          entities = await search.return.page(0, 5);
         });
 
         it("askes the client for results", () => {
@@ -48,7 +48,7 @@ describe("Search", () => {
       describe("when querying a single result", () => {
         beforeEach(async () => {
           mockClientSearchToReturnSingleHash();
-          entities = await search.return(0, 5);
+          entities = await search.return.page(0, 5);
         });
 
         it("askes the client for results", () => {
@@ -68,7 +68,7 @@ describe("Search", () => {
       describe("when querying multiple results", () => {
         beforeEach(async () => {
           mockClientSearchToReturnMultipleHashes();
-          entities = await search.return(0, 5);
+          entities = await search.return.page(0, 5);
         });
 
         it("askes the client for results", () => {
@@ -98,7 +98,7 @@ describe("Search", () => {
       describe("when querying no results", () => {
         beforeEach(async () => {
           mockClientSearchToReturnNothing();
-          entities = await search.return(0, 5);
+          entities = await search.return.page(0, 5);
         });
 
         it("askes the client for results", () => {
@@ -113,7 +113,7 @@ describe("Search", () => {
       describe("when querying a single result", () => {
         beforeEach(async () => {
           mockClientSearchToReturnSingleJsonString();
-          entities = await search.return(0, 5);
+          entities = await search.return.page(0, 5);
         });
 
         it("askes the client for results", () => {
@@ -133,7 +133,7 @@ describe("Search", () => {
       describe("when querying multiple results", () => {
         beforeEach(async () => {
           mockClientSearchToReturnMultipleJsonStrings();
-          entities = await search.return(0, 5);
+          entities = await search.return.page(0, 5);
         });
 
         it("askes the client for results", () => {

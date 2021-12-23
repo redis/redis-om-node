@@ -27,7 +27,7 @@ describe("Search", () => {
       beforeEach(async () => {
         mockClientSearchToReturnCountOf(3);
         search = new Search<SimpleHashEntity>(simpleHashSchema, client)
-        actualCount = await search.count();
+        actualCount = await search.return.count();
       });
 
       it("askes the client for results", () => {
@@ -45,7 +45,7 @@ describe("Search", () => {
       beforeEach(async () => {
         mockClientSearchToReturnCountOf(3);
         search = new Search<SimpleJsonEntity>(simpleJsonSchema, client);
-        actualCount = await search.count();
+        actualCount = await search.return.count();
       });
 
       it("askes the client for results", () => {

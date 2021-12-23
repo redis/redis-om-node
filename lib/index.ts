@@ -1,7 +1,7 @@
 import Client, { SearchDataStructure, HashData, JsonData } from "./client";
 import Entity, { EntityConstructor, EntityData } from "./entity/entity";
 import RedisError from "./errors";
-import Repository from "./repository/repository";
+import Repository, { EntityCreationData } from "./repository/repository";
 import Schema from "./schema/schema";
 import { SchemaDefinition, FieldDefinition, Field, NumericField, StringField, BooleanField, ArrayField,
   IdStrategy, StopWordOptions } from "./schema/schema-definitions";
@@ -15,7 +15,7 @@ export {
   Client, SearchDataStructure, HashData, JsonData, 
   Entity, EntityConstructor, EntityData,
   RedisError,
-  Repository,
+  Repository, EntityCreationData,
   Schema, SchemaDefinition, SchemaOptions,
   FieldDefinition, Field, NumericField, StringField, BooleanField, ArrayField, IdStrategy, StopWordOptions,
   Search, SubSearchFunction,

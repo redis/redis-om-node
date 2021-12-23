@@ -57,6 +57,62 @@ describe("Entity", () => {
       });
     });
 
+    describe("changing to mismatched types", () => {
+      it("complains when not a number", () => {
+        // @ts-ignore: JavaScript
+        expect(() => entity.aNumber = 'foo')
+          .toThrow("Property 'aNumber' expected type of 'number' but received type of 'string'.");
+        // @ts-ignore: JavaScript
+        expect(() => entity.aNumber = true)
+          .toThrow("Property 'aNumber' expected type of 'number' but received type of 'boolean'.");
+        // @ts-ignore: JavaScript
+        expect(() => entity.aNumber = [ ' bar', 'baz', 'qux '])
+          .toThrow("Property 'aNumber' expected type of 'number' but received type of 'array'.");
+        });
+      
+      it("complains when not a string", () => {
+        // @ts-ignore: JavaScript
+        expect(() => entity.aString = true)
+          .toThrow("Property 'aString' expected type of 'string' but received type of 'boolean'.");
+        // @ts-ignore: JavaScript
+        expect(() => entity.aString = 42)
+          .toThrow("Property 'aString' expected type of 'string' but received type of 'number'.");
+        // @ts-ignore: JavaScript
+        expect(() => entity.aString = [ ' bar', 'baz', 'qux '])
+          .toThrow("Property 'aString' expected type of 'string' but received type of 'array'.");
+      });
+
+      it("complains when not a boolean", () => {
+        // @ts-ignore: JavaScript
+        expect(() => entity.aBoolean = 'foo')
+          .toThrow("Property 'aBoolean' expected type of 'boolean' but received type of 'string'.")
+        // @ts-ignore: JavaScript
+        expect(() => entity.aBoolean = 42)
+          .toThrow("Property 'aBoolean' expected type of 'boolean' but received type of 'number'.")
+        // @ts-ignore: JavaScript
+        expect(() => entity.aBoolean = [ 'bar', 'baz', 'qux' ])
+          .toThrow("Property 'aBoolean' expected type of 'boolean' but received type of 'array'.")
+      });
+      
+      it("complains when not an array", () => {
+        // @ts-ignore: JavaScript
+        expect(() => entity.anArray = 'foo')
+          .toThrow("Property 'anArray' expected type of 'array' but received type of 'string'.")
+        // @ts-ignore: JavaScript
+        expect(() => entity.anArray = 42)
+          .toThrow("Property 'anArray' expected type of 'array' but received type of 'number'.")
+        // @ts-ignore: JavaScript
+        expect(() => entity.anArray = true)
+          .toThrow("Property 'anArray' expected type of 'array' but received type of 'boolean'.")
+      });
+
+      it("converts non-string values in arrays to strings", () => {
+        // @ts-ignore: JavaScript
+        entity.anArray = [ 42, true, 23, false ];
+        expect(entity.entityData.anArray).toEqual([ '42', 'true', '23', 'false' ])
+      });
+    });
+
     describe("deleting the data", () => {
       it("removes nulled properties", () => {
         entity.aNumber = null;
