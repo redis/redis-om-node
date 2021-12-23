@@ -66,7 +66,7 @@ its constructor.
 
 #### Defined in
 
-[lib/schema/schema.ts:54](https://github.com/redis/redis-om-node/blob/799b746/lib/schema/schema.ts#L54)
+[lib/schema/schema.ts:54](https://github.com/redis/redis-om-node/blob/80a8574/lib/schema/schema.ts#L54)
 
 ## Accessors
 
@@ -83,7 +83,7 @@ that this Schema uses to store [Entities](Entity.md) in Redis.
 
 #### Defined in
 
-[lib/schema/schema.ts:73](https://github.com/redis/redis-om-node/blob/799b746/lib/schema/schema.ts#L73)
+[lib/schema/schema.ts:73](https://github.com/redis/redis-om-node/blob/80a8574/lib/schema/schema.ts#L73)
 
 ___
 
@@ -99,7 +99,7 @@ The configured name for the RediSearch index for this Schema.
 
 #### Defined in
 
-[lib/schema/schema.ts:67](https://github.com/redis/redis-om-node/blob/799b746/lib/schema/schema.ts#L67)
+[lib/schema/schema.ts:67](https://github.com/redis/redis-om-node/blob/80a8574/lib/schema/schema.ts#L67)
 
 ___
 
@@ -115,7 +115,7 @@ The configured keyspace prefix in Redis for this Schema.
 
 #### Defined in
 
-[lib/schema/schema.ts:64](https://github.com/redis/redis-om-node/blob/799b746/lib/schema/schema.ts#L64)
+[lib/schema/schema.ts:64](https://github.com/redis/redis-om-node/blob/80a8574/lib/schema/schema.ts#L64)
 
 ___
 
@@ -132,7 +132,7 @@ than `CUSTOM`.
 
 #### Defined in
 
-[lib/schema/schema.ts:86](https://github.com/redis/redis-om-node/blob/799b746/lib/schema/schema.ts#L86)
+[lib/schema/schema.ts:86](https://github.com/redis/redis-om-node/blob/80a8574/lib/schema/schema.ts#L86)
 
 ___
 
@@ -150,7 +150,7 @@ for more details.
 
 #### Defined in
 
-[lib/schema/schema.ts:80](https://github.com/redis/redis-om-node/blob/799b746/lib/schema/schema.ts#L80)
+[lib/schema/schema.ts:80](https://github.com/redis/redis-om-node/blob/80a8574/lib/schema/schema.ts#L80)
 
 ## Methods
 
@@ -166,4 +166,4 @@ Generates a unique string using the configured [IdStrategy](../README.md#idstrat
 
 #### Defined in
 
-[lib/schema/schema.ts:95](https://github.com/redis/redis-om-node/blob/799b746/lib/schema/schema.ts#L95)
+[lib/schema/schema.ts:95](https://github.com/redis/redis-om-node/blob/80a8574/lib/schema/schema.ts#L95)
