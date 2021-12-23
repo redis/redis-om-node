@@ -29,7 +29,7 @@ export interface AliasedEntity {
   aNumber?: number | null;
   aBoolean?: boolean | null;
   anArray?: string[] | null;
-}  
+}
 
 export const simpleSchema = new Schema(SimpleEntity, {
   aString: { type: 'string' },

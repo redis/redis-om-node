@@ -1,4 +1,4 @@
-import { AliasedEntity, SimpleEntity } from '../helpers/test-entity-and-schema';
+import { AliasedEntity, aliasedSchema, SimpleEntity, simpleSchema } from '../helpers/test-entity-and-schema';
 
 describe("Entity", () => {
 
@@ -8,20 +8,22 @@ describe("Entity", () => {
 
     let entity: SimpleEntity;
 
-    beforeEach(() => entity = new SimpleEntity(entityId));
+    beforeEach(() => entity = new SimpleEntity(simpleSchema.definition, entityId));
   
     it("has the passed in Redis ID", () => expect(entity.entityId).toBe(entityId));
     it("returns null for the number property", () => expect(entity.aNumber).toBeNull());
     it("returns null for the string property", () => expect(entity.aString).toBeNull());
     it("returns null for the boolean property", () => expect(entity.aBoolean).toBeNull());
     it("returns null for the array property", () => expect(entity.anArray).toBeNull());
+    it("serializes to the expected JSON", () => expect(JSON.stringify(entity))
+      .toBe('{"entityId":"foo","aString":null,"aNumber":null,"aBoolean":null,"anArray":null}'));
   });
 
   describe("with data", () => {
 
     let entity: SimpleEntity;
 
-    beforeEach(() => entity = new SimpleEntity(entityId,
+    beforeEach(() => entity = new SimpleEntity(simpleSchema.definition, entityId,
       { aNumber: 42, aString: 'foo', aBoolean: false, anArray: [ "foo", "bar", "baz"] }));
 
     it("has the passed in Redis ID", () => expect(entity.entityId).toBe(entityId));
@@ -29,6 +31,8 @@ describe("Entity", () => {
     it("returns a string for the string property", () => expect(entity.aString).toBe('foo'));
     it("returns a boolean for the boolean property", () => expect(entity.aBoolean).toBe(false));
     it("returns an array for the array property", () => expect(entity.anArray).toEqual([ 'foo', 'bar', 'baz' ]));
+    it("serializes to the expected JSON", () => expect(JSON.stringify(entity))
+      .toBe('{"entityId":"foo","aString":"foo","aNumber":42,"aBoolean":false,"anArray":["foo","bar","baz"]}'));
 
     describe("changing the data", () => {
       it("stores a number when the number property is changed", () => {
@@ -145,7 +149,7 @@ describe("Entity", () => {
 
     let entity: AliasedEntity;
 
-    beforeEach(() => entity = new AliasedEntity(entityId,
+    beforeEach(() => entity = new AliasedEntity(aliasedSchema.definition, entityId,
       { anotherNumber: 23, anotherString: 'bar', anotherBoolean: true, anotherArray: [ "bar", "baz", "qux" ] }));
 
     it("has the passed in Redis ID", () => expect(entity.entityId).toBe(entityId));
@@ -153,6 +157,8 @@ describe("Entity", () => {
     it("returns a string for the string property", () => expect(entity.aString).toBe('bar'));
     it("returns a boolean for the boolean property", () => expect(entity.aBoolean).toBe(true));
     it("returns an array for the array property", () => expect(entity.anArray).toEqual([ 'bar', 'baz', 'qux' ]));
+    it("serializes to the expected JSON", () => expect(JSON.stringify(entity))
+      .toBe('{"entityId":"foo","aString":"bar","aNumber":23,"aBoolean":true,"anArray":["bar","baz","qux"]}'));
 
     describe("changing the data", () => {
       it("stores a number when the number property is changed", () => {

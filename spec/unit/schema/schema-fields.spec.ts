@@ -303,7 +303,7 @@ describe("Schema", () => {
     beforeEach(() => {
       let entityData: EntityData = {};
       entityData[data.providedEntityFieldName] = data.providedEntityFieldValue;
-      entity = new TestEntity('foo', entityData)
+      entity = new TestEntity(data.schemaDef, 'foo', entityData)
     });
 
     it("adds the getter and setter for the field from the schema definition to the entity", () => {
