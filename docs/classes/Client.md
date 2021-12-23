@@ -47,7 +47,7 @@ Close the connection to Redis.
 
 #### Defined in
 
-[lib/client.ts:96](https://github.com/redis/redis-om-node/blob/80a8574/lib/client.ts#L96)
+[lib/client.ts:96](https://github.com/redis/redis-om-node/blob/8a196dc/lib/client.ts#L96)
 
 ___
 
@@ -77,7 +77,7 @@ The raw results of calling the Redis command.
 
 #### Defined in
 
-[lib/client.ts:73](https://github.com/redis/redis-om-node/blob/80a8574/lib/client.ts#L73)
+[lib/client.ts:73](https://github.com/redis/redis-om-node/blob/8a196dc/lib/client.ts#L73)
 
 ___
 
@@ -107,7 +107,7 @@ A repository for the provided schema.
 
 #### Defined in
 
-[lib/client.ts:88](https://github.com/redis/redis-om-node/blob/80a8574/lib/client.ts#L88)
+[lib/client.ts:88](https://github.com/redis/redis-om-node/blob/8a196dc/lib/client.ts#L88)
 
 ___
 
@@ -129,4 +129,4 @@ Open a connection to Redis at the provided URL.
 
 #### Defined in
 
-[lib/client.ts:60](https://github.com/redis/redis-om-node/blob/80a8574/lib/client.ts#L60)
+[lib/client.ts:60](https://github.com/redis/redis-om-node/blob/8a196dc/lib/client.ts#L60)

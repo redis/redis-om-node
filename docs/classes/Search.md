@@ -44,7 +44,7 @@ this
 
 #### Defined in
 
-[lib/search/search.ts:52](https://github.com/redis/redis-om-node/blob/80a8574/lib/search/search.ts#L52)
+[lib/search/search.ts:52](https://github.com/redis/redis-om-node/blob/8a196dc/lib/search/search.ts#L52)
 
 ## Methods
 
@@ -76,7 +76,7 @@ An array of [Entities](Entity.md) matching the query.
 
 #### Defined in
 
-[lib/search/search.ts:94](https://github.com/redis/redis-om-node/blob/80a8574/lib/search/search.ts#L94)
+[lib/search/search.ts:94](https://github.com/redis/redis-om-node/blob/8a196dc/lib/search/search.ts#L94)
 
 ___
 
@@ -100,7 +100,7 @@ A subclass of [WhereField](WhereField.md) matching the type of the field.
 
 #### Defined in
 
-[lib/search/search.ts:154](https://github.com/redis/redis-om-node/blob/80a8574/lib/search/search.ts#L154)
+[lib/search/search.ts:154](https://github.com/redis/redis-om-node/blob/8a196dc/lib/search/search.ts#L154)
 
 ▸ **and**(`subSearchFn`): [`Search`](Search.md)<`TEntity`\>
 
@@ -120,7 +120,7 @@ Sets up a nested search as a logical AND.
 
 #### Defined in
 
-[lib/search/search.ts:161](https://github.com/redis/redis-om-node/blob/80a8574/lib/search/search.ts#L161)
+[lib/search/search.ts:161](https://github.com/redis/redis-om-node/blob/8a196dc/lib/search/search.ts#L161)
 
 ___
 
@@ -136,7 +136,7 @@ Returns the number of [Entities](Entity.md) that match this query.
 
 #### Defined in
 
-[lib/search/search.ts:60](https://github.com/redis/redis-om-node/blob/80a8574/lib/search/search.ts#L60)
+[lib/search/search.ts:60](https://github.com/redis/redis-om-node/blob/8a196dc/lib/search/search.ts#L60)
 
 ___
 
@@ -160,7 +160,7 @@ A subclass of [WhereField](WhereField.md) matching the type of the field.
 
 #### Defined in
 
-[lib/search/search.ts:171](https://github.com/redis/redis-om-node/blob/80a8574/lib/search/search.ts#L171)
+[lib/search/search.ts:171](https://github.com/redis/redis-om-node/blob/8a196dc/lib/search/search.ts#L171)
 
 ▸ **or**(`subSearchFn`): [`Search`](Search.md)<`TEntity`\>
 
@@ -180,7 +180,7 @@ Sets up a nested search as a logical OR.
 
 #### Defined in
 
-[lib/search/search.ts:178](https://github.com/redis/redis-om-node/blob/80a8574/lib/search/search.ts#L178)
+[lib/search/search.ts:178](https://github.com/redis/redis-om-node/blob/8a196dc/lib/search/search.ts#L178)
 
 ___
 
@@ -205,7 +205,7 @@ An array of [Entities](Entity.md) matching the query.
 
 #### Defined in
 
-[lib/search/search.ts:73](https://github.com/redis/redis-om-node/blob/80a8574/lib/search/search.ts#L73)
+[lib/search/search.ts:73](https://github.com/redis/redis-om-node/blob/8a196dc/lib/search/search.ts#L73)
 
 ___
 
@@ -228,7 +228,7 @@ Alias for [Search.all](Search.md#all).
 
 #### Defined in
 
-[lib/search/search.ts:126](https://github.com/redis/redis-om-node/blob/80a8574/lib/search/search.ts#L126)
+[lib/search/search.ts:126](https://github.com/redis/redis-om-node/blob/8a196dc/lib/search/search.ts#L126)
 
 ___
 
@@ -244,7 +244,7 @@ Alias for [Search.count](Search.md#count).
 
 #### Defined in
 
-[lib/search/search.ts:112](https://github.com/redis/redis-om-node/blob/80a8574/lib/search/search.ts#L112)
+[lib/search/search.ts:112](https://github.com/redis/redis-om-node/blob/8a196dc/lib/search/search.ts#L112)
 
 ___
 
@@ -267,7 +267,7 @@ Alias for [Search.page](Search.md#page).
 
 #### Defined in
 
-[lib/search/search.ts:119](https://github.com/redis/redis-om-node/blob/80a8574/lib/search/search.ts#L119)
+[lib/search/search.ts:119](https://github.com/redis/redis-om-node/blob/8a196dc/lib/search/search.ts#L119)
 
 ___
 
@@ -292,7 +292,7 @@ A subclass of [WhereField](WhereField.md) matching the type of the field.
 
 #### Defined in
 
-[lib/search/search.ts:136](https://github.com/redis/redis-om-node/blob/80a8574/lib/search/search.ts#L136)
+[lib/search/search.ts:136](https://github.com/redis/redis-om-node/blob/8a196dc/lib/search/search.ts#L136)
 
 ▸ **where**(`subSearchFn`): [`Search`](Search.md)<`TEntity`\>
 
@@ -313,4 +313,4 @@ they are treated logically as AND.
 
 #### Defined in
 
-[lib/search/search.ts:144](https://github.com/redis/redis-om-node/blob/80a8574/lib/search/search.ts#L144)
+[lib/search/search.ts:144](https://github.com/redis/redis-om-node/blob/8a196dc/lib/search/search.ts#L144)

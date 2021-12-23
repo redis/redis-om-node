@@ -8,6 +8,12 @@ import HashConverter from "./hash-converter";
 import JsonConverter from "./json-converter";
 
 /**
+ * Initialization data for {@link Entity} creation when calling
+ * {@link Repository.createEntity} or {@link Repository.createAndSave}.
+ */
+export type EntityCreationData = Record<string, number | boolean | string | string[] | null>;
+
+/**
  * A repository is the main interaction point for reading, writing, and
  * removing {@link Entity | Entities} from Redis. Create one by passing
  * in a {@link Schema} and a {@link Client}. Then use the {@link Repository.fetch},
@@ -104,7 +110,7 @@ export default class Repository<TEntity extends Entity> {
    * @param data Optional values with which to initialize the entity.
    * @returns A newly created Entity.
    */
-  createEntity(data: EntityData = {}): TEntity {
+  createEntity(data: EntityCreationData = {}): TEntity {
     let id = this.schema.generateId();
     let entity = new this.schema.entityCtor(id);
     for (let key in data) {
@@ -147,7 +153,7 @@ export default class Repository<TEntity extends Entity> {
    * @param data Optional values with which to initialize the entity.
    * @returns The newly created and saved Entity.
    */
-   async createAndSave(data: EntityData = {}): Promise<TEntity> {
+   async createAndSave(data: EntityCreationData = {}): Promise<TEntity> {
     let entity = this.createEntity(data);
     await this.save(entity)
     return entity
