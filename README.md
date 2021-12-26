@@ -117,7 +117,7 @@ Caveats done. Now, on with *how* to use Redis OM!
 
 ## 🏁 Getting Started
 
-First things first, get yourself a Node.js project. There are lots of ways to do this but I'm gonna go with a classic:
+First things first, get yourself a Node.js project. There are lots of ways to do this, but I'm gonna go with a classic:
 
     $ npm init
 
@@ -129,7 +129,7 @@ Of course, you'll need some Redis, preferably with [RediSearch][redisearch-url] 
 
     $ docker run -p 6379:6379 redislabs/redismod:preview
 
-Excellent. Set up done. Let's write some code!
+Excellent. Setup done. Let's write some code!
 
 ## 🔌 Connect to Redis with a Client
 
@@ -158,7 +158,7 @@ let { Client } = require('redis-om')
 ```
 
 <details>
-<summary>Also in TypeScript</summary>
+<summary>Or, in TypeScript:</summary>
 
 ```typescript
 import { Client } from 'redis-om';
@@ -203,13 +203,13 @@ Ok. Let's start doing some object mapping. We'll start by defining an [*entity*]
 import { Entity, Schema } from 'redis-om'
 ```
 
-[Entities](docs/classes/Entity.md) are the classes that you work with. The thing being created, read, updated, and deleted. Any class that extends `Entity` is an entity. Usually, you'll define an entity with a single line of code:
+[Entities](docs/classes/Entity.md) are the classes that you work with. The things being created, read, updated, and deleted. Any class that extends `Entity` is an entity. Usually, you'll define an entity with a single line of code:
 
 ```javascript
 class Album extends Entity {}
 ```
 
-[Schemas](docs/classes/Schema.md) define the fields on your entity, their types, and how they are mapped internally to Redis. By default, entities map to Hashes in Redis but you can also use JSON, more on that later:
+[Schemas](docs/classes/Schema.md) define the fields on your entity, their types, and how they are mapped internally to Redis. By default, entities map to Hashes in Redis, but you can also use JSON (more on that later):
 
 ```javascript
 let schema = new Schema(Album, {
@@ -227,7 +227,7 @@ There are several other options available when defining a schema for your entity
 
 ## 🖋 Reading and Writing with Repository
 
-Now that we have a client and a schema we have what we need to make a [*repository*](docs/classes/Repository.md). A repository provides the means to read, write, and remove entities. Creating a repository is pretty straightforward:
+Now that we have a client and a schema, we have what we need to make a [*repository*](docs/classes/Repository.md). A repository provides the means to read, write, and remove entities. Creating a repository is pretty straightforward:
 
 ```javascript
 import { Repository } from 'redis-om'
@@ -242,7 +242,7 @@ let album = repository.createEntity()
 album.entityId // '01FJYWEYRHYFT8YTEGQBABJ43J'
 ```
 
-Note that entities created by `.createEntity` are not saved to Redis, at least not yet. They've only been instantiated and populated with an entity ID. This ID is a [ULID](https://github.com/ulid/spec) and is a unique id representing that object. To create a new entity *and* save it to Redis, we need to set all the properties on the entity that we care about and call `.save`:
+Note that entities created by `.createEntity` are not saved to Redis (at least not yet). They've only been instantiated and populated with an entity ID. This ID is a [ULID](https://github.com/ulid/spec), and is a unique id representing that object. To create a new entity *and* save it to Redis, we need to set all the properties on the entity that we care about, and call `.save`:
 
 ```javascript
 let album = repository.createEntity()
@@ -283,7 +283,7 @@ await repository.remove('01FJYWEYRHYFT8YTEGQBABJ43J')
 
 ### Missing Entities and Null Values
 
-Redis, and by extension Redis OM, doesn't differentiate between missing and null. Missing fields in Redis are returned as `null` and missing keys return `null`. So, if you fetch an entity that doesn't exist, it will happily return you an entity full of nulls:
+Redis, and by extension Redis OM, doesn't differentiate between missing and null. Missing fields in Redis are returned as `null`, and missing keys return `null`. So, if you fetch an entity that doesn't exist, it will happily return you an entity full of nulls:
 
 ```javascript
 let album = await repository.fetch('DOES_NOT_EXIST')
@@ -309,7 +309,7 @@ let id = await repository.save(album)
 let exists = await client.execute(['EXISTS', 'Album:01FJYWEYRHYFT8YTEGQBABJ43J']) // 0
 ```
 
-It does this because Redis doesn't distinguish between missing and null. You could have an entity that is all nulls. Or you could not. Redis doesn't know which is your intention and so always returns something when you call `.fetch`.
+It does this because Redis doesn't distinguish between missing and null. You could have an entity that is all nulls. Or you could not. Redis doesn't know which is your intention, and so always returns *something* when you call `.fetch`.
 
 ### A Note for TypeScript Users
 
@@ -407,13 +407,13 @@ Let's explore this in full.
 
 ### Build the Index
 
-To use search you have to build an index. If you don't you'll get errors. To build an index, just call `.createIndex` on your repository:
+To use search you have to build an index. If you don't, you'll get errors. To build an index, just call `.createIndex` on your repository:
 
 ```javascript
 await repository.createIndex();
 ```
 
-If you change your schema, you'll need to rebuild your index. To do that you'll need to drop the index and create it again:
+If you change your schema, you'll need to rebuild your index. To do that, you'll need to drop the index and create it again:
 
 ```javascript
 await repository.dropIndex();
@@ -430,7 +430,7 @@ let albums = await repository.search().return.all()
 
 #### Pagination
 
-It's possible that you have a *lot* of albums, I know I do. In that case, you can page through the results. Just pass in the zero-based offset and the number of results you want:
+It's possible that you have a *lot* of albums; I know I do. In that case, you can page through the results. Just pass in the zero-based offset and the number of results you want:
 
 ```javascript
 let offset = 100
@@ -543,7 +543,7 @@ albums = await repository.search.where('outOfPublication').true().return.all()
 albums = await repository.search.where('outOfPublication').false().return.all()
 ```
 
-You can negate boolean searches. This might seem odd, but if your field is `null` then it would match on a `.not` query:
+You can negate boolean searches. This might seem odd, but if your field is `null`, then it would match on a `.not` query:
 
 ```javascript
 // find all albums where outOfPublication is false or null
@@ -611,7 +611,7 @@ By default, a string matches the entire string. So, if the title of your album i
   ...
 ```
 
-Doing this gives you the full power of [RediSearch][redisearch-url] by enabling full-text search against that string instead of matching the whole string. Full-text search is pretty clever. It understands that certain words (like *a*, *an*, or *the*) are common and ignores them. It understands how words relate to each other and so if you search for 'give' it matches 'gave', 'gives', 'given', and 'giving' too. Plus, if you need to, you can override this to do exact matches of a word or phrase.
+Doing this gives you the full power of [RediSearch][redisearch-url] by enabling full-text search against that string instead of matching the whole string. Full-text search is pretty clever. It understands that certain words (like *a*, *an*, or *the*) are common and ignores them. It understands how words relate to each other and so if you search for 'give', it matches 'gave', 'gives', 'given', and 'giving' too. Plus, if you need to, you can override this to do exact matches of a word or phrase.
 
 ```javascript
 let albums
@@ -671,7 +671,7 @@ let albums = await repository.search
   .and('year').is.greaterThan(1990).return.all()
 ```
 
-These are executed in order from left to right and ignore any order of operations. So this query will match an artist of "Mushroomhead" OR a title matching "butterfly" before it goes on to match that the year is greater than 1990.
+These are executed in order from left to right, and ignore any order of operations. So this query will match an artist of "Mushroomhead" OR a title matching "butterfly", before it goes on to match that the year is greater than 1990.
 
 If you'd like to change this you can nest your queries:
 
@@ -688,7 +688,7 @@ This query finds all Mushroomhead albums after 1990 or albums that have "butterf
 
 ## 👊 Combining RedisJSON and RediSearch
 
-One final note. All of the search capabilities of RediSearch that Redis OM exposes work with Hashes. But, RediSearch also plays nice with RedisJSON. All you need to do to use search with RedisJSON is to enable it in the schema:
+One final note: All of the search capabilities of RediSearch that Redis OM exposes work with Hashes. However, RediSearch also plays nice with RedisJSON. All you need to do to use search with RedisJSON is to enable it in the schema:
 
 
 ```javascript
