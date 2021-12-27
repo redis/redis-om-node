@@ -107,6 +107,15 @@ export default class Search<TEntity extends Entity> {
   }
 
   /**
+   * Returns only the first {@link Entity} that matches this query.
+   */
+  async first(): Promise<TEntity> {
+    let foundEntity: TEntity[] | TEntity = await this.page(0, 1);
+    foundEntity = foundEntity[0];
+    return foundEntity;
+  }
+
+  /**
    * Alias for {@link Search.count}.
    */
    async returnCount(): Promise<number> {
@@ -125,6 +134,14 @@ export default class Search<TEntity extends Entity> {
    */
   async returnAll(options = { pageSize: 10 }): Promise<TEntity[]> {
     return await this.all(options)
+  }
+
+  /**
+   * 
+   * Alias for (@link Search.first).
+   */
+  async returnFirst(): Promise<TEntity> {
+    return await this.first();
   }
 
   /**

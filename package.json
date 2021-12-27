@@ -4,13 +4,14 @@
   "description": "Object mapping, and more, for Redis and Node.js. Written in TypeScript.",
   "main": "dist/index.js",
   "types": "./dist/index.d.ts",
-  "files": [ 
+  "files": [
     "README.md",
     "CHANGELOG",
     "LICENSE",
     "logo.svg",
     "dist/**/*",
-    "docs/**/*" ],
+    "docs/**/*"
+  ],
   "scripts": {
     "build": "rm -rf ./dist && tsc --project ./",
     "docs": "rm -rf ./docs && typedoc",
