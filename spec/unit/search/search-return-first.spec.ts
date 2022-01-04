@@ -6,8 +6,7 @@ import Search from "../../../lib/search/search";
 import { simpleHashSchema, SimpleHashEntity, SimpleJsonEntity, simpleJsonSchema } from "../helpers/test-entity-and-schema";
 import { mockClientSearchToReturnNothing,
   mockClientSearchToReturnSingleHash, mockClientSearchToReturnSingleJsonString,
-  mockClientSearchToReturnMultipleHashes, mockClientSearchToReturnMultipleJsonStrings,
-  SIMPLE_ENTITY_1, SIMPLE_ENTITY_2, SIMPLE_ENTITY_3 } from '../helpers/search-helpers';
+  SIMPLE_ENTITY_1} from '../helpers/search-helpers';
 
 jest.mock('../../../lib/client');
 
