@@ -110,9 +110,8 @@ export default class Search<TEntity extends Entity> {
    * Returns only the first {@link Entity} that matches this query.
    */
   async first(): Promise<TEntity> {
-    let foundEntity: TEntity[] | TEntity = await this.page(0, 1);
-    foundEntity = foundEntity[0];
-    return foundEntity;
+    let foundEntity = await this.page(0, 1);
+    return foundEntity[0];
   }
 
   /**
