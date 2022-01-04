@@ -111,7 +111,7 @@ export default class Search<TEntity extends Entity> {
    */
   async first(): Promise<TEntity> {
     let foundEntity = await this.page(0, 1);
-    return foundEntity[0];
+    return foundEntity[0] ?? null;
   }
 
   /**
