@@ -429,7 +429,7 @@ let albums = await repository.search().return.all()
 ```
 
 ### Finding and returning only the first item
-If you have an index created, you can also search and return the first entry in the repository:
+If you have an index created, you can also search and return the first entry that matches the search.
 
 ```javascript
 let firstAlbum = await repository.search().return.first();
