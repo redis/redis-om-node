@@ -69,6 +69,52 @@ describe("Search", () => {
 
         });
 
+        describe("When running against JSON Objects", () => {
+
+            let search: Search<SimpleJsonEntity>
+            let entity: SimpleJsonEntity;
+            let indexName = 'SimpleJsonEntity:index', query = '*';
+
+            beforeEach(() => search = new Search<SimpleJsonEntity>(simpleJsonSchema, client));
+
+            describe("When querying no results", () => {
+                beforeEach( async () => {
+                    mockClientSearchToReturnNothing();
+                    entity = await search.return.first();
+                });
+
+                it("asks the client for the first result of a given repository", () => {
+                    expect(Client.prototype.search).toHaveBeenCalledTimes(1);
+                    expect(Client.prototype.search).toHaveBeenCalledWith({
+                        indexName, query, offset: 0, count: 1 });
+                });
+
+                it("return no result", () => expect(entity).toBe(null));
+            });
+
+            describe("When getting a result", () => {
+
+                beforeEach(async () => {
+                    mockClientSearchToReturnSingleJsonString();
+                    entity = await search.return.first();
+                  });
+
+                  it("asks the client for the first result of a given repository", () => {
+                      expect(Client.prototype.search).toHaveBeenCalledTimes(1)
+                      expect(Client.prototype.search).toHaveBeenCalledWith({
+                        indexName, query, offset: 0, count: 1 });
+                  });
+
+                  it("Return the first result of a given repository", () => {
+                      expect(entity.entityData.aBoolean).toEqual(SIMPLE_ENTITY_1.aBoolean);
+                      expect(entity.entityData.aNumber).toEqual(SIMPLE_ENTITY_1.aNumber);
+                      expect(entity.entityData.aString).toEqual(SIMPLE_ENTITY_1.aString);
+                      expect(entity.entityId).toEqual(SIMPLE_ENTITY_1.entityId);
+                  })
+            });
+
+        });
+
     });
 
 });
