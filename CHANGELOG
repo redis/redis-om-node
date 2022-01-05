@@ -4,7 +4,10 @@
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and Redis OM adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## 0.1.6 - 2022-01-03
+## 0.1.6 - 2022-01-05
+### Added
+- Added .return.first() and .returnFirst() methods to search. Sometimes you really can eat just one.
+
 ### Fixed
 - Entity now has a better default JSON serialization output.
 

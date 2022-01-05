@@ -440,6 +440,16 @@ let albums = await repository.search().return.page(offset, count)
 
 Don't worry if your offset is greater than the number of entities. If it is, you just get an empty array back. No harm, no foul.
 
+#### First Things First
+
+Sometimes you only have one album. Or maybe you only care about the first album you find. You can easily grab the first result of your search with `.first`:
+
+```javascript
+let firstAlbum = await repository.search().return.first();
+```
+
+Note: If you have *no* albums, this will return `null`.
+
 #### Counting
 
 Sometimes you just want to know how many entities you have. For that, you can call `.count`:
