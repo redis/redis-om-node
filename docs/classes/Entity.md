@@ -15,6 +15,10 @@ class Foo extends Entity {}
 
 - [entityId](Entity.md#entityid)
 
+### Methods
+
+- [toJSON](Entity.md#tojson)
+
 ## Properties
 
 ### entityId
@@ -25,4 +29,18 @@ The generated entity ID.
 
 #### Defined in
 
-[lib/entity/entity.ts:22](https://github.com/redis/redis-om-node/blob/8a196dc/lib/entity/entity.ts#L22)
+[lib/entity/entity.ts:27](https://github.com/redis/redis-om-node/blob/cb8f447/lib/entity/entity.ts#L27)
+
+## Methods
+
+### toJSON
+
+▸ **toJSON**(): `Record`<`string`, `any`\>
+
+#### Returns
+
+`Record`<`string`, `any`\>
+
+#### Defined in
+
+[lib/entity/entity.ts:47](https://github.com/redis/redis-om-node/blob/cb8f447/lib/entity/entity.ts#L47)
