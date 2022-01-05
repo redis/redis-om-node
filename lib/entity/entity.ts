@@ -46,7 +46,6 @@ export default abstract class Entity {
 
   toJSON() {
     let json: Record<string, any> = { entityId: this.entityId }
-    console.log(Object.getOwnPropertyDescriptors(this));
     for (let key in this.schemaDef) {
       json[key] = (this as Record<string, any>)[key];
     }
