@@ -4,12 +4,15 @@
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and Redis OM adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-
-## 0.1.6
+## 0.1.6 - 2022-01-05
 ### Added
 - Added .return.first() and .returnFirst() methods to search. Sometimes you really can eat just one.
 
-## 0.1.5 - 2021-12-22
+### Fixed
+- Entity now has a better default JSON serialization output.
+
+
+## 0.1.5 - 2021-12-23
 ### Added
 - Added ability to pass in initial values when creating an Entity with .createEntity.
 - Added .createAndSave method to Repository that does exactly what you think it does.
@@ -17,6 +20,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ### Changed
 - More fluent interface on .return.all(), return.page(), and return.count() on Search.
 - Replace .return with .returnPage in Search class.
+
 
 ## 0.1.4 - 2021-12-17
 ### Added

@@ -112,7 +112,7 @@ export default class Repository<TEntity extends Entity> {
    */
   createEntity(data: EntityCreationData = {}): TEntity {
     let id = this.schema.generateId();
-    let entity = new this.schema.entityCtor(id);
+    let entity = new this.schema.entityCtor(this.schema.definition, id);
     for (let key in data) {
       if (this.schema.entityCtor.prototype.hasOwnProperty(key)) {
         (entity as Record<string, any>)[key] = data[key]
@@ -178,7 +178,7 @@ export default class Repository<TEntity extends Entity> {
       entityData = this.hashConverter.toEntityData(hashData);
     }
 
-    let entity = new this.schema.entityCtor(id, entityData);
+    let entity = new this.schema.entityCtor(this.schema.definition, id, entityData);
     return entity;
   }
 

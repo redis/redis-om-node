@@ -56,13 +56,7 @@ export type FieldDefinition = NumericField | StringField | BooleanField | ArrayF
 /**
 * Group of {@link FieldDefinition}s that define the schema for an {@link Entity}.
  */
-export type SchemaDefinition = {
-  /**
-   * The key determines the propery name that is added to the {@link Entity}. The property
-   * contains a {@link FieldDefinition} that tell Redis OM how to map the property to Redis.
-   */
-  [key: string]: FieldDefinition
-}
+export type SchemaDefinition = Record<string, FieldDefinition>;
 
 /** A function that generates random {@link Entity.entityId | Entity IDs}. */
 export type IdStrategy = () => string;
