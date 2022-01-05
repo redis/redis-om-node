@@ -428,12 +428,6 @@ Once you have an index created (or recreated) you can search. The most basic sea
 let albums = await repository.search().return.all()
 ```
 
-### Finding and returning only the first item
-If you have an index created, you can also search and return the first entry that matches the search.
-
-```javascript
-let firstAlbum = await repository.search().return.first();
-
 #### Pagination
 
 It's possible that you have a *lot* of albums; I know I do. In that case, you can page through the results. Just pass in the zero-based offset and the number of results you want:
@@ -445,6 +439,16 @@ let albums = await repository.search().return.page(offset, count)
 ```
 
 Don't worry if your offset is greater than the number of entities. If it is, you just get an empty array back. No harm, no foul.
+
+#### First Things First
+
+Sometimes you only have one album. Or maybe you only care about the first album you find. You can easily grab the first result of your search with `.first`:
+
+```javascript
+let firstAlbum = await repository.search().return.first();
+```
+
+Note: If you have *no* albums, this will return `null`.
 
 #### Counting
 
