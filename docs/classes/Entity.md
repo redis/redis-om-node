@@ -29,7 +29,7 @@ The generated entity ID.
 
 #### Defined in
 
-[lib/entity/entity.ts:27](https://github.com/redis/redis-om-node/blob/cb8f447/lib/entity/entity.ts#L27)
+[lib/entity/entity.ts:27](https://github.com/redis/redis-om-node/blob/ee688a6/lib/entity/entity.ts#L27)
 
 ## Methods
 
@@ -43,4 +43,4 @@ The generated entity ID.
 
 #### Defined in
 
-[lib/entity/entity.ts:47](https://github.com/redis/redis-om-node/blob/cb8f447/lib/entity/entity.ts#L47)
+[lib/entity/entity.ts:47](https://github.com/redis/redis-om-node/blob/ee688a6/lib/entity/entity.ts#L47)
