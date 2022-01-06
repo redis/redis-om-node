@@ -21,7 +21,10 @@ describe("Client", () => {
         await client.close();
       });
       
-      it("closes the shim", () => expect(RedisShim.prototype.close).toHaveBeenCalled());
+      it("closes the shim", () => {
+        expect(RedisShim.prototype.close).toHaveBeenCalled();
+        expect(client.isOpen()).toBe(false);
+      });
     });
 
     describe("when called on an already closed client", () => {
@@ -30,13 +33,15 @@ describe("Client", () => {
         await client.close();
       });
       
-      it("errors when called on a closed client", () => 
-        expect(async () => await client.close())
-          .rejects.toThrow("Redis connection needs opened."));
+      it("happily closes it anyways", async () => {
+        await client.close();
+        expect(client.isOpen()).toBe(false);
+      });
     });
     
-    it("errors when called on a new client", async () =>
-      expect(async () => await client.close())
-        .rejects.toThrow("Redis connection needs opened."));
+    it("happily closes an unopened client", async () => {
+      await client.close();
+      expect(client.isOpen()).toBe(false);
+    });
   });
 });
