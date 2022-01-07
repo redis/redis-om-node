@@ -44,6 +44,7 @@
     - [Build the Index](#build-the-index)
     - [Finding All The Things (and Returning Them)](#finding-all-the-things-and-returning-them)
       - [Pagination](#pagination)
+      - [First Things First](#first-things-first)
       - [Counting](#counting)
     - [Finding Specific Things](#finding-specific-things)
       - [Searching on Whole Strings](#searching-on-whole-strings)

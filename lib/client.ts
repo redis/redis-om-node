@@ -58,8 +58,7 @@ export default class Client {
    * @param url A URL to Redis as defined with the [IANA](https://www.iana.org/assignments/uri-schemes/prov/redis).
    */
   async open(url: string = 'redis://localhost:6379') {
-    this.validateShimClosed();
-    let shim = new RedisShim();
+    let shim = this.shim ?? new RedisShim();
     await shim.open(url);
     this.shim = shim;
   }
@@ -93,9 +92,8 @@ export default class Client {
   /**
    * Close the connection to Redis.
    */
-   async close() {
-    this.validateShimOpen();
-    await this.shim!.close();
+  async close() {
+    await this.shim?.close();
     this.shim = undefined;
   }
 
@@ -122,7 +120,7 @@ export default class Client {
     this.validateShimOpen();
     await this.shim!.execute([ 'FT.DROPINDEX', indexName ]);
   }
-  
+
   /** @internal */
   async search(options: SearchOptions) {
     this.validateShimOpen();
@@ -164,8 +162,11 @@ export default class Client {
     await this.shim!.execute<string>([ 'JSON.SET', key, '.', json ]);
   }
 
-  private validateShimClosed() {
-    if (this.shim) throw new RedisError("Redis connection is already open.");
+  /**
+   * @returns Whether a connection is already open
+   */
+  isOpen() {
+    return !!this.shim;
   }
 
   private validateShimOpen() {

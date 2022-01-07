@@ -64,7 +64,7 @@ A constructor that creates an [Entity](classes/Entity.md) of type TEntity.
 
 #### Defined in
 
-[lib/entity/entity.ts:12](https://github.com/redis/redis-om-node/blob/cb8f447/lib/entity/entity.ts#L12)
+[lib/entity/entity.ts:12](https://github.com/redis/redis-om-node/blob/ee688a6/lib/entity/entity.ts#L12)
 
 ___
 
@@ -77,7 +77,7 @@ Initialization data for [Entity](classes/Entity.md) creation when calling
 
 #### Defined in
 
-[lib/repository/repository.ts:14](https://github.com/redis/redis-om-node/blob/cb8f447/lib/repository/repository.ts#L14)
+[lib/repository/repository.ts:14](https://github.com/redis/redis-om-node/blob/ee688a6/lib/repository/repository.ts#L14)
 
 ___
 
@@ -89,7 +89,7 @@ A JavaScript object containing the underlying data of an [Entity](classes/Entity
 
 #### Defined in
 
-[lib/entity/entity.ts:6](https://github.com/redis/redis-om-node/blob/cb8f447/lib/entity/entity.ts#L6)
+[lib/entity/entity.ts:6](https://github.com/redis/redis-om-node/blob/ee688a6/lib/entity/entity.ts#L6)
 
 ___
 
@@ -101,7 +101,7 @@ Contains instructions telling how to map a property on an [Entity](classes/Entit
 
 #### Defined in
 
-[lib/schema/schema-definitions.ts:54](https://github.com/redis/redis-om-node/blob/cb8f447/lib/schema/schema-definitions.ts#L54)
+[lib/schema/schema-definitions.ts:54](https://github.com/redis/redis-om-node/blob/ee688a6/lib/schema/schema-definitions.ts#L54)
 
 ___
 
@@ -121,7 +121,7 @@ A function that generates random [Entity IDs](classes/Entity.md#entityid).
 
 #### Defined in
 
-[lib/schema/schema-definitions.ts:62](https://github.com/redis/redis-om-node/blob/cb8f447/lib/schema/schema-definitions.ts#L62)
+[lib/schema/schema-definitions.ts:62](https://github.com/redis/redis-om-node/blob/ee688a6/lib/schema/schema-definitions.ts#L62)
 
 ___
 
@@ -133,7 +133,7 @@ Group of [FieldDefinition](README.md#fielddefinition)s that define the schema fo
 
 #### Defined in
 
-[lib/schema/schema-definitions.ts:59](https://github.com/redis/redis-om-node/blob/cb8f447/lib/schema/schema-definitions.ts#L59)
+[lib/schema/schema-definitions.ts:59](https://github.com/redis/redis-om-node/blob/ee688a6/lib/schema/schema-definitions.ts#L59)
 
 ___
 
@@ -156,7 +156,7 @@ Configuration options for a [Schema](classes/Schema.md).
 
 #### Defined in
 
-[lib/schema/schema-options.ts:7](https://github.com/redis/redis-om-node/blob/cb8f447/lib/schema/schema-options.ts#L7)
+[lib/schema/schema-options.ts:7](https://github.com/redis/redis-om-node/blob/ee688a6/lib/schema/schema-options.ts#L7)
 
 ___
 
@@ -168,7 +168,7 @@ The type of data structure in Redis to map objects to.
 
 #### Defined in
 
-[lib/client.ts:21](https://github.com/redis/redis-om-node/blob/cb8f447/lib/client.ts#L21)
+[lib/client.ts:21](https://github.com/redis/redis-om-node/blob/ee688a6/lib/client.ts#L21)
 
 ___
 
@@ -180,7 +180,7 @@ Valid values for how to use stop words for a given [Schema](classes/Schema.md).
 
 #### Defined in
 
-[lib/schema/schema-definitions.ts:65](https://github.com/redis/redis-om-node/blob/cb8f447/lib/schema/schema-definitions.ts#L65)
+[lib/schema/schema-definitions.ts:65](https://github.com/redis/redis-om-node/blob/ee688a6/lib/schema/schema-definitions.ts#L65)
 
 ___
 
@@ -212,4 +212,4 @@ A function that takes a [Search](classes/Search.md) and returns a [Search](class
 
 #### Defined in
 
-[lib/search/search.ts:22](https://github.com/redis/redis-om-node/blob/cb8f447/lib/search/search.ts#L22)
+[lib/search/search.ts:22](https://github.com/redis/redis-om-node/blob/ee688a6/lib/search/search.ts#L22)

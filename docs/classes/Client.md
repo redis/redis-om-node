@@ -25,6 +25,7 @@ its constructor.
 - [close](Client.md#close)
 - [execute](Client.md#execute)
 - [fetchRepository](Client.md#fetchrepository)
+- [isOpen](Client.md#isopen)
 - [open](Client.md#open)
 
 ## Constructors
@@ -47,7 +48,7 @@ Close the connection to Redis.
 
 #### Defined in
 
-[lib/client.ts:96](https://github.com/redis/redis-om-node/blob/cb8f447/lib/client.ts#L96)
+[lib/client.ts:95](https://github.com/redis/redis-om-node/blob/ee688a6/lib/client.ts#L95)
 
 ___
 
@@ -77,7 +78,7 @@ The raw results of calling the Redis command.
 
 #### Defined in
 
-[lib/client.ts:73](https://github.com/redis/redis-om-node/blob/cb8f447/lib/client.ts#L73)
+[lib/client.ts:72](https://github.com/redis/redis-om-node/blob/ee688a6/lib/client.ts#L72)
 
 ___
 
@@ -107,7 +108,23 @@ A repository for the provided schema.
 
 #### Defined in
 
-[lib/client.ts:88](https://github.com/redis/redis-om-node/blob/cb8f447/lib/client.ts#L88)
+[lib/client.ts:87](https://github.com/redis/redis-om-node/blob/ee688a6/lib/client.ts#L87)
+
+___
+
+### isOpen
+
+▸ **isOpen**(): `boolean`
+
+#### Returns
+
+`boolean`
+
+Whether a connection is already open
+
+#### Defined in
+
+[lib/client.ts:168](https://github.com/redis/redis-om-node/blob/ee688a6/lib/client.ts#L168)
 
 ___
 
@@ -129,4 +146,4 @@ Open a connection to Redis at the provided URL.
 
 #### Defined in
 
-[lib/client.ts:60](https://github.com/redis/redis-om-node/blob/cb8f447/lib/client.ts#L60)
+[lib/client.ts:60](https://github.com/redis/redis-om-node/blob/ee688a6/lib/client.ts#L60)
