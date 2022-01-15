@@ -51,7 +51,7 @@ export type SearchOptions = {
  * its constructor.
  */
 export default class Client {
-  private shim?: RedisShim;
+  protected shim?: RedisShim;
 
   /**
    * Open a connection to Redis at the provided URL.
@@ -71,7 +71,7 @@ export default class Client {
    */
    async execute<TResult>(command: (string|number|boolean)[]) : Promise<TResult> {
     this.validateShimOpen();
-    return await this.shim!.execute<TResult>(command.map(arg => {
+    return await this.shim.execute<TResult>(command.map(arg => {
       if (arg === false) return '0';
       if (arg === true) return '1';
       return arg.toString();
@@ -112,20 +112,20 @@ export default class Client {
 
     command.push('SCHEMA', ...schema);
 
-    await this.shim!.execute(command);
+    await this.shim.execute(command);
   }
 
   /** @internal */
   async dropIndex(indexName: string) {
     this.validateShimOpen();
-    await this.shim!.execute([ 'FT.DROPINDEX', indexName ]);
+    await this.shim.execute([ 'FT.DROPINDEX', indexName ]);
   }
 
   /** @internal */
   async search(options: SearchOptions) {
     this.validateShimOpen();
     let { indexName, query, offset, count } = options
-    return await this.shim!.execute<any[]>([
+    return await this.shim.execute<any[]>([
       'FT.SEARCH', indexName, query,
       'LIMIT', offset.toString(), count.toString() ]);
   }
@@ -133,25 +133,25 @@ export default class Client {
   /** @internal */
   async unlink(key: string) {
     this.validateShimOpen();
-    await this.shim!.unlink(key);
+    await this.shim.unlink(key);
   }
 
   /** @internal */
   async hgetall(key: string): Promise<HashData> {
     this.validateShimOpen();
-    return await this.shim!.hgetall(key);
+    return await this.shim.hgetall(key);
   }
 
   /** @internal */
   async hsetall(key: string, data: HashData) {
     this.validateShimOpen();
-    await this.shim!.hsetall(key, data)
+    await this.shim.hsetall(key, data)
   }
 
   /** @internal */
   async jsonget(key: string): Promise<JsonData> {
     this.validateShimOpen();
-    let json = await this.shim!.execute<string>([ 'JSON.GET', key, '.' ]);
+    let json = await this.shim.execute<string>([ 'JSON.GET', key, '.' ]);
     return JSON.parse(json);
   }
 
@@ -159,7 +159,7 @@ export default class Client {
   async jsonset(key: string, data: JsonData) {
     this.validateShimOpen();
     let json = JSON.stringify(data);
-    await this.shim!.execute<string>([ 'JSON.SET', key, '.', json ]);
+    await this.shim.execute<string>([ 'JSON.SET', key, '.', json ]);
   }
 
   /**
@@ -169,7 +169,7 @@ export default class Client {
     return !!this.shim;
   }
 
-  private validateShimOpen() {
+  private validateShimOpen(): asserts this is { shim: RedisShim } {
     if (!this.shim) throw new RedisError("Redis connection needs opened.");
   }
 }
