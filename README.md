@@ -24,7 +24,7 @@
 
 **Redis OM Node.js** makes it easy to model Redis data in your Node.js applications.
 
-[Redis OM .NET][redis-om-dotnet] | **Redis OM Node.js** | [Redis OM Python][redis-om-python] | [Redis OM Spring][redis-om-spring]
+[Redis OM .NET](https://github.com/redis/redis-om-dotnet) | **Redis OM Node.js** | [Redis OM Spring](https://github.com/redis/redis-om-spring) | [Redis OM Python](https://github.com/redis/redis-om-python)
 
 <details>
   <summary><strong>Table of contents</strong></summary>
