@@ -40,6 +40,11 @@ export interface StringField extends Field {
 export interface BooleanField extends Field {
   /** Yep. It's a boolean. */
   type: 'boolean';
+
+  /** Enables sorting by this field. Keep in mind that booleans are represented by 0's and 1's so 
+   * sorting will work accoordingly
+   */
+  sortable?: boolean;
 }
 
 /** A field representing an array of strings. */

@@ -69,19 +69,6 @@ export default class SchemaBuilder<TEntity extends Entity> {
     schemaEntry.push(fieldPath, 'AS', fieldAlias);
 
     if (fieldType === 'boolean') schemaEntry.push('TAG');
-    if (fieldType === 'number') { 
-      schemaEntry.push('NUMERIC');
-      if((fieldDef as NumericField).sortable)
-        schemaEntry.push('SORTABLE');
-    }
-    if (fieldType === 'array') schemaEntry.push('TAG');
-    if (fieldType === 'string') {
-      if ((fieldDef as StringField).textSearch) schemaEntry.push('TEXT');
-      else schemaEntry.push('TAG', 'SEPARATOR', (fieldDef as StringField).separator ?? '|');
-      if((fieldDef as StringField).sortable) schemaEntry.push('SORTABLE');
-    }
-
-    if (fieldType === 'boolean') schemaEntry.push('TAG');
     if (fieldType === 'number') schemaEntry.push('NUMERIC');
     if (fieldType === 'array') schemaEntry.push('TAG');
     if (fieldType === 'string') {

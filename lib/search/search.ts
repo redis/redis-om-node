@@ -66,9 +66,12 @@ export default class Search<TEntity extends Entity> {
     if (fieldDef === undefined) 
       throw new Error(`The field '${field}' is not part of the schema.`);
 
-    if(!(fieldDef.type === 'string' || fieldDef.type === 'number')) 
-      throw new Error(`Sorting is not supported in field '${field}'. Only fields with string or number types can be sorted.`);
-    
+    if(this.schema.dataStructure === 'JSON')
+      throw new Error(`Sorting is not supported for schemas with JSON datastructures. Refer to https://oss.redis.com/redisearch/Indexing_JSON/#sortable_not_supported_on_tag`);
+
+    if(fieldDef.type === 'array')
+      throw new Error(`Sorting is not supported for array field types.`);
+
     if(!fieldDef.sortable)
       throw new Error(`Sorting is not enabled at '${field}'. Enable sorting in the field's schema.`);
 
@@ -76,19 +79,39 @@ export default class Search<TEntity extends Entity> {
     return this;
   }
 
+  /**
+   * Find the minimal value of a field.
+   * @returns The {@link Entity | Entities} with the minimal value 
+   */
   async min (field:string) : Promise<TEntity> {
     this.sortBy(field, 'ASC');
     return await this.first();
   }
 
-  returnMin = async (field:string) : Promise<TEntity> => this.min(field);
+  /**
+   * Find the minimal value of a field.
+   * @returns The {@link Entity | Entities} with the minimal value 
+   */
+  async returnMin (field:string) : Promise<TEntity> {
+    return await this.min(field);
+  }
 
+  /**
+   * Find the maximal value of a field.
+   * @returns The {@link Entity | Entities} with the maximal value 
+   */
   async max (field:string) : Promise<TEntity> {
     this.sortBy(field, 'DESC');
     return await this.first();
   }
 
-  returnMax = async (field:string) : Promise<TEntity> => this.max(field);
+  /**
+   * Find the maximal value of a field.
+   * @returns The {@link Entity | Entities} with the maximal value 
+   */
+  async returnMax (field:string) : Promise<TEntity> {
+    return await this.max(field);
+  }
 
   /**
    * Returns the number of {@link Entity | Entities} that match this query.
