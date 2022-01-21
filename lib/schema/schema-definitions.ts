@@ -11,6 +11,9 @@ export interface Field {
 export interface NumericField extends Field {
   /** Yep. It's a number. */
   type: 'number';
+
+  /** Enables sorting by this field. */
+  sortable?: boolean;
 }
 
 /** A field representing a string. */
@@ -20,6 +23,9 @@ export interface StringField extends Field {
 
   /** Enables full-text search on this field when set to `true`. Defaults to `false`. */
   textSearch?: boolean;
+
+  /** Enables sorting by this field. */
+  sortable?: boolean;
 
   /**
    * Due to how RediSearch works, non-full-text strings and arrays are sometimes stored the same

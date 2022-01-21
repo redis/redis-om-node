@@ -14,6 +14,7 @@ import WhereText from './where-text';
 
 import { HashSearchResultsConverter, JsonSearchResultsConverter } from "./results-converter";
 import { RedisError } from "..";
+import { SortOptions } from "../client";
 
 /**
  * A function that takes a {@link Search} and returns a {@link Search}. Used in nested queries.
@@ -30,7 +31,7 @@ type AndOrConstructor = new (left: Where, right: Where) => Where;
 export default class Search<TEntity extends Entity> {
   private schema: Schema<TEntity>;
   private client: Client;
-
+  private sort?:SortOptions;
   private rootWhere?: Where;
 
   /** @internal */
@@ -52,6 +53,42 @@ export default class Search<TEntity extends Entity> {
   get return() : Search<TEntity> {
     return this;
   }
+
+  /**
+   * Applies sorting for the query.
+   * @param field The field to sort by.
+   * @param order The order of returned {@link Entity | Entities} Defaults to `ASC` (ascending) if not specified
+   * @returns this
+   */
+  sortBy(field:string, order:'ASC'|'DESC'='ASC') : Search<TEntity> {
+    let fieldDef = this.schema.definition[field];
+
+    if (fieldDef === undefined) 
+      throw new Error(`The field '${field}' is not part of the schema.`);
+
+    if(!(fieldDef.type === 'string' || fieldDef.type === 'number')) 
+      throw new Error(`Sorting is not supported in field '${field}'. Only fields with string or number types can be sorted.`);
+    
+    if(!fieldDef.sortable)
+      throw new Error(`Sorting is not enabled at '${field}'. Enable sorting in the field's schema.`);
+
+    this.sort = { field, order };
+    return this;
+  }
+
+  async min (field:string) : Promise<TEntity> {
+    this.sortBy(field, 'ASC');
+    return await this.first();
+  }
+
+  returnMin = async (field:string) : Promise<TEntity> => this.min(field);
+
+  async max (field:string) : Promise<TEntity> {
+    this.sortBy(field, 'DESC');
+    return await this.first();
+  }
+
+  returnMax = async (field:string) : Promise<TEntity> => this.max(field);
 
   /**
    * Returns the number of {@link Entity | Entities} that match this query.
@@ -201,7 +238,8 @@ export default class Search<TEntity extends Entity> {
       indexName: this.schema.indexName,
       query: this.query,
       offset,
-      count
+      count,
+      sort:this.sort
     };
 
     let searchResults
