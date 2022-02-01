@@ -473,17 +473,17 @@ You can search for a whole string. This syntax will not search for partial strin
 let albums
 
 // find all albums where the artist is 'Mushroomhead'
-albums = await repository.search.where('artist').eq('Mushroomhead').return.all()
+albums = await repository.search().where('artist').eq('Mushroomhead').return.all()
 
 // find all albums where the artist is *not* 'Mushroomhead'
-albums = await repository.search.where('artist').not.eq('Mushroomhead').return.all()
+albums = await repository.search().where('artist').not.eq('Mushroomhead').return.all()
 
 // fluent alternatives that do the same thing
-albums = await repository.search.where('artist').equals('Mushroomhead').return.all()
-albums = await repository.search.where('artist').does.equal('Mushroomhead').return.all()
-albums = await repository.search.where('artist').is.equalTo('Mushroomhead').return.all()
-albums = await repository.search.where('artist').does.not.equal('Mushroomhead').return.all()
-albums = await repository.search.where('artist').is.not.equalTo('Mushroomhead').return.all()
+albums = await repository.search().where('artist').equals('Mushroomhead').return.all()
+albums = await repository.search().where('artist').does.equal('Mushroomhead').return.all()
+albums = await repository.search().where('artist').is.equalTo('Mushroomhead').return.all()
+albums = await repository.search().where('artist').does.not.equal('Mushroomhead').return.all()
+albums = await repository.search().where('artist').is.not.equalTo('Mushroomhead').return.all()
 ```
 
 #### Searching on Numbers
@@ -494,50 +494,50 @@ You can search against fields that contain numbers—both integers and floating-
 let albums
 
 // find all albums where the year is ===, >, >=, <, and <= 1984
-albums = await repository.search.where('year').eq(1984).return.all()
-albums = await repository.search.where('year').gt(1984).return.all()
-albums = await repository.search.where('year').gte(1984).return.all()
-albums = await repository.search.where('year').lt(1984).return.all()
-albums = await repository.search.where('year').lte(1984).return.all()
+albums = await repository.search().where('year').eq(1984).return.all()
+albums = await repository.search().where('year').gt(1984).return.all()
+albums = await repository.search().where('year').gte(1984).return.all()
+albums = await repository.search().where('year').lt(1984).return.all()
+albums = await repository.search().where('year').lte(1984).return.all()
 
 // find all albums where year is between 1980 and 1989 inclusive
-albums = await repository.search.where('year').between(1980, 1989).return.all()
+albums = await repository.search().where('year').between(1980, 1989).return.all()
 
 // find all albums where the year is *not* ===, >, >=, <, and <= 1984
-albums = await repository.search.where('year').not.eq(1984).return.all()
-albums = await repository.search.where('year').not.gt(1984).return.all()
-albums = await repository.search.where('year').not.gte(1984).return.all()
-albums = await repository.search.where('year').not.lt(1984).return.all()
-albums = await repository.search.where('year').not.lte(1984).return.all()
+albums = await repository.search().where('year').not.eq(1984).return.all()
+albums = await repository.search().where('year').not.gt(1984).return.all()
+albums = await repository.search().where('year').not.gte(1984).return.all()
+albums = await repository.search().where('year').not.lt(1984).return.all()
+albums = await repository.search().where('year').not.lte(1984).return.all()
 
 // find all albums where year is *not* between 1980 and 1989 inclusive
-albums = await repository.search.where('year').not.between(1980, 1989);
+albums = await repository.search().where('year').not.between(1980, 1989);
 
 // fluent alternatives that do the same thing
-albums = await repository.search.where('year').equals(1984).return.all()
-albums = await repository.search.where('year').does.equal(1984).return.all()
-albums = await repository.search.where('year').does.not.equal(1984).return.all()
-albums = await repository.search.where('year').is.equalTo(1984).return.all()
-albums = await repository.search.where('year').is.not.equalTo(1984).return.all()
+albums = await repository.search().where('year').equals(1984).return.all()
+albums = await repository.search().where('year').does.equal(1984).return.all()
+albums = await repository.search().where('year').does.not.equal(1984).return.all()
+albums = await repository.search().where('year').is.equalTo(1984).return.all()
+albums = await repository.search().where('year').is.not.equalTo(1984).return.all()
 
-albums = await repository.search.where('year').greaterThan(1984).return.all()
-albums = await repository.search.where('year').is.greaterThan(1984).return.all()
-albums = await repository.search.where('year').is.not.greaterThan(1984).return.all()
+albums = await repository.search().where('year').greaterThan(1984).return.all()
+albums = await repository.search().where('year').is.greaterThan(1984).return.all()
+albums = await repository.search().where('year').is.not.greaterThan(1984).return.all()
 
-albums = await repository.search.where('year').greaterThanOrEqualTo(1984).return.all()
-albums = await repository.search.where('year').is.greaterThanOrEqualTo(1984).return.all()
-albums = await repository.search.where('year').is.not.greaterThanOrEqualTo(1984).return.all()
+albums = await repository.search().where('year').greaterThanOrEqualTo(1984).return.all()
+albums = await repository.search().where('year').is.greaterThanOrEqualTo(1984).return.all()
+albums = await repository.search().where('year').is.not.greaterThanOrEqualTo(1984).return.all()
 
-albums = await repository.search.where('year').lessThan(1984).return.all()
-albums = await repository.search.where('year').is.lessThan(1984).return.all()
-albums = await repository.search.where('year').is.not.lessThan(1984).return.all()
+albums = await repository.search().where('year').lessThan(1984).return.all()
+albums = await repository.search().where('year').is.lessThan(1984).return.all()
+albums = await repository.search().where('year').is.not.lessThan(1984).return.all()
 
-albums = await repository.search.where('year').lessThanOrEqualTo(1984).return.all()
-albums = await repository.search.where('year').is.lessThanOrEqualTo(1984).return.all()
-albums = await repository.search.where('year').is.not.lessThanOrEqualTo(1984).return.all()
+albums = await repository.search().where('year').lessThanOrEqualTo(1984).return.all()
+albums = await repository.search().where('year').is.lessThanOrEqualTo(1984).return.all()
+albums = await repository.search().where('year').is.not.lessThanOrEqualTo(1984).return.all()
 
-albums = await repository.search.where('year').is.between(1980, 1989).return.all()
-albums = await repository.search.where('year').is.not.between(1980, 1989).return.all()
+albums = await repository.search().where('year').is.between(1980, 1989).return.all()
+albums = await repository.search().where('year').is.not.between(1980, 1989).return.all()
 ```
 
 #### Searching on Booleans
@@ -548,40 +548,40 @@ You can search against fields that contain booleans:
 let albums
 
 // find all albums where outOfPublication is true
-albums = await repository.search.where('outOfPublication').true().return.all()
+albums = await repository.search().where('outOfPublication').true().return.all()
 
 // find all albums where outOfPublication is false
-albums = await repository.search.where('outOfPublication').false().return.all()
+albums = await repository.search().where('outOfPublication').false().return.all()
 ```
 
 You can negate boolean searches. This might seem odd, but if your field is `null`, then it would match on a `.not` query:
 
 ```javascript
 // find all albums where outOfPublication is false or null
-albums = await repository.search.where('outOfPublication').not.true().return.all()
+albums = await repository.search().where('outOfPublication').not.true().return.all()
 
 // find all albums where outOfPublication is true or null
-albums = await repository.search.where('outOfPublication').not.false().return.all()
+albums = await repository.search().where('outOfPublication').not.false().return.all()
 ```
 
 And, of course, there's lots of syntactic sugar to make this fluent:
 
 ```javascript
-albums = await repository.search.where('outOfPublication').eq(true).return.all()
-albums = await repository.search.where('outOfPublication').equals(true).return.all()
-albums = await repository.search.where('outOfPublication').does.equal(true).return.all()
-albums = await repository.search.where('outOfPublication').is.equalTo(true).return.all()
+albums = await repository.search().where('outOfPublication').eq(true).return.all()
+albums = await repository.search().where('outOfPublication').equals(true).return.all()
+albums = await repository.search().where('outOfPublication').does.equal(true).return.all()
+albums = await repository.search().where('outOfPublication').is.equalTo(true).return.all()
 
-albums = await repository.search.where('outOfPublication').true().return.all()
-albums = await repository.search.where('outOfPublication').false().return.all()
-albums = await repository.search.where('outOfPublication').is.true().return.all()
-albums = await repository.search.where('outOfPublication').is.false().return.all()
+albums = await repository.search().where('outOfPublication').true().return.all()
+albums = await repository.search().where('outOfPublication').false().return.all()
+albums = await repository.search().where('outOfPublication').is.true().return.all()
+albums = await repository.search().where('outOfPublication').is.false().return.all()
 
-albums = await repository.search.where('outOfPublication').not.eq(true).return.all()
-albums = await repository.search.where('outOfPublication').does.not.equal(true).return.all()
-albums = await repository.search.where('outOfPublication').is.not.equalTo(true).return.all()
-albums = await repository.search.where('outOfPublication').is.not.true().return.all()
-albums = await repository.search.where('outOfPublication').is.not.false().return.all()
+albums = await repository.search().where('outOfPublication').not.eq(true).return.all()
+albums = await repository.search().where('outOfPublication').does.not.equal(true).return.all()
+albums = await repository.search().where('outOfPublication').is.not.equalTo(true).return.all()
+albums = await repository.search().where('outOfPublication').is.not.true().return.all()
+albums = await repository.search().where('outOfPublication').is.not.false().return.all()
 ```
 
 #### Searching Arrays
@@ -592,24 +592,24 @@ You can search on whole strings that are in an array:
 let albums
 
 // find all albums where genres contains the string 'rock'
-albums = await repository.search.where('genres').contain('rock').return.all()
+albums = await repository.search().where('genres').contain('rock').return.all()
 
 // find all albums where genres contains the string 'rock', 'metal', or 'blues'
-albums = await repository.search.where('genres').containOneOf('rock', 'metal', 'blues').return.all()
+albums = await repository.search().where('genres').containOneOf('rock', 'metal', 'blues').return.all()
 
 // find all albums where genres does *not* contain the string 'rock'
-albums = await repository.search.where('genres').not.contain('rock').return.all()
+albums = await repository.search().where('genres').not.contain('rock').return.all()
 
 // find all albums where genres does *not* contain the string 'rock', 'metal', and 'blues'
-albums = await repository.search.where('genres').not.containOneOf('rock', 'metal', 'blues').return.all()
+albums = await repository.search().where('genres').not.containOneOf('rock', 'metal', 'blues').return.all()
 
 // alternative syntaxes
-albums = await repository.search.where('genres').contains('rock').return.all()
-albums = await repository.search.where('genres').containsOneOf('rock', 'metal', 'blues').return.all()
-albums = await repository.search.where('genres').does.contain('rock').return.all()
-albums = await repository.search.where('genres').does.not.contain('rock').return.all()
-albums = await repository.search.where('genres').does.containOneOf('rock', 'metal', 'blues').return.all()
-albums = await repository.search.where('genres').does.not.containOneOf('rock', 'metal', 'blues').return.all()
+albums = await repository.search().where('genres').contains('rock').return.all()
+albums = await repository.search().where('genres').containsOneOf('rock', 'metal', 'blues').return.all()
+albums = await repository.search().where('genres').does.contain('rock').return.all()
+albums = await repository.search().where('genres').does.not.contain('rock').return.all()
+albums = await repository.search().where('genres').does.containOneOf('rock', 'metal', 'blues').return.all()
+albums = await repository.search().where('genres').does.not.containOneOf('rock', 'metal', 'blues').return.all()
 ```
 
 #### Full-Text Search
@@ -628,47 +628,47 @@ Doing this gives you the full power of [RediSearch][redisearch-url] by enabling 
 let albums
 
 // finds all albums where the title contains the word 'butterfly'
-albums = await repository.search.where('title').match('butterfly').return.all()
+albums = await repository.search().where('title').match('butterfly').return.all()
 
 // finds all albums where the title contains the the words 'beautiful' and 'children'
-albums = await repository.search.where('title').match('beautiful children').return.all()
+albums = await repository.search().where('title').match('beautiful children').return.all()
 
 // finds all albums where the title contains the exact phrase 'beautiful stories'
-albums = await repository.search.where('title').matchExact('beautiful stories').return.all()
+albums = await repository.search().where('title').matchExact('beautiful stories').return.all()
 ```
 
-Redis OM also exposes word prefix searches from RediSearch. If you are looking for a word that starts with a particular value, just tack a `*` on the end and it'll match accordingly:
+Redis OM also exposes word prefix searches from Redisearch. If you are looking for a word that starts with a particular value, just tack a `*` on the end and it'll match accordingly:
 
 ```javascript
 // finds all albums where the title contains a word that starts with 'right'
-albums = await repository.search.where('title').match('right*').return.all()
+albums = await repository.search().where('title').match('right*').return.all()
 ```
 
 But do not combine these. I repeat, **DO NOT COMBINE THESE**. Prefix searches and exact matches are not compatible. If you try to exactly match a prefixed search, you'll get an error.
 
 ```javascript
 // THIS WILL ERROR
-albums = await repository.search.where('title').matchExact('beautiful sto*').return.all()
+albums = await repository.search().where('title').matchExact('beautiful sto*').return.all()
 ```
 
 Again, there are several alternatives to make this a bit more fluent and, of course, negation is available:
 
 ```javascript
-albums = await repository.search.where('title').not.match('butterfly').return.all()
-albums = await repository.search.where('title').matches('butterfly').return.all()
-albums = await repository.search.where('title').does.match('butterfly').return.all()
-albums = await repository.search.where('title').does.not.match('butterfly').return.all()
+albums = await repository.search().where('title').not.match('butterfly').return.all()
+albums = await repository.search().where('title').matches('butterfly').return.all()
+albums = await repository.search().where('title').does.match('butterfly').return.all()
+albums = await repository.search().where('title').does.not.match('butterfly').return.all()
 
-albums = await repository.search.where('title').exact.match('beautiful stories').return.all()
-albums = await repository.search.where('title').not.exact.match('beautiful stories').return.all()
-albums = await repository.search.where('title').exactly.matches('beautiful stories').return.all()
-albums = await repository.search.where('title').does.exactly.match('beautiful stories').return.all()
-albums = await repository.search.where('title').does.not.exactly.match('beautiful stories').return.all()
+albums = await repository.search().where('title').exact.match('beautiful stories').return.all()
+albums = await repository.search().where('title').not.exact.match('beautiful stories').return.all()
+albums = await repository.search().where('title').exactly.matches('beautiful stories').return.all()
+albums = await repository.search().where('title').does.exactly.match('beautiful stories').return.all()
+albums = await repository.search().where('title').does.not.exactly.match('beautiful stories').return.all()
 
-albums = await repository.search.where('title').not.matchExact('beautiful stories').return.all()
-albums = await repository.search.where('title').matchesExactly('beautiful stories').return.all()
-albums = await repository.search.where('title').does.matchExactly('beautiful stories').return.all()
-albums = await repository.search.where('title').does.not.matchExactly('beautiful stories').return.all()
+albums = await repository.search().where('title').not.matchExact('beautiful stories').return.all()
+albums = await repository.search().where('title').matchesExactly('beautiful stories').return.all()
+albums = await repository.search().where('title').does.matchExactly('beautiful stories').return.all()
+albums = await repository.search().where('title').does.not.matchExactly('beautiful stories').return.all()
 ```
 
 #### Chaining Searches
