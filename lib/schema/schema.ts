@@ -19,6 +19,7 @@ import { SchemaOptions } from './schema-options';
  *   aString: { type: 'string' },
  *   aNumber: { type: 'number' },
  *   aBoolean: { type: 'boolean' },
+ *   aGeoPoint: { type: 'geopoint' },
  *   anArray: { type: 'array' }
  * }, {
  *   dataStructure: 'JSON'
@@ -112,23 +113,33 @@ export default class Schema<TEntity extends Entity> {
           return this.entityData[fieldAlias] ?? null;
         },
         set: function(value: any): void {
+
           if (value === undefined) {
             throw Error(`Property '${field}' on entity of type '${entityName}' cannot be set to undefined. Use null instead.`);
-          } else if (value === null) {
-            delete this.entityData[fieldAlias];
-          } else {
-            let isArray = Array.isArray(value);
-            let valueType = isArray ? 'array' : typeof(value)
-            if (fieldType === valueType) {
-              if (isArray) {
-                this.entityData[fieldAlias] = value.map((v: any) => v.toString());
-              } else {
-                this.entityData[fieldAlias] = value;
-              }
-            } else {
-              throw new RedisError(`Property '${field}' expected type of '${fieldType}' but received type of '${valueType}'.`);
-            }
           }
+          
+          if (value === null) {
+            delete this.entityData[fieldAlias];
+            return;
+          }
+
+          let isArray = Array.isArray(value);
+          let isObject = typeof(value === 'object');
+          let hasLongLat = typeof(value.longitude) === 'number' && typeof(value.latitude) === 'number';
+          let isGeo = !isArray && isObject && hasLongLat;
+
+          let valueType = isGeo ? 'geopoint' : (isArray ? 'array' : typeof(value))
+          if (fieldType === valueType) {
+            if (isArray) {
+              this.entityData[fieldAlias] = value.map((v: any) => v.toString());
+            } else {
+              this.entityData[fieldAlias] = value;
+            }
+
+            return;
+          }
+
+          throw new RedisError(`Property '${field}' expected type of '${fieldType}' but received type of '${valueType}'.`);
         }
       });
     }
@@ -150,7 +161,7 @@ export default class Schema<TEntity extends Entity> {
 
   private validateFieldDef(field: string) {
     let fieldDef: FieldDefinition = this.definition[field];
-    if (!['array', 'boolean', 'number', 'string'].includes(fieldDef.type))
+    if (!['array', 'boolean', 'number', 'string', 'geopoint'].includes(fieldDef.type))
       throw Error(`The field '${field}' is configured with a type of '${fieldDef.type}'. Valid types include 'array', 'boolean', 'number', and 'string'.`);
   }
 }

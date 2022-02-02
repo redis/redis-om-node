@@ -1,9 +1,9 @@
-import { SchemaDefinition } from "..";
+import { GeoPoint, SchemaDefinition } from "..";
 
 /**
  * A JavaScript object containing the underlying data of an {@link Entity}.
  */
-export type EntityData = Record<string, number | boolean | string | string[]>;
+export type EntityData = Record<string, number | boolean | string | GeoPoint | string[]>;
 
 /** 
  * A constructor that creates an {@link Entity} of type TEntity.

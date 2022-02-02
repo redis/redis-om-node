@@ -1,3 +1,11 @@
+/** Defines a point on the globe using longitude and latitude. */
+export type GeoPoint = {
+  /** The longitude of the point. */
+  longitude: number,
+  /** The latitude of the point. */
+  latitude: number
+}
+
 /** Base interface for all fields. */
 export interface Field {
   /**
@@ -36,6 +44,12 @@ export interface BooleanField extends Field {
   type: 'boolean';
 }
 
+/** A field representing a geopoint. */
+export interface GeoField extends Field {
+  /** Yep. It's a geopoint. */
+  type: 'geopoint';
+}
+
 /** A field representing an array of strings. */
 export interface ArrayField extends Field {
   /** Yep. It's an array. */
@@ -51,7 +65,7 @@ export interface ArrayField extends Field {
 }
 
 /** Contains instructions telling how to map a property on an {@link Entity} to Redis. */
-export type FieldDefinition = NumericField | StringField | BooleanField | ArrayField;
+export type FieldDefinition = NumericField | StringField | BooleanField | GeoField | ArrayField;
 
 /**
 * Group of {@link FieldDefinition}s that define the schema for an {@link Entity}.

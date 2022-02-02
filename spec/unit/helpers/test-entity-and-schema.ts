@@ -1,5 +1,6 @@
 import Entity from '../../../lib/entity/entity';
 import Schema from '../../../lib/schema/schema';
+import { GeoPoint } from '../../../lib/schema/schema-definitions';
 
 export class SimpleEntity extends Entity {}
 export class SimpleHashEntity extends SimpleEntity {}
@@ -9,6 +10,7 @@ export interface SimpleEntity {
   aString?: string | null;
   aNumber?: number | null;
   aBoolean?: boolean | null;
+  aGeoPoint?: GeoPoint | null;
   anArray?: string[] | null;
 }
 
@@ -28,6 +30,7 @@ export interface AliasedEntity {
   aString?: string | null;
   aNumber?: number | null;
   aBoolean?: boolean | null;
+  aGeoPoint?: GeoPoint | null;
   anArray?: string[] | null;
 }
 
@@ -35,6 +38,7 @@ export const simpleSchema = new Schema(SimpleEntity, {
   aString: { type: 'string' },
   aNumber: { type: 'number' },
   aBoolean: { type: 'boolean' },
+  aGeoPoint: { type: 'geopoint' },
   anArray: { type: 'array' }
 });
 
@@ -42,6 +46,7 @@ export const simpleHashSchema = new Schema(SimpleHashEntity, {
   aString: { type: 'string' },
   aNumber: { type: 'number' },
   aBoolean: { type: 'boolean' },
+  aGeoPoint: { type: 'geopoint' },
   anArray: { type: 'array' }
 }, {
   dataStructure: 'HASH'
@@ -51,6 +56,7 @@ export const simpleJsonSchema = new Schema(SimpleJsonEntity, {
   aString: { type: 'string' },
   aNumber: { type: 'number' },
   aBoolean: { type: 'boolean' },
+  aGeoPoint: { type: 'geopoint' },
   anArray: { type: 'array' }
 }, {
   dataStructure: 'JSON'
@@ -64,6 +70,7 @@ export const aliasedSchema = new Schema(AliasedEntity, {
   aString: { type: 'string', alias: 'anotherString' },
   aNumber: { type: 'number', alias: 'anotherNumber' },
   aBoolean: { type: 'boolean', alias: 'anotherBoolean' },
+  aGeoPoint: { type: 'geopoint', alias: 'anotherGeoPoint' },
   anArray: { type: 'array', alias: 'anotherArray' }
 });
 
