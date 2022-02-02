@@ -21,19 +21,20 @@ describe("Repository", () => {
 
     describe.each([
 
-      ["when fetching a fully populated entity from a hash", {
-        mockedData: { aString: 'foo', aNumber: '42', aBoolean: '0', anArray: 'bar|baz|qux' },
-        expectedData: { aString: 'foo', aNumber: 42, aBoolean: false, anArray: [ 'bar', 'baz', 'qux' ] }
+      [ "when fetching a fully populated entity from a hash", {
+        mockedData: { aString: 'foo', aNumber: '42', aBoolean: '0', aGeoPoint: '12.34,56.78', anArray: 'bar|baz|qux' },
+        expectedData: { aString: 'foo', aNumber: 42, aBoolean: false, 
+          aGeoPoint: { longitude: 12.34, latitude: 56.78 }, anArray: [ 'bar', 'baz', 'qux' ] }
       }],
 
       [ "when fetching a partially populated entity from a hash", {
         mockedData: { aString: 'foo', aNumber: '42' },
-        expectedData: { aString: 'foo', aNumber: 42, aBoolean: null, anArray: null }
+        expectedData: { aString: 'foo', aNumber: 42, aBoolean: null, aGeoPoint: null, anArray: null }
       }],
 
       [ "when fetching a empty entity from a hash", {
         mockedData: {},
-        expectedData: { aString: null, aNumber: null, aBoolean: null, anArray: null }
+        expectedData: { aString: null, aNumber: null, aBoolean: null, aGeoPoint: null, anArray: null }
       }]
 
     ])("%s", (_, data) => {
@@ -54,28 +55,29 @@ describe("Repository", () => {
     describe.each([
 
       ["when fetching a fully populated entity from JSON", {
-        mockedData: { aString: 'foo', aNumber: 42, aBoolean: false, anArray: [ "bar", "baz", "qux" ] },
-        expectedData: { aString: 'foo', aNumber: 42, aBoolean: false, anArray: [ 'bar', 'baz', 'qux' ] }
+        mockedData: { aString: 'foo', aNumber: 42, aBoolean: false, aGeoPoint: '12.34,56.78', anArray: [ "bar", "baz", "qux" ] },
+        expectedData: { aString: 'foo', aNumber: 42, aBoolean: false,
+          aGeoPoint: { longitude: 12.34, latitude: 56.78 }, anArray: [ 'bar', 'baz', 'qux' ] }
       }],
 
       [ "when fetching a partially populated entity from JSON", {
         mockedData: { aString: 'foo', aNumber: 42 },
-        expectedData: { aString: 'foo', aNumber: 42, aBoolean: null, anArray: null }
+        expectedData: { aString: 'foo', aNumber: 42, aBoolean: null, aGeoPoint: null, anArray: null }
       }],
 
       [ "when fetching an empty entity from JSON", {
         mockedData: {},
-        expectedData: { aString: null, aNumber: null, aBoolean: null, anArray: null }
+        expectedData: { aString: null, aNumber: null, aBoolean: null, aGeoPoint: null, anArray: null }
       }],
       
       [ "when fetching a missing entity from JSON", {
         mockedData: null,
-        expectedData: { aString: null, aNumber: null, aBoolean: null, anArray: null }
+        expectedData: { aString: null, aNumber: null, aBoolean: null, aGeoPoint: null, anArray: null }
       }],
       
       [ "when fetching an entity from JSON with nulls", {
-        mockedData: { aString: 'foo', aNumber: 42, aBoolean: null, anArray: null },
-        expectedData: { aString: 'foo', aNumber: 42, aBoolean: null, anArray: null }
+        mockedData: { aString: 'foo', aNumber: 42, aBoolean: null, aGeoPoint: null, anArray: null },
+        expectedData: { aString: 'foo', aNumber: 42, aBoolean: null, aGeoPoint: null, anArray: null }
       }]
 
     ])("%s", (_, data: any) => {

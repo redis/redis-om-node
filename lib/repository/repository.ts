@@ -1,5 +1,6 @@
 import Schema from "../schema/schema";
 import Client, { CreateIndexOptions } from "../client";
+import { GeoPoint } from "..";
 import Entity from '../entity/entity';
 import Search from '../search/search';
 
@@ -11,7 +12,7 @@ import JsonConverter from "./json-converter";
  * Initialization data for {@link Entity} creation when calling
  * {@link Repository.createEntity} or {@link Repository.createAndSave}.
  */
-export type EntityCreationData = Record<string, number | boolean | string | string[] | null>;
+export type EntityCreationData = Record<string, number | boolean | string | string[] | GeoPoint | null>;
 
 /**
  * A repository is the main interaction point for reading, writing, and

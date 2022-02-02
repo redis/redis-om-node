@@ -31,12 +31,13 @@ describe("Repository", () => {
       describe.each([
 
         ["when saving a fully populated entity", {
-          providedString: 'foo', providedNumber: 42, providedBoolean: false, providedArray: [ 'bar', 'baz', 'qux' ],
-          expectedData: { aString: 'foo', aNumber: '42', aBoolean: '0', anArray: 'bar|baz|qux' }
+          providedString: 'foo', providedNumber: 42, providedBoolean: false,
+          providedGeoPoint: { longitude: 12.34, latitude: 56.78 }, providedArray: [ 'bar', 'baz', 'qux' ],
+          expectedData: { aString: 'foo', aNumber: '42', aBoolean: '0', aGeoPoint: '12.34,56.78', anArray: 'bar|baz|qux' }
         }],
   
         [ "when saving a partially populated entity", {
-          providedString: 'foo', providedNumber: 42, providedBoolean: null, providedArray: null,
+          providedString: 'foo', providedNumber: 42, providedBoolean: null, providedGeoPoint: null, providedArray: null,
           expectedData: { aString: 'foo', aNumber: '42' }
         }]
   
@@ -46,6 +47,7 @@ describe("Repository", () => {
           entity.aString = data.providedString;
           entity.aNumber = data.providedNumber;
           entity.aBoolean = data.providedBoolean;
+          entity.aGeoPoint = data.providedGeoPoint;
           entity.anArray = data.providedArray;
           entityId = await repository.save(entity);
           expectedKey = `SimpleHashEntity:${entityId}`;
@@ -61,6 +63,7 @@ describe("Repository", () => {
           entity.aString = null;
           entity.aNumber = null;
           entity.aBoolean = null;
+          entity.aGeoPoint = null;
           entity.anArray = null;
           entityId = await repository.save(entity);
           expectedKey = `SimpleHashEntity:${entityId}`;
@@ -83,12 +86,13 @@ describe("Repository", () => {
       describe.each([
 
         ["when saving a fully populated entity", {
-          providedString: 'foo', providedNumber: 42, providedBoolean: false, providedArray: [ 'bar', 'baz', 'qux' ],
-          expectedData: { aString: 'foo', aNumber: 42, aBoolean: false, anArray: [ 'bar', 'baz', 'qux' ] }
+          providedString: 'foo', providedNumber: 42, providedBoolean: false,
+          providedGeoPoint: { longitude: 12.34, latitude: 56.78 }, providedArray: [ 'bar', 'baz', 'qux' ],
+          expectedData: { aString: 'foo', aNumber: 42, aBoolean: false, aGeoPoint: '12.34,56.78', anArray: [ 'bar', 'baz', 'qux' ] }
         }],
   
         [ "when saving a partially populated entity", {
-          providedString: 'foo', providedNumber: 42, providedBoolean: null, providedArray: null,
+          providedString: 'foo', providedNumber: 42, providedBoolean: null, providedGeoPoint: null, providedArray: null,
           expectedData: { aString: 'foo', aNumber: 42 }
         }]
 
@@ -98,6 +102,7 @@ describe("Repository", () => {
           entity.aString = data.providedString;
           entity.aNumber = data.providedNumber;
           entity.aBoolean = data.providedBoolean;
+          entity.aGeoPoint = data.providedGeoPoint
           entity.anArray = data.providedArray;
           entityId = await repository.save(entity);
           expectedKey = `SimpleJsonEntity:${entityId}`;
@@ -113,6 +118,7 @@ describe("Repository", () => {
           entity.aString = null;
           entity.aNumber = null;
           entity.aBoolean = null;
+          entity.aGeoPoint = null;
           entity.anArray = null;
           entityId = await repository.save(entity);
           expectedKey = `SimpleJsonEntity:${entityId}`;
