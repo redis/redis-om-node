@@ -1,6 +1,7 @@
 import Entity from "../entity/entity";
 import Search from "./search";
 import Where from "./where";
+import { CircleFunction } from "./where-geo";
 
 /**
  * Interface with all the methods from all the concrete
@@ -190,6 +191,9 @@ interface WhereField<TEntity> extends Where {
    * @returns The {@link Search} that was called to create this {@link WhereField}.
    */
   containsOneOf(...value: string[]): Search<TEntity>;
+
+  // TODO: document and define better
+  inCircle(circleFn: CircleFunction): Search<TEntity>;
 }
 
 /**
@@ -224,7 +228,7 @@ interface WhereField<TEntity> extends Where {
    * Returns the current instance. Syntactic sugar to make your code more fluent.
    * @returns this
    */
-   get does() {
+  get does() {
     return this;
   }
 
@@ -233,7 +237,7 @@ interface WhereField<TEntity> extends Where {
    * *not* met. Calling this multiple times will negate the negation.
    * @returns this
    */
-   get not() {
+  get not() {
     this.negate();
     return this;
   }

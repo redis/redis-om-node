@@ -9,6 +9,7 @@ import WhereField from './where-field';
 import WhereArray from './where-array';
 import { WhereHashBoolean, WhereJsonBoolean } from './where-boolean';
 import WhereNumber from './where-number';
+import WhereGeo from './where-geo';
 import WhereString from './where-string';
 import WhereText from './where-text';
 
@@ -271,6 +272,9 @@ export default class Search<TEntity extends Entity> {
     if (fieldDef.type === 'number')
       return new WhereNumber<TEntity>(this, field);
 
+    if (fieldDef.type === 'geopoint')
+      return new WhereGeo<TEntity>(this, field);
+
     if (fieldDef.type === 'string' && fieldDef.textSearch === true)
       return new WhereText<TEntity>(this, field);
 
@@ -278,6 +282,6 @@ export default class Search<TEntity extends Entity> {
       return new WhereString<TEntity>(this, field);
 
     // @ts-ignore: This is a trap for JavaScript
-    throw new Error(`The field type of '${fieldDef.type}' is not a valid field type. Valid types include 'array', 'boolean', 'number', and 'string'.`);
+    throw new Error(`The field type of '${fieldDef.type}' is not a valid field type. Valid types include 'array', 'boolean', 'geopoint', 'number', and 'string'.`);
   }
 }
