@@ -2,6 +2,7 @@ import Client from '../../lib/client';
 import Schema from '../../lib/schema/schema';
 import Entity from '../../lib/entity/entity';
 import Repository from '../../lib/repository/repository';
+import { GeoPoint } from '../../lib';
 
 describe("Demo", () => {
 
@@ -16,6 +17,7 @@ describe("Demo", () => {
       classification: string[];
       county: string;
       state: string;
+      location: GeoPoint;
       highTemp: number;
       lowTemp: number;
       fullMoon: boolean;
@@ -46,6 +48,7 @@ describe("Demo", () => {
         classification: { type: 'array' },
         county: { type: 'string' },
         state: { type: 'string' },
+        location: { type: 'geopoint' },
         highTemp: { type: 'number' },
         lowTemp: { type: 'number' },
         fullMoon: { type: 'boolean' }
@@ -62,6 +65,7 @@ describe("Demo", () => {
     entity.id = '8086';
     entity.title = "Bigfoot by the Walmart";
     entity.classification = [ 'Class A', 'Class B' ];
+    entity.location = { longitude: 12.34, latitude: 56.78 },
     entity.highTemp = 78;
     entity.fullMoon = false;
 
@@ -72,6 +76,7 @@ describe("Demo", () => {
       id: '8086',
       title: "Bigfoot by the Walmart",
       classification: [ 'Class A', 'Class B' ],
+      location: { longitude: 12.34, latitude: 56.78 },
       highTemp: 78,
       fullMoon: false
     });
@@ -83,6 +88,7 @@ describe("Demo", () => {
       id: '8086',
       title: "Bigfoot by the Walmart",
       classification: [ 'Class A', 'Class B' ],
+      location: { longitude: 12.34, latitude: 56.78 },
       highTemp: 78,
       fullMoon: false
     });
@@ -109,6 +115,7 @@ describe("Demo", () => {
         .or('state').equals('KY')
       )
       .and('classification').contains('Class A')
+      .and('location').inCircle(circle => circle.origin(12.34, 56.78).radius(50).miles)
       .and('title').matchesExactly('the walmart')
       .and('fullMoon').is.true().returnAll();
 

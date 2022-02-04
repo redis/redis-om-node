@@ -39,6 +39,8 @@ describe("save JSON", () => {
         anotherNumber: AN_ENTITY.anotherNumber,
         aBoolean: AN_ENTITY.aBoolean,
         anotherBoolean: AN_ENTITY.anotherBoolean,
+        aGeoPoint: AN_ENTITY.aGeoPoint,
+        anotherGeoPoint: AN_ENTITY.anotherGeoPoint,
         anArray: AN_ENTITY.anArray,
         anotherArray: AN_ENTITY.anotherArray
       });
@@ -49,7 +51,18 @@ describe("save JSON", () => {
     it("creates the expected JSON", async () => {
       let json = await fetchJson(client, entityKey);
       let data = JSON.parse(json);
-      expect(data).toEqual(expect.objectContaining(AN_ENTITY));
+      expect(data.aString).toBe(AN_ENTITY.aString);
+      expect(data.anotherString).toBe(AN_ENTITY.anotherString);
+      expect(data.aFullTextString).toBe(AN_ENTITY.aFullTextString);
+      expect(data.anotherFullTextString).toBe(AN_ENTITY.anotherFullTextString);
+      expect(data.aNumber).toBe(AN_ENTITY.aNumber);
+      expect(data.anotherNumber).toBe(AN_ENTITY.anotherNumber);
+      expect(data.aBoolean).toBe(AN_ENTITY.aBoolean);
+      expect(data.anotherBoolean).toBe(AN_ENTITY.anotherBoolean);
+      expect(data.aGeoPoint).toBe(`${AN_ENTITY.aGeoPoint?.longitude},${AN_ENTITY.aGeoPoint?.latitude}`);
+      expect(data.anotherGeoPoint).toBe(`${AN_ENTITY.anotherGeoPoint?.longitude},${AN_ENTITY.anotherGeoPoint?.latitude}`);
+      expect(data.anArray).toEqual(AN_ENTITY.anArray);
+      expect(data.anotherArray).toEqual(AN_ENTITY.anotherArray);
     });
   });
 
@@ -64,6 +77,8 @@ describe("save JSON", () => {
         anotherNumber: A_PARTIAL_ENTITY.anotherNumber,
         aBoolean: A_PARTIAL_ENTITY.aBoolean,
         anotherBoolean: A_PARTIAL_ENTITY.anotherBoolean,
+        aGeoPoint: A_PARTIAL_ENTITY.aGeoPoint,
+        anotherGeoPoint: A_PARTIAL_ENTITY.anotherGeoPoint,
         anArray: A_PARTIAL_ENTITY.anArray,
         anotherArray: A_PARTIAL_ENTITY.anotherArray
       });
@@ -82,6 +97,8 @@ describe("save JSON", () => {
       expect(data.anotherNumber).toBeUndefined();
       expect(data.aBoolean).toBe(A_PARTIAL_ENTITY.aBoolean);
       expect(data.anotherBoolean).toBeUndefined();
+      expect(data.aGeoPoint).toBe(`${A_PARTIAL_ENTITY.aGeoPoint?.longitude},${A_PARTIAL_ENTITY.aGeoPoint?.latitude}`);
+      expect(data.anotherGeoPoint).toBeUndefined();
       expect(data.anArray).toEqual(A_PARTIAL_ENTITY.anArray);
       expect(data.anotherArray).toBeUndefined();
     });
@@ -98,6 +115,8 @@ describe("save JSON", () => {
         anotherNumber: AN_EMPTY_ENTITY.anotherNumber,
         aBoolean: AN_EMPTY_ENTITY.aBoolean,
         anotherBoolean: AN_EMPTY_ENTITY.anotherBoolean,
+        aGeoPoint: AN_EMPTY_ENTITY.aGeoPoint,
+        anotherGeoPoint: AN_EMPTY_ENTITY.anotherGeoPoint,
         anArray: AN_EMPTY_ENTITY.anArray,
         anotherArray: AN_EMPTY_ENTITY.anotherArray
       });

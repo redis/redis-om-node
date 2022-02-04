@@ -46,7 +46,7 @@ describe("create and drop index on hash", () => {
   
     it("has the expected fields", () => {
       let fields = result[7];
-      expect(fields).toHaveLength(10);
+      expect(fields).toHaveLength(12);
       expect(fields).toEqual([
         [ 'identifier', 'aString', 'attribute', 'aString', 'type', 'TAG', 'SEPARATOR', '|' ],
         [ 'identifier', 'anotherString', 'attribute', 'anotherString', 'type', 'TAG', 'SEPARATOR', '|' ],
@@ -56,6 +56,8 @@ describe("create and drop index on hash", () => {
         [ 'identifier', 'anotherNumber', 'attribute', 'anotherNumber', 'type', 'NUMERIC' ],
         [ 'identifier', 'aBoolean', 'attribute', 'aBoolean', 'type', 'TAG', 'SEPARATOR', ',' ],
         [ 'identifier', 'anotherBoolean', 'attribute', 'anotherBoolean', 'type', 'TAG', 'SEPARATOR', ',' ],
+        [ 'identifier', 'aGeoPoint', 'attribute', 'aGeoPoint', 'type', 'GEO' ],
+        [ 'identifier', 'anotherGeoPoint', 'attribute', 'anotherGeoPoint', 'type', 'GEO' ],
         [ 'identifier', 'anArray', 'attribute', 'anArray', 'type', 'TAG', 'SEPARATOR', '|' ],
         [ 'identifier', 'anotherArray', 'attribute', 'anotherArray', 'type', 'TAG', 'SEPARATOR', '|' ]
       ]);

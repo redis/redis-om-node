@@ -115,6 +115,17 @@ describe("search for hashes", () => {
     ]));
   });
 
+  it("searches a geopoint", async () => {
+    entities = await repository.search()
+      .where('aGeoPoint').inCircle(circle => circle.origin(12.34, 56.78).radius(10).meters)
+        .returnAll();
+
+    expect(entities).toHaveLength(1);
+    expect(entities).toEqual(expect.arrayContaining([
+      expect.objectContaining({ entityId: '1', ...AN_ENTITY }),
+    ]));
+  });
+
   it("searches an array", async () => {
     entities = await repository.search().where('anArray').contains('charlie').returnAll();
 
@@ -132,6 +143,7 @@ describe("search for hashes", () => {
       .and('aFullTextString').matches('dog')
       .and('aNumber').gte(42)
       .and('aBoolean').true()
+      .and('aGeoPoint').inCircle(circle => circle.origin(12.34, 56.78).radius(10).meters)
       .and('anArray').contains('alfa')
       .returnAll();
 
