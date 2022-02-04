@@ -9,6 +9,7 @@ import { SchemaOptions } from "./schema/schema-options";
 import Search, { SubSearchFunction } from "./search/search";
 import Where from "./search/where";
 import WhereField from "./search/where-field";
+import { Circle, CircleFunction } from "./search/where-geo";
 
 
 export {
@@ -19,5 +20,5 @@ export {
   Schema, SchemaDefinition, SchemaOptions, GeoPoint,
   FieldDefinition, Field, NumericField, StringField, BooleanField, GeoField, ArrayField, IdStrategy, StopWordOptions,
   Search, SubSearchFunction,
-  Where, WhereField
+  Where, WhereField, Circle, CircleFunction
 };
