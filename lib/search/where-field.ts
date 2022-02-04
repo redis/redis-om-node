@@ -11,6 +11,9 @@ interface WhereField<TEntity> extends Where {
 
   /**
    * Adds an equals comparison to the query.
+   * 
+   * NOTE: this function is not available for strings where full-text
+   * search is enabled. In that scenario, use `.match`.
    * @param value The value to be compared
    * @returns The {@link Search} that was called to create this {@link WhereField}.
    */
@@ -18,6 +21,9 @@ interface WhereField<TEntity> extends Where {
 
   /**
    * Adds an equals comparison to the query.
+   * 
+   * NOTE: this function is not available for strings where full-text
+   * search is enabled. In that scenario, use `.match`.
    * @param value The value to be compared
    * @returns The {@link Search} that was called to create this {@link WhereField}.
    */
@@ -25,6 +31,9 @@ interface WhereField<TEntity> extends Where {
 
   /**
    * Adds an equals comparison to the query.
+   *
+   * NOTE: this function is not available for strings where full-text
+   * search is enabled. In that scenario, use `.match`.
    * @param value The value to be compared
    * @returns The {@link Search} that was called to create this {@link WhereField}.
    */
@@ -32,6 +41,9 @@ interface WhereField<TEntity> extends Where {
 
   /**
    * Adds an equals comparison to the query.
+   *
+   * NOTE: this function is not available for strings where full-text
+   * search is enabled. In that scenario, use `.match`.
    * @param value The value to be compared
    * @returns The {@link Search} that was called to create this {@link WhereField}.
    */
@@ -192,7 +204,11 @@ interface WhereField<TEntity> extends Where {
    */
   containsOneOf(...value: string[]): Search<TEntity>;
 
-  // TODO: document and define better
+  /**
+   * Adds a search for geopoints that fall within a defined circle.
+   * @param circleFn A function that returns a {@link Circle} instance defining the search area.
+   * @returns The {@link Search} that was called to create this {@link WhereField}.
+   */
   inCircle(circleFn: CircleFunction): Search<TEntity>;
 }
 
