@@ -55,8 +55,12 @@ describe("Search", () => {
 
       describe("and in a circle", () => {
 
-        it("generates a query with default values",
+        it("generates a query with default values using .inCircle",
           () => expectToBeDefaultQuery(where.inCircle(circle => circle)));
+
+        it("generates a query with default values using .inRadius",
+          () => expectToBeDefaultQuery(where.inRadius(circle => circle)));
+
 
         it("generates a query with .point(geopoint).radius.meters",
           () => expectToBeMetersQuery(where.inCircle(circle => circle.origin(point).radius(42).meters)));  

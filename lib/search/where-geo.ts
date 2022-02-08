@@ -177,6 +177,10 @@ export class Circle {
 export default class WhereGeo<TEntity extends Entity> extends WhereField<TEntity> {
   private circle: Circle = new Circle();
 
+  inRadius(circleFn: CircleFunction): Search<TEntity> {
+    return this.inCircle(circleFn);
+  }
+
   inCircle(circleFn: CircleFunction): Search<TEntity> {
     this.circle = circleFn(this.circle);
     return this.search;
