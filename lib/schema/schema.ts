@@ -20,6 +20,7 @@ import { SchemaOptions } from './schema-options';
  *   aNumber: { type: 'number' },
  *   aBoolean: { type: 'boolean' },
  *   aGeoPoint: { type: 'geopoint' },
+ *   aDate: { type: 'date' },
  *   anArray: { type: 'array' }
  * }, {
  *   dataStructure: 'JSON'
@@ -124,11 +125,18 @@ export default class Schema<TEntity extends Entity> {
           }
 
           let isArray = Array.isArray(value);
+          let isDate = value instanceof Date;
           let isObject = typeof(value === 'object');
           let hasLongLat = typeof(value.longitude) === 'number' && typeof(value.latitude) === 'number';
-          let isGeo = !isArray && isObject && hasLongLat;
+          let isGeo = !isArray && !isDate && isObject && hasLongLat;
 
-          let valueType = isGeo ? 'geopoint' : (isArray ? 'array' : typeof(value))
+          let valueType;
+
+          if (isGeo) valueType = 'geopoint';
+          else if (isDate) valueType = 'date';
+          else if (isArray) valueType = 'array';
+          else valueType = typeof(value);
+
           if (fieldType === valueType) {
             if (isArray) {
               this.entityData[fieldAlias] = value.map((v: any) => v.toString());
@@ -161,7 +169,7 @@ export default class Schema<TEntity extends Entity> {
 
   private validateFieldDef(field: string) {
     let fieldDef: FieldDefinition = this.definition[field];
-    if (!['array', 'boolean', 'number', 'string', 'geopoint'].includes(fieldDef.type))
-      throw Error(`The field '${field}' is configured with a type of '${fieldDef.type}'. Valid types include 'array', 'boolean', 'geopoint', 'number', and 'string'.`);
+    if (!['array', 'boolean', 'number', 'string', 'geopoint', 'date'].includes(fieldDef.type))
+      throw Error(`The field '${field}' is configured with a type of '${fieldDef.type}'. Valid types include 'array', 'boolean', 'date', 'geopoint', 'number', and 'string'.`);
   }
 }

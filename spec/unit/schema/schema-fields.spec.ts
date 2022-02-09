@@ -51,6 +51,14 @@ describe("Schema", () => {
     expectedAlternatePropertyValue: { longitude: 23.45, latitude: 67.89 }
   }
 
+  let DATE_HASH_DEFAULTS = {
+    ...HASH_DEFAULTS,
+    providedEntityFieldValue: new Date('1997-07-04T16:56:55.000Z'),
+    expectedPropertyValue: new Date('1997-07-04T16:56:55.000Z'),
+    providedAlternatePropertyValue: new Date('1969-07-20T20:17:40.000Z'),
+    expectedAlternatePropertyValue: new Date('1969-07-20T20:17:40.000Z')
+  };
+
   let ARRAY_HASH_DEFAULTS = {
     ...HASH_DEFAULTS,
     providedEntityFieldValue: ['foo', 'bar', 'baz'],
@@ -89,6 +97,14 @@ describe("Schema", () => {
     expectedPropertyValue: { longitude: 12.34, latitude: 56.78 },
     providedAlternatePropertyValue: { longitude: 23.45, latitude: 67.89 },
     expectedAlternatePropertyValue: { longitude: 23.45, latitude: 67.89 }
+  };
+
+  let DATE_JSON_DEFAULTS = {
+    ...JSON_DEFAULTS,
+    providedEntityFieldValue: new Date('1997-07-04T16:56:55.000Z'),
+    expectedPropertyValue: new Date('1997-07-04T16:56:55.000Z'),
+    providedAlternatePropertyValue: new Date('1969-07-20T20:17:40.000Z'),
+    expectedAlternatePropertyValue: new Date('1969-07-20T20:17:40.000Z')
   };
 
   let ARRAY_JSON_DEFAULTS = {
@@ -191,6 +207,23 @@ describe("Schema", () => {
       } as SchemaDefinition,
       providedEntityFieldName: 'anotherField',
       expectedRedisSchema: ['anotherField', 'GEO']
+    }],
+
+    ["that defines an unconfigured date for a HASH", {
+      ...DATE_HASH_DEFAULTS,
+      schemaDef: { 
+        aField: { type: 'date' }
+      } as SchemaDefinition,
+      expectedRedisSchema: ['aField', 'NUMERIC']
+    }],
+
+    ["that defines an aliased date for a HASH", {
+      ...DATE_HASH_DEFAULTS,
+      schemaDef: {
+        aField: { type: 'date', alias: 'anotherField' }
+      } as SchemaDefinition,
+      providedEntityFieldName: 'anotherField',
+      expectedRedisSchema: ['anotherField', 'NUMERIC']
     }],
 
     ["that defines an unconfigured array for a HASH", {
@@ -309,6 +342,23 @@ describe("Schema", () => {
       } as SchemaDefinition,
       providedEntityFieldName: 'anotherField',
       expectedRedisSchema: ['$.anotherField', 'AS', 'anotherField', 'GEO']
+    }],
+
+    ["that defines an unconfigured date for JSON", {
+      ...DATE_JSON_DEFAULTS,
+      schemaDef: { 
+        aField: { type: 'date' }
+      } as SchemaDefinition,
+      expectedRedisSchema: ['$.aField', 'AS', 'aField', 'NUMERIC']
+    }],
+
+    ["that defines an aliased date for JSON", {
+      ...DATE_JSON_DEFAULTS,
+      schemaDef: {
+        aField: { type: 'date', alias: 'anotherField' }
+      } as SchemaDefinition,
+      providedEntityFieldName: 'anotherField',
+      expectedRedisSchema: ['$.anotherField', 'AS', 'anotherField', 'NUMERIC']
     }],
 
     ["that defines an unconfigured array for JSON", {
