@@ -40,6 +40,8 @@ describe("update JSON", () => {
       entity.anotherNumber = ANOTHER_ENTITY.anotherNumber;
       entity.aBoolean = ANOTHER_ENTITY.aBoolean;
       entity.anotherBoolean = ANOTHER_ENTITY.anotherBoolean;
+      entity.aGeoPoint = ANOTHER_ENTITY.aGeoPoint;
+      entity.anotherGeoPoint = ANOTHER_ENTITY.anotherGeoPoint;
       entity.anArray = ANOTHER_ENTITY.anArray;
       entity.anotherArray = ANOTHER_ENTITY.anotherArray;
       entityId = await repository.save(entity);
@@ -51,7 +53,18 @@ describe("update JSON", () => {
     it("creates the expected JSON", async () => {
       let json = await fetchJson(client, entityKey);
       let data = JSON.parse(json);
-      expect(data).toEqual(expect.objectContaining(ANOTHER_ENTITY));
+      expect(data.aString).toBe(ANOTHER_ENTITY.aString);
+      expect(data.anotherString).toBe(ANOTHER_ENTITY.anotherString);
+      expect(data.aFullTextString).toBe(ANOTHER_ENTITY.aFullTextString);
+      expect(data.anotherFullTextString).toBe(ANOTHER_ENTITY.anotherFullTextString);
+      expect(data.aNumber).toBe(ANOTHER_ENTITY.aNumber);
+      expect(data.anotherNumber).toBe(ANOTHER_ENTITY.anotherNumber);
+      expect(data.aBoolean).toBe(ANOTHER_ENTITY.aBoolean);
+      expect(data.anotherBoolean).toBe(ANOTHER_ENTITY.anotherBoolean);
+      expect(data.aGeoPoint).toBe(`${ANOTHER_ENTITY.aGeoPoint?.longitude},${ANOTHER_ENTITY.aGeoPoint?.latitude}`);
+      expect(data.anotherGeoPoint).toBe(`${ANOTHER_ENTITY.anotherGeoPoint?.longitude},${ANOTHER_ENTITY.anotherGeoPoint?.latitude}`);
+      expect(data.anArray).toEqual(ANOTHER_ENTITY.anArray);
+      expect(data.anotherArray).toEqual(ANOTHER_ENTITY.anotherArray);
     });
   });
 
@@ -66,6 +79,8 @@ describe("update JSON", () => {
       entity.anotherNumber = null;
       entity.aBoolean = ANOTHER_ENTITY.aBoolean;
       entity.anotherBoolean = null;
+      entity.aGeoPoint = ANOTHER_ENTITY.aGeoPoint;
+      entity.anotherGeoPoint = null;
       entity.anArray = ANOTHER_ENTITY.anArray;
       entity.anotherArray = null;
       entityId = await repository.save(entity);
@@ -85,6 +100,8 @@ describe("update JSON", () => {
       expect(data.anotherNumber).toBeUndefined();
       expect(data.aBoolean).toBe(ANOTHER_ENTITY.aBoolean);
       expect(data.anotherBoolean).toBeUndefined();
+      expect(data.aGeoPoint).toBe(`${ANOTHER_ENTITY.aGeoPoint?.longitude},${ANOTHER_ENTITY.aGeoPoint?.latitude}`);
+      expect(data.anotherGeoPoint).toBeUndefined();
       expect(data.anArray).toEqual(ANOTHER_ENTITY.anArray);
       expect(data.anotherArray).toBeUndefined();
     });
@@ -101,6 +118,8 @@ describe("update JSON", () => {
       entity.anotherNumber = null;
       entity.aBoolean = null;
       entity.anotherBoolean = null;
+      entity.aGeoPoint = null;
+      entity.anotherGeoPoint = null;
       entity.anArray = null;
       entity.anotherArray = null;
       entityId = await repository.save(entity);

@@ -52,6 +52,7 @@
       - [Searching on Booleans](#searching-on-booleans)
       - [Searching Arrays](#searching-arrays)
       - [Full-Text Search](#full-text-search)
+      - [Searching on Geopoints](#searching-on-geopoints)
       - [Chaining Searches](#chaining-searches)
   - 👊 [Combining RedisJSON and RediSearch](#-combining-redisjson-and-redisearch)
   - 📚 [Documentation](#-documentation)
@@ -208,21 +209,29 @@ import { Entity, Schema } from 'redis-om'
 
 ```javascript
 class Album extends Entity {}
+class Studio extends Entity {}
 ```
 
 [Schemas](docs/classes/Schema.md) define the fields on your entity, their types, and how they are mapped internally to Redis. By default, entities map to Hashes in Redis, but you can also use JSON (more on that later):
 
 ```javascript
-let schema = new Schema(Album, {
+let albumSchema = new Schema(Album, {
   artist: { type: 'string' },
   title: { type: 'string' },
   year: { type: 'number' },
   genres: { type: 'array' },
   outOfPublication: { type: 'boolean' }
 })
+
+let studioSchema = new Studio(Studio, {
+  name: { type: 'string' },
+  city: { type: 'string' },
+  state: { type: 'string' },
+  location: { type: 'geopoint' }
+})
 ```
 
-When you create a `Schema`, it modifies the entity you handed it, adding getters and setters for the properties you define. The type those getters and setters accept and return are defined with the type parameter above. Valid values are: `string`, `number`, `boolean`, or `array`. The first three do exactly what you think—they define a property that is a String, a Number, or a Boolean. `array` specifically defines an array of Strings.
+When you create a `Schema`, it modifies the entity you handed it, adding getters and setters for the properties you define. The type those getters and setters accept and return are defined with the type parameter above. Valid values are: `string`, `number`, `boolean`, `array`, or `geopoint`. The first three do exactly what you think—they define a property that is a String, a Number, or a Boolean. `array` specifically defines an array of Strings and `geopoint` defines a point somehwere on the globe as a longitude and a latitude.
 
 There are several other options available when defining a schema for your entity. Check them out in the [detailed documentation](docs/classes/Schema.md) for the `Schema` class.
 
@@ -233,27 +242,57 @@ Now that we have a client and a schema, we have what we need to make a [*reposit
 ```javascript
 import { Repository } from 'redis-om'
 
-let repository = new Repository(schema, client)
+let albumRepository = new Repository(albumSchema, client)
 ```
 
-Once we have a repository, we can use it to create entities:
+Alternatively, you can just ask the client for a repository:
 
 ```javascript
-let album = repository.createEntity()
+let studioRepository = client.fetchRepository(studioSchema)
+```
+
+Regardless of how we got it, once we have a repository, we can use it to create entities:
+
+```javascript
+let album = albumRepository.createEntity()
 album.entityId // '01FJYWEYRHYFT8YTEGQBABJ43J'
 ```
 
 Note that entities created by `.createEntity` are not saved to Redis (at least not yet). They've only been instantiated and populated with an entity ID. This ID is a [ULID](https://github.com/ulid/spec), and is a unique id representing that object. To create a new entity *and* save it to Redis, we need to set all the properties on the entity that we care about, and call `.save`:
 
 ```javascript
-let album = repository.createEntity()
+let album = albumRepository.createEntity()
 album.artist = "Mushroomhead"
 album.title = "The Righteous & The Butterfly"
 album.year = 2014
 album.genres = [ 'metal' ]
 album.outOfPublication = true
 
-let id = await repository.save(album) // '01FJYWEYRHYFT8YTEGQBABJ43J'
+let id = await albumRepository.save(album) // '01FJYWEYRHYFT8YTEGQBABJ43J'
+```
+
+As a convenience, you can pass in the values for the entity in the constructor:
+
+```javascript
+let studio = studioRepository.createEntity({
+  name: "Bad Racket Recording Studio",
+  city: "Cleveland",
+  state: "Ohio",
+  location: { longitude: -81.6764187, latitude: 41.5080462 }
+})
+
+let id = await studioRepository.save(studio) // '01FVDN241NGTPHSAV0DFDBXC90'
+```
+
+And for even *more* convenience, you can create and save in a single call:
+
+```javascript
+let studio = studioRepository.createAndSave({
+  name: "Bad Racket Recording Studio",
+  city: "Cleveland",
+  state: "Ohio",
+  location: { longitude: -81.6764187, latitude: 41.5080462 }
+})
 ```
 
 You also use `.save` to update an existing entity:
@@ -262,13 +301,13 @@ You also use `.save` to update an existing entity:
 album.genres = [ 'metal', 'nu metal', 'avantgarde' ]
 album.outOfPublication = false
 
-let id = await repository.save(album) // '01FJYWEYRHYFT8YTEGQBABJ43J'
+let id = await albumRepository.save(album) // '01FJYWEYRHYFT8YTEGQBABJ43J'
 ```
 
 If you know an object's entity ID you can `.fetch` it:
 
 ```javascript
-let album = await repository.fetch('01FJYWEYRHYFT8YTEGQBABJ43J')
+let album = await albumRepository.fetch('01FJYWEYRHYFT8YTEGQBABJ43J')
 album.artist // "Mushroomhead"
 album.title // "The Righteous & The Butterfly"
 album.year // 2014
@@ -279,7 +318,7 @@ album.outOfPublication // false
 Or `.remove` it:
 
 ```javascript
-await repository.remove('01FJYWEYRHYFT8YTEGQBABJ43J')
+await studioRepository.remove('01FVDN241NGTPHSAV0DFDBXC90')
 ```
 
 ### Missing Entities and Null Values
@@ -287,7 +326,7 @@ await repository.remove('01FJYWEYRHYFT8YTEGQBABJ43J')
 Redis, and by extension Redis OM, doesn't differentiate between missing and null. Missing fields in Redis are returned as `null`, and missing keys return `null`. So, if you fetch an entity that doesn't exist, it will happily return you an entity full of nulls:
 
 ```javascript
-let album = await repository.fetch('DOES_NOT_EXIST')
+let album = await albumRepository.fetch('DOES_NOT_EXIST')
 album.artist // null
 album.title // null
 album.year // null
@@ -298,14 +337,14 @@ album.outOfPublication // null
 Conversely, if you set all the properties on an entity to `null` and then save it, it will remove the entity from Redis:
 
 ```javascript
-let album = await repository.fetch('01FJYWEYRHYFT8YTEGQBABJ43J')
+let album = await albumRepository.fetch('01FJYWEYRHYFT8YTEGQBABJ43J')
 album.artist = null
 album.title = null
 album.year = null
 album.genres = null
 album.outOfPublication = null
 
-let id = await repository.save(album)
+let id = await albumRepository.save(album)
 
 let exists = await client.execute(['EXISTS', 'Album:01FJYWEYRHYFT8YTEGQBABJ43J']) // 0
 ```
@@ -317,7 +356,7 @@ It does this because Redis doesn't distinguish between missing and null. You cou
 When you define an entity and schema in TypeScript, all is well. But when you go to *use* that entity, you might have a problem. You'll get an error accessing the properties that the schema added to the entity. This code won't work:
 
 ```typescript
-let album = repository.createEntity()
+let album = albumRepository.createEntity()
 album.artist = "Mushroomhead"                 // Property 'artist' does not exist on type 'Album'
 album.title = "The Righteous & The Butterfly" // Property 'title' does not exist on type 'Album'
 album.year = 2014                             // Property 'year' does not exist on type 'Album'
@@ -338,7 +377,7 @@ interface Album {
 
 class Album extends Entity {}
 
-let schema = new Schema(Album, {
+let albumSchema = new Schema(Album, {
   artist: { type: 'string' },
   title: { type: 'string' },
   year: { type: 'number' },
@@ -369,8 +408,8 @@ Or even use more Redis OM to find related entities:
 
 ```javascript
 class Album extends Entity {
-  async fetchArtist() {
-    return await artistRepository.fetch(this.artistId)
+  async recordedAt() {
+    return await studioRepository.fetch(this.studioId)
   }
 }
 ```
@@ -380,7 +419,7 @@ class Album extends Entity {
 By default, Redis OM stores your entities in Hashes. But if you're using [RedisJSON][redis-json-url], you can instead choose to store your entities as JSON. It works exactly the same as using Hashes, but when you define your schema, just pass in an option telling it to use JSON:
 
 ```javascript
-let schema = new Schema(Album, {
+let albumSchema = new Schema(Album, {
   artist: { type: 'string' },
   title: { type: 'string' },
   year: { type: 'number' },
@@ -398,10 +437,11 @@ Everything else works the same.
 Using [RediSearch][redisearch-url] with Redis OM is where the power of this fully armed and operational battle station starts to become apparent. If you have RediSearch installed on your Redis server you can use the search capabilities of Redis OM. This enables commands like:
 
 ```javascript
-let albums = await repository.search()
+let albums = await albumRepository.search()
   .where('artist').equals('Mushroomhead')
   .and('title').matches('butterfly')
-  .and('year').is.greaterThan(2000).return.all()
+  .and('year').is.greaterThan(2000)
+    .return.all()
 ```
 
 Let's explore this in full.
@@ -411,14 +451,14 @@ Let's explore this in full.
 To use search you have to build an index. If you don't, you'll get errors. To build an index, just call `.createIndex` on your repository:
 
 ```javascript
-await repository.createIndex();
+await albumRepository.createIndex();
 ```
 
 If you change your schema, you'll need to rebuild your index. To do that, you'll need to drop the index and create it again:
 
 ```javascript
-await repository.dropIndex();
-await repository.createIndex();
+await albumRepository.dropIndex();
+await albumRepository.createIndex();
 ```
 
 ### Finding All The Things (and Returning Them)
@@ -426,7 +466,7 @@ await repository.createIndex();
 Once you have an index created (or recreated) you can search. The most basic search is to just return all the things. This will return all of the albums that you've put in Redis:
 
 ```javascript
-let albums = await repository.search().return.all()
+let albums = await albumRepository.search().return.all()
 ```
 
 #### Pagination
@@ -436,7 +476,7 @@ It's possible that you have a *lot* of albums; I know I do. In that case, you ca
 ```javascript
 let offset = 100
 let count = 25
-let albums = await repository.search().return.page(offset, count)
+let albums = await albumRepository.search().return.page(offset, count)
 ```
 
 Don't worry if your offset is greater than the number of entities. If it is, you just get an empty array back. No harm, no foul.
@@ -446,7 +486,7 @@ Don't worry if your offset is greater than the number of entities. If it is, you
 Sometimes you only have one album. Or maybe you only care about the first album you find. You can easily grab the first result of your search with `.first`:
 
 ```javascript
-let firstAlbum = await repository.search().return.first();
+let firstAlbum = await albumRepository.search().return.first();
 ```
 
 Note: If you have *no* albums, this will return `null`.
@@ -456,12 +496,12 @@ Note: If you have *no* albums, this will return `null`.
 Sometimes you just want to know how many entities you have. For that, you can call `.count`:
 
 ```javascript
-let count = await repository.search().return.count()
+let count = await albumRepository.search().return.count()
 ```
 
 ### Finding Specific Things
 
-It's fine and dandy to return all the things. But that's not what you usually want to do. You want to find *specific* things. Redis OM will let you find those specific things by [strings](#searching-on-whole-strings), [numbers](#searching-on-numbers), and [booleans](#searching-on-booleans). You can also search for strings that are in an [array](#searching-arrays) or even perform [full-text search](#full-text-search) within strings.
+It's fine and dandy to return all the things. But that's not what you usually want to do. You want to find *specific* things. Redis OM will let you find those specific things by [strings](#searching-on-whole-strings), [numbers](#searching-on-numbers), and [booleans](#searching-on-booleans). You can also search for strings that are in an [array](#searching-arrays), perform [full-text search](#full-text-search) within strings, and search for [geopoints](#searching-on-geopoints) within a particular area.
 
 And it does it with a fluent interface that allows—but does not demand—code that reads like a sentence. See below for exhaustive examples of all the syntax available to you.
 
@@ -473,17 +513,17 @@ You can search for a whole string. This syntax will not search for partial strin
 let albums
 
 // find all albums where the artist is 'Mushroomhead'
-albums = await repository.search().where('artist').eq('Mushroomhead').return.all()
+albums = await albumRepository.search().where('artist').eq('Mushroomhead').return.all()
 
 // find all albums where the artist is *not* 'Mushroomhead'
-albums = await repository.search().where('artist').not.eq('Mushroomhead').return.all()
+albums = await albumRepository.search().where('artist').not.eq('Mushroomhead').return.all()
 
 // fluent alternatives that do the same thing
-albums = await repository.search().where('artist').equals('Mushroomhead').return.all()
-albums = await repository.search().where('artist').does.equal('Mushroomhead').return.all()
-albums = await repository.search().where('artist').is.equalTo('Mushroomhead').return.all()
-albums = await repository.search().where('artist').does.not.equal('Mushroomhead').return.all()
-albums = await repository.search().where('artist').is.not.equalTo('Mushroomhead').return.all()
+albums = await albumRepository.search().where('artist').equals('Mushroomhead').return.all()
+albums = await albumRepository.search().where('artist').does.equal('Mushroomhead').return.all()
+albums = await albumRepository.search().where('artist').is.equalTo('Mushroomhead').return.all()
+albums = await albumRepository.search().where('artist').does.not.equal('Mushroomhead').return.all()
+albums = await albumRepository.search().where('artist').is.not.equalTo('Mushroomhead').return.all()
 ```
 
 #### Searching on Numbers
@@ -494,50 +534,50 @@ You can search against fields that contain numbers—both integers and floating-
 let albums
 
 // find all albums where the year is ===, >, >=, <, and <= 1984
-albums = await repository.search().where('year').eq(1984).return.all()
-albums = await repository.search().where('year').gt(1984).return.all()
-albums = await repository.search().where('year').gte(1984).return.all()
-albums = await repository.search().where('year').lt(1984).return.all()
-albums = await repository.search().where('year').lte(1984).return.all()
+albums = await albumRepository.search().where('year').eq(1984).return.all()
+albums = await albumRepository.search().where('year').gt(1984).return.all()
+albums = await albumRepository.search().where('year').gte(1984).return.all()
+albums = await albumRepository.search().where('year').lt(1984).return.all()
+albums = await albumRepository.search().where('year').lte(1984).return.all()
 
 // find all albums where year is between 1980 and 1989 inclusive
-albums = await repository.search().where('year').between(1980, 1989).return.all()
+albums = await albumRepository.search().where('year').between(1980, 1989).return.all()
 
 // find all albums where the year is *not* ===, >, >=, <, and <= 1984
-albums = await repository.search().where('year').not.eq(1984).return.all()
-albums = await repository.search().where('year').not.gt(1984).return.all()
-albums = await repository.search().where('year').not.gte(1984).return.all()
-albums = await repository.search().where('year').not.lt(1984).return.all()
-albums = await repository.search().where('year').not.lte(1984).return.all()
+albums = await albumRepository.search().where('year').not.eq(1984).return.all()
+albums = await albumRepository.search().where('year').not.gt(1984).return.all()
+albums = await albumRepository.search().where('year').not.gte(1984).return.all()
+albums = await albumRepository.search().where('year').not.lt(1984).return.all()
+albums = await albumRepository.search().where('year').not.lte(1984).return.all()
 
 // find all albums where year is *not* between 1980 and 1989 inclusive
-albums = await repository.search().where('year').not.between(1980, 1989);
+albums = await albumRepository.search().where('year').not.between(1980, 1989);
 
 // fluent alternatives that do the same thing
-albums = await repository.search().where('year').equals(1984).return.all()
-albums = await repository.search().where('year').does.equal(1984).return.all()
-albums = await repository.search().where('year').does.not.equal(1984).return.all()
-albums = await repository.search().where('year').is.equalTo(1984).return.all()
-albums = await repository.search().where('year').is.not.equalTo(1984).return.all()
+albums = await albumRepository.search().where('year').equals(1984).return.all()
+albums = await albumRepository.search().where('year').does.equal(1984).return.all()
+albums = await albumRepository.search().where('year').does.not.equal(1984).return.all()
+albums = await albumRepository.search().where('year').is.equalTo(1984).return.all()
+albums = await albumRepository.search().where('year').is.not.equalTo(1984).return.all()
 
-albums = await repository.search().where('year').greaterThan(1984).return.all()
-albums = await repository.search().where('year').is.greaterThan(1984).return.all()
-albums = await repository.search().where('year').is.not.greaterThan(1984).return.all()
+albums = await albumRepository.search().where('year').greaterThan(1984).return.all()
+albums = await albumRepository.search().where('year').is.greaterThan(1984).return.all()
+albums = await albumRepository.search().where('year').is.not.greaterThan(1984).return.all()
 
-albums = await repository.search().where('year').greaterThanOrEqualTo(1984).return.all()
-albums = await repository.search().where('year').is.greaterThanOrEqualTo(1984).return.all()
-albums = await repository.search().where('year').is.not.greaterThanOrEqualTo(1984).return.all()
+albums = await albumRepository.search().where('year').greaterThanOrEqualTo(1984).return.all()
+albums = await albumRepository.search().where('year').is.greaterThanOrEqualTo(1984).return.all()
+albums = await albumRepository.search().where('year').is.not.greaterThanOrEqualTo(1984).return.all()
 
-albums = await repository.search().where('year').lessThan(1984).return.all()
-albums = await repository.search().where('year').is.lessThan(1984).return.all()
-albums = await repository.search().where('year').is.not.lessThan(1984).return.all()
+albums = await albumRepository.search().where('year').lessThan(1984).return.all()
+albums = await albumRepository.search().where('year').is.lessThan(1984).return.all()
+albums = await albumRepository.search().where('year').is.not.lessThan(1984).return.all()
 
-albums = await repository.search().where('year').lessThanOrEqualTo(1984).return.all()
-albums = await repository.search().where('year').is.lessThanOrEqualTo(1984).return.all()
-albums = await repository.search().where('year').is.not.lessThanOrEqualTo(1984).return.all()
+albums = await albumRepository.search().where('year').lessThanOrEqualTo(1984).return.all()
+albums = await albumRepository.search().where('year').is.lessThanOrEqualTo(1984).return.all()
+albums = await albumRepository.search().where('year').is.not.lessThanOrEqualTo(1984).return.all()
 
-albums = await repository.search().where('year').is.between(1980, 1989).return.all()
-albums = await repository.search().where('year').is.not.between(1980, 1989).return.all()
+albums = await albumRepository.search().where('year').is.between(1980, 1989).return.all()
+albums = await albumRepository.search().where('year').is.not.between(1980, 1989).return.all()
 ```
 
 #### Searching on Booleans
@@ -548,73 +588,73 @@ You can search against fields that contain booleans:
 let albums
 
 // find all albums where outOfPublication is true
-albums = await repository.search().where('outOfPublication').true().return.all()
+albums = await albumRepository.search().where('outOfPublication').true().return.all()
 
 // find all albums where outOfPublication is false
-albums = await repository.search().where('outOfPublication').false().return.all()
+albums = await albumRepository.search().where('outOfPublication').false().return.all()
 ```
 
 You can negate boolean searches. This might seem odd, but if your field is `null`, then it would match on a `.not` query:
 
 ```javascript
 // find all albums where outOfPublication is false or null
-albums = await repository.search().where('outOfPublication').not.true().return.all()
+albums = await albumRepository.search().where('outOfPublication').not.true().return.all()
 
 // find all albums where outOfPublication is true or null
-albums = await repository.search().where('outOfPublication').not.false().return.all()
+albums = await albumRepository.search().where('outOfPublication').not.false().return.all()
 ```
 
 And, of course, there's lots of syntactic sugar to make this fluent:
 
 ```javascript
-albums = await repository.search().where('outOfPublication').eq(true).return.all()
-albums = await repository.search().where('outOfPublication').equals(true).return.all()
-albums = await repository.search().where('outOfPublication').does.equal(true).return.all()
-albums = await repository.search().where('outOfPublication').is.equalTo(true).return.all()
+albums = await albumRepository.search().where('outOfPublication').eq(true).return.all()
+albums = await albumRepository.search().where('outOfPublication').equals(true).return.all()
+albums = await albumRepository.search().where('outOfPublication').does.equal(true).return.all()
+albums = await albumRepository.search().where('outOfPublication').is.equalTo(true).return.all()
 
-albums = await repository.search().where('outOfPublication').true().return.all()
-albums = await repository.search().where('outOfPublication').false().return.all()
-albums = await repository.search().where('outOfPublication').is.true().return.all()
-albums = await repository.search().where('outOfPublication').is.false().return.all()
+albums = await albumRepository.search().where('outOfPublication').true().return.all()
+albums = await albumRepository.search().where('outOfPublication').false().return.all()
+albums = await albumRepository.search().where('outOfPublication').is.true().return.all()
+albums = await albumRepository.search().where('outOfPublication').is.false().return.all()
 
-albums = await repository.search().where('outOfPublication').not.eq(true).return.all()
-albums = await repository.search().where('outOfPublication').does.not.equal(true).return.all()
-albums = await repository.search().where('outOfPublication').is.not.equalTo(true).return.all()
-albums = await repository.search().where('outOfPublication').is.not.true().return.all()
-albums = await repository.search().where('outOfPublication').is.not.false().return.all()
+albums = await albumRepository.search().where('outOfPublication').not.eq(true).return.all()
+albums = await albumRepository.search().where('outOfPublication').does.not.equal(true).return.all()
+albums = await albumRepository.search().where('outOfPublication').is.not.equalTo(true).return.all()
+albums = await albumRepository.search().where('outOfPublication').is.not.true().return.all()
+albums = await albumRepository.search().where('outOfPublication').is.not.false().return.all()
 ```
 
 #### Searching Arrays
 
-You can search on whole strings that are in an array:
+You can search on *whole strings* that are in an array:
 
 ```javascript
 let albums
 
 // find all albums where genres contains the string 'rock'
-albums = await repository.search().where('genres').contain('rock').return.all()
+albums = await albumRepository.search().where('genres').contain('rock').return.all()
 
 // find all albums where genres contains the string 'rock', 'metal', or 'blues'
-albums = await repository.search().where('genres').containOneOf('rock', 'metal', 'blues').return.all()
+albums = await albumRepository.search().where('genres').containOneOf('rock', 'metal', 'blues').return.all()
 
 // find all albums where genres does *not* contain the string 'rock'
-albums = await repository.search().where('genres').not.contain('rock').return.all()
+albums = await albumRepository.search().where('genres').not.contain('rock').return.all()
 
 // find all albums where genres does *not* contain the string 'rock', 'metal', and 'blues'
-albums = await repository.search().where('genres').not.containOneOf('rock', 'metal', 'blues').return.all()
+albums = await albumRepository.search().where('genres').not.containOneOf('rock', 'metal', 'blues').return.all()
 
 // alternative syntaxes
-albums = await repository.search().where('genres').contains('rock').return.all()
-albums = await repository.search().where('genres').containsOneOf('rock', 'metal', 'blues').return.all()
-albums = await repository.search().where('genres').does.contain('rock').return.all()
-albums = await repository.search().where('genres').does.not.contain('rock').return.all()
-albums = await repository.search().where('genres').does.containOneOf('rock', 'metal', 'blues').return.all()
-albums = await repository.search().where('genres').does.not.containOneOf('rock', 'metal', 'blues').return.all()
+albums = await albumRepository.search().where('genres').contains('rock').return.all()
+albums = await albumRepository.search().where('genres').containsOneOf('rock', 'metal', 'blues').return.all()
+albums = await albumRepository.search().where('genres').does.contain('rock').return.all()
+albums = await albumRepository.search().where('genres').does.not.contain('rock').return.all()
+albums = await albumRepository.search().where('genres').does.containOneOf('rock', 'metal', 'blues').return.all()
+albums = await albumRepository.search().where('genres').does.not.containOneOf('rock', 'metal', 'blues').return.all()
 ```
 
 #### Full-Text Search
 
-By default, a string matches the entire string. So, if the title of your album is "The Righteous & The Butterfly", to find that album using its title, you'll need to provide the entire string. However, you can configure a string for full-text search in the schema by setting `textSearch` to `true`:
+By default, a string matches the entire string. So, if the title of your album is "The Righteous & The Butterfly", to find that album using its title, you'll need to provide the exact and entire string. However, you can configure a string for full-text search in the schema by setting `textSearch` to `true`:
 
 ```javascript
   ...
@@ -628,47 +668,163 @@ Doing this gives you the full power of [RediSearch][redisearch-url] by enabling 
 let albums
 
 // finds all albums where the title contains the word 'butterfly'
-albums = await repository.search().where('title').match('butterfly').return.all()
+albums = await albumRepository.search().where('title').match('butterfly').return.all()
 
 // finds all albums where the title contains the the words 'beautiful' and 'children'
-albums = await repository.search().where('title').match('beautiful children').return.all()
+albums = await albumRepository.search().where('title').match('beautiful children').return.all()
 
 // finds all albums where the title contains the exact phrase 'beautiful stories'
-albums = await repository.search().where('title').matchExact('beautiful stories').return.all()
+albums = await albumRepository.search().where('title').matchExact('beautiful stories').return.all()
 ```
 
-Redis OM also exposes word prefix searches from Redisearch. If you are looking for a word that starts with a particular value, just tack a `*` on the end and it'll match accordingly:
+Redis OM also exposes word prefix searches from RediSearch. If you are looking for a word that starts with a particular value, just tack a `*` on the end and it'll match accordingly:
 
 ```javascript
 // finds all albums where the title contains a word that starts with 'right'
-albums = await repository.search().where('title').match('right*').return.all()
+albums = await albumRepository.search().where('title').match('right*').return.all()
 ```
 
 But do not combine these. I repeat, **DO NOT COMBINE THESE**. Prefix searches and exact matches are not compatible. If you try to exactly match a prefixed search, you'll get an error.
 
 ```javascript
 // THIS WILL ERROR
-albums = await repository.search().where('title').matchExact('beautiful sto*').return.all()
+albums = await albumRepository.search().where('title').matchExact('beautiful sto*').return.all()
 ```
 
 Again, there are several alternatives to make this a bit more fluent and, of course, negation is available:
 
 ```javascript
-albums = await repository.search().where('title').not.match('butterfly').return.all()
-albums = await repository.search().where('title').matches('butterfly').return.all()
-albums = await repository.search().where('title').does.match('butterfly').return.all()
-albums = await repository.search().where('title').does.not.match('butterfly').return.all()
+albums = await albumRepository.search().where('title').not.match('butterfly').return.all()
+albums = await albumRepository.search().where('title').matches('butterfly').return.all()
+albums = await albumRepository.search().where('title').does.match('butterfly').return.all()
+albums = await albumRepository.search().where('title').does.not.match('butterfly').return.all()
 
-albums = await repository.search().where('title').exact.match('beautiful stories').return.all()
-albums = await repository.search().where('title').not.exact.match('beautiful stories').return.all()
-albums = await repository.search().where('title').exactly.matches('beautiful stories').return.all()
-albums = await repository.search().where('title').does.exactly.match('beautiful stories').return.all()
-albums = await repository.search().where('title').does.not.exactly.match('beautiful stories').return.all()
+albums = await albumRepository.search().where('title').exact.match('beautiful stories').return.all()
+albums = await albumRepository.search().where('title').not.exact.match('beautiful stories').return.all()
+albums = await albumRepository.search().where('title').exactly.matches('beautiful stories').return.all()
+albums = await albumRepository.search().where('title').does.exactly.match('beautiful stories').return.all()
+albums = await albumRepository.search().where('title').does.not.exactly.match('beautiful stories').return.all()
 
-albums = await repository.search().where('title').not.matchExact('beautiful stories').return.all()
-albums = await repository.search().where('title').matchesExactly('beautiful stories').return.all()
-albums = await repository.search().where('title').does.matchExactly('beautiful stories').return.all()
-albums = await repository.search().where('title').does.not.matchExactly('beautiful stories').return.all()
+albums = await albumRepository.search().where('title').not.matchExact('beautiful stories').return.all()
+albums = await albumRepository.search().where('title').matchesExactly('beautiful stories').return.all()
+albums = await albumRepository.search().where('title').does.matchExactly('beautiful stories').return.all()
+albums = await albumRepository.search().where('title').does.not.matchExactly('beautiful stories').return.all()
+```
+
+#### Searching on Geopoints
+
+RediSearch, and therefore Redis OM, both support searching by geographic location. You specify a point in the globe and a radius and it'll gleefully return all the entities within that radius:
+
+```javascript
+let studios
+
+// finds all the studios with 50 miles of downtown Cleveland
+studios = await studioRepository.search().where('location').inRadius(
+  circle => circle.origin(-81.7758995, 41.4976393).radius(50).miles).return.all()
+```
+
+Note that coordinates are specified with the longitude *first*, and then the latitude. This might be the opposite of what you expect but is consistent with how Redis implements coordinates in [RediSearch](https://oss.redis.com/redisearch/Query_Syntax/) and with [GeoSets](https://redis.io/commands#geo).
+
+If you don't want to rely on argument order, you can also specify longitude and latitude more explicity:
+
+```javascript
+// finds all the studios with 50 miles of downtown Cleveland using a geopoint
+studios = await studioRepository.search().where('location').inRadius(
+  circle => circle.origin({ longitude: -81.7758995, latitude: 41.4976393 }).radius(50).miles).return.all()
+
+// finds all the studios with 50 miles of downtown Cleveland using longitude and latitude
+studios = await studioRepository.search().where('location').inRadius(
+  circle => circle.longitude(-81.7758995).latitude(41.4976393).radius(50).miles).return.all()
+```
+
+Radius can be in *miles*, *feet*, *kilometers*, and *meters* in all the spelling variations you could ever want:
+
+```javascript
+// finds all the studios within 50 miles
+studios = await studioRepository.search().where('location').inRadius(
+  circle => circle.origin(-81.7758995, 41.4976393).radius(50).miles).return.all()
+
+studios = await studioRepository.search().where('location').inRadius(
+  circle => circle.origin(-81.7758995, 41.4976393).radius(50).mile).return.all()
+
+studios = await studioRepository.search().where('location').inRadius(
+  circle => circle.origin(-81.7758995, 41.4976393).radius(50).mi).return.all()
+
+// finds all the studios within 50 feet
+studios = await studioRepository.search().where('location').inRadius(
+  circle => circle.origin(-81.7758995, 41.4976393).radius(50).feet).return.all()
+
+studios = await studioRepository.search().where('location').inRadius(
+  circle => circle.origin(-81.7758995, 41.4976393).radius(50).foot).return.all()
+
+studios = await studioRepository.search().where('location').inRadius(
+  circle => circle.origin(-81.7758995, 41.4976393).radius(50).ft).return.all()
+
+// finds all the studios within 50 kilometers
+studios = await studioRepository.search().where('location').inRadius(
+  circle => circle.origin(-81.7758995, 41.4976393).radius(50).kilometers).return.all()
+
+studios = await studioRepository.search().where('location').inRadius(
+  circle => circle.origin(-81.7758995, 41.4976393).radius(50).kilometer).return.all()
+
+studios = await studioRepository.search().where('location').inRadius(
+  circle => circle.origin(-81.7758995, 41.4976393).radius(50).km).return.all()
+
+// finds all the studios within 50 meters
+studios = await studioRepository.search().where('location').inRadius(
+  circle => circle.origin(-81.7758995, 41.4976393).radius(50).meters).return.all()
+
+studios = await studioRepository.search().where('location').inRadius(
+  circle => circle.origin(-81.7758995, 41.4976393).radius(50).meter).return.all()
+
+studios = await studioRepository.search().where('location').inRadius(
+  circle => circle.origin(-81.7758995, 41.4976393).radius(50).m).return.all()
+```
+
+If you don't specify the origin, Redis OM will use a longitude 0.0 and a latitude 0.0 (.i.e [Null Island](https://en.wikipedia.org/wiki/Null_Island)):
+
+```javascript
+// finds all the studios within 50 miles of Null Island (probably ain't much there)
+studios = await studioRepository.search().where('location').inRadius(
+  circle => circle.radius(50).miles).return.all()
+```
+
+If you don't specify the radius, it defaults to *1* and if you don't provide units, it defaults to *meters*:
+
+```javascript
+// finds all the studios within 1 meter of downtown Cleveland
+studios = await studioRepository.search().where('location').inRadius(
+  circle => circle.origin(-81.7758995, 41.4976393)).return.all()
+
+// finds all the studios within 1 kilometer of downtown Cleveland
+studios = await studioRepository.search().where('location').inRadius(
+  circle => circle.origin(-81.7758995, 41.4976393).kilometers).return.all()
+
+// finds all the studios within 50 meters of downtown Cleveland
+studios = await studioRepository.search().where('location').inRadius(
+  circle => circle.origin(-81.7758995, 41.4976393).radius(50)).return.all()
+```
+
+And there are plenty of fluent variations to help make your code pretty:
+
+```javascript
+studios = await studioRepository.search().where('location').not.inRadius(
+  circle => circle.longitude(-81.7758995).latitude(41.4976393).radius(50).miles).return.all()
+
+studios = await studioRepository.search().where('location').is.inRadius(
+  circle => circle.longitude(-81.7758995).latitude(41.4976393).radius(50).miles).return.all()
+
+studios = await studioRepository.search().where('location').is.not.inRadius(
+  circle => circle.longitude(-81.7758995).latitude(41.4976393).radius(50).miles).return.all()
+
+studios = await studioRepository.search().where('location').not.inCircle(
+  circle => circle.longitude(-81.7758995).latitude(41.4976393).radius(50).miles).return.all()
+
+studios = await studioRepository.search().where('location').is.inCircle(
+  circle => circle.longitude(-81.7758995).latitude(41.4976393).radius(50).miles).return.all()
+
+studios = await studioRepository.search().where('location').is.not.inCircle(
+  circle => circle.longitude(-81.7758995).latitude(41.4976393).radius(50).miles).return.all()
 ```
 
 #### Chaining Searches
@@ -676,7 +832,7 @@ albums = await repository.search().where('title').does.not.matchExactly('beautif
 So far we've been doing searches that match on a single field. However, we often want to query on multiple fields. Not a problem:
 
 ```javascript
-let albums = await repository.search
+let albums = await albumRepository.search
   .where('artist').equals('Mushroomhread')
   .or('title').matches('butterfly')
   .and('year').is.greaterThan(1990).return.all()
@@ -687,7 +843,7 @@ These are executed in order from left to right, and ignore any order of operatio
 If you'd like to change this you can nest your queries:
 
 ```javascript
-search
+let albums = await albumRepository.search
   .where('title').matches('butterfly').return.all()
   .or(search => search
     .where('artist').equals('Mushroomhead')
@@ -703,7 +859,7 @@ One final note: All of the search capabilities of RediSearch that Redis OM expos
 
 
 ```javascript
-let schema = new Schema(Album, {
+let albumSchema = new Schema(Album, {
   artist: { type: 'string' },
   title: { type: 'string' },
   year: { type: 'number' },

@@ -3,6 +3,7 @@ import { saveHash, saveJson } from './redis-helper';
 import Client, { SearchDataStructure } from "../../../lib/client";
 import Entity, { EntityConstructor } from "../../../lib/entity/entity";
 import Schema from '../../../lib/schema/schema';
+import { GeoPoint } from '../../../lib';
 
 interface CommonEntity {
   aString?: string | null;
@@ -13,6 +14,8 @@ interface CommonEntity {
   anotherNumber?: number | null;
   aBoolean?: boolean | null;
   anotherBoolean?: boolean | null;
+  aGeoPoint?: GeoPoint | null;
+  anotherGeoPoint?: GeoPoint | null;
   anArray?: string[] | null;
   anotherArray?: string[] | null;
 }
@@ -43,6 +46,8 @@ function createSchemaOfType<TEntity extends Entity>(ctor: EntityConstructor<TEnt
       anotherNumber: { type: 'number' },
       aBoolean: { type: 'boolean' },
       anotherBoolean: { type: 'boolean' },
+      aGeoPoint: { type: 'geopoint' },
+      anotherGeoPoint: { type: 'geopoint' },
       anArray: { type: 'array' },
       anotherArray: { type: 'array' }
     }, {
@@ -59,6 +64,8 @@ type CommonEntityData = {
   anotherNumber: number | null;
   aBoolean: boolean | null;
   anotherBoolean: boolean | null;
+  aGeoPoint: GeoPoint | null;
+  anotherGeoPoint: GeoPoint | null;
   anArray: string[] | null;
   anotherArray: string[] | null;  
 };
@@ -72,6 +79,8 @@ export const AN_ENTITY: CommonEntityData = {
   anotherNumber: 23,
   aBoolean: true,
   anotherBoolean: false,
+  aGeoPoint: { longitude: 12.34, latitude: 56.78 },
+  anotherGeoPoint: { longitude: 12.35, latitude: 56.79 },
   anArray: [ 'alfa', 'bravo', 'charlie'],
   anotherArray: [ 'bravo', 'charlie', 'delta' ]
 };
@@ -85,6 +94,8 @@ export const ANOTHER_ENTITY: CommonEntityData = {
   anotherNumber: 13,
   aBoolean: true,
   anotherBoolean: true,
+  aGeoPoint: { longitude: 23.45, latitude: 67.89 },
+  anotherGeoPoint: { longitude: 23.46, latitude: 67.90 },
   anArray: [ 'bravo', 'charlie', 'delta' ],
   anotherArray: [ 'charlie', 'delta', 'echo' ]
 };
@@ -98,6 +109,8 @@ export const A_THIRD_ENTITY: CommonEntityData = {
   anotherNumber: 7,
   aBoolean: false,
   anotherBoolean: false,
+  aGeoPoint: { longitude: 34.56, latitude: 78.90 },
+  anotherGeoPoint: { longitude: 34.57, latitude: 78.91 },
   anArray: [ 'charlie', 'delta', 'echo' ],
   anotherArray: [ 'delta', 'echo', 'foxtrot' ]
 };
@@ -111,6 +124,8 @@ export const A_PARTIAL_ENTITY: CommonEntityData = {
   anotherNumber: null,
   aBoolean: true,
   anotherBoolean: null,
+  aGeoPoint: { longitude: 12.34, latitude: 56.78 },
+  anotherGeoPoint: null,
   anArray: [ 'alfa', 'bravo', 'charlie'],
   anotherArray: null
 };
@@ -124,6 +139,8 @@ export const AN_EMPTY_ENTITY: CommonEntityData = {
   anotherNumber: null,
   aBoolean: null,
   anotherBoolean: null,
+  aGeoPoint: null,
+  anotherGeoPoint: null,
   anArray: null,
   anotherArray: null
 };
@@ -137,6 +154,8 @@ export const AN_ESCAPED_ENTITY: CommonEntityData = {
   anotherNumber: null,
   aBoolean: null,
   anotherBoolean: null,
+  aGeoPoint: null,
+  anotherGeoPoint: null,
   anArray: [ 'alfa ,.<>{}[]"\':;!@#$%^&*()-+=~ bravo', 'charlie delta' ],
   anotherArray: null
 };
@@ -149,9 +168,10 @@ export async function loadTestHash(client: Client, key: string, data: CommonEnti
     let value = (data as any)[field];
     if (value !== null) {
       if (typeof value === 'boolean') command.push(field, value ? '1' : '0');
-      if (typeof value === 'number') command.push(field, value.toString());
-      if (typeof value === 'string') command.push(field, value);
-      if (Array.isArray(value)) command.push(field, value.join('|'));
+      else if (typeof value === 'number') command.push(field, value.toString());
+      else if (typeof value === 'string') command.push(field, value);
+      else if (Array.isArray(value)) command.push(field, value.join('|'));
+      else if (typeof value === 'object') command.push(field, `${value.longitude},${value.latitude}`)
     }
   }
 
@@ -164,7 +184,10 @@ export async function loadTestJson(client: Client, key: string, data: CommonEnti
 
   for (let field in data) {
     let value = (data as any)[field];
-    if (value !== null) json[field] = value;
+    if (value !== null) {
+      if (typeof value === 'object' && !Array.isArray(value)) json[field] = `${value.longitude},${value.latitude}`;
+      else json[field] = value;
+    }
   }
 
   await saveJson(client, key, JSON.stringify(json));

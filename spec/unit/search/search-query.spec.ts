@@ -37,8 +37,9 @@ describe("Search", () => {
           .where('aString').eq('foo')
           .where('aNumber').eq(42)
           .where('aBoolean').true()
+          .where('aGeoPoint').inCircle(circle => circle.origin(12.34, 56.78).radius(23).miles)
           .where('anArray').containsOneOf('foo', 'bar').query;
-        expect(query).toBe("( ( ( (@aString:{foo}) (@aNumber:[42 42]) ) (@aBoolean:{1}) ) (@anArray:{foo|bar}) )");
+        expect(query).toBe("( ( ( ( (@aString:{foo}) (@aNumber:[42 42]) ) (@aBoolean:{1}) ) (@aGeoPoint:[12.34 56.78 23 mi]) ) (@anArray:{foo|bar}) )");
       });
 
       it("generates a query using .and", () => {
@@ -46,8 +47,9 @@ describe("Search", () => {
           .where('aString').eq('foo')
           .and('aNumber').eq(42)
           .and('aBoolean').true()
+          .and('aGeoPoint').inCircle(circle => circle.origin(12.34, 56.78).radius(23).miles)
           .and('anArray').containsOneOf('foo', 'bar').query;
-          expect(query).toBe("( ( ( (@aString:{foo}) (@aNumber:[42 42]) ) (@aBoolean:{1}) ) (@anArray:{foo|bar}) )");
+          expect(query).toBe("( ( ( ( (@aString:{foo}) (@aNumber:[42 42]) ) (@aBoolean:{1}) ) (@aGeoPoint:[12.34 56.78 23 mi]) ) (@anArray:{foo|bar}) )");
       });
 
       it("generates a query using .or", () => {
@@ -55,8 +57,9 @@ describe("Search", () => {
           .where('aString').eq('foo')
           .or('aNumber').equals(42)
           .or('aBoolean').true()
+          .or('aGeoPoint').inCircle(circle => circle.origin(12.34, 56.78).radius(23).miles)
           .or('anArray').containsOneOf('foo', 'bar').query;
-        expect(query).toBe("( ( ( (@aString:{foo}) | (@aNumber:[42 42]) ) | (@aBoolean:{1}) ) | (@anArray:{foo|bar}) )");
+        expect(query).toBe("( ( ( ( (@aString:{foo}) | (@aNumber:[42 42]) ) | (@aBoolean:{1}) ) | (@aGeoPoint:[12.34 56.78 23 mi]) ) | (@anArray:{foo|bar}) )");
       });
 
       it("generates a query using .and and .or", () => {
@@ -101,6 +104,7 @@ describe("Search", () => {
           .where('aString').eq('foo')
           .and('aNumber').equals(42)
           .or('aBoolean').true()
+          .and('aGeoPoint').inCircle(circle => circle.origin(12.34, 56.78).radius(23).miles)
           .and(search => search
             .where('aString').eq('bar')
             .and('aNumber').equals(23)
@@ -116,7 +120,7 @@ describe("Search", () => {
             )
           ).query;
 
-        expect(query).toBe("( ( ( ( (@aString:{foo}) (@aNumber:[42 42]) ) | (@aBoolean:{1}) ) ( ( (@aString:{bar}) (@aNumber:[23 23]) ) (@aBoolean:{0}) ) ) | ( ( ( (@aString:{baz}) | (@aNumber:[13 13]) ) | (@aBoolean:{1}) ) ( (@aString:{qux}) (@aNumber:[7 7]) ) ) )");
+        expect(query).toBe("( ( ( ( ( (@aString:{foo}) (@aNumber:[42 42]) ) | (@aBoolean:{1}) ) (@aGeoPoint:[12.34 56.78 23 mi]) ) ( ( (@aString:{bar}) (@aNumber:[23 23]) ) (@aBoolean:{0}) ) ) | ( ( ( (@aString:{baz}) | (@aNumber:[13 13]) ) | (@aBoolean:{1}) ) ( (@aString:{qux}) (@aNumber:[7 7]) ) ) )");
       });
     });
 
@@ -140,8 +144,9 @@ describe("Search", () => {
           .where('aString').eq('foo')
           .where('aNumber').eq(42)
           .where('aBoolean').true()
+          .where('aGeoPoint').inCircle(circle => circle.origin(12.34, 56.78).radius(23).miles)
           .where('anArray').containsOneOf('foo', 'bar').query;
-        expect(query).toBe("( ( ( (@aString:{foo}) (@aNumber:[42 42]) ) (@aBoolean:{true}) ) (@anArray:{foo|bar}) )");
+        expect(query).toBe("( ( ( ( (@aString:{foo}) (@aNumber:[42 42]) ) (@aBoolean:{true}) ) (@aGeoPoint:[12.34 56.78 23 mi]) ) (@anArray:{foo|bar}) )");
       });
 
       it("generates a query using .and", () => {
@@ -149,8 +154,9 @@ describe("Search", () => {
           .where('aString').eq('foo')
           .and('aNumber').eq(42)
           .and('aBoolean').true()
+          .and('aGeoPoint').inCircle(circle => circle.origin(12.34, 56.78).radius(23).miles)
           .and('anArray').containsOneOf('foo', 'bar').query;
-          expect(query).toBe("( ( ( (@aString:{foo}) (@aNumber:[42 42]) ) (@aBoolean:{true}) ) (@anArray:{foo|bar}) )");
+          expect(query).toBe("( ( ( ( (@aString:{foo}) (@aNumber:[42 42]) ) (@aBoolean:{true}) ) (@aGeoPoint:[12.34 56.78 23 mi]) ) (@anArray:{foo|bar}) )");
       });
 
       it("generates a query using .or", () => {
@@ -158,8 +164,9 @@ describe("Search", () => {
           .where('aString').eq('foo')
           .or('aNumber').equals(42)
           .or('aBoolean').true()
+          .or('aGeoPoint').inCircle(circle => circle.origin(12.34, 56.78).radius(23).miles)
           .or('anArray').containsOneOf('foo', 'bar').query;
-        expect(query).toBe("( ( ( (@aString:{foo}) | (@aNumber:[42 42]) ) | (@aBoolean:{true}) ) | (@anArray:{foo|bar}) )");
+        expect(query).toBe("( ( ( ( (@aString:{foo}) | (@aNumber:[42 42]) ) | (@aBoolean:{true}) ) | (@aGeoPoint:[12.34 56.78 23 mi]) ) | (@anArray:{foo|bar}) )");
       });
 
       it("generates a query using .and and .or", () => {
@@ -204,6 +211,7 @@ describe("Search", () => {
           .where('aString').eq('foo')
           .and('aNumber').equals(42)
           .or('aBoolean').true()
+          .and('aGeoPoint').inCircle(circle => circle.origin(12.34, 56.78).radius(23).miles)
           .and(search => search
             .where('aString').eq('bar')
             .and('aNumber').equals(23)
@@ -219,7 +227,7 @@ describe("Search", () => {
             )
           ).query;
 
-        expect(query).toBe("( ( ( ( (@aString:{foo}) (@aNumber:[42 42]) ) | (@aBoolean:{true}) ) ( ( (@aString:{bar}) (@aNumber:[23 23]) ) (@aBoolean:{false}) ) ) | ( ( ( (@aString:{baz}) | (@aNumber:[13 13]) ) | (@aBoolean:{true}) ) ( (@aString:{qux}) (@aNumber:[7 7]) ) ) )");
+        expect(query).toBe("( ( ( ( ( (@aString:{foo}) (@aNumber:[42 42]) ) | (@aBoolean:{true}) ) (@aGeoPoint:[12.34 56.78 23 mi]) ) ( ( (@aString:{bar}) (@aNumber:[23 23]) ) (@aBoolean:{false}) ) ) | ( ( ( (@aString:{baz}) | (@aNumber:[13 13]) ) | (@aBoolean:{true}) ) ( (@aString:{qux}) (@aNumber:[7 7]) ) ) )");
       });
     });
   });

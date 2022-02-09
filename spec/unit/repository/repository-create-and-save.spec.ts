@@ -31,6 +31,7 @@ describe("Repository", () => {
             aString: 'foo',
             aNumber: 42,
             aBoolean: false,
+            aGeoPoint: { longitude: 12.34, latitude: 56.78 },
             anArray: [ 'bar', 'baz', 'qux' ]
           });
         });
@@ -39,6 +40,7 @@ describe("Repository", () => {
           expect(entity.aString).toBe('foo');
           expect(entity.aNumber).toBe(42);
           expect(entity.aBoolean).toBe(false);
+          expect(entity.aGeoPoint).toEqual({ longitude: 12.34, latitude: 56.78 });
           expect(entity.anArray).toEqual([ 'bar', 'baz', 'qux' ]);
         });
 
@@ -46,7 +48,7 @@ describe("Repository", () => {
           expect(Client.prototype.hsetall).toHaveBeenCalledWith(
             expect.stringMatching(/^SimpleHashEntity:/), {
               aString: 'foo', aNumber: '42', aBoolean: '0',
-              anArray: 'bar|baz|qux' }));
+              aGeoPoint: '12.34,56.78', anArray: 'bar|baz|qux' }));
       });
   
       describe("when saving an empty entity", () => {
@@ -56,6 +58,7 @@ describe("Repository", () => {
           expect(entity.aString).toBeNull();
           expect(entity.aNumber).toBeNull();
           expect(entity.aBoolean).toBeNull();
+          expect(entity.aGeoPoint).toBeNull();
           expect(entity.anArray).toBeNull();
         });
 
@@ -78,6 +81,7 @@ describe("Repository", () => {
             aString: 'foo',
             aNumber: 42,
             aBoolean: false,
+            aGeoPoint: { longitude: 12.34, latitude: 56.78 },
             anArray: [ 'bar', 'baz', 'qux' ]
           });
         });
@@ -86,6 +90,7 @@ describe("Repository", () => {
           expect(entity.aString).toBe('foo');
           expect(entity.aNumber).toBe(42);
           expect(entity.aBoolean).toBe(false);
+          expect(entity.aGeoPoint).toEqual({ longitude: 12.34, latitude: 56.78 });
           expect(entity.anArray).toEqual([ 'bar', 'baz', 'qux' ]);
         });
 
@@ -93,7 +98,7 @@ describe("Repository", () => {
           expect(Client.prototype.jsonset).toHaveBeenCalledWith(
             expect.stringMatching(/^SimpleJsonEntity:/), {
               aString: 'foo', aNumber: 42, aBoolean: false,
-              anArray: [ 'bar', 'baz', 'qux' ] }));
+              aGeoPoint: '12.34,56.78', anArray: [ 'bar', 'baz', 'qux' ] }));
       });
   
       describe("when saving an empty entity", () => {
@@ -103,6 +108,7 @@ describe("Repository", () => {
           expect(entity.aString).toBeNull();
           expect(entity.aNumber).toBeNull();
           expect(entity.aBoolean).toBeNull();
+          expect(entity.aGeoPoint).toBeNull();
           expect(entity.anArray).toBeNull();
         });
 

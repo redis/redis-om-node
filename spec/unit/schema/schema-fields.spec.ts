@@ -43,6 +43,14 @@ describe("Schema", () => {
     expectedAlternatePropertyValue: 'bar',
   };
 
+  let GEO_HASH_DEFAULTS = {
+    ...HASH_DEFAULTS,
+    providedEntityFieldValue: { longitude: 12.34, latitude: 56.78 },
+    expectedPropertyValue: { longitude: 12.34, latitude: 56.78 },
+    providedAlternatePropertyValue: { longitude: 23.45, latitude: 67.89 },
+    expectedAlternatePropertyValue: { longitude: 23.45, latitude: 67.89 }
+  }
+
   let ARRAY_HASH_DEFAULTS = {
     ...HASH_DEFAULTS,
     providedEntityFieldValue: ['foo', 'bar', 'baz'],
@@ -72,7 +80,15 @@ describe("Schema", () => {
     providedEntityFieldValue: 'foo',
     expectedPropertyValue: 'foo',
     providedAlternatePropertyValue: 'bar',
-    expectedAlternatePropertyValue: 'bar',
+    expectedAlternatePropertyValue: 'bar'
+  };
+
+  let GEO_JSON_DEFAULTS = {
+    ...JSON_DEFAULTS,
+    providedEntityFieldValue: { longitude: 12.34, latitude: 56.78 },
+    expectedPropertyValue: { longitude: 12.34, latitude: 56.78 },
+    providedAlternatePropertyValue: { longitude: 23.45, latitude: 67.89 },
+    expectedAlternatePropertyValue: { longitude: 23.45, latitude: 67.89 }
   };
 
   let ARRAY_JSON_DEFAULTS = {
@@ -158,6 +174,23 @@ describe("Schema", () => {
         aField: { type: 'string', separator: ';' }
       } as SchemaDefinition,
       expectedRedisSchema: ['aField', 'TAG', 'SEPARATOR', ';']
+    }],
+
+    ["that defines an unconfigured geopoint for a HASH", {
+      ...GEO_HASH_DEFAULTS,
+      schemaDef: { 
+        aField: { type: 'geopoint' }
+      } as SchemaDefinition,
+      expectedRedisSchema: ['aField', 'GEO']
+    }],
+
+    ["that defines an aliased geopoint for a HASH", {
+      ...GEO_HASH_DEFAULTS,
+      schemaDef: { 
+        aField: { type: 'geopoint', alias: 'anotherField' }
+      } as SchemaDefinition,
+      providedEntityFieldName: 'anotherField',
+      expectedRedisSchema: ['anotherField', 'GEO']
     }],
 
     ["that defines an unconfigured array for a HASH", {
@@ -259,6 +292,23 @@ describe("Schema", () => {
         aField: { type: 'string', separator: ';' }
       } as SchemaDefinition,
       expectedRedisSchema: ['$.aField', 'AS', 'aField', 'TAG', 'SEPARATOR', ';']
+    }],
+
+    ["that defines an unconfigured geopoint for JSON", {
+      ...GEO_JSON_DEFAULTS,
+      schemaDef: { 
+        aField: { type: 'geopoint' }
+      } as SchemaDefinition,
+      expectedRedisSchema: ['$.aField', 'AS', 'aField', 'GEO']
+    }],
+
+    ["that defines an aliased geopoint for JSON", {
+      ...GEO_JSON_DEFAULTS,
+      schemaDef: {
+        aField: { type: 'geopoint', alias: 'anotherField' }
+      } as SchemaDefinition,
+      providedEntityFieldName: 'anotherField',
+      expectedRedisSchema: ['$.anotherField', 'AS', 'anotherField', 'GEO']
     }],
 
     ["that defines an unconfigured array for JSON", {

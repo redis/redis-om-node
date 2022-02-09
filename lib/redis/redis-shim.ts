@@ -1,12 +1,10 @@
 import { createClient } from '@node-redis/client';
 
-import { RedisClientType, } from '@node-redis/client/dist/lib/client';
-import { RedisScripts, RedisModules } from '@node-redis/client/dist/lib/commands';
 import RedisError from '../errors';
 
 export default class RedisShim {
 
-  private redis!: RedisClientType<RedisModules, RedisScripts>;
+  private redis!: ReturnType<typeof createClient>;
 
   async open(url: string) {
     this.redis = createClient({ url });

@@ -1,5 +1,5 @@
 import { EntityData } from '../entity/entity';
-import { ArrayField, SchemaDefinition } from "../schema/schema-definitions";
+import { ArrayField, SchemaDefinition, GeoPoint } from "../schema/schema-definitions";
 import { HashData } from '../client';
 
 export default class HashConverter {
@@ -20,6 +20,10 @@ export default class HashConverter {
         if (fieldDef.type === 'boolean') hashData[field] = value ? '1': '0';
         if (fieldDef.type === 'array') hashData[field] = (value as string[]).join(fieldDef.separator ?? '|');
         if (fieldDef.type === 'string') hashData[field] = value;
+        if (fieldDef.type === 'geopoint') {
+          let { longitude, latitude } = value as GeoPoint;
+          hashData[field] = `${longitude},${latitude}`;
+        }
       }
     }
     return hashData;
@@ -37,6 +41,7 @@ export default class HashConverter {
         if (fieldDef.type === 'boolean') this.addBoolean(field, entityData, value);
         if (fieldDef.type === 'array') this.addArray(field, fieldDef as ArrayField, entityData, value);
         if (fieldDef.type === 'string') this.addString(field, entityData, value);
+        if (fieldDef.type === 'geopoint') this.addGeoPoint(field, entityData, value);
       }
     }
 
@@ -65,5 +70,10 @@ export default class HashConverter {
 
   private addString(field: string, entityData: EntityData, value: string) {
     entityData[field] = value;
+  }
+
+  private addGeoPoint(field: string, entityData: EntityData, value: string) {
+    let [ longitude, latitude ] = value.split(',').map(Number.parseFloat);
+    entityData[field] = { longitude, latitude };
   }
 }

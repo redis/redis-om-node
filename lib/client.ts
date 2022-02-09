@@ -51,6 +51,7 @@ export type SearchOptions = {
  * its constructor.
  */
 export default class Client {
+  /** @internal */
   protected shim?: RedisShim;
 
   /**

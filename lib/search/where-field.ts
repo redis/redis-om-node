@@ -1,6 +1,7 @@
 import Entity from "../entity/entity";
 import Search from "./search";
 import Where from "./where";
+import { CircleFunction } from "./where-geo";
 
 /**
  * Interface with all the methods from all the concrete
@@ -10,6 +11,9 @@ interface WhereField<TEntity> extends Where {
 
   /**
    * Adds an equals comparison to the query.
+   * 
+   * NOTE: this function is not available for strings where full-text
+   * search is enabled. In that scenario, use `.match`.
    * @param value The value to be compared
    * @returns The {@link Search} that was called to create this {@link WhereField}.
    */
@@ -17,6 +21,9 @@ interface WhereField<TEntity> extends Where {
 
   /**
    * Adds an equals comparison to the query.
+   * 
+   * NOTE: this function is not available for strings where full-text
+   * search is enabled. In that scenario, use `.match`.
    * @param value The value to be compared
    * @returns The {@link Search} that was called to create this {@link WhereField}.
    */
@@ -24,6 +31,9 @@ interface WhereField<TEntity> extends Where {
 
   /**
    * Adds an equals comparison to the query.
+   *
+   * NOTE: this function is not available for strings where full-text
+   * search is enabled. In that scenario, use `.match`.
    * @param value The value to be compared
    * @returns The {@link Search} that was called to create this {@link WhereField}.
    */
@@ -31,6 +41,9 @@ interface WhereField<TEntity> extends Where {
 
   /**
    * Adds an equals comparison to the query.
+   *
+   * NOTE: this function is not available for strings where full-text
+   * search is enabled. In that scenario, use `.match`.
    * @param value The value to be compared
    * @returns The {@link Search} that was called to create this {@link WhereField}.
    */
@@ -190,6 +203,20 @@ interface WhereField<TEntity> extends Where {
    * @returns The {@link Search} that was called to create this {@link WhereField}.
    */
   containsOneOf(...value: string[]): Search<TEntity>;
+
+  /**
+   * Adds a search for geopoints that fall within a defined circle.
+   * @param circleFn A function that returns a {@link Circle} instance defining the search area.
+   * @returns The {@link Search} that was called to create this {@link WhereField}.
+   */
+  inCircle(circleFn: CircleFunction): Search<TEntity>;
+
+  /**
+   * Adds a search for geopoints that fall within a defined radius.
+   * @param circleFn A function that returns a {@link Circle} instance defining the search area.
+   * @returns The {@link Search} that was called to create this {@link WhereField}.
+   */
+  inRadius(circleFn: CircleFunction): Search<TEntity>;
 }
 
 /**
@@ -224,7 +251,7 @@ interface WhereField<TEntity> extends Where {
    * Returns the current instance. Syntactic sugar to make your code more fluent.
    * @returns this
    */
-   get does() {
+  get does() {
     return this;
   }
 
@@ -233,7 +260,7 @@ interface WhereField<TEntity> extends Where {
    * *not* met. Calling this multiple times will negate the negation.
    * @returns this
    */
-   get not() {
+  get not() {
     this.negate();
     return this;
   }
