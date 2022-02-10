@@ -2,14 +2,6 @@ import Entity from '../../../lib/entity/entity';
 import Schema from '../../../lib/schema/schema';
 import { GeoPoint } from '../../../lib/schema/schema-definitions';
 
-export const A_TEST_DATE = new Date('1997-07-04T16:56:55.000Z');
-export const A_TEST_DATE_ISO = A_TEST_DATE.toISOString();
-export const A_TEST_DATE_EPOCH = A_TEST_DATE.getTime();
-
-export const ANOTHER_TEST_DATE = new Date('1969-07-20T20:17:40.000Z');
-export const ANOTHER_TEST_DATE_ISO = ANOTHER_TEST_DATE.toISOString();
-export const ANOTHER_TEST_DATE_EPOCH = ANOTHER_TEST_DATE.getTime();
-
 export class SimpleEntity extends Entity {}
 export class SimpleHashEntity extends SimpleEntity {}
 export class SimpleJsonEntity extends SimpleEntity {}

@@ -2,6 +2,10 @@ import { mocked } from 'ts-jest/utils';
 
 import Client from '../../../lib/client';
 import Repository from '../../../lib/repository/repository';
+import {
+  AN_ARRAY, AN_ARRAY_JOINED,
+  A_DATE, A_DATE_EPOCH, A_DATE_EPOCH_STRING,
+  A_GEOPOINT, A_GEOPOINT_STRING } from '../helpers/test-data';
 
 import { simpleHashSchema, SimpleHashEntity, SimpleJsonEntity, simpleJsonSchema } from '../helpers/test-entity-and-schema';
 
@@ -32,12 +36,14 @@ describe("Repository", () => {
 
         ["when saving a fully populated entity", {
           providedString: 'foo', providedNumber: 42, providedBoolean: false,
-          providedGeoPoint: { longitude: 12.34, latitude: 56.78 }, providedArray: [ 'bar', 'baz', 'qux' ],
-          expectedData: { aString: 'foo', aNumber: '42', aBoolean: '0', aGeoPoint: '12.34,56.78', anArray: 'bar|baz|qux' }
+          providedGeoPoint: A_GEOPOINT, providedDate: A_DATE, providedArray: AN_ARRAY,
+          expectedData: { aString: 'foo', aNumber: '42', aBoolean: '0',
+            aGeoPoint: A_GEOPOINT_STRING, aDate: A_DATE_EPOCH_STRING, anArray: AN_ARRAY_JOINED }
         }],
   
         [ "when saving a partially populated entity", {
-          providedString: 'foo', providedNumber: 42, providedBoolean: null, providedGeoPoint: null, providedArray: null,
+          providedString: 'foo', providedNumber: 42, providedBoolean: null,
+          providedGeoPoint: null, providedDate: null, providedArray: null,
           expectedData: { aString: 'foo', aNumber: '42' }
         }]
   
@@ -48,6 +54,7 @@ describe("Repository", () => {
           entity.aNumber = data.providedNumber;
           entity.aBoolean = data.providedBoolean;
           entity.aGeoPoint = data.providedGeoPoint;
+          entity.aDate = data.providedDate;
           entity.anArray = data.providedArray;
           entityId = await repository.save(entity);
           expectedKey = `SimpleHashEntity:${entityId}`;
@@ -64,6 +71,7 @@ describe("Repository", () => {
           entity.aNumber = null;
           entity.aBoolean = null;
           entity.aGeoPoint = null;
+          entity.aDate = null;
           entity.anArray = null;
           entityId = await repository.save(entity);
           expectedKey = `SimpleHashEntity:${entityId}`;
@@ -87,12 +95,14 @@ describe("Repository", () => {
 
         ["when saving a fully populated entity", {
           providedString: 'foo', providedNumber: 42, providedBoolean: false,
-          providedGeoPoint: { longitude: 12.34, latitude: 56.78 }, providedArray: [ 'bar', 'baz', 'qux' ],
-          expectedData: { aString: 'foo', aNumber: 42, aBoolean: false, aGeoPoint: '12.34,56.78', anArray: [ 'bar', 'baz', 'qux' ] }
+          providedGeoPoint: A_GEOPOINT, providedDate: A_DATE, providedArray: AN_ARRAY,
+          expectedData: { aString: 'foo', aNumber: 42, aBoolean: false,
+            aGeoPoint: A_GEOPOINT_STRING, aDate: A_DATE_EPOCH, anArray: AN_ARRAY }
         }],
   
         [ "when saving a partially populated entity", {
-          providedString: 'foo', providedNumber: 42, providedBoolean: null, providedGeoPoint: null, providedArray: null,
+          providedString: 'foo', providedNumber: 42, providedBoolean: null,
+          providedGeoPoint: null, providedDate: null, providedArray: null,
           expectedData: { aString: 'foo', aNumber: 42 }
         }]
 
@@ -103,6 +113,7 @@ describe("Repository", () => {
           entity.aNumber = data.providedNumber;
           entity.aBoolean = data.providedBoolean;
           entity.aGeoPoint = data.providedGeoPoint
+          entity.aDate = data.providedDate;
           entity.anArray = data.providedArray;
           entityId = await repository.save(entity);
           expectedKey = `SimpleJsonEntity:${entityId}`;
@@ -119,6 +130,7 @@ describe("Repository", () => {
           entity.aNumber = null;
           entity.aBoolean = null;
           entity.aGeoPoint = null;
+          entity.aDate = null;
           entity.anArray = null;
           entityId = await repository.save(entity);
           expectedKey = `SimpleJsonEntity:${entityId}`;

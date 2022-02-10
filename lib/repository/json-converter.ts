@@ -21,6 +21,8 @@ export default class JsonConverter {
         if (fieldDef.type === 'geopoint') {
           let { longitude, latitude } = value as GeoPoint;
           jsonData[field] = `${longitude},${latitude}`;
+        } else if (fieldDef.type === 'date' ) {
+          jsonData[field] = (value as Date).getTime();
         } else {
           jsonData[field] = value
         }
@@ -40,7 +42,12 @@ export default class JsonConverter {
         if (this.schemaDef[field].type === 'geopoint') {
           let [ longitude, latitude ] = value.split(',').map(Number.parseFloat);
           value = { longitude, latitude };
-        }  
+        } else if (this.schemaDef[field].type === 'date') {
+          let parsed = Number.parseInt(value);
+          if (Number.isNaN(parsed)) throw Error(`Non-numeric value of '${value}' read from Redis for date field '${field}'`);
+          value = new Date();
+          value.setTime(parsed);
+        }
         entityData[field] = value;
       }
     }

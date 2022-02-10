@@ -3,6 +3,11 @@ import { mocked } from 'ts-jest/utils';
 import Client from '../../../lib/client';
 import Repository from '../../../lib/repository/repository';
 
+import {
+  AN_ARRAY, AN_ARRAY_JOINED,
+  A_DATE, A_DATE_EPOCH, A_DATE_EPOCH_STRING,
+  A_GEOPOINT, A_GEOPOINT_STRING } from '../helpers/test-data';
+
 import { simpleHashSchema, SimpleHashEntity, SimpleJsonEntity, simpleJsonSchema } from '../helpers/test-entity-and-schema';
 
 jest.mock('../../../lib/client');
@@ -27,28 +32,24 @@ describe("Repository", () => {
 
       describe("when creating and saving a fully populated entity", () => {
         beforeEach(async () => {
-          entity = await repository.createAndSave({
-            aString: 'foo',
-            aNumber: 42,
-            aBoolean: false,
-            aGeoPoint: { longitude: 12.34, latitude: 56.78 },
-            anArray: [ 'bar', 'baz', 'qux' ]
-          });
+          entity = await repository.createAndSave({ aString: 'foo', aNumber: 42, aBoolean: false,
+            aGeoPoint: A_GEOPOINT, aDate: A_DATE, anArray: AN_ARRAY });
         });
   
         it("returns the populated entity", () => {
           expect(entity.aString).toBe('foo');
           expect(entity.aNumber).toBe(42);
           expect(entity.aBoolean).toBe(false);
-          expect(entity.aGeoPoint).toEqual({ longitude: 12.34, latitude: 56.78 });
-          expect(entity.anArray).toEqual([ 'bar', 'baz', 'qux' ]);
+          expect(entity.aGeoPoint).toEqual(A_GEOPOINT);
+          expect(entity.aDate).toEqual(A_DATE);
+          expect(entity.anArray).toEqual(AN_ARRAY);
         });
 
         it("saves the entity data to the key", () =>
           expect(Client.prototype.hsetall).toHaveBeenCalledWith(
             expect.stringMatching(/^SimpleHashEntity:/), {
               aString: 'foo', aNumber: '42', aBoolean: '0',
-              aGeoPoint: '12.34,56.78', anArray: 'bar|baz|qux' }));
+              aGeoPoint: A_GEOPOINT_STRING, aDate: A_DATE_EPOCH_STRING, anArray: AN_ARRAY_JOINED }));
       });
   
       describe("when saving an empty entity", () => {
@@ -59,12 +60,12 @@ describe("Repository", () => {
           expect(entity.aNumber).toBeNull();
           expect(entity.aBoolean).toBeNull();
           expect(entity.aGeoPoint).toBeNull();
+          expect(entity.aDate).toBeNull();
           expect(entity.anArray).toBeNull();
         });
 
         it("unlinks the key", () =>
-          expect(Client.prototype.unlink).toHaveBeenCalledWith(
-            expect.stringMatching(/^SimpleHashEntity:/)));
+          expect(Client.prototype.unlink).toHaveBeenCalledWith(expect.stringMatching(/^SimpleHashEntity:/)));
       });
     });
 
@@ -77,28 +78,24 @@ describe("Repository", () => {
 
       describe("when creating and saving a fully populated entity", () => {
         beforeEach(async () => {
-          entity = await repository.createAndSave({
-            aString: 'foo',
-            aNumber: 42,
-            aBoolean: false,
-            aGeoPoint: { longitude: 12.34, latitude: 56.78 },
-            anArray: [ 'bar', 'baz', 'qux' ]
-          });
+          entity = await repository.createAndSave({ aString: 'foo', aNumber: 42, aBoolean: false,
+            aGeoPoint: A_GEOPOINT, aDate: A_DATE, anArray: AN_ARRAY });
         });
   
         it("returns the populated entity", () => {
           expect(entity.aString).toBe('foo');
           expect(entity.aNumber).toBe(42);
           expect(entity.aBoolean).toBe(false);
-          expect(entity.aGeoPoint).toEqual({ longitude: 12.34, latitude: 56.78 });
-          expect(entity.anArray).toEqual([ 'bar', 'baz', 'qux' ]);
+          expect(entity.aGeoPoint).toEqual(A_GEOPOINT);
+          expect(entity.aDate).toEqual(A_DATE);
+          expect(entity.anArray).toEqual(AN_ARRAY);
         });
 
         it("saves the entity data to the key", () =>
           expect(Client.prototype.jsonset).toHaveBeenCalledWith(
             expect.stringMatching(/^SimpleJsonEntity:/), {
               aString: 'foo', aNumber: 42, aBoolean: false,
-              aGeoPoint: '12.34,56.78', anArray: [ 'bar', 'baz', 'qux' ] }));
+              aGeoPoint: A_GEOPOINT_STRING, aDate: A_DATE_EPOCH, anArray: AN_ARRAY }));
       });
   
       describe("when saving an empty entity", () => {
@@ -109,6 +106,7 @@ describe("Repository", () => {
           expect(entity.aNumber).toBeNull();
           expect(entity.aBoolean).toBeNull();
           expect(entity.aGeoPoint).toBeNull();
+          expect(entity.aDate).toBeNull();
           expect(entity.anArray).toBeNull();
         });
 

@@ -1,44 +1,43 @@
-import { AliasedEntity, aliasedSchema, ANOTHER_TEST_DATE, A_TEST_DATE, A_TEST_DATE_ISO, SimpleEntity, simpleSchema } from '../helpers/test-entity-and-schema';
+import { 
+  A_DATE, A_DATE_ISO, ANOTHER_DATE, ANOTHER_DATE_ISO, A_THIRD_DATE,
+  A_GEOPOINT, A_GEOPOINT_JSON, ANOTHER_GEOPOINT, ANOTHER_GEOPOINT_JSON, A_THIRD_GEOPOINT,
+  AN_ARRAY, AN_ARRAY_JSON, ANOTHER_ARRAY, ANOTHER_ARRAY_JSON, A_THIRD_ARRAY } from '../helpers/test-data';
+
+import { AliasedEntity, aliasedSchema, SimpleEntity, simpleSchema } from '../helpers/test-entity-and-schema';
+
+const ENTITY_ID = 'foo';
+const EXPECTED_JSON = `{"entityId":"${ENTITY_ID}","aString":"foo","aNumber":42,"aBoolean":false,"aGeoPoint":${A_GEOPOINT_JSON},"aDate":"${A_DATE_ISO}","anArray":${AN_ARRAY_JSON}}`;
+const EXPECTED_NULL_JSON = `{"entityId":"${ENTITY_ID}","aString":null,"aNumber":null,"aBoolean":null,"aGeoPoint":null,"aDate":null,"anArray":null}`;
+const EXPECTED_ALIASED_JSON = `{"entityId":"${ENTITY_ID}","aString":"bar","aNumber":23,"aBoolean":true,"aGeoPoint":${ANOTHER_GEOPOINT_JSON},"aDate":"${ANOTHER_DATE_ISO}","anArray":${ANOTHER_ARRAY_JSON}}`;
+
+let entity: SimpleEntity;
 
 describe("Entity", () => {
-
-  let entityId = 'foo';
-  
   describe("without data", () => {
+    beforeEach(() => entity = new SimpleEntity(simpleSchema.definition, ENTITY_ID));
 
-    let entity: SimpleEntity;
-
-    beforeEach(() => entity = new SimpleEntity(simpleSchema.definition, entityId));
-  
-    it("has the passed in Redis ID", () => expect(entity.entityId).toBe(entityId));
+    it("has the passed in Redis ID", () => expect(entity.entityId).toBe(ENTITY_ID));
     it("returns null for the number property", () => expect(entity.aNumber).toBeNull());
     it("returns null for the string property", () => expect(entity.aString).toBeNull());
     it("returns null for the boolean property", () => expect(entity.aBoolean).toBeNull());
     it("returns null for the geopoint property", () => expect(entity.aGeoPoint).toBeNull());
     it("returns null for the date property", () => expect(entity.aDate).toBeNull());
     it("returns null for the array property", () => expect(entity.anArray).toBeNull());
-    it("serializes to the expected JSON", () => expect(JSON.stringify(entity))
-      .toBe('{"entityId":"foo","aString":null,"aNumber":null,"aBoolean":null,"aGeoPoint":null,"aDate":null,"anArray":null}'));
+    it("serializes to the expected JSON", () => expect(JSON.stringify(entity)).toBe(EXPECTED_NULL_JSON));
   });
 
   describe("with data", () => {
+    beforeEach(() => entity = new SimpleEntity(simpleSchema.definition, ENTITY_ID, {
+      aNumber: 42, aString: 'foo', aBoolean: false, aGeoPoint: A_GEOPOINT, aDate: A_DATE, anArray: AN_ARRAY }));
 
-    let entity: SimpleEntity;
-
-    beforeEach(() => entity = new SimpleEntity(simpleSchema.definition, entityId,
-      { aNumber: 42, aString: 'foo', aBoolean: false,
-        aGeoPoint: { longitude: 12.34, latitude: 56.78 }, aDate: A_TEST_DATE,
-        anArray: [ "foo", "bar", "baz"] }));
-
-    it("has the passed in Redis ID", () => expect(entity.entityId).toBe(entityId));
+    it("has the passed in Redis ID", () => expect(entity.entityId).toBe(ENTITY_ID));
     it("returns a number for the number property", () => expect(entity.aNumber).toBe(42));
     it("returns a string for the string property", () => expect(entity.aString).toBe('foo'));
     it("returns a boolean for the boolean property", () => expect(entity.aBoolean).toBe(false));
-    it("returns a geopoint for the geopoint property", () => expect(entity.aGeoPoint).toEqual({ longitude: 12.34, latitude: 56.78 }));
-    it("returns a date for the date property", () => expect(entity.aDate).toEqual(A_TEST_DATE));
-    it("returns an array for the array property", () => expect(entity.anArray).toEqual([ 'foo', 'bar', 'baz' ]));
-    it("serializes to the expected JSON", () => expect(JSON.stringify(entity))
-      .toBe(`{"entityId":"foo","aString":"foo","aNumber":42,"aBoolean":false,"aGeoPoint":{"longitude":12.34,"latitude":56.78},"aDate":"${A_TEST_DATE_ISO}","anArray":["foo","bar","baz"]}`));
+    it("returns a geopoint for the geopoint property", () => expect(entity.aGeoPoint).toEqual(A_GEOPOINT));
+    it("returns a date for the date property", () => expect(entity.aDate).toEqual(A_DATE));
+    it("returns an array for the array property", () => expect(entity.anArray).toEqual(AN_ARRAY));
+    it("serializes to the expected JSON", () => expect(JSON.stringify(entity)).toBe(EXPECTED_JSON));
 
     describe("changing the data", () => {
       it("stores a number when the number property is changed", () => {
@@ -62,18 +61,18 @@ describe("Entity", () => {
       });
 
       it("stores a geopoint when the geopoint property is changed", () => {
-        entity.aGeoPoint = { longitude: 23.45, latitude: 67.89 };
-        expect(entity.entityData.aGeoPoint).toEqual({ longitude: 23.45, latitude: 67.89 });
+        entity.aGeoPoint = ANOTHER_GEOPOINT;
+        expect(entity.entityData.aGeoPoint).toEqual(ANOTHER_GEOPOINT);
       });
 
       it("stores a date when the date property is changed", () => {
-        entity.aDate = ANOTHER_TEST_DATE;
-        expect(entity.entityData.aDate).toEqual(ANOTHER_TEST_DATE);
+        entity.aDate = ANOTHER_DATE;
+        expect(entity.entityData.aDate).toEqual(ANOTHER_DATE);
       });
 
       it("stores an array when the array property is changed", () => {
-        entity.anArray = [ 'bar', 'baz', 'qux' ];
-        expect(entity.entityData.anArray).toEqual([ 'bar', 'baz', 'qux' ]);
+        entity.anArray = ANOTHER_ARRAY;
+        expect(entity.entityData.anArray).toEqual(ANOTHER_ARRAY);
       });
     });
 
@@ -86,13 +85,13 @@ describe("Entity", () => {
         expect(() => entity.aNumber = true)
           .toThrow("Property 'aNumber' expected type of 'number' but received type of 'boolean'.");
         // @ts-ignore: JavaScript
-        expect(() => entity.aNumber = { longitude: 12.34, latitude: 56.78 })
+        expect(() => entity.aNumber = A_GEOPOINT)
           .toThrow("Property 'aNumber' expected type of 'number' but received type of 'geopoint'.");
         // @ts-ignore: JavaScript
-        expect(() => entity.aNumber = A_TEST_DATE)
+        expect(() => entity.aNumber = A_DATE)
           .toThrow("Property 'aNumber' expected type of 'number' but received type of 'date'.");
         // @ts-ignore: JavaScript
-        expect(() => entity.aNumber = [ ' bar', 'baz', 'qux '])
+        expect(() => entity.aNumber = AN_ARRAY)
           .toThrow("Property 'aNumber' expected type of 'number' but received type of 'array'.");
         });
       
@@ -104,13 +103,13 @@ describe("Entity", () => {
         expect(() => entity.aString = 42)
           .toThrow("Property 'aString' expected type of 'string' but received type of 'number'.");
         // @ts-ignore: JavaScript
-        expect(() => entity.aString = { longitude: 12.34, latitude: 56.78 })
+        expect(() => entity.aString = A_GEOPOINT)
           .toThrow("Property 'aString' expected type of 'string' but received type of 'geopoint'.");
         // @ts-ignore: JavaScript
-        expect(() => entity.aString = A_TEST_DATE)
+        expect(() => entity.aString = A_DATE)
           .toThrow("Property 'aString' expected type of 'string' but received type of 'date'.");
         // @ts-ignore: JavaScript
-        expect(() => entity.aString = [ ' bar', 'baz', 'qux '])
+        expect(() => entity.aString = AN_ARRAY)
           .toThrow("Property 'aString' expected type of 'string' but received type of 'array'.");
       });
 
@@ -122,13 +121,13 @@ describe("Entity", () => {
         expect(() => entity.aBoolean = 42)
           .toThrow("Property 'aBoolean' expected type of 'boolean' but received type of 'number'.")
         // @ts-ignore: JavaScript
-        expect(() => entity.aBoolean = { longitude: 12.34, latitude: 56.78 })
+        expect(() => entity.aBoolean = A_GEOPOINT)
           .toThrow("Property 'aBoolean' expected type of 'boolean' but received type of 'geopoint'.");
         // @ts-ignore: JavaScript
-        expect(() => entity.aBoolean = A_TEST_DATE)
+        expect(() => entity.aBoolean = A_DATE)
           .toThrow("Property 'aBoolean' expected type of 'boolean' but received type of 'date'.");
         // @ts-ignore: JavaScript
-        expect(() => entity.aBoolean = [ 'bar', 'baz', 'qux' ])
+        expect(() => entity.aBoolean = AN_ARRAY)
           .toThrow("Property 'aBoolean' expected type of 'boolean' but received type of 'array'.")
       });
       
@@ -143,10 +142,10 @@ describe("Entity", () => {
         expect(() => entity.aGeoPoint = true)
           .toThrow("Property 'aGeoPoint' expected type of 'geopoint' but received type of 'boolean'.")
         // @ts-ignore: JavaScript
-        expect(() => entity.aGeoPoint = A_TEST_DATE)
+        expect(() => entity.aGeoPoint = A_DATE)
           .toThrow("Property 'aGeoPoint' expected type of 'geopoint' but received type of 'date'.");
         // @ts-ignore: JavaScript
-        expect(() => entity.aGeoPoint = [ 'bar', 'baz', 'qux' ])
+        expect(() => entity.aGeoPoint = AN_ARRAY)
           .toThrow("Property 'aGeoPoint' expected type of 'geopoint' but received type of 'array'.")
       });
 
@@ -161,10 +160,10 @@ describe("Entity", () => {
         expect(() => entity.aDate = true)
           .toThrow("Property 'aDate' expected type of 'date' but received type of 'boolean'.")
         // @ts-ignore: JavaScript
-        expect(() => entity.aDate = { longitude: 12.34, latitude: 56.78 })
+        expect(() => entity.aDate = A_GEOPOINT)
           .toThrow("Property 'aDate' expected type of 'date' but received type of 'geopoint'.");
         // @ts-ignore: JavaScript
-        expect(() => entity.aDate = [ 'bar', 'baz', 'qux' ])
+        expect(() => entity.aDate = AN_ARRAY)
           .toThrow("Property 'aDate' expected type of 'date' but received type of 'array'.")
       });
 
@@ -179,10 +178,10 @@ describe("Entity", () => {
         expect(() => entity.anArray = true)
           .toThrow("Property 'anArray' expected type of 'array' but received type of 'boolean'.")
         // @ts-ignore: JavaScript
-        expect(() => entity.anArray = { longitude: 12.34, latitude: 56.78 })
+        expect(() => entity.anArray = A_GEOPOINT)
           .toThrow("Property 'anArray' expected type of 'array' but received type of 'geopoint'.");
         // @ts-ignore: JavaScript
-        expect(() => entity.anArray = A_TEST_DATE)
+        expect(() => entity.anArray = A_DATE)
           .toThrow("Property 'anArray' expected type of 'array' but received type of 'date'.");
       });
 
@@ -232,23 +231,18 @@ describe("Entity", () => {
   });
 
   describe("with aliased data", () => {
+    beforeEach(() => entity = new AliasedEntity(aliasedSchema.definition, ENTITY_ID, {
+      anotherNumber: 23, anotherString: 'bar', anotherBoolean: true,
+      anotherGeoPoint: ANOTHER_GEOPOINT, anotherDate: ANOTHER_DATE, anotherArray: ANOTHER_ARRAY }));
 
-    let entity: AliasedEntity;
-
-    beforeEach(() => entity = new AliasedEntity(aliasedSchema.definition, entityId,
-      { anotherNumber: 23, anotherString: 'bar', anotherBoolean: true,
-        anotherGeoPoint: { longitude: 23.45, latitude: 67.89 }, anotherDate: A_TEST_DATE,
-        anotherArray: [ "bar", "baz", "qux" ] }));
-
-    it("has the passed in Redis ID", () => expect(entity.entityId).toBe(entityId));
+    it("has the passed in Redis ID", () => expect(entity.entityId).toBe(ENTITY_ID));
     it("returns a number for the number property", () => expect(entity.aNumber).toBe(23));
     it("returns a string for the string property", () => expect(entity.aString).toBe('bar'));
     it("returns a boolean for the boolean property", () => expect(entity.aBoolean).toBe(true));
-    it("returns a geopoint for the geopoint property", () => expect(entity.aGeoPoint).toEqual({ longitude: 23.45, latitude: 67.89 }));
-    it("returns a date for the date property", () => expect(entity.aDate).toEqual(A_TEST_DATE));
-    it("returns an array for the array property", () => expect(entity.anArray).toEqual([ 'bar', 'baz', 'qux' ]));
-    it("serializes to the expected JSON", () => expect(JSON.stringify(entity))
-      .toBe(`{"entityId":"foo","aString":"bar","aNumber":23,"aBoolean":true,"aGeoPoint":{"longitude":23.45,"latitude":67.89},"aDate":"${A_TEST_DATE_ISO}","anArray":["bar","baz","qux"]}`));
+    it("returns a geopoint for the geopoint property", () => expect(entity.aGeoPoint).toEqual(ANOTHER_GEOPOINT));
+    it("returns a date for the date property", () => expect(entity.aDate).toEqual(ANOTHER_DATE));
+    it("returns an array for the array property", () => expect(entity.anArray).toEqual(ANOTHER_ARRAY));
+    it("serializes to the expected JSON", () => expect(JSON.stringify(entity)).toBe(EXPECTED_ALIASED_JSON));
 
     describe("changing the data", () => {
       it("stores a number when the number property is changed", () => {
@@ -272,18 +266,18 @@ describe("Entity", () => {
       });
 
       it("stores a geopoint when the geopoint property is changed", () => {
-        entity.aGeoPoint = { longitude: 23.45, latitude: 67.89 };
-        expect(entity.entityData.anotherGeoPoint).toEqual({ longitude: 23.45, latitude: 67.89 });
+        entity.aGeoPoint = A_THIRD_GEOPOINT;
+        expect(entity.entityData.anotherGeoPoint).toEqual(A_THIRD_GEOPOINT);
       });
 
       it("stores a date when the date property is changed", () => {
-        entity.aDate = ANOTHER_TEST_DATE;
-        expect(entity.entityData.anotherDate).toEqual(ANOTHER_TEST_DATE);
+        entity.aDate = A_THIRD_DATE;
+        expect(entity.entityData.anotherDate).toEqual(A_THIRD_DATE);
       });
 
       it("stores an array when the array property is changed", () => {
-        entity.anArray = [ 'baz', 'qux', 'quux' ];
-        expect(entity.entityData.anotherArray).toEqual([ 'baz', 'qux', 'quux' ]);
+        entity.anArray = A_THIRD_ARRAY;
+        expect(entity.entityData.anotherArray).toEqual(A_THIRD_ARRAY);
       });
     });
   

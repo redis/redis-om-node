@@ -20,6 +20,7 @@ export default class HashConverter {
         if (fieldDef.type === 'boolean') hashData[field] = value ? '1': '0';
         if (fieldDef.type === 'array') hashData[field] = (value as string[]).join(fieldDef.separator ?? '|');
         if (fieldDef.type === 'string') hashData[field] = value;
+        if (fieldDef.type === 'date') hashData[field] = (value as Date).getTime().toString();
         if (fieldDef.type === 'geopoint') {
           let { longitude, latitude } = value as GeoPoint;
           hashData[field] = `${longitude},${latitude}`;
@@ -41,6 +42,7 @@ export default class HashConverter {
         if (fieldDef.type === 'boolean') this.addBoolean(field, entityData, value);
         if (fieldDef.type === 'array') this.addArray(field, fieldDef as ArrayField, entityData, value);
         if (fieldDef.type === 'string') this.addString(field, entityData, value);
+        if (fieldDef.type === 'date') this.addDate(field, entityData, value);
         if (fieldDef.type === 'geopoint') this.addGeoPoint(field, entityData, value);
       }
     }
@@ -70,6 +72,14 @@ export default class HashConverter {
 
   private addString(field: string, entityData: EntityData, value: string) {
     entityData[field] = value;
+  }
+
+  private addDate(field: string, entityData: EntityData, value: string) {
+    let parsed = Number.parseInt(value);
+    if (Number.isNaN(parsed)) throw Error(`Non-numeric value of '${value}' read from Redis for date field '${field}'`);
+    let date = new Date();
+    date.setTime(parsed);
+    entityData[field] = date;
   }
 
   private addGeoPoint(field: string, entityData: EntityData, value: string) {
