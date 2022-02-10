@@ -2,6 +2,7 @@ import Schema from '../../../lib/schema/schema';
 import Entity, { EntityData } from '../../../lib/entity/entity';
 import { SchemaDefinition } from '../../../lib/schema/schema-definitions';
 import { SearchDataStructure } from '../../../lib/client';
+import { ANOTHER_TEST_DATE, A_TEST_DATE } from '../helpers/test-entity-and-schema';
 
 describe("Schema", () => {
 
@@ -53,10 +54,10 @@ describe("Schema", () => {
 
   let DATE_HASH_DEFAULTS = {
     ...HASH_DEFAULTS,
-    providedEntityFieldValue: new Date('1997-07-04T16:56:55.000Z'),
-    expectedPropertyValue: new Date('1997-07-04T16:56:55.000Z'),
-    providedAlternatePropertyValue: new Date('1969-07-20T20:17:40.000Z'),
-    expectedAlternatePropertyValue: new Date('1969-07-20T20:17:40.000Z')
+    providedEntityFieldValue: A_TEST_DATE,
+    expectedPropertyValue: A_TEST_DATE,
+    providedAlternatePropertyValue: ANOTHER_TEST_DATE,
+    expectedAlternatePropertyValue: ANOTHER_TEST_DATE
   };
 
   let ARRAY_HASH_DEFAULTS = {
@@ -101,10 +102,10 @@ describe("Schema", () => {
 
   let DATE_JSON_DEFAULTS = {
     ...JSON_DEFAULTS,
-    providedEntityFieldValue: new Date('1997-07-04T16:56:55.000Z'),
-    expectedPropertyValue: new Date('1997-07-04T16:56:55.000Z'),
-    providedAlternatePropertyValue: new Date('1969-07-20T20:17:40.000Z'),
-    expectedAlternatePropertyValue: new Date('1969-07-20T20:17:40.000Z')
+    providedEntityFieldValue: A_TEST_DATE,
+    expectedPropertyValue: A_TEST_DATE,
+    providedAlternatePropertyValue: ANOTHER_TEST_DATE,
+    expectedAlternatePropertyValue: ANOTHER_TEST_DATE
   };
 
   let ARRAY_JSON_DEFAULTS = {

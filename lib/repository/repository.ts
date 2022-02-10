@@ -12,7 +12,7 @@ import JsonConverter from "./json-converter";
  * Initialization data for {@link Entity} creation when calling
  * {@link Repository.createEntity} or {@link Repository.createAndSave}.
  */
-export type EntityCreationData = Record<string, number | boolean | string | string[] | GeoPoint | null>;
+export type EntityCreationData = Record<string, number | boolean | string | string[] | GeoPoint | Date | null>;
 
 /**
  * A repository is the main interaction point for reading, writing, and
