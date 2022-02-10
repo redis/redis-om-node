@@ -2,6 +2,8 @@ import RedisShim from './redis/redis-shim';
 
 import Entity from './entity/entity';
 import Repository from './repository/repository';
+import JsonRepository from './repository/json-repository';
+import HashRepository from './repository/hash-repository';
 import Schema from './schema/schema';
 import RedisError from './errors';
 
@@ -87,7 +89,11 @@ export default class Client {
    */
   fetchRepository<TEntity extends Entity>(schema: Schema<TEntity>) : Repository<TEntity> {
     this.validateShimOpen();
-    return new Repository(schema, this);
+    if (schema.dataStructure === 'JSON') {
+      return new JsonRepository(schema, this);
+    } else {
+      return new HashRepository(schema, this);
+    }
   }
 
   /**

@@ -1,8 +1,9 @@
 import { mocked } from 'ts-jest/utils';
 
 import Client from '../../../lib/client';
-import Repository from '../../../lib/repository/repository';
 import Search from '../../../lib/search/search';
+import Repository from '../../../lib/repository/repository';
+import HashRepository from '../../../lib/repository/hash-repository';
 
 import { simpleSchema, SimpleEntity } from '../helpers/test-entity-and-schema';
 
@@ -26,7 +27,7 @@ describe("Repository", () => {
     beforeAll(() => client = new Client());
 
     beforeEach(async () => {
-      repository = new Repository(simpleSchema, client);
+      repository = new HashRepository(simpleSchema, client);
       search = repository.search();
     });
 

@@ -2,6 +2,7 @@ import { mocked } from 'ts-jest/utils';
 
 import Client from '../../../lib/client';
 import Repository from '../../../lib/repository/repository';
+import HashRepository from '../../../lib/repository/hash-repository';
 
 import { simpleSchema, SimpleEntity } from '../helpers/test-entity-and-schema';
 import {
@@ -24,12 +25,10 @@ describe("Repository", () => {
   describe('#createEntity', () => {
 
     beforeAll(() => client = new Client());
+    beforeEach(() => repository = new HashRepository(simpleSchema, client));
 
     describe("when creating an entity", () => {
-      beforeEach(() => {
-        repository = new Repository(simpleSchema, client);
-        entity = repository.createEntity();
-      });
+      beforeEach(() => entity = repository.createEntity());
   
       it("is of the expected type", () => expect(entity).toBeInstanceOf(SimpleEntity));
       it("has a generated entity id", () => expect(entity.entityId).toMatch(ULID_REGEX));
@@ -45,11 +44,8 @@ describe("Repository", () => {
     });
 
     describe("when creating an entity with data", () => {
-      beforeEach(() => {
-        repository = new Repository(simpleSchema, client);
-        entity = repository.createEntity({
-          aBoolean: true, aNumber: 42, aString: 'foo', aGeoPoint: A_GEOPOINT, aDate: A_DATE, anArray: AN_ARRAY });
-      });
+      beforeEach(() => entity = repository.createEntity({
+        aBoolean: true, aNumber: 42, aString: 'foo', aGeoPoint: A_GEOPOINT, aDate: A_DATE, anArray: AN_ARRAY }));
   
       it("is of the expected type", () => expect(entity).toBeInstanceOf(SimpleEntity));
       it("has a generated entity id", () => expect(entity.entityId).toMatch(ULID_REGEX));
@@ -67,10 +63,7 @@ describe("Repository", () => {
     });
 
     describe("when creating an entity with missing data", () => {
-      beforeEach(() => {
-        repository = new Repository(simpleSchema, client);
-        entity = repository.createEntity({ aString: 'foo', anArray: AN_ARRAY });
-      });
+      beforeEach(() => entity = repository.createEntity({ aString: 'foo', anArray: AN_ARRAY }));
   
       it("is of the expected type", () => expect(entity).toBeInstanceOf(SimpleEntity));
       it("has a generated entity id", () => expect(entity.entityId).toMatch(ULID_REGEX));
@@ -86,14 +79,11 @@ describe("Repository", () => {
     });
 
     describe("when creating an entity with extra data", () => {
-      beforeEach(() => {
-        repository = new Repository(simpleSchema, client);
-        entity = repository.createEntity({
+      beforeEach(() => entity = repository.createEntity({
           aBoolean: true, aNumber: 42, aString: 'foo', 
           anotherBoolean: false, anotherNumber: 23, anotherString: 'bar',
           aGeoPoint: A_GEOPOINT, aDate: A_DATE, anArray: AN_ARRAY,
-          anotherGeoPoint: ANOTHER_GEOPOINT, anotherDate: ANOTHER_DATE, anotherArray: ANOTHER_ARRAY });
-      });
+          anotherGeoPoint: ANOTHER_GEOPOINT, anotherDate: ANOTHER_DATE, anotherArray: ANOTHER_ARRAY }));
   
       it("is of the expected type", () => expect(entity).toBeInstanceOf(SimpleEntity));
       it("has a generated entity id", () => expect(entity.entityId).toMatch(ULID_REGEX));
@@ -110,7 +100,6 @@ describe("Repository", () => {
     });
 
     it("complains when creating an entity with mismatched data", () => {
-      repository = new Repository(simpleSchema, client);
       expect(() => entity = repository.createEntity({
           aBoolean: 42,
           aNumber: 'foo',

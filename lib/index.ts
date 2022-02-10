@@ -1,7 +1,8 @@
 import Client, { SearchDataStructure, HashData, JsonData } from "./client";
 import Entity, { EntityConstructor, EntityData } from "./entity/entity";
 import RedisError from "./errors";
-import Repository, { EntityCreationData } from "./repository/repository";
+import Repository from "./repository/repository";
+import { EntityCreationData } from "./repository/repository";
 import Schema from "./schema/schema";
 import { GeoPoint, SchemaDefinition, FieldDefinition, Field, NumericField, StringField, BooleanField, GeoField, ArrayField,
   IdStrategy, StopWordOptions } from "./schema/schema-definitions";

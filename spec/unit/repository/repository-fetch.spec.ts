@@ -2,6 +2,8 @@ import { mocked } from 'ts-jest/utils';
 
 import Client from '../../../lib/client';
 import Repository from '../../../lib/repository/repository';
+import HashRepository from '../../../lib/repository/hash-repository';
+import JsonRepository from '../../../lib/repository/json-repository';
 
 import { 
   AN_ARRAY, AN_ARRAY_JOINED,
@@ -47,7 +49,7 @@ describe("Repository", () => {
       let entity: SimpleHashEntity;
     
       beforeEach(async () => {
-        repository = new Repository(simpleHashSchema, client);
+        repository = new HashRepository(simpleHashSchema, client);
         mocked(Client.prototype.hgetall).mockResolvedValue(data.mockedData)
         entity = await repository.fetch(entityId);
       });
@@ -89,7 +91,7 @@ describe("Repository", () => {
       let entity: SimpleJsonEntity;
 
       beforeEach(async () => {
-        repository = new Repository(simpleJsonSchema, client);
+        repository = new JsonRepository(simpleJsonSchema, client);
         mocked(Client.prototype.jsonget).mockResolvedValue(data.mockedData)
         entity = await repository.fetch(entityId);
       });

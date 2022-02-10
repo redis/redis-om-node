@@ -2,6 +2,7 @@ import { mocked } from 'ts-jest/utils';
 
 import Client from '../../../lib/client';
 import Repository from '../../../lib/repository/repository';
+import HashRepository from '../../../lib/repository/hash-repository';
 
 import { simpleSchema, SimpleEntity,
   stopWordsOffSchema, StopWordsOffEntity,
@@ -21,7 +22,7 @@ describe("Repository", () => {
       let repository: Repository<SimpleEntity>;
 
       beforeEach(async () => {
-        repository = new Repository(simpleSchema, client);
+        repository = new HashRepository(simpleSchema, client);
         await repository.createIndex();
       });
 
@@ -38,7 +39,7 @@ describe("Repository", () => {
       let repository: Repository<StopWordsOffEntity>;
 
       beforeEach(async () => {
-        repository = new Repository(stopWordsOffSchema, client);
+        repository = new HashRepository(stopWordsOffSchema, client);
         await repository.createIndex();
       });
 
@@ -56,7 +57,7 @@ describe("Repository", () => {
       let repository: Repository<CustomStopWordsEntity>;
 
       beforeEach(async () => {
-        repository = new Repository(customStopWordsSchema, client);
+        repository = new HashRepository(customStopWordsSchema, client);
         await repository.createIndex();
       });
 

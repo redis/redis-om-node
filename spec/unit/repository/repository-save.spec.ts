@@ -2,6 +2,9 @@ import { mocked } from 'ts-jest/utils';
 
 import Client from '../../../lib/client';
 import Repository from '../../../lib/repository/repository';
+import HashRepository from '../../../lib/repository/hash-repository';
+import JsonRepository from '../../../lib/repository/json-repository';
+
 import {
   AN_ARRAY, AN_ARRAY_JOINED,
   A_DATE, A_DATE_EPOCH, A_DATE_EPOCH_STRING,
@@ -29,7 +32,7 @@ describe("Repository", () => {
       let repository: Repository<SimpleHashEntity>;
       let entity: SimpleHashEntity;
 
-      beforeAll(async () => repository = new Repository(simpleHashSchema, client));
+      beforeAll(async () => repository = new HashRepository(simpleHashSchema, client));
       beforeEach(async () => entity = repository.createEntity());
 
       describe.each([
@@ -88,7 +91,7 @@ describe("Repository", () => {
       let repository: Repository<SimpleJsonEntity>;
       let entity: SimpleJsonEntity;
 
-      beforeAll(async () => repository = new Repository(simpleJsonSchema, client));
+      beforeAll(async () => repository = new JsonRepository(simpleJsonSchema, client));
       beforeEach(async () => entity = repository.createEntity());
 
       describe.each([
