@@ -2,7 +2,7 @@ import { mocked } from 'ts-jest/utils';
 
 import Client from '../../../lib/client';
 import Repository from '../../../lib/repository/repository';
-import HashRepository from '../../../lib/repository/hash-repository';
+import { HashRepository } from '../../../lib/repository/repository';
 
 import { simpleSchema, SimpleEntity } from '../helpers/test-entity-and-schema';
 import {

@@ -1,10 +1,12 @@
-import Client, { CreateIndexOptions } from "../client";
-import Entity from "../entity/entity";
 import Schema from "../schema/schema"
+import Client from "../client";
+import Entity from "../entity/entity";
 import Search from '../search/search';
 
 import { EntityData } from "../entity/entity";
 import { GeoPoint } from "../schema/schema-definitions";
+import { CreateIndexOptions } from "../client";
+import { JsonConverter, HashConverter } from "./converter";
 
 /**
  * Initialization data for {@link Entity} creation when calling
@@ -56,8 +58,8 @@ export type EntityCreationData = Record<string, number | boolean | string | stri
   
   /** @internal */
   constructor(schema: Schema<TEntity>, client: Client) {
-    this.client = client
     this.schema = schema;
+    this.client = client
   }
 
   /**
@@ -183,5 +185,45 @@ export type EntityCreationData = Record<string, number | boolean | string | stri
   /** @internal */
   protected makeKey(id: string): string {
     return `${this.schema.prefix}:${id}`;
+  }
+}
+
+/** @internal */
+export class HashRepository<TEntity extends Entity> extends Repository<TEntity> {
+  private converter: HashConverter;
+
+  constructor(schema: Schema<TEntity>, client: Client) {
+    super(schema, client);
+    this.converter = new HashConverter(schema.definition);
+  }
+
+  protected async writeEntity(key: string, data: EntityData): Promise<void> {
+    let hashData = this.converter.toHashData(data);
+    await this.client.hsetall(key, hashData);
+  }
+
+  protected async readEntity(key: string): Promise<EntityData> {
+    let hashData = await this.client.hgetall(key);
+    return this.converter.toEntityData(hashData);
+  }
+}
+
+/** @internal */
+export class JsonRepository<TEntity extends Entity> extends Repository<TEntity> {
+  private converter: JsonConverter;
+
+  constructor(schema: Schema<TEntity>, client: Client) {
+    super(schema, client);
+    this.converter = new JsonConverter(schema.definition);
+  }
+
+  protected async writeEntity(key: string, data: EntityData): Promise<void> {
+    let jsonData = this.converter.toJsonData(data);
+    await this.client.jsonset(key, jsonData);
+  }
+
+  protected async readEntity(key: string): Promise<EntityData> {
+    let jsonData = await this.client.jsonget(key);
+    return this.converter.toEntityData(jsonData);
   }
 }

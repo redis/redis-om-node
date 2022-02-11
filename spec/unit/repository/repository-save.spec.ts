@@ -2,8 +2,7 @@ import { mocked } from 'ts-jest/utils';
 
 import Client from '../../../lib/client';
 import Repository from '../../../lib/repository/repository';
-import HashRepository from '../../../lib/repository/hash-repository';
-import JsonRepository from '../../../lib/repository/json-repository';
+import { JsonRepository, HashRepository } from '../../../lib/repository/repository';
 
 import {
   AN_ARRAY, AN_ARRAY_JOINED,

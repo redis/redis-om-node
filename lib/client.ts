@@ -1,9 +1,8 @@
 import RedisShim from './redis/redis-shim';
 
-import Entity from './entity/entity';
 import Repository from './repository/repository';
-import JsonRepository from './repository/json-repository';
-import HashRepository from './repository/hash-repository';
+import { JsonRepository, HashRepository } from './repository/repository';
+import Entity from './entity/entity';
 import Schema from './schema/schema';
 import RedisError from './errors';
 

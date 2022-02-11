@@ -1,14 +1,17 @@
 import { EntityData } from '../entity/entity';
+import { JsonData, HashData } from '../client';
 import { ArrayField, SchemaDefinition, GeoPoint } from "../schema/schema-definitions";
-import { HashData } from '../client';
 
-export default class HashConverter {
-  private schemaDef: SchemaDefinition
+class AbstractConverter {
+  protected schemaDef: SchemaDefinition
 
   constructor(schemaDef: SchemaDefinition) {
     this.schemaDef = schemaDef;
   }
+}
 
+/** @internal */
+export class HashConverter extends AbstractConverter {
   toHashData(entityData: EntityData): HashData {
     let hashData: HashData = {};
 
@@ -85,5 +88,54 @@ export default class HashConverter {
   private addGeoPoint(field: string, entityData: EntityData, value: string) {
     let [ longitude, latitude ] = value.split(',').map(Number.parseFloat);
     entityData[field] = { longitude, latitude };
+  }
+}
+
+/** @internal */
+export class JsonConverter extends AbstractConverter {
+
+  toJsonData(entityData: EntityData): JsonData {
+
+    let jsonData: JsonData = {};
+
+    for (let field in this.schemaDef) {
+      let value = entityData[field];
+      if (value !== undefined) {
+        let fieldDef = this.schemaDef[field];
+        if (fieldDef.type === 'geopoint') {
+          let { longitude, latitude } = value as GeoPoint;
+          jsonData[field] = `${longitude},${latitude}`;
+        } else if (fieldDef.type === 'date' ) {
+          jsonData[field] = (value as Date).getTime();
+        } else {
+          jsonData[field] = value
+        }
+      }
+    }
+
+    return jsonData;
+  }
+
+  toEntityData(jsonData: JsonData): EntityData {
+    let entityData: EntityData = {};
+
+    if (jsonData === null) return entityData;
+    for (let field in this.schemaDef) {
+      let value = jsonData[field];
+      if (value !== undefined && value !== null) {
+        if (this.schemaDef[field].type === 'geopoint') {
+          let [ longitude, latitude ] = value.split(',').map(Number.parseFloat);
+          value = { longitude, latitude };
+        } else if (this.schemaDef[field].type === 'date') {
+          let parsed = Number.parseInt(value);
+          if (Number.isNaN(parsed)) throw Error(`Non-numeric value of '${value}' read from Redis for date field '${field}'`);
+          value = new Date();
+          value.setTime(parsed);
+        }
+        entityData[field] = value;
+      }
+    }
+
+    return entityData;
   }
 }

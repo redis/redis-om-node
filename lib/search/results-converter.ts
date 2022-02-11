@@ -1,8 +1,7 @@
 import { HashData, JsonData } from "../client";
 import Entity from "../entity/entity";
 import { EntityData } from '../entity/entity';
-import HashConverter from "../repository/hash-converter";
-import JsonConverter from "../repository/json-converter";
+import { JsonConverter, HashConverter } from "../repository/converter";
 import Schema from "../schema/schema";
 
 export abstract class SearchResultsConverter<TEntity extends Entity> {
