@@ -5,7 +5,7 @@ import Repository from '../../../lib/repository/repository';
 import { SampleHashEntity, createHashEntitySchema, loadTestHash } from '../helpers/data-helper';
 import { flushAll } from '../helpers/redis-helper';
 
-import { AN_ENTITY, ANOTHER_ENTITY, A_THIRD_ENTITY, AN_ESCAPED_ENTITY, A_GEOPOINT } from '../../helpers/example-data';
+import { AN_ENTITY, ANOTHER_ENTITY, A_THIRD_ENTITY, AN_ESCAPED_ENTITY, A_GEOPOINT, A_DATE } from '../../helpers/example-data';
 
 describe("search for hashes", () => {
 
@@ -125,6 +125,15 @@ describe("search for hashes", () => {
     expect(entities).toHaveLength(1);
     expect(entities).toEqual(expect.arrayContaining([
       expect.objectContaining({ entityId: '1', ...AN_ENTITY }),
+    ]));
+  });
+
+  it("searches a date", async () => {
+    entities = await repository.search().where('aDate').after(A_DATE).returnAll();
+
+    expect(entities).toHaveLength(1);
+    expect(entities).toEqual(expect.arrayContaining([
+      expect.objectContaining({ entityId: '3', ...A_THIRD_ENTITY })
     ]));
   });
 

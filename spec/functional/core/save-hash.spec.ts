@@ -8,6 +8,7 @@ import { fetchHashKeys, fetchHashFields, keyExists, flushAll } from '../helpers/
 import {
   AN_ENTITY, A_PARTIAL_ENTITY, AN_EMPTY_ENTITY,
   A_GEOPOINT_STRING, ANOTHER_GEOPOINT_STRING,
+  A_DATE_EPOCH_STRING, ANOTHER_DATE_EPOCH_STRING,
   AN_ARRAY_JOINED, ANOTHER_ARRAY_JOINED } from '../../helpers/example-data';
 
 describe("save hash", () => {
@@ -43,6 +44,8 @@ describe("save hash", () => {
         anotherBoolean: AN_ENTITY.anotherBoolean,
         aGeoPoint: AN_ENTITY.aGeoPoint,
         anotherGeoPoint: AN_ENTITY.anotherGeoPoint,
+        aDate: AN_ENTITY.aDate,
+        anotherDate: AN_ENTITY.anotherDate,
         anArray: AN_ENTITY.anArray,
         anotherArray: AN_ENTITY.anotherArray
       });
@@ -52,29 +55,33 @@ describe("save hash", () => {
 
     it("creates the expected fields in a hash", async () => {
       let fields = await fetchHashKeys(client, entityKey);
-      expect(fields).toHaveLength(12);
+      expect(fields).toHaveLength(14);
       expect(fields).toEqual(expect.arrayContaining([ 'aString', 'anotherString',
         'aFullTextString', 'anotherFullTextString', 'aNumber', 'anotherNumber',
-        'aBoolean', 'anotherBoolean', 'aGeoPoint', 'anotherGeoPoint', 'anArray', 'anotherArray' ]));
+        'aBoolean', 'anotherBoolean', 'aGeoPoint', 'anotherGeoPoint',
+        'aDate', 'anotherDate', 'anArray', 'anotherArray' ]));
     });
 
     it("stores the expected values in the hash", async () => {
       let values = await fetchHashFields(client, entityKey, 'aString', 'anotherString',
         'aFullTextString', 'anotherFullTextString', 'aNumber', 'anotherNumber',
-        'aBoolean', 'anotherBoolean', 'aGeoPoint', 'anotherGeoPoint', 'anArray', 'anotherArray');
-        expect(values).toEqual([
-          AN_ENTITY.aString,
-          AN_ENTITY.anotherString,
-          AN_ENTITY.aFullTextString,
-          AN_ENTITY.anotherFullTextString,
-          AN_ENTITY.aNumber?.toString(),
-          AN_ENTITY.anotherNumber?.toString(),
-          AN_ENTITY.aBoolean ? '1' : '0',
-          AN_ENTITY.anotherBoolean ? '1' : '0',
-          A_GEOPOINT_STRING,
-          ANOTHER_GEOPOINT_STRING,
-          AN_ARRAY_JOINED,
-          ANOTHER_ARRAY_JOINED]);
+        'aBoolean', 'anotherBoolean', 'aGeoPoint', 'anotherGeoPoint',
+        'aDate', 'anotherDate', 'anArray', 'anotherArray');
+      expect(values).toEqual([
+        AN_ENTITY.aString,
+        AN_ENTITY.anotherString,
+        AN_ENTITY.aFullTextString,
+        AN_ENTITY.anotherFullTextString,
+        AN_ENTITY.aNumber?.toString(),
+        AN_ENTITY.anotherNumber?.toString(),
+        AN_ENTITY.aBoolean ? '1' : '0',
+        AN_ENTITY.anotherBoolean ? '1' : '0',
+        A_GEOPOINT_STRING,
+        ANOTHER_GEOPOINT_STRING,
+        A_DATE_EPOCH_STRING,
+        ANOTHER_DATE_EPOCH_STRING,
+        AN_ARRAY_JOINED,
+        ANOTHER_ARRAY_JOINED]);
     });
   });
 
@@ -91,6 +98,8 @@ describe("save hash", () => {
         anotherBoolean: A_PARTIAL_ENTITY.anotherBoolean,
         aGeoPoint: A_PARTIAL_ENTITY.aGeoPoint,
         anotherGeoPoint: A_PARTIAL_ENTITY.anotherGeoPoint,
+        aDate: A_PARTIAL_ENTITY.aDate,
+        anotherDate: A_PARTIAL_ENTITY.anotherDate,
         anArray: A_PARTIAL_ENTITY.anArray,
         anotherArray: A_PARTIAL_ENTITY.anotherArray
       });
@@ -100,20 +109,23 @@ describe("save hash", () => {
 
     it("creates the expected fields in a hash", async () => {
       let fields = await fetchHashKeys(client, entityKey);
-      expect(fields).toHaveLength(6);
-      expect(fields).toEqual(expect.arrayContaining([ 'aString', 'aFullTextString', 'aNumber', 'aBoolean', 'aGeoPoint', 'anArray' ]));
+      expect(fields).toHaveLength(7);
+      expect(fields).toEqual(expect.arrayContaining([
+        'aString', 'aFullTextString', 'aNumber', 'aBoolean', 'aGeoPoint', 'aDate', 'anArray' ]));
     });
 
     it("stores the expected values in the hash", async () => {
       let values = await fetchHashFields(client, entityKey, 'aString', 'anotherString',
         'aFullTextString', 'anotherFullTextString', 'aNumber', 'anotherNumber',
-        'aBoolean', 'anotherBoolean', 'aGeoPoint', 'anotherGeoPoint', 'anArray', 'anotherArray');
+        'aBoolean', 'anotherBoolean', 'aGeoPoint', 'anotherGeoPoint',
+        'aDate', 'anotherDate', 'anArray', 'anotherArray');
       expect(values).toEqual([
         A_PARTIAL_ENTITY.aString, null,
         A_PARTIAL_ENTITY.aFullTextString, null,
         A_PARTIAL_ENTITY.aNumber?.toString(), null,
         A_PARTIAL_ENTITY.aBoolean ? '1' : '0', null,
         A_GEOPOINT_STRING, null,
+        A_DATE_EPOCH_STRING, null,
         AN_ARRAY_JOINED, null
       ]);
     });
@@ -132,6 +144,8 @@ describe("save hash", () => {
         anotherBoolean: AN_EMPTY_ENTITY.anotherBoolean,
         aGeoPoint: AN_EMPTY_ENTITY.aGeoPoint,
         anotherGeoPoint: AN_EMPTY_ENTITY.anotherGeoPoint,
+        aDate: AN_EMPTY_ENTITY.aDate,
+        anotherDate: AN_EMPTY_ENTITY.anotherDate,
         anArray: AN_EMPTY_ENTITY.anArray,
         anotherArray: AN_EMPTY_ENTITY.anotherArray
       });
@@ -147,8 +161,9 @@ describe("save hash", () => {
     it("stores no value in the hash", async () => {
       let values = await fetchHashFields(client, entityKey, 'aString', 'anotherString',
         'aFullTextString', 'anotherFullTextString', 'aNumber', 'anotherNumber',
-        'aBoolean', 'anotherBoolean', 'aGeoPoint', 'anotherGeoPoint', 'anArray', 'anotherArray');
-      expect(values).toEqual([ null, null, null, null, null, null, null, null, null, null, null, null ]);
+        'aBoolean', 'anotherBoolean', 'aGeoPoint', 'anotherGeoPoint',
+        'anDate', 'anotherDate', 'anArray', 'anotherArray');
+      expect(values).toEqual([ null, null, null, null, null, null, null, null, null, null, null, null, null, null ]);
     });
 
     it("stores no hash at all", async () => {

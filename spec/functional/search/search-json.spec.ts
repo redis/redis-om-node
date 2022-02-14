@@ -5,7 +5,7 @@ import Repository from '../../../lib/repository/repository';
 import { SampleJsonEntity, createJsonEntitySchema, loadTestJson } from '../helpers/data-helper';
 import { flushAll } from '../helpers/redis-helper';
 
-import { AN_ENTITY, ANOTHER_ENTITY, A_THIRD_ENTITY, AN_ESCAPED_ENTITY } from '../../helpers/example-data';
+import { AN_ENTITY, ANOTHER_ENTITY, A_THIRD_ENTITY, AN_ESCAPED_ENTITY, A_GEOPOINT, A_DATE } from '../../helpers/example-data';
 
 describe("search for JSON documents", () => {
 
@@ -119,7 +119,7 @@ describe("search for JSON documents", () => {
 
   it("searches a geopoint", async () => {
     entities = await repository.search()
-      .where('aGeoPoint').inCircle(circle => circle.origin(12.34, 56.78).radius(10).meters)
+      .where('aGeoPoint').inCircle(circle => circle.origin(A_GEOPOINT).radius(10).meters)
         .returnAll();
     
     expect(entities).toHaveLength(1);
@@ -127,7 +127,16 @@ describe("search for JSON documents", () => {
       expect.objectContaining({ entityId: '1', ...AN_ENTITY }),
     ]));  
   });  
-  
+
+  it("searches a date", async () => {
+    entities = await repository.search().where('aDate').after(A_DATE).returnAll();
+
+    expect(entities).toHaveLength(1);
+    expect(entities).toEqual(expect.arrayContaining([
+      expect.objectContaining({ entityId: '3', ...A_THIRD_ENTITY })
+    ]));
+  });
+
   it("searches an array", async () => {
     entities = await repository.search().where('anArray').contains('charlie').returnAll();
 
