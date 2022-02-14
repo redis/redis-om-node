@@ -1,16 +1,21 @@
-import { fetchHashKeys, fetchHashFields, keyExists } from '../helpers/redis-helper';
-import { HashEntity, AN_ENTITY, A_PARTIAL_ENTITY, AN_EMPTY_ENTITY, createHashEntitySchema} from '../helpers/data-helper';
-
 import Client from '../../../lib/client';
 import Schema from '../../../lib/schema/schema';
 import Repository from '../../../lib/repository/repository';
 
+import { SampleHashEntity, createHashEntitySchema} from '../helpers/data-helper';
+import { fetchHashKeys, fetchHashFields, keyExists, flushAll } from '../helpers/redis-helper';
+
+import {
+  AN_ENTITY, A_PARTIAL_ENTITY, AN_EMPTY_ENTITY,
+  A_GEOPOINT_STRING, ANOTHER_GEOPOINT_STRING,
+  AN_ARRAY_JOINED, ANOTHER_ARRAY_JOINED } from '../../helpers/example-data';
+
 describe("save hash", () => {
 
   let client: Client;
-  let repository: Repository<HashEntity>;
-  let schema: Schema<HashEntity>;
-  let entity: HashEntity;
+  let repository: Repository<SampleHashEntity>;
+  let schema: Schema<SampleHashEntity>;
+  let entity: SampleHashEntity;
   let entityId: string;
   let entityKey: string;
 
@@ -19,13 +24,10 @@ describe("save hash", () => {
     await client.open();
 
     schema = createHashEntitySchema();
-    repository = client.fetchRepository<HashEntity>(schema);
+    repository = client.fetchRepository<SampleHashEntity>(schema);
   });
   
-  beforeEach(async () => {
-    await client.execute(['FLUSHALL']);
-  });
-
+  beforeEach(async () => await flushAll(client));
   afterAll(async () => await client.close());
 
   describe("when saving a fully populated entity to redis", () => {
@@ -45,7 +47,7 @@ describe("save hash", () => {
         anotherArray: AN_ENTITY.anotherArray
       });
       entityId = await repository.save(entity);
-      entityKey = `HashEntity:${entityId}`;
+      entityKey = `SampleHashEntity:${entityId}`;
     });
 
     it("creates the expected fields in a hash", async () => {
@@ -69,10 +71,10 @@ describe("save hash", () => {
           AN_ENTITY.anotherNumber?.toString(),
           AN_ENTITY.aBoolean ? '1' : '0',
           AN_ENTITY.anotherBoolean ? '1' : '0',
-          `${AN_ENTITY.aGeoPoint?.longitude},${AN_ENTITY.aGeoPoint?.latitude}`,
-          `${AN_ENTITY.anotherGeoPoint?.longitude},${AN_ENTITY.anotherGeoPoint?.latitude}`,
-          AN_ENTITY.anArray?.join('|'),
-          AN_ENTITY.anotherArray?.join('|') ]);
+          A_GEOPOINT_STRING,
+          ANOTHER_GEOPOINT_STRING,
+          AN_ARRAY_JOINED,
+          ANOTHER_ARRAY_JOINED]);
     });
   });
 
@@ -93,7 +95,7 @@ describe("save hash", () => {
         anotherArray: A_PARTIAL_ENTITY.anotherArray
       });
       entityId = await repository.save(entity);
-      entityKey = `HashEntity:${entityId}`;
+      entityKey = `SampleHashEntity:${entityId}`;
     });
 
     it("creates the expected fields in a hash", async () => {
@@ -111,8 +113,8 @@ describe("save hash", () => {
         A_PARTIAL_ENTITY.aFullTextString, null,
         A_PARTIAL_ENTITY.aNumber?.toString(), null,
         A_PARTIAL_ENTITY.aBoolean ? '1' : '0', null,
-        `${AN_ENTITY.aGeoPoint?.longitude},${AN_ENTITY.aGeoPoint?.latitude}`, null,
-        A_PARTIAL_ENTITY.anArray?.join('|'), null
+        A_GEOPOINT_STRING, null,
+        AN_ARRAY_JOINED, null
       ]);
     });
   });
@@ -134,7 +136,7 @@ describe("save hash", () => {
         anotherArray: AN_EMPTY_ENTITY.anotherArray
       });
       entityId = await repository.save(entity);
-      entityKey = `HashEntity:${entityId}`;
+      entityKey = `SampleHashEntity:${entityId}`;
     });
 
     it("creates no fields in the hash", async () => {

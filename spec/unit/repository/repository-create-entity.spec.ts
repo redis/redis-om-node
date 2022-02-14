@@ -7,7 +7,7 @@ import { HashRepository } from '../../../lib/repository/repository';
 import { simpleSchema, SimpleEntity } from '../helpers/test-entity-and-schema';
 import {
   AN_ARRAY, A_DATE, A_GEOPOINT,
-  ANOTHER_ARRAY, ANOTHER_DATE, ANOTHER_GEOPOINT } from '../helpers/test-data';
+  ANOTHER_ARRAY, ANOTHER_DATE, ANOTHER_GEOPOINT } from '../../helpers/example-data';
 
 jest.mock('../../../lib/client');
 

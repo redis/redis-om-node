@@ -2,7 +2,7 @@ import Schema from '../../../lib/schema/schema';
 import Entity, { EntityData } from '../../../lib/entity/entity';
 import { SchemaDefinition } from '../../../lib/schema/schema-definitions';
 import { SearchDataStructure } from '../../../lib/client';
-import { ANOTHER_ARRAY, ANOTHER_DATE, ANOTHER_GEOPOINT, AN_ARRAY, A_DATE, A_GEOPOINT } from '../helpers/test-data';
+import { ANOTHER_ARRAY, ANOTHER_DATE, ANOTHER_GEOPOINT, AN_ARRAY, A_DATE, A_GEOPOINT } from '../../helpers/example-data';
 
 describe("Schema", () => {
 
@@ -217,7 +217,7 @@ describe("Schema", () => {
     ["that defines an array configured with an alternative separator for a HASH", {
       ...ARRAY_HASH_DEFAULTS,
       schemaDef: { aField: { type: 'array', separator: ';'} } as SchemaDefinition,
-      providedEntityFieldValue: [ 'foo', 'bar', 'baz' ],
+      providedEntityFieldValue: AN_ARRAY,
       expectedRedisSchema: ['aField', 'TAG', 'SEPARATOR', ';']
     }],
 

@@ -6,7 +6,7 @@ import WhereField from '../../../lib/search/where-field';
 
 import {
   A_DATE, A_DATE_EPOCH,
-  ANOTHER_DATE, ANOTHER_DATE_EPOCH } from '../helpers/test-data';
+  ANOTHER_DATE, ANOTHER_DATE_EPOCH } from '../../helpers/example-data';
 
 import { simpleSchema, SimpleEntity } from "../helpers/test-entity-and-schema";
 

@@ -2,27 +2,29 @@ import Client from '../../../lib/client';
 import Schema from '../../../lib/schema/schema';
 import Repository from '../../../lib/repository/repository';
 
-import { ANOTHER_ENTITY, AN_ENTITY, AN_ESCAPED_ENTITY, A_THIRD_ENTITY,
-  createJsonEntitySchema, JsonEntity, loadTestJson } from '../helpers/data-helper';
+import { SampleJsonEntity, createJsonEntitySchema, loadTestJson } from '../helpers/data-helper';
+import { flushAll } from '../helpers/redis-helper';
+
+import { AN_ENTITY, ANOTHER_ENTITY, A_THIRD_ENTITY, AN_ESCAPED_ENTITY } from '../../helpers/example-data';
 
 describe("search for JSON documents", () => {
 
   let client: Client;
-  let repository: Repository<JsonEntity>;
-  let schema: Schema<JsonEntity>;
-  let entities: JsonEntity[];
+  let repository: Repository<SampleJsonEntity>;
+  let schema: Schema<SampleJsonEntity>;
+  let entities: SampleJsonEntity[];
 
   beforeAll(async () => {
     client = new Client();
     await client.open();
-    await client.execute(['FLUSHALL']);
-    await loadTestJson(client, 'JsonEntity:1', AN_ENTITY);
-    await loadTestJson(client, 'JsonEntity:2', ANOTHER_ENTITY);
-    await loadTestJson(client, 'JsonEntity:3', A_THIRD_ENTITY);
-    await loadTestJson(client, 'JsonEntity:4', AN_ESCAPED_ENTITY);
+    await flushAll(client);
+    await loadTestJson(client, 'SampleJsonEntity:1', AN_ENTITY);
+    await loadTestJson(client, 'SampleJsonEntity:2', ANOTHER_ENTITY);
+    await loadTestJson(client, 'SampleJsonEntity:3', A_THIRD_ENTITY);
+    await loadTestJson(client, 'SampleJsonEntity:4', AN_ESCAPED_ENTITY);
     
     schema = createJsonEntitySchema();
-    repository = client.fetchRepository<JsonEntity>(schema);
+    repository = client.fetchRepository<SampleJsonEntity>(schema);
 
     await repository.createIndex();
   });

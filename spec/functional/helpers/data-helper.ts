@@ -5,7 +5,9 @@ import Entity, { EntityConstructor } from "../../../lib/entity/entity";
 import Schema from '../../../lib/schema/schema';
 import { GeoPoint } from '../../../lib';
 
-interface CommonEntity {
+import { SampleEntityData } from "../../helpers/example-data";
+
+interface SampleEntity {
   aString?: string | null;
   anotherString?: string | null;
   aFullTextString?: string | null;
@@ -16,23 +18,25 @@ interface CommonEntity {
   anotherBoolean?: boolean | null;
   aGeoPoint?: GeoPoint | null;
   anotherGeoPoint?: GeoPoint | null;
+  aDate?: Date | null;
+  anotherDate?: Date | null;
   anArray?: string[] | null;
   anotherArray?: string[] | null;
 }
 
-export interface HashEntity extends CommonEntity {}
-export interface JsonEntity extends CommonEntity {}
+export interface SampleHashEntity extends SampleEntity {}
+export interface SampleJsonEntity extends SampleEntity {}
 
-class CommonEntity extends Entity {}
-export class HashEntity extends CommonEntity {}
-export class JsonEntity extends CommonEntity {}
+class SampleEntity extends Entity {}
+export class SampleHashEntity extends SampleEntity {}
+export class SampleJsonEntity extends SampleEntity {}
 
-export function createHashEntitySchema() : Schema<HashEntity> {
-  return createSchemaOfType<HashEntity>(HashEntity, 'HASH');
+export function createHashEntitySchema() : Schema<SampleHashEntity> {
+  return createSchemaOfType<SampleHashEntity>(SampleHashEntity, 'HASH');
 }
 
-export function createJsonEntitySchema() : Schema<JsonEntity> {
-  return createSchemaOfType<JsonEntity>(JsonEntity, 'JSON');
+export function createJsonEntitySchema() : Schema<SampleJsonEntity> {
+  return createSchemaOfType<SampleJsonEntity>(SampleJsonEntity, 'JSON');
 }
 
 function createSchemaOfType<TEntity extends Entity>(ctor: EntityConstructor<TEntity>, dataStructure: SearchDataStructure) : Schema<TEntity> {
@@ -48,6 +52,8 @@ function createSchemaOfType<TEntity extends Entity>(ctor: EntityConstructor<TEnt
       anotherBoolean: { type: 'boolean' },
       aGeoPoint: { type: 'geopoint' },
       anotherGeoPoint: { type: 'geopoint' },
+      aDate: { type: 'date' },
+      anotherDate: { type: 'date' },
       anArray: { type: 'array' },
       anotherArray: { type: 'array' }
     }, {
@@ -55,112 +61,7 @@ function createSchemaOfType<TEntity extends Entity>(ctor: EntityConstructor<TEnt
     });
 }
 
-type CommonEntityData = {
-  aString: string | null;
-  anotherString: string | null;
-  aFullTextString: string | null;
-  anotherFullTextString: string | null;
-  aNumber: number | null;
-  anotherNumber: number | null;
-  aBoolean: boolean | null;
-  anotherBoolean: boolean | null;
-  aGeoPoint: GeoPoint | null;
-  anotherGeoPoint: GeoPoint | null;
-  anArray: string[] | null;
-  anotherArray: string[] | null;  
-};
-
-export const AN_ENTITY: CommonEntityData = {
-  aString: 'foo',
-  anotherString: 'bar',
-  aFullTextString: 'The quick brown fox jumped over the lazy dog.',
-  anotherFullTextString: 'The five boxing wizards jump quickly.',
-  aNumber: 42,
-  anotherNumber: 23,
-  aBoolean: true,
-  anotherBoolean: false,
-  aGeoPoint: { longitude: 12.34, latitude: 56.78 },
-  anotherGeoPoint: { longitude: 12.35, latitude: 56.79 },
-  anArray: [ 'alfa', 'bravo', 'charlie'],
-  anotherArray: [ 'bravo', 'charlie', 'delta' ]
-};
-
-export const ANOTHER_ENTITY: CommonEntityData = {
-  aString: 'bar',
-  anotherString: 'baz',
-  aFullTextString: 'How vexingly quick daft zebras jump!',
-  anotherFullTextString: 'Pack my box with five dozen liquor jugs.',
-  aNumber: 23,
-  anotherNumber: 13,
-  aBoolean: true,
-  anotherBoolean: true,
-  aGeoPoint: { longitude: 23.45, latitude: 67.89 },
-  anotherGeoPoint: { longitude: 23.46, latitude: 67.90 },
-  anArray: [ 'bravo', 'charlie', 'delta' ],
-  anotherArray: [ 'charlie', 'delta', 'echo' ]
-};
-
-export const A_THIRD_ENTITY: CommonEntityData = {
-  aString: 'baz',
-  anotherString: 'qux',
-  aFullTextString: 'Sphinx of black quartz, judge my vow.',
-  anotherFullTextString: 'Mr. Jock, TV quiz Ph.D., bags few lynx.',
-  aNumber: 13,
-  anotherNumber: 7,
-  aBoolean: false,
-  anotherBoolean: false,
-  aGeoPoint: { longitude: 34.56, latitude: 78.90 },
-  anotherGeoPoint: { longitude: 34.57, latitude: 78.91 },
-  anArray: [ 'charlie', 'delta', 'echo' ],
-  anotherArray: [ 'delta', 'echo', 'foxtrot' ]
-};
-
-export const A_PARTIAL_ENTITY: CommonEntityData = {
-  aString: 'foo',
-  anotherString: null,
-  aFullTextString: 'The quick brown fox jumped over the lazy dog.',
-  anotherFullTextString: null,
-  aNumber: 42,
-  anotherNumber: null,
-  aBoolean: true,
-  anotherBoolean: null,
-  aGeoPoint: { longitude: 12.34, latitude: 56.78 },
-  anotherGeoPoint: null,
-  anArray: [ 'alfa', 'bravo', 'charlie'],
-  anotherArray: null
-};
-
-export const AN_EMPTY_ENTITY: CommonEntityData = {
-  aString: null,
-  anotherString: null,
-  aFullTextString: null,
-  anotherFullTextString: null,
-  aNumber: null,
-  anotherNumber: null,
-  aBoolean: null,
-  anotherBoolean: null,
-  aGeoPoint: null,
-  anotherGeoPoint: null,
-  anArray: null,
-  anotherArray: null
-};
-
-export const AN_ESCAPED_ENTITY: CommonEntityData = {
-  aString: "foo ,.<>{}[]\"':;!@#$%^*()-+=~& bar",
-  anotherString: null,
-  aFullTextString: "zany ,.<>{}[]\"':;!@#$%^&*()-+=~| fox",
-  anotherFullTextString: null,
-  aNumber: null,
-  anotherNumber: null,
-  aBoolean: null,
-  anotherBoolean: null,
-  aGeoPoint: null,
-  anotherGeoPoint: null,
-  anArray: [ 'alfa ,.<>{}[]"\':;!@#$%^&*()-+=~ bravo', 'charlie delta' ],
-  anotherArray: null
-};
-
-export async function loadTestHash(client: Client, key: string, data: CommonEntityData) {
+export async function loadTestHash(client: Client, key: string, data: SampleEntityData) {
 
   let command: string[] = [];
 
@@ -171,6 +72,7 @@ export async function loadTestHash(client: Client, key: string, data: CommonEnti
       else if (typeof value === 'number') command.push(field, value.toString());
       else if (typeof value === 'string') command.push(field, value);
       else if (Array.isArray(value)) command.push(field, value.join('|'));
+      else if (value instanceof Date) command.push(field, value.getTime().toString());
       else if (typeof value === 'object') command.push(field, `${value.longitude},${value.latitude}`)
     }
   }
@@ -178,14 +80,15 @@ export async function loadTestHash(client: Client, key: string, data: CommonEnti
   if (command.length > 0) await saveHash(client, key, command);
 }
 
-export async function loadTestJson(client: Client, key: string, data: CommonEntityData) {
+export async function loadTestJson(client: Client, key: string, data: SampleEntityData) {
 
   let json: any = {};
 
   for (let field in data) {
     let value = (data as any)[field];
     if (value !== null) {
-      if (typeof value === 'object' && !Array.isArray(value)) json[field] = `${value.longitude},${value.latitude}`;
+      if (value instanceof Date) json[field] = value.getTime();
+      else if (typeof value === 'object' && !Array.isArray(value)) json[field] = `${value.longitude},${value.latitude}`;
       else json[field] = value;
     }
   }

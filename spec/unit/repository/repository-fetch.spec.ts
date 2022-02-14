@@ -7,7 +7,7 @@ import { JsonRepository, HashRepository } from '../../../lib/repository/reposito
 import { 
   AN_ARRAY, AN_ARRAY_JOINED,
   A_DATE, A_DATE_EPOCH,
-  A_GEOPOINT, A_GEOPOINT_STRING } from '../helpers/test-data';
+  A_GEOPOINT, A_GEOPOINT_STRING } from '../../helpers/example-data';
 
 import { simpleHashSchema, simpleJsonSchema, SimpleHashEntity, SimpleJsonEntity } from '../helpers/test-entity-and-schema';
 
