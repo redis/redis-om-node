@@ -8,54 +8,56 @@ export default class WhereDate<TEntity extends Entity> extends WhereField<TEntit
   private lowerExclusive: boolean = false;
   private upperExclusive: boolean = false;
 
-  eq(value: Date): Search<TEntity> {
-    this.lower = value.getTime();
-    this.upper = value.getTime();
+  eq(value: Date | number | string): Search<TEntity> {
+    let epoch = this.coerceDateToEpoch(value);
+    this.lower = epoch;
+    this.upper = epoch;
     return this.search;
   }
 
-  gt(value: Date): Search<TEntity> {
-    this.lower = value.getTime();
+  gt(value: Date | number | string): Search<TEntity> {
+    let epoch = this.coerceDateToEpoch(value);
+    this.lower = epoch;
     this.lowerExclusive = true;
     return this.search;
   }
 
-  gte(value: Date): Search<TEntity> {
-    this.lower = value.getTime();
+  gte(value: Date | number | string): Search<TEntity> {
+    this.lower = this.coerceDateToEpoch(value);
     return this.search;
   }
 
-  lt(value: Date): Search<TEntity> {
-    this.upper = value.getTime();
+  lt(value: Date | number | string): Search<TEntity> {
+    this.upper = this.coerceDateToEpoch(value);
     this.upperExclusive = true;
     return this.search;
   }
 
-  lte(value: Date): Search<TEntity> {
-    this.upper = value.getTime();
+  lte(value: Date | number | string): Search<TEntity> {
+    this.upper = this.coerceDateToEpoch(value);
     return this.search;
   }
 
-  between(lower: Date, upper: Date): Search<TEntity> {
-    this.lower = lower.getTime();
-    this.upper = upper.getTime();
+  between(lower: Date | number | string, upper: Date | number | string): Search<TEntity> {
+    this.lower = this.coerceDateToEpoch(lower);
+    this.upper = this.coerceDateToEpoch(upper);
     return this.search;
   }
 
-  equal(value: Date): Search<TEntity> { return this.eq(value); }
-  equals(value: Date): Search<TEntity> { return this.eq(value); }
-  equalTo(value: Date): Search<TEntity> { return this.eq(value); }
+  equal(value: Date | number | string): Search<TEntity> { return this.eq(value); }
+  equals(value: Date | number | string): Search<TEntity> { return this.eq(value); }
+  equalTo(value: Date | number | string): Search<TEntity> { return this.eq(value); }
 
-  greaterThan(value: Date): Search<TEntity> { return this.gt(value); }
-  greaterThanOrEqualTo(value: Date): Search<TEntity> { return this.gte(value); }
-  lessThan(value: Date): Search<TEntity> { return this.lt(value); }
-  lessThanOrEqualTo(value: Date): Search<TEntity> { return this.lte(value); }
+  greaterThan(value: Date | number | string): Search<TEntity> { return this.gt(value); }
+  greaterThanOrEqualTo(value: Date | number | string): Search<TEntity> { return this.gte(value); }
+  lessThan(value: Date | number | string): Search<TEntity> { return this.lt(value); }
+  lessThanOrEqualTo(value: Date | number | string): Search<TEntity> { return this.lte(value); }
 
-  on(value: Date): Search<TEntity> { return this.eq(value); }
-  after(value: Date): Search<TEntity> { return this.gt(value); }
-  before(value: Date): Search<TEntity> { return this.lt(value); }
-  onOrAfter(value: Date): Search<TEntity> { return this.gte(value); }
-  onOrBefore(value: Date): Search<TEntity> { return this.lte(value); }
+  on(value: Date | number | string): Search<TEntity> { return this.eq(value); }
+  after(value: Date | number | string): Search<TEntity> { return this.gt(value); }
+  before(value: Date | number | string): Search<TEntity> { return this.lt(value); }
+  onOrAfter(value: Date | number | string): Search<TEntity> { return this.gte(value); }
+  onOrBefore(value: Date | number | string): Search<TEntity> { return this.lte(value); }
 
   toString(): string {
     let lower = this.makeLowerString();
@@ -73,5 +75,11 @@ export default class WhereDate<TEntity extends Entity> extends WhereField<TEntit
     if (this.upper === Number.POSITIVE_INFINITY) return '+inf';
     if (this.upperExclusive) return `(${this.upper}`;
     return this.upper.toString()
+  }
+
+  private coerceDateToEpoch(value: Date | number | string) {
+    if (value instanceof Date) return value.getTime();
+    if (typeof(value) === 'string') return new Date(value).getTime();
+    return value;
   }
 }
