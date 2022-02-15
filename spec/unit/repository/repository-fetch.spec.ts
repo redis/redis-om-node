@@ -2,6 +2,12 @@ import { mocked } from 'ts-jest/utils';
 
 import Client from '../../../lib/client';
 import Repository from '../../../lib/repository/repository';
+import { JsonRepository, HashRepository } from '../../../lib/repository/repository';
+
+import { 
+  AN_ARRAY, AN_ARRAY_JOINED,
+  A_DATE, A_DATE_EPOCH,
+  A_GEOPOINT, A_GEOPOINT_STRING } from '../../helpers/example-data';
 
 import { simpleHashSchema, simpleJsonSchema, SimpleHashEntity, SimpleJsonEntity } from '../helpers/test-entity-and-schema';
 
@@ -22,19 +28,18 @@ describe("Repository", () => {
     describe.each([
 
       [ "when fetching a fully populated entity from a hash", {
-        mockedData: { aString: 'foo', aNumber: '42', aBoolean: '0', aGeoPoint: '12.34,56.78', anArray: 'bar|baz|qux' },
-        expectedData: { aString: 'foo', aNumber: 42, aBoolean: false, 
-          aGeoPoint: { longitude: 12.34, latitude: 56.78 }, anArray: [ 'bar', 'baz', 'qux' ] }
+        mockedData: { aString: 'foo', aNumber: '42', aBoolean: '0', aGeoPoint: A_GEOPOINT_STRING, aDate: A_DATE_EPOCH.toString(), anArray: AN_ARRAY_JOINED },
+        expectedData: { aString: 'foo', aNumber: 42, aBoolean: false, aGeoPoint: A_GEOPOINT, aDate: A_DATE, anArray: AN_ARRAY }
       }],
 
       [ "when fetching a partially populated entity from a hash", {
         mockedData: { aString: 'foo', aNumber: '42' },
-        expectedData: { aString: 'foo', aNumber: 42, aBoolean: null, aGeoPoint: null, anArray: null }
+        expectedData: { aString: 'foo', aNumber: 42, aBoolean: null, aDate: null, aGeoPoint: null, anArray: null }
       }],
 
       [ "when fetching a empty entity from a hash", {
         mockedData: {},
-        expectedData: { aString: null, aNumber: null, aBoolean: null, aGeoPoint: null, anArray: null }
+        expectedData: { aString: null, aNumber: null, aBoolean: null, aDate: null, aGeoPoint: null, anArray: null }
       }]
 
     ])("%s", (_, data) => {
@@ -43,7 +48,7 @@ describe("Repository", () => {
       let entity: SimpleHashEntity;
     
       beforeEach(async () => {
-        repository = new Repository(simpleHashSchema, client);
+        repository = new HashRepository(simpleHashSchema, client);
         mocked(Client.prototype.hgetall).mockResolvedValue(data.mockedData)
         entity = await repository.fetch(entityId);
       });
@@ -55,29 +60,28 @@ describe("Repository", () => {
     describe.each([
 
       ["when fetching a fully populated entity from JSON", {
-        mockedData: { aString: 'foo', aNumber: 42, aBoolean: false, aGeoPoint: '12.34,56.78', anArray: [ "bar", "baz", "qux" ] },
-        expectedData: { aString: 'foo', aNumber: 42, aBoolean: false,
-          aGeoPoint: { longitude: 12.34, latitude: 56.78 }, anArray: [ 'bar', 'baz', 'qux' ] }
+        mockedData: { aString: 'foo', aNumber: 42, aBoolean: false, aGeoPoint: A_GEOPOINT_STRING, aDate: A_DATE_EPOCH, anArray: AN_ARRAY },
+        expectedData: { aString: 'foo', aNumber: 42, aBoolean: false, aGeoPoint: A_GEOPOINT, aDate: A_DATE, anArray: AN_ARRAY }
       }],
 
       [ "when fetching a partially populated entity from JSON", {
         mockedData: { aString: 'foo', aNumber: 42 },
-        expectedData: { aString: 'foo', aNumber: 42, aBoolean: null, aGeoPoint: null, anArray: null }
+        expectedData: { aString: 'foo', aNumber: 42, aBoolean: null, aGeoPoint: null, aDate: null, anArray: null }
       }],
 
       [ "when fetching an empty entity from JSON", {
         mockedData: {},
-        expectedData: { aString: null, aNumber: null, aBoolean: null, aGeoPoint: null, anArray: null }
+        expectedData: { aString: null, aNumber: null, aBoolean: null, aGeoPoint: null, aDate: null, anArray: null }
       }],
       
       [ "when fetching a missing entity from JSON", {
         mockedData: null,
-        expectedData: { aString: null, aNumber: null, aBoolean: null, aGeoPoint: null, anArray: null }
+        expectedData: { aString: null, aNumber: null, aBoolean: null, aGeoPoint: null, aDate: null, anArray: null }
       }],
       
       [ "when fetching an entity from JSON with nulls", {
-        mockedData: { aString: 'foo', aNumber: 42, aBoolean: null, aGeoPoint: null, anArray: null },
-        expectedData: { aString: 'foo', aNumber: 42, aBoolean: null, aGeoPoint: null, anArray: null }
+        mockedData: { aString: 'foo', aNumber: 42, aBoolean: null, aGeoPoint: null, aDate: null, anArray: null },
+        expectedData: { aString: 'foo', aNumber: 42, aBoolean: null, aGeoPoint: null, aDate: null, anArray: null }
       }]
 
     ])("%s", (_, data: any) => {
@@ -86,7 +90,7 @@ describe("Repository", () => {
       let entity: SimpleJsonEntity;
 
       beforeEach(async () => {
-        repository = new Repository(simpleJsonSchema, client);
+        repository = new JsonRepository(simpleJsonSchema, client);
         mocked(Client.prototype.jsonget).mockResolvedValue(data.mockedData)
         entity = await repository.fetch(entityId);
       });

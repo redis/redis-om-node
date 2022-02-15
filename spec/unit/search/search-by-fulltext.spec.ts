@@ -23,20 +23,20 @@ describe("Search", () => {
     const AN_EXACT_TEXT_QUERY = '(@aString:"foo")';
     const A_NEGATED_EXACT_TEXT_QUERY = '(-@aString:"foo")';
 
+    type StringChecker = (search: Search<FullTextEntity>) => void;
+    const expectToBeTextQuery: StringChecker = search => expect(search.query).toBe(A_TEXT_QUERY);
+    const expectToBeNegatedTextQuery: StringChecker = search => expect(search.query).toBe(A_NEGATED_TEXT_QUERY);
+    const expectToBeExactTextQuery: StringChecker = search => expect(search.query).toBe(AN_EXACT_TEXT_QUERY);
+    const expectToBeNegatedExactTextQuery: StringChecker = search => expect(search.query).toBe(A_NEGATED_EXACT_TEXT_QUERY);
+
     beforeAll(() => client = new Client());
   
     beforeEach(() => {
       search = new Search<FullTextEntity>(fullTextSchema, client);
       where = search.where('aString');
-    });
+    });  
 
     describe("when generating for a query with a string", () => {
-
-      type StringChecker = (search: Search<FullTextEntity>) => void;
-      const expectToBeTextQuery: StringChecker = search => expect(search.query).toBe(A_TEXT_QUERY);
-      const expectToBeNegatedTextQuery: StringChecker = search => expect(search.query).toBe(A_NEGATED_TEXT_QUERY);
-      const expectToBeExactTextQuery: StringChecker = search => expect(search.query).toBe(AN_EXACT_TEXT_QUERY);
-      const expectToBeNegatedExactTextQuery: StringChecker = search => expect(search.query).toBe(A_NEGATED_EXACT_TEXT_QUERY);
 
       it("generates a query with .match", () => expectToBeTextQuery(where.match('foo')));
       it("generates a query with .not.match", () => expectToBeNegatedTextQuery(where.not.match('foo')));

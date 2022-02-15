@@ -2,27 +2,29 @@ import Client from '../../../lib/client';
 import Schema from '../../../lib/schema/schema';
 import Repository from '../../../lib/repository/repository';
 
-import { ANOTHER_ENTITY, AN_ENTITY, AN_ESCAPED_ENTITY, A_THIRD_ENTITY,
-  createHashEntitySchema, HashEntity, loadTestHash } from '../helpers/data-helper';
+import { SampleHashEntity, createHashEntitySchema, loadTestHash } from '../helpers/data-helper';
+import { flushAll } from '../helpers/redis-helper';
+
+import { AN_ENTITY, ANOTHER_ENTITY, A_THIRD_ENTITY, AN_ESCAPED_ENTITY, A_GEOPOINT, A_DATE } from '../../helpers/example-data';
 
 describe("search for hashes", () => {
 
   let client: Client;
-  let repository: Repository<HashEntity>;
-  let schema: Schema<HashEntity>;
-  let entities: HashEntity[];
+  let repository: Repository<SampleHashEntity>;
+  let schema: Schema<SampleHashEntity>;
+  let entities: SampleHashEntity[];
 
   beforeAll(async () => {
     client = new Client();
     await client.open();
-    await client.execute(['FLUSHALL']);
-    await loadTestHash(client, 'HashEntity:1', AN_ENTITY);
-    await loadTestHash(client, 'HashEntity:2', ANOTHER_ENTITY);
-    await loadTestHash(client, 'HashEntity:3', A_THIRD_ENTITY);
-    await loadTestHash(client, 'HashEntity:4', AN_ESCAPED_ENTITY);
+    await flushAll(client);
+    await loadTestHash(client, 'SampleHashEntity:1', AN_ENTITY);
+    await loadTestHash(client, 'SampleHashEntity:2', ANOTHER_ENTITY);
+    await loadTestHash(client, 'SampleHashEntity:3', A_THIRD_ENTITY);
+    await loadTestHash(client, 'SampleHashEntity:4', AN_ESCAPED_ENTITY);
     
     schema = createHashEntitySchema();
-    repository = client.fetchRepository<HashEntity>(schema);
+    repository = client.fetchRepository<SampleHashEntity>(schema);
 
     await repository.createIndex();
   });
@@ -117,12 +119,21 @@ describe("search for hashes", () => {
 
   it("searches a geopoint", async () => {
     entities = await repository.search()
-      .where('aGeoPoint').inCircle(circle => circle.origin(12.34, 56.78).radius(10).meters)
+      .where('aGeoPoint').inCircle(circle => circle.origin(A_GEOPOINT).radius(10).meters)
         .returnAll();
 
     expect(entities).toHaveLength(1);
     expect(entities).toEqual(expect.arrayContaining([
       expect.objectContaining({ entityId: '1', ...AN_ENTITY }),
+    ]));
+  });
+
+  it("searches a date", async () => {
+    entities = await repository.search().where('aDate').after(A_DATE).returnAll();
+
+    expect(entities).toHaveLength(1);
+    expect(entities).toEqual(expect.arrayContaining([
+      expect.objectContaining({ entityId: '3', ...A_THIRD_ENTITY })
     ]));
   });
 
@@ -143,7 +154,7 @@ describe("search for hashes", () => {
       .and('aFullTextString').matches('dog')
       .and('aNumber').gte(42)
       .and('aBoolean').true()
-      .and('aGeoPoint').inCircle(circle => circle.origin(12.34, 56.78).radius(10).meters)
+      .and('aGeoPoint').inCircle(circle => circle.origin(A_GEOPOINT).radius(10).meters)
       .and('anArray').contains('alfa')
       .returnAll();
 

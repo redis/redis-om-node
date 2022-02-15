@@ -31,28 +31,28 @@ describe("Search", () => {
     const A_BETWEEN_QUERY = "(@aNumber:[23 42])";
     const A_NEGATED_BETWEEN_QUERY = "(-@aNumber:[23 42])";
 
+    type RangeChecker = (search: Search<SimpleEntity>) => void;
+    const expectToBeEqualQuery: RangeChecker = search => expect(search.query).toBe(AN_EQUAL_QUERY);
+    const expectToBeNegatedEqualQuery: RangeChecker = search => expect(search.query).toBe(A_NEGATED_EQUAL_QUERY);
+    const expectToBeGTQuery: RangeChecker = search => expect(search.query).toBe(A_GT_QUERY);
+    const expectToBeNegatedGTQuery: RangeChecker = search => expect(search.query).toBe(A_NEGATED_GT_QUERY);
+    const expectToBeGTEQuery: RangeChecker = search => expect(search.query).toBe(A_GTE_QUERY);
+    const expectToBeNegatedGTEQuery: RangeChecker = search => expect(search.query).toBe(A_NEGATED_GTE_QUERY);
+    const expectToBeLTQuery: RangeChecker = search => expect(search.query).toBe(AN_LT_QUERY);
+    const expectToBeNegatedLTQuery: RangeChecker = search => expect(search.query).toBe(A_NEGATED_LT_QUERY);
+    const expectToBeLTEQuery: RangeChecker = search => expect(search.query).toBe(AN_LTE_QUERY);
+    const expectToBeNegatedLTEQuery: RangeChecker = search => expect(search.query).toBe(A_NEGATED_LTE_QUERY);
+    const expectToBeBetweenQuery: RangeChecker = search => expect(search.query).toBe(A_BETWEEN_QUERY);
+    const expectToBeNegatedBetweenQuery: RangeChecker = search => expect(search.query).toBe(A_NEGATED_BETWEEN_QUERY);
+
     beforeAll(() => client = new Client());
 
     beforeEach(() => {
       search = new Search<SimpleEntity>(simpleSchema, client);
       where = search.where('aNumber');
-    });
+    });  
 
     describe("when generating a query with a number", () => {
-
-      type RangeChecker = (search: Search<SimpleEntity>) => void;
-      const expectToBeEqualQuery: RangeChecker = search => expect(search.query).toBe(AN_EQUAL_QUERY);
-      const expectToBeNegatedEqualQuery: RangeChecker = search => expect(search.query).toBe(A_NEGATED_EQUAL_QUERY);
-      const expectToBeGTQuery: RangeChecker = search => expect(search.query).toBe(A_GT_QUERY);
-      const expectToBeNegatedGTQuery: RangeChecker = search => expect(search.query).toBe(A_NEGATED_GT_QUERY);
-      const expectToBeGTEQuery: RangeChecker = search => expect(search.query).toBe(A_GTE_QUERY);
-      const expectToBeNegatedGTEQuery: RangeChecker = search => expect(search.query).toBe(A_NEGATED_GTE_QUERY);
-      const expectToBeLTQuery: RangeChecker = search => expect(search.query).toBe(AN_LT_QUERY);
-      const expectToBeNegatedLTQuery: RangeChecker = search => expect(search.query).toBe(A_NEGATED_LT_QUERY);
-      const expectToBeLTEQuery: RangeChecker = search => expect(search.query).toBe(AN_LTE_QUERY);
-      const expectToBeNegatedLTEQuery: RangeChecker = search => expect(search.query).toBe(A_NEGATED_LTE_QUERY);
-      const expectToBeBetweenQuery: RangeChecker = search => expect(search.query).toBe(A_BETWEEN_QUERY);
-      const expectToBeNegatedBetweenQuery: RangeChecker = search => expect(search.query).toBe(A_NEGATED_BETWEEN_QUERY);
 
       it("generates a query with .eq", () => expectToBeEqualQuery(where.eq(42)));
       it("generates a query with .not.eq", () => expectToBeNegatedEqualQuery(where.not.eq(42)));

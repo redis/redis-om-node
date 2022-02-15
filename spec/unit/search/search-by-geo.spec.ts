@@ -4,6 +4,7 @@ import { GeoPoint } from '../../../lib';
 import Client from "../../../lib/client";
 import Search from "../../../lib/search/search";
 import WhereField from '../../../lib/search/where-field';
+import { A_GEOPOINT } from '../../helpers/example-data';
 
 import { simpleSchema, SimpleEntity } from "../helpers/test-entity-and-schema";
 
@@ -29,41 +30,39 @@ describe("Search", () => {
     const A_MILES_QUERY = "(@aGeoPoint:[12.34 56.78 42 mi])";
     const A_NEGATED_MILES_QUERY = "(-@aGeoPoint:[12.34 56.78 42 mi])";
 
+    type GeoChecker = (search: Search<SimpleEntity>) => void;
+    const expectToBeDefaultQuery: GeoChecker = search => expect(search.query).toBe(A_DEFAULT_QUERY);
+    const expectToBeMetersQuery: GeoChecker = search => expect(search.query).toBe(A_METERS_QUERY);
+    const expectToBeNegatedMetersQuery: GeoChecker = search => expect(search.query).toBe(A_NEGATED_METERS_QUERY);
+    const expectToBeKilometersQuery: GeoChecker = search => expect(search.query).toBe(A_KILOMETERS_QUERY);
+    const expectToBeNegatedKilometersQuery: GeoChecker = search => expect(search.query).toBe(A_NEGATED_KILOMETERS_QUERY);
+    const expectToBeFeetQuery: GeoChecker = search => expect(search.query).toBe(A_FEET_QUERY);
+    const expectToBeNegatedFeetQuery: GeoChecker = search => expect(search.query).toBe(A_NEGATED_FEET_QUERY);
+    const expectToBeMilesQuery: GeoChecker = search => expect(search.query).toBe(A_MILES_QUERY);
+    const expectToBeNegatedMilesQuery: GeoChecker = search => expect(search.query).toBe(A_NEGATED_MILES_QUERY);
+
+    const point: GeoPoint = A_GEOPOINT;
     const longitude = 12.34;
     const latitude = 56.78;
-    const point: GeoPoint = { longitude, latitude };
 
     beforeAll(() => client = new Client());
 
     beforeEach(() => {
       search = new Search<SimpleEntity>(simpleSchema, client);
       where = search.where('aGeoPoint');
-    });
+    });  
 
     describe("when generating a query with a geopoint", () => {
-
-      type GeoChecker = (search: Search<SimpleEntity>) => void;
-      const expectToBeDefaultQuery: GeoChecker = search => expect(search.query).toBe(A_DEFAULT_QUERY);
-      const expectToBeMetersQuery: GeoChecker = search => expect(search.query).toBe(A_METERS_QUERY);
-      const expectToBeNegatedMetersQuery: GeoChecker = search => expect(search.query).toBe(A_NEGATED_METERS_QUERY);
-      const expectToBeKilometersQuery: GeoChecker = search => expect(search.query).toBe(A_KILOMETERS_QUERY);
-      const expectToBeNegatedKilometersQuery: GeoChecker = search => expect(search.query).toBe(A_NEGATED_KILOMETERS_QUERY);
-      const expectToBeFeetQuery: GeoChecker = search => expect(search.query).toBe(A_FEET_QUERY);
-      const expectToBeNegatedFeetQuery: GeoChecker = search => expect(search.query).toBe(A_NEGATED_FEET_QUERY);
-      const expectToBeMilesQuery: GeoChecker = search => expect(search.query).toBe(A_MILES_QUERY);
-      const expectToBeNegatedMilesQuery: GeoChecker = search => expect(search.query).toBe(A_NEGATED_MILES_QUERY);
 
       describe("and in a circle", () => {
 
         it("generates a query with default values using .inCircle",
           () => expectToBeDefaultQuery(where.inCircle(circle => circle)));
-
         it("generates a query with default values using .inRadius",
           () => expectToBeDefaultQuery(where.inRadius(circle => circle)));
 
-
         it("generates a query with .point(geopoint).radius.meters",
-          () => expectToBeMetersQuery(where.inCircle(circle => circle.origin(point).radius(42).meters)));  
+          () => expectToBeMetersQuery(where.inCircle(circle => circle.origin(point).radius(42).meters)));
         it("generates a query with .point(lng, lat).radius.meter",
           () => expectToBeMetersQuery(where.is.inCircle(circle => circle.origin(longitude, latitude).radius(42).meter)));
         it("generates a query with .longitude.latitude.radius.m",

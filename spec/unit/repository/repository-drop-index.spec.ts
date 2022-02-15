@@ -2,6 +2,7 @@ import { mocked } from 'ts-jest/utils';
 
 import Client from '../../../lib/client';
 import Repository from '../../../lib/repository/repository';
+import { HashRepository } from '../../../lib/repository/repository';
 
 import { simpleSchema, SimpleEntity } from '../helpers/test-entity-and-schema';
 
@@ -20,7 +21,7 @@ describe("Repository", () => {
     beforeAll(() => client = new Client());
 
     beforeEach(async () => {
-      repository = new Repository(simpleSchema, client);
+      repository = new HashRepository(simpleSchema, client);
     });
     
     it("asks the client to drop the index with data from the schema", async () => {

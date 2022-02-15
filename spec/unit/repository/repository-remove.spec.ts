@@ -1,7 +1,7 @@
 import { mocked } from 'ts-jest/utils';
 
 import Client from '../../../lib/client';
-import Repository from '../../../lib/repository/repository';
+import { JsonRepository, HashRepository } from '../../../lib/repository/repository';
 
 import { simpleHashSchema, simpleJsonSchema, SimpleHashEntity, SimpleJsonEntity } from '../helpers/test-entity-and-schema';
 
@@ -20,14 +20,14 @@ describe("Repository", () => {
     beforeAll(() => client = new Client());
 
     it("removes a hash", async () => {
-      let repository = new Repository<SimpleHashEntity>(simpleHashSchema, client);
+      let repository = new HashRepository<SimpleHashEntity>(simpleHashSchema, client);
       let expectedKey = `SimpleHashEntity:${entityId}`;
       await repository.remove(entityId);
       expect(Client.prototype.unlink).toHaveBeenCalledWith(expectedKey);
     });
 
     it("removes JSON", async () => {
-      let repository = new Repository<SimpleJsonEntity>(simpleJsonSchema, client);
+      let repository = new JsonRepository<SimpleJsonEntity>(simpleJsonSchema, client);
       let expectedKey = `SimpleJsonEntity:${entityId}`;
       await repository.remove(entityId);
       expect(Client.prototype.unlink).toHaveBeenCalledWith(expectedKey);

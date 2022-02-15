@@ -1,16 +1,21 @@
-import { fetchJson, keyExists } from '../helpers/redis-helper';
-import { JsonEntity, AN_ENTITY, A_PARTIAL_ENTITY, AN_EMPTY_ENTITY, createJsonEntitySchema} from '../helpers/data-helper';
-
 import Client from '../../../lib/client';
 import Schema from '../../../lib/schema/schema';
 import Repository from '../../../lib/repository/repository';
 
+import { SampleJsonEntity, createJsonEntitySchema} from '../helpers/data-helper';
+import { fetchJson, flushAll, keyExists } from '../helpers/redis-helper';
+
+import {
+  AN_ENTITY, A_PARTIAL_ENTITY, AN_EMPTY_ENTITY,
+  A_GEOPOINT_STRING, ANOTHER_GEOPOINT_STRING,
+  A_DATE_EPOCH, ANOTHER_DATE_EPOCH } from '../../helpers/example-data';
+
 describe("save JSON", () => {
 
   let client: Client;
-  let repository: Repository<JsonEntity>;
-  let schema: Schema<JsonEntity>;
-  let entity: JsonEntity;
+  let repository: Repository<SampleJsonEntity>;
+  let schema: Schema<SampleJsonEntity>;
+  let entity: SampleJsonEntity;
   let entityId: string;
   let entityKey: string;
 
@@ -19,13 +24,10 @@ describe("save JSON", () => {
     await client.open();
 
     schema = createJsonEntitySchema();
-    repository = client.fetchRepository<JsonEntity>(schema);
+    repository = client.fetchRepository<SampleJsonEntity>(schema);
   });
   
-  beforeEach(async () => {
-    await client.execute(['FLUSHALL']);
-  });
-
+  beforeEach(async () => await flushAll(client));
   afterAll(async () => await client.close());
 
   describe("when saving a fully populated entity to redis", () => {
@@ -41,11 +43,13 @@ describe("save JSON", () => {
         anotherBoolean: AN_ENTITY.anotherBoolean,
         aGeoPoint: AN_ENTITY.aGeoPoint,
         anotherGeoPoint: AN_ENTITY.anotherGeoPoint,
+        aDate: AN_ENTITY.aDate,
+        anotherDate: AN_ENTITY.anotherDate,
         anArray: AN_ENTITY.anArray,
         anotherArray: AN_ENTITY.anotherArray
       });
       entityId = await repository.save(entity);
-      entityKey = `JsonEntity:${entityId}`;
+      entityKey = `SampleJsonEntity:${entityId}`;
     });
 
     it("creates the expected JSON", async () => {
@@ -59,8 +63,10 @@ describe("save JSON", () => {
       expect(data.anotherNumber).toBe(AN_ENTITY.anotherNumber);
       expect(data.aBoolean).toBe(AN_ENTITY.aBoolean);
       expect(data.anotherBoolean).toBe(AN_ENTITY.anotherBoolean);
-      expect(data.aGeoPoint).toBe(`${AN_ENTITY.aGeoPoint?.longitude},${AN_ENTITY.aGeoPoint?.latitude}`);
-      expect(data.anotherGeoPoint).toBe(`${AN_ENTITY.anotherGeoPoint?.longitude},${AN_ENTITY.anotherGeoPoint?.latitude}`);
+      expect(data.aGeoPoint).toBe(A_GEOPOINT_STRING);
+      expect(data.anotherGeoPoint).toBe(ANOTHER_GEOPOINT_STRING);
+      expect(data.aDate).toBe(A_DATE_EPOCH);
+      expect(data.anotherDate).toBe(ANOTHER_DATE_EPOCH);
       expect(data.anArray).toEqual(AN_ENTITY.anArray);
       expect(data.anotherArray).toEqual(AN_ENTITY.anotherArray);
     });
@@ -79,11 +85,13 @@ describe("save JSON", () => {
         anotherBoolean: A_PARTIAL_ENTITY.anotherBoolean,
         aGeoPoint: A_PARTIAL_ENTITY.aGeoPoint,
         anotherGeoPoint: A_PARTIAL_ENTITY.anotherGeoPoint,
+        aDate: A_PARTIAL_ENTITY.aDate,
+        anotherDate: A_PARTIAL_ENTITY.anotherDate,
         anArray: A_PARTIAL_ENTITY.anArray,
         anotherArray: A_PARTIAL_ENTITY.anotherArray
       });
       entityId = await repository.save(entity);
-      entityKey = `JsonEntity:${entityId}`;
+      entityKey = `SampleJsonEntity:${entityId}`;
     });
 
     it("creates the expected JSON", async () => {
@@ -97,8 +105,10 @@ describe("save JSON", () => {
       expect(data.anotherNumber).toBeUndefined();
       expect(data.aBoolean).toBe(A_PARTIAL_ENTITY.aBoolean);
       expect(data.anotherBoolean).toBeUndefined();
-      expect(data.aGeoPoint).toBe(`${A_PARTIAL_ENTITY.aGeoPoint?.longitude},${A_PARTIAL_ENTITY.aGeoPoint?.latitude}`);
+      expect(data.aGeoPoint).toBe(A_GEOPOINT_STRING);
       expect(data.anotherGeoPoint).toBeUndefined();
+      expect(data.aDate).toBe(A_DATE_EPOCH);
+      expect(data.anotherDate).toBeUndefined();
       expect(data.anArray).toEqual(A_PARTIAL_ENTITY.anArray);
       expect(data.anotherArray).toBeUndefined();
     });
@@ -117,11 +127,13 @@ describe("save JSON", () => {
         anotherBoolean: AN_EMPTY_ENTITY.anotherBoolean,
         aGeoPoint: AN_EMPTY_ENTITY.aGeoPoint,
         anotherGeoPoint: AN_EMPTY_ENTITY.anotherGeoPoint,
+        aDate: AN_EMPTY_ENTITY.aDate,
+        anotherDate: AN_EMPTY_ENTITY.anotherDate,
         anArray: AN_EMPTY_ENTITY.anArray,
         anotherArray: AN_EMPTY_ENTITY.anotherArray
       });
       entityId = await repository.save(entity);
-      entityKey = `JsonEntity:${entityId}`;
+      entityKey = `SampleJsonEntity:${entityId}`;
     });
 
     it("does not save JSON", async () => {

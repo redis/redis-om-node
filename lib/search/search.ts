@@ -15,6 +15,7 @@ import WhereText from './where-text';
 
 import { HashSearchResultsConverter, JsonSearchResultsConverter } from "./results-converter";
 import { RedisError } from "..";
+import WhereDate from "./where-date";
 
 /**
  * A function that takes a {@link Search} and returns a {@link Search}. Used in nested queries.
@@ -274,6 +275,9 @@ export default class Search<TEntity extends Entity> {
 
     if (fieldDef.type === 'geopoint')
       return new WhereGeo<TEntity>(this, field);
+
+    if (fieldDef.type === 'date')
+      return new WhereDate<TEntity>(this, field);
 
     if (fieldDef.type === 'string' && fieldDef.textSearch === true)
       return new WhereText<TEntity>(this, field);

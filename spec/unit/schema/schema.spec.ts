@@ -10,21 +10,11 @@ describe("Schema", () => {
   describe("that is empty", () => {
     beforeEach(() => schema = new Schema<TestEntity>(TestEntity, {}));
 
-    it("has the constructor for the entity", () =>
-      expect(schema.entityCtor).toBe(TestEntity));
-      
-    it("generates an empty Redis schema", () =>
-      expect(schema.redisSchema).toEqual([]));
-
-    it("provides the default data structure", () =>
-      expect(schema.dataStructure).toBe("HASH"));
-
-    it("generates the keyspace prefix from the entity constructor name", () =>
-      expect(schema.prefix).toBe("TestEntity"));
-
-    it("generates the index name from the entity constructor name", () =>
-      expect(schema.indexName).toBe("TestEntity:index"));
-
+    it("has the constructor for the entity", () => expect(schema.entityCtor).toBe(TestEntity));
+    it("generates an empty Redis schema", () => expect(schema.redisSchema).toEqual([]));
+    it("provides the default data structure", () => expect(schema.dataStructure).toBe("HASH"));
+    it("generates the keyspace prefix from the entity constructor name", () => expect(schema.prefix).toBe("TestEntity"));
+    it("generates the index name from the entity constructor name", () => expect(schema.indexName).toBe("TestEntity:index"));
     it("generates default Redis IDs", () => expect(schema.generateId()).toMatch(/^[0-9ABCDEFGHJKMNPQRSTVWXYZ]{26}$/));
 
     it("provides the default stop word settings", () => {
@@ -46,17 +36,13 @@ describe("Schema", () => {
   describe("that overrides the keyspace prefix", () => {
     beforeEach(() => schema = new Schema<TestEntity>(TestEntity, {}, { prefix: 'test-prefix' }));
 
-    it("generates the keyspace prefix from the configuration", () =>
-      expect(schema.prefix).toBe("test-prefix"));
-
-    it("generates the index name from the configured prefix", () =>
-      expect(schema.indexName).toBe("test-prefix:index"));
+    it("generates the keyspace prefix from the configuration", () => expect(schema.prefix).toBe("test-prefix"));
+    it("generates the index name from the configured prefix", () => expect(schema.indexName).toBe("test-prefix:index"));
   });
 
   describe("that overrides the index name", () => {
     beforeEach(() => schema = new Schema<TestEntity>(TestEntity, {}, { indexName: 'test-index' }));
-    it("generates the index name from the configured index name, ignoring the prefix", () =>
-      expect(schema.indexName).toBe("test-index"));
+    it("generates the index name from the configured index name, ignoring the prefix", () => expect(schema.indexName).toBe("test-index"));
   });
 
   describe("that overrides the id generation strategy", () => {
@@ -88,12 +74,12 @@ describe("Schema", () => {
     it("throws an exception when the type is missing on a field definition", () =>
       // @ts-ignore: JavaScript test
       expect(() => new Schema<TestEntity>(TestEntity, { aField: {} }))
-        .toThrow("The field 'aField' is configured with a type of 'undefined'. Valid types include 'array', 'boolean', 'geopoint', 'number', and 'string'."));
+        .toThrow("The field 'aField' is configured with a type of 'undefined'. Valid types include 'array', 'boolean', 'date', 'geopoint', 'number', and 'string'."));
 
     it("throws an exception when the type is invalid on a field definition", () =>
       // @ts-ignore: JavaScript test
       expect(() => new Schema<TestEntity>(TestEntity, { aField: { type: 'foo' } }))
-        .toThrow("The field 'aField' is configured with a type of 'foo'. Valid types include 'array', 'boolean', 'geopoint', 'number', and 'string'."));
+        .toThrow("The field 'aField' is configured with a type of 'foo'. Valid types include 'array', 'boolean', 'date', 'geopoint', 'number', and 'string'."));
 
     it("throws an exception when the data structure is invalid", () => {
       // @ts-ignore: JavaScript test

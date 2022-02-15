@@ -1,28 +1,28 @@
-import Schema from "../schema/schema";
-import Client, { CreateIndexOptions } from "../client";
-import { GeoPoint } from "..";
-import Entity from '../entity/entity';
+import Schema from "../schema/schema"
+import Client from "../client";
+import Entity from "../entity/entity";
 import Search from '../search/search';
 
-import { EntityData } from '../entity/entity';
-import HashConverter from "./hash-converter";
-import JsonConverter from "./json-converter";
+import { EntityData } from "../entity/entity";
+import { GeoPoint } from "../schema/schema-definitions";
+import { CreateIndexOptions } from "../client";
+import { JsonConverter, HashConverter } from "./converter";
 
 /**
  * Initialization data for {@link Entity} creation when calling
  * {@link Repository.createEntity} or {@link Repository.createAndSave}.
  */
-export type EntityCreationData = Record<string, number | boolean | string | string[] | GeoPoint | null>;
+export type EntityCreationData = Record<string, number | boolean | string | string[] | GeoPoint | Date | null>;
 
 /**
  * A repository is the main interaction point for reading, writing, and
- * removing {@link Entity | Entities} from Redis. Create one by passing
- * in a {@link Schema} and a {@link Client}. Then use the {@link Repository.fetch},
- * {@link Repository.save}, and {@link Repository.remove} methods to manage your
- * data:
+ * removing {@link Entity | Entities} from Redis. Create one by calling
+ * {@link Client.fetchRepository} and passing in a {@link Schema}. Then
+ * use the {@link Repository.fetch}, {@link Repository.save}, and
+ * {@link Repository.remove} methods to manage your data:
  * 
  * ```typescript
- * let repository = new Repository<Foo>(schema, client);
+ * let repository = client.fetchRepository<Foo>(schema);
  * 
  * let foo = await repository.fetch('01FK6TCJBDK41RJ766A4SBWDJ9');
  * foo.aString = 'bar';
@@ -30,8 +30,8 @@ export type EntityCreationData = Record<string, number | boolean | string | stri
  * await repository.save(foo);
  * ```
  * 
- * Be sure to use the repository to create a new instance of {@link Entity} you want
- * to create before you save it:
+ * Be sure to use the repository to create a new instance of an
+ * {@link Entity} you want to create before you save it:
  
  * ```typescript
  * let foo = await repository.createEntity();
@@ -52,23 +52,14 @@ export type EntityCreationData = Record<string, number | boolean | string | stri
  * 
  * @template TEntity The type of {@link Entity} that this repository manages.
  */
-export default class Repository<TEntity extends Entity> {
+ export default abstract class Repository<TEntity extends Entity> {
+  protected client: Client;
   private schema: Schema<TEntity>;
-  private client: Client;
-  private jsonConverter: JsonConverter;
-  private hashConverter: HashConverter;
-
-  /**
-   * Constructs a new Repository.
-   * @template TEntity The type of {@link Entity} that this repository manages.
-   * @param schema The {@link Schema} for this Repository.
-   * @param client An open {@link Client}.
-   */
+  
+  /** @internal */
   constructor(schema: Schema<TEntity>, client: Client) {
     this.schema = schema;
-    this.client = client;
-    this.jsonConverter = new JsonConverter(this.schema.definition);
-    this.hashConverter = new HashConverter(this.schema.definition);
+    this.client = client
   }
 
   /**
@@ -90,7 +81,7 @@ export default class Repository<TEntity extends Entity> {
   }
 
   /**
-   * Removes an existing index from Redis. Use this method if you want to swap out you index
+   * Removes an existing index from Redis. Use this method if you want to swap out your index
    * because your {@link Entity} has changed. Requires that RediSearch or RedisJSON is installed
    * on your instance of Redis.
    */
@@ -128,21 +119,13 @@ export default class Repository<TEntity extends Entity> {
    * @param entity The Entity to save.
    * @returns The ID of the Entity just saved.
    */
-  async save(entity: TEntity): Promise<string> {
-
+  async save(entity: TEntity) : Promise<string> {
     let key = this.makeKey(entity.entityId);
 
     if (Object.keys(entity.entityData).length === 0) {
       await this.client.unlink(key);
-      return entity.entityId;
-    }
-
-    if (this.schema.dataStructure === 'JSON') {
-      let jsonData = this.jsonConverter.toJsonData(entity.entityData);
-      await this.client.jsonset(key, jsonData);
     } else {
-      let hashData = this.hashConverter.toHashData(entity.entityData);
-      await this.client.hsetall(key, hashData);
+      await this.writeEntity(key, entity.entityData);
     }
 
     return entity.entityId;
@@ -153,12 +136,12 @@ export default class Repository<TEntity extends Entity> {
    * {@link Repository.createEntity} followed by {@link Repository.save}.
    * @param data Optional values with which to initialize the entity.
    * @returns The newly created and saved Entity.
-   */
-   async createAndSave(data: EntityCreationData = {}): Promise<TEntity> {
+   */ 
+  async createAndSave(data: EntityCreationData = {}): Promise<TEntity> {
     let entity = this.createEntity(data);
     await this.save(entity)
     return entity
-  }
+  }  
 
   /**
    * Read and return an {@link Entity} from Redis with the given id. If
@@ -169,18 +152,8 @@ export default class Repository<TEntity extends Entity> {
    */
   async fetch(id: string): Promise<TEntity> {
     let key = this.makeKey(id);
-    let entityData: EntityData = {};
-    
-    if (this.schema.dataStructure === 'JSON') {
-      let jsonData = await this.client.jsonget(key);
-      entityData = this.jsonConverter.toEntityData(jsonData);
-    } else {
-      let hashData = await this.client.hgetall(key);
-      entityData = this.hashConverter.toEntityData(hashData);
-    }
-
-    let entity = new this.schema.entityCtor(this.schema.definition, id, entityData);
-    return entity;
+    let entityData = await this.readEntity(key);
+    return new this.schema.entityCtor(this.schema.definition, id, entityData);
   }
 
   /**
@@ -203,7 +176,54 @@ export default class Repository<TEntity extends Entity> {
     return new Search<TEntity>(this.schema, this.client);
   }
 
-  private makeKey(id: string): string {
+  /** @internal */
+  protected abstract writeEntity(key: string, data: EntityData): Promise<void>;
+
+  /** @internal */
+  protected abstract readEntity(key: string): Promise<EntityData>;
+
+  /** @internal */
+  protected makeKey(id: string): string {
     return `${this.schema.prefix}:${id}`;
+  }
+}
+
+/** @internal */
+export class HashRepository<TEntity extends Entity> extends Repository<TEntity> {
+  private converter: HashConverter;
+
+  constructor(schema: Schema<TEntity>, client: Client) {
+    super(schema, client);
+    this.converter = new HashConverter(schema.definition);
+  }
+
+  protected async writeEntity(key: string, data: EntityData): Promise<void> {
+    let hashData = this.converter.toHashData(data);
+    await this.client.hsetall(key, hashData);
+  }
+
+  protected async readEntity(key: string): Promise<EntityData> {
+    let hashData = await this.client.hgetall(key);
+    return this.converter.toEntityData(hashData);
+  }
+}
+
+/** @internal */
+export class JsonRepository<TEntity extends Entity> extends Repository<TEntity> {
+  private converter: JsonConverter;
+
+  constructor(schema: Schema<TEntity>, client: Client) {
+    super(schema, client);
+    this.converter = new JsonConverter(schema.definition);
+  }
+
+  protected async writeEntity(key: string, data: EntityData): Promise<void> {
+    let jsonData = this.converter.toJsonData(data);
+    await this.client.jsonset(key, jsonData);
+  }
+
+  protected async readEntity(key: string): Promise<EntityData> {
+    let jsonData = await this.client.jsonget(key);
+    return this.converter.toEntityData(jsonData);
   }
 }
