@@ -1,7 +1,7 @@
 import { 
   A_DATE, A_DATE_ISO, ANOTHER_DATE, ANOTHER_DATE_ISO, A_THIRD_DATE,
   A_GEOPOINT, A_GEOPOINT_JSON, ANOTHER_GEOPOINT, ANOTHER_GEOPOINT_JSON, A_THIRD_GEOPOINT,
-  AN_ARRAY, AN_ARRAY_JSON, ANOTHER_ARRAY, ANOTHER_ARRAY_JSON, A_THIRD_ARRAY } from '../../helpers/example-data';
+  AN_ARRAY, AN_ARRAY_JSON, ANOTHER_ARRAY, ANOTHER_ARRAY_JSON, A_THIRD_ARRAY, ANOTHER_DATE_EPOCH, A_THIRD_DATE_EPOCH, A_THIRD_DATE_ISO } from '../../helpers/example-data';
 
 import { AliasedEntity, aliasedSchema, SimpleEntity, simpleSchema } from '../helpers/test-entity-and-schema';
 
@@ -50,7 +50,17 @@ describe("Entity", () => {
         expect(entity.entityData.aString).toBe('bar');
       });
 
-      it("stores a boolean when the booelan property is changed to true", () => {
+      it("stores a string when the string property is changed to a number", () => {
+        entity.aString = 23;
+        expect(entity.entityData.aString).toBe('23');
+      });
+
+      it("stores a string when the string property is changed to a boolean", () => {
+        entity.aString = false;
+        expect(entity.entityData.aString).toBe('false');
+      });
+
+      it("stores a boolean when the boolaan property is changed to true", () => {
         entity.aBoolean = true;
         expect(entity.entityData.aBoolean).toBe(true);
       });
@@ -70,9 +80,24 @@ describe("Entity", () => {
         expect(entity.entityData.aDate).toEqual(ANOTHER_DATE);
       });
 
-      it("stores an array when the array property is changed", () => {
+      it("stores a date when the date property is changed to a UNIX epoch", () => {
+        entity.aDate = ANOTHER_DATE_EPOCH;
+        expect(entity.entityData.aDate).toEqual(ANOTHER_DATE);
+      });
+
+      it("stores a date when the date property is changed to a ISO date", () => {
+        entity.aDate = ANOTHER_DATE_ISO;
+        expect(entity.entityData.aDate).toEqual(ANOTHER_DATE);
+      });
+
+      it("stores a string[] when the array property is changed", () => {
         entity.anArray = ANOTHER_ARRAY;
         expect(entity.entityData.anArray).toEqual(ANOTHER_ARRAY);
+      });
+
+      it("stores a string[] when the array property is changed to an any[]", () => {
+        entity.anArray = [ 42, true, 23, false ];
+        expect(entity.entityData.anArray).toEqual([ '42', 'true', '23', 'false' ])
       });
     });
 
@@ -80,115 +105,97 @@ describe("Entity", () => {
       it("complains when not a number", () => {
         // @ts-ignore: JavaScript
         expect(() => entity.aNumber = 'foo')
-          .toThrow("Property 'aNumber' expected type of 'number' but received type of 'string'.");
+          .toThrow(`Property 'aNumber' expected type of 'number' but received value of 'foo'.`);
         // @ts-ignore: JavaScript
         expect(() => entity.aNumber = true)
-          .toThrow("Property 'aNumber' expected type of 'number' but received type of 'boolean'.");
+          .toThrow(`Property 'aNumber' expected type of 'number' but received value of 'true'.`);
         // @ts-ignore: JavaScript
         expect(() => entity.aNumber = A_GEOPOINT)
-          .toThrow("Property 'aNumber' expected type of 'number' but received type of 'geopoint'.");
+          .toThrow(`Property 'aNumber' expected type of 'number' but received value of '${A_GEOPOINT}'.`);
         // @ts-ignore: JavaScript
         expect(() => entity.aNumber = A_DATE)
-          .toThrow("Property 'aNumber' expected type of 'number' but received type of 'date'.");
+          .toThrow(`Property 'aNumber' expected type of 'number' but received value of '${A_DATE}'.`);
         // @ts-ignore: JavaScript
         expect(() => entity.aNumber = AN_ARRAY)
-          .toThrow("Property 'aNumber' expected type of 'number' but received type of 'array'.");
+          .toThrow(`Property 'aNumber' expected type of 'number' but received value of '${AN_ARRAY}'.`);
         });
       
       it("complains when not a string", () => {
         // @ts-ignore: JavaScript
-        expect(() => entity.aString = true)
-          .toThrow("Property 'aString' expected type of 'string' but received type of 'boolean'.");
-        // @ts-ignore: JavaScript
-        expect(() => entity.aString = 42)
-          .toThrow("Property 'aString' expected type of 'string' but received type of 'number'.");
-        // @ts-ignore: JavaScript
         expect(() => entity.aString = A_GEOPOINT)
-          .toThrow("Property 'aString' expected type of 'string' but received type of 'geopoint'.");
+          .toThrow(`Property 'aString' expected type of 'string' but received value of '${A_GEOPOINT}'.`);
         // @ts-ignore: JavaScript
         expect(() => entity.aString = A_DATE)
-          .toThrow("Property 'aString' expected type of 'string' but received type of 'date'.");
+          .toThrow(`Property 'aString' expected type of 'string' but received value of '${A_DATE}'.`);
         // @ts-ignore: JavaScript
         expect(() => entity.aString = AN_ARRAY)
-          .toThrow("Property 'aString' expected type of 'string' but received type of 'array'.");
+          .toThrow(`Property 'aString' expected type of 'string' but received value of '${AN_ARRAY}'.`);
       });
 
       it("complains when not a boolean", () => {
         // @ts-ignore: JavaScript
         expect(() => entity.aBoolean = 'foo')
-          .toThrow("Property 'aBoolean' expected type of 'boolean' but received type of 'string'.")
+          .toThrow(`Property 'aBoolean' expected type of 'boolean' but received value of 'foo'`)
         // @ts-ignore: JavaScript
         expect(() => entity.aBoolean = 42)
-          .toThrow("Property 'aBoolean' expected type of 'boolean' but received type of 'number'.")
+          .toThrow(`Property 'aBoolean' expected type of 'boolean' but received value of '42'`)
         // @ts-ignore: JavaScript
         expect(() => entity.aBoolean = A_GEOPOINT)
-          .toThrow("Property 'aBoolean' expected type of 'boolean' but received type of 'geopoint'.");
+          .toThrow(`Property 'aBoolean' expected type of 'boolean' but received value of '${A_GEOPOINT}'.`);
         // @ts-ignore: JavaScript
         expect(() => entity.aBoolean = A_DATE)
-          .toThrow("Property 'aBoolean' expected type of 'boolean' but received type of 'date'.");
+          .toThrow(`Property 'aBoolean' expected type of 'boolean' but received value of '${A_DATE}'.`);
         // @ts-ignore: JavaScript
         expect(() => entity.aBoolean = AN_ARRAY)
-          .toThrow("Property 'aBoolean' expected type of 'boolean' but received type of 'array'.")
+          .toThrow(`Property 'aBoolean' expected type of 'boolean' but received value of '${AN_ARRAY}'`)
       });
       
       it("complains when not a geopoint", () => {
         // @ts-ignore: JavaScript
         expect(() => entity.aGeoPoint = 'foo')
-          .toThrow("Property 'aGeoPoint' expected type of 'geopoint' but received type of 'string'.")
+          .toThrow(`Property 'aGeoPoint' expected type of 'geopoint' but received value of 'foo'`)
         // @ts-ignore: JavaScript
         expect(() => entity.aGeoPoint = 42)
-          .toThrow("Property 'aGeoPoint' expected type of 'geopoint' but received type of 'number'.")
+          .toThrow(`Property 'aGeoPoint' expected type of 'geopoint' but received value of '42'`)
         // @ts-ignore: JavaScript
         expect(() => entity.aGeoPoint = true)
-          .toThrow("Property 'aGeoPoint' expected type of 'geopoint' but received type of 'boolean'.")
+          .toThrow(`Property 'aGeoPoint' expected type of 'geopoint' but received value of 'true'`)
         // @ts-ignore: JavaScript
         expect(() => entity.aGeoPoint = A_DATE)
-          .toThrow("Property 'aGeoPoint' expected type of 'geopoint' but received type of 'date'.");
+          .toThrow(`Property 'aGeoPoint' expected type of 'geopoint' but received value of '${A_DATE}'.`);
         // @ts-ignore: JavaScript
         expect(() => entity.aGeoPoint = AN_ARRAY)
-          .toThrow("Property 'aGeoPoint' expected type of 'geopoint' but received type of 'array'.")
+          .toThrow(`Property 'aGeoPoint' expected type of 'geopoint' but received value of '${AN_ARRAY}'`)
       });
 
       it("complains when not a date", () => {
         // @ts-ignore: JavaScript
-        expect(() => entity.aDate = 'foo')
-          .toThrow("Property 'aDate' expected type of 'date' but received type of 'string'.")
-        // @ts-ignore: JavaScript
-        expect(() => entity.aDate = 42)
-          .toThrow("Property 'aDate' expected type of 'date' but received type of 'number'.")
-        // @ts-ignore: JavaScript
         expect(() => entity.aDate = true)
-          .toThrow("Property 'aDate' expected type of 'date' but received type of 'boolean'.")
+          .toThrow(`Property 'aDate' expected type of 'date' but received value of 'true'`)
         // @ts-ignore: JavaScript
         expect(() => entity.aDate = A_GEOPOINT)
-          .toThrow("Property 'aDate' expected type of 'date' but received type of 'geopoint'.");
+          .toThrow(`Property 'aDate' expected type of 'date' but received value of '${A_GEOPOINT}'.`);
         // @ts-ignore: JavaScript
         expect(() => entity.aDate = AN_ARRAY)
-          .toThrow("Property 'aDate' expected type of 'date' but received type of 'array'.")
+          .toThrow(`Property 'aDate' expected type of 'date' but received value of '${AN_ARRAY}'.`)
       });
 
       it("complains when not an array", () => {
         // @ts-ignore: JavaScript
         expect(() => entity.anArray = 'foo')
-          .toThrow("Property 'anArray' expected type of 'array' but received type of 'string'.")
+          .toThrow(`Property 'anArray' expected type of 'array' but received value of 'foo'`)
         // @ts-ignore: JavaScript
         expect(() => entity.anArray = 42)
-          .toThrow("Property 'anArray' expected type of 'array' but received type of 'number'.")
+          .toThrow(`Property 'anArray' expected type of 'array' but received value of '42'`)
         // @ts-ignore: JavaScript
         expect(() => entity.anArray = true)
-          .toThrow("Property 'anArray' expected type of 'array' but received type of 'boolean'.")
+          .toThrow(`Property 'anArray' expected type of 'array' but received value of 'true'`)
         // @ts-ignore: JavaScript
         expect(() => entity.anArray = A_GEOPOINT)
-          .toThrow("Property 'anArray' expected type of 'array' but received type of 'geopoint'.");
+          .toThrow(`Property 'anArray' expected type of 'array' but received value of '${A_GEOPOINT}'.`);
         // @ts-ignore: JavaScript
         expect(() => entity.anArray = A_DATE)
-          .toThrow("Property 'anArray' expected type of 'array' but received type of 'date'.");
-      });
-
-      it("converts non-string values in arrays to strings", () => {
-        // @ts-ignore: JavaScript
-        entity.anArray = [ 42, true, 23, false ];
-        expect(entity.entityData.anArray).toEqual([ '42', 'true', '23', 'false' ])
+          .toThrow(`Property 'anArray' expected type of 'array' but received value of '${A_DATE}'.`);
       });
     });
 
@@ -210,22 +217,22 @@ describe("Entity", () => {
 
       it("throws error when setting to undefined", () => {
         expect(() => entity.aNumber = undefined)
-          .toThrow("Property 'aNumber' on entity of type 'SimpleEntity' cannot be set to undefined. Use null instead.");
+          .toThrow(`Property 'aNumber' on entity of type 'SimpleEntity' cannot be set to undefined. Use null instead.`);
 
         expect(() => entity.aString = undefined)
-          .toThrow("Property 'aString' on entity of type 'SimpleEntity' cannot be set to undefined. Use null instead.");
+          .toThrow(`Property 'aString' on entity of type 'SimpleEntity' cannot be set to undefined. Use null instead.`);
 
         expect(() => entity.aBoolean = undefined)
-          .toThrow("Property 'aBoolean' on entity of type 'SimpleEntity' cannot be set to undefined. Use null instead.");
+          .toThrow(`Property 'aBoolean' on entity of type 'SimpleEntity' cannot be set to undefined. Use null instead.`);
 
         expect(() => entity.aGeoPoint = undefined)
-          .toThrow("Property 'aGeoPoint' on entity of type 'SimpleEntity' cannot be set to undefined. Use null instead.");
+          .toThrow(`Property 'aGeoPoint' on entity of type 'SimpleEntity' cannot be set to undefined. Use null instead.`);
 
         expect(() => entity.aDate = undefined)
-          .toThrow("Property 'aDate' on entity of type 'SimpleEntity' cannot be set to undefined. Use null instead.");
+          .toThrow(`Property 'aDate' on entity of type 'SimpleEntity' cannot be set to undefined. Use null instead.`);
 
         expect(() => entity.anArray = undefined)
-          .toThrow("Property 'anArray' on entity of type 'SimpleEntity' cannot be set to undefined. Use null instead.");
+          .toThrow(`Property 'anArray' on entity of type 'SimpleEntity' cannot be set to undefined. Use null instead.`);
       });
     });
   });
@@ -255,6 +262,16 @@ describe("Entity", () => {
         expect(entity.entityData.anotherString).toBe('baz');
       });
 
+      it("stores a string when the string property is changed to a number", () => {
+        entity.aString = 13;
+        expect(entity.entityData.anotherString).toBe('13');
+      });
+
+      it("stores a string when the string property is changed to a boolean", () => {
+        entity.aString = true;
+        expect(entity.entityData.anotherString).toBe('true');
+      });
+
       it("stores a boolean when the booelan property is changed to true", () => {
         entity.aBoolean = true;
         expect(entity.entityData.anotherBoolean).toBe(true);
@@ -275,9 +292,24 @@ describe("Entity", () => {
         expect(entity.entityData.anotherDate).toEqual(A_THIRD_DATE);
       });
 
-      it("stores an array when the array property is changed", () => {
+      it("stores a date when the date property is changed to a UNIX epoch", () => {
+        entity.aDate = A_THIRD_DATE_EPOCH;
+        expect(entity.entityData.anotherDate).toEqual(A_THIRD_DATE);
+      });
+
+      it("stores a date when the date property is changed to a ISO date", () => {
+        entity.aDate = A_THIRD_DATE_ISO;
+        expect(entity.entityData.anotherDate).toEqual(A_THIRD_DATE);
+      });
+
+      it("stores a string[] when the array property is changed", () => {
         entity.anArray = A_THIRD_ARRAY;
         expect(entity.entityData.anotherArray).toEqual(A_THIRD_ARRAY);
+      });
+
+      it("stores a string[] when the array property is changed to an any[]", () => {
+        entity.anArray = [ 42, true, 23, false ];
+        expect(entity.entityData.anotherArray).toEqual([ '42', 'true', '23', 'false' ])
       });
     });
   
@@ -299,16 +331,16 @@ describe("Entity", () => {
       
       it("errors when properties are set to undefined", () => {
         expect(() => entity.aNumber = undefined)
-          .toThrow("Property 'aNumber' on entity of type 'AliasedEntity' cannot be set to undefined. Use null instead.");
+          .toThrow(`Property 'aNumber' on entity of type 'AliasedEntity' cannot be set to undefined. Use null instead.`);
 
         expect(() => entity.aString = undefined)
-          .toThrow("Property 'aString' on entity of type 'AliasedEntity' cannot be set to undefined. Use null instead.");
+          .toThrow(`Property 'aString' on entity of type 'AliasedEntity' cannot be set to undefined. Use null instead.`);
 
         expect(() => entity.aBoolean = undefined)
-          .toThrow("Property 'aBoolean' on entity of type 'AliasedEntity' cannot be set to undefined. Use null instead.");
+          .toThrow(`Property 'aBoolean' on entity of type 'AliasedEntity' cannot be set to undefined. Use null instead.`);
 
         expect(() => entity.aGeoPoint = undefined)
-          .toThrow("Property 'aGeoPoint' on entity of type 'AliasedEntity' cannot be set to undefined. Use null instead.");
+          .toThrow(`Property 'aGeoPoint' on entity of type 'AliasedEntity' cannot be set to undefined. Use null instead.`);
 
         expect(() => entity.aDate = undefined)
           .toThrow("Property 'aDate' on entity of type 'AliasedEntity' cannot be set to undefined. Use null instead.");

@@ -7,12 +7,12 @@ export class SimpleHashEntity extends SimpleEntity {}
 export class SimpleJsonEntity extends SimpleEntity {}
 
 export interface SimpleEntity {
-  aString?: string | null;
+  aString?: string | number | boolean | null;
   aNumber?: number | null;
   aBoolean?: boolean | null;
   aGeoPoint?: GeoPoint | null;
-  aDate?: Date | null;
-  anArray?: string[] | null;
+  aDate?: Date | string | number | null;
+  anArray?: any[] | null;
 }
 
 export interface SimpleHashEntity extends SimpleEntity {}
