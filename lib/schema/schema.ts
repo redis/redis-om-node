@@ -19,7 +19,7 @@ import { SchemaOptions } from './schema-options';
  *   aString: { type: 'string' },
  *   aNumber: { type: 'number' },
  *   aBoolean: { type: 'boolean' },
- *   aGeoPoint: { type: 'geopoint' },
+ *   aPoint: { type: 'point' },
  *   aDate: { type: 'date' },
  *   anArray: { type: 'array' }
  * }, {
@@ -139,7 +139,7 @@ export default class Schema<TEntity extends Entity> {
             return;
           }
 
-          if (fieldType === 'geopoint' && isPoint(value)) {
+          if (fieldType === 'point' && isPoint(value)) {
             let { longitude, latitude } = value;
             this.entityData[fieldAlias] = { longitude, latitude };
             return;
@@ -221,7 +221,7 @@ export default class Schema<TEntity extends Entity> {
 
   private validateFieldDef(field: string) {
     let fieldDef: FieldDefinition = this.definition[field];
-    if (!['array', 'boolean', 'number', 'string', 'geopoint', 'date'].includes(fieldDef.type))
-      throw Error(`The field '${field}' is configured with a type of '${fieldDef.type}'. Valid types include 'array', 'boolean', 'date', 'geopoint', 'number', and 'string'.`);
+    if (!['array', 'boolean', 'number', 'string', 'point', 'date'].includes(fieldDef.type))
+      throw Error(`The field '${field}' is configured with a type of '${fieldDef.type}'. Valid types include 'array', 'boolean', 'date', 'number', 'point', and 'string'.`);
   }
 }

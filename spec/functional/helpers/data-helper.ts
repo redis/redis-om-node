@@ -3,7 +3,7 @@ import { saveHash, saveJson } from './redis-helper';
 import Client, { SearchDataStructure } from "../../../lib/client";
 import Entity, { EntityConstructor } from "../../../lib/entity/entity";
 import Schema from '../../../lib/schema/schema';
-import { GeoPoint } from '../../../lib';
+import { Point } from '../../../lib';
 
 import { SampleEntityData } from "../../helpers/example-data";
 
@@ -16,8 +16,8 @@ interface SampleEntity {
   anotherNumber?: number | null;
   aBoolean?: boolean | null;
   anotherBoolean?: boolean | null;
-  aGeoPoint?: GeoPoint | null;
-  anotherGeoPoint?: GeoPoint | null;
+  aPoint?: Point | null;
+  anotherPoint?: Point | null;
   aDate?: Date | null;
   anotherDate?: Date | null;
   anArray?: string[] | null;
@@ -50,8 +50,8 @@ function createSchemaOfType<TEntity extends Entity>(ctor: EntityConstructor<TEnt
       anotherNumber: { type: 'number' },
       aBoolean: { type: 'boolean' },
       anotherBoolean: { type: 'boolean' },
-      aGeoPoint: { type: 'geopoint' },
-      anotherGeoPoint: { type: 'geopoint' },
+      aPoint: { type: 'point' },
+      anotherPoint: { type: 'point' },
       aDate: { type: 'date' },
       anotherDate: { type: 'date' },
       anArray: { type: 'array' },

@@ -7,7 +7,7 @@ import { JsonRepository, HashRepository } from '../../../lib/repository/reposito
 import {
   AN_ARRAY, AN_ARRAY_JOINED,
   A_DATE, A_DATE_EPOCH, A_DATE_EPOCH_STRING,
-  A_GEOPOINT, A_GEOPOINT_STRING } from '../../helpers/example-data';
+  A_POINT, A_POINT_STRING } from '../../helpers/example-data';
 
 import { simpleHashSchema, SimpleHashEntity, SimpleJsonEntity, simpleJsonSchema } from '../helpers/test-entity-and-schema';
 
@@ -34,14 +34,14 @@ describe("Repository", () => {
       describe("when creating and saving a fully populated entity", () => {
         beforeEach(async () => {
           entity = await repository.createAndSave({ aString: 'foo', aNumber: 42, aBoolean: false,
-            aGeoPoint: A_GEOPOINT, aDate: A_DATE, anArray: AN_ARRAY });
+            aPoint: A_POINT, aDate: A_DATE, anArray: AN_ARRAY });
         });
   
         it("returns the populated entity", () => {
           expect(entity.aString).toBe('foo');
           expect(entity.aNumber).toBe(42);
           expect(entity.aBoolean).toBe(false);
-          expect(entity.aGeoPoint).toEqual(A_GEOPOINT);
+          expect(entity.aPoint).toEqual(A_POINT);
           expect(entity.aDate).toEqual(A_DATE);
           expect(entity.anArray).toEqual(AN_ARRAY);
         });
@@ -50,7 +50,7 @@ describe("Repository", () => {
           expect(Client.prototype.hsetall).toHaveBeenCalledWith(
             expect.stringMatching(/^SimpleHashEntity:/), {
               aString: 'foo', aNumber: '42', aBoolean: '0',
-              aGeoPoint: A_GEOPOINT_STRING, aDate: A_DATE_EPOCH_STRING, anArray: AN_ARRAY_JOINED }));
+              aPoint: A_POINT_STRING, aDate: A_DATE_EPOCH_STRING, anArray: AN_ARRAY_JOINED }));
       });
   
       describe("when saving an empty entity", () => {
@@ -60,7 +60,7 @@ describe("Repository", () => {
           expect(entity.aString).toBeNull();
           expect(entity.aNumber).toBeNull();
           expect(entity.aBoolean).toBeNull();
-          expect(entity.aGeoPoint).toBeNull();
+          expect(entity.aPoint).toBeNull();
           expect(entity.aDate).toBeNull();
           expect(entity.anArray).toBeNull();
         });
@@ -80,14 +80,14 @@ describe("Repository", () => {
       describe("when creating and saving a fully populated entity", () => {
         beforeEach(async () => {
           entity = await repository.createAndSave({ aString: 'foo', aNumber: 42, aBoolean: false,
-            aGeoPoint: A_GEOPOINT, aDate: A_DATE, anArray: AN_ARRAY });
+            aPoint: A_POINT, aDate: A_DATE, anArray: AN_ARRAY });
         });
   
         it("returns the populated entity", () => {
           expect(entity.aString).toBe('foo');
           expect(entity.aNumber).toBe(42);
           expect(entity.aBoolean).toBe(false);
-          expect(entity.aGeoPoint).toEqual(A_GEOPOINT);
+          expect(entity.aPoint).toEqual(A_POINT);
           expect(entity.aDate).toEqual(A_DATE);
           expect(entity.anArray).toEqual(AN_ARRAY);
         });
@@ -96,7 +96,7 @@ describe("Repository", () => {
           expect(Client.prototype.jsonset).toHaveBeenCalledWith(
             expect.stringMatching(/^SimpleJsonEntity:/), {
               aString: 'foo', aNumber: 42, aBoolean: false,
-              aGeoPoint: A_GEOPOINT_STRING, aDate: A_DATE_EPOCH, anArray: AN_ARRAY }));
+              aPoint: A_POINT_STRING, aDate: A_DATE_EPOCH, anArray: AN_ARRAY }));
       });
   
       describe("when saving an empty entity", () => {
@@ -106,7 +106,7 @@ describe("Repository", () => {
           expect(entity.aString).toBeNull();
           expect(entity.aNumber).toBeNull();
           expect(entity.aBoolean).toBeNull();
-          expect(entity.aGeoPoint).toBeNull();
+          expect(entity.aPoint).toBeNull();
           expect(entity.aDate).toBeNull();
           expect(entity.anArray).toBeNull();
         });

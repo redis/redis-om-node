@@ -2,7 +2,7 @@ import Schema from '../../../lib/schema/schema';
 import Entity, { EntityData } from '../../../lib/entity/entity';
 import { SchemaDefinition } from '../../../lib/schema/schema-definitions';
 import { SearchDataStructure } from '../../../lib/client';
-import { ANOTHER_ARRAY, ANOTHER_DATE, ANOTHER_GEOPOINT, AN_ARRAY, A_DATE, A_GEOPOINT } from '../../helpers/example-data';
+import { ANOTHER_ARRAY, ANOTHER_DATE, ANOTHER_POINT, AN_ARRAY, A_DATE, A_POINT } from '../../helpers/example-data';
 
 describe("Schema", () => {
 
@@ -46,10 +46,10 @@ describe("Schema", () => {
 
   let GEO_HASH_DEFAULTS = {
     ...HASH_DEFAULTS,
-    providedEntityFieldValue: A_GEOPOINT,
-    expectedPropertyValue: A_GEOPOINT,
-    providedAlternatePropertyValue: ANOTHER_GEOPOINT,
-    expectedAlternatePropertyValue: ANOTHER_GEOPOINT
+    providedEntityFieldValue: A_POINT,
+    expectedPropertyValue: A_POINT,
+    providedAlternatePropertyValue: ANOTHER_POINT,
+    expectedAlternatePropertyValue: ANOTHER_POINT
   }
 
   let DATE_HASH_DEFAULTS = {
@@ -94,10 +94,10 @@ describe("Schema", () => {
 
   let GEO_JSON_DEFAULTS = {
     ...JSON_DEFAULTS,
-    providedEntityFieldValue: A_GEOPOINT,
-    expectedPropertyValue: A_GEOPOINT,
-    providedAlternatePropertyValue: ANOTHER_GEOPOINT,
-    expectedAlternatePropertyValue: ANOTHER_GEOPOINT
+    providedEntityFieldValue: A_POINT,
+    expectedPropertyValue: A_POINT,
+    providedAlternatePropertyValue: ANOTHER_POINT,
+    expectedAlternatePropertyValue: ANOTHER_POINT
   };
 
   let DATE_JSON_DEFAULTS = {
@@ -175,15 +175,15 @@ describe("Schema", () => {
       expectedRedisSchema: ['aField', 'TAG', 'SEPARATOR', ';']
     }],
 
-    ["that defines an unconfigured geopoint for a HASH", {
+    ["that defines an unconfigured point for a HASH", {
       ...GEO_HASH_DEFAULTS,
-      schemaDef: { aField: { type: 'geopoint' } } as SchemaDefinition,
+      schemaDef: { aField: { type: 'point' } } as SchemaDefinition,
       expectedRedisSchema: ['aField', 'GEO']
     }],
 
-    ["that defines an aliased geopoint for a HASH", {
+    ["that defines an aliased point for a HASH", {
       ...GEO_HASH_DEFAULTS,
-      schemaDef: { aField: { type: 'geopoint', alias: 'anotherField' } } as SchemaDefinition,
+      schemaDef: { aField: { type: 'point', alias: 'anotherField' } } as SchemaDefinition,
       providedEntityFieldName: 'anotherField',
       expectedRedisSchema: ['anotherField', 'GEO']
     }],
@@ -278,15 +278,15 @@ describe("Schema", () => {
       expectedRedisSchema: ['$.aField', 'AS', 'aField', 'TAG', 'SEPARATOR', ';']
     }],
 
-    ["that defines an unconfigured geopoint for JSON", {
+    ["that defines an unconfigured point for JSON", {
       ...GEO_JSON_DEFAULTS,
-      schemaDef: { aField: { type: 'geopoint' } } as SchemaDefinition,
+      schemaDef: { aField: { type: 'point' } } as SchemaDefinition,
       expectedRedisSchema: ['$.aField', 'AS', 'aField', 'GEO']
     }],
 
-    ["that defines an aliased geopoint for JSON", {
+    ["that defines an aliased point for JSON", {
       ...GEO_JSON_DEFAULTS,
-      schemaDef: { aField: { type: 'geopoint', alias: 'anotherField' } } as SchemaDefinition,
+      schemaDef: { aField: { type: 'point', alias: 'anotherField' } } as SchemaDefinition,
       providedEntityFieldName: 'anotherField',
       expectedRedisSchema: ['$.anotherField', 'AS', 'anotherField', 'GEO']
     }],

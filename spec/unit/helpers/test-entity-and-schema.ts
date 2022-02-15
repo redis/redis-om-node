@@ -1,6 +1,6 @@
 import Entity from '../../../lib/entity/entity';
 import Schema from '../../../lib/schema/schema';
-import { GeoPoint } from '../../../lib/schema/schema-definitions';
+import { Point } from '../../../lib/schema/schema-definitions';
 
 export class SimpleEntity extends Entity {}
 export class SimpleHashEntity extends SimpleEntity {}
@@ -10,7 +10,7 @@ export interface SimpleEntity {
   aString?: string | number | boolean | null;
   aNumber?: number | null;
   aBoolean?: boolean | null;
-  aGeoPoint?: GeoPoint | null;
+  aPoint?: Point | null;
   aDate?: Date | string | number | null;
   anArray?: any[] | null;
 }
@@ -31,7 +31,7 @@ export interface AliasedEntity {
   aString?: string | null;
   aNumber?: number | null;
   aBoolean?: boolean | null;
-  aGeoPoint?: GeoPoint | null;
+  aPoint?: Point | null;
   aDate?: Date | null;
   anArray?: string[] | null;
 }
@@ -40,7 +40,7 @@ export const simpleSchema = new Schema(SimpleEntity, {
   aString: { type: 'string' },
   aNumber: { type: 'number' },
   aBoolean: { type: 'boolean' },
-  aGeoPoint: { type: 'geopoint' },
+  aPoint: { type: 'point' },
   aDate: { type: 'date' },
   anArray: { type: 'array' }
 });
@@ -49,7 +49,7 @@ export const simpleHashSchema = new Schema(SimpleHashEntity, {
   aString: { type: 'string' },
   aNumber: { type: 'number' },
   aBoolean: { type: 'boolean' },
-  aGeoPoint: { type: 'geopoint' },
+  aPoint: { type: 'point' },
   aDate: { type: 'date' },
   anArray: { type: 'array' }
 }, {
@@ -60,7 +60,7 @@ export const simpleJsonSchema = new Schema(SimpleJsonEntity, {
   aString: { type: 'string' },
   aNumber: { type: 'number' },
   aBoolean: { type: 'boolean' },
-  aGeoPoint: { type: 'geopoint' },
+  aPoint: { type: 'point' },
   aDate: { type: 'date' },
   anArray: { type: 'array' }
 }, {
@@ -75,7 +75,7 @@ export const aliasedSchema = new Schema(AliasedEntity, {
   aString: { type: 'string', alias: 'anotherString' },
   aNumber: { type: 'number', alias: 'anotherNumber' },
   aBoolean: { type: 'boolean', alias: 'anotherBoolean' },
-  aGeoPoint: { type: 'geopoint', alias: 'anotherGeoPoint' },
+  aPoint: { type: 'point', alias: 'anotherPoint' },
   aDate: { type: 'date', alias: 'anotherDate' },
   anArray: { type: 'array', alias: 'anotherArray' }
 });

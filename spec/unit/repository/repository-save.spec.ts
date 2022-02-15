@@ -7,7 +7,7 @@ import { JsonRepository, HashRepository } from '../../../lib/repository/reposito
 import {
   AN_ARRAY, AN_ARRAY_JOINED,
   A_DATE, A_DATE_EPOCH, A_DATE_EPOCH_STRING,
-  A_GEOPOINT, A_GEOPOINT_STRING } from '../../helpers/example-data';
+  A_POINT, A_POINT_STRING } from '../../helpers/example-data';
 
 import { simpleHashSchema, SimpleHashEntity, SimpleJsonEntity, simpleJsonSchema } from '../helpers/test-entity-and-schema';
 
@@ -38,14 +38,14 @@ describe("Repository", () => {
 
         ["when saving a fully populated entity", {
           providedString: 'foo', providedNumber: 42, providedBoolean: false,
-          providedGeoPoint: A_GEOPOINT, providedDate: A_DATE, providedArray: AN_ARRAY,
+          providedPoint: A_POINT, providedDate: A_DATE, providedArray: AN_ARRAY,
           expectedData: { aString: 'foo', aNumber: '42', aBoolean: '0',
-            aGeoPoint: A_GEOPOINT_STRING, aDate: A_DATE_EPOCH_STRING, anArray: AN_ARRAY_JOINED }
+            aPoint: A_POINT_STRING, aDate: A_DATE_EPOCH_STRING, anArray: AN_ARRAY_JOINED }
         }],
   
         [ "when saving a partially populated entity", {
           providedString: 'foo', providedNumber: 42, providedBoolean: null,
-          providedGeoPoint: null, providedDate: null, providedArray: null,
+          providedPoint: null, providedDate: null, providedArray: null,
           expectedData: { aString: 'foo', aNumber: '42' }
         }]
   
@@ -55,7 +55,7 @@ describe("Repository", () => {
           entity.aString = data.providedString;
           entity.aNumber = data.providedNumber;
           entity.aBoolean = data.providedBoolean;
-          entity.aGeoPoint = data.providedGeoPoint;
+          entity.aPoint = data.providedPoint;
           entity.aDate = data.providedDate;
           entity.anArray = data.providedArray;
           entityId = await repository.save(entity);
@@ -72,7 +72,7 @@ describe("Repository", () => {
           entity.aString = null;
           entity.aNumber = null;
           entity.aBoolean = null;
-          entity.aGeoPoint = null;
+          entity.aPoint = null;
           entity.aDate = null;
           entity.anArray = null;
           entityId = await repository.save(entity);
@@ -97,14 +97,14 @@ describe("Repository", () => {
 
         ["when saving a fully populated entity", {
           providedString: 'foo', providedNumber: 42, providedBoolean: false,
-          providedGeoPoint: A_GEOPOINT, providedDate: A_DATE, providedArray: AN_ARRAY,
+          providedPoint: A_POINT, providedDate: A_DATE, providedArray: AN_ARRAY,
           expectedData: { aString: 'foo', aNumber: 42, aBoolean: false,
-            aGeoPoint: A_GEOPOINT_STRING, aDate: A_DATE_EPOCH, anArray: AN_ARRAY }
+            aPoint: A_POINT_STRING, aDate: A_DATE_EPOCH, anArray: AN_ARRAY }
         }],
   
         [ "when saving a partially populated entity", {
           providedString: 'foo', providedNumber: 42, providedBoolean: null,
-          providedGeoPoint: null, providedDate: null, providedArray: null,
+          providedPoint: null, providedDate: null, providedArray: null,
           expectedData: { aString: 'foo', aNumber: 42 }
         }]
 
@@ -114,7 +114,7 @@ describe("Repository", () => {
           entity.aString = data.providedString;
           entity.aNumber = data.providedNumber;
           entity.aBoolean = data.providedBoolean;
-          entity.aGeoPoint = data.providedGeoPoint
+          entity.aPoint = data.providedPoint
           entity.aDate = data.providedDate;
           entity.anArray = data.providedArray;
           entityId = await repository.save(entity);
@@ -131,7 +131,7 @@ describe("Repository", () => {
           entity.aString = null;
           entity.aNumber = null;
           entity.aBoolean = null;
-          entity.aGeoPoint = null;
+          entity.aPoint = null;
           entity.aDate = null;
           entity.anArray = null;
           entityId = await repository.save(entity);

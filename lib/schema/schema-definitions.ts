@@ -1,5 +1,5 @@
 /** Defines a point on the globe using longitude and latitude. */
-export type GeoPoint = {
+export type Point = {
   /** The longitude of the point. */
   longitude: number,
   /** The latitude of the point. */
@@ -44,10 +44,10 @@ export interface BooleanField extends Field {
   type: 'boolean';
 }
 
-/** A field representing a geopoint. */
+/** A field representing a point on the globe. */
 export interface GeoField extends Field {
-  /** Yep. It's a geopoint. */
-  type: 'geopoint';
+  /** Yep. It's a point. */
+  type: 'point';
 }
 
 /** A field representing a date/time. */

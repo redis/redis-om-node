@@ -6,10 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## 0.2.0 - 2022-02-15
 ### Added
-- Added geopoint data type.
-- Added georadius search.
-- Added date data type.
-- Added date search.
+- Added point data type representing a spot on the globe.
+- Added point radius search allowing simple geographic searches.
+- Added date data type with UNIX, ISO8601, and JavaScript flavors.
+- Added date search, also with UNIX, ISO8601, and JavaScript flavors.
 
 ### Changed
 - String fields and searches can now be set to numbers or booleans and will be coerced to a string.

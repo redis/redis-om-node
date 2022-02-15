@@ -43,7 +43,7 @@ export default class SchemaBuilder<TEntity extends Entity> {
 
     if (fieldType === 'boolean') schemaEntry.push('TAG');
     if (fieldType === 'number') schemaEntry.push('NUMERIC');
-    if (fieldType === 'geopoint') schemaEntry.push('GEO');
+    if (fieldType === 'point') schemaEntry.push('GEO');
     if (fieldType === 'date') schemaEntry.push('NUMERIC');
     if (fieldType === 'array')
       schemaEntry.push('TAG', 'SEPARATOR', (fieldDef as ArrayField).separator ?? '|');
@@ -70,7 +70,7 @@ export default class SchemaBuilder<TEntity extends Entity> {
 
     if (fieldType === 'boolean') schemaEntry.push('TAG');
     if (fieldType === 'number') schemaEntry.push('NUMERIC');
-    if (fieldType === 'geopoint') schemaEntry.push('GEO');
+    if (fieldType === 'point') schemaEntry.push('GEO');
     if (fieldType === 'date') schemaEntry.push('NUMERIC');
     if (fieldType === 'array') schemaEntry.push('TAG');
     if (fieldType === 'string') {

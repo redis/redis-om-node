@@ -3,7 +3,7 @@ import Schema from '../../lib/schema/schema';
 import Entity from '../../lib/entity/entity';
 import Repository from '../../lib/repository/repository';
 
-import { GeoPoint } from '../../lib';
+import { Point } from '../../lib';
 
 describe("Demo", () => {
 
@@ -18,7 +18,7 @@ describe("Demo", () => {
       classification: string[];
       county: string;
       state: string;
-      location: GeoPoint;
+      location: Point;
       highTemp: number;
       lowTemp: number;
       fullMoon: boolean;
@@ -49,7 +49,7 @@ describe("Demo", () => {
         classification: { type: 'array' },
         county: { type: 'string' },
         state: { type: 'string' },
-        location: { type: 'geopoint' },
+        location: { type: 'point' },
         highTemp: { type: 'number' },
         lowTemp: { type: 'number' },
         fullMoon: { type: 'boolean' }

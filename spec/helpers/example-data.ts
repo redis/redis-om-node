@@ -1,4 +1,4 @@
-import { GeoPoint } from "../../lib/schema/schema-definitions";
+import { Point } from "../../lib/schema/schema-definitions";
 
 
 export const A_STRING = 'foo';
@@ -24,17 +24,17 @@ export const A_THIRD_DATE_ISO: string = A_THIRD_DATE.toISOString();
 export const A_THIRD_DATE_EPOCH: number = A_THIRD_DATE.getTime();
 export const A_THIRD_DATE_EPOCH_STRING: string = A_THIRD_DATE_EPOCH.toString();
 
-export const A_GEOPOINT: GeoPoint = { longitude: 12.34, latitude: 56.78 };
-export const A_GEOPOINT_JSON: string = JSON.stringify(A_GEOPOINT);
-export const A_GEOPOINT_STRING: string = `${A_GEOPOINT.longitude},${A_GEOPOINT.latitude}`;
+export const A_POINT: Point = { longitude: 12.34, latitude: 56.78 };
+export const A_POINT_JSON: string = JSON.stringify(A_POINT);
+export const A_POINT_STRING: string = `${A_POINT.longitude},${A_POINT.latitude}`;
 
-export const ANOTHER_GEOPOINT: GeoPoint = { longitude: 23.45, latitude: 67.89 };
-export const ANOTHER_GEOPOINT_JSON: string = JSON.stringify(ANOTHER_GEOPOINT);
-export const ANOTHER_GEOPOINT_STRING: string = `${ANOTHER_GEOPOINT.longitude},${ANOTHER_GEOPOINT.latitude}`;
+export const ANOTHER_POINT: Point = { longitude: 23.45, latitude: 67.89 };
+export const ANOTHER_POINT_JSON: string = JSON.stringify(ANOTHER_POINT);
+export const ANOTHER_POINT_STRING: string = `${ANOTHER_POINT.longitude},${ANOTHER_POINT.latitude}`;
 
-export const A_THIRD_GEOPOINT: GeoPoint = { longitude: 34.56, latitude: 78.90 };
-export const A_THIRD_GEOPOINT_JSON: string = JSON.stringify(A_THIRD_GEOPOINT);
-export const A_THIRD_GEOPOINT_STRING: string = `${A_THIRD_GEOPOINT.longitude},${A_THIRD_GEOPOINT.latitude}`;
+export const A_THIRD_POINT: Point = { longitude: 34.56, latitude: 78.90 };
+export const A_THIRD_POINT_JSON: string = JSON.stringify(A_THIRD_POINT);
+export const A_THIRD_POINT_STRING: string = `${A_THIRD_POINT.longitude},${A_THIRD_POINT.latitude}`;
 
 export const AN_ARRAY: string[] = [ 'alfa', 'bravo', 'charlie' ];
 export const AN_ARRAY_JSON: string = JSON.stringify(AN_ARRAY);
@@ -60,8 +60,8 @@ export type SampleEntityData = {
   anotherNumber: number | null;
   aBoolean: boolean | null;
   anotherBoolean: boolean | null;
-  aGeoPoint: GeoPoint | null;
-  anotherGeoPoint: GeoPoint | null;
+  aPoint: Point | null;
+  anotherPoint: Point | null;
   aDate: Date | null;
   anotherDate: Date | null;
   anArray: string[] | null;
@@ -77,8 +77,8 @@ export const AN_ENTITY: SampleEntityData = {
   anotherNumber: 23,
   aBoolean: true,
   anotherBoolean: false,
-  aGeoPoint: A_GEOPOINT,
-  anotherGeoPoint: ANOTHER_GEOPOINT,
+  aPoint: A_POINT,
+  anotherPoint: ANOTHER_POINT,
   aDate: A_DATE,
   anotherDate: ANOTHER_DATE,
   anArray: AN_ARRAY,
@@ -94,8 +94,8 @@ export const ANOTHER_ENTITY: SampleEntityData = {
   anotherNumber: 13,
   aBoolean: true,
   anotherBoolean: true,
-  aGeoPoint: ANOTHER_GEOPOINT,
-  anotherGeoPoint: A_THIRD_GEOPOINT,
+  aPoint: ANOTHER_POINT,
+  anotherPoint: A_THIRD_POINT,
   aDate: ANOTHER_DATE,
   anotherDate: A_THIRD_DATE,
   anArray: ANOTHER_ARRAY,
@@ -111,8 +111,8 @@ export const A_THIRD_ENTITY: SampleEntityData = {
   anotherNumber: 7,
   aBoolean: false,
   anotherBoolean: false,
-  aGeoPoint: A_THIRD_GEOPOINT,
-  anotherGeoPoint: A_GEOPOINT,
+  aPoint: A_THIRD_POINT,
+  anotherPoint: A_POINT,
   aDate: A_THIRD_DATE,
   anotherDate: A_DATE,
   anArray: A_THIRD_ARRAY,
@@ -128,8 +128,8 @@ export const A_PARTIAL_ENTITY: SampleEntityData = {
   anotherNumber: null,
   aBoolean: true,
   anotherBoolean: null,
-  aGeoPoint: A_GEOPOINT,
-  anotherGeoPoint: null,
+  aPoint: A_POINT,
+  anotherPoint: null,
   aDate: A_DATE,
   anotherDate: null,
   anArray: AN_ARRAY,
@@ -145,8 +145,8 @@ export const AN_EMPTY_ENTITY: SampleEntityData = {
   anotherNumber: null,
   aBoolean: null,
   anotherBoolean: null,
-  aGeoPoint: null,
-  anotherGeoPoint: null,
+  aPoint: null,
+  anotherPoint: null,
   aDate: null,
   anotherDate: null,
   anArray: null,
@@ -162,8 +162,8 @@ export const AN_ESCAPED_ENTITY: SampleEntityData = {
   anotherNumber: null,
   aBoolean: null,
   anotherBoolean: null,
-  aGeoPoint: null,
-  anotherGeoPoint: null,
+  aPoint: null,
+  anotherPoint: null,
   aDate: null,
   anotherDate: null,
   anArray: [ 'alfa ,.<>{}[]"\':;!@#$%^&*()-+=~ bravo', 'charlie delta' ],

@@ -5,7 +5,7 @@ import Repository from '../../../lib/repository/repository';
 import { SampleJsonEntity, createJsonEntitySchema, loadTestJson } from '../helpers/data-helper';
 import { flushAll } from '../helpers/redis-helper';
 
-import { AN_ENTITY, ANOTHER_ENTITY, A_THIRD_ENTITY, AN_ESCAPED_ENTITY, A_GEOPOINT, A_DATE } from '../../helpers/example-data';
+import { AN_ENTITY, ANOTHER_ENTITY, A_THIRD_ENTITY, AN_ESCAPED_ENTITY, A_POINT, A_DATE } from '../../helpers/example-data';
 
 describe("search for JSON documents", () => {
 
@@ -117,9 +117,9 @@ describe("search for JSON documents", () => {
     ]));
   });
 
-  it("searches a geopoint", async () => {
+  it("searches a point", async () => {
     entities = await repository.search()
-      .where('aGeoPoint').inCircle(circle => circle.origin(A_GEOPOINT).radius(10).meters)
+      .where('aPoint').inCircle(circle => circle.origin(A_POINT).radius(10).meters)
         .returnAll();
     
     expect(entities).toHaveLength(1);
@@ -154,7 +154,7 @@ describe("search for JSON documents", () => {
       .and('aFullTextString').matches('dog')
       .and('aNumber').gte(42)
       .and('aBoolean').true()
-      .and('aGeoPoint').inCircle(circle => circle.origin(12.34, 56.78).radius(10).meters)
+      .and('aPoint').inCircle(circle => circle.origin(12.34, 56.78).radius(10).meters)
       .and('anArray').contains('alfa')
       .returnAll();
 

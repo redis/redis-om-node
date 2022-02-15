@@ -7,7 +7,7 @@ import { fetchJson, flushAll, keyExists } from '../helpers/redis-helper';
 
 import {
   AN_ENTITY, A_PARTIAL_ENTITY, AN_EMPTY_ENTITY,
-  A_GEOPOINT_STRING, ANOTHER_GEOPOINT_STRING,
+  A_POINT_STRING, ANOTHER_POINT_STRING,
   A_DATE_EPOCH, ANOTHER_DATE_EPOCH } from '../../helpers/example-data';
 
 describe("save JSON", () => {
@@ -41,8 +41,8 @@ describe("save JSON", () => {
         anotherNumber: AN_ENTITY.anotherNumber,
         aBoolean: AN_ENTITY.aBoolean,
         anotherBoolean: AN_ENTITY.anotherBoolean,
-        aGeoPoint: AN_ENTITY.aGeoPoint,
-        anotherGeoPoint: AN_ENTITY.anotherGeoPoint,
+        aPoint: AN_ENTITY.aPoint,
+        anotherPoint: AN_ENTITY.anotherPoint,
         aDate: AN_ENTITY.aDate,
         anotherDate: AN_ENTITY.anotherDate,
         anArray: AN_ENTITY.anArray,
@@ -63,8 +63,8 @@ describe("save JSON", () => {
       expect(data.anotherNumber).toBe(AN_ENTITY.anotherNumber);
       expect(data.aBoolean).toBe(AN_ENTITY.aBoolean);
       expect(data.anotherBoolean).toBe(AN_ENTITY.anotherBoolean);
-      expect(data.aGeoPoint).toBe(A_GEOPOINT_STRING);
-      expect(data.anotherGeoPoint).toBe(ANOTHER_GEOPOINT_STRING);
+      expect(data.aPoint).toBe(A_POINT_STRING);
+      expect(data.anotherPoint).toBe(ANOTHER_POINT_STRING);
       expect(data.aDate).toBe(A_DATE_EPOCH);
       expect(data.anotherDate).toBe(ANOTHER_DATE_EPOCH);
       expect(data.anArray).toEqual(AN_ENTITY.anArray);
@@ -83,8 +83,8 @@ describe("save JSON", () => {
         anotherNumber: A_PARTIAL_ENTITY.anotherNumber,
         aBoolean: A_PARTIAL_ENTITY.aBoolean,
         anotherBoolean: A_PARTIAL_ENTITY.anotherBoolean,
-        aGeoPoint: A_PARTIAL_ENTITY.aGeoPoint,
-        anotherGeoPoint: A_PARTIAL_ENTITY.anotherGeoPoint,
+        aPoint: A_PARTIAL_ENTITY.aPoint,
+        anotherPoint: A_PARTIAL_ENTITY.anotherPoint,
         aDate: A_PARTIAL_ENTITY.aDate,
         anotherDate: A_PARTIAL_ENTITY.anotherDate,
         anArray: A_PARTIAL_ENTITY.anArray,
@@ -105,8 +105,8 @@ describe("save JSON", () => {
       expect(data.anotherNumber).toBeUndefined();
       expect(data.aBoolean).toBe(A_PARTIAL_ENTITY.aBoolean);
       expect(data.anotherBoolean).toBeUndefined();
-      expect(data.aGeoPoint).toBe(A_GEOPOINT_STRING);
-      expect(data.anotherGeoPoint).toBeUndefined();
+      expect(data.aPoint).toBe(A_POINT_STRING);
+      expect(data.anotherPoint).toBeUndefined();
       expect(data.aDate).toBe(A_DATE_EPOCH);
       expect(data.anotherDate).toBeUndefined();
       expect(data.anArray).toEqual(A_PARTIAL_ENTITY.anArray);
@@ -125,8 +125,8 @@ describe("save JSON", () => {
         anotherNumber: AN_EMPTY_ENTITY.anotherNumber,
         aBoolean: AN_EMPTY_ENTITY.aBoolean,
         anotherBoolean: AN_EMPTY_ENTITY.anotherBoolean,
-        aGeoPoint: AN_EMPTY_ENTITY.aGeoPoint,
-        anotherGeoPoint: AN_EMPTY_ENTITY.anotherGeoPoint,
+        aPoint: AN_EMPTY_ENTITY.aPoint,
+        anotherPoint: AN_EMPTY_ENTITY.anotherPoint,
         aDate: AN_EMPTY_ENTITY.aDate,
         anotherDate: AN_EMPTY_ENTITY.anotherDate,
         anArray: AN_EMPTY_ENTITY.anArray,

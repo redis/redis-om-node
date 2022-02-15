@@ -205,14 +205,14 @@ interface WhereField<TEntity> extends Where {
   containsOneOf(...value: string[]): Search<TEntity>;
 
   /**
-   * Adds a search for geopoints that fall within a defined circle.
+   * Adds a search for points that fall within a defined circle.
    * @param circleFn A function that returns a {@link Circle} instance defining the search area.
    * @returns The {@link Search} that was called to create this {@link WhereField}.
    */
   inCircle(circleFn: CircleFunction): Search<TEntity>;
 
   /**
-   * Adds a search for geopoints that fall within a defined radius.
+   * Adds a search for points that fall within a defined radius.
    * @param circleFn A function that returns a {@link Circle} instance defining the search area.
    * @returns The {@link Search} that was called to create this {@link WhereField}.
    */

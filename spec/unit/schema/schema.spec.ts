@@ -74,12 +74,12 @@ describe("Schema", () => {
     it("throws an exception when the type is missing on a field definition", () =>
       // @ts-ignore: JavaScript test
       expect(() => new Schema<TestEntity>(TestEntity, { aField: {} }))
-        .toThrow("The field 'aField' is configured with a type of 'undefined'. Valid types include 'array', 'boolean', 'date', 'geopoint', 'number', and 'string'."));
+        .toThrow("The field 'aField' is configured with a type of 'undefined'. Valid types include 'array', 'boolean', 'date', 'number', 'point', and 'string'."));
 
     it("throws an exception when the type is invalid on a field definition", () =>
       // @ts-ignore: JavaScript test
       expect(() => new Schema<TestEntity>(TestEntity, { aField: { type: 'foo' } }))
-        .toThrow("The field 'aField' is configured with a type of 'foo'. Valid types include 'array', 'boolean', 'date', 'geopoint', 'number', and 'string'."));
+        .toThrow("The field 'aField' is configured with a type of 'foo'. Valid types include 'array', 'boolean', 'date', 'number', 'point', and 'string'."));
 
     it("throws an exception when the data structure is invalid", () => {
       // @ts-ignore: JavaScript test

@@ -7,7 +7,7 @@ import { fetchJson, flushAll, keyExists } from '../helpers/redis-helper';
 
 import {
   AN_ENTITY, ANOTHER_ENTITY,
-  ANOTHER_GEOPOINT_STRING, A_THIRD_GEOPOINT_STRING,
+  ANOTHER_POINT_STRING, A_THIRD_POINT_STRING,
   ANOTHER_DATE_EPOCH, A_THIRD_DATE_EPOCH } from '../../helpers/example-data';
 
 describe("update JSON", () => {
@@ -45,8 +45,8 @@ describe("update JSON", () => {
       entity.anotherNumber = ANOTHER_ENTITY.anotherNumber;
       entity.aBoolean = ANOTHER_ENTITY.aBoolean;
       entity.anotherBoolean = ANOTHER_ENTITY.anotherBoolean;
-      entity.aGeoPoint = ANOTHER_ENTITY.aGeoPoint;
-      entity.anotherGeoPoint = ANOTHER_ENTITY.anotherGeoPoint;
+      entity.aPoint = ANOTHER_ENTITY.aPoint;
+      entity.anotherPoint = ANOTHER_ENTITY.anotherPoint;
       entity.aDate = ANOTHER_ENTITY.aDate;
       entity.anotherDate = ANOTHER_ENTITY.anotherDate;
       entity.anArray = ANOTHER_ENTITY.anArray;
@@ -68,8 +68,8 @@ describe("update JSON", () => {
       expect(data.anotherNumber).toBe(ANOTHER_ENTITY.anotherNumber);
       expect(data.aBoolean).toBe(ANOTHER_ENTITY.aBoolean);
       expect(data.anotherBoolean).toBe(ANOTHER_ENTITY.anotherBoolean);
-      expect(data.aGeoPoint).toBe(ANOTHER_GEOPOINT_STRING);
-      expect(data.anotherGeoPoint).toBe(A_THIRD_GEOPOINT_STRING);
+      expect(data.aPoint).toBe(ANOTHER_POINT_STRING);
+      expect(data.anotherPoint).toBe(A_THIRD_POINT_STRING);
       expect(data.aDate).toBe(ANOTHER_DATE_EPOCH);
       expect(data.anotherDate).toBe(A_THIRD_DATE_EPOCH);
       expect(data.anArray).toEqual(ANOTHER_ENTITY.anArray);
@@ -88,8 +88,8 @@ describe("update JSON", () => {
       entity.anotherNumber = null;
       entity.aBoolean = ANOTHER_ENTITY.aBoolean;
       entity.anotherBoolean = null;
-      entity.aGeoPoint = ANOTHER_ENTITY.aGeoPoint;
-      entity.anotherGeoPoint = null;
+      entity.aPoint = ANOTHER_ENTITY.aPoint;
+      entity.anotherPoint = null;
       entity.aDate = ANOTHER_ENTITY.aDate;
       entity.anotherDate = null;
       entity.anArray = ANOTHER_ENTITY.anArray;
@@ -111,8 +111,8 @@ describe("update JSON", () => {
       expect(data.anotherNumber).toBeUndefined();
       expect(data.aBoolean).toBe(ANOTHER_ENTITY.aBoolean);
       expect(data.anotherBoolean).toBeUndefined();
-      expect(data.aGeoPoint).toBe(ANOTHER_GEOPOINT_STRING);
-      expect(data.anotherGeoPoint).toBeUndefined();
+      expect(data.aPoint).toBe(ANOTHER_POINT_STRING);
+      expect(data.anotherPoint).toBeUndefined();
       expect(data.aDate).toBe(ANOTHER_DATE_EPOCH);
       expect(data.anotherDate).toBeUndefined();
       expect(data.anArray).toEqual(ANOTHER_ENTITY.anArray);
@@ -131,8 +131,8 @@ describe("update JSON", () => {
       entity.anotherNumber = null;
       entity.aBoolean = null;
       entity.anotherBoolean = null;
-      entity.aGeoPoint = null;
-      entity.anotherGeoPoint = null;
+      entity.aPoint = null;
+      entity.anotherPoint = null;
       entity.aDate = null;
       entity.anotherDate = null;
       entity.anArray = null;

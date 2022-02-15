@@ -1,4 +1,4 @@
-import { GeoPoint } from "..";
+import { Point } from "../schema/schema-definitions";
 import Entity from "../entity/entity";
 import Search from "./search";
 import WhereField from "./where-field";
@@ -46,13 +46,13 @@ export class Circle {
   }
 
   /**
-   * Sets the origin of the circle using a {@link GeoPoint}. If not
+   * Sets the origin of the circle using a {@link Point}. If not
    * set, defaults to [Null Island](https://en.wikipedia.org/wiki/Null_Island).
    * 
-   * @param point A {@link GeoPoint} containing the longitude and latitude of the origin.
+   * @param point A {@link Point} containing the longitude and latitude of the origin.
    * @returns This instance.
    */
-  origin(point: GeoPoint) : Circle;
+  origin(point: Point) : Circle;
 
   /**
    * Sets the origin of the circle. If not set, defaults to
@@ -65,12 +65,12 @@ export class Circle {
   origin(longitude: number, latitude: number) : Circle;
 
   /** @internal */
-  origin(pointOrLongitude: number | GeoPoint, latitude?: number) : Circle {
+  origin(pointOrLongitude: number | Point, latitude?: number) : Circle {
     if (typeof(pointOrLongitude) === 'number' && latitude !== undefined) {
       this.longitudeOfOrigin = pointOrLongitude;
       this.latitudeOfOrigin = latitude;
     } else {
-      let point = pointOrLongitude as GeoPoint;
+      let point = pointOrLongitude as Point;
       this.longitudeOfOrigin = point.longitude;
       this.latitudeOfOrigin = point.latitude;
     }

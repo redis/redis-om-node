@@ -273,7 +273,7 @@ export default class Search<TEntity extends Entity> {
     if (fieldDef.type === 'number')
       return new WhereNumber<TEntity>(this, field);
 
-    if (fieldDef.type === 'geopoint')
+    if (fieldDef.type === 'point')
       return new WhereGeo<TEntity>(this, field);
 
     if (fieldDef.type === 'date')
@@ -286,6 +286,6 @@ export default class Search<TEntity extends Entity> {
       return new WhereString<TEntity>(this, field);
 
     // @ts-ignore: This is a trap for JavaScript
-    throw new Error(`The field type of '${fieldDef.type}' is not a valid field type. Valid types include 'array', 'boolean', 'geopoint', 'number', and 'string'.`);
+    throw new Error(`The field type of '${fieldDef.type}' is not a valid field type. Valid types include 'array', 'boolean', 'point', 'number', and 'string'.`);
   }
 }

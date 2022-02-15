@@ -1,6 +1,6 @@
 import { EntityData, EntityValue } from '../entity/entity';
 import { JsonData, HashData } from '../client';
-import { ArrayField, SchemaDefinition, FieldDefinition, GeoPoint } from "../schema/schema-definitions";
+import { ArrayField, SchemaDefinition, FieldDefinition, Point } from "../schema/schema-definitions";
 
 class AbstractConverter {
   protected schemaDef: SchemaDefinition
@@ -68,7 +68,7 @@ let toHashConverters = {
   'number': (value: EntityValue) => (value as number).toString(),
   'boolean': (value: EntityValue) => (value as boolean) ? '1' : '0',
   'string': (value: EntityValue) => (value as string).toString(),
-  'geopoint': (value: EntityValue) => geoPointToString(value as GeoPoint),
+  'point': (value: EntityValue) => pointToString(value as Point),
   'date': (value: EntityValue) => dateToString(value as Date),
   'array': (value: EntityValue, fieldDef: FieldDefinition) => stringArrayToString(value as string[], fieldDef as ArrayField)
 };
@@ -77,7 +77,7 @@ let fromHashConverters = {
   'number': stringToNumber,
   'boolean': stringToBoolean,
   'string': (value: string) => value,
-  'geopoint': stringToGeoPoint,
+  'point': stringToPoint,
   'date': stringToDate,
   'array': (value: string, fieldDef: FieldDefinition) => stringToStringArray(value, fieldDef as ArrayField)
 };
@@ -86,7 +86,7 @@ let toJsonConverters = {
   'number': (value: EntityValue) => value,
   'boolean': (value: EntityValue) => value,
   'string': (value: EntityValue) => value,
-  'geopoint': (value: EntityValue) => geoPointToString(value as GeoPoint),
+  'point': (value: EntityValue) => pointToString(value as Point),
   'date': (value: EntityValue) => dateToNumber(value as Date),
   'array': (value: EntityValue) => value
 };
@@ -95,12 +95,12 @@ let fromJsonConverters = {
   'number': (value: any) => (value as number),
   'boolean': (value: any) => (value as boolean),
   'string': (value: any) => (value as string),
-  'geopoint': (value: any) => stringToGeoPoint(value as string),
+  'point': (value: any) => stringToPoint(value as string),
   'date': (value: any) => numberToDate(value as number),
   'array': (value: any) => (value as string[])
 }
 
-function geoPointToString(value: GeoPoint): string {
+function pointToString(value: Point): string {
   let {longitude, latitude} = value;
   return `${longitude},${latitude}`;
 }
@@ -129,7 +129,7 @@ function stringToBoolean(value: string): boolean {
   throw Error(`Non-boolean value of '${value}' read from Redis for boolean field.`);
 }
 
-function stringToGeoPoint(value: string): GeoPoint {
+function stringToPoint(value: string): Point {
   let [ longitude, latitude ] = value.split(',').map(Number.parseFloat);
   return { longitude, latitude };
 }
