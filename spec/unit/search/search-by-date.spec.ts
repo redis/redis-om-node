@@ -35,13 +35,6 @@ describe("Search", () => {
     const A_BETWEEN_QUERY = `(@aDate:[${ANOTHER_DATE_EPOCH} ${A_DATE_EPOCH}])`;
     const A_NEGATED_BETWEEN_QUERY = `(-@aDate:[${ANOTHER_DATE_EPOCH} ${A_DATE_EPOCH}])`;
 
-    beforeAll(() => client = new Client());
-
-    beforeEach(() => {
-      search = new Search<SimpleEntity>(simpleSchema, client);
-      where = search.where('aDate');
-    });
-
     type RangeChecker = (search: Search<SimpleEntity>) => void;
     const expectToBeEqualQuery: RangeChecker = search => expect(search.query).toBe(AN_EQUAL_QUERY);
     const expectToBeNegatedEqualQuery: RangeChecker = search => expect(search.query).toBe(A_NEGATED_EQUAL_QUERY);
@@ -55,6 +48,13 @@ describe("Search", () => {
     const expectToBeNegatedLTEQuery: RangeChecker = search => expect(search.query).toBe(A_NEGATED_LTE_QUERY);
     const expectToBeBetweenQuery: RangeChecker = search => expect(search.query).toBe(A_BETWEEN_QUERY);
     const expectToBeNegatedBetweenQuery: RangeChecker = search => expect(search.query).toBe(A_NEGATED_BETWEEN_QUERY);
+
+    beforeAll(() => client = new Client());
+
+    beforeEach(() => {
+      search = new Search<SimpleEntity>(simpleSchema, client);
+      where = search.where('aDate');
+    });  
 
     describe.each([
       [ "when generating a query with a date as a JavaScript Date type", A_DATE ],

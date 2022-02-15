@@ -1,5 +1,14 @@
 import { GeoPoint } from "../../lib/schema/schema-definitions";
 
+
+export const A_STRING = 'foo';
+export const ANOTHER_STRING = 'bar';
+export const A_THIRD_STRING = 'baz';
+
+export const A_NUMBER = 42;
+export const ANOTHER_NUMBER = 23;
+export const A_THIRD_NUMBER = 13;
+
 export const A_DATE: Date = new Date('1997-07-04T16:56:55.000Z');
 export const A_DATE_ISO: string = A_DATE.toISOString();
 export const A_DATE_EPOCH: number = A_DATE.getTime();

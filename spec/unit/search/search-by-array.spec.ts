@@ -23,20 +23,20 @@ describe("Search", () => {
     const A_CONTAINS_ONE_QUERY = "(@anArray:{foo|bar|baz})";
     const A_NEGATED_CONTAINS_ONE_QUERY = "(-@anArray:{foo|bar|baz})";
 
+    type ArrayChecker = (search: Search<SimpleEntity>) => void;
+    const expectToBeContainsQuery: ArrayChecker = search => expect(search.query).toBe(A_CONTAINS_QUERY);
+    const expectToBeNegatedContainsQuery: ArrayChecker = search => expect(search.query).toBe(A_NEGATED_CONTAINS_QUERY);
+    const expectToBeContainsOneQuery: ArrayChecker = search => expect(search.query).toBe(A_CONTAINS_ONE_QUERY);
+    const expectToBeNegatedContainsOneQuery: ArrayChecker = search => expect(search.query).toBe(A_NEGATED_CONTAINS_ONE_QUERY);
+
     beforeAll(() => client = new Client());
   
     beforeEach(() => {
       search = new Search<SimpleEntity>(simpleSchema, client);
       where = search.where('anArray');
-    });  
+    });    
 
     describe("when generating for an array", () => {
-
-      type ArrayChecker = (search: Search<SimpleEntity>) => void;
-      const expectToBeContainsQuery: ArrayChecker = search => expect(search.query).toBe(A_CONTAINS_QUERY);
-      const expectToBeNegatedContainsQuery: ArrayChecker = search => expect(search.query).toBe(A_NEGATED_CONTAINS_QUERY);
-      const expectToBeContainsOneQuery: ArrayChecker = search => expect(search.query).toBe(A_CONTAINS_ONE_QUERY);
-      const expectToBeNegatedContainsOneQuery: ArrayChecker = search => expect(search.query).toBe(A_NEGATED_CONTAINS_ONE_QUERY);
 
       it("generates a query with .contains", () => expectToBeContainsQuery(where.contains('foo')));
       it("generates a query with .does.contain", () => expectToBeContainsQuery(where.does.contain('foo')));
