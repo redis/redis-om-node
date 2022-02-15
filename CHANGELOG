@@ -4,10 +4,18 @@
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and Redis OM adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## 0.1.8 - 2022-02-04
+## 0.2.0 - 2022-02-15
 ### Added
-- Added geopoint data type
-- Added georadius search
+- Added geopoint data type.
+- Added georadius search.
+- Added date data type.
+- Added date search.
+
+### Changed
+- String fields and searches can now be set to numbers or booleans and will be coerced to a string.
+
+### Removed
+- Repository constructor cannot be directly called. Use client.fetchRepository instead.
 
 
 ## 0.1.7 - 2022-01-07
