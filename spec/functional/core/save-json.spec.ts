@@ -45,8 +45,8 @@ describe("save JSON", () => {
         anotherPoint: AN_ENTITY.anotherPoint,
         aDate: AN_ENTITY.aDate,
         anotherDate: AN_ENTITY.anotherDate,
-        anArray: AN_ENTITY.anArray,
-        anotherArray: AN_ENTITY.anotherArray
+        someStrings: AN_ENTITY.someStrings,
+        someOtherStrings: AN_ENTITY.someOtherStrings
       });
       entityId = await repository.save(entity);
       entityKey = `SampleJsonEntity:${entityId}`;
@@ -67,8 +67,8 @@ describe("save JSON", () => {
       expect(data.anotherPoint).toBe(ANOTHER_POINT_STRING);
       expect(data.aDate).toBe(A_DATE_EPOCH);
       expect(data.anotherDate).toBe(ANOTHER_DATE_EPOCH);
-      expect(data.anArray).toEqual(AN_ENTITY.anArray);
-      expect(data.anotherArray).toEqual(AN_ENTITY.anotherArray);
+      expect(data.someStrings).toEqual(AN_ENTITY.someStrings);
+      expect(data.someOtherStrings).toEqual(AN_ENTITY.someOtherStrings);
     });
   });
 
@@ -87,8 +87,8 @@ describe("save JSON", () => {
         anotherPoint: A_PARTIAL_ENTITY.anotherPoint,
         aDate: A_PARTIAL_ENTITY.aDate,
         anotherDate: A_PARTIAL_ENTITY.anotherDate,
-        anArray: A_PARTIAL_ENTITY.anArray,
-        anotherArray: A_PARTIAL_ENTITY.anotherArray
+        someStrings: A_PARTIAL_ENTITY.someStrings,
+        someOtherStrings: A_PARTIAL_ENTITY.someOtherStrings
       });
       entityId = await repository.save(entity);
       entityKey = `SampleJsonEntity:${entityId}`;
@@ -109,8 +109,8 @@ describe("save JSON", () => {
       expect(data.anotherPoint).toBeUndefined();
       expect(data.aDate).toBe(A_DATE_EPOCH);
       expect(data.anotherDate).toBeUndefined();
-      expect(data.anArray).toEqual(A_PARTIAL_ENTITY.anArray);
-      expect(data.anotherArray).toBeUndefined();
+      expect(data.someStrings).toEqual(A_PARTIAL_ENTITY.someStrings);
+      expect(data.someOtherStrings).toBeUndefined();
     });
   });
 
@@ -129,8 +129,8 @@ describe("save JSON", () => {
         anotherPoint: AN_EMPTY_ENTITY.anotherPoint,
         aDate: AN_EMPTY_ENTITY.aDate,
         anotherDate: AN_EMPTY_ENTITY.anotherDate,
-        anArray: AN_EMPTY_ENTITY.anArray,
-        anotherArray: AN_EMPTY_ENTITY.anotherArray
+        someStrings: AN_EMPTY_ENTITY.someStrings,
+        someOtherStrings: AN_EMPTY_ENTITY.someOtherStrings
       });
       entityId = await repository.save(entity);
       entityKey = `SampleJsonEntity:${entityId}`;

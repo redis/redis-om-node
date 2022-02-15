@@ -60,8 +60,8 @@ describe("create and drop index on hash", () => {
         [ 'identifier', 'anotherPoint', 'attribute', 'anotherPoint', 'type', 'GEO' ],
         [ 'identifier', 'aDate', 'attribute', 'aDate', 'type', 'NUMERIC' ],
         [ 'identifier', 'anotherDate', 'attribute', 'anotherDate', 'type', 'NUMERIC' ],
-        [ 'identifier', 'anArray', 'attribute', 'anArray', 'type', 'TAG', 'SEPARATOR', '|' ],
-        [ 'identifier', 'anotherArray', 'attribute', 'anotherArray', 'type', 'TAG', 'SEPARATOR', '|' ]
+        [ 'identifier', 'someStrings', 'attribute', 'someStrings', 'type', 'TAG', 'SEPARATOR', '|' ],
+        [ 'identifier', 'someOtherStrings', 'attribute', 'someOtherStrings', 'type', 'TAG', 'SEPARATOR', '|' ]
       ]);
     });
 

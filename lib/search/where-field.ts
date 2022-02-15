@@ -175,21 +175,21 @@ interface WhereField<TEntity> extends Where {
   between(lower: string | number | Date, upper: string | number | Date): Search<TEntity>;
 
   /**
-   * Adds a whole-string match for a value within an array to the search query.
+   * Adds a whole-string match for a value within a string array to the search query.
    * @param value The string to be matched.
    * @returns The {@link Search} that was called to create this {@link WhereField}.
    */
   contain(value: string): Search<TEntity>;
 
   /**
-   * Adds a whole-string match for a value within an array to the search query.
+   * Adds a whole-string match for a value within a string array to the search query.
    * @param value The string to be matched.
    * @returns The {@link Search} that was called to create this {@link WhereField}.
    */
   contains(value: string): Search<TEntity>;
 
   /**
-   * Adds a whole-string match against an array to the query. If any of the provided
+   * Adds a whole-string match against a string array to the query. If any of the provided
    * strings in `value` is matched in the array, this matched.
    * @param value An array of strings that you want to match one of.
    * @returns The {@link Search} that was called to create this {@link WhereField}.
@@ -197,7 +197,7 @@ interface WhereField<TEntity> extends Where {
   containOneOf(...value: string[]): Search<TEntity>;
 
   /**
-   * Adds a whole-string match against an array to the query. If any of the provided
+   * Adds a whole-string match against a string array to the query. If any of the provided
    * strings in `value` is matched in the array, this matched.
    * @param value An array of strings that you want to match one of.
    * @returns The {@link Search} that was called to create this {@link WhereField}.

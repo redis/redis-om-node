@@ -13,6 +13,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### Changed
 - String fields and searches can now be set to numbers or booleans and will be coerced to a string.
+- Changed 'array' type in Schema definitions to 'string[]' in preparation for adding other types of arrays.
 
 ### Removed
 - Repository constructor cannot be directly called. Use client.fetchRepository instead.

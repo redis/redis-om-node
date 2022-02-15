@@ -6,8 +6,8 @@ import { HashRepository } from '../../../lib/repository/repository';
 
 import { simpleSchema, SimpleEntity } from '../helpers/test-entity-and-schema';
 import {
-  AN_ARRAY, A_DATE, A_POINT,
-  ANOTHER_ARRAY, ANOTHER_DATE, ANOTHER_POINT } from '../../helpers/example-data';
+  A_STRING_ARRAY, A_DATE, A_POINT,
+  ANOTHER_STRING_ARRAY, ANOTHER_DATE, ANOTHER_POINT } from '../../helpers/example-data';
 
 jest.mock('../../../lib/client');
 
@@ -39,18 +39,18 @@ describe("Repository", () => {
         expect(entity.aString).toBe(null);
         expect(entity.aPoint).toBe(null);
         expect(entity.aDate).toBe(null);
-        expect(entity.anArray).toBe(null);
+        expect(entity.someStrings).toBe(null);
       });
     });
 
     describe("when creating an entity with data", () => {
       beforeEach(() => entity = repository.createEntity({
-        aBoolean: true, aNumber: 42, aString: 'foo', aPoint: A_POINT, aDate: A_DATE, anArray: AN_ARRAY }));
+        aBoolean: true, aNumber: 42, aString: 'foo', aPoint: A_POINT, aDate: A_DATE, someStrings: A_STRING_ARRAY }));
   
       it("is of the expected type", () => expect(entity).toBeInstanceOf(SimpleEntity));
       it("has a generated entity id", () => expect(entity.entityId).toMatch(ULID_REGEX));
       it("has the expected entity data", () => expect(entity.entityData).toEqual({
-        aBoolean: true, aNumber: 42, aString: 'foo', aPoint: A_POINT, aDate: A_DATE, anArray: AN_ARRAY }));
+        aBoolean: true, aNumber: 42, aString: 'foo', aPoint: A_POINT, aDate: A_DATE, someStrings: A_STRING_ARRAY }));
 
       it("has populated properties", () => {
         expect(entity.aBoolean).toBe(true);
@@ -58,23 +58,23 @@ describe("Repository", () => {
         expect(entity.aString).toBe('foo');
         expect(entity.aPoint).toEqual(A_POINT);
         expect(entity.aDate).toEqual(A_DATE);
-        expect(entity.anArray).toEqual(AN_ARRAY);
+        expect(entity.someStrings).toEqual(A_STRING_ARRAY);
       });
     });
 
     describe("when creating an entity with missing data", () => {
-      beforeEach(() => entity = repository.createEntity({ aString: 'foo', anArray: AN_ARRAY }));
+      beforeEach(() => entity = repository.createEntity({ aString: 'foo', someStrings: A_STRING_ARRAY }));
   
       it("is of the expected type", () => expect(entity).toBeInstanceOf(SimpleEntity));
       it("has a generated entity id", () => expect(entity.entityId).toMatch(ULID_REGEX));
-      it("has the expected entity data", () => expect(entity.entityData).toEqual({ aString: 'foo', anArray: AN_ARRAY }));
+      it("has the expected entity data", () => expect(entity.entityData).toEqual({ aString: 'foo', someStrings: A_STRING_ARRAY }));
       it("has populated properties", () => {
         expect(entity.aBoolean).toBe(null);
         expect(entity.aNumber).toBe(null);
         expect(entity.aString).toBe('foo');
         expect(entity.aPoint).toBe(null);
         expect(entity.aDate).toBe(null);
-        expect(entity.anArray).toEqual(AN_ARRAY);
+        expect(entity.someStrings).toEqual(A_STRING_ARRAY);
       });
     });
 
@@ -82,20 +82,20 @@ describe("Repository", () => {
       beforeEach(() => entity = repository.createEntity({
           aBoolean: true, aNumber: 42, aString: 'foo', 
           anotherBoolean: false, anotherNumber: 23, anotherString: 'bar',
-          aPoint: A_POINT, aDate: A_DATE, anArray: AN_ARRAY,
-          anotherPoint: ANOTHER_POINT, anotherDate: ANOTHER_DATE, anotherArray: ANOTHER_ARRAY }));
+          aPoint: A_POINT, aDate: A_DATE, someStrings: A_STRING_ARRAY,
+          anotherPoint: ANOTHER_POINT, anotherDate: ANOTHER_DATE, someOtherStrings: ANOTHER_STRING_ARRAY }));
   
       it("is of the expected type", () => expect(entity).toBeInstanceOf(SimpleEntity));
       it("has a generated entity id", () => expect(entity.entityId).toMatch(ULID_REGEX));
       it("has the expected entity data", () => expect(entity.entityData).toEqual({
-        aBoolean: true, aNumber: 42, aString: 'foo', aPoint: A_POINT, aDate: A_DATE, anArray: AN_ARRAY }))
+        aBoolean: true, aNumber: 42, aString: 'foo', aPoint: A_POINT, aDate: A_DATE, someStrings: A_STRING_ARRAY }))
       it("has populated properties", () => {
         expect(entity.aBoolean).toBe(true);
         expect(entity.aNumber).toBe(42);
         expect(entity.aString).toBe('foo');
         expect(entity.aPoint).toEqual(A_POINT);
         expect(entity.aDate).toEqual(A_DATE);
-        expect(entity.anArray).toEqual(AN_ARRAY);
+        expect(entity.someStrings).toEqual(A_STRING_ARRAY);
       });
     });
 
@@ -105,8 +105,8 @@ describe("Repository", () => {
           aNumber: 'foo',
           aString: A_POINT,
           aPoint: A_DATE,
-          aDate: AN_ARRAY,
-          anArray: true
+          aDate: A_STRING_ARRAY,
+          someStrings: true
         })).toThrowError();
     });
   });

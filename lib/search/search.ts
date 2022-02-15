@@ -6,7 +6,7 @@ import Where from './where';
 import WhereAnd from './where-and';
 import WhereOr from './where-or';
 import WhereField from './where-field';
-import WhereArray from './where-array';
+import WhereStringArray from './where-array';
 import { WhereHashBoolean, WhereJsonBoolean } from './where-boolean';
 import WhereNumber from './where-number';
 import WhereGeo from './where-geo';
@@ -261,31 +261,16 @@ export default class Search<TEntity extends Entity> {
 
     if (fieldDef === undefined) throw new Error(`The field '${field}' is not part of the schema.`);
 
-    if (fieldDef.type === 'array')
-      return new WhereArray<TEntity>(this, field);
-
-    if (fieldDef.type === 'boolean' && this.schema.dataStructure === 'HASH')
-      return new WhereHashBoolean<TEntity>(this, field);
-
-    if (fieldDef.type === 'boolean' && this.schema.dataStructure === 'JSON')
-      return new WhereJsonBoolean<TEntity>(this, field);
-
-    if (fieldDef.type === 'number')
-      return new WhereNumber<TEntity>(this, field);
-
-    if (fieldDef.type === 'point')
-      return new WhereGeo<TEntity>(this, field);
-
-    if (fieldDef.type === 'date')
-      return new WhereDate<TEntity>(this, field);
-
-    if (fieldDef.type === 'string' && fieldDef.textSearch === true)
-      return new WhereText<TEntity>(this, field);
-
-    if (fieldDef.type === 'string' && fieldDef.textSearch !== true)
-      return new WhereString<TEntity>(this, field);
+    if (fieldDef.type === 'boolean' && this.schema.dataStructure === 'HASH') return new WhereHashBoolean<TEntity>(this, field);
+    if (fieldDef.type === 'boolean' && this.schema.dataStructure === 'JSON') return new WhereJsonBoolean<TEntity>(this, field);
+    if (fieldDef.type === 'date') return new WhereDate<TEntity>(this, field);
+    if (fieldDef.type === 'number') return new WhereNumber<TEntity>(this, field);
+    if (fieldDef.type === 'point') return new WhereGeo<TEntity>(this, field);
+    if (fieldDef.type === 'string' && fieldDef.textSearch === true) return new WhereText<TEntity>(this, field);
+    if (fieldDef.type === 'string' && fieldDef.textSearch !== true) return new WhereString<TEntity>(this, field);
+    if (fieldDef.type === 'string[]') return new WhereStringArray<TEntity>(this, field);
 
     // @ts-ignore: This is a trap for JavaScript
-    throw new Error(`The field type of '${fieldDef.type}' is not a valid field type. Valid types include 'array', 'boolean', 'point', 'number', and 'string'.`);
+    throw new Error(`The field type of '${fieldDef.type}' is not a valid field type. Valid types include 'boolean', 'date', 'number', 'point', 'string', and 'string[]'.`);
   }
 }

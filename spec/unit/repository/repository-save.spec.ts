@@ -5,7 +5,7 @@ import Repository from '../../../lib/repository/repository';
 import { JsonRepository, HashRepository } from '../../../lib/repository/repository';
 
 import {
-  AN_ARRAY, AN_ARRAY_JOINED,
+  A_STRING_ARRAY, A_STRING_ARRAY_JOINED,
   A_DATE, A_DATE_EPOCH, A_DATE_EPOCH_STRING,
   A_POINT, A_POINT_STRING } from '../../helpers/example-data';
 
@@ -38,9 +38,9 @@ describe("Repository", () => {
 
         ["when saving a fully populated entity", {
           providedString: 'foo', providedNumber: 42, providedBoolean: false,
-          providedPoint: A_POINT, providedDate: A_DATE, providedArray: AN_ARRAY,
+          providedPoint: A_POINT, providedDate: A_DATE, providedArray: A_STRING_ARRAY,
           expectedData: { aString: 'foo', aNumber: '42', aBoolean: '0',
-            aPoint: A_POINT_STRING, aDate: A_DATE_EPOCH_STRING, anArray: AN_ARRAY_JOINED }
+            aPoint: A_POINT_STRING, aDate: A_DATE_EPOCH_STRING, someStrings: A_STRING_ARRAY_JOINED }
         }],
   
         [ "when saving a partially populated entity", {
@@ -57,7 +57,7 @@ describe("Repository", () => {
           entity.aBoolean = data.providedBoolean;
           entity.aPoint = data.providedPoint;
           entity.aDate = data.providedDate;
-          entity.anArray = data.providedArray;
+          entity.someStrings = data.providedArray;
           entityId = await repository.save(entity);
           expectedKey = `SimpleHashEntity:${entityId}`;
         });
@@ -74,7 +74,7 @@ describe("Repository", () => {
           entity.aBoolean = null;
           entity.aPoint = null;
           entity.aDate = null;
-          entity.anArray = null;
+          entity.someStrings = null;
           entityId = await repository.save(entity);
           expectedKey = `SimpleHashEntity:${entityId}`;
         });
@@ -97,9 +97,9 @@ describe("Repository", () => {
 
         ["when saving a fully populated entity", {
           providedString: 'foo', providedNumber: 42, providedBoolean: false,
-          providedPoint: A_POINT, providedDate: A_DATE, providedArray: AN_ARRAY,
+          providedPoint: A_POINT, providedDate: A_DATE, providedArray: A_STRING_ARRAY,
           expectedData: { aString: 'foo', aNumber: 42, aBoolean: false,
-            aPoint: A_POINT_STRING, aDate: A_DATE_EPOCH, anArray: AN_ARRAY }
+            aPoint: A_POINT_STRING, aDate: A_DATE_EPOCH, someStrings: A_STRING_ARRAY }
         }],
   
         [ "when saving a partially populated entity", {
@@ -116,7 +116,7 @@ describe("Repository", () => {
           entity.aBoolean = data.providedBoolean;
           entity.aPoint = data.providedPoint
           entity.aDate = data.providedDate;
-          entity.anArray = data.providedArray;
+          entity.someStrings = data.providedArray;
           entityId = await repository.save(entity);
           expectedKey = `SimpleJsonEntity:${entityId}`;
         });
@@ -133,7 +133,7 @@ describe("Repository", () => {
           entity.aBoolean = null;
           entity.aPoint = null;
           entity.aDate = null;
-          entity.anArray = null;
+          entity.someStrings = null;
           entityId = await repository.save(entity);
           expectedKey = `SimpleJsonEntity:${entityId}`;
         });

@@ -46,7 +46,7 @@ describe("Demo", () => {
         date: { type: 'date' },
         title: { type: 'string', textSearch: true },
         observed: { type: 'string', textSearch: true },
-        classification: { type: 'array' },
+        classification: { type: 'string[]' },
         county: { type: 'string' },
         state: { type: 'string' },
         location: { type: 'point' },

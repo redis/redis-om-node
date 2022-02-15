@@ -8,7 +8,7 @@ export const SIMPLE_ENTITY_1 = {
   aNumber: 42,
   aBoolean: false,
   aPoint: { longitude: 12.34, latitude: 56.78 },
-  anArray: [ 'foo', 'bar', 'baz' ]
+  someStrings: [ 'foo', 'bar', 'baz' ]
 }
 
 export const SIMPLE_ENTITY_2 = {
@@ -17,7 +17,7 @@ export const SIMPLE_ENTITY_2 = {
   aNumber: 23,
   aBoolean: true,
   aPoint: { longitude: 23.45, latitude: 67.89 },
-  anArray: [ 'bar', 'baz', 'qux' ]
+  someStrings: [ 'bar', 'baz', 'qux' ]
 }
 
 export const SIMPLE_ENTITY_3 = {
@@ -26,7 +26,7 @@ export const SIMPLE_ENTITY_3 = {
   aNumber: 13,
   aBoolean: false,
   aPoint: { longitude: 34.56, latitude: 78.90 },
-  anArray: [ 'baz', 'qux', 'quux' ]
+  someStrings: [ 'baz', 'qux', 'quux' ]
 }
 
 export const SIMPLE_ENTITY_4 = {
@@ -35,7 +35,7 @@ export const SIMPLE_ENTITY_4 = {
   aNumber: 7,
   aBoolean: true,
   aPoint: { longitude: 1.23, latitude: 4.56 },
-  anArray: [ 'qux', 'quux', 'quuux' ]
+  someStrings: [ 'qux', 'quux', 'quuux' ]
 }
 
 export const SIMPLE_ENTITY_5 = {
@@ -44,7 +44,7 @@ export const SIMPLE_ENTITY_5 = {
   aNumber: 37,
   aBoolean: false,
   aPoint: { longitude: 2.34, latitude: 5.67 },
-  anArray: [ 'quux', 'quuux', 'quuuux' ]
+  someStrings: [ 'quux', 'quuux', 'quuuux' ]
 }
 
 export function mockClientSearchToReturnNothing() {
@@ -64,7 +64,7 @@ export function mockClientSearchToReturnSingleHash() {
         'aNumber', '42',
         'aBoolean', '0',
         'aPoint', '12.34,56.78',
-        'anArray', 'foo|bar|baz' ]])
+        'someStrings', 'foo|bar|baz' ]])
     .mockResolvedValue(['1']);
 }
 
@@ -77,7 +77,7 @@ export function mockClientSearchToReturnSingleJsonString() {
         "aNumber": 42,
         "aBoolean": false,
         "aPoint": "12.34,56.78",
-        "anArray": [ "foo", "bar", "baz" ] }`]])
+        "someStrings": [ "foo", "bar", "baz" ] }`]])
     .mockResolvedValue(['1']);
 }
 
@@ -90,19 +90,19 @@ export function mockClientSearchToReturnMultipleHashes() {
         'aNumber', '42',
         'aBoolean', '0',
         'aPoint', '12.34,56.78',
-        'anArray', 'foo|bar|baz' ],
+        'someStrings', 'foo|bar|baz' ],
       'SimpleHashEntity:2', [
         'aString', 'bar',
         'aNumber', '23',
         'aBoolean', '1',
         'aPoint', '23.45,67.89',
-        'anArray', 'bar|baz|qux' ],
+        'someStrings', 'bar|baz|qux' ],
       'SimpleHashEntity:3', [
         'aString', 'baz',
         'aNumber', '13',
         'aBoolean', '0',
         'aPoint', '34.56,78.90',
-        'anArray', 'baz|qux|quux' ]])
+        'someStrings', 'baz|qux|quux' ]])
     .mockResolvedValue(['3']);
 }
 
@@ -115,19 +115,19 @@ export function mockClientSearchToReturnMultipleJsonStrings() {
         "aNumber": 42,
         "aBoolean": false,
         "aPoint": "12.34,56.78",
-        "anArray": [ "foo", "bar", "baz" ] }`],
+        "someStrings": [ "foo", "bar", "baz" ] }`],
       'SimpleJsonEntity:2', [ '$', `{
         "aString": "bar",
         "aNumber": 23,
         "aBoolean": true,
         "aPoint": "23.45,67.89",
-        "anArray": [ "bar", "baz", "qux" ] }`],
+        "someStrings": [ "bar", "baz", "qux" ] }`],
       'SimpleJsonEntity:3', [ '$', `{
         "aString": "baz",
         "aNumber": 13,
         "aBoolean": false,
         "aPoint": "34.56,78.90",
-        "anArray": [ "baz", "qux", "quux" ] }`]])
+        "someStrings": [ "baz", "qux", "quux" ] }`]])
     .mockResolvedValue(['3']);
 }
 
@@ -140,13 +140,13 @@ export function mockClientSearchToReturnPaginatedHashes() {
         'aNumber', '42',
         'aBoolean', '0',
         'aPoint', '12.34,56.78',
-        'anArray', 'foo|bar|baz' ],
+        'someStrings', 'foo|bar|baz' ],
       'SimpleHashEntity:2', [
         'aString', 'bar',
         'aNumber', '23',
         'aBoolean', '1',
         'aPoint', '23.45,67.89',
-        'anArray', 'bar|baz|qux' ]])
+        'someStrings', 'bar|baz|qux' ]])
     .mockResolvedValueOnce([
       '5',
       'SimpleHashEntity:3', [
@@ -154,13 +154,13 @@ export function mockClientSearchToReturnPaginatedHashes() {
         'aNumber', '13',
         'aBoolean', '0',
         'aPoint', '34.56,78.90',
-        'anArray', 'baz|qux|quux' ],
+        'someStrings', 'baz|qux|quux' ],
       'SimpleHashEntity:4', [
         'aString', 'qux',
         'aNumber', '7',
         'aBoolean', '1',
         'aPoint', '1.23,4.56',
-        'anArray', 'qux|quux|quuux' ]])
+        'someStrings', 'qux|quux|quuux' ]])
     .mockResolvedValueOnce([
       '5',
       'SimpleHashEntity:5', [
@@ -168,7 +168,7 @@ export function mockClientSearchToReturnPaginatedHashes() {
         'aNumber', '37',
         'aBoolean', '0',
         'aPoint', '2.34,5.67',
-        'anArray', 'quux|quuux|quuuux' ]])
+        'someStrings', 'quux|quuux|quuuux' ]])
     .mockResolvedValue(['5']);
 }
 
@@ -181,13 +181,13 @@ export function mockClientSearchToReturnPaginatedJsonStrings() {
         "aNumber": 42,
         "aBoolean": false,
         "aPoint": "12.34,56.78",
-        "anArray": [ "foo", "bar", "baz" ] }`],
+        "someStrings": [ "foo", "bar", "baz" ] }`],
       'SimpleJsonEntity:2', [ '$', `{
         "aString": "bar",
         "aNumber": 23,
         "aBoolean": true,
         "aPoint": "23.45,67.89",
-        "anArray": [ "bar", "baz", "qux" ] }`]])
+        "someStrings": [ "bar", "baz", "qux" ] }`]])
     .mockResolvedValueOnce([
       '5',
       'SimpleJsonEntity:3', [ '$', `{
@@ -195,13 +195,13 @@ export function mockClientSearchToReturnPaginatedJsonStrings() {
         "aNumber": 13,
         "aBoolean": false,
         "aPoint": "34.56,78.90",
-        "anArray": [ "baz", "qux", "quux" ] }`],
+        "someStrings": [ "baz", "qux", "quux" ] }`],
       'SimpleJsonEntity:4', [ '$', `{
         "aString": "qux",
         "aNumber": 7,
         "aBoolean": true,
         "aPoint": "1.23,4.56",
-        "anArray": [ "qux", "quux", "quuux" ] }`]])
+        "someStrings": [ "qux", "quux", "quuux" ] }`]])
     .mockResolvedValueOnce([
       '5',
       'SimpleJsonEntity:5', [ '$', `{
@@ -209,6 +209,6 @@ export function mockClientSearchToReturnPaginatedJsonStrings() {
         "aNumber": 37,
         "aBoolean": false,
         "aPoint": "2.34,5.67",
-        "anArray": [ "quux", "quuux", "quuuux" ] }`]])
+        "someStrings": [ "quux", "quuux", "quuuux" ] }`]])
     .mockResolvedValue(['5']);
 }

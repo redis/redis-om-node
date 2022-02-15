@@ -1,6 +1,6 @@
 import { EntityData, EntityValue } from '../entity/entity';
 import { JsonData, HashData } from '../client';
-import { ArrayField, SchemaDefinition, FieldDefinition, Point } from "../schema/schema-definitions";
+import { StringArrayField, SchemaDefinition, FieldDefinition, Point } from "../schema/schema-definitions";
 
 class AbstractConverter {
   protected schemaDef: SchemaDefinition
@@ -70,7 +70,7 @@ let toHashConverters = {
   'string': (value: EntityValue) => (value as string).toString(),
   'point': (value: EntityValue) => pointToString(value as Point),
   'date': (value: EntityValue) => dateToString(value as Date),
-  'array': (value: EntityValue, fieldDef: FieldDefinition) => stringArrayToString(value as string[], fieldDef as ArrayField)
+  'string[]': (value: EntityValue, fieldDef: FieldDefinition) => stringArrayToString(value as string[], fieldDef as StringArrayField)
 };
 
 let fromHashConverters = {
@@ -79,7 +79,7 @@ let fromHashConverters = {
   'string': (value: string) => value,
   'point': stringToPoint,
   'date': stringToDate,
-  'array': (value: string, fieldDef: FieldDefinition) => stringToStringArray(value, fieldDef as ArrayField)
+  'string[]': (value: string, fieldDef: FieldDefinition) => stringToStringArray(value, fieldDef as StringArrayField)
 };
 
 let toJsonConverters = {
@@ -88,7 +88,7 @@ let toJsonConverters = {
   'string': (value: EntityValue) => value,
   'point': (value: EntityValue) => pointToString(value as Point),
   'date': (value: EntityValue) => dateToNumber(value as Date),
-  'array': (value: EntityValue) => value
+  'string[]': (value: EntityValue) => value
 };
 
 let fromJsonConverters = {
@@ -97,7 +97,7 @@ let fromJsonConverters = {
   'string': (value: any) => (value as string),
   'point': (value: any) => stringToPoint(value as string),
   'date': (value: any) => numberToDate(value as number),
-  'array': (value: any) => (value as string[])
+  'string[]': (value: any) => (value as string[])
 }
 
 function pointToString(value: Point): string {
@@ -113,7 +113,7 @@ function dateToNumber(value: Date): number {
   return value.getTime();
 }
 
-function stringArrayToString(value: string[], fieldDef: ArrayField): string {
+function stringArrayToString(value: string[], fieldDef: StringArrayField): string {
   return value.join(fieldDef.separator ?? '|');
 }
 
@@ -142,7 +142,7 @@ function stringToDate(value: string): Date {
   return date;
 }
 
-function stringToStringArray(value: string, fieldDef: ArrayField) {
+function stringToStringArray(value: string, fieldDef: StringArrayField) {
   return value.split(fieldDef.separator ?? '|');
 }
 

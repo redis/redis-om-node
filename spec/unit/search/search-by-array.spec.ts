@@ -18,10 +18,10 @@ describe("Search", () => {
     let search: Search<SimpleEntity>;
     let where: WhereField<SimpleEntity>;
 
-    const A_CONTAINS_QUERY = "(@anArray:{foo})";
-    const A_NEGATED_CONTAINS_QUERY = "(-@anArray:{foo})";
-    const A_CONTAINS_ONE_QUERY = "(@anArray:{foo|bar|baz})";
-    const A_NEGATED_CONTAINS_ONE_QUERY = "(-@anArray:{foo|bar|baz})";
+    const A_CONTAINS_QUERY = "(@someStrings:{foo})";
+    const A_NEGATED_CONTAINS_QUERY = "(-@someStrings:{foo})";
+    const A_CONTAINS_ONE_QUERY = "(@someStrings:{foo|bar|baz})";
+    const A_NEGATED_CONTAINS_ONE_QUERY = "(-@someStrings:{foo|bar|baz})";
 
     type ArrayChecker = (search: Search<SimpleEntity>) => void;
     const expectToBeContainsQuery: ArrayChecker = search => expect(search.query).toBe(A_CONTAINS_QUERY);
@@ -33,10 +33,10 @@ describe("Search", () => {
   
     beforeEach(() => {
       search = new Search<SimpleEntity>(simpleSchema, client);
-      where = search.where('anArray');
+      where = search.where('someStrings');
     });    
 
-    describe("when generating for an array", () => {
+    describe("when generating for an string[]", () => {
 
       it("generates a query with .contains", () => expectToBeContainsQuery(where.contains('foo')));
       it("generates a query with .does.contain", () => expectToBeContainsQuery(where.does.contain('foo')));
@@ -48,12 +48,12 @@ describe("Search", () => {
 
       it("generates a query that escapes all punctuation", () => {
         let query = where.contains(",.<>{}[]\"':;|!@#$%^&*()-+=~ ").query;
-        expect(query).toBe("(@anArray:{\\,\\.\\<\\>\\{\\}\\[\\]\\\"\\'\\:\\;\\|\\!\\@\\#\\$\\%\\^\\&\\*\\(\\)\\-\\+\\=\\~\\ })");
+        expect(query).toBe("(@someStrings:{\\,\\.\\<\\>\\{\\}\\[\\]\\\"\\'\\:\\;\\|\\!\\@\\#\\$\\%\\^\\&\\*\\(\\)\\-\\+\\=\\~\\ })");
       });
 
       it("generates a query that escapes all punctuation", () => {
         let query = where.containsOneOf(",.<>{}[]\"':;|", "!@#$%^&*()-+=~ ").query;
-        expect(query).toBe("(@anArray:{\\,\\.\\<\\>\\{\\}\\[\\]\\\"\\'\\:\\;\\||\\!\\@\\#\\$\\%\\^\\&\\*\\(\\)\\-\\+\\=\\~\\ })");
+        expect(query).toBe("(@someStrings:{\\,\\.\\<\\>\\{\\}\\[\\]\\\"\\'\\:\\;\\||\\!\\@\\#\\$\\%\\^\\&\\*\\(\\)\\-\\+\\=\\~\\ })");
       });
     });
   });

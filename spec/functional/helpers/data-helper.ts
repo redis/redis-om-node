@@ -20,8 +20,8 @@ interface SampleEntity {
   anotherPoint?: Point | null;
   aDate?: Date | null;
   anotherDate?: Date | null;
-  anArray?: string[] | null;
-  anotherArray?: string[] | null;
+  someStrings?: string[] | null;
+  someOtherStrings?: string[] | null;
 }
 
 export interface SampleHashEntity extends SampleEntity {}
@@ -54,8 +54,8 @@ function createSchemaOfType<TEntity extends Entity>(ctor: EntityConstructor<TEnt
       anotherPoint: { type: 'point' },
       aDate: { type: 'date' },
       anotherDate: { type: 'date' },
-      anArray: { type: 'array' },
-      anotherArray: { type: 'array' }
+      someStrings: { type: 'string[]' },
+      someOtherStrings: { type: 'string[]' }
     }, {
       dataStructure
     });

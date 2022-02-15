@@ -1,14 +1,20 @@
 import { 
-  A_DATE, A_DATE_ISO, ANOTHER_DATE, ANOTHER_DATE_ISO, A_THIRD_DATE,
-  A_POINT, A_POINT_JSON, ANOTHER_POINT, ANOTHER_POINT_JSON, A_THIRD_POINT,
-  AN_ARRAY, AN_ARRAY_JSON, ANOTHER_ARRAY, ANOTHER_ARRAY_JSON, A_THIRD_ARRAY, ANOTHER_DATE_EPOCH, A_THIRD_DATE_EPOCH, A_THIRD_DATE_ISO } from '../../helpers/example-data';
+  A_DATE, A_DATE_ISO,
+  ANOTHER_DATE, ANOTHER_DATE_EPOCH, ANOTHER_DATE_ISO, 
+  A_THIRD_DATE, A_THIRD_DATE_EPOCH, A_THIRD_DATE_ISO,
+  A_POINT, A_POINT_JSON,
+  ANOTHER_POINT, ANOTHER_POINT_JSON,
+  A_THIRD_POINT,
+  A_STRING_ARRAY, A_STRING_ARRAY_JSON,
+  ANOTHER_STRING_ARRAY, ANOTHER_STRING_ARRAY_JSON,
+  A_THIRD_STRING_ARRAY } from '../../helpers/example-data';
 
 import { AliasedEntity, aliasedSchema, SimpleEntity, simpleSchema } from '../helpers/test-entity-and-schema';
 
 const ENTITY_ID = 'foo';
-const EXPECTED_JSON = `{"entityId":"${ENTITY_ID}","aString":"foo","aNumber":42,"aBoolean":false,"aPoint":${A_POINT_JSON},"aDate":"${A_DATE_ISO}","anArray":${AN_ARRAY_JSON}}`;
-const EXPECTED_NULL_JSON = `{"entityId":"${ENTITY_ID}","aString":null,"aNumber":null,"aBoolean":null,"aPoint":null,"aDate":null,"anArray":null}`;
-const EXPECTED_ALIASED_JSON = `{"entityId":"${ENTITY_ID}","aString":"bar","aNumber":23,"aBoolean":true,"aPoint":${ANOTHER_POINT_JSON},"aDate":"${ANOTHER_DATE_ISO}","anArray":${ANOTHER_ARRAY_JSON}}`;
+const EXPECTED_JSON = `{"entityId":"${ENTITY_ID}","aString":"foo","aNumber":42,"aBoolean":false,"aPoint":${A_POINT_JSON},"aDate":"${A_DATE_ISO}","someStrings":${A_STRING_ARRAY_JSON}}`;
+const EXPECTED_NULL_JSON = `{"entityId":"${ENTITY_ID}","aString":null,"aNumber":null,"aBoolean":null,"aPoint":null,"aDate":null,"someStrings":null}`;
+const EXPECTED_ALIASED_JSON = `{"entityId":"${ENTITY_ID}","aString":"bar","aNumber":23,"aBoolean":true,"aPoint":${ANOTHER_POINT_JSON},"aDate":"${ANOTHER_DATE_ISO}","someStrings":${ANOTHER_STRING_ARRAY_JSON}}`;
 
 let entity: SimpleEntity;
 
@@ -22,13 +28,13 @@ describe("Entity", () => {
     it("returns null for the boolean property", () => expect(entity.aBoolean).toBeNull());
     it("returns null for the point property", () => expect(entity.aPoint).toBeNull());
     it("returns null for the date property", () => expect(entity.aDate).toBeNull());
-    it("returns null for the array property", () => expect(entity.anArray).toBeNull());
+    it("returns null for the string[] property", () => expect(entity.someStrings).toBeNull());
     it("serializes to the expected JSON", () => expect(JSON.stringify(entity)).toBe(EXPECTED_NULL_JSON));
   });
 
   describe("with data", () => {
     beforeEach(() => entity = new SimpleEntity(simpleSchema.definition, ENTITY_ID, {
-      aNumber: 42, aString: 'foo', aBoolean: false, aPoint: A_POINT, aDate: A_DATE, anArray: AN_ARRAY }));
+      aNumber: 42, aString: 'foo', aBoolean: false, aPoint: A_POINT, aDate: A_DATE, someStrings: A_STRING_ARRAY }));
 
     it("has the passed in Redis ID", () => expect(entity.entityId).toBe(ENTITY_ID));
     it("returns a number for the number property", () => expect(entity.aNumber).toBe(42));
@@ -36,7 +42,7 @@ describe("Entity", () => {
     it("returns a boolean for the boolean property", () => expect(entity.aBoolean).toBe(false));
     it("returns a point for the point property", () => expect(entity.aPoint).toEqual(A_POINT));
     it("returns a date for the date property", () => expect(entity.aDate).toEqual(A_DATE));
-    it("returns an array for the array property", () => expect(entity.anArray).toEqual(AN_ARRAY));
+    it("returns a string[] for the string[] property", () => expect(entity.someStrings).toEqual(A_STRING_ARRAY));
     it("serializes to the expected JSON", () => expect(JSON.stringify(entity)).toBe(EXPECTED_JSON));
 
     describe("changing the data", () => {
@@ -90,14 +96,14 @@ describe("Entity", () => {
         expect(entity.entityData.aDate).toEqual(ANOTHER_DATE);
       });
 
-      it("stores a string[] when the array property is changed", () => {
-        entity.anArray = ANOTHER_ARRAY;
-        expect(entity.entityData.anArray).toEqual(ANOTHER_ARRAY);
+      it("stores a string[] when the string[] property is changed", () => {
+        entity.someStrings = ANOTHER_STRING_ARRAY;
+        expect(entity.entityData.someStrings).toEqual(ANOTHER_STRING_ARRAY);
       });
 
-      it("stores a string[] when the array property is changed to an any[]", () => {
-        entity.anArray = [ 42, true, 23, false ];
-        expect(entity.entityData.anArray).toEqual([ '42', 'true', '23', 'false' ])
+      it("stores a string[] when the string[] property is changed to an any[]", () => {
+        entity.someStrings = [ 42, true, 23, false ];
+        expect(entity.entityData.someStrings).toEqual([ '42', 'true', '23', 'false' ])
       });
     });
 
@@ -116,8 +122,8 @@ describe("Entity", () => {
         expect(() => entity.aNumber = A_DATE)
           .toThrow(`Property 'aNumber' expected type of 'number' but received value of '${A_DATE}'.`);
         // @ts-ignore: JavaScript
-        expect(() => entity.aNumber = AN_ARRAY)
-          .toThrow(`Property 'aNumber' expected type of 'number' but received value of '${AN_ARRAY}'.`);
+        expect(() => entity.aNumber = A_STRING_ARRAY)
+          .toThrow(`Property 'aNumber' expected type of 'number' but received value of '${A_STRING_ARRAY}'.`);
         });
       
       it("complains when not a string", () => {
@@ -128,8 +134,8 @@ describe("Entity", () => {
         expect(() => entity.aString = A_DATE)
           .toThrow(`Property 'aString' expected type of 'string' but received value of '${A_DATE}'.`);
         // @ts-ignore: JavaScript
-        expect(() => entity.aString = AN_ARRAY)
-          .toThrow(`Property 'aString' expected type of 'string' but received value of '${AN_ARRAY}'.`);
+        expect(() => entity.aString = A_STRING_ARRAY)
+          .toThrow(`Property 'aString' expected type of 'string' but received value of '${A_STRING_ARRAY}'.`);
       });
 
       it("complains when not a boolean", () => {
@@ -146,8 +152,8 @@ describe("Entity", () => {
         expect(() => entity.aBoolean = A_DATE)
           .toThrow(`Property 'aBoolean' expected type of 'boolean' but received value of '${A_DATE}'.`);
         // @ts-ignore: JavaScript
-        expect(() => entity.aBoolean = AN_ARRAY)
-          .toThrow(`Property 'aBoolean' expected type of 'boolean' but received value of '${AN_ARRAY}'`)
+        expect(() => entity.aBoolean = A_STRING_ARRAY)
+          .toThrow(`Property 'aBoolean' expected type of 'boolean' but received value of '${A_STRING_ARRAY}'`)
       });
       
       it("complains when not a point", () => {
@@ -164,8 +170,8 @@ describe("Entity", () => {
         expect(() => entity.aPoint = A_DATE)
           .toThrow(`Property 'aPoint' expected type of 'point' but received value of '${A_DATE}'.`);
         // @ts-ignore: JavaScript
-        expect(() => entity.aPoint = AN_ARRAY)
-          .toThrow(`Property 'aPoint' expected type of 'point' but received value of '${AN_ARRAY}'`)
+        expect(() => entity.aPoint = A_STRING_ARRAY)
+          .toThrow(`Property 'aPoint' expected type of 'point' but received value of '${A_STRING_ARRAY}'`)
       });
 
       it("complains when not a date", () => {
@@ -176,26 +182,26 @@ describe("Entity", () => {
         expect(() => entity.aDate = A_POINT)
           .toThrow(`Property 'aDate' expected type of 'date' but received value of '${A_POINT}'.`);
         // @ts-ignore: JavaScript
-        expect(() => entity.aDate = AN_ARRAY)
-          .toThrow(`Property 'aDate' expected type of 'date' but received value of '${AN_ARRAY}'.`)
+        expect(() => entity.aDate = A_STRING_ARRAY)
+          .toThrow(`Property 'aDate' expected type of 'date' but received value of '${A_STRING_ARRAY}'.`)
       });
 
       it("complains when not an array", () => {
         // @ts-ignore: JavaScript
-        expect(() => entity.anArray = 'foo')
-          .toThrow(`Property 'anArray' expected type of 'array' but received value of 'foo'`)
+        expect(() => entity.someStrings = 'foo')
+          .toThrow(`Property 'someStrings' expected type of 'string[]' but received value of 'foo'`)
         // @ts-ignore: JavaScript
-        expect(() => entity.anArray = 42)
-          .toThrow(`Property 'anArray' expected type of 'array' but received value of '42'`)
+        expect(() => entity.someStrings = 42)
+          .toThrow(`Property 'someStrings' expected type of 'string[]' but received value of '42'`)
         // @ts-ignore: JavaScript
-        expect(() => entity.anArray = true)
-          .toThrow(`Property 'anArray' expected type of 'array' but received value of 'true'`)
+        expect(() => entity.someStrings = true)
+          .toThrow(`Property 'someStrings' expected type of 'string[]' but received value of 'true'`)
         // @ts-ignore: JavaScript
-        expect(() => entity.anArray = A_POINT)
-          .toThrow(`Property 'anArray' expected type of 'array' but received value of '${A_POINT}'.`);
+        expect(() => entity.someStrings = A_POINT)
+          .toThrow(`Property 'someStrings' expected type of 'string[]' but received value of '${A_POINT}'.`);
         // @ts-ignore: JavaScript
-        expect(() => entity.anArray = A_DATE)
-          .toThrow(`Property 'anArray' expected type of 'array' but received value of '${A_DATE}'.`);
+        expect(() => entity.someStrings = A_DATE)
+          .toThrow(`Property 'someStrings' expected type of 'string[]' but received value of '${A_DATE}'.`);
       });
     });
 
@@ -206,13 +212,13 @@ describe("Entity", () => {
         entity.aBoolean = null;
         entity.aPoint = null;
         entity.aDate = null;
-        entity.anArray = null;
+        entity.someStrings = null;
         expect(entity.entityData.aNumber).toBeUndefined();
         expect(entity.entityData.aString).toBeUndefined();
         expect(entity.entityData.aBoolean).toBeUndefined();
         expect(entity.entityData.aPoint).toBeUndefined();
         expect(entity.entityData.aDate).toBeUndefined();
-        expect(entity.entityData.anArray).toBeUndefined();
+        expect(entity.entityData.someStrings).toBeUndefined();
       });
 
       it("throws error when setting to undefined", () => {
@@ -231,8 +237,8 @@ describe("Entity", () => {
         expect(() => entity.aDate = undefined)
           .toThrow(`Property 'aDate' on entity of type 'SimpleEntity' cannot be set to undefined. Use null instead.`);
 
-        expect(() => entity.anArray = undefined)
-          .toThrow(`Property 'anArray' on entity of type 'SimpleEntity' cannot be set to undefined. Use null instead.`);
+        expect(() => entity.someStrings = undefined)
+          .toThrow(`Property 'someStrings' on entity of type 'SimpleEntity' cannot be set to undefined. Use null instead.`);
       });
     });
   });
@@ -240,7 +246,7 @@ describe("Entity", () => {
   describe("with aliased data", () => {
     beforeEach(() => entity = new AliasedEntity(aliasedSchema.definition, ENTITY_ID, {
       anotherNumber: 23, anotherString: 'bar', anotherBoolean: true,
-      anotherPoint: ANOTHER_POINT, anotherDate: ANOTHER_DATE, anotherArray: ANOTHER_ARRAY }));
+      anotherPoint: ANOTHER_POINT, anotherDate: ANOTHER_DATE, someOtherStrings: ANOTHER_STRING_ARRAY }));
 
     it("has the passed in Redis ID", () => expect(entity.entityId).toBe(ENTITY_ID));
     it("returns a number for the number property", () => expect(entity.aNumber).toBe(23));
@@ -248,7 +254,7 @@ describe("Entity", () => {
     it("returns a boolean for the boolean property", () => expect(entity.aBoolean).toBe(true));
     it("returns a point for the point property", () => expect(entity.aPoint).toEqual(ANOTHER_POINT));
     it("returns a date for the date property", () => expect(entity.aDate).toEqual(ANOTHER_DATE));
-    it("returns an array for the array property", () => expect(entity.anArray).toEqual(ANOTHER_ARRAY));
+    it("returns a string[] for the string[] property", () => expect(entity.someStrings).toEqual(ANOTHER_STRING_ARRAY));
     it("serializes to the expected JSON", () => expect(JSON.stringify(entity)).toBe(EXPECTED_ALIASED_JSON));
 
     describe("changing the data", () => {
@@ -302,14 +308,14 @@ describe("Entity", () => {
         expect(entity.entityData.anotherDate).toEqual(A_THIRD_DATE);
       });
 
-      it("stores a string[] when the array property is changed", () => {
-        entity.anArray = A_THIRD_ARRAY;
-        expect(entity.entityData.anotherArray).toEqual(A_THIRD_ARRAY);
+      it("stores a string[] when the string[] property is changed", () => {
+        entity.someStrings = A_THIRD_STRING_ARRAY;
+        expect(entity.entityData.someOtherStrings).toEqual(A_THIRD_STRING_ARRAY);
       });
 
-      it("stores a string[] when the array property is changed to an any[]", () => {
-        entity.anArray = [ 42, true, 23, false ];
-        expect(entity.entityData.anotherArray).toEqual([ '42', 'true', '23', 'false' ])
+      it("stores a string[] when the string[] property is changed to an any[]", () => {
+        entity.someStrings = [ 42, true, 23, false ];
+        expect(entity.entityData.someOtherStrings).toEqual([ '42', 'true', '23', 'false' ])
       });
     });
   
@@ -320,13 +326,13 @@ describe("Entity", () => {
         entity.aBoolean = null;
         entity.aPoint = null;
         entity.aDate = null;
-        entity.anArray = null;
+        entity.someStrings = null;
         expect(entity.entityData.anotherNumber).toBeUndefined();
         expect(entity.entityData.anotherString).toBeUndefined();
         expect(entity.entityData.anotherBoolean).toBeUndefined();
         expect(entity.entityData.anotherPoint).toBeUndefined();
         expect(entity.entityData.anotherDate).toBeUndefined();
-        expect(entity.entityData.anotherArray).toBeUndefined();
+        expect(entity.entityData.someOtherStrings).toBeUndefined();
       });
       
       it("errors when properties are set to undefined", () => {
@@ -345,8 +351,8 @@ describe("Entity", () => {
         expect(() => entity.aDate = undefined)
           .toThrow("Property 'aDate' on entity of type 'AliasedEntity' cannot be set to undefined. Use null instead.");
 
-        expect(() => entity.anArray = undefined)
-          .toThrow("Property 'anArray' on entity of type 'AliasedEntity' cannot be set to undefined. Use null instead.");
+        expect(() => entity.someStrings = undefined)
+          .toThrow("Property 'someStrings' on entity of type 'AliasedEntity' cannot be set to undefined. Use null instead.");
       });
     });
   });

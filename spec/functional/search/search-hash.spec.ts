@@ -137,8 +137,8 @@ describe("search for hashes", () => {
     ]));
   });
 
-  it("searches an array", async () => {
-    entities = await repository.search().where('anArray').contains('charlie').returnAll();
+  it("searches a string[]", async () => {
+    entities = await repository.search().where('someStrings').contains('charlie').returnAll();
 
     expect(entities).toHaveLength(3);
     expect(entities).toEqual(expect.arrayContaining([
@@ -155,7 +155,7 @@ describe("search for hashes", () => {
       .and('aNumber').gte(42)
       .and('aBoolean').true()
       .and('aPoint').inCircle(circle => circle.origin(A_POINT).radius(10).meters)
-      .and('anArray').contains('alfa')
+      .and('someStrings').contains('alfa')
       .returnAll();
 
     expect(entities).toHaveLength(1);
@@ -182,8 +182,8 @@ describe("search for hashes", () => {
     ]));
   });
 
-  it("searches an array with escaped punctuation", async () => {
-    entities = await repository.search().where('anArray').contains('alfa ,.<>{}[]"\':;!@#$%^&*()-+=~ bravo').returnAll();
+  it("searches an string[] with escaped punctuation", async () => {
+    entities = await repository.search().where('someStrings').contains('alfa ,.<>{}[]"\':;!@#$%^&*()-+=~ bravo').returnAll();
 
     expect(entities).toHaveLength(1);
     expect(entities).toEqual(expect.arrayContaining([

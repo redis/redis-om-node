@@ -12,7 +12,7 @@ export interface SimpleEntity {
   aBoolean?: boolean | null;
   aPoint?: Point | null;
   aDate?: Date | string | number | null;
-  anArray?: any[] | null;
+  someStrings?: any[] | null;
 }
 
 export interface SimpleHashEntity extends SimpleEntity {}
@@ -33,7 +33,7 @@ export interface AliasedEntity {
   aBoolean?: boolean | null;
   aPoint?: Point | null;
   aDate?: Date | null;
-  anArray?: string[] | null;
+  someStrings?: string[] | null;
 }
 
 export const simpleSchema = new Schema(SimpleEntity, {
@@ -42,7 +42,7 @@ export const simpleSchema = new Schema(SimpleEntity, {
   aBoolean: { type: 'boolean' },
   aPoint: { type: 'point' },
   aDate: { type: 'date' },
-  anArray: { type: 'array' }
+  someStrings: { type: 'string[]' }
 });
 
 export const simpleHashSchema = new Schema(SimpleHashEntity, {
@@ -51,7 +51,7 @@ export const simpleHashSchema = new Schema(SimpleHashEntity, {
   aBoolean: { type: 'boolean' },
   aPoint: { type: 'point' },
   aDate: { type: 'date' },
-  anArray: { type: 'array' }
+  someStrings: { type: 'string[]' }
 }, {
   dataStructure: 'HASH'
 });
@@ -62,7 +62,7 @@ export const simpleJsonSchema = new Schema(SimpleJsonEntity, {
   aBoolean: { type: 'boolean' },
   aPoint: { type: 'point' },
   aDate: { type: 'date' },
-  anArray: { type: 'array' }
+  someStrings: { type: 'string[]' }
 }, {
   dataStructure: 'JSON'
 });
@@ -77,7 +77,7 @@ export const aliasedSchema = new Schema(AliasedEntity, {
   aBoolean: { type: 'boolean', alias: 'anotherBoolean' },
   aPoint: { type: 'point', alias: 'anotherPoint' },
   aDate: { type: 'date', alias: 'anotherDate' },
-  anArray: { type: 'array', alias: 'anotherArray' }
+  someStrings: { type: 'string[]', alias: 'someOtherStrings' }
 });
 
 export const stopWordsOffSchema = new Schema(StopWordsOffEntity, {

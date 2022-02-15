@@ -21,7 +21,7 @@ import { SchemaOptions } from './schema-options';
  *   aBoolean: { type: 'boolean' },
  *   aPoint: { type: 'point' },
  *   aDate: { type: 'date' },
- *   anArray: { type: 'array' }
+ *   someStrings: { type: 'string[]' }
  * }, {
  *   dataStructure: 'JSON'
  * });
@@ -162,7 +162,7 @@ export default class Schema<TEntity extends Entity> {
             return;
           }
 
-          if (fieldType === 'array' && isArray(value)) {
+          if (fieldType === 'string[]' && isArray(value)) {
             this.entityData[fieldAlias] = value.map((v: any) => v.toString());
             return;
           }
@@ -221,7 +221,7 @@ export default class Schema<TEntity extends Entity> {
 
   private validateFieldDef(field: string) {
     let fieldDef: FieldDefinition = this.definition[field];
-    if (!['array', 'boolean', 'number', 'string', 'point', 'date'].includes(fieldDef.type))
-      throw Error(`The field '${field}' is configured with a type of '${fieldDef.type}'. Valid types include 'array', 'boolean', 'date', 'number', 'point', and 'string'.`);
+    if (!['boolean', 'date', 'number', 'point', 'string', 'string[]'].includes(fieldDef.type))
+      throw Error(`The field '${field}' is configured with a type of '${fieldDef.type}'. Valid types include 'boolean', 'date', 'number', 'point', 'string', and 'string[]'.`);
   }
 }

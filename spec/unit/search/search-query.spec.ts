@@ -33,7 +33,7 @@ const EXPECTED_TRUE_JSON_QUERY = `@aBoolean:{true}`;
 
 const EXPECTED_POINT_QUERY = `@aPoint:[${POINT_LONGITUDE} ${POINT_LATITUDE} ${POINT_RADIUS} ${POINT_UNITS}]`;
 const EXPECTED_DATE_QUERY = `@aDate:[${A_DATE_EPOCH} +inf]`;
-const EXPECTED_ARRAY_QUERY = `@anArray:{${A_STRING}|${ANOTHER_STRING}}`;
+const EXPECTED_ARRAY_QUERY = `@someStrings:{${A_STRING}|${ANOTHER_STRING}}`;
 
 beforeEach(() => mocked(Client).mockReset());
 
@@ -66,7 +66,7 @@ describe("Search", () => {
           .where('aBoolean').true()
           .where('aPoint').inCircle(circle => circle.origin(A_POINT).radius(POINT_RADIUS).miles)
           .where('aDate').onOrAfter(A_DATE)
-          .where('anArray').containsOneOf(A_STRING, ANOTHER_STRING).query;
+          .where('someStrings').containsOneOf(A_STRING, ANOTHER_STRING).query;
         expect(query).toBe(`( ( ( ( ( (${EXPECTED_STRING_QUERY_1}) (${EXPECTED_NUMBER_QUERY_1}) ) (${EXPECTED_TRUE_HASH_QUERY}) ) (${EXPECTED_POINT_QUERY}) ) (${EXPECTED_DATE_QUERY}) ) (${EXPECTED_ARRAY_QUERY}) )`);
       });
 
@@ -77,7 +77,7 @@ describe("Search", () => {
           .and('aBoolean').true()
           .and('aPoint').inCircle(circle => circle.origin(A_POINT).radius(POINT_RADIUS).miles)
           .and('aDate').onOrAfter(A_DATE)
-          .and('anArray').containsOneOf(A_STRING, ANOTHER_STRING).query;
+          .and('someStrings').containsOneOf(A_STRING, ANOTHER_STRING).query;
           expect(query).toBe(`( ( ( ( ( (${EXPECTED_STRING_QUERY_1}) (${EXPECTED_NUMBER_QUERY_1}) ) (${EXPECTED_TRUE_HASH_QUERY}) ) (${EXPECTED_POINT_QUERY}) ) (${EXPECTED_DATE_QUERY}) ) (${EXPECTED_ARRAY_QUERY}) )`);
       });
 
@@ -88,7 +88,7 @@ describe("Search", () => {
           .or('aBoolean').true()
           .or('aPoint').inCircle(circle => circle.origin(A_POINT).radius(POINT_RADIUS).miles)
           .or('aDate').onOrAfter(A_DATE)
-          .or('anArray').containsOneOf(A_STRING, ANOTHER_STRING).query;
+          .or('someStrings').containsOneOf(A_STRING, ANOTHER_STRING).query;
         expect(query).toBe(`( ( ( ( ( (${EXPECTED_STRING_QUERY_1}) | (${EXPECTED_NUMBER_QUERY_1}) ) | (${EXPECTED_TRUE_HASH_QUERY}) ) | (${EXPECTED_POINT_QUERY}) ) | (${EXPECTED_DATE_QUERY}) ) | (${EXPECTED_ARRAY_QUERY}) )`);
       });
 
@@ -177,7 +177,7 @@ describe("Search", () => {
           .where('aBoolean').true()
           .where('aPoint').inCircle(circle => circle.origin(A_POINT).radius(POINT_RADIUS).miles)
           .where('aDate').onOrAfter(A_DATE)
-          .where('anArray').containsOneOf(A_STRING, ANOTHER_STRING).query;
+          .where('someStrings').containsOneOf(A_STRING, ANOTHER_STRING).query;
         expect(query).toBe(`( ( ( ( ( (${EXPECTED_STRING_QUERY_1}) (${EXPECTED_NUMBER_QUERY_1}) ) (${EXPECTED_TRUE_JSON_QUERY}) ) (${EXPECTED_POINT_QUERY}) ) (${EXPECTED_DATE_QUERY}) ) (${EXPECTED_ARRAY_QUERY}) )`);
       });
 
@@ -188,7 +188,7 @@ describe("Search", () => {
           .and('aBoolean').true()
           .and('aPoint').inCircle(circle => circle.origin(A_POINT).radius(POINT_RADIUS).miles)
           .and('aDate').onOrAfter(A_DATE)
-          .and('anArray').containsOneOf(A_STRING, ANOTHER_STRING).query;
+          .and('someStrings').containsOneOf(A_STRING, ANOTHER_STRING).query;
           expect(query).toBe(`( ( ( ( ( (${EXPECTED_STRING_QUERY_1}) (${EXPECTED_NUMBER_QUERY_1}) ) (${EXPECTED_TRUE_JSON_QUERY}) ) (${EXPECTED_POINT_QUERY}) ) (${EXPECTED_DATE_QUERY}) ) (${EXPECTED_ARRAY_QUERY}) )`);
       });
 
@@ -199,7 +199,7 @@ describe("Search", () => {
           .or('aBoolean').true()
           .or('aPoint').inCircle(circle => circle.origin(A_POINT).radius(POINT_RADIUS).miles)
           .or('aDate').onOrAfter(A_DATE)
-          .or('anArray').containsOneOf(A_STRING, ANOTHER_STRING).query;
+          .or('someStrings').containsOneOf(A_STRING, ANOTHER_STRING).query;
         expect(query).toBe(`( ( ( ( ( (${EXPECTED_STRING_QUERY_1}) | (${EXPECTED_NUMBER_QUERY_1}) ) | (${EXPECTED_TRUE_JSON_QUERY}) ) | (${EXPECTED_POINT_QUERY}) ) | (${EXPECTED_DATE_QUERY}) ) | (${EXPECTED_ARRAY_QUERY}) )`);
       });
 

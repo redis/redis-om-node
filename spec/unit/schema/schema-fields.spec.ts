@@ -2,7 +2,7 @@ import Schema from '../../../lib/schema/schema';
 import Entity, { EntityData } from '../../../lib/entity/entity';
 import { SchemaDefinition } from '../../../lib/schema/schema-definitions';
 import { SearchDataStructure } from '../../../lib/client';
-import { ANOTHER_ARRAY, ANOTHER_DATE, ANOTHER_POINT, AN_ARRAY, A_DATE, A_POINT } from '../../helpers/example-data';
+import { ANOTHER_STRING_ARRAY, ANOTHER_DATE, ANOTHER_POINT, A_STRING_ARRAY, A_DATE, A_POINT } from '../../helpers/example-data';
 
 describe("Schema", () => {
 
@@ -62,10 +62,10 @@ describe("Schema", () => {
 
   let ARRAY_HASH_DEFAULTS = {
     ...HASH_DEFAULTS,
-    providedEntityFieldValue: AN_ARRAY,
-    expectedPropertyValue: AN_ARRAY,
-    providedAlternatePropertyValue: ANOTHER_ARRAY,
-    expectedAlternatePropertyValue: ANOTHER_ARRAY
+    providedEntityFieldValue: A_STRING_ARRAY,
+    expectedPropertyValue: A_STRING_ARRAY,
+    providedAlternatePropertyValue: ANOTHER_STRING_ARRAY,
+    expectedAlternatePropertyValue: ANOTHER_STRING_ARRAY
   };
 
   let BOOLEAN_JSON_DEFAULTS = {
@@ -110,10 +110,10 @@ describe("Schema", () => {
 
   let ARRAY_JSON_DEFAULTS = {
     ...JSON_DEFAULTS,
-    providedEntityFieldValue: AN_ARRAY,
-    expectedPropertyValue: AN_ARRAY,
-    providedAlternatePropertyValue: ANOTHER_ARRAY,
-    expectedAlternatePropertyValue: ANOTHER_ARRAY
+    providedEntityFieldValue: A_STRING_ARRAY,
+    expectedPropertyValue: A_STRING_ARRAY,
+    providedAlternatePropertyValue: ANOTHER_STRING_ARRAY,
+    expectedAlternatePropertyValue: ANOTHER_STRING_ARRAY
   };
 
   describe.each([
@@ -201,23 +201,23 @@ describe("Schema", () => {
       expectedRedisSchema: ['anotherField', 'NUMERIC']
     }],
 
-    ["that defines an unconfigured array for a HASH", {
+    ["that defines an unconfigured string[] for a HASH", {
       ...ARRAY_HASH_DEFAULTS,
-      schemaDef: { aField: { type: 'array' } } as SchemaDefinition,
+      schemaDef: { aField: { type: 'string[]' } } as SchemaDefinition,
       expectedRedisSchema: ['aField', 'TAG', 'SEPARATOR', '|']
     }],
 
-    ["that defines an aliased array for a HASH", {
+    ["that defines an aliased string[] for a HASH", {
       ...ARRAY_HASH_DEFAULTS,
-      schemaDef: { aField: { type: 'array', alias: 'anotherField' } } as SchemaDefinition,
+      schemaDef: { aField: { type: 'string[]', alias: 'anotherField' } } as SchemaDefinition,
       providedEntityFieldName: 'anotherField',
       expectedRedisSchema: ['anotherField', 'TAG', 'SEPARATOR', '|']
     }],
 
-    ["that defines an array configured with an alternative separator for a HASH", {
+    ["that defines a string[] configured with an alternative separator for a HASH", {
       ...ARRAY_HASH_DEFAULTS,
-      schemaDef: { aField: { type: 'array', separator: ';'} } as SchemaDefinition,
-      providedEntityFieldValue: AN_ARRAY,
+      schemaDef: { aField: { type: 'string[]', separator: ';'} } as SchemaDefinition,
+      providedEntityFieldValue: A_STRING_ARRAY,
       expectedRedisSchema: ['aField', 'TAG', 'SEPARATOR', ';']
     }],
 
@@ -304,22 +304,22 @@ describe("Schema", () => {
       expectedRedisSchema: ['$.anotherField', 'AS', 'anotherField', 'NUMERIC']
     }],
 
-    ["that defines an unconfigured array for JSON", {
+    ["that defines an unconfigured string[] for JSON", {
       ...ARRAY_JSON_DEFAULTS,
-      schemaDef: { aField: { type: 'array' } } as SchemaDefinition,
+      schemaDef: { aField: { type: 'string[]' } } as SchemaDefinition,
       expectedRedisSchema: ['$.aField[*]', 'AS', 'aField', 'TAG']
     }],
 
-    ["that defines an aliased array for JSON", {
+    ["that defines an aliased string[] for JSON", {
       ...ARRAY_JSON_DEFAULTS,
-      schemaDef: { aField: { type: 'array', alias: 'anotherField' } } as SchemaDefinition,
+      schemaDef: { aField: { type: 'string[]', alias: 'anotherField' } } as SchemaDefinition,
       providedEntityFieldName: 'anotherField',
       expectedRedisSchema: ['$.anotherField[*]', 'AS', 'anotherField', 'TAG']
     }],
 
-    ["that defines an array configured with an ignored separator for JSON", {
+    ["that defines a string[] configured with an ignored separator for JSON", {
       ...ARRAY_JSON_DEFAULTS,
-      schemaDef: { aField: { type: 'array', separator: ';' } } as SchemaDefinition,
+      schemaDef: { aField: { type: 'string[]', separator: ';' } } as SchemaDefinition,
       expectedRedisSchema: ['$.aField[*]', 'AS', 'aField', 'TAG']
     }]
   ])("%s", (_, data) => {

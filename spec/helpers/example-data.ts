@@ -36,20 +36,20 @@ export const A_THIRD_POINT: Point = { longitude: 34.56, latitude: 78.90 };
 export const A_THIRD_POINT_JSON: string = JSON.stringify(A_THIRD_POINT);
 export const A_THIRD_POINT_STRING: string = `${A_THIRD_POINT.longitude},${A_THIRD_POINT.latitude}`;
 
-export const AN_ARRAY: string[] = [ 'alfa', 'bravo', 'charlie' ];
-export const AN_ARRAY_JSON: string = JSON.stringify(AN_ARRAY);
-export const AN_ARRAY_JOINED: string = AN_ARRAY.join('|');
-export const AN_ARRAY_LEN: number = AN_ARRAY.length;
+export const A_STRING_ARRAY: string[] = [ 'alfa', 'bravo', 'charlie' ];
+export const A_STRING_ARRAY_JSON: string = JSON.stringify(A_STRING_ARRAY);
+export const A_STRING_ARRAY_JOINED: string = A_STRING_ARRAY.join('|');
+export const A_STRING_ARRAY_LEN: number = A_STRING_ARRAY.length;
 
-export const ANOTHER_ARRAY: string[] = [ 'bravo', 'charlie', 'delta' ];
-export const ANOTHER_ARRAY_JSON: string = JSON.stringify(ANOTHER_ARRAY);
-export const ANOTHER_ARRAY_JOINED: string = ANOTHER_ARRAY.join('|');
-export const ANOTHER_ARRAY_LEN: number = ANOTHER_ARRAY.length;
+export const ANOTHER_STRING_ARRAY: string[] = [ 'bravo', 'charlie', 'delta' ];
+export const ANOTHER_STRING_ARRAY_JSON: string = JSON.stringify(ANOTHER_STRING_ARRAY);
+export const ANOTHER_STRING_ARRAY_JOINED: string = ANOTHER_STRING_ARRAY.join('|');
+export const ANOTHER_STRING_ARRAY_LEN: number = ANOTHER_STRING_ARRAY.length;
 
-export const A_THIRD_ARRAY: string[] = [ 'charlie', 'delta', 'echo' ];
-export const A_THIRD_JSON: string = JSON.stringify(A_THIRD_ARRAY);
-export const A_THIRD_ARRAY_JOINED: string = A_THIRD_ARRAY.join('|');
-export const A_THIRD_ARRAY_LEN: number = ANOTHER_ARRAY.length;
+export const A_THIRD_STRING_ARRAY: string[] = [ 'charlie', 'delta', 'echo' ];
+export const A_THIRD_STRING_ARRAY_JSON: string = JSON.stringify(A_THIRD_STRING_ARRAY);
+export const A_THIRD_STRING_ARRAY_JOINED: string = A_THIRD_STRING_ARRAY.join('|');
+export const A_THIRD_STRING_ARRAY_LEN: number = A_THIRD_STRING_ARRAY.length;
 
 export type SampleEntityData = {
   aString: string | null;
@@ -64,8 +64,8 @@ export type SampleEntityData = {
   anotherPoint: Point | null;
   aDate: Date | null;
   anotherDate: Date | null;
-  anArray: string[] | null;
-  anotherArray: string[] | null;  
+  someStrings: string[] | null;
+  someOtherStrings: string[] | null;  
 };
 
 export const AN_ENTITY: SampleEntityData = {
@@ -81,8 +81,8 @@ export const AN_ENTITY: SampleEntityData = {
   anotherPoint: ANOTHER_POINT,
   aDate: A_DATE,
   anotherDate: ANOTHER_DATE,
-  anArray: AN_ARRAY,
-  anotherArray: ANOTHER_ARRAY
+  someStrings: A_STRING_ARRAY,
+  someOtherStrings: ANOTHER_STRING_ARRAY
 };
 
 export const ANOTHER_ENTITY: SampleEntityData = {
@@ -98,8 +98,8 @@ export const ANOTHER_ENTITY: SampleEntityData = {
   anotherPoint: A_THIRD_POINT,
   aDate: ANOTHER_DATE,
   anotherDate: A_THIRD_DATE,
-  anArray: ANOTHER_ARRAY,
-  anotherArray: A_THIRD_ARRAY
+  someStrings: ANOTHER_STRING_ARRAY,
+  someOtherStrings: A_THIRD_STRING_ARRAY
 };
 
 export const A_THIRD_ENTITY: SampleEntityData = {
@@ -115,8 +115,8 @@ export const A_THIRD_ENTITY: SampleEntityData = {
   anotherPoint: A_POINT,
   aDate: A_THIRD_DATE,
   anotherDate: A_DATE,
-  anArray: A_THIRD_ARRAY,
-  anotherArray: AN_ARRAY
+  someStrings: A_THIRD_STRING_ARRAY,
+  someOtherStrings: A_STRING_ARRAY
 };
 
 export const A_PARTIAL_ENTITY: SampleEntityData = {
@@ -132,8 +132,8 @@ export const A_PARTIAL_ENTITY: SampleEntityData = {
   anotherPoint: null,
   aDate: A_DATE,
   anotherDate: null,
-  anArray: AN_ARRAY,
-  anotherArray: null
+  someStrings: A_STRING_ARRAY,
+  someOtherStrings: null
 };
 
 export const AN_EMPTY_ENTITY: SampleEntityData = {
@@ -149,8 +149,8 @@ export const AN_EMPTY_ENTITY: SampleEntityData = {
   anotherPoint: null,
   aDate: null,
   anotherDate: null,
-  anArray: null,
-  anotherArray: null
+  someStrings: null,
+  someOtherStrings: null
 };
 
 export const AN_ESCAPED_ENTITY: SampleEntityData = {
@@ -166,7 +166,7 @@ export const AN_ESCAPED_ENTITY: SampleEntityData = {
   anotherPoint: null,
   aDate: null,
   anotherDate: null,
-  anArray: [ 'alfa ,.<>{}[]"\':;!@#$%^&*()-+=~ bravo', 'charlie delta' ],
-  anotherArray: null
+  someStrings: [ 'alfa ,.<>{}[]"\':;!@#$%^&*()-+=~ bravo', 'charlie delta' ],
+  someOtherStrings: null
 };
 
