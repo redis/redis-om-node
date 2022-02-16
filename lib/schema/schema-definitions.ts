@@ -45,7 +45,7 @@ export interface BooleanField extends Field {
 }
 
 /** A field representing a point on the globe. */
-export interface GeoField extends Field {
+export interface PointField extends Field {
   /** Yep. It's a point. */
   type: 'point';
 }
@@ -71,7 +71,7 @@ export interface StringArrayField extends Field {
 }
 
 /** Contains instructions telling how to map a property on an {@link Entity} to Redis. */
-export type FieldDefinition = NumericField | StringField | BooleanField | GeoField | DateField | StringArrayField;
+export type FieldDefinition = NumericField | StringField | BooleanField | PointField | DateField | StringArrayField;
 
 /**
 * Group of {@link FieldDefinition}s that define the schema for an {@link Entity}.
