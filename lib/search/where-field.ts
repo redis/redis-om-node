@@ -1,7 +1,7 @@
 import Entity from "../entity/entity";
 import Search from "./search";
 import Where from "./where";
-import { CircleFunction } from "./where-geo";
+import { CircleFunction } from "./where-point";
 
 /**
  * Interface with all the methods from all the concrete

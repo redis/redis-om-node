@@ -10,7 +10,7 @@ import { SchemaOptions } from "./schema/schema-options";
 import Search, { SubSearchFunction } from "./search/search";
 import Where from "./search/where";
 import WhereField from "./search/where-field";
-import { Circle, CircleFunction } from "./search/where-geo";
+import { Circle, CircleFunction } from "./search/where-point";
 
 
 export {

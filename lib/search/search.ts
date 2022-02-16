@@ -6,10 +6,10 @@ import Where from './where';
 import WhereAnd from './where-and';
 import WhereOr from './where-or';
 import WhereField from './where-field';
-import WhereStringArray from './where-array';
+import WhereStringArray from './where-string-array';
 import { WhereHashBoolean, WhereJsonBoolean } from './where-boolean';
 import WhereNumber from './where-number';
-import WhereGeo from './where-geo';
+import WhereGeo from './where-point';
 import WhereString from './where-string';
 import WhereText from './where-text';
 
