@@ -82,5 +82,20 @@ describe("Search", () => {
         expect(query).toBe("(@aString:{\\,\\.\\<\\>\\{\\}\\[\\]\\\"\\'\\:\\;\\!\\@\\#\\$\\%\\^\\&\\*\\(\\)\\-\\+\\=\\~\\|\\ })");
       });
     });
+
+    describe("when trying to perform full-text search on a string", () => {
+      const EXPECTED_EXCEPTION = "Cannot perform full-text search operations like .match on field of type 'string'. If full-text search is needed on this field, change the type to 'text' in the Schema.";
+      it("throws an exception telling you what to do", () => {
+        expect(() => where.match(A_STRING)).toThrow(EXPECTED_EXCEPTION);
+        expect(() => where.matchExact(A_STRING)).toThrow(EXPECTED_EXCEPTION);
+        expect(() => where.exact.match(A_STRING)).toThrow(EXPECTED_EXCEPTION);
+        expect(() => where.exact.matches(A_STRING)).toThrow(EXPECTED_EXCEPTION);
+        expect(() => where.matchExactly(A_STRING)).toThrow(EXPECTED_EXCEPTION);
+        expect(() => where.matches(A_STRING)).toThrow(EXPECTED_EXCEPTION);
+        expect(() => where.matchesExactly(A_STRING)).toThrow(EXPECTED_EXCEPTION);
+        expect(() => where.exactly.match(A_STRING)).toThrow(EXPECTED_EXCEPTION);
+        expect(() => where.exactly.matches(A_STRING)).toThrow(EXPECTED_EXCEPTION);
+      });
+    });
   });
 });

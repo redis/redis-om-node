@@ -54,35 +54,35 @@ interface WhereField<TEntity> extends Where {
    * @param value The word or phrase sought.
    * @returns The {@link Search} that was called to create this {@link WhereField}.
    */
-  match(value: string): Search<TEntity>;
+  match(value: string | number | boolean): Search<TEntity>;
 
   /**
    * Adds a full-text search comparison to the query.
    * @param value The word or phrase sought.
    * @returns The {@link Search} that was called to create this {@link WhereField}.
    */
-  matches(value: string): Search<TEntity>;
+  matches(value: string | number | boolean): Search<TEntity>;
 
   /**
    * Adds a full-text search comparison to the query that matches an exact word or phrase.
    * @param value The word or phrase sought.
    * @returns The {@link Search} that was called to create this {@link WhereField}.
    */
-  matchExact(value: string): Search<TEntity>;
+  matchExact(value: string | number | boolean): Search<TEntity>;
 
   /**
    * Adds a full-text search comparison to the query that matches an exact word or phrase.
    * @param value The word or phrase sought.
    * @returns The {@link Search} that was called to create this {@link WhereField}.
    */
-  matchExactly(value: string): Search<TEntity>;
+  matchExactly(value: string | number | boolean): Search<TEntity>;
 
   /**
    * Adds a full-text search comparison to the query that matches an exact word or phrase.
    * @param value The word or phrase sought.
    * @returns The {@link Search} that was called to create this {@link WhereField}.
    */
-  matchesExactly(value: string): Search<TEntity>;
+  matchesExactly(value: string | number | boolean): Search<TEntity>;
 
   /**
    * Makes a call to {@link WhereField.match} a {@link WhereField.matchExact} call. Calling
