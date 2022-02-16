@@ -31,6 +31,7 @@ const EXPECTED_FALSE_JSON_QUERY = `@aBoolean:{false}`;
 const EXPECTED_TRUE_HASH_QUERY = `@aBoolean:{1}`;
 const EXPECTED_TRUE_JSON_QUERY = `@aBoolean:{true}`;
 
+const EXPECTED_TEXT_QUERY = `@someText:'${A_STRING}'`;
 const EXPECTED_POINT_QUERY = `@aPoint:[${POINT_LONGITUDE} ${POINT_LATITUDE} ${POINT_RADIUS} ${POINT_UNITS}]`;
 const EXPECTED_DATE_QUERY = `@aDate:[${A_DATE_EPOCH} +inf]`;
 const EXPECTED_ARRAY_QUERY = `@someStrings:{${A_STRING}|${ANOTHER_STRING}}`;
@@ -64,10 +65,11 @@ describe("Search", () => {
           .where('aString').eq(A_STRING)
           .where('aNumber').eq(A_NUMBER)
           .where('aBoolean').true()
+          .where('someText').matches(A_STRING)
           .where('aPoint').inCircle(circle => circle.origin(A_POINT).radius(POINT_RADIUS).miles)
           .where('aDate').onOrAfter(A_DATE)
           .where('someStrings').containsOneOf(A_STRING, ANOTHER_STRING).query;
-        expect(query).toBe(`( ( ( ( ( (${EXPECTED_STRING_QUERY_1}) (${EXPECTED_NUMBER_QUERY_1}) ) (${EXPECTED_TRUE_HASH_QUERY}) ) (${EXPECTED_POINT_QUERY}) ) (${EXPECTED_DATE_QUERY}) ) (${EXPECTED_ARRAY_QUERY}) )`);
+        expect(query).toBe(`( ( ( ( ( ( (${EXPECTED_STRING_QUERY_1}) (${EXPECTED_NUMBER_QUERY_1}) ) (${EXPECTED_TRUE_HASH_QUERY}) ) (${EXPECTED_TEXT_QUERY}) ) (${EXPECTED_POINT_QUERY}) ) (${EXPECTED_DATE_QUERY}) ) (${EXPECTED_ARRAY_QUERY}) )`);
       });
 
       it("generates a query using .and", () => {
@@ -75,10 +77,11 @@ describe("Search", () => {
           .where('aString').eq(A_STRING)
           .and('aNumber').eq(A_NUMBER)
           .and('aBoolean').true()
+          .and('someText').matches(A_STRING)
           .and('aPoint').inCircle(circle => circle.origin(A_POINT).radius(POINT_RADIUS).miles)
           .and('aDate').onOrAfter(A_DATE)
           .and('someStrings').containsOneOf(A_STRING, ANOTHER_STRING).query;
-          expect(query).toBe(`( ( ( ( ( (${EXPECTED_STRING_QUERY_1}) (${EXPECTED_NUMBER_QUERY_1}) ) (${EXPECTED_TRUE_HASH_QUERY}) ) (${EXPECTED_POINT_QUERY}) ) (${EXPECTED_DATE_QUERY}) ) (${EXPECTED_ARRAY_QUERY}) )`);
+          expect(query).toBe(`( ( ( ( ( ( (${EXPECTED_STRING_QUERY_1}) (${EXPECTED_NUMBER_QUERY_1}) ) (${EXPECTED_TRUE_HASH_QUERY}) ) (${EXPECTED_TEXT_QUERY}) ) (${EXPECTED_POINT_QUERY}) ) (${EXPECTED_DATE_QUERY}) ) (${EXPECTED_ARRAY_QUERY}) )`);
       });
 
       it("generates a query using .or", () => {
@@ -86,10 +89,11 @@ describe("Search", () => {
           .where('aString').eq(A_STRING)
           .or('aNumber').equals(A_NUMBER)
           .or('aBoolean').true()
+          .or('someText').matches(A_STRING)
           .or('aPoint').inCircle(circle => circle.origin(A_POINT).radius(POINT_RADIUS).miles)
           .or('aDate').onOrAfter(A_DATE)
           .or('someStrings').containsOneOf(A_STRING, ANOTHER_STRING).query;
-        expect(query).toBe(`( ( ( ( ( (${EXPECTED_STRING_QUERY_1}) | (${EXPECTED_NUMBER_QUERY_1}) ) | (${EXPECTED_TRUE_HASH_QUERY}) ) | (${EXPECTED_POINT_QUERY}) ) | (${EXPECTED_DATE_QUERY}) ) | (${EXPECTED_ARRAY_QUERY}) )`);
+        expect(query).toBe(`( ( ( ( ( ( (${EXPECTED_STRING_QUERY_1}) | (${EXPECTED_NUMBER_QUERY_1}) ) | (${EXPECTED_TRUE_HASH_QUERY}) ) | (${EXPECTED_TEXT_QUERY}) ) | (${EXPECTED_POINT_QUERY}) ) | (${EXPECTED_DATE_QUERY}) ) | (${EXPECTED_ARRAY_QUERY}) )`);
       });
 
       it("generates a query using .and and .or", () => {
@@ -134,6 +138,7 @@ describe("Search", () => {
           .where('aString').eq(A_STRING)
           .and('aNumber').equals(A_NUMBER)
           .or('aBoolean').true()
+          .and('someText').matches(A_STRING)
           .and('aPoint').inCircle(circle => circle.origin(A_POINT).radius(POINT_RADIUS).miles)
           .or('aDate').onOrAfter(A_DATE)
           .and(search => search
@@ -151,7 +156,7 @@ describe("Search", () => {
             )
           ).query;
 
-        expect(query).toBe(`( ( ( ( ( ( (${EXPECTED_STRING_QUERY_1}) (${EXPECTED_NUMBER_QUERY_1}) ) | (${EXPECTED_TRUE_HASH_QUERY}) ) (${EXPECTED_POINT_QUERY}) ) | (${EXPECTED_DATE_QUERY}) ) ( ( (${EXPECTED_STRING_QUERY_2}) (${EXPECTED_NUMBER_QUERY_2}) ) (${EXPECTED_FALSE_HASH_QUERY}) ) ) | ( ( ( (${EXPECTED_STRING_QUERY_3}) | (${EXPECTED_NUMBER_QUERY_3}) ) | (${EXPECTED_TRUE_HASH_QUERY}) ) ( (${EXPECTED_STRING_QUERY_1}) (${EXPECTED_NUMBER_QUERY_1}) ) ) )`);
+        expect(query).toBe(`( ( ( ( ( ( ( (${EXPECTED_STRING_QUERY_1}) (${EXPECTED_NUMBER_QUERY_1}) ) | (${EXPECTED_TRUE_HASH_QUERY}) ) (${EXPECTED_TEXT_QUERY}) ) (${EXPECTED_POINT_QUERY}) ) | (${EXPECTED_DATE_QUERY}) ) ( ( (${EXPECTED_STRING_QUERY_2}) (${EXPECTED_NUMBER_QUERY_2}) ) (${EXPECTED_FALSE_HASH_QUERY}) ) ) | ( ( ( (${EXPECTED_STRING_QUERY_3}) | (${EXPECTED_NUMBER_QUERY_3}) ) | (${EXPECTED_TRUE_HASH_QUERY}) ) ( (${EXPECTED_STRING_QUERY_1}) (${EXPECTED_NUMBER_QUERY_1}) ) ) )`);
       });
     });
 
@@ -175,10 +180,11 @@ describe("Search", () => {
           .where('aString').eq(A_STRING)
           .where('aNumber').eq(A_NUMBER)
           .where('aBoolean').true()
+          .where('someText').matches(A_STRING)
           .where('aPoint').inCircle(circle => circle.origin(A_POINT).radius(POINT_RADIUS).miles)
           .where('aDate').onOrAfter(A_DATE)
           .where('someStrings').containsOneOf(A_STRING, ANOTHER_STRING).query;
-        expect(query).toBe(`( ( ( ( ( (${EXPECTED_STRING_QUERY_1}) (${EXPECTED_NUMBER_QUERY_1}) ) (${EXPECTED_TRUE_JSON_QUERY}) ) (${EXPECTED_POINT_QUERY}) ) (${EXPECTED_DATE_QUERY}) ) (${EXPECTED_ARRAY_QUERY}) )`);
+        expect(query).toBe(`( ( ( ( ( ( (${EXPECTED_STRING_QUERY_1}) (${EXPECTED_NUMBER_QUERY_1}) ) (${EXPECTED_TRUE_JSON_QUERY}) ) (${EXPECTED_TEXT_QUERY}) ) (${EXPECTED_POINT_QUERY}) ) (${EXPECTED_DATE_QUERY}) ) (${EXPECTED_ARRAY_QUERY}) )`);
       });
 
       it("generates a query using .and", () => {
@@ -186,10 +192,11 @@ describe("Search", () => {
           .where('aString').eq(A_STRING)
           .and('aNumber').eq(A_NUMBER)
           .and('aBoolean').true()
+          .and('someText').matches(A_STRING)
           .and('aPoint').inCircle(circle => circle.origin(A_POINT).radius(POINT_RADIUS).miles)
           .and('aDate').onOrAfter(A_DATE)
           .and('someStrings').containsOneOf(A_STRING, ANOTHER_STRING).query;
-          expect(query).toBe(`( ( ( ( ( (${EXPECTED_STRING_QUERY_1}) (${EXPECTED_NUMBER_QUERY_1}) ) (${EXPECTED_TRUE_JSON_QUERY}) ) (${EXPECTED_POINT_QUERY}) ) (${EXPECTED_DATE_QUERY}) ) (${EXPECTED_ARRAY_QUERY}) )`);
+          expect(query).toBe(`( ( ( ( ( ( (${EXPECTED_STRING_QUERY_1}) (${EXPECTED_NUMBER_QUERY_1}) ) (${EXPECTED_TRUE_JSON_QUERY}) ) (${EXPECTED_TEXT_QUERY}) ) (${EXPECTED_POINT_QUERY}) ) (${EXPECTED_DATE_QUERY}) ) (${EXPECTED_ARRAY_QUERY}) )`);
       });
 
       it("generates a query using .or", () => {
@@ -197,10 +204,11 @@ describe("Search", () => {
           .where('aString').eq(A_STRING)
           .or('aNumber').equals(A_NUMBER)
           .or('aBoolean').true()
+          .or('someText').matches(A_STRING)
           .or('aPoint').inCircle(circle => circle.origin(A_POINT).radius(POINT_RADIUS).miles)
           .or('aDate').onOrAfter(A_DATE)
           .or('someStrings').containsOneOf(A_STRING, ANOTHER_STRING).query;
-        expect(query).toBe(`( ( ( ( ( (${EXPECTED_STRING_QUERY_1}) | (${EXPECTED_NUMBER_QUERY_1}) ) | (${EXPECTED_TRUE_JSON_QUERY}) ) | (${EXPECTED_POINT_QUERY}) ) | (${EXPECTED_DATE_QUERY}) ) | (${EXPECTED_ARRAY_QUERY}) )`);
+        expect(query).toBe(`( ( ( ( ( ( (${EXPECTED_STRING_QUERY_1}) | (${EXPECTED_NUMBER_QUERY_1}) ) | (${EXPECTED_TRUE_JSON_QUERY}) ) | (${EXPECTED_TEXT_QUERY}) ) | (${EXPECTED_POINT_QUERY}) ) | (${EXPECTED_DATE_QUERY}) ) | (${EXPECTED_ARRAY_QUERY}) )`);
       });
 
       it("generates a query using .and and .or", () => {
@@ -245,6 +253,7 @@ describe("Search", () => {
           .where('aString').eq(A_STRING)
           .and('aNumber').equals(A_NUMBER)
           .or('aBoolean').true()
+          .and('someText').matches(A_STRING)
           .and('aPoint').inCircle(circle => circle.origin(A_POINT).radius(POINT_RADIUS).miles)
           .or('aDate').onOrAfter(A_DATE)
           .and(search => search
@@ -262,7 +271,7 @@ describe("Search", () => {
             )
           ).query;
 
-        expect(query).toBe(`( ( ( ( ( ( (${EXPECTED_STRING_QUERY_1}) (${EXPECTED_NUMBER_QUERY_1}) ) | (${EXPECTED_TRUE_JSON_QUERY}) ) (${EXPECTED_POINT_QUERY}) ) | (${EXPECTED_DATE_QUERY}) ) ( ( (${EXPECTED_STRING_QUERY_2}) (${EXPECTED_NUMBER_QUERY_2}) ) (${EXPECTED_FALSE_JSON_QUERY}) ) ) | ( ( ( (${EXPECTED_STRING_QUERY_3}) | (${EXPECTED_NUMBER_QUERY_3}) ) | (${EXPECTED_TRUE_JSON_QUERY}) ) ( (${EXPECTED_STRING_QUERY_1}) (${EXPECTED_NUMBER_QUERY_1}) ) ) )`);
+        expect(query).toBe(`( ( ( ( ( ( ( (${EXPECTED_STRING_QUERY_1}) (${EXPECTED_NUMBER_QUERY_1}) ) | (${EXPECTED_TRUE_JSON_QUERY}) ) (${EXPECTED_TEXT_QUERY}) ) (${EXPECTED_POINT_QUERY}) ) | (${EXPECTED_DATE_QUERY}) ) ( ( (${EXPECTED_STRING_QUERY_2}) (${EXPECTED_NUMBER_QUERY_2}) ) (${EXPECTED_FALSE_JSON_QUERY}) ) ) | ( ( ( (${EXPECTED_STRING_QUERY_3}) | (${EXPECTED_NUMBER_QUERY_3}) ) | (${EXPECTED_TRUE_JSON_QUERY}) ) ( (${EXPECTED_STRING_QUERY_1}) (${EXPECTED_NUMBER_QUERY_1}) ) ) )`);
       });
     });
   });

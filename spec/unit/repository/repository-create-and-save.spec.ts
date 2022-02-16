@@ -5,7 +5,10 @@ import Repository from '../../../lib/repository/repository';
 import { JsonRepository, HashRepository } from '../../../lib/repository/repository';
 
 import {
-  A_STRING_ARRAY, A_STRING_ARRAY_JOINED,
+  A_NUMBER, A_NUMBER_STRING,
+  A_STRING,
+  SOME_TEXT,
+  SOME_STRINGS, SOME_STRINGS_JOINED,
   A_DATE, A_DATE_EPOCH, A_DATE_EPOCH_STRING,
   A_POINT, A_POINT_STRING } from '../../helpers/example-data';
 
@@ -33,24 +36,25 @@ describe("Repository", () => {
 
       describe("when creating and saving a fully populated entity", () => {
         beforeEach(async () => {
-          entity = await repository.createAndSave({ aString: 'foo', aNumber: 42, aBoolean: false,
-            aPoint: A_POINT, aDate: A_DATE, someStrings: A_STRING_ARRAY });
+          entity = await repository.createAndSave({ aString: A_STRING, aNumber: A_NUMBER, aBoolean: false,
+            someText: SOME_TEXT, aPoint: A_POINT, aDate: A_DATE, someStrings: SOME_STRINGS });
         });
   
         it("returns the populated entity", () => {
-          expect(entity.aString).toBe('foo');
-          expect(entity.aNumber).toBe(42);
+          expect(entity.aString).toBe(A_STRING);
+          expect(entity.aNumber).toBe(A_NUMBER);
           expect(entity.aBoolean).toBe(false);
+          expect(entity.someText).toBe(SOME_TEXT);
           expect(entity.aPoint).toEqual(A_POINT);
           expect(entity.aDate).toEqual(A_DATE);
-          expect(entity.someStrings).toEqual(A_STRING_ARRAY);
+          expect(entity.someStrings).toEqual(SOME_STRINGS);
         });
 
         it("saves the entity data to the key", () =>
           expect(Client.prototype.hsetall).toHaveBeenCalledWith(
             expect.stringMatching(/^SimpleHashEntity:/), {
-              aString: 'foo', aNumber: '42', aBoolean: '0',
-              aPoint: A_POINT_STRING, aDate: A_DATE_EPOCH_STRING, someStrings: A_STRING_ARRAY_JOINED }));
+              aString: A_STRING, aNumber: A_NUMBER_STRING, aBoolean: '0', someText: SOME_TEXT,
+              aPoint: A_POINT_STRING, aDate: A_DATE_EPOCH_STRING, someStrings: SOME_STRINGS_JOINED }));
       });
   
       describe("when saving an empty entity", () => {
@@ -60,6 +64,7 @@ describe("Repository", () => {
           expect(entity.aString).toBeNull();
           expect(entity.aNumber).toBeNull();
           expect(entity.aBoolean).toBeNull();
+          expect(entity.someText).toBeNull();
           expect(entity.aPoint).toBeNull();
           expect(entity.aDate).toBeNull();
           expect(entity.someStrings).toBeNull();
@@ -79,24 +84,25 @@ describe("Repository", () => {
 
       describe("when creating and saving a fully populated entity", () => {
         beforeEach(async () => {
-          entity = await repository.createAndSave({ aString: 'foo', aNumber: 42, aBoolean: false,
-            aPoint: A_POINT, aDate: A_DATE, someStrings: A_STRING_ARRAY });
+          entity = await repository.createAndSave({ aString: A_STRING, aNumber: A_NUMBER, aBoolean: false,
+            someText: SOME_TEXT, aPoint: A_POINT, aDate: A_DATE, someStrings: SOME_STRINGS });
         });
   
         it("returns the populated entity", () => {
-          expect(entity.aString).toBe('foo');
-          expect(entity.aNumber).toBe(42);
+          expect(entity.aString).toBe(A_STRING);
+          expect(entity.aNumber).toBe(A_NUMBER);
           expect(entity.aBoolean).toBe(false);
+          expect(entity.someText).toBe(SOME_TEXT);
           expect(entity.aPoint).toEqual(A_POINT);
           expect(entity.aDate).toEqual(A_DATE);
-          expect(entity.someStrings).toEqual(A_STRING_ARRAY);
+          expect(entity.someStrings).toEqual(SOME_STRINGS);
         });
 
         it("saves the entity data to the key", () =>
           expect(Client.prototype.jsonset).toHaveBeenCalledWith(
             expect.stringMatching(/^SimpleJsonEntity:/), {
-              aString: 'foo', aNumber: 42, aBoolean: false,
-              aPoint: A_POINT_STRING, aDate: A_DATE_EPOCH, someStrings: A_STRING_ARRAY }));
+              aString: A_STRING, aNumber: A_NUMBER, aBoolean: false, someText: SOME_TEXT,
+              aPoint: A_POINT_STRING, aDate: A_DATE_EPOCH, someStrings: SOME_STRINGS }));
       });
   
       describe("when saving an empty entity", () => {
@@ -106,6 +112,7 @@ describe("Repository", () => {
           expect(entity.aString).toBeNull();
           expect(entity.aNumber).toBeNull();
           expect(entity.aBoolean).toBeNull();
+          expect(entity.someText).toBeNull();
           expect(entity.aPoint).toBeNull();
           expect(entity.aDate).toBeNull();
           expect(entity.someStrings).toBeNull();

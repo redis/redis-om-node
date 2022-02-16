@@ -68,6 +68,7 @@ let toHashConverters = {
   'number': (value: EntityValue) => (value as number).toString(),
   'boolean': (value: EntityValue) => (value as boolean) ? '1' : '0',
   'string': (value: EntityValue) => (value as string).toString(),
+  'text': (value: EntityValue) => (value as string).toString(),
   'point': (value: EntityValue) => pointToString(value as Point),
   'date': (value: EntityValue) => dateToString(value as Date),
   'string[]': (value: EntityValue, fieldDef: FieldDefinition) => stringArrayToString(value as string[], fieldDef as StringArrayField)
@@ -77,6 +78,7 @@ let fromHashConverters = {
   'number': stringToNumber,
   'boolean': stringToBoolean,
   'string': (value: string) => value,
+  'text': (value: string) => value,
   'point': stringToPoint,
   'date': stringToDate,
   'string[]': (value: string, fieldDef: FieldDefinition) => stringToStringArray(value, fieldDef as StringArrayField)
@@ -86,6 +88,7 @@ let toJsonConverters = {
   'number': (value: EntityValue) => value,
   'boolean': (value: EntityValue) => value,
   'string': (value: EntityValue) => value,
+  'text': (value: EntityValue) => value,
   'point': (value: EntityValue) => pointToString(value as Point),
   'date': (value: EntityValue) => dateToNumber(value as Date),
   'string[]': (value: EntityValue) => value
@@ -95,6 +98,7 @@ let fromJsonConverters = {
   'number': (value: any) => (value as number),
   'boolean': (value: any) => (value as boolean),
   'string': (value: any) => (value as string),
+  'text': (value: any) => (value as string),
   'point': (value: any) => stringToPoint(value as string),
   'date': (value: any) => numberToDate(value as number),
   'string[]': (value: any) => (value as string[])

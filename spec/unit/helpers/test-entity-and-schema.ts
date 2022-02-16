@@ -8,6 +8,7 @@ export class SimpleJsonEntity extends SimpleEntity {}
 
 export interface SimpleEntity {
   aString?: string | number | boolean | null;
+  someText?: string | number | boolean | null;
   aNumber?: number | null;
   aBoolean?: boolean | null;
   aPoint?: Point | null;
@@ -18,17 +19,13 @@ export interface SimpleEntity {
 export interface SimpleHashEntity extends SimpleEntity {}
 export interface SimpleJsonEntity extends SimpleEntity {}
 
-export class FullTextEntity extends Entity {}
 export class AliasedEntity extends Entity {}
 export class StopWordsOffEntity extends Entity {}
 export class CustomStopWordsEntity extends Entity {}
 
-export interface FullTextEntity {
-  aString?: string | null;
-}  
-
 export interface AliasedEntity {
   aString?: string | null;
+  someText?: string | null;
   aNumber?: number | null;
   aBoolean?: boolean | null;
   aPoint?: Point | null;
@@ -38,6 +35,7 @@ export interface AliasedEntity {
 
 export const simpleSchema = new Schema(SimpleEntity, {
   aString: { type: 'string' },
+  someText: { type: 'text' },
   aNumber: { type: 'number' },
   aBoolean: { type: 'boolean' },
   aPoint: { type: 'point' },
@@ -47,6 +45,7 @@ export const simpleSchema = new Schema(SimpleEntity, {
 
 export const simpleHashSchema = new Schema(SimpleHashEntity, {
   aString: { type: 'string' },
+  someText: { type: 'text' },
   aNumber: { type: 'number' },
   aBoolean: { type: 'boolean' },
   aPoint: { type: 'point' },
@@ -58,6 +57,7 @@ export const simpleHashSchema = new Schema(SimpleHashEntity, {
 
 export const simpleJsonSchema = new Schema(SimpleJsonEntity, {
   aString: { type: 'string' },
+  someText: { type: 'text' },
   aNumber: { type: 'number' },
   aBoolean: { type: 'boolean' },
   aPoint: { type: 'point' },
@@ -67,12 +67,9 @@ export const simpleJsonSchema = new Schema(SimpleJsonEntity, {
   dataStructure: 'JSON'
 });
 
-export const fullTextSchema = new Schema(FullTextEntity, {
-  aString: { type: 'string', textSearch: true },
-});
-
 export const aliasedSchema = new Schema(AliasedEntity, {
   aString: { type: 'string', alias: 'anotherString' },
+  someText: { type: 'text', alias: 'someOtherText' },
   aNumber: { type: 'number', alias: 'anotherNumber' },
   aBoolean: { type: 'boolean', alias: 'anotherBoolean' },
   aPoint: { type: 'point', alias: 'anotherPoint' },
@@ -81,13 +78,13 @@ export const aliasedSchema = new Schema(AliasedEntity, {
 });
 
 export const stopWordsOffSchema = new Schema(StopWordsOffEntity, {
-  aString: { type: 'string', textSearch: true }
+  someText: { type: 'text' }
 }, {
   useStopWords: 'OFF'
 });
 
 export const customStopWordsSchema = new Schema(CustomStopWordsEntity, {
-  aString: { type: 'string', textSearch: true }
+  someText: { type: 'text' }
 }, {
   useStopWords: 'CUSTOM',
   stopWords: [ 'foo', 'bar', 'baz' ]

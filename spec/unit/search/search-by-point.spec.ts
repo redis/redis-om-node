@@ -4,8 +4,8 @@ import { Point } from '../../../lib';
 import Client from "../../../lib/client";
 import Search from "../../../lib/search/search";
 import WhereField from '../../../lib/search/where-field';
-import { A_POINT } from '../../helpers/example-data';
 
+import { A_POINT } from '../../helpers/example-data';
 import { simpleSchema, SimpleEntity } from "../helpers/test-entity-and-schema";
 
 jest.mock('../../../lib/client');

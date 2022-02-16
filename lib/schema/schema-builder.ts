@@ -41,19 +41,13 @@ export default class SchemaBuilder<TEntity extends Entity> {
 
     schemaEntry.push(fieldAlias)
 
+    if (fieldType === 'date') schemaEntry.push('NUMERIC');
     if (fieldType === 'boolean') schemaEntry.push('TAG');
     if (fieldType === 'number') schemaEntry.push('NUMERIC');
     if (fieldType === 'point') schemaEntry.push('GEO');
-    if (fieldType === 'date') schemaEntry.push('NUMERIC');
-    if (fieldType === 'string[]')
-      schemaEntry.push('TAG', 'SEPARATOR', (fieldDef as StringArrayField).separator ?? '|');
-
-    if (fieldType === 'string') {
-      if ((fieldDef as StringField).textSearch)
-        schemaEntry.push('TEXT');
-      else
-        schemaEntry.push('TAG', 'SEPARATOR', (fieldDef as StringField).separator ?? '|');
-    }
+    if (fieldType === 'string[]') schemaEntry.push('TAG', 'SEPARATOR', (fieldDef as StringArrayField).separator ?? '|');
+    if (fieldType === 'string') schemaEntry.push('TAG', 'SEPARATOR', (fieldDef as StringField).separator ?? '|');
+    if (fieldType === 'text') schemaEntry.push('TEXT');
 
     return schemaEntry;
   }
@@ -73,10 +67,8 @@ export default class SchemaBuilder<TEntity extends Entity> {
     if (fieldType === 'point') schemaEntry.push('GEO');
     if (fieldType === 'date') schemaEntry.push('NUMERIC');
     if (fieldType === 'string[]') schemaEntry.push('TAG');
-    if (fieldType === 'string') {
-      if ((fieldDef as StringField).textSearch) schemaEntry.push('TEXT');
-      else schemaEntry.push('TAG', 'SEPARATOR', (fieldDef as StringField).separator ?? '|');
-    }
+    if (fieldType === 'string') schemaEntry.push('TAG', 'SEPARATOR', (fieldDef as StringField).separator ?? '|');
+    if (fieldType === 'text') schemaEntry.push('TEXT');
 
     return schemaEntry;
   }

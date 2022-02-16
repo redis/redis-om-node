@@ -9,7 +9,7 @@ import WhereField from './where-field';
 import WhereStringArray from './where-string-array';
 import { WhereHashBoolean, WhereJsonBoolean } from './where-boolean';
 import WhereNumber from './where-number';
-import WhereGeo from './where-point';
+import WherePoint from './where-point';
 import WhereString from './where-string';
 import WhereText from './where-text';
 
@@ -265,9 +265,9 @@ export default class Search<TEntity extends Entity> {
     if (fieldDef.type === 'boolean' && this.schema.dataStructure === 'JSON') return new WhereJsonBoolean<TEntity>(this, field);
     if (fieldDef.type === 'date') return new WhereDate<TEntity>(this, field);
     if (fieldDef.type === 'number') return new WhereNumber<TEntity>(this, field);
-    if (fieldDef.type === 'point') return new WhereGeo<TEntity>(this, field);
-    if (fieldDef.type === 'string' && fieldDef.textSearch === true) return new WhereText<TEntity>(this, field);
-    if (fieldDef.type === 'string' && fieldDef.textSearch !== true) return new WhereString<TEntity>(this, field);
+    if (fieldDef.type === 'point') return new WherePoint<TEntity>(this, field);
+    if (fieldDef.type === 'text') return new WhereText<TEntity>(this, field);
+    if (fieldDef.type === 'string') return new WhereString<TEntity>(this, field);
     if (fieldDef.type === 'string[]') return new WhereStringArray<TEntity>(this, field);
 
     // @ts-ignore: This is a trap for JavaScript

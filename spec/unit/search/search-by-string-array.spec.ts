@@ -4,6 +4,7 @@ import Client from "../../../lib/client";
 import Search from "../../../lib/search/search";
 import WhereField from '../../../lib/search/where-field';
 
+import { A_STRING, ANOTHER_STRING, A_THIRD_STRING } from '../../helpers/example-data';
 import { simpleSchema, SimpleEntity } from "../helpers/test-entity-and-schema";
 
 jest.mock('../../../lib/client');
@@ -18,10 +19,10 @@ describe("Search", () => {
     let search: Search<SimpleEntity>;
     let where: WhereField<SimpleEntity>;
 
-    const A_CONTAINS_QUERY = "(@someStrings:{foo})";
-    const A_NEGATED_CONTAINS_QUERY = "(-@someStrings:{foo})";
-    const A_CONTAINS_ONE_QUERY = "(@someStrings:{foo|bar|baz})";
-    const A_NEGATED_CONTAINS_ONE_QUERY = "(-@someStrings:{foo|bar|baz})";
+    const A_CONTAINS_QUERY = `(@someStrings:{${A_STRING}})`;
+    const A_NEGATED_CONTAINS_QUERY = `(-@someStrings:{${A_STRING}})`;
+    const A_CONTAINS_ONE_QUERY = `(@someStrings:{${A_STRING}|${ANOTHER_STRING}|${A_THIRD_STRING}})`;
+    const A_NEGATED_CONTAINS_ONE_QUERY = `(-@someStrings:{${A_STRING}|${ANOTHER_STRING}|${A_THIRD_STRING}})`;
 
     type ArrayChecker = (search: Search<SimpleEntity>) => void;
     const expectToBeContainsQuery: ArrayChecker = search => expect(search.query).toBe(A_CONTAINS_QUERY);
@@ -38,13 +39,13 @@ describe("Search", () => {
 
     describe("when generating for an string[]", () => {
 
-      it("generates a query with .contains", () => expectToBeContainsQuery(where.contains('foo')));
-      it("generates a query with .does.contain", () => expectToBeContainsQuery(where.does.contain('foo')));
-      it("generates a query with .does.not.contain", () => expectToBeNegatedContainsQuery(where.does.not.contain('foo')));
+      it("generates a query with .contains", () => expectToBeContainsQuery(where.contains(A_STRING)));
+      it("generates a query with .does.contain", () => expectToBeContainsQuery(where.does.contain(A_STRING)));
+      it("generates a query with .does.not.contain", () => expectToBeNegatedContainsQuery(where.does.not.contain(A_STRING)));
 
-      it("generates a query with .containsOneOf", () => expectToBeContainsOneQuery(where.containsOneOf('foo', 'bar', 'baz')));
-      it("generates a query with .does.containOneOf", () => expectToBeContainsOneQuery(where.does.containOneOf('foo', 'bar', 'baz')));
-      it("generates a query with .does.not.containOneOf", () => expectToBeNegatedContainsOneQuery(where.does.not.containOneOf('foo', 'bar', 'baz')));
+      it("generates a query with .containsOneOf", () => expectToBeContainsOneQuery(where.containsOneOf(A_STRING, ANOTHER_STRING, A_THIRD_STRING)));
+      it("generates a query with .does.containOneOf", () => expectToBeContainsOneQuery(where.does.containOneOf(A_STRING, ANOTHER_STRING, A_THIRD_STRING)));
+      it("generates a query with .does.not.containOneOf", () => expectToBeNegatedContainsOneQuery(where.does.not.containOneOf(A_STRING, ANOTHER_STRING, A_THIRD_STRING)));
 
       it("generates a query that escapes all punctuation", () => {
         let query = where.contains(",.<>{}[]\"':;|!@#$%^&*()-+=~ ").query;

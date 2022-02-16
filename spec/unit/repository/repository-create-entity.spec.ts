@@ -6,8 +6,8 @@ import { HashRepository } from '../../../lib/repository/repository';
 
 import { simpleSchema, SimpleEntity } from '../helpers/test-entity-and-schema';
 import {
-  A_STRING_ARRAY, A_DATE, A_POINT,
-  ANOTHER_STRING_ARRAY, ANOTHER_DATE, ANOTHER_POINT } from '../../helpers/example-data';
+  A_NUMBER, A_STRING, SOME_STRINGS, SOME_TEXT, A_DATE, A_POINT,
+  ANOTHER_NUMBER, ANOTHER_STRING, SOME_OTHER_STRINGS, SOME_OTHER_TEXT, ANOTHER_DATE, ANOTHER_POINT } from '../../helpers/example-data';
 
 jest.mock('../../../lib/client');
 
@@ -37,6 +37,7 @@ describe("Repository", () => {
         expect(entity.aBoolean).toBe(null);
         expect(entity.aNumber).toBe(null);
         expect(entity.aString).toBe(null);
+        expect(entity.someText).toBe(null);
         expect(entity.aPoint).toBe(null);
         expect(entity.aDate).toBe(null);
         expect(entity.someStrings).toBe(null);
@@ -45,69 +46,78 @@ describe("Repository", () => {
 
     describe("when creating an entity with data", () => {
       beforeEach(() => entity = repository.createEntity({
-        aBoolean: true, aNumber: 42, aString: 'foo', aPoint: A_POINT, aDate: A_DATE, someStrings: A_STRING_ARRAY }));
-  
+        aBoolean: true, aNumber: A_NUMBER, aString: A_STRING, someText: SOME_TEXT,
+        aPoint: A_POINT, aDate: A_DATE, someStrings: SOME_STRINGS }));
+
       it("is of the expected type", () => expect(entity).toBeInstanceOf(SimpleEntity));
       it("has a generated entity id", () => expect(entity.entityId).toMatch(ULID_REGEX));
       it("has the expected entity data", () => expect(entity.entityData).toEqual({
-        aBoolean: true, aNumber: 42, aString: 'foo', aPoint: A_POINT, aDate: A_DATE, someStrings: A_STRING_ARRAY }));
+        aBoolean: true, aNumber: A_NUMBER, aString: A_STRING, someText: SOME_TEXT,
+        aPoint: A_POINT, aDate: A_DATE, someStrings: SOME_STRINGS }));
 
       it("has populated properties", () => {
         expect(entity.aBoolean).toBe(true);
-        expect(entity.aNumber).toBe(42);
-        expect(entity.aString).toBe('foo');
+        expect(entity.aNumber).toBe(A_NUMBER);
+        expect(entity.aString).toBe(A_STRING);
+        expect(entity.someText).toBe(SOME_TEXT);
         expect(entity.aPoint).toEqual(A_POINT);
         expect(entity.aDate).toEqual(A_DATE);
-        expect(entity.someStrings).toEqual(A_STRING_ARRAY);
+        expect(entity.someStrings).toEqual(SOME_STRINGS);
       });
     });
 
     describe("when creating an entity with missing data", () => {
-      beforeEach(() => entity = repository.createEntity({ aString: 'foo', someStrings: A_STRING_ARRAY }));
-  
+      beforeEach(() => entity = repository.createEntity({ aString: A_STRING, someStrings: SOME_STRINGS }));
       it("is of the expected type", () => expect(entity).toBeInstanceOf(SimpleEntity));
       it("has a generated entity id", () => expect(entity.entityId).toMatch(ULID_REGEX));
-      it("has the expected entity data", () => expect(entity.entityData).toEqual({ aString: 'foo', someStrings: A_STRING_ARRAY }));
+      it("has the expected entity data", () => expect(entity.entityData).toEqual({ aString: A_STRING, someStrings: SOME_STRINGS }));
       it("has populated properties", () => {
         expect(entity.aBoolean).toBe(null);
         expect(entity.aNumber).toBe(null);
-        expect(entity.aString).toBe('foo');
+        expect(entity.aString).toBe(A_STRING);
+        expect(entity.someText).toBe(null);
         expect(entity.aPoint).toBe(null);
         expect(entity.aDate).toBe(null);
-        expect(entity.someStrings).toEqual(A_STRING_ARRAY);
+        expect(entity.someStrings).toEqual(SOME_STRINGS);
       });
     });
 
     describe("when creating an entity with extra data", () => {
       beforeEach(() => entity = repository.createEntity({
-          aBoolean: true, aNumber: 42, aString: 'foo', 
-          anotherBoolean: false, anotherNumber: 23, anotherString: 'bar',
-          aPoint: A_POINT, aDate: A_DATE, someStrings: A_STRING_ARRAY,
-          anotherPoint: ANOTHER_POINT, anotherDate: ANOTHER_DATE, someOtherStrings: ANOTHER_STRING_ARRAY }));
+        aBoolean: true, aNumber: A_NUMBER, aString: A_STRING, 
+        anotherBoolean: false, anotherNumber: 23, anotherString: 'bar',
+        someText: SOME_TEXT, someOtherText: SOME_OTHER_TEXT, 
+        aPoint: A_POINT, aDate: A_DATE, someStrings: SOME_STRINGS,
+        anotherPoint: ANOTHER_POINT, anotherDate: ANOTHER_DATE, someOtherStrings: SOME_OTHER_STRINGS }));
   
       it("is of the expected type", () => expect(entity).toBeInstanceOf(SimpleEntity));
       it("has a generated entity id", () => expect(entity.entityId).toMatch(ULID_REGEX));
       it("has the expected entity data", () => expect(entity.entityData).toEqual({
-        aBoolean: true, aNumber: 42, aString: 'foo', aPoint: A_POINT, aDate: A_DATE, someStrings: A_STRING_ARRAY }))
+        aBoolean: true, aNumber: A_NUMBER, aString: A_STRING, someText: SOME_TEXT,
+        aPoint: A_POINT, aDate: A_DATE, someStrings: SOME_STRINGS }));
+
       it("has populated properties", () => {
         expect(entity.aBoolean).toBe(true);
-        expect(entity.aNumber).toBe(42);
-        expect(entity.aString).toBe('foo');
+        expect(entity.aNumber).toBe(A_NUMBER);
+        expect(entity.aString).toBe(A_STRING);
+        expect(entity.someText).toBe(SOME_TEXT);
         expect(entity.aPoint).toEqual(A_POINT);
         expect(entity.aDate).toEqual(A_DATE);
-        expect(entity.someStrings).toEqual(A_STRING_ARRAY);
+        expect(entity.someStrings).toEqual(SOME_STRINGS);
       });
-    });
+      ;
 
     it("complains when creating an entity with mismatched data", () => {
       expect(() => entity = repository.createEntity({
-          aBoolean: 42,
-          aNumber: 'foo',
+          aBoolean: A_NUMBER,
+          aNumber: A_STRING,
           aString: A_POINT,
-          aPoint: A_DATE,
-          aDate: A_STRING_ARRAY,
-          someStrings: true
+          someText: A_DATE,
+          aPoint: SOME_STRINGS,
+          aDate: SOME_OTHER_STRINGS,
+          someStrings: A_NUMBER
         })).toThrowError();
+      });
     });
   });
 });

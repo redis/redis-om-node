@@ -4,7 +4,7 @@ import RedisError from "./errors";
 import Repository from "./repository/repository";
 import { EntityCreationData } from "./repository/repository";
 import Schema from "./schema/schema";
-import { Point, SchemaDefinition, FieldDefinition, Field, NumericField, StringField, BooleanField, PointField, StringArrayField,
+import { Point, SchemaDefinition, FieldDefinition, Field, NumberField, StringField, BooleanField, PointField, StringArrayField,
   IdStrategy, StopWordOptions } from "./schema/schema-definitions";
 import { SchemaOptions } from "./schema/schema-options";
 import Search, { SubSearchFunction } from "./search/search";
@@ -19,7 +19,7 @@ export {
   RedisError,
   Repository, EntityCreationData,
   Schema, SchemaDefinition, SchemaOptions, Point,
-  FieldDefinition, Field, NumericField, StringField, BooleanField, PointField, StringArrayField, IdStrategy, StopWordOptions,
+  FieldDefinition, Field, NumberField, StringField, BooleanField, PointField, StringArrayField, IdStrategy, StopWordOptions,
   Search, SubSearchFunction,
   Where, WhereField, Circle, CircleFunction
 };

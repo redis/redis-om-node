@@ -74,12 +74,12 @@ describe("Schema", () => {
     it("throws an exception when the type is missing on a field definition", () =>
       // @ts-ignore: JavaScript test
       expect(() => new Schema<TestEntity>(TestEntity, { aField: {} }))
-        .toThrow("The field 'aField' is configured with a type of 'undefined'. Valid types include 'boolean', 'date', 'number', 'point', 'string', and 'string[]'."));
+        .toThrow("The field 'aField' is configured with a type of 'undefined'. Valid types include 'boolean', 'date', 'number', 'point', 'string', 'string[]', and 'text'."));
 
     it("throws an exception when the type is invalid on a field definition", () =>
       // @ts-ignore: JavaScript test
       expect(() => new Schema<TestEntity>(TestEntity, { aField: { type: 'foo' } }))
-        .toThrow("The field 'aField' is configured with a type of 'foo'. Valid types include 'boolean', 'date', 'number', 'point', 'string', and 'string[]'."));
+        .toThrow("The field 'aField' is configured with a type of 'foo'. Valid types include 'boolean', 'date', 'number', 'point', 'string', 'string[]', and 'text'."));
 
     it("throws an exception when the data structure is invalid", () => {
       // @ts-ignore: JavaScript test
@@ -87,7 +87,7 @@ describe("Schema", () => {
         .toThrow("'FOO' in an invalid data structure. Valid data structures are 'HASH' and 'JSON'.");
     });
 
-    it("throws an exception when use stop words is invalid", () => {
+    it("throws an exception when use stop words are invalid", () => {
       // @ts-ignore: JavaScript test
       expect(() => new Schema<TestEntity>(TestEntity, {}, { useStopWords: 'FOO' }))
         .toThrow("'FOO' in an invalid value for stop words. Valid values are 'OFF', 'DEFAULT', and 'CUSTOM'.");

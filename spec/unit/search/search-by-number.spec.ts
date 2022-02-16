@@ -4,6 +4,7 @@ import Client from "../../../lib/client";
 import Search from "../../../lib/search/search";
 import WhereField from '../../../lib/search/where-field';
 
+import { A_NUMBER, ANOTHER_NUMBER } from '../../helpers/example-data';
 import { simpleSchema, SimpleEntity } from "../helpers/test-entity-and-schema";
 
 jest.mock('../../../lib/client');
@@ -18,18 +19,18 @@ describe("Search", () => {
     let search: Search<SimpleEntity>;
     let where: WhereField<SimpleEntity>;
 
-    const AN_EQUAL_QUERY = "(@aNumber:[42 42])";
-    const A_NEGATED_EQUAL_QUERY = "(-@aNumber:[42 42])";
-    const A_GT_QUERY = "(@aNumber:[(42 +inf])";
-    const A_NEGATED_GT_QUERY = "(-@aNumber:[(42 +inf])";
-    const A_GTE_QUERY = "(@aNumber:[42 +inf])";
-    const A_NEGATED_GTE_QUERY = "(-@aNumber:[42 +inf])";
-    const AN_LT_QUERY = "(@aNumber:[-inf (42])";
-    const A_NEGATED_LT_QUERY = "(-@aNumber:[-inf (42])";
-    const AN_LTE_QUERY = "(@aNumber:[-inf 42])";
-    const A_NEGATED_LTE_QUERY = "(-@aNumber:[-inf 42])";
-    const A_BETWEEN_QUERY = "(@aNumber:[23 42])";
-    const A_NEGATED_BETWEEN_QUERY = "(-@aNumber:[23 42])";
+    const AN_EQUAL_QUERY = `(@aNumber:[${A_NUMBER} ${A_NUMBER}])`;
+    const A_NEGATED_EQUAL_QUERY = `(-@aNumber:[${A_NUMBER} ${A_NUMBER}])`;
+    const A_GT_QUERY = `(@aNumber:[(${A_NUMBER} +inf])`;
+    const A_NEGATED_GT_QUERY = `(-@aNumber:[(${A_NUMBER} +inf])`;
+    const A_GTE_QUERY = `(@aNumber:[${A_NUMBER} +inf])`;
+    const A_NEGATED_GTE_QUERY = `(-@aNumber:[${A_NUMBER} +inf])`;
+    const AN_LT_QUERY = `(@aNumber:[-inf (${A_NUMBER}])`;
+    const A_NEGATED_LT_QUERY = `(-@aNumber:[-inf (${A_NUMBER}])`;
+    const AN_LTE_QUERY = `(@aNumber:[-inf ${A_NUMBER}])`;
+    const A_NEGATED_LTE_QUERY = `(-@aNumber:[-inf ${A_NUMBER}])`;
+    const A_BETWEEN_QUERY = `(@aNumber:[${ANOTHER_NUMBER} ${A_NUMBER}])`;
+    const A_NEGATED_BETWEEN_QUERY = `(-@aNumber:[${ANOTHER_NUMBER} ${A_NUMBER}])`;
 
     type RangeChecker = (search: Search<SimpleEntity>) => void;
     const expectToBeEqualQuery: RangeChecker = search => expect(search.query).toBe(AN_EQUAL_QUERY);
@@ -54,42 +55,42 @@ describe("Search", () => {
 
     describe("when generating a query with a number", () => {
 
-      it("generates a query with .eq", () => expectToBeEqualQuery(where.eq(42)));
-      it("generates a query with .not.eq", () => expectToBeNegatedEqualQuery(where.not.eq(42)));
-      it("generates a query with .equals", () => expectToBeEqualQuery(where.equals(42)));
-      it("generates a query with .does.equal", () => expectToBeEqualQuery(where.does.equal(42)));
-      it("generates a query with .does.not.equal", () => expectToBeNegatedEqualQuery(where.does.not.equal(42)));
-      it("generates a query with .is.equalTo", () => expectToBeEqualQuery(where.is.equalTo(42)));
-      it("generates a query with .is.not.equalTo", () => expectToBeNegatedEqualQuery(where.is.not.equalTo(42)));
+      it("generates a query with .eq", () => expectToBeEqualQuery(where.eq(A_NUMBER)));
+      it("generates a query with .not.eq", () => expectToBeNegatedEqualQuery(where.not.eq(A_NUMBER)));
+      it("generates a query with .equals", () => expectToBeEqualQuery(where.equals(A_NUMBER)));
+      it("generates a query with .does.equal", () => expectToBeEqualQuery(where.does.equal(A_NUMBER)));
+      it("generates a query with .does.not.equal", () => expectToBeNegatedEqualQuery(where.does.not.equal(A_NUMBER)));
+      it("generates a query with .is.equalTo", () => expectToBeEqualQuery(where.is.equalTo(A_NUMBER)));
+      it("generates a query with .is.not.equalTo", () => expectToBeNegatedEqualQuery(where.is.not.equalTo(A_NUMBER)));
 
-      it("generates a query with .gt", () => expectToBeGTQuery(where.gt(42)));
-      it("generates a query with .not.gt", () => expectToBeNegatedGTQuery(where.not.gt(42)));
-      it("generates a query with .greaterThan", () => expectToBeGTQuery(where.greaterThan(42)));
-      it("generates a query with .is.greaterThan", () => expectToBeGTQuery(where.is.greaterThan(42)));
-      it("generates a query with .is.not.greaterThan", () => expectToBeNegatedGTQuery(where.is.not.greaterThan(42)));
+      it("generates a query with .gt", () => expectToBeGTQuery(where.gt(A_NUMBER)));
+      it("generates a query with .not.gt", () => expectToBeNegatedGTQuery(where.not.gt(A_NUMBER)));
+      it("generates a query with .greaterThan", () => expectToBeGTQuery(where.greaterThan(A_NUMBER)));
+      it("generates a query with .is.greaterThan", () => expectToBeGTQuery(where.is.greaterThan(A_NUMBER)));
+      it("generates a query with .is.not.greaterThan", () => expectToBeNegatedGTQuery(where.is.not.greaterThan(A_NUMBER)));
       
-      it("generates a query with .gte", () => expectToBeGTEQuery(where.gte(42)));
-      it("generates a query with .not.gte", () => expectToBeNegatedGTEQuery(where.not.gte(42)));
-      it("generates a query with .greaterThanOrEqualTo", () => expectToBeGTEQuery(where.greaterThanOrEqualTo(42)));
-      it("generates a query with .is.greaterThanOrEqualTo", () => expectToBeGTEQuery(where.is.greaterThanOrEqualTo(42)));
-      it("generates a query with .is.not.greaterThanOrEqualTo", () => expectToBeNegatedGTEQuery(where.is.not.greaterThanOrEqualTo(42)));
+      it("generates a query with .gte", () => expectToBeGTEQuery(where.gte(A_NUMBER)));
+      it("generates a query with .not.gte", () => expectToBeNegatedGTEQuery(where.not.gte(A_NUMBER)));
+      it("generates a query with .greaterThanOrEqualTo", () => expectToBeGTEQuery(where.greaterThanOrEqualTo(A_NUMBER)));
+      it("generates a query with .is.greaterThanOrEqualTo", () => expectToBeGTEQuery(where.is.greaterThanOrEqualTo(A_NUMBER)));
+      it("generates a query with .is.not.greaterThanOrEqualTo", () => expectToBeNegatedGTEQuery(where.is.not.greaterThanOrEqualTo(A_NUMBER)));
 
-      it("generates a query with .lt", () => expectToBeLTQuery(where.lt(42)));
-      it("generates a query with .not.lt", () => expectToBeNegatedLTQuery(where.not.lt(42)));
-      it("generates a query with .lessThan", () => expectToBeLTQuery(where.lessThan(42)));
-      it("generates a query with .is.lessThan", () => expectToBeLTQuery(where.is.lessThan(42)));
-      it("generates a query with .is.not.lessThan", () => expectToBeNegatedLTQuery(where.is.not.lessThan(42)));
+      it("generates a query with .lt", () => expectToBeLTQuery(where.lt(A_NUMBER)));
+      it("generates a query with .not.lt", () => expectToBeNegatedLTQuery(where.not.lt(A_NUMBER)));
+      it("generates a query with .lessThan", () => expectToBeLTQuery(where.lessThan(A_NUMBER)));
+      it("generates a query with .is.lessThan", () => expectToBeLTQuery(where.is.lessThan(A_NUMBER)));
+      it("generates a query with .is.not.lessThan", () => expectToBeNegatedLTQuery(where.is.not.lessThan(A_NUMBER)));
       
-      it("generates a query with .lte", () => expectToBeLTEQuery(where.lte(42)));
-      it("generates a query with .not.lte", () => expectToBeNegatedLTEQuery(where.not.lte(42)));
-      it("generates a query with .lessThanOrEqualTo", () => expectToBeLTEQuery(where.lessThanOrEqualTo(42)));
-      it("generates a query with .is.lessThanOrEqualTo", () => expectToBeLTEQuery(where.is.lessThanOrEqualTo(42)));
-      it("generates a query with .is.not.lessThanOrEqualTo", () => expectToBeNegatedLTEQuery(where.is.not.lessThanOrEqualTo(42)));
+      it("generates a query with .lte", () => expectToBeLTEQuery(where.lte(A_NUMBER)));
+      it("generates a query with .not.lte", () => expectToBeNegatedLTEQuery(where.not.lte(A_NUMBER)));
+      it("generates a query with .lessThanOrEqualTo", () => expectToBeLTEQuery(where.lessThanOrEqualTo(A_NUMBER)));
+      it("generates a query with .is.lessThanOrEqualTo", () => expectToBeLTEQuery(where.is.lessThanOrEqualTo(A_NUMBER)));
+      it("generates a query with .is.not.lessThanOrEqualTo", () => expectToBeNegatedLTEQuery(where.is.not.lessThanOrEqualTo(A_NUMBER)));
 
-      it("generates a query with .between", () => expectToBeBetweenQuery(where.between(23, 42)));
-      it("generates a query with .not.between", () => expectToBeNegatedBetweenQuery(where.not.between(23, 42)));
-      it("generates a query with .is.between", () => expectToBeBetweenQuery(where.is.between(23, 42)));
-      it("generates a query with .is.not.between", () => expectToBeNegatedBetweenQuery(where.is.not.between(23, 42)));
+      it("generates a query with .between", () => expectToBeBetweenQuery(where.between(ANOTHER_NUMBER, A_NUMBER)));
+      it("generates a query with .not.between", () => expectToBeNegatedBetweenQuery(where.not.between(ANOTHER_NUMBER, A_NUMBER)));
+      it("generates a query with .is.between", () => expectToBeBetweenQuery(where.is.between(ANOTHER_NUMBER, A_NUMBER)));
+      it("generates a query with .is.not.between", () => expectToBeNegatedBetweenQuery(where.is.not.between(ANOTHER_NUMBER, A_NUMBER)));
     });
   });
 });

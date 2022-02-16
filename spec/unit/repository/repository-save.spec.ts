@@ -5,7 +5,8 @@ import Repository from '../../../lib/repository/repository';
 import { JsonRepository, HashRepository } from '../../../lib/repository/repository';
 
 import {
-  A_STRING_ARRAY, A_STRING_ARRAY_JOINED,
+  A_STRING, A_NUMBER, A_NUMBER_STRING, SOME_TEXT,
+  SOME_STRINGS, SOME_STRINGS_JOINED,
   A_DATE, A_DATE_EPOCH, A_DATE_EPOCH_STRING,
   A_POINT, A_POINT_STRING } from '../../helpers/example-data';
 
@@ -37,16 +38,16 @@ describe("Repository", () => {
       describe.each([
 
         ["when saving a fully populated entity", {
-          providedString: 'foo', providedNumber: 42, providedBoolean: false,
-          providedPoint: A_POINT, providedDate: A_DATE, providedArray: A_STRING_ARRAY,
-          expectedData: { aString: 'foo', aNumber: '42', aBoolean: '0',
-            aPoint: A_POINT_STRING, aDate: A_DATE_EPOCH_STRING, someStrings: A_STRING_ARRAY_JOINED }
+          providedString: A_STRING, providedNumber: A_NUMBER, providedBoolean: false, providedText: SOME_TEXT,
+          providedPoint: A_POINT, providedDate: A_DATE, providedArray: SOME_STRINGS,
+          expectedData: { aString: A_STRING, aNumber: A_NUMBER_STRING, aBoolean: '0', someText: SOME_TEXT,
+            aPoint: A_POINT_STRING, aDate: A_DATE_EPOCH_STRING, someStrings: SOME_STRINGS_JOINED }
         }],
   
         [ "when saving a partially populated entity", {
-          providedString: 'foo', providedNumber: 42, providedBoolean: null,
+          providedString: A_STRING, providedNumber: A_NUMBER, providedBoolean: null, providedText: null,
           providedPoint: null, providedDate: null, providedArray: null,
-          expectedData: { aString: 'foo', aNumber: '42' }
+          expectedData: { aString: A_STRING, aNumber: A_NUMBER_STRING }
         }]
   
       ])("%s", (_, data) => {
@@ -55,6 +56,7 @@ describe("Repository", () => {
           entity.aString = data.providedString;
           entity.aNumber = data.providedNumber;
           entity.aBoolean = data.providedBoolean;
+          entity.someText = data.providedText;
           entity.aPoint = data.providedPoint;
           entity.aDate = data.providedDate;
           entity.someStrings = data.providedArray;
@@ -72,6 +74,7 @@ describe("Repository", () => {
           entity.aString = null;
           entity.aNumber = null;
           entity.aBoolean = null;
+          entity.someText = null;
           entity.aPoint = null;
           entity.aDate = null;
           entity.someStrings = null;
@@ -96,16 +99,16 @@ describe("Repository", () => {
       describe.each([
 
         ["when saving a fully populated entity", {
-          providedString: 'foo', providedNumber: 42, providedBoolean: false,
-          providedPoint: A_POINT, providedDate: A_DATE, providedArray: A_STRING_ARRAY,
-          expectedData: { aString: 'foo', aNumber: 42, aBoolean: false,
-            aPoint: A_POINT_STRING, aDate: A_DATE_EPOCH, someStrings: A_STRING_ARRAY }
+          providedString: A_STRING, providedNumber: A_NUMBER, providedBoolean: false, providedText: SOME_TEXT,
+          providedPoint: A_POINT, providedDate: A_DATE, providedArray: SOME_STRINGS,
+          expectedData: { aString: A_STRING, aNumber: A_NUMBER, aBoolean: false, someText: SOME_TEXT,
+            aPoint: A_POINT_STRING, aDate: A_DATE_EPOCH, someStrings: SOME_STRINGS }
         }],
   
         [ "when saving a partially populated entity", {
-          providedString: 'foo', providedNumber: 42, providedBoolean: null,
+          providedString: A_STRING, providedNumber: A_NUMBER, providedBoolean: null, providedText: null,
           providedPoint: null, providedDate: null, providedArray: null,
-          expectedData: { aString: 'foo', aNumber: 42 }
+          expectedData: { aString: A_STRING, aNumber: A_NUMBER }
         }]
 
       ])("%s", (_, data) => {
@@ -114,6 +117,7 @@ describe("Repository", () => {
           entity.aString = data.providedString;
           entity.aNumber = data.providedNumber;
           entity.aBoolean = data.providedBoolean;
+          entity.someText = data.providedText;
           entity.aPoint = data.providedPoint
           entity.aDate = data.providedDate;
           entity.someStrings = data.providedArray;
@@ -131,6 +135,7 @@ describe("Repository", () => {
           entity.aString = null;
           entity.aNumber = null;
           entity.aBoolean = null;
+          entity.someText = null;
           entity.aPoint = null;
           entity.aDate = null;
           entity.someStrings = null;

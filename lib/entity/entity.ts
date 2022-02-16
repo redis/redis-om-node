@@ -1,5 +1,8 @@
 import { Point, SchemaDefinition } from "../schema/schema-definitions";
 
+/**
+ * Valid values for properties of an {@link Entity}.
+ */
 export type EntityValue = number | boolean | string | Point | Date | string[];
 
 /**

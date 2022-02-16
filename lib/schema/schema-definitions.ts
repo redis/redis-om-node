@@ -16,26 +16,29 @@ export interface Field {
 }
 
 /** A field representing a number. */
-export interface NumericField extends Field {
+export interface NumberField extends Field {
   /** Yep. It's a number. */
   type: 'number';
 }
 
-/** A field representing a string. */
+/** A field representing a whole string. */
 export interface StringField extends Field {
   /** Yep. It's a string. */
   type: 'string';
 
-  /** Enables full-text search on this field when set to `true`. Defaults to `false`. */
-  textSearch?: boolean;
-
   /**
-   * Due to how RediSearch works, non-full-text strings and arrays are sometimes stored the same
-   * in Redis, as a simple string. This is the separator used to split those strings when it is an
-   * array. If your StringField contains this separator, this can cause problems. You can change it
-   * here to avoid those problems. Defaults to `|`.
+   * Due to how RediSearch works, strings and arrays are sometimes stored the same in Redis, as a
+   * simple string. This is the separator used to split those strings when it is an array. If your
+   * StringField contains this separator, this can cause problems. You can change it here to avoid
+   * those problems. Defaults to `|`.
    */
   separator?: string;
+}
+
+/** A field representing searchable text. */
+export interface TextField extends Field {
+  /** Yep. It's searchable text. */
+  type: 'text';
 }
 
 /** A field representing a boolean. */
@@ -71,7 +74,7 @@ export interface StringArrayField extends Field {
 }
 
 /** Contains instructions telling how to map a property on an {@link Entity} to Redis. */
-export type FieldDefinition = NumericField | StringField | BooleanField | PointField | DateField | StringArrayField;
+export type FieldDefinition = StringField | TextField | NumberField | BooleanField | PointField | DateField | StringArrayField;
 
 /**
 * Group of {@link FieldDefinition}s that define the schema for an {@link Entity}.
