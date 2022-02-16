@@ -44,8 +44,8 @@ describe("Demo", () => {
       BigfootSighting, {
         id: { type: 'string' },
         date: { type: 'date' },
-        title: { type: 'string', textSearch: true },
-        observed: { type: 'string', textSearch: true },
+        title: { type: 'text' },
+        observed: { type: 'text' },
         classification: { type: 'string[]' },
         county: { type: 'string' },
         state: { type: 'string' },

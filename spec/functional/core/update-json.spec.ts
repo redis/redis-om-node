@@ -39,8 +39,8 @@ describe("update JSON", () => {
       entity = await repository.fetch('full');
       entity.aString = ANOTHER_ENTITY.aString;
       entity.anotherString = ANOTHER_ENTITY.anotherString;
-      entity.aFullTextString = ANOTHER_ENTITY.aFullTextString;
-      entity.anotherFullTextString = ANOTHER_ENTITY.anotherFullTextString;
+      entity.someText = ANOTHER_ENTITY.someText;
+      entity.someOtherText = ANOTHER_ENTITY.someOtherText;
       entity.aNumber = ANOTHER_ENTITY.aNumber;
       entity.anotherNumber = ANOTHER_ENTITY.anotherNumber;
       entity.aBoolean = ANOTHER_ENTITY.aBoolean;
@@ -62,8 +62,8 @@ describe("update JSON", () => {
       let data = JSON.parse(json);
       expect(data.aString).toBe(ANOTHER_ENTITY.aString);
       expect(data.anotherString).toBe(ANOTHER_ENTITY.anotherString);
-      expect(data.aFullTextString).toBe(ANOTHER_ENTITY.aFullTextString);
-      expect(data.anotherFullTextString).toBe(ANOTHER_ENTITY.anotherFullTextString);
+      expect(data.someText).toBe(ANOTHER_ENTITY.someText);
+      expect(data.someOtherText).toBe(ANOTHER_ENTITY.someOtherText);
       expect(data.aNumber).toBe(ANOTHER_ENTITY.aNumber);
       expect(data.anotherNumber).toBe(ANOTHER_ENTITY.anotherNumber);
       expect(data.aBoolean).toBe(ANOTHER_ENTITY.aBoolean);
@@ -82,8 +82,8 @@ describe("update JSON", () => {
       entity = await repository.fetch('full');
       entity.aString = ANOTHER_ENTITY.aString;
       entity.anotherString = null;
-      entity.aFullTextString = ANOTHER_ENTITY.aFullTextString;
-      entity.anotherFullTextString = null;
+      entity.someText = ANOTHER_ENTITY.someText;
+      entity.someOtherText = null;
       entity.aNumber = ANOTHER_ENTITY.aNumber;
       entity.anotherNumber = null;
       entity.aBoolean = ANOTHER_ENTITY.aBoolean;
@@ -105,8 +105,8 @@ describe("update JSON", () => {
       let data = JSON.parse(json);
       expect(data.aString).toBe(ANOTHER_ENTITY.aString);
       expect(data.anotherString).toBeUndefined()
-      expect(data.aFullTextString).toBe(ANOTHER_ENTITY.aFullTextString);
-      expect(data.anotherFullTextString).toBeUndefined();
+      expect(data.someText).toBe(ANOTHER_ENTITY.someText);
+      expect(data.someOtherText).toBeUndefined();
       expect(data.aNumber).toBe(ANOTHER_ENTITY.aNumber);
       expect(data.anotherNumber).toBeUndefined();
       expect(data.aBoolean).toBe(ANOTHER_ENTITY.aBoolean);
@@ -125,8 +125,8 @@ describe("update JSON", () => {
       entity = await repository.fetch('full');
       entity.aString = null;
       entity.anotherString = null;
-      entity.aFullTextString = null;
-      entity.anotherFullTextString = null;
+      entity.someText = null;
+      entity.someOtherText = null;
       entity.aNumber = null;
       entity.anotherNumber = null;
       entity.aBoolean = null;

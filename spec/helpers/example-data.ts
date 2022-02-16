@@ -60,8 +60,8 @@ export const SOME_MORE_STRINGS_JOINED: string = SOME_MORE_STRINGS.join('|');
 export type SampleEntityData = {
   aString: string | null;
   anotherString: string | null;
-  aFullTextString: string | null;
-  anotherFullTextString: string | null;
+  someText: string | null;
+  someOtherText: string | null;
   aNumber: number | null;
   anotherNumber: number | null;
   aBoolean: boolean | null;
@@ -75,12 +75,12 @@ export type SampleEntityData = {
 };
 
 export const AN_ENTITY: SampleEntityData = {
-  aString: 'foo',
-  anotherString: 'bar',
-  aFullTextString: SOME_TEXT,
-  anotherFullTextString: SOME_OTHER_TEXT,
-  aNumber: 42,
-  anotherNumber: 23,
+  aString: A_STRING,
+  anotherString: ANOTHER_STRING,
+  someText: SOME_TEXT,
+  someOtherText: SOME_OTHER_TEXT,
+  aNumber: A_NUMBER,
+  anotherNumber: ANOTHER_NUMBER,
   aBoolean: true,
   anotherBoolean: false,
   aPoint: A_POINT,
@@ -92,12 +92,12 @@ export const AN_ENTITY: SampleEntityData = {
 };
 
 export const ANOTHER_ENTITY: SampleEntityData = {
-  aString: 'bar',
-  anotherString: 'baz',
-  aFullTextString: SOME_OTHER_TEXT,
-  anotherFullTextString: SOME_MORE_TEXT,
-  aNumber: 23,
-  anotherNumber: 13,
+  aString: ANOTHER_STRING,
+  anotherString: A_THIRD_STRING,
+  someText: SOME_OTHER_TEXT,
+  someOtherText: SOME_MORE_TEXT,
+  aNumber: ANOTHER_NUMBER,
+  anotherNumber: A_THIRD_NUMBER,
   aBoolean: true,
   anotherBoolean: true,
   aPoint: ANOTHER_POINT,
@@ -109,12 +109,12 @@ export const ANOTHER_ENTITY: SampleEntityData = {
 };
 
 export const A_THIRD_ENTITY: SampleEntityData = {
-  aString: 'baz',
-  anotherString: 'qux',
-  aFullTextString: SOME_MORE_TEXT,
-  anotherFullTextString: SOME_TEXT,
-  aNumber: 13,
-  anotherNumber: 7,
+  aString: A_THIRD_STRING,
+  anotherString: A_STRING,
+  someText: SOME_MORE_TEXT,
+  someOtherText: SOME_TEXT,
+  aNumber: A_THIRD_NUMBER,
+  anotherNumber: A_NUMBER,
   aBoolean: false,
   anotherBoolean: false,
   aPoint: A_THIRD_POINT,
@@ -126,11 +126,11 @@ export const A_THIRD_ENTITY: SampleEntityData = {
 };
 
 export const A_PARTIAL_ENTITY: SampleEntityData = {
-  aString: 'foo',
+  aString: A_STRING,
   anotherString: null,
-  aFullTextString: SOME_TEXT,
-  anotherFullTextString: null,
-  aNumber: 42,
+  someText: SOME_TEXT,
+  someOtherText: null,
+  aNumber: A_NUMBER,
   anotherNumber: null,
   aBoolean: true,
   anotherBoolean: null,
@@ -145,8 +145,8 @@ export const A_PARTIAL_ENTITY: SampleEntityData = {
 export const AN_EMPTY_ENTITY: SampleEntityData = {
   aString: null,
   anotherString: null,
-  aFullTextString: null,
-  anotherFullTextString: null,
+  someText: null,
+  someOtherText: null,
   aNumber: null,
   anotherNumber: null,
   aBoolean: null,
@@ -162,8 +162,8 @@ export const AN_EMPTY_ENTITY: SampleEntityData = {
 export const AN_ESCAPED_ENTITY: SampleEntityData = {
   aString: "foo ,.<>{}[]\"':;!@#$%^*()-+=~& bar",
   anotherString: null,
-  aFullTextString: "zany ,.<>{}[]\"':;!@#$%^&*()-+=~| fox",
-  anotherFullTextString: null,
+  someText: "zany ,.<>{}[]\"':;!@#$%^&*()-+=~| fox",
+  someOtherText: null,
   aNumber: null,
   anotherNumber: null,
   aBoolean: null,

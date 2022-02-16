@@ -10,8 +10,8 @@ import { SampleEntityData } from "../../helpers/example-data";
 interface SampleEntity {
   aString?: string | null;
   anotherString?: string | null;
-  aFullTextString?: string | null;
-  anotherFullTextString?: string | null;
+  someText?: string | null;
+  someOtherText?: string | null;
   aNumber?: number | null;
   anotherNumber?: number | null;
   aBoolean?: boolean | null;
@@ -44,8 +44,8 @@ function createSchemaOfType<TEntity extends Entity>(ctor: EntityConstructor<TEnt
     ctor, {
       aString: { type: 'string' },
       anotherString: { type: 'string' },
-      aFullTextString: { type: 'string', textSearch: true },
-      anotherFullTextString: { type: 'string', textSearch: true },
+      someText: { type: 'text' },
+      someOtherText: { type: 'text' },
       aNumber: { type: 'number' },
       anotherNumber: { type: 'number' },
       aBoolean: { type: 'boolean' },

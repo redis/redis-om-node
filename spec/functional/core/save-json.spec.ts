@@ -35,8 +35,8 @@ describe("save JSON", () => {
       entity = repository.createEntity({
         aString: AN_ENTITY.aString,
         anotherString: AN_ENTITY.anotherString,
-        aFullTextString: AN_ENTITY.aFullTextString,
-        anotherFullTextString: AN_ENTITY.anotherFullTextString,
+        someText: AN_ENTITY.someText,
+        someOtherText: AN_ENTITY.someOtherText,
         aNumber: AN_ENTITY.aNumber,
         anotherNumber: AN_ENTITY.anotherNumber,
         aBoolean: AN_ENTITY.aBoolean,
@@ -57,8 +57,8 @@ describe("save JSON", () => {
       let data = JSON.parse(json);
       expect(data.aString).toBe(AN_ENTITY.aString);
       expect(data.anotherString).toBe(AN_ENTITY.anotherString);
-      expect(data.aFullTextString).toBe(AN_ENTITY.aFullTextString);
-      expect(data.anotherFullTextString).toBe(AN_ENTITY.anotherFullTextString);
+      expect(data.someText).toBe(AN_ENTITY.someText);
+      expect(data.someOtherText).toBe(AN_ENTITY.someOtherText);
       expect(data.aNumber).toBe(AN_ENTITY.aNumber);
       expect(data.anotherNumber).toBe(AN_ENTITY.anotherNumber);
       expect(data.aBoolean).toBe(AN_ENTITY.aBoolean);
@@ -77,8 +77,8 @@ describe("save JSON", () => {
       entity = repository.createEntity({
         aString: A_PARTIAL_ENTITY.aString,
         anotherString: A_PARTIAL_ENTITY.anotherString,
-        aFullTextString: A_PARTIAL_ENTITY.aFullTextString,
-        anotherFullTextString: A_PARTIAL_ENTITY.anotherFullTextString,
+        someText: A_PARTIAL_ENTITY.someText,
+        someOtherText: A_PARTIAL_ENTITY.someOtherText,
         aNumber: A_PARTIAL_ENTITY.aNumber,
         anotherNumber: A_PARTIAL_ENTITY.anotherNumber,
         aBoolean: A_PARTIAL_ENTITY.aBoolean,
@@ -99,8 +99,8 @@ describe("save JSON", () => {
       let data = JSON.parse(json);
       expect(data.aString).toBe(A_PARTIAL_ENTITY.aString);
       expect(data.anotherString).toBeUndefined();
-      expect(data.aFullTextString).toBe(A_PARTIAL_ENTITY.aFullTextString);
-      expect(data.anotherFullTextString).toBeUndefined();
+      expect(data.someText).toBe(A_PARTIAL_ENTITY.someText);
+      expect(data.someOtherText).toBeUndefined();
       expect(data.aNumber).toBe(A_PARTIAL_ENTITY.aNumber);
       expect(data.anotherNumber).toBeUndefined();
       expect(data.aBoolean).toBe(A_PARTIAL_ENTITY.aBoolean);
@@ -119,8 +119,8 @@ describe("save JSON", () => {
       entity = repository.createEntity({
         aString: AN_EMPTY_ENTITY.aString,
         anotherString: AN_EMPTY_ENTITY.anotherString,
-        aFullTextString: AN_EMPTY_ENTITY.aFullTextString,
-        anotherFullTextString: AN_EMPTY_ENTITY.anotherFullTextString,
+        someText: AN_EMPTY_ENTITY.someText,
+        someOtherText: AN_EMPTY_ENTITY.someOtherText,
         aNumber: AN_EMPTY_ENTITY.aNumber,
         anotherNumber: AN_EMPTY_ENTITY.anotherNumber,
         aBoolean: AN_EMPTY_ENTITY.aBoolean,

@@ -50,8 +50,8 @@ describe("create and drop index on JSON", () => {
       expect(fields).toEqual([
         [ 'identifier', '$.aString', 'attribute', 'aString', 'type', 'TAG', 'SEPARATOR', '|' ],
         [ 'identifier', '$.anotherString', 'attribute', 'anotherString', 'type', 'TAG', 'SEPARATOR', '|' ],
-        [ 'identifier', '$.aFullTextString', 'attribute', 'aFullTextString', 'type', 'TEXT', 'WEIGHT', '1' ],
-        [ 'identifier', '$.anotherFullTextString', 'attribute', 'anotherFullTextString', 'type', 'TEXT', 'WEIGHT', '1' ],
+        [ 'identifier', '$.someText', 'attribute', 'someText', 'type', 'TEXT', 'WEIGHT', '1' ],
+        [ 'identifier', '$.someOtherText', 'attribute', 'someOtherText', 'type', 'TEXT', 'WEIGHT', '1' ],
         [ 'identifier', '$.aNumber', 'attribute', 'aNumber', 'type', 'NUMERIC' ],
         [ 'identifier', '$.anotherNumber', 'attribute', 'anotherNumber', 'type', 'NUMERIC' ],
         [ 'identifier', '$.aBoolean', 'attribute', 'aBoolean', 'type', 'TAG', 'SEPARATOR', '' ],
