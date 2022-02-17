@@ -6,10 +6,10 @@ import Where from './where';
 import WhereAnd from './where-and';
 import WhereOr from './where-or';
 import WhereField from './where-field';
-import WhereArray from './where-array';
+import WhereStringArray from './where-string-array';
 import { WhereHashBoolean, WhereJsonBoolean } from './where-boolean';
 import WhereNumber from './where-number';
-import WhereGeo from './where-geo';
+import WherePoint from './where-point';
 import WhereString from './where-string';
 import WhereText from './where-text';
 
@@ -26,14 +26,17 @@ export type SubSearchFunction<TEntity extends Entity> = (search: Search<TEntity>
 type AndOrConstructor = new (left: Where, right: Where) => Where;
 
 /**
- * Entry point to fluent search. Requires the RediSearch or RedisJSON is installed.
+ * Abstract base class for {@link Search} and {@link RawSearch} that
+ * contains methods to return search results.
  * @template TEntity The type of {@link Entity} being sought.
  */
-export default class Search<TEntity extends Entity> {
-  private schema: Schema<TEntity>;
-  private client: Client;
+export abstract class AbstractSearch<TEntity extends Entity> {
 
-  private rootWhere?: Where;
+  /** @internal */
+  protected schema: Schema<TEntity>;
+
+  /** @internal */
+  protected client: Client;
 
   /** @internal */
   constructor(schema: Schema<TEntity>, client: Client) {
@@ -42,24 +45,13 @@ export default class Search<TEntity extends Entity> {
   }
 
   /** @internal */
-  get query() : string {
-    if (this.rootWhere === undefined) return '*';
-    return `${this.rootWhere.toString()}`;
-  }
-
-  /**
-   * Returns the current instance. Syntactic sugar to make your code more fluent.
-   * @returns this
-   */
-  get return() : Search<TEntity> {
-    return this;
-  }
+  abstract get query(): string;
 
   /**
    * Returns the number of {@link Entity | Entities} that match this query.
    * @returns 
    */
-  async count(): Promise<number> {
+   async count(): Promise<number> {
     let searchResults = await this.callSearch()
     return this.schema.dataStructure === 'JSON'
       ? new JsonSearchResultsConverter(this.schema, searchResults).count
@@ -80,6 +72,14 @@ export default class Search<TEntity extends Entity> {
   }
 
   /**
+   * Returns only the first {@link Entity} that matches this query.
+   */
+  async first(): Promise<TEntity> {
+    let foundEntity = await this.page(0, 1);
+    return foundEntity[0] ?? null;
+  }
+
+  /**
    * Returns all the {@link Entity | Entities} that match this query. This method
    * makes multiple calls to Redis until all the {@link Entity | Entities} are returned.
    * You can specify the batch size by setting the `pageSize` property on the
@@ -93,7 +93,7 @@ export default class Search<TEntity extends Entity> {
    * @param options.pageSize Number of {@link Entity | Entities} returned per batch.
    * @returns An array of {@link Entity | Entities} matching the query.
    */
-  async all(options = { pageSize: 10 }): Promise<TEntity[]> {
+   async all(options = { pageSize: 10 }): Promise<TEntity[]> {
     let entities: TEntity[] = [];
     let offset = 0;
     let pageSize = options.pageSize;
@@ -109,11 +109,11 @@ export default class Search<TEntity extends Entity> {
   }
 
   /**
-   * Returns only the first {@link Entity} that matches this query.
+   * Returns the current instance. Syntactic sugar to make your code more fluent.
+   * @returns this
    */
-  async first(): Promise<TEntity> {
-    let foundEntity = await this.page(0, 1);
-    return foundEntity[0] ?? null;
+   get return() : AbstractSearch<TEntity> {
+    return this;
   }
 
   /**
@@ -139,11 +139,69 @@ export default class Search<TEntity extends Entity> {
 
   /**
    * 
-   * Alias for (@link Search.first).
+   * Alias for {@link Search.first}.
    */
   async returnFirst(): Promise<TEntity> {
     return await this.first();
   }
+
+  private async callSearch(offset = 0, count = 0) {
+    let options: SearchOptions = { 
+      indexName: this.schema.indexName,
+      query: this.query,
+      offset,
+      count
+    };
+
+    let searchResults
+    try {
+      searchResults = await this.client.search(options);
+    } catch (error) {
+      let message = (error as Error).message
+      if (message.startsWith("Syntax error")) {
+        throw new RedisError(`The query to RediSearch had a syntax error: "${message}".\nThis is often the result of using a stop word in the query. Either change the query to not use a stop word or change the stop words in the schema definition. You can check the RediSearch source for the default stop words at: https://github.com/RediSearch/RediSearch/blob/master/src/stopwords.h.`)
+      }
+      throw error
+    }
+    return searchResults
+  }
+}
+
+/**
+ * Entry point to raw search which allows using raw RediSearch queries
+ * against Redis OM. Requires that RediSearch (and optionally RedisJSON) be
+ * installed.
+ * @template TEntity The type of {@link Entity} being sought.
+ */
+export class RawSearch<TEntity extends Entity> extends AbstractSearch<TEntity> {
+  private rawQuery: string;
+
+  /** @internal */
+  constructor(schema: Schema<TEntity>, client: Client, query: string = '*') {
+    super(schema, client);
+    this.rawQuery = query;
+  }
+
+  /** @internal */
+  get query() : string {
+    return this.rawQuery;
+  }
+}
+
+/**
+ * Entry point to fluent search. This is the default Redis OM experience.
+ * Requires that RediSearch (and optionally RedisJSON) be installed.
+ * @template TEntity The type of {@link Entity} being sought.
+ */
+export class Search<TEntity extends Entity> extends AbstractSearch<TEntity> {
+  private rootWhere?: Where;
+
+  /** @internal */
+  get query() : string {
+    if (this.rootWhere === undefined) return '*';
+    return `${this.rootWhere.toString()}`;
+  }
+
 
   /**
    * Sets up a query matching a particular field. If there are multiple calls
@@ -198,27 +256,6 @@ export default class Search<TEntity extends Entity> {
     return this.anyWhere(WhereOr, fieldOrFn);
   }
 
-  private async callSearch(offset = 0, count = 0) {
-    let options: SearchOptions = { 
-      indexName: this.schema.indexName,
-      query: this.query,
-      offset,
-      count
-    };
-
-    let searchResults
-    try {
-      searchResults = await this.client.search(options);
-    } catch (error) {
-      let message = (error as Error).message
-      if (message.startsWith("Syntax error")) {
-        throw new RedisError(`The query to RediSearch had a syntax error: "${message}".\nThis is often the result of using a stop word in the query. Either change the query to not use a stop word or change the stop words in the schema definition. You can check the RediSearch source for the default stop words at: https://github.com/RediSearch/RediSearch/blob/master/src/stopwords.h.`)
-      }
-      throw error
-    }
-    return searchResults
-  }
-
   private anyWhere(ctor: AndOrConstructor, fieldOrFn: string | SubSearchFunction<TEntity>): WhereField<TEntity> | Search<TEntity> {
     if (typeof fieldOrFn === 'string') {
       return this.anyWhereForField(ctor, fieldOrFn);
@@ -261,31 +298,16 @@ export default class Search<TEntity extends Entity> {
 
     if (fieldDef === undefined) throw new Error(`The field '${field}' is not part of the schema.`);
 
-    if (fieldDef.type === 'array')
-      return new WhereArray<TEntity>(this, field);
-
-    if (fieldDef.type === 'boolean' && this.schema.dataStructure === 'HASH')
-      return new WhereHashBoolean<TEntity>(this, field);
-
-    if (fieldDef.type === 'boolean' && this.schema.dataStructure === 'JSON')
-      return new WhereJsonBoolean<TEntity>(this, field);
-
-    if (fieldDef.type === 'number')
-      return new WhereNumber<TEntity>(this, field);
-
-    if (fieldDef.type === 'geopoint')
-      return new WhereGeo<TEntity>(this, field);
-
-    if (fieldDef.type === 'date')
-      return new WhereDate<TEntity>(this, field);
-
-    if (fieldDef.type === 'string' && fieldDef.textSearch === true)
-      return new WhereText<TEntity>(this, field);
-
-    if (fieldDef.type === 'string' && fieldDef.textSearch !== true)
-      return new WhereString<TEntity>(this, field);
+    if (fieldDef.type === 'boolean' && this.schema.dataStructure === 'HASH') return new WhereHashBoolean<TEntity>(this, field);
+    if (fieldDef.type === 'boolean' && this.schema.dataStructure === 'JSON') return new WhereJsonBoolean<TEntity>(this, field);
+    if (fieldDef.type === 'date') return new WhereDate<TEntity>(this, field);
+    if (fieldDef.type === 'number') return new WhereNumber<TEntity>(this, field);
+    if (fieldDef.type === 'point') return new WherePoint<TEntity>(this, field);
+    if (fieldDef.type === 'text') return new WhereText<TEntity>(this, field);
+    if (fieldDef.type === 'string') return new WhereString<TEntity>(this, field);
+    if (fieldDef.type === 'string[]') return new WhereStringArray<TEntity>(this, field);
 
     // @ts-ignore: This is a trap for JavaScript
-    throw new Error(`The field type of '${fieldDef.type}' is not a valid field type. Valid types include 'array', 'boolean', 'geopoint', 'number', and 'string'.`);
+    throw new Error(`The field type of '${fieldDef.type}' is not a valid field type. Valid types include 'boolean', 'date', 'number', 'point', 'string', and 'string[]'.`);
   }
 }

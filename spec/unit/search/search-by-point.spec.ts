@@ -1,11 +1,11 @@
 import { mocked } from 'ts-jest/utils';
-import { GeoPoint } from '../../../lib';
+import { Point } from '../../../lib';
 
 import Client from "../../../lib/client";
-import Search from "../../../lib/search/search";
+import { Search } from "../../../lib/search/search";
 import WhereField from '../../../lib/search/where-field';
-import { A_GEOPOINT } from '../../helpers/example-data';
 
+import { A_POINT } from '../../helpers/example-data';
 import { simpleSchema, SimpleEntity } from "../helpers/test-entity-and-schema";
 
 jest.mock('../../../lib/client');
@@ -20,15 +20,15 @@ describe("Search", () => {
     let search: Search<SimpleEntity>;
     let where: WhereField<SimpleEntity>;
 
-    const A_DEFAULT_QUERY = "(@aGeoPoint:[0 0 1 m])";
-    const A_METERS_QUERY = "(@aGeoPoint:[12.34 56.78 42 m])";
-    const A_NEGATED_METERS_QUERY = "(-@aGeoPoint:[12.34 56.78 42 m])";
-    const A_KILOMETERS_QUERY = "(@aGeoPoint:[12.34 56.78 42 km])";
-    const A_NEGATED_KILOMETERS_QUERY = "(-@aGeoPoint:[12.34 56.78 42 km])";
-    const A_FEET_QUERY = "(@aGeoPoint:[12.34 56.78 42 ft])";
-    const A_NEGATED_FEET_QUERY = "(-@aGeoPoint:[12.34 56.78 42 ft])";
-    const A_MILES_QUERY = "(@aGeoPoint:[12.34 56.78 42 mi])";
-    const A_NEGATED_MILES_QUERY = "(-@aGeoPoint:[12.34 56.78 42 mi])";
+    const A_DEFAULT_QUERY = "(@aPoint:[0 0 1 m])";
+    const A_METERS_QUERY = "(@aPoint:[12.34 56.78 42 m])";
+    const A_NEGATED_METERS_QUERY = "(-@aPoint:[12.34 56.78 42 m])";
+    const A_KILOMETERS_QUERY = "(@aPoint:[12.34 56.78 42 km])";
+    const A_NEGATED_KILOMETERS_QUERY = "(-@aPoint:[12.34 56.78 42 km])";
+    const A_FEET_QUERY = "(@aPoint:[12.34 56.78 42 ft])";
+    const A_NEGATED_FEET_QUERY = "(-@aPoint:[12.34 56.78 42 ft])";
+    const A_MILES_QUERY = "(@aPoint:[12.34 56.78 42 mi])";
+    const A_NEGATED_MILES_QUERY = "(-@aPoint:[12.34 56.78 42 mi])";
 
     type GeoChecker = (search: Search<SimpleEntity>) => void;
     const expectToBeDefaultQuery: GeoChecker = search => expect(search.query).toBe(A_DEFAULT_QUERY);
@@ -41,7 +41,7 @@ describe("Search", () => {
     const expectToBeMilesQuery: GeoChecker = search => expect(search.query).toBe(A_MILES_QUERY);
     const expectToBeNegatedMilesQuery: GeoChecker = search => expect(search.query).toBe(A_NEGATED_MILES_QUERY);
 
-    const point: GeoPoint = A_GEOPOINT;
+    const point: Point = A_POINT;
     const longitude = 12.34;
     const latitude = 56.78;
 
@@ -49,10 +49,10 @@ describe("Search", () => {
 
     beforeEach(() => {
       search = new Search<SimpleEntity>(simpleSchema, client);
-      where = search.where('aGeoPoint');
+      where = search.where('aPoint');
     });  
 
-    describe("when generating a query with a geopoint", () => {
+    describe("when generating a query with a point", () => {
 
       describe("and in a circle", () => {
 
@@ -61,28 +61,28 @@ describe("Search", () => {
         it("generates a query with default values using .inRadius",
           () => expectToBeDefaultQuery(where.inRadius(circle => circle)));
 
-        it("generates a query with .point(geopoint).radius.meters",
+        it("generates a query with .point(point).radius.meters",
           () => expectToBeMetersQuery(where.inCircle(circle => circle.origin(point).radius(42).meters)));
         it("generates a query with .point(lng, lat).radius.meter",
           () => expectToBeMetersQuery(where.is.inCircle(circle => circle.origin(longitude, latitude).radius(42).meter)));
         it("generates a query with .longitude.latitude.radius.m",
           () => expectToBeNegatedMetersQuery(where.is.not.inCircle(circle => circle.longitude(longitude).latitude(latitude).radius(42).m)));
 
-        it("generates a query with .point(geopoint).radius.kilometers",
+        it("generates a query with .point(point).radius.kilometers",
           () => expectToBeKilometersQuery(where.inCircle(circle => circle.origin(point).radius(42).kilometers)));  
         it("generates a query with .point(lng, lat).radius.kilometer",
           () => expectToBeKilometersQuery(where.is.inCircle(circle => circle.origin(longitude, latitude).radius(42).kilometer)));
         it("generates a query with .longitude.latitude.radius.km",
           () => expectToBeNegatedKilometersQuery(where.is.not.inCircle(circle => circle.longitude(longitude).latitude(latitude).radius(42).km)));
 
-        it("generates a query with .point(geopoint).radius.feet",
+        it("generates a query with .point(point).radius.feet",
           () => expectToBeFeetQuery(where.inCircle(circle => circle.origin(point).radius(42).feet)));  
         it("generates a query with .point(lng, lat).radius.foot",
           () => expectToBeFeetQuery(where.is.inCircle(circle => circle.origin(longitude, latitude).radius(42).foot)));
         it("generates a query with .longitude.latitude.radius.ft",
           () => expectToBeNegatedFeetQuery(where.is.not.inCircle(circle => circle.longitude(longitude).latitude(latitude).radius(42).ft)));
 
-        it("generates a query with .point(geopoint).radius.miles",
+        it("generates a query with .point(point).radius.miles",
           () => expectToBeMilesQuery(where.inCircle(circle => circle.origin(point).radius(42).miles)));  
         it("generates a query with .point(lng, lat).radius.mile",
           () => expectToBeMilesQuery(where.is.inCircle(circle => circle.origin(longitude, latitude).radius(42).mile)));

@@ -7,8 +7,8 @@ import { fetchHashKeys, fetchHashFields, flushAll, keyExists } from '../helpers/
 
 import {
   AN_ENTITY, ANOTHER_ENTITY,
-  ANOTHER_GEOPOINT_STRING, A_THIRD_GEOPOINT_STRING,
-  ANOTHER_ARRAY_JOINED, A_THIRD_ARRAY_JOINED,
+  ANOTHER_POINT_STRING, A_THIRD_POINT_STRING,
+  SOME_OTHER_STRINGS_JOINED, SOME_MORE_STRINGS_JOINED,
   ANOTHER_DATE_EPOCH_STRING, A_THIRD_DATE_EPOCH_STRING } from '../../helpers/example-data';
 
 describe("update hash", () => {
@@ -40,18 +40,18 @@ describe("update hash", () => {
       entity = await repository.fetch('full');
       entity.aString = ANOTHER_ENTITY.aString;
       entity.anotherString = ANOTHER_ENTITY.anotherString;
-      entity.aFullTextString = ANOTHER_ENTITY.aFullTextString;
-      entity.anotherFullTextString = ANOTHER_ENTITY.anotherFullTextString;
+      entity.someText = ANOTHER_ENTITY.someText;
+      entity.someOtherText = ANOTHER_ENTITY.someOtherText;
       entity.aNumber = ANOTHER_ENTITY.aNumber;
       entity.anotherNumber = ANOTHER_ENTITY.anotherNumber;
       entity.aBoolean = ANOTHER_ENTITY.aBoolean;
       entity.anotherBoolean = ANOTHER_ENTITY.anotherBoolean;
-      entity.aGeoPoint = ANOTHER_ENTITY.aGeoPoint;
-      entity.anotherGeoPoint = ANOTHER_ENTITY.anotherGeoPoint;
+      entity.aPoint = ANOTHER_ENTITY.aPoint;
+      entity.anotherPoint = ANOTHER_ENTITY.anotherPoint;
       entity.aDate = ANOTHER_ENTITY.aDate;
       entity.anotherDate = ANOTHER_ENTITY.anotherDate;
-      entity.anArray = ANOTHER_ENTITY.anArray;
-      entity.anotherArray = ANOTHER_ENTITY.anotherArray;
+      entity.someStrings = ANOTHER_ENTITY.someStrings;
+      entity.someOtherStrings = ANOTHER_ENTITY.someOtherStrings;
       entityId = await repository.save(entity);
       entityKey = `SampleHashEntity:full`;
     });
@@ -64,31 +64,31 @@ describe("update hash", () => {
       let fields = await fetchHashKeys(client, entityKey);
       expect(fields).toHaveLength(14);
       expect(fields).toEqual(expect.arrayContaining([ 'aString', 'anotherString',
-        'aFullTextString', 'anotherFullTextString', 'aNumber', 'anotherNumber',
-        'aBoolean', 'anotherBoolean', 'aGeoPoint', 'anotherGeoPoint',
-        'aDate', 'anotherDate', 'anArray', 'anotherArray' ]));
+        'someText', 'someOtherText', 'aNumber', 'anotherNumber',
+        'aBoolean', 'anotherBoolean', 'aPoint', 'anotherPoint',
+        'aDate', 'anotherDate', 'someStrings', 'someOtherStrings' ]));
     });
 
     it("updates the expected fields in the hash", async () => {
       let values = await fetchHashFields(client, entityKey, 'aString', 'anotherString',
-        'aFullTextString', 'anotherFullTextString', 'aNumber', 'anotherNumber',
-        'aBoolean', 'anotherBoolean', 'aGeoPoint', 'anotherGeoPoint',
-        'aDate', 'anotherDate', 'anArray', 'anotherArray');
+        'someText', 'someOtherText', 'aNumber', 'anotherNumber',
+        'aBoolean', 'anotherBoolean', 'aPoint', 'anotherPoint',
+        'aDate', 'anotherDate', 'someStrings', 'someOtherStrings');
       expect(values).toEqual([
         ANOTHER_ENTITY.aString,
         ANOTHER_ENTITY.anotherString,
-        ANOTHER_ENTITY.aFullTextString,
-        ANOTHER_ENTITY.anotherFullTextString,
+        ANOTHER_ENTITY.someText,
+        ANOTHER_ENTITY.someOtherText,
         ANOTHER_ENTITY.aNumber?.toString(),
         ANOTHER_ENTITY.anotherNumber?.toString(),
         ANOTHER_ENTITY.aBoolean ? '1' : '0',
         ANOTHER_ENTITY.anotherBoolean ? '1' : '0',
-        ANOTHER_GEOPOINT_STRING,
-        A_THIRD_GEOPOINT_STRING,
+        ANOTHER_POINT_STRING,
+        A_THIRD_POINT_STRING,
         ANOTHER_DATE_EPOCH_STRING,
         A_THIRD_DATE_EPOCH_STRING,
-        ANOTHER_ARRAY_JOINED,
-        A_THIRD_ARRAY_JOINED
+        SOME_OTHER_STRINGS_JOINED,
+SOME_MORE_STRINGS_JOINED
       ]);
     });
   });
@@ -98,18 +98,18 @@ describe("update hash", () => {
       entity = await repository.fetch('full');
       entity.aString = ANOTHER_ENTITY.aString;
       entity.anotherString = null;
-      entity.aFullTextString = ANOTHER_ENTITY.aFullTextString;
-      entity.anotherFullTextString = null;
+      entity.someText = ANOTHER_ENTITY.someText;
+      entity.someOtherText = null;
       entity.aNumber = ANOTHER_ENTITY.aNumber;
       entity.anotherNumber = null;
       entity.aBoolean = ANOTHER_ENTITY.aBoolean;
       entity.anotherBoolean = null;
-      entity.aGeoPoint = ANOTHER_ENTITY.aGeoPoint;
-      entity.anotherGeoPoint = null;
+      entity.aPoint = ANOTHER_ENTITY.aPoint;
+      entity.anotherPoint = null;
       entity.aDate = ANOTHER_ENTITY.aDate;
       entity.anotherDate = null;
-      entity.anArray = ANOTHER_ENTITY.anArray;
-      entity.anotherArray = null;
+      entity.someStrings = ANOTHER_ENTITY.someStrings;
+      entity.someOtherStrings = null;
       entityId = await repository.save(entity);
       entityKey = `SampleHashEntity:full`;
     });
@@ -122,22 +122,22 @@ describe("update hash", () => {
       let fields = await fetchHashKeys(client, entityKey);
       expect(fields).toHaveLength(7);
       expect(fields).toEqual(expect.arrayContaining([
-        'aString', 'aFullTextString', 'aNumber', 'aBoolean', 'aGeoPoint', 'aDate', 'anArray' ]));
+        'aString', 'someText', 'aNumber', 'aBoolean', 'aPoint', 'aDate', 'someStrings' ]));
     });
 
     it("updates the expected fields in the hash", async () => {
       let values = await fetchHashFields(client, entityKey, 'aString', 'anotherString',
-        'aFullTextString', 'anotherFullTextString', 'aNumber', 'anotherNumber',
-        'aBoolean', 'anotherBoolean', 'aGeoPoint', 'anotherGeoPoint',
-        'aDate', 'anotherDate', 'anArray', 'anotherArray');
+        'someText', 'someOtherText', 'aNumber', 'anotherNumber',
+        'aBoolean', 'anotherBoolean', 'aPoint', 'anotherPoint',
+        'aDate', 'anotherDate', 'someStrings', 'someOtherStrings');
       expect(values).toEqual([
         ANOTHER_ENTITY.aString, null,
-        ANOTHER_ENTITY.aFullTextString, null,
+        ANOTHER_ENTITY.someText, null,
         ANOTHER_ENTITY.aNumber?.toString(), null,
         ANOTHER_ENTITY.aBoolean ? '1' : '0', null,
-        ANOTHER_GEOPOINT_STRING, null,
+        ANOTHER_POINT_STRING, null,
         ANOTHER_DATE_EPOCH_STRING, null,
-        ANOTHER_ARRAY_JOINED, null
+        SOME_OTHER_STRINGS_JOINED, null
       ]);
     });
   });
@@ -147,18 +147,18 @@ describe("update hash", () => {
       entity = await repository.fetch('full');
       entity.aString = null;
       entity.anotherString = null;
-      entity.aFullTextString = null;
-      entity.anotherFullTextString = null;
+      entity.someText = null;
+      entity.someOtherText = null;
       entity.aNumber = null;
       entity.anotherNumber = null;
       entity.aBoolean = null;
       entity.anotherBoolean = null;
-      entity.aGeoPoint = null;
-      entity.anotherGeoPoint = null;
+      entity.aPoint = null;
+      entity.anotherPoint = null;
       entity.aDate = null;
       entity.anotherDate = null;
-      entity.anArray = null;
-      entity.anotherArray = null;
+      entity.someStrings = null;
+      entity.someOtherStrings = null;
       entityId = await repository.save(entity);
       entityKey = `SampleHashEntity:full`;
     });
@@ -174,9 +174,9 @@ describe("update hash", () => {
 
     it("removes all the values from the hash", async () => {
       let values = await fetchHashFields(client, entityKey, 'aString', 'anotherString',
-        'aFullTextString', 'anotherFullTextString', 'aNumber', 'anotherNumber',
-        'aBoolean', 'anotherBoolean', 'aGeoPoint', 'anotherGeoPoint',
-        'aDate', 'anotherDate', 'anArray', 'anotherArray');
+        'someText', 'someOtherText', 'aNumber', 'anotherNumber',
+        'aBoolean', 'anotherBoolean', 'aPoint', 'anotherPoint',
+        'aDate', 'anotherDate', 'someStrings', 'someOtherStrings');
       expect(values).toEqual([ null, null, null, null, null, null, null, null, null, null, null, null, null, null ]);
     });
 

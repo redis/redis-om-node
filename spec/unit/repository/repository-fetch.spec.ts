@@ -4,10 +4,10 @@ import Client from '../../../lib/client';
 import Repository from '../../../lib/repository/repository';
 import { JsonRepository, HashRepository } from '../../../lib/repository/repository';
 
-import { 
-  AN_ARRAY, AN_ARRAY_JOINED,
-  A_DATE, A_DATE_EPOCH,
-  A_GEOPOINT, A_GEOPOINT_STRING } from '../../helpers/example-data';
+import {
+  A_NUMBER, A_NUMBER_STRING, A_STRING, SOME_TEXT, 
+  SOME_STRINGS, SOME_STRINGS_JOINED,
+  A_DATE, A_DATE_EPOCH, A_POINT, A_POINT_STRING } from '../../helpers/example-data';
 
 import { simpleHashSchema, simpleJsonSchema, SimpleHashEntity, SimpleJsonEntity } from '../helpers/test-entity-and-schema';
 
@@ -28,18 +28,18 @@ describe("Repository", () => {
     describe.each([
 
       [ "when fetching a fully populated entity from a hash", {
-        mockedData: { aString: 'foo', aNumber: '42', aBoolean: '0', aGeoPoint: A_GEOPOINT_STRING, aDate: A_DATE_EPOCH.toString(), anArray: AN_ARRAY_JOINED },
-        expectedData: { aString: 'foo', aNumber: 42, aBoolean: false, aGeoPoint: A_GEOPOINT, aDate: A_DATE, anArray: AN_ARRAY }
+        mockedData: { aString: A_STRING, aNumber: A_NUMBER_STRING, aBoolean: '0', someText: SOME_TEXT, aPoint: A_POINT_STRING, aDate: A_DATE_EPOCH.toString(), someStrings: SOME_STRINGS_JOINED },
+        expectedData: { aString: A_STRING, aNumber: A_NUMBER, aBoolean: false, someText: SOME_TEXT, aPoint: A_POINT, aDate: A_DATE, someStrings: SOME_STRINGS }
       }],
 
       [ "when fetching a partially populated entity from a hash", {
-        mockedData: { aString: 'foo', aNumber: '42' },
-        expectedData: { aString: 'foo', aNumber: 42, aBoolean: null, aDate: null, aGeoPoint: null, anArray: null }
+        mockedData: { aString: A_STRING, aNumber: A_NUMBER_STRING },
+        expectedData: { aString: A_STRING, aNumber: A_NUMBER, aBoolean: null, someText: null, aDate: null, aPoint: null, someStrings: null }
       }],
 
       [ "when fetching a empty entity from a hash", {
         mockedData: {},
-        expectedData: { aString: null, aNumber: null, aBoolean: null, aDate: null, aGeoPoint: null, anArray: null }
+        expectedData: { aString: null, aNumber: null, aBoolean: null, aDate: null, someText: null, aPoint: null, someStrings: null }
       }]
 
     ])("%s", (_, data) => {
@@ -60,28 +60,28 @@ describe("Repository", () => {
     describe.each([
 
       ["when fetching a fully populated entity from JSON", {
-        mockedData: { aString: 'foo', aNumber: 42, aBoolean: false, aGeoPoint: A_GEOPOINT_STRING, aDate: A_DATE_EPOCH, anArray: AN_ARRAY },
-        expectedData: { aString: 'foo', aNumber: 42, aBoolean: false, aGeoPoint: A_GEOPOINT, aDate: A_DATE, anArray: AN_ARRAY }
+        mockedData: { aString: A_STRING, aNumber: A_NUMBER, aBoolean: false, someText: SOME_TEXT, aPoint: A_POINT_STRING, aDate: A_DATE_EPOCH, someStrings: SOME_STRINGS },
+        expectedData: { aString: A_STRING, aNumber: A_NUMBER, aBoolean: false, someText: SOME_TEXT, aPoint: A_POINT, aDate: A_DATE, someStrings: SOME_STRINGS }
       }],
 
       [ "when fetching a partially populated entity from JSON", {
-        mockedData: { aString: 'foo', aNumber: 42 },
-        expectedData: { aString: 'foo', aNumber: 42, aBoolean: null, aGeoPoint: null, aDate: null, anArray: null }
+        mockedData: { aString: A_STRING, aNumber: A_NUMBER },
+        expectedData: { aString: A_STRING, aNumber: A_NUMBER, aBoolean: null, someText: null, aPoint: null, aDate: null, someStrings: null }
       }],
 
       [ "when fetching an empty entity from JSON", {
         mockedData: {},
-        expectedData: { aString: null, aNumber: null, aBoolean: null, aGeoPoint: null, aDate: null, anArray: null }
+        expectedData: { aString: null, aNumber: null, aBoolean: null, someText: null, aPoint: null, aDate: null, someStrings: null }
       }],
       
       [ "when fetching a missing entity from JSON", {
         mockedData: null,
-        expectedData: { aString: null, aNumber: null, aBoolean: null, aGeoPoint: null, aDate: null, anArray: null }
+        expectedData: { aString: null, aNumber: null, aBoolean: null,someText: null,  aPoint: null, aDate: null, someStrings: null }
       }],
       
       [ "when fetching an entity from JSON with nulls", {
-        mockedData: { aString: 'foo', aNumber: 42, aBoolean: null, aGeoPoint: null, aDate: null, anArray: null },
-        expectedData: { aString: 'foo', aNumber: 42, aBoolean: null, aGeoPoint: null, aDate: null, anArray: null }
+        mockedData: { aString: A_STRING, aNumber: A_NUMBER, aBoolean: null, someText: null, aPoint: null, aDate: null, someStrings: null },
+        expectedData: { aString: A_STRING, aNumber: A_NUMBER, aBoolean: null, someText: null, aPoint: null, aDate: null, someStrings: null }
       }]
 
     ])("%s", (_, data: any) => {

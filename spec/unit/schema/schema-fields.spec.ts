@@ -2,7 +2,13 @@ import Schema from '../../../lib/schema/schema';
 import Entity, { EntityData } from '../../../lib/entity/entity';
 import { SchemaDefinition } from '../../../lib/schema/schema-definitions';
 import { SearchDataStructure } from '../../../lib/client';
-import { ANOTHER_ARRAY, ANOTHER_DATE, ANOTHER_GEOPOINT, AN_ARRAY, A_DATE, A_GEOPOINT } from '../../helpers/example-data';
+import {
+  A_STRING, ANOTHER_STRING,
+  A_NUMBER, ANOTHER_NUMBER,
+  SOME_STRINGS, SOME_OTHER_STRINGS,
+  SOME_TEXT, SOME_OTHER_TEXT,
+  A_DATE, ANOTHER_DATE,
+  A_POINT, ANOTHER_POINT } from '../../helpers/example-data';
 
 describe("Schema", () => {
 
@@ -30,26 +36,34 @@ describe("Schema", () => {
 
   let NUMBER_HASH_DEFAULTS = {
     ...HASH_DEFAULTS,
-    providedEntityFieldValue: 42,
-    expectedPropertyValue: 42,
-    providedAlternatePropertyValue: 23,
-    expectedAlternatePropertyValue: 23
+    providedEntityFieldValue: A_NUMBER,
+    expectedPropertyValue: A_NUMBER,
+    providedAlternatePropertyValue: ANOTHER_NUMBER,
+    expectedAlternatePropertyValue: ANOTHER_NUMBER
   };
 
   let STRING_HASH_DEFAULTS = {
     ...HASH_DEFAULTS,
-    providedEntityFieldValue: 'foo',
-    expectedPropertyValue: 'foo',
-    providedAlternatePropertyValue: 'bar',
-    expectedAlternatePropertyValue: 'bar',
+    providedEntityFieldValue: A_STRING,
+    expectedPropertyValue: A_STRING,
+    providedAlternatePropertyValue: ANOTHER_STRING,
+    expectedAlternatePropertyValue: ANOTHER_STRING
+  };
+
+  let TEXT_HASH_DEFAULTS = {
+    ...HASH_DEFAULTS,
+    providedEntityFieldValue: SOME_TEXT,
+    expectedPropertyValue: SOME_TEXT,
+    providedAlternatePropertyValue: SOME_OTHER_TEXT,
+    expectedAlternatePropertyValue: SOME_OTHER_TEXT
   };
 
   let GEO_HASH_DEFAULTS = {
     ...HASH_DEFAULTS,
-    providedEntityFieldValue: A_GEOPOINT,
-    expectedPropertyValue: A_GEOPOINT,
-    providedAlternatePropertyValue: ANOTHER_GEOPOINT,
-    expectedAlternatePropertyValue: ANOTHER_GEOPOINT
+    providedEntityFieldValue: A_POINT,
+    expectedPropertyValue: A_POINT,
+    providedAlternatePropertyValue: ANOTHER_POINT,
+    expectedAlternatePropertyValue: ANOTHER_POINT
   }
 
   let DATE_HASH_DEFAULTS = {
@@ -62,10 +76,10 @@ describe("Schema", () => {
 
   let ARRAY_HASH_DEFAULTS = {
     ...HASH_DEFAULTS,
-    providedEntityFieldValue: AN_ARRAY,
-    expectedPropertyValue: AN_ARRAY,
-    providedAlternatePropertyValue: ANOTHER_ARRAY,
-    expectedAlternatePropertyValue: ANOTHER_ARRAY
+    providedEntityFieldValue: SOME_STRINGS,
+    expectedPropertyValue: SOME_STRINGS,
+    providedAlternatePropertyValue: SOME_OTHER_STRINGS,
+    expectedAlternatePropertyValue: SOME_OTHER_STRINGS
   };
 
   let BOOLEAN_JSON_DEFAULTS = {
@@ -78,26 +92,34 @@ describe("Schema", () => {
 
   let NUMBER_JSON_DEFAULTS = {
     ...JSON_DEFAULTS,
-    providedEntityFieldValue: 42,
-    expectedPropertyValue: 42,
-    providedAlternatePropertyValue: 23,
-    expectedAlternatePropertyValue: 23
+    providedEntityFieldValue: A_NUMBER,
+    expectedPropertyValue: A_NUMBER,
+    providedAlternatePropertyValue: ANOTHER_NUMBER,
+    expectedAlternatePropertyValue: ANOTHER_NUMBER
   };
 
   let STRING_JSON_DEFAULTS = {
     ...JSON_DEFAULTS,
-    providedEntityFieldValue: 'foo',
-    expectedPropertyValue: 'foo',
-    providedAlternatePropertyValue: 'bar',
-    expectedAlternatePropertyValue: 'bar'
+    providedEntityFieldValue: A_STRING,
+    expectedPropertyValue: A_STRING,
+    providedAlternatePropertyValue: ANOTHER_STRING,
+    expectedAlternatePropertyValue: ANOTHER_STRING
+  };
+
+  let TEXT_JSON_DEFAULTS = {
+    ...JSON_DEFAULTS,
+    providedEntityFieldValue: SOME_TEXT,
+    expectedPropertyValue: SOME_TEXT,
+    providedAlternatePropertyValue: SOME_OTHER_TEXT,
+    expectedAlternatePropertyValue: SOME_OTHER_TEXT,
   };
 
   let GEO_JSON_DEFAULTS = {
     ...JSON_DEFAULTS,
-    providedEntityFieldValue: A_GEOPOINT,
-    expectedPropertyValue: A_GEOPOINT,
-    providedAlternatePropertyValue: ANOTHER_GEOPOINT,
-    expectedAlternatePropertyValue: ANOTHER_GEOPOINT
+    providedEntityFieldValue: A_POINT,
+    expectedPropertyValue: A_POINT,
+    providedAlternatePropertyValue: ANOTHER_POINT,
+    expectedAlternatePropertyValue: ANOTHER_POINT
   };
 
   let DATE_JSON_DEFAULTS = {
@@ -110,10 +132,10 @@ describe("Schema", () => {
 
   let ARRAY_JSON_DEFAULTS = {
     ...JSON_DEFAULTS,
-    providedEntityFieldValue: AN_ARRAY,
-    expectedPropertyValue: AN_ARRAY,
-    providedAlternatePropertyValue: ANOTHER_ARRAY,
-    expectedAlternatePropertyValue: ANOTHER_ARRAY
+    providedEntityFieldValue: SOME_STRINGS,
+    expectedPropertyValue: SOME_STRINGS,
+    providedAlternatePropertyValue: SOME_OTHER_STRINGS,
+    expectedAlternatePropertyValue: SOME_OTHER_STRINGS
   };
 
   describe.each([
@@ -157,33 +179,34 @@ describe("Schema", () => {
       expectedRedisSchema: ['anotherField', 'TAG', 'SEPARATOR', '|']
     }],
 
-    ["that defines a string configured for full text search for a HASH", {
-      ...STRING_HASH_DEFAULTS,
-      schemaDef: { aField: { type: 'string', textSearch: true } } as SchemaDefinition,
-      expectedRedisSchema: ['aField', 'TEXT']
-    }],
-
-    ["that defines a string *not* configured for full text search for a HASH", {
-      ...STRING_HASH_DEFAULTS,
-      schemaDef: { aField: { type: 'string', textSearch: false } } as SchemaDefinition,
-      expectedRedisSchema: ['aField', 'TAG', 'SEPARATOR', '|']
-    }],
-
     ["that defines a string configured with an alternative separator for a HASH", {
       ...STRING_HASH_DEFAULTS,
       schemaDef: { aField: { type: 'string', separator: ';' } } as SchemaDefinition,
       expectedRedisSchema: ['aField', 'TAG', 'SEPARATOR', ';']
     }],
 
-    ["that defines an unconfigured geopoint for a HASH", {
+    ["that defines an unconfigured text for a HASH", {
+      ...TEXT_HASH_DEFAULTS,
+      schemaDef: { aField: { type: 'text' } } as SchemaDefinition,
+      expectedRedisSchema: ['aField', 'TEXT']
+    }],
+
+    ["that defines an alaised text for a HASH", {
+      ...TEXT_HASH_DEFAULTS,
+      schemaDef: { aField: { type: 'text', alias: 'anotherField' } } as SchemaDefinition,
+      providedEntityFieldName: 'anotherField',
+      expectedRedisSchema: ['anotherField', 'TEXT']
+    }],
+
+    ["that defines an unconfigured point for a HASH", {
       ...GEO_HASH_DEFAULTS,
-      schemaDef: { aField: { type: 'geopoint' } } as SchemaDefinition,
+      schemaDef: { aField: { type: 'point' } } as SchemaDefinition,
       expectedRedisSchema: ['aField', 'GEO']
     }],
 
-    ["that defines an aliased geopoint for a HASH", {
+    ["that defines an aliased point for a HASH", {
       ...GEO_HASH_DEFAULTS,
-      schemaDef: { aField: { type: 'geopoint', alias: 'anotherField' } } as SchemaDefinition,
+      schemaDef: { aField: { type: 'point', alias: 'anotherField' } } as SchemaDefinition,
       providedEntityFieldName: 'anotherField',
       expectedRedisSchema: ['anotherField', 'GEO']
     }],
@@ -201,23 +224,23 @@ describe("Schema", () => {
       expectedRedisSchema: ['anotherField', 'NUMERIC']
     }],
 
-    ["that defines an unconfigured array for a HASH", {
+    ["that defines an unconfigured string[] for a HASH", {
       ...ARRAY_HASH_DEFAULTS,
-      schemaDef: { aField: { type: 'array' } } as SchemaDefinition,
+      schemaDef: { aField: { type: 'string[]' } } as SchemaDefinition,
       expectedRedisSchema: ['aField', 'TAG', 'SEPARATOR', '|']
     }],
 
-    ["that defines an aliased array for a HASH", {
+    ["that defines an aliased string[] for a HASH", {
       ...ARRAY_HASH_DEFAULTS,
-      schemaDef: { aField: { type: 'array', alias: 'anotherField' } } as SchemaDefinition,
+      schemaDef: { aField: { type: 'string[]', alias: 'anotherField' } } as SchemaDefinition,
       providedEntityFieldName: 'anotherField',
       expectedRedisSchema: ['anotherField', 'TAG', 'SEPARATOR', '|']
     }],
 
-    ["that defines an array configured with an alternative separator for a HASH", {
+    ["that defines a string[] configured with an alternative separator for a HASH", {
       ...ARRAY_HASH_DEFAULTS,
-      schemaDef: { aField: { type: 'array', separator: ';'} } as SchemaDefinition,
-      providedEntityFieldValue: AN_ARRAY,
+      schemaDef: { aField: { type: 'string[]', separator: ';'} } as SchemaDefinition,
+      providedEntityFieldValue: SOME_STRINGS,
       expectedRedisSchema: ['aField', 'TAG', 'SEPARATOR', ';']
     }],
 
@@ -260,33 +283,34 @@ describe("Schema", () => {
       expectedRedisSchema: ['$.anotherField', 'AS', 'anotherField', 'TAG', 'SEPARATOR', '|']
     }],
 
-    ["that defines a string configured for full text search for JSON", {
-      ...STRING_JSON_DEFAULTS,
-      schemaDef: { aField: { type: 'string', textSearch: true } } as SchemaDefinition,
-      expectedRedisSchema: ['$.aField', 'AS', 'aField', 'TEXT']
-    }],
-
-    ["that defines a string *not* configured for full text search for JSON", {
-      ...STRING_JSON_DEFAULTS,
-      schemaDef: { aField: { type: 'string', textSearch: false } } as SchemaDefinition,
-      expectedRedisSchema: ['$.aField', 'AS', 'aField', 'TAG', 'SEPARATOR', '|']
-    }],
-
     ["that defines a string configured with an alternative separator for JSON", {
       ...STRING_JSON_DEFAULTS,
       schemaDef: { aField: { type: 'string', separator: ';' } } as SchemaDefinition,
       expectedRedisSchema: ['$.aField', 'AS', 'aField', 'TAG', 'SEPARATOR', ';']
     }],
 
-    ["that defines an unconfigured geopoint for JSON", {
+    ["that defines an unconfigured text for a JSON", {
+      ...TEXT_JSON_DEFAULTS,
+      schemaDef: { aField: { type: 'text' } } as SchemaDefinition,
+      expectedRedisSchema: ['$.aField', 'AS', 'aField', 'TEXT']
+    }],
+
+    ["that defines an alaised text for a JSON", {
+      ...TEXT_JSON_DEFAULTS,
+      schemaDef: { aField: { type: 'text', alias: 'anotherField' } } as SchemaDefinition,
+      providedEntityFieldName: 'anotherField',
+      expectedRedisSchema: ['$.anotherField', 'AS', 'anotherField', 'TEXT']
+    }],
+
+    ["that defines an unconfigured point for JSON", {
       ...GEO_JSON_DEFAULTS,
-      schemaDef: { aField: { type: 'geopoint' } } as SchemaDefinition,
+      schemaDef: { aField: { type: 'point' } } as SchemaDefinition,
       expectedRedisSchema: ['$.aField', 'AS', 'aField', 'GEO']
     }],
 
-    ["that defines an aliased geopoint for JSON", {
+    ["that defines an aliased point for JSON", {
       ...GEO_JSON_DEFAULTS,
-      schemaDef: { aField: { type: 'geopoint', alias: 'anotherField' } } as SchemaDefinition,
+      schemaDef: { aField: { type: 'point', alias: 'anotherField' } } as SchemaDefinition,
       providedEntityFieldName: 'anotherField',
       expectedRedisSchema: ['$.anotherField', 'AS', 'anotherField', 'GEO']
     }],
@@ -304,22 +328,22 @@ describe("Schema", () => {
       expectedRedisSchema: ['$.anotherField', 'AS', 'anotherField', 'NUMERIC']
     }],
 
-    ["that defines an unconfigured array for JSON", {
+    ["that defines an unconfigured string[] for JSON", {
       ...ARRAY_JSON_DEFAULTS,
-      schemaDef: { aField: { type: 'array' } } as SchemaDefinition,
+      schemaDef: { aField: { type: 'string[]' } } as SchemaDefinition,
       expectedRedisSchema: ['$.aField[*]', 'AS', 'aField', 'TAG']
     }],
 
-    ["that defines an aliased array for JSON", {
+    ["that defines an aliased string[] for JSON", {
       ...ARRAY_JSON_DEFAULTS,
-      schemaDef: { aField: { type: 'array', alias: 'anotherField' } } as SchemaDefinition,
+      schemaDef: { aField: { type: 'string[]', alias: 'anotherField' } } as SchemaDefinition,
       providedEntityFieldName: 'anotherField',
       expectedRedisSchema: ['$.anotherField[*]', 'AS', 'anotherField', 'TAG']
     }],
 
-    ["that defines an array configured with an ignored separator for JSON", {
+    ["that defines a string[] configured with an ignored separator for JSON", {
       ...ARRAY_JSON_DEFAULTS,
-      schemaDef: { aField: { type: 'array', separator: ';' } } as SchemaDefinition,
+      schemaDef: { aField: { type: 'string[]', separator: ';' } } as SchemaDefinition,
       expectedRedisSchema: ['$.aField[*]', 'AS', 'aField', 'TAG']
     }]
   ])("%s", (_, data) => {
@@ -340,7 +364,7 @@ describe("Schema", () => {
     beforeEach(() => {
       let entityData: EntityData = {};
       entityData[data.providedEntityFieldName] = data.providedEntityFieldValue;
-      entity = new TestEntity(data.schemaDef, 'foo', entityData)
+      entity = new TestEntity(data.schemaDef, A_STRING, entityData)
     });
 
     it("adds the getter and setter for the field from the schema definition to the entity", () => {

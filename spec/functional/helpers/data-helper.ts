@@ -3,25 +3,25 @@ import { saveHash, saveJson } from './redis-helper';
 import Client, { SearchDataStructure } from "../../../lib/client";
 import Entity, { EntityConstructor } from "../../../lib/entity/entity";
 import Schema from '../../../lib/schema/schema';
-import { GeoPoint } from '../../../lib';
+import { Point } from '../../../lib';
 
 import { SampleEntityData } from "../../helpers/example-data";
 
 interface SampleEntity {
   aString?: string | null;
   anotherString?: string | null;
-  aFullTextString?: string | null;
-  anotherFullTextString?: string | null;
+  someText?: string | null;
+  someOtherText?: string | null;
   aNumber?: number | null;
   anotherNumber?: number | null;
   aBoolean?: boolean | null;
   anotherBoolean?: boolean | null;
-  aGeoPoint?: GeoPoint | null;
-  anotherGeoPoint?: GeoPoint | null;
+  aPoint?: Point | null;
+  anotherPoint?: Point | null;
   aDate?: Date | null;
   anotherDate?: Date | null;
-  anArray?: string[] | null;
-  anotherArray?: string[] | null;
+  someStrings?: string[] | null;
+  someOtherStrings?: string[] | null;
 }
 
 export interface SampleHashEntity extends SampleEntity {}
@@ -44,18 +44,18 @@ function createSchemaOfType<TEntity extends Entity>(ctor: EntityConstructor<TEnt
     ctor, {
       aString: { type: 'string' },
       anotherString: { type: 'string' },
-      aFullTextString: { type: 'string', textSearch: true },
-      anotherFullTextString: { type: 'string', textSearch: true },
+      someText: { type: 'text' },
+      someOtherText: { type: 'text' },
       aNumber: { type: 'number' },
       anotherNumber: { type: 'number' },
       aBoolean: { type: 'boolean' },
       anotherBoolean: { type: 'boolean' },
-      aGeoPoint: { type: 'geopoint' },
-      anotherGeoPoint: { type: 'geopoint' },
+      aPoint: { type: 'point' },
+      anotherPoint: { type: 'point' },
       aDate: { type: 'date' },
       anotherDate: { type: 'date' },
-      anArray: { type: 'array' },
-      anotherArray: { type: 'array' }
+      someStrings: { type: 'string[]' },
+      someOtherStrings: { type: 'string[]' }
     }, {
       dataStructure
     });

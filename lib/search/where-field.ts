@@ -1,7 +1,7 @@
 import Entity from "../entity/entity";
-import Search from "./search";
+import { Search } from "./search";
 import Where from "./where";
-import { CircleFunction } from "./where-geo";
+import { CircleFunction } from "./where-point";
 
 /**
  * Interface with all the methods from all the concrete
@@ -54,35 +54,35 @@ interface WhereField<TEntity> extends Where {
    * @param value The word or phrase sought.
    * @returns The {@link Search} that was called to create this {@link WhereField}.
    */
-  match(value: string): Search<TEntity>;
+  match(value: string | number | boolean): Search<TEntity>;
 
   /**
    * Adds a full-text search comparison to the query.
    * @param value The word or phrase sought.
    * @returns The {@link Search} that was called to create this {@link WhereField}.
    */
-  matches(value: string): Search<TEntity>;
+  matches(value: string | number | boolean): Search<TEntity>;
 
   /**
    * Adds a full-text search comparison to the query that matches an exact word or phrase.
    * @param value The word or phrase sought.
    * @returns The {@link Search} that was called to create this {@link WhereField}.
    */
-  matchExact(value: string): Search<TEntity>;
+  matchExact(value: string | number | boolean): Search<TEntity>;
 
   /**
    * Adds a full-text search comparison to the query that matches an exact word or phrase.
    * @param value The word or phrase sought.
    * @returns The {@link Search} that was called to create this {@link WhereField}.
    */
-  matchExactly(value: string): Search<TEntity>;
+  matchExactly(value: string | number | boolean): Search<TEntity>;
 
   /**
    * Adds a full-text search comparison to the query that matches an exact word or phrase.
    * @param value The word or phrase sought.
    * @returns The {@link Search} that was called to create this {@link WhereField}.
    */
-  matchesExactly(value: string): Search<TEntity>;
+  matchesExactly(value: string | number | boolean): Search<TEntity>;
 
   /**
    * Makes a call to {@link WhereField.match} a {@link WhereField.matchExact} call. Calling
@@ -175,21 +175,21 @@ interface WhereField<TEntity> extends Where {
   between(lower: string | number | Date, upper: string | number | Date): Search<TEntity>;
 
   /**
-   * Adds a whole-string match for a value within an array to the search query.
+   * Adds a whole-string match for a value within a string array to the search query.
    * @param value The string to be matched.
    * @returns The {@link Search} that was called to create this {@link WhereField}.
    */
   contain(value: string): Search<TEntity>;
 
   /**
-   * Adds a whole-string match for a value within an array to the search query.
+   * Adds a whole-string match for a value within a string array to the search query.
    * @param value The string to be matched.
    * @returns The {@link Search} that was called to create this {@link WhereField}.
    */
   contains(value: string): Search<TEntity>;
 
   /**
-   * Adds a whole-string match against an array to the query. If any of the provided
+   * Adds a whole-string match against a string array to the query. If any of the provided
    * strings in `value` is matched in the array, this matched.
    * @param value An array of strings that you want to match one of.
    * @returns The {@link Search} that was called to create this {@link WhereField}.
@@ -197,7 +197,7 @@ interface WhereField<TEntity> extends Where {
   containOneOf(...value: string[]): Search<TEntity>;
 
   /**
-   * Adds a whole-string match against an array to the query. If any of the provided
+   * Adds a whole-string match against a string array to the query. If any of the provided
    * strings in `value` is matched in the array, this matched.
    * @param value An array of strings that you want to match one of.
    * @returns The {@link Search} that was called to create this {@link WhereField}.
@@ -205,14 +205,14 @@ interface WhereField<TEntity> extends Where {
   containsOneOf(...value: string[]): Search<TEntity>;
 
   /**
-   * Adds a search for geopoints that fall within a defined circle.
+   * Adds a search for points that fall within a defined circle.
    * @param circleFn A function that returns a {@link Circle} instance defining the search area.
    * @returns The {@link Search} that was called to create this {@link WhereField}.
    */
   inCircle(circleFn: CircleFunction): Search<TEntity>;
 
   /**
-   * Adds a search for geopoints that fall within a defined radius.
+   * Adds a search for points that fall within a defined radius.
    * @param circleFn A function that returns a {@link Circle} instance defining the search area.
    * @returns The {@link Search} that was called to create this {@link WhereField}.
    */

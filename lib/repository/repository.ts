@@ -1,10 +1,10 @@
 import Schema from "../schema/schema"
 import Client from "../client";
 import Entity from "../entity/entity";
-import Search from '../search/search';
+import { Search, RawSearch } from '../search/search';
 
 import { EntityData } from "../entity/entity";
-import { GeoPoint } from "../schema/schema-definitions";
+import { Point } from "../schema/schema-definitions";
 import { CreateIndexOptions } from "../client";
 import { JsonConverter, HashConverter } from "./converter";
 
@@ -12,7 +12,7 @@ import { JsonConverter, HashConverter } from "./converter";
  * Initialization data for {@link Entity} creation when calling
  * {@link Repository.createEntity} or {@link Repository.createAndSave}.
  */
-export type EntityCreationData = Record<string, number | boolean | string | string[] | GeoPoint | Date | null>;
+export type EntityCreationData = Record<string, number | boolean | string | string[] | Point | Date | null>;
 
 /**
  * A repository is the main interaction point for reading, writing, and
@@ -167,13 +167,25 @@ export type EntityCreationData = Record<string, number | boolean | string | stri
   }
 
   /**
-   * Kicks off the processes of building a query. Requires that RediSearch or
-   * RedisJSON is installed on your instance of Redis.
+   * Kicks off the process of building a query. Requires that RediSearch (and optionally
+   * RedisJSON) be is installed on your instance of Redis.
    * @template TEntity The type of {@link Entity} sought.
    * @returns A {@link Search} object.
    */
   search(): Search<TEntity> {
     return new Search<TEntity>(this.schema, this.client);
+  }
+
+  /**
+   * Creates a search that bypassed Redis OM and instead allows you to execute a raw
+   * RediSearch query. Requires that RediSearch (and optionally RedisJSON) be installed
+   * on your instance of Redis.
+   * @template TEntity The type of {@link Entity} sought.
+   * @query The raw RediSearch query you want to rune.
+   * @returns A {@link RawSearch} object.
+   */
+  searchRaw(query: string): RawSearch<TEntity> {
+    return new RawSearch<TEntity>(this.schema, this.client, query);
   }
 
   /** @internal */

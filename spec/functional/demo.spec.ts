@@ -3,7 +3,7 @@ import Schema from '../../lib/schema/schema';
 import Entity from '../../lib/entity/entity';
 import Repository from '../../lib/repository/repository';
 
-import { GeoPoint } from '../../lib';
+import { Point } from '../../lib';
 
 describe("Demo", () => {
 
@@ -18,7 +18,7 @@ describe("Demo", () => {
       classification: string[];
       county: string;
       state: string;
-      location: GeoPoint;
+      location: Point;
       highTemp: number;
       lowTemp: number;
       fullMoon: boolean;
@@ -44,12 +44,12 @@ describe("Demo", () => {
       BigfootSighting, {
         id: { type: 'string' },
         date: { type: 'date' },
-        title: { type: 'string', textSearch: true },
-        observed: { type: 'string', textSearch: true },
-        classification: { type: 'array' },
+        title: { type: 'text' },
+        observed: { type: 'text' },
+        classification: { type: 'string[]' },
         county: { type: 'string' },
         state: { type: 'string' },
-        location: { type: 'geopoint' },
+        location: { type: 'point' },
         highTemp: { type: 'number' },
         lowTemp: { type: 'number' },
         fullMoon: { type: 'boolean' }
@@ -125,6 +125,9 @@ describe("Demo", () => {
       .and('date').before(new Date('2000-01-01T00:00:00.000Z'))
       .and('title').matchesExactly('the walmart')
       .and('fullMoon').is.true().returnAll();
+
+    // execute a raw search
+    someEntities = repository.searchRaw('@fullMoon:{true} @location:[23.45 67.89 50 mi]').returnAll();
 
     // close the client
     client.close();

@@ -1,6 +1,6 @@
 import Entity from '../../../lib/entity/entity';
 import Schema from '../../../lib/schema/schema';
-import { GeoPoint } from '../../../lib/schema/schema-definitions';
+import { Point } from '../../../lib/schema/schema-definitions';
 
 export class SimpleEntity extends Entity {}
 export class SimpleHashEntity extends SimpleEntity {}
@@ -8,86 +8,83 @@ export class SimpleJsonEntity extends SimpleEntity {}
 
 export interface SimpleEntity {
   aString?: string | number | boolean | null;
+  someText?: string | number | boolean | null;
   aNumber?: number | null;
   aBoolean?: boolean | null;
-  aGeoPoint?: GeoPoint | null;
+  aPoint?: Point | null;
   aDate?: Date | string | number | null;
-  anArray?: any[] | null;
+  someStrings?: any[] | null;
 }
 
 export interface SimpleHashEntity extends SimpleEntity {}
 export interface SimpleJsonEntity extends SimpleEntity {}
 
-export class FullTextEntity extends Entity {}
 export class AliasedEntity extends Entity {}
 export class StopWordsOffEntity extends Entity {}
 export class CustomStopWordsEntity extends Entity {}
 
-export interface FullTextEntity {
-  aString?: string | null;
-}  
-
 export interface AliasedEntity {
   aString?: string | null;
+  someText?: string | null;
   aNumber?: number | null;
   aBoolean?: boolean | null;
-  aGeoPoint?: GeoPoint | null;
+  aPoint?: Point | null;
   aDate?: Date | null;
-  anArray?: string[] | null;
+  someStrings?: string[] | null;
 }
 
 export const simpleSchema = new Schema(SimpleEntity, {
   aString: { type: 'string' },
+  someText: { type: 'text' },
   aNumber: { type: 'number' },
   aBoolean: { type: 'boolean' },
-  aGeoPoint: { type: 'geopoint' },
+  aPoint: { type: 'point' },
   aDate: { type: 'date' },
-  anArray: { type: 'array' }
+  someStrings: { type: 'string[]' }
 });
 
 export const simpleHashSchema = new Schema(SimpleHashEntity, {
   aString: { type: 'string' },
+  someText: { type: 'text' },
   aNumber: { type: 'number' },
   aBoolean: { type: 'boolean' },
-  aGeoPoint: { type: 'geopoint' },
+  aPoint: { type: 'point' },
   aDate: { type: 'date' },
-  anArray: { type: 'array' }
+  someStrings: { type: 'string[]' }
 }, {
   dataStructure: 'HASH'
 });
 
 export const simpleJsonSchema = new Schema(SimpleJsonEntity, {
   aString: { type: 'string' },
+  someText: { type: 'text' },
   aNumber: { type: 'number' },
   aBoolean: { type: 'boolean' },
-  aGeoPoint: { type: 'geopoint' },
+  aPoint: { type: 'point' },
   aDate: { type: 'date' },
-  anArray: { type: 'array' }
+  someStrings: { type: 'string[]' }
 }, {
   dataStructure: 'JSON'
 });
 
-export const fullTextSchema = new Schema(FullTextEntity, {
-  aString: { type: 'string', textSearch: true },
-});
-
 export const aliasedSchema = new Schema(AliasedEntity, {
   aString: { type: 'string', alias: 'anotherString' },
+  someText: { type: 'text', alias: 'someOtherText' },
   aNumber: { type: 'number', alias: 'anotherNumber' },
   aBoolean: { type: 'boolean', alias: 'anotherBoolean' },
-  aGeoPoint: { type: 'geopoint', alias: 'anotherGeoPoint' },
+  aPoint: { type: 'point', alias: 'anotherPoint' },
   aDate: { type: 'date', alias: 'anotherDate' },
-  anArray: { type: 'array', alias: 'anotherArray' }
+  someStrings: { type: 'string[]', alias: 'someOtherStrings' }
 });
 
 export const stopWordsOffSchema = new Schema(StopWordsOffEntity, {
-  aString: { type: 'string', textSearch: true }
+  someText: { type: 'text' }
 }, {
   useStopWords: 'OFF'
 });
 
 export const customStopWordsSchema = new Schema(CustomStopWordsEntity, {
-  aString: { type: 'string', textSearch: true }
+  someText: { type: 'text' }
 }, {
   useStopWords: 'CUSTOM',
   stopWords: [ 'foo', 'bar', 'baz' ]

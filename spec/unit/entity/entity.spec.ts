@@ -1,14 +1,18 @@
 import { 
-  A_DATE, A_DATE_ISO, ANOTHER_DATE, ANOTHER_DATE_ISO, A_THIRD_DATE,
-  A_GEOPOINT, A_GEOPOINT_JSON, ANOTHER_GEOPOINT, ANOTHER_GEOPOINT_JSON, A_THIRD_GEOPOINT,
-  AN_ARRAY, AN_ARRAY_JSON, ANOTHER_ARRAY, ANOTHER_ARRAY_JSON, A_THIRD_ARRAY, ANOTHER_DATE_EPOCH, A_THIRD_DATE_EPOCH, A_THIRD_DATE_ISO } from '../../helpers/example-data';
+  A_STRING, ANOTHER_STRING, A_THIRD_STRING,
+  A_NUMBER, ANOTHER_NUMBER, ANOTHER_NUMBER_STRING, A_THIRD_NUMBER, A_THIRD_NUMBER_STRING,
+  A_DATE, A_DATE_ISO, ANOTHER_DATE, ANOTHER_DATE_EPOCH, ANOTHER_DATE_ISO, 
+  A_THIRD_DATE, A_THIRD_DATE_EPOCH, A_THIRD_DATE_ISO,
+  A_POINT, A_POINT_JSON, ANOTHER_POINT, ANOTHER_POINT_JSON, A_THIRD_POINT,
+  SOME_STRINGS, SOME_STRINGS_JSON, SOME_OTHER_STRINGS, SOME_OTHER_STRINGS_JSON, SOME_MORE_STRINGS,
+  SOME_TEXT, SOME_OTHER_TEXT, SOME_MORE_TEXT  } from '../../helpers/example-data';
 
 import { AliasedEntity, aliasedSchema, SimpleEntity, simpleSchema } from '../helpers/test-entity-and-schema';
 
 const ENTITY_ID = 'foo';
-const EXPECTED_JSON = `{"entityId":"${ENTITY_ID}","aString":"foo","aNumber":42,"aBoolean":false,"aGeoPoint":${A_GEOPOINT_JSON},"aDate":"${A_DATE_ISO}","anArray":${AN_ARRAY_JSON}}`;
-const EXPECTED_NULL_JSON = `{"entityId":"${ENTITY_ID}","aString":null,"aNumber":null,"aBoolean":null,"aGeoPoint":null,"aDate":null,"anArray":null}`;
-const EXPECTED_ALIASED_JSON = `{"entityId":"${ENTITY_ID}","aString":"bar","aNumber":23,"aBoolean":true,"aGeoPoint":${ANOTHER_GEOPOINT_JSON},"aDate":"${ANOTHER_DATE_ISO}","anArray":${ANOTHER_ARRAY_JSON}}`;
+const EXPECTED_JSON = `{"entityId":"${ENTITY_ID}","aString":"${A_STRING}","someText":"${SOME_TEXT}","aNumber":${A_NUMBER},"aBoolean":false,"aPoint":${A_POINT_JSON},"aDate":"${A_DATE_ISO}","someStrings":${SOME_STRINGS_JSON}}`;
+const EXPECTED_NULL_JSON = `{"entityId":"${ENTITY_ID}","aString":null,"someText":null,"aNumber":null,"aBoolean":null,"aPoint":null,"aDate":null,"someStrings":null}`;
+const EXPECTED_ALIASED_JSON = `{"entityId":"${ENTITY_ID}","aString":"${ANOTHER_STRING}","someText":"${SOME_OTHER_TEXT}","aNumber":${ANOTHER_NUMBER},"aBoolean":true,"aPoint":${ANOTHER_POINT_JSON},"aDate":"${ANOTHER_DATE_ISO}","someStrings":${SOME_OTHER_STRINGS_JSON}}`;
 
 let entity: SimpleEntity;
 
@@ -20,39 +24,41 @@ describe("Entity", () => {
     it("returns null for the number property", () => expect(entity.aNumber).toBeNull());
     it("returns null for the string property", () => expect(entity.aString).toBeNull());
     it("returns null for the boolean property", () => expect(entity.aBoolean).toBeNull());
-    it("returns null for the geopoint property", () => expect(entity.aGeoPoint).toBeNull());
+    it("returns null for the text property", () => expect(entity.someText).toBeNull());
+    it("returns null for the point property", () => expect(entity.aPoint).toBeNull());
     it("returns null for the date property", () => expect(entity.aDate).toBeNull());
-    it("returns null for the array property", () => expect(entity.anArray).toBeNull());
+    it("returns null for the string[] property", () => expect(entity.someStrings).toBeNull());
     it("serializes to the expected JSON", () => expect(JSON.stringify(entity)).toBe(EXPECTED_NULL_JSON));
   });
 
   describe("with data", () => {
     beforeEach(() => entity = new SimpleEntity(simpleSchema.definition, ENTITY_ID, {
-      aNumber: 42, aString: 'foo', aBoolean: false, aGeoPoint: A_GEOPOINT, aDate: A_DATE, anArray: AN_ARRAY }));
+      aNumber: A_NUMBER, aString: A_STRING, aBoolean: false, someText: SOME_TEXT, aPoint: A_POINT, aDate: A_DATE, someStrings: SOME_STRINGS }));
 
     it("has the passed in Redis ID", () => expect(entity.entityId).toBe(ENTITY_ID));
-    it("returns a number for the number property", () => expect(entity.aNumber).toBe(42));
-    it("returns a string for the string property", () => expect(entity.aString).toBe('foo'));
+    it("returns a number for the number property", () => expect(entity.aNumber).toBe(A_NUMBER));
+    it("returns a string for the string property", () => expect(entity.aString).toBe(A_STRING));
     it("returns a boolean for the boolean property", () => expect(entity.aBoolean).toBe(false));
-    it("returns a geopoint for the geopoint property", () => expect(entity.aGeoPoint).toEqual(A_GEOPOINT));
+    it("returns a string for the text property", () => expect(entity.someText).toBe(SOME_TEXT));
+    it("returns a point for the point property", () => expect(entity.aPoint).toEqual(A_POINT));
     it("returns a date for the date property", () => expect(entity.aDate).toEqual(A_DATE));
-    it("returns an array for the array property", () => expect(entity.anArray).toEqual(AN_ARRAY));
+    it("returns a string[] for the string[] property", () => expect(entity.someStrings).toEqual(SOME_STRINGS));
     it("serializes to the expected JSON", () => expect(JSON.stringify(entity)).toBe(EXPECTED_JSON));
 
     describe("changing the data", () => {
       it("stores a number when the number property is changed", () => {
-        entity.aNumber = 13;
-        expect(entity.entityData.aNumber).toBe(13);
+        entity.aNumber = ANOTHER_NUMBER;
+        expect(entity.entityData.aNumber).toBe(ANOTHER_NUMBER);
       });
 
       it("stores a string when the string property is changed", () => {
-        entity.aString = 'bar';
-        expect(entity.entityData.aString).toBe('bar');
+        entity.aString = ANOTHER_STRING;
+        expect(entity.entityData.aString).toBe(ANOTHER_STRING);
       });
 
       it("stores a string when the string property is changed to a number", () => {
-        entity.aString = 23;
-        expect(entity.entityData.aString).toBe('23');
+        entity.aString = ANOTHER_NUMBER;
+        expect(entity.entityData.aString).toBe(ANOTHER_NUMBER_STRING);
       });
 
       it("stores a string when the string property is changed to a boolean", () => {
@@ -60,7 +66,7 @@ describe("Entity", () => {
         expect(entity.entityData.aString).toBe('false');
       });
 
-      it("stores a boolean when the boolaan property is changed to true", () => {
+      it("stores a boolean when the boolean property is changed to true", () => {
         entity.aBoolean = true;
         expect(entity.entityData.aBoolean).toBe(true);
       });
@@ -70,9 +76,24 @@ describe("Entity", () => {
         expect(entity.entityData.aBoolean).toBe(false);
       });
 
-      it("stores a geopoint when the geopoint property is changed", () => {
-        entity.aGeoPoint = ANOTHER_GEOPOINT;
-        expect(entity.entityData.aGeoPoint).toEqual(ANOTHER_GEOPOINT);
+      it("stores a string when the text property is changed to a string", () => {
+        entity.someText = SOME_OTHER_TEXT;
+        expect(entity.entityData.someText).toBe(SOME_OTHER_TEXT);
+      });
+
+      it("stores a string when the text property is changed to a number", () => {
+        entity.someText = ANOTHER_NUMBER;
+        expect(entity.entityData.someText).toBe(ANOTHER_NUMBER_STRING);
+      });
+
+      it("stores a string when the text property is changed to a boolean", () => {
+        entity.someText = false;
+        expect(entity.entityData.someText).toBe('false');
+      });
+
+      it("stores a point when the point property is changed", () => {
+        entity.aPoint = ANOTHER_POINT;
+        expect(entity.entityData.aPoint).toEqual(ANOTHER_POINT);
       });
 
       it("stores a date when the date property is changed", () => {
@@ -90,14 +111,14 @@ describe("Entity", () => {
         expect(entity.entityData.aDate).toEqual(ANOTHER_DATE);
       });
 
-      it("stores a string[] when the array property is changed", () => {
-        entity.anArray = ANOTHER_ARRAY;
-        expect(entity.entityData.anArray).toEqual(ANOTHER_ARRAY);
+      it("stores a string[] when the string[] property is changed", () => {
+        entity.someStrings = SOME_OTHER_STRINGS;
+        expect(entity.entityData.someStrings).toEqual(SOME_OTHER_STRINGS);
       });
 
-      it("stores a string[] when the array property is changed to an any[]", () => {
-        entity.anArray = [ 42, true, 23, false ];
-        expect(entity.entityData.anArray).toEqual([ '42', 'true', '23', 'false' ])
+      it("stores a string[] when the string[] property is changed to an any[]", () => {
+        entity.someStrings = [ 42, true, 23, false ];
+        expect(entity.entityData.someStrings).toEqual([ '42', 'true', '23', 'false' ])
       });
     });
 
@@ -110,26 +131,26 @@ describe("Entity", () => {
         expect(() => entity.aNumber = true)
           .toThrow(`Property 'aNumber' expected type of 'number' but received value of 'true'.`);
         // @ts-ignore: JavaScript
-        expect(() => entity.aNumber = A_GEOPOINT)
-          .toThrow(`Property 'aNumber' expected type of 'number' but received value of '${A_GEOPOINT}'.`);
+        expect(() => entity.aNumber = A_POINT)
+          .toThrow(`Property 'aNumber' expected type of 'number' but received value of '${A_POINT}'.`);
         // @ts-ignore: JavaScript
         expect(() => entity.aNumber = A_DATE)
           .toThrow(`Property 'aNumber' expected type of 'number' but received value of '${A_DATE}'.`);
         // @ts-ignore: JavaScript
-        expect(() => entity.aNumber = AN_ARRAY)
-          .toThrow(`Property 'aNumber' expected type of 'number' but received value of '${AN_ARRAY}'.`);
+        expect(() => entity.aNumber = SOME_STRINGS)
+          .toThrow(`Property 'aNumber' expected type of 'number' but received value of '${SOME_STRINGS}'.`);
         });
       
       it("complains when not a string", () => {
         // @ts-ignore: JavaScript
-        expect(() => entity.aString = A_GEOPOINT)
-          .toThrow(`Property 'aString' expected type of 'string' but received value of '${A_GEOPOINT}'.`);
+        expect(() => entity.aString = A_POINT)
+          .toThrow(`Property 'aString' expected type of 'string' but received value of '${A_POINT}'.`);
         // @ts-ignore: JavaScript
         expect(() => entity.aString = A_DATE)
           .toThrow(`Property 'aString' expected type of 'string' but received value of '${A_DATE}'.`);
         // @ts-ignore: JavaScript
-        expect(() => entity.aString = AN_ARRAY)
-          .toThrow(`Property 'aString' expected type of 'string' but received value of '${AN_ARRAY}'.`);
+        expect(() => entity.aString = SOME_STRINGS)
+          .toThrow(`Property 'aString' expected type of 'string' but received value of '${SOME_STRINGS}'.`);
       });
 
       it("complains when not a boolean", () => {
@@ -140,32 +161,44 @@ describe("Entity", () => {
         expect(() => entity.aBoolean = 42)
           .toThrow(`Property 'aBoolean' expected type of 'boolean' but received value of '42'`)
         // @ts-ignore: JavaScript
-        expect(() => entity.aBoolean = A_GEOPOINT)
-          .toThrow(`Property 'aBoolean' expected type of 'boolean' but received value of '${A_GEOPOINT}'.`);
+        expect(() => entity.aBoolean = A_POINT)
+          .toThrow(`Property 'aBoolean' expected type of 'boolean' but received value of '${A_POINT}'.`);
         // @ts-ignore: JavaScript
         expect(() => entity.aBoolean = A_DATE)
           .toThrow(`Property 'aBoolean' expected type of 'boolean' but received value of '${A_DATE}'.`);
         // @ts-ignore: JavaScript
-        expect(() => entity.aBoolean = AN_ARRAY)
-          .toThrow(`Property 'aBoolean' expected type of 'boolean' but received value of '${AN_ARRAY}'`)
+        expect(() => entity.aBoolean = SOME_STRINGS)
+          .toThrow(`Property 'aBoolean' expected type of 'boolean' but received value of '${SOME_STRINGS}'`)
       });
-      
-      it("complains when not a geopoint", () => {
+
+      it("complains when not a text", () => {
         // @ts-ignore: JavaScript
-        expect(() => entity.aGeoPoint = 'foo')
-          .toThrow(`Property 'aGeoPoint' expected type of 'geopoint' but received value of 'foo'`)
+        expect(() => entity.someText = A_POINT)
+          .toThrow(`Property 'someText' expected type of 'text' but received value of '${A_POINT}'.`);
         // @ts-ignore: JavaScript
-        expect(() => entity.aGeoPoint = 42)
-          .toThrow(`Property 'aGeoPoint' expected type of 'geopoint' but received value of '42'`)
+        expect(() => entity.someText = A_DATE)
+          .toThrow(`Property 'someText' expected type of 'text' but received value of '${A_DATE}'.`);
         // @ts-ignore: JavaScript
-        expect(() => entity.aGeoPoint = true)
-          .toThrow(`Property 'aGeoPoint' expected type of 'geopoint' but received value of 'true'`)
+        expect(() => entity.someText = SOME_STRINGS)
+          .toThrow(`Property 'someText' expected type of 'text' but received value of '${SOME_STRINGS}'.`);
+      });
+
+      it("complains when not a point", () => {
         // @ts-ignore: JavaScript
-        expect(() => entity.aGeoPoint = A_DATE)
-          .toThrow(`Property 'aGeoPoint' expected type of 'geopoint' but received value of '${A_DATE}'.`);
+        expect(() => entity.aPoint = 'foo')
+          .toThrow(`Property 'aPoint' expected type of 'point' but received value of 'foo'`)
         // @ts-ignore: JavaScript
-        expect(() => entity.aGeoPoint = AN_ARRAY)
-          .toThrow(`Property 'aGeoPoint' expected type of 'geopoint' but received value of '${AN_ARRAY}'`)
+        expect(() => entity.aPoint = 42)
+          .toThrow(`Property 'aPoint' expected type of 'point' but received value of '42'`)
+        // @ts-ignore: JavaScript
+        expect(() => entity.aPoint = true)
+          .toThrow(`Property 'aPoint' expected type of 'point' but received value of 'true'`)
+        // @ts-ignore: JavaScript
+        expect(() => entity.aPoint = A_DATE)
+          .toThrow(`Property 'aPoint' expected type of 'point' but received value of '${A_DATE}'.`);
+        // @ts-ignore: JavaScript
+        expect(() => entity.aPoint = SOME_STRINGS)
+          .toThrow(`Property 'aPoint' expected type of 'point' but received value of '${SOME_STRINGS}'`)
       });
 
       it("complains when not a date", () => {
@@ -173,29 +206,29 @@ describe("Entity", () => {
         expect(() => entity.aDate = true)
           .toThrow(`Property 'aDate' expected type of 'date' but received value of 'true'`)
         // @ts-ignore: JavaScript
-        expect(() => entity.aDate = A_GEOPOINT)
-          .toThrow(`Property 'aDate' expected type of 'date' but received value of '${A_GEOPOINT}'.`);
+        expect(() => entity.aDate = A_POINT)
+          .toThrow(`Property 'aDate' expected type of 'date' but received value of '${A_POINT}'.`);
         // @ts-ignore: JavaScript
-        expect(() => entity.aDate = AN_ARRAY)
-          .toThrow(`Property 'aDate' expected type of 'date' but received value of '${AN_ARRAY}'.`)
+        expect(() => entity.aDate = SOME_STRINGS)
+          .toThrow(`Property 'aDate' expected type of 'date' but received value of '${SOME_STRINGS}'.`)
       });
 
       it("complains when not an array", () => {
         // @ts-ignore: JavaScript
-        expect(() => entity.anArray = 'foo')
-          .toThrow(`Property 'anArray' expected type of 'array' but received value of 'foo'`)
+        expect(() => entity.someStrings = 'foo')
+          .toThrow(`Property 'someStrings' expected type of 'string[]' but received value of 'foo'`)
         // @ts-ignore: JavaScript
-        expect(() => entity.anArray = 42)
-          .toThrow(`Property 'anArray' expected type of 'array' but received value of '42'`)
+        expect(() => entity.someStrings = 42)
+          .toThrow(`Property 'someStrings' expected type of 'string[]' but received value of '42'`)
         // @ts-ignore: JavaScript
-        expect(() => entity.anArray = true)
-          .toThrow(`Property 'anArray' expected type of 'array' but received value of 'true'`)
+        expect(() => entity.someStrings = true)
+          .toThrow(`Property 'someStrings' expected type of 'string[]' but received value of 'true'`)
         // @ts-ignore: JavaScript
-        expect(() => entity.anArray = A_GEOPOINT)
-          .toThrow(`Property 'anArray' expected type of 'array' but received value of '${A_GEOPOINT}'.`);
+        expect(() => entity.someStrings = A_POINT)
+          .toThrow(`Property 'someStrings' expected type of 'string[]' but received value of '${A_POINT}'.`);
         // @ts-ignore: JavaScript
-        expect(() => entity.anArray = A_DATE)
-          .toThrow(`Property 'anArray' expected type of 'array' but received value of '${A_DATE}'.`);
+        expect(() => entity.someStrings = A_DATE)
+          .toThrow(`Property 'someStrings' expected type of 'string[]' but received value of '${A_DATE}'.`);
       });
     });
 
@@ -203,16 +236,18 @@ describe("Entity", () => {
       it("removes nulled properties", () => {
         entity.aNumber = null;
         entity.aString = null;
+        entity.someText = null;
         entity.aBoolean = null;
-        entity.aGeoPoint = null;
+        entity.aPoint = null;
         entity.aDate = null;
-        entity.anArray = null;
+        entity.someStrings = null;
         expect(entity.entityData.aNumber).toBeUndefined();
         expect(entity.entityData.aString).toBeUndefined();
         expect(entity.entityData.aBoolean).toBeUndefined();
-        expect(entity.entityData.aGeoPoint).toBeUndefined();
+        expect(entity.entityData.someText).toBeUndefined();
+        expect(entity.entityData.aPoint).toBeUndefined();
         expect(entity.entityData.aDate).toBeUndefined();
-        expect(entity.entityData.anArray).toBeUndefined();
+        expect(entity.entityData.someStrings).toBeUndefined();
       });
 
       it("throws error when setting to undefined", () => {
@@ -222,49 +257,54 @@ describe("Entity", () => {
         expect(() => entity.aString = undefined)
           .toThrow(`Property 'aString' on entity of type 'SimpleEntity' cannot be set to undefined. Use null instead.`);
 
+        expect(() => entity.someText = undefined)
+          .toThrow(`Property 'someText' on entity of type 'SimpleEntity' cannot be set to undefined. Use null instead.`);
+
         expect(() => entity.aBoolean = undefined)
           .toThrow(`Property 'aBoolean' on entity of type 'SimpleEntity' cannot be set to undefined. Use null instead.`);
 
-        expect(() => entity.aGeoPoint = undefined)
-          .toThrow(`Property 'aGeoPoint' on entity of type 'SimpleEntity' cannot be set to undefined. Use null instead.`);
+        expect(() => entity.aPoint = undefined)
+          .toThrow(`Property 'aPoint' on entity of type 'SimpleEntity' cannot be set to undefined. Use null instead.`);
 
         expect(() => entity.aDate = undefined)
           .toThrow(`Property 'aDate' on entity of type 'SimpleEntity' cannot be set to undefined. Use null instead.`);
 
-        expect(() => entity.anArray = undefined)
-          .toThrow(`Property 'anArray' on entity of type 'SimpleEntity' cannot be set to undefined. Use null instead.`);
+        expect(() => entity.someStrings = undefined)
+          .toThrow(`Property 'someStrings' on entity of type 'SimpleEntity' cannot be set to undefined. Use null instead.`);
       });
     });
   });
 
   describe("with aliased data", () => {
     beforeEach(() => entity = new AliasedEntity(aliasedSchema.definition, ENTITY_ID, {
-      anotherNumber: 23, anotherString: 'bar', anotherBoolean: true,
-      anotherGeoPoint: ANOTHER_GEOPOINT, anotherDate: ANOTHER_DATE, anotherArray: ANOTHER_ARRAY }));
+      anotherNumber: ANOTHER_NUMBER, anotherString: ANOTHER_STRING,
+      anotherBoolean: true, someOtherText: SOME_OTHER_TEXT,
+      anotherPoint: ANOTHER_POINT, anotherDate: ANOTHER_DATE, someOtherStrings: SOME_OTHER_STRINGS }));
 
     it("has the passed in Redis ID", () => expect(entity.entityId).toBe(ENTITY_ID));
-    it("returns a number for the number property", () => expect(entity.aNumber).toBe(23));
-    it("returns a string for the string property", () => expect(entity.aString).toBe('bar'));
+    it("returns a number for the number property", () => expect(entity.aNumber).toBe(ANOTHER_NUMBER));
+    it("returns a string for the string property", () => expect(entity.aString).toBe(ANOTHER_STRING));
     it("returns a boolean for the boolean property", () => expect(entity.aBoolean).toBe(true));
-    it("returns a geopoint for the geopoint property", () => expect(entity.aGeoPoint).toEqual(ANOTHER_GEOPOINT));
+    it("returns a string for the text property", () => expect(entity.someText).toBe(SOME_OTHER_TEXT));
+    it("returns a point for the point property", () => expect(entity.aPoint).toEqual(ANOTHER_POINT));
     it("returns a date for the date property", () => expect(entity.aDate).toEqual(ANOTHER_DATE));
-    it("returns an array for the array property", () => expect(entity.anArray).toEqual(ANOTHER_ARRAY));
+    it("returns a string[] for the string[] property", () => expect(entity.someStrings).toEqual(SOME_OTHER_STRINGS));
     it("serializes to the expected JSON", () => expect(JSON.stringify(entity)).toBe(EXPECTED_ALIASED_JSON));
 
     describe("changing the data", () => {
       it("stores a number when the number property is changed", () => {
-        entity.aNumber = 13;
-        expect(entity.entityData.anotherNumber).toBe(13);
+        entity.aNumber = A_THIRD_NUMBER;
+        expect(entity.entityData.anotherNumber).toBe(A_THIRD_NUMBER);
       });
 
       it("stores a string when the string property is changed", () => {
-        entity.aString = 'baz';
-        expect(entity.entityData.anotherString).toBe('baz');
+        entity.aString = A_THIRD_STRING;
+        expect(entity.entityData.anotherString).toBe(A_THIRD_STRING);
       });
 
       it("stores a string when the string property is changed to a number", () => {
-        entity.aString = 13;
-        expect(entity.entityData.anotherString).toBe('13');
+        entity.aString = A_THIRD_NUMBER;
+        expect(entity.entityData.anotherString).toBe(A_THIRD_NUMBER_STRING);
       });
 
       it("stores a string when the string property is changed to a boolean", () => {
@@ -282,9 +322,24 @@ describe("Entity", () => {
         expect(entity.entityData.anotherBoolean).toBe(false);
       });
 
-      it("stores a geopoint when the geopoint property is changed", () => {
-        entity.aGeoPoint = A_THIRD_GEOPOINT;
-        expect(entity.entityData.anotherGeoPoint).toEqual(A_THIRD_GEOPOINT);
+      it("stores a string when the text property is changed to a string", () => {
+        entity.someText = SOME_MORE_TEXT;
+        expect(entity.entityData.someOtherText).toBe(SOME_MORE_TEXT);
+      });
+
+      it("stores a string when the text property is changed to a number", () => {
+        entity.someText = A_THIRD_NUMBER;
+        expect(entity.entityData.someOtherText).toBe(A_THIRD_NUMBER_STRING);
+      });
+
+      it("stores a string when the text property is changed to a boolean", () => {
+        entity.someText = false;
+        expect(entity.entityData.someOtherText).toBe('false');
+      });
+
+      it("stores a point when the point property is changed", () => {
+        entity.aPoint = A_THIRD_POINT;
+        expect(entity.entityData.anotherPoint).toEqual(A_THIRD_POINT);
       });
 
       it("stores a date when the date property is changed", () => {
@@ -302,14 +357,14 @@ describe("Entity", () => {
         expect(entity.entityData.anotherDate).toEqual(A_THIRD_DATE);
       });
 
-      it("stores a string[] when the array property is changed", () => {
-        entity.anArray = A_THIRD_ARRAY;
-        expect(entity.entityData.anotherArray).toEqual(A_THIRD_ARRAY);
+      it("stores a string[] when the string[] property is changed", () => {
+        entity.someStrings = SOME_MORE_STRINGS;
+        expect(entity.entityData.someOtherStrings).toEqual(SOME_MORE_STRINGS);
       });
 
-      it("stores a string[] when the array property is changed to an any[]", () => {
-        entity.anArray = [ 42, true, 23, false ];
-        expect(entity.entityData.anotherArray).toEqual([ '42', 'true', '23', 'false' ])
+      it("stores a string[] when the string[] property is changed to an any[]", () => {
+        entity.someStrings = [ 42, true, 23, false ];
+        expect(entity.entityData.someOtherStrings).toEqual([ '42', 'true', '23', 'false' ])
       });
     });
   
@@ -318,15 +373,17 @@ describe("Entity", () => {
         entity.aNumber = null;
         entity.aString = null;
         entity.aBoolean = null;
-        entity.aGeoPoint = null;
+        entity.someText = null;
+        entity.aPoint = null;
         entity.aDate = null;
-        entity.anArray = null;
+        entity.someStrings = null;
         expect(entity.entityData.anotherNumber).toBeUndefined();
         expect(entity.entityData.anotherString).toBeUndefined();
         expect(entity.entityData.anotherBoolean).toBeUndefined();
-        expect(entity.entityData.anotherGeoPoint).toBeUndefined();
+        expect(entity.entityData.someOtherText).toBeUndefined();
+        expect(entity.entityData.anotherPoint).toBeUndefined();
         expect(entity.entityData.anotherDate).toBeUndefined();
-        expect(entity.entityData.anotherArray).toBeUndefined();
+        expect(entity.entityData.someOtherStrings).toBeUndefined();
       });
       
       it("errors when properties are set to undefined", () => {
@@ -339,14 +396,17 @@ describe("Entity", () => {
         expect(() => entity.aBoolean = undefined)
           .toThrow(`Property 'aBoolean' on entity of type 'AliasedEntity' cannot be set to undefined. Use null instead.`);
 
-        expect(() => entity.aGeoPoint = undefined)
-          .toThrow(`Property 'aGeoPoint' on entity of type 'AliasedEntity' cannot be set to undefined. Use null instead.`);
+        expect(() => entity.someText = undefined)
+          .toThrow(`Property 'someText' on entity of type 'AliasedEntity' cannot be set to undefined. Use null instead.`);
+
+        expect(() => entity.aPoint = undefined)
+          .toThrow(`Property 'aPoint' on entity of type 'AliasedEntity' cannot be set to undefined. Use null instead.`);
 
         expect(() => entity.aDate = undefined)
           .toThrow("Property 'aDate' on entity of type 'AliasedEntity' cannot be set to undefined. Use null instead.");
 
-        expect(() => entity.anArray = undefined)
-          .toThrow("Property 'anArray' on entity of type 'AliasedEntity' cannot be set to undefined. Use null instead.");
+        expect(() => entity.someStrings = undefined)
+          .toThrow("Property 'someStrings' on entity of type 'AliasedEntity' cannot be set to undefined. Use null instead.");
       });
     });
   });

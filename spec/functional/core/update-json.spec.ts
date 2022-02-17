@@ -7,7 +7,7 @@ import { fetchJson, flushAll, keyExists } from '../helpers/redis-helper';
 
 import {
   AN_ENTITY, ANOTHER_ENTITY,
-  ANOTHER_GEOPOINT_STRING, A_THIRD_GEOPOINT_STRING,
+  ANOTHER_POINT_STRING, A_THIRD_POINT_STRING,
   ANOTHER_DATE_EPOCH, A_THIRD_DATE_EPOCH } from '../../helpers/example-data';
 
 describe("update JSON", () => {
@@ -39,18 +39,18 @@ describe("update JSON", () => {
       entity = await repository.fetch('full');
       entity.aString = ANOTHER_ENTITY.aString;
       entity.anotherString = ANOTHER_ENTITY.anotherString;
-      entity.aFullTextString = ANOTHER_ENTITY.aFullTextString;
-      entity.anotherFullTextString = ANOTHER_ENTITY.anotherFullTextString;
+      entity.someText = ANOTHER_ENTITY.someText;
+      entity.someOtherText = ANOTHER_ENTITY.someOtherText;
       entity.aNumber = ANOTHER_ENTITY.aNumber;
       entity.anotherNumber = ANOTHER_ENTITY.anotherNumber;
       entity.aBoolean = ANOTHER_ENTITY.aBoolean;
       entity.anotherBoolean = ANOTHER_ENTITY.anotherBoolean;
-      entity.aGeoPoint = ANOTHER_ENTITY.aGeoPoint;
-      entity.anotherGeoPoint = ANOTHER_ENTITY.anotherGeoPoint;
+      entity.aPoint = ANOTHER_ENTITY.aPoint;
+      entity.anotherPoint = ANOTHER_ENTITY.anotherPoint;
       entity.aDate = ANOTHER_ENTITY.aDate;
       entity.anotherDate = ANOTHER_ENTITY.anotherDate;
-      entity.anArray = ANOTHER_ENTITY.anArray;
-      entity.anotherArray = ANOTHER_ENTITY.anotherArray;
+      entity.someStrings = ANOTHER_ENTITY.someStrings;
+      entity.someOtherStrings = ANOTHER_ENTITY.someOtherStrings;
       entityId = await repository.save(entity);
       entityKey = `SampleJsonEntity:full`;
     });
@@ -62,18 +62,18 @@ describe("update JSON", () => {
       let data = JSON.parse(json);
       expect(data.aString).toBe(ANOTHER_ENTITY.aString);
       expect(data.anotherString).toBe(ANOTHER_ENTITY.anotherString);
-      expect(data.aFullTextString).toBe(ANOTHER_ENTITY.aFullTextString);
-      expect(data.anotherFullTextString).toBe(ANOTHER_ENTITY.anotherFullTextString);
+      expect(data.someText).toBe(ANOTHER_ENTITY.someText);
+      expect(data.someOtherText).toBe(ANOTHER_ENTITY.someOtherText);
       expect(data.aNumber).toBe(ANOTHER_ENTITY.aNumber);
       expect(data.anotherNumber).toBe(ANOTHER_ENTITY.anotherNumber);
       expect(data.aBoolean).toBe(ANOTHER_ENTITY.aBoolean);
       expect(data.anotherBoolean).toBe(ANOTHER_ENTITY.anotherBoolean);
-      expect(data.aGeoPoint).toBe(ANOTHER_GEOPOINT_STRING);
-      expect(data.anotherGeoPoint).toBe(A_THIRD_GEOPOINT_STRING);
+      expect(data.aPoint).toBe(ANOTHER_POINT_STRING);
+      expect(data.anotherPoint).toBe(A_THIRD_POINT_STRING);
       expect(data.aDate).toBe(ANOTHER_DATE_EPOCH);
       expect(data.anotherDate).toBe(A_THIRD_DATE_EPOCH);
-      expect(data.anArray).toEqual(ANOTHER_ENTITY.anArray);
-      expect(data.anotherArray).toEqual(ANOTHER_ENTITY.anotherArray);
+      expect(data.someStrings).toEqual(ANOTHER_ENTITY.someStrings);
+      expect(data.someOtherStrings).toEqual(ANOTHER_ENTITY.someOtherStrings);
     });
   });
 
@@ -82,18 +82,18 @@ describe("update JSON", () => {
       entity = await repository.fetch('full');
       entity.aString = ANOTHER_ENTITY.aString;
       entity.anotherString = null;
-      entity.aFullTextString = ANOTHER_ENTITY.aFullTextString;
-      entity.anotherFullTextString = null;
+      entity.someText = ANOTHER_ENTITY.someText;
+      entity.someOtherText = null;
       entity.aNumber = ANOTHER_ENTITY.aNumber;
       entity.anotherNumber = null;
       entity.aBoolean = ANOTHER_ENTITY.aBoolean;
       entity.anotherBoolean = null;
-      entity.aGeoPoint = ANOTHER_ENTITY.aGeoPoint;
-      entity.anotherGeoPoint = null;
+      entity.aPoint = ANOTHER_ENTITY.aPoint;
+      entity.anotherPoint = null;
       entity.aDate = ANOTHER_ENTITY.aDate;
       entity.anotherDate = null;
-      entity.anArray = ANOTHER_ENTITY.anArray;
-      entity.anotherArray = null;
+      entity.someStrings = ANOTHER_ENTITY.someStrings;
+      entity.someOtherStrings = null;
       entityId = await repository.save(entity);
       entityKey = `SampleJsonEntity:full`;
     });
@@ -105,18 +105,18 @@ describe("update JSON", () => {
       let data = JSON.parse(json);
       expect(data.aString).toBe(ANOTHER_ENTITY.aString);
       expect(data.anotherString).toBeUndefined()
-      expect(data.aFullTextString).toBe(ANOTHER_ENTITY.aFullTextString);
-      expect(data.anotherFullTextString).toBeUndefined();
+      expect(data.someText).toBe(ANOTHER_ENTITY.someText);
+      expect(data.someOtherText).toBeUndefined();
       expect(data.aNumber).toBe(ANOTHER_ENTITY.aNumber);
       expect(data.anotherNumber).toBeUndefined();
       expect(data.aBoolean).toBe(ANOTHER_ENTITY.aBoolean);
       expect(data.anotherBoolean).toBeUndefined();
-      expect(data.aGeoPoint).toBe(ANOTHER_GEOPOINT_STRING);
-      expect(data.anotherGeoPoint).toBeUndefined();
+      expect(data.aPoint).toBe(ANOTHER_POINT_STRING);
+      expect(data.anotherPoint).toBeUndefined();
       expect(data.aDate).toBe(ANOTHER_DATE_EPOCH);
       expect(data.anotherDate).toBeUndefined();
-      expect(data.anArray).toEqual(ANOTHER_ENTITY.anArray);
-      expect(data.anotherArray).toBeUndefined();
+      expect(data.someStrings).toEqual(ANOTHER_ENTITY.someStrings);
+      expect(data.someOtherStrings).toBeUndefined();
     });
   });
 
@@ -125,18 +125,18 @@ describe("update JSON", () => {
       entity = await repository.fetch('full');
       entity.aString = null;
       entity.anotherString = null;
-      entity.aFullTextString = null;
-      entity.anotherFullTextString = null;
+      entity.someText = null;
+      entity.someOtherText = null;
       entity.aNumber = null;
       entity.anotherNumber = null;
       entity.aBoolean = null;
       entity.anotherBoolean = null;
-      entity.aGeoPoint = null;
-      entity.anotherGeoPoint = null;
+      entity.aPoint = null;
+      entity.anotherPoint = null;
       entity.aDate = null;
       entity.anotherDate = null;
-      entity.anArray = null;
-      entity.anotherArray = null;
+      entity.someStrings = null;
+      entity.someOtherStrings = null;
       entityId = await repository.save(entity);
       entityKey = `SampleJsonEntity:full`;
     });

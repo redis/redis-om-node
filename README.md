@@ -52,7 +52,7 @@
       - [Searching on Booleans](#searching-on-booleans)
       - [Searching Arrays](#searching-arrays)
       - [Full-Text Search](#full-text-search)
-      - [Searching on Geopoints](#searching-on-geopoints)
+      - [Searching on Points](#searching-on-points)
       - [Chaining Searches](#chaining-searches)
   - 👊 [Combining RedisJSON and RediSearch](#-combining-redisjson-and-redisearch)
   - 📚 [Documentation](#-documentation)
@@ -227,11 +227,11 @@ let studioSchema = new Studio(Studio, {
   name: { type: 'string' },
   city: { type: 'string' },
   state: { type: 'string' },
-  location: { type: 'geopoint' }
+  location: { type: 'point' }
 })
 ```
 
-When you create a `Schema`, it modifies the entity you handed it, adding getters and setters for the properties you define. The type those getters and setters accept and return are defined with the type parameter above. Valid values are: `string`, `number`, `boolean`, `array`, or `geopoint`. The first three do exactly what you think—they define a property that is a String, a Number, or a Boolean. `array` specifically defines an array of Strings and `geopoint` defines a point somehwere on the globe as a longitude and a latitude.
+When you create a `Schema`, it modifies the entity you handed it, adding getters and setters for the properties you define. The type those getters and setters accept and return are defined with the type parameter above. Valid values are: `string`, `number`, `boolean`, `array`, or `point`. The first three do exactly what you think—they define a property that is a String, a Number, or a Boolean. `array` specifically defines an array of Strings and `point` defines a point somehwere on the globe as a longitude and a latitude.
 
 There are several other options available when defining a schema for your entity. Check them out in the [detailed documentation](docs/classes/Schema.md) for the `Schema` class.
 
@@ -501,7 +501,7 @@ let count = await albumRepository.search().return.count()
 
 ### Finding Specific Things
 
-It's fine and dandy to return all the things. But that's not what you usually want to do. You want to find *specific* things. Redis OM will let you find those specific things by [strings](#searching-on-whole-strings), [numbers](#searching-on-numbers), and [booleans](#searching-on-booleans). You can also search for strings that are in an [array](#searching-arrays), perform [full-text search](#full-text-search) within strings, and search for [geopoints](#searching-on-geopoints) within a particular area.
+It's fine and dandy to return all the things. But that's not what you usually want to do. You want to find *specific* things. Redis OM will let you find those specific things by [strings](#searching-on-whole-strings), [numbers](#searching-on-numbers), and [booleans](#searching-on-booleans). You can also search for strings that are in an [array](#searching-arrays), perform [full-text search](#full-text-search) within strings, and search for [points](#searching-on-points) on the globe within a particular area.
 
 And it does it with a fluent interface that allows—but does not demand—code that reads like a sentence. See below for exhaustive examples of all the syntax available to you.
 
@@ -711,7 +711,7 @@ albums = await albumRepository.search().where('title').does.matchExactly('beauti
 albums = await albumRepository.search().where('title').does.not.matchExactly('beautiful stories').return.all()
 ```
 
-#### Searching on Geopoints
+#### Searching on Points
 
 RediSearch, and therefore Redis OM, both support searching by geographic location. You specify a point in the globe and a radius and it'll gleefully return all the entities within that radius:
 
@@ -728,7 +728,7 @@ Note that coordinates are specified with the longitude *first*, and then the lat
 If you don't want to rely on argument order, you can also specify longitude and latitude more explicity:
 
 ```javascript
-// finds all the studios with 50 miles of downtown Cleveland using a geopoint
+// finds all the studios with 50 miles of downtown Cleveland using a point
 studios = await studioRepository.search().where('location').inRadius(
   circle => circle.origin({ longitude: -81.7758995, latitude: 41.4976393 }).radius(50).miles).return.all()
 

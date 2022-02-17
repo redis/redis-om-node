@@ -50,18 +50,18 @@ describe("create and drop index on hash", () => {
       expect(fields).toEqual([
         [ 'identifier', 'aString', 'attribute', 'aString', 'type', 'TAG', 'SEPARATOR', '|' ],
         [ 'identifier', 'anotherString', 'attribute', 'anotherString', 'type', 'TAG', 'SEPARATOR', '|' ],
-        [ 'identifier', 'aFullTextString', 'attribute', 'aFullTextString', 'type', 'TEXT', 'WEIGHT', '1' ],
-        [ 'identifier', 'anotherFullTextString', 'attribute', 'anotherFullTextString', 'type', 'TEXT', 'WEIGHT', '1' ],
+        [ 'identifier', 'someText', 'attribute', 'someText', 'type', 'TEXT', 'WEIGHT', '1' ],
+        [ 'identifier', 'someOtherText', 'attribute', 'someOtherText', 'type', 'TEXT', 'WEIGHT', '1' ],
         [ 'identifier', 'aNumber', 'attribute', 'aNumber', 'type', 'NUMERIC' ],
         [ 'identifier', 'anotherNumber', 'attribute', 'anotherNumber', 'type', 'NUMERIC' ],
         [ 'identifier', 'aBoolean', 'attribute', 'aBoolean', 'type', 'TAG', 'SEPARATOR', ',' ],
         [ 'identifier', 'anotherBoolean', 'attribute', 'anotherBoolean', 'type', 'TAG', 'SEPARATOR', ',' ],
-        [ 'identifier', 'aGeoPoint', 'attribute', 'aGeoPoint', 'type', 'GEO' ],
-        [ 'identifier', 'anotherGeoPoint', 'attribute', 'anotherGeoPoint', 'type', 'GEO' ],
+        [ 'identifier', 'aPoint', 'attribute', 'aPoint', 'type', 'GEO' ],
+        [ 'identifier', 'anotherPoint', 'attribute', 'anotherPoint', 'type', 'GEO' ],
         [ 'identifier', 'aDate', 'attribute', 'aDate', 'type', 'NUMERIC' ],
         [ 'identifier', 'anotherDate', 'attribute', 'anotherDate', 'type', 'NUMERIC' ],
-        [ 'identifier', 'anArray', 'attribute', 'anArray', 'type', 'TAG', 'SEPARATOR', '|' ],
-        [ 'identifier', 'anotherArray', 'attribute', 'anotherArray', 'type', 'TAG', 'SEPARATOR', '|' ]
+        [ 'identifier', 'someStrings', 'attribute', 'someStrings', 'type', 'TAG', 'SEPARATOR', '|' ],
+        [ 'identifier', 'someOtherStrings', 'attribute', 'someOtherStrings', 'type', 'TAG', 'SEPARATOR', '|' ]
       ]);
     });
 

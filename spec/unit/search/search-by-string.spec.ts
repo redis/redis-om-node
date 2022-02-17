@@ -1,9 +1,10 @@
 import { mocked } from 'ts-jest/utils';
 
 import Client from "../../../lib/client";
-import Search from "../../../lib/search/search";
+import { Search } from "../../../lib/search/search";
 import WhereField from '../../../lib/search/where-field';
 
+import { A_STRING, A_NUMBER } from '../../helpers/example-data';
 import { simpleSchema, SimpleEntity } from "../helpers/test-entity-and-schema";
 
 jest.mock('../../../lib/client');
@@ -18,12 +19,12 @@ describe("Search", () => {
     let search: Search<SimpleEntity>;
     let where: WhereField<SimpleEntity>;
   
-    const A_STRING_QUERY = "(@aString:{foo})";
-    const A_NEGATED_STRING_QUERY = "(-@aString:{foo})";
-    const A_NUMBER_STRING_QUERY = "(@aString:{42})";
-    const A_NEGATED_NUMBER_STRING_QUERY = "(-@aString:{42})";
-    const A_BOOLEAN_STRING_QUERY = "(@aString:{true})";
-    const A_NEGATED_BOOLEAN_STRING_QUERY = "(-@aString:{true})";
+    const A_STRING_QUERY = `(@aString:{${A_STRING}})`;
+    const A_NEGATED_STRING_QUERY = `(-@aString:{${A_STRING}})`;
+    const A_NUMBER_STRING_QUERY = `(@aString:{${A_NUMBER}})`;
+    const A_NEGATED_NUMBER_STRING_QUERY = `(-@aString:{${A_NUMBER}})`;
+    const A_BOOLEAN_STRING_QUERY = `(@aString:{true})`;
+    const A_NEGATED_BOOLEAN_STRING_QUERY = `(-@aString:{true})`;
 
     type StringChecker = (search: Search<SimpleEntity>) => void;
     const expectToBeStringQuery: StringChecker = search => expect(search.query).toBe(A_STRING_QUERY);
@@ -41,23 +42,23 @@ describe("Search", () => {
     });
 
     describe("when generating a query with a string", () => {
-      it("generates a query with .eq", () => expectToBeStringQuery(where.equals('foo')));
-      it("generates a query with .not.eq", () => expectToBeNegatedStringQuery(where.not.eq('foo')));
-      it("generates a query with .equals", () => expectToBeStringQuery(where.equals('foo')));
-      it("generates a query with .does.equal", () => expectToBeStringQuery(where.does.equal('foo')));
-      it("generates a query with .does.not.equal", () => expectToBeNegatedStringQuery(where.does.not.equal('foo')));
-      it("generates a query with .is.equalTo", () => expectToBeStringQuery(where.is.equalTo('foo')));
-      it("generates a query with .is.not.equalTo", () => expectToBeNegatedStringQuery(where.is.not.equalTo('foo')));
+      it("generates a query with .eq", () => expectToBeStringQuery(where.equals(A_STRING)));
+      it("generates a query with .not.eq", () => expectToBeNegatedStringQuery(where.not.eq(A_STRING)));
+      it("generates a query with .equals", () => expectToBeStringQuery(where.equals(A_STRING)));
+      it("generates a query with .does.equal", () => expectToBeStringQuery(where.does.equal(A_STRING)));
+      it("generates a query with .does.not.equal", () => expectToBeNegatedStringQuery(where.does.not.equal(A_STRING)));
+      it("generates a query with .is.equalTo", () => expectToBeStringQuery(where.is.equalTo(A_STRING)));
+      it("generates a query with .is.not.equalTo", () => expectToBeNegatedStringQuery(where.is.not.equalTo(A_STRING)));
     });
 
     describe("when generating a query with a number as a string", () => {
-      it("generates a query with .eq", () => expectToBeNumberStringQuery(where.equals(42)));
-      it("generates a query with .not.eq", () => expectToBeNegatedNumberStringQuery(where.not.eq(42)));
-      it("generates a query with .equals", () => expectToBeNumberStringQuery(where.equals(42)));
-      it("generates a query with .does.equal", () => expectToBeNumberStringQuery(where.does.equal(42)));
-      it("generates a query with .does.not.equal", () => expectToBeNegatedNumberStringQuery(where.does.not.equal(42)));
-      it("generates a query with .is.equalTo", () => expectToBeNumberStringQuery(where.is.equalTo(42)));
-      it("generates a query with .is.not.equalTo", () => expectToBeNegatedNumberStringQuery(where.is.not.equalTo(42)));
+      it("generates a query with .eq", () => expectToBeNumberStringQuery(where.equals(A_NUMBER)));
+      it("generates a query with .not.eq", () => expectToBeNegatedNumberStringQuery(where.not.eq(A_NUMBER)));
+      it("generates a query with .equals", () => expectToBeNumberStringQuery(where.equals(A_NUMBER)));
+      it("generates a query with .does.equal", () => expectToBeNumberStringQuery(where.does.equal(A_NUMBER)));
+      it("generates a query with .does.not.equal", () => expectToBeNegatedNumberStringQuery(where.does.not.equal(A_NUMBER)));
+      it("generates a query with .is.equalTo", () => expectToBeNumberStringQuery(where.is.equalTo(A_NUMBER)));
+      it("generates a query with .is.not.equalTo", () => expectToBeNegatedNumberStringQuery(where.is.not.equalTo(A_NUMBER)));
     });
 
     describe("when generating a query with a boolean as a string", () => {
@@ -79,6 +80,21 @@ describe("Search", () => {
       it("generates a query that escapes all punctuation", () => {
         let query = where.eq(",.<>{}[]\"':;!@#$%^&*()-+=~| ").query;
         expect(query).toBe("(@aString:{\\,\\.\\<\\>\\{\\}\\[\\]\\\"\\'\\:\\;\\!\\@\\#\\$\\%\\^\\&\\*\\(\\)\\-\\+\\=\\~\\|\\ })");
+      });
+    });
+
+    describe("when trying to perform full-text search on a string", () => {
+      const EXPECTED_EXCEPTION = "Cannot perform full-text search operations like .match on field of type 'string'. If full-text search is needed on this field, change the type to 'text' in the Schema.";
+      it("throws an exception telling you what to do", () => {
+        expect(() => where.match(A_STRING)).toThrow(EXPECTED_EXCEPTION);
+        expect(() => where.matchExact(A_STRING)).toThrow(EXPECTED_EXCEPTION);
+        expect(() => where.exact.match(A_STRING)).toThrow(EXPECTED_EXCEPTION);
+        expect(() => where.exact.matches(A_STRING)).toThrow(EXPECTED_EXCEPTION);
+        expect(() => where.matchExactly(A_STRING)).toThrow(EXPECTED_EXCEPTION);
+        expect(() => where.matches(A_STRING)).toThrow(EXPECTED_EXCEPTION);
+        expect(() => where.matchesExactly(A_STRING)).toThrow(EXPECTED_EXCEPTION);
+        expect(() => where.exactly.match(A_STRING)).toThrow(EXPECTED_EXCEPTION);
+        expect(() => where.exactly.matches(A_STRING)).toThrow(EXPECTED_EXCEPTION);
       });
     });
   });

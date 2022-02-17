@@ -1,6 +1,9 @@
-import { GeoPoint, SchemaDefinition } from "..";
+import { Point, SchemaDefinition } from "../schema/schema-definitions";
 
-export type EntityValue = number | boolean | string | GeoPoint | Date | string[];
+/**
+ * Valid values for properties of an {@link Entity}.
+ */
+export type EntityValue = number | boolean | string | Point | Date | string[];
 
 /**
  * A JavaScript object containing the underlying data of an {@link Entity}.

@@ -1,13 +1,22 @@
-import { GeoPoint } from "../../lib/schema/schema-definitions";
+import { Point } from "../../lib/schema/schema-definitions";
 
 
 export const A_STRING = 'foo';
 export const ANOTHER_STRING = 'bar';
 export const A_THIRD_STRING = 'baz';
 
+export const SOME_TEXT = "The quick brown fox jumped over the lazy dog.";
+export const SOME_OTHER_TEXT = "The five boxing wizards jump quickly.";
+export const SOME_MORE_TEXT = "How vexingly quick daft zebras jump!";
+
 export const A_NUMBER = 42;
+export const A_NUMBER_STRING = A_NUMBER.toString();
+
 export const ANOTHER_NUMBER = 23;
+export const ANOTHER_NUMBER_STRING = ANOTHER_NUMBER.toString();
+
 export const A_THIRD_NUMBER = 13;
+export const A_THIRD_NUMBER_STRING = A_THIRD_NUMBER.toString();
 
 export const A_DATE: Date = new Date('1997-07-04T16:56:55.000Z');
 export const A_DATE_ISO: string = A_DATE.toISOString();
@@ -24,149 +33,146 @@ export const A_THIRD_DATE_ISO: string = A_THIRD_DATE.toISOString();
 export const A_THIRD_DATE_EPOCH: number = A_THIRD_DATE.getTime();
 export const A_THIRD_DATE_EPOCH_STRING: string = A_THIRD_DATE_EPOCH.toString();
 
-export const A_GEOPOINT: GeoPoint = { longitude: 12.34, latitude: 56.78 };
-export const A_GEOPOINT_JSON: string = JSON.stringify(A_GEOPOINT);
-export const A_GEOPOINT_STRING: string = `${A_GEOPOINT.longitude},${A_GEOPOINT.latitude}`;
+export const A_POINT: Point = { longitude: 12.34, latitude: 56.78 };
+export const A_POINT_JSON: string = JSON.stringify(A_POINT);
+export const A_POINT_STRING: string = `${A_POINT.longitude},${A_POINT.latitude}`;
 
-export const ANOTHER_GEOPOINT: GeoPoint = { longitude: 23.45, latitude: 67.89 };
-export const ANOTHER_GEOPOINT_JSON: string = JSON.stringify(ANOTHER_GEOPOINT);
-export const ANOTHER_GEOPOINT_STRING: string = `${ANOTHER_GEOPOINT.longitude},${ANOTHER_GEOPOINT.latitude}`;
+export const ANOTHER_POINT: Point = { longitude: 23.45, latitude: 67.89 };
+export const ANOTHER_POINT_JSON: string = JSON.stringify(ANOTHER_POINT);
+export const ANOTHER_POINT_STRING: string = `${ANOTHER_POINT.longitude},${ANOTHER_POINT.latitude}`;
 
-export const A_THIRD_GEOPOINT: GeoPoint = { longitude: 34.56, latitude: 78.90 };
-export const A_THIRD_GEOPOINT_JSON: string = JSON.stringify(A_THIRD_GEOPOINT);
-export const A_THIRD_GEOPOINT_STRING: string = `${A_THIRD_GEOPOINT.longitude},${A_THIRD_GEOPOINT.latitude}`;
+export const A_THIRD_POINT: Point = { longitude: 34.56, latitude: 78.90 };
+export const A_THIRD_POINT_JSON: string = JSON.stringify(A_THIRD_POINT);
+export const A_THIRD_POINT_STRING: string = `${A_THIRD_POINT.longitude},${A_THIRD_POINT.latitude}`;
 
-export const AN_ARRAY: string[] = [ 'alfa', 'bravo', 'charlie' ];
-export const AN_ARRAY_JSON: string = JSON.stringify(AN_ARRAY);
-export const AN_ARRAY_JOINED: string = AN_ARRAY.join('|');
-export const AN_ARRAY_LEN: number = AN_ARRAY.length;
+export const SOME_STRINGS: string[] = [ 'alfa', 'bravo', 'charlie' ];
+export const SOME_STRINGS_JSON: string = JSON.stringify(SOME_STRINGS);
+export const SOME_STRINGS_JOINED: string = SOME_STRINGS.join('|');
 
-export const ANOTHER_ARRAY: string[] = [ 'bravo', 'charlie', 'delta' ];
-export const ANOTHER_ARRAY_JSON: string = JSON.stringify(ANOTHER_ARRAY);
-export const ANOTHER_ARRAY_JOINED: string = ANOTHER_ARRAY.join('|');
-export const ANOTHER_ARRAY_LEN: number = ANOTHER_ARRAY.length;
+export const SOME_OTHER_STRINGS: string[] = [ 'bravo', 'charlie', 'delta' ];
+export const SOME_OTHER_STRINGS_JSON: string = JSON.stringify(SOME_OTHER_STRINGS);
+export const SOME_OTHER_STRINGS_JOINED: string = SOME_OTHER_STRINGS.join('|');
 
-export const A_THIRD_ARRAY: string[] = [ 'charlie', 'delta', 'echo' ];
-export const A_THIRD_JSON: string = JSON.stringify(A_THIRD_ARRAY);
-export const A_THIRD_ARRAY_JOINED: string = A_THIRD_ARRAY.join('|');
-export const A_THIRD_ARRAY_LEN: number = ANOTHER_ARRAY.length;
+export const SOME_MORE_STRINGS: string[] = [ 'charlie', 'delta', 'echo' ];
+export const SOME_MORE_STRINGS_JSON: string = JSON.stringify(SOME_MORE_STRINGS);
+export const SOME_MORE_STRINGS_JOINED: string = SOME_MORE_STRINGS.join('|');
 
 export type SampleEntityData = {
   aString: string | null;
   anotherString: string | null;
-  aFullTextString: string | null;
-  anotherFullTextString: string | null;
+  someText: string | null;
+  someOtherText: string | null;
   aNumber: number | null;
   anotherNumber: number | null;
   aBoolean: boolean | null;
   anotherBoolean: boolean | null;
-  aGeoPoint: GeoPoint | null;
-  anotherGeoPoint: GeoPoint | null;
+  aPoint: Point | null;
+  anotherPoint: Point | null;
   aDate: Date | null;
   anotherDate: Date | null;
-  anArray: string[] | null;
-  anotherArray: string[] | null;  
+  someStrings: string[] | null;
+  someOtherStrings: string[] | null;  
 };
 
 export const AN_ENTITY: SampleEntityData = {
-  aString: 'foo',
-  anotherString: 'bar',
-  aFullTextString: 'The quick brown fox jumped over the lazy dog.',
-  anotherFullTextString: 'The five boxing wizards jump quickly.',
-  aNumber: 42,
-  anotherNumber: 23,
+  aString: A_STRING,
+  anotherString: ANOTHER_STRING,
+  someText: SOME_TEXT,
+  someOtherText: SOME_OTHER_TEXT,
+  aNumber: A_NUMBER,
+  anotherNumber: ANOTHER_NUMBER,
   aBoolean: true,
   anotherBoolean: false,
-  aGeoPoint: A_GEOPOINT,
-  anotherGeoPoint: ANOTHER_GEOPOINT,
+  aPoint: A_POINT,
+  anotherPoint: ANOTHER_POINT,
   aDate: A_DATE,
   anotherDate: ANOTHER_DATE,
-  anArray: AN_ARRAY,
-  anotherArray: ANOTHER_ARRAY
+  someStrings: SOME_STRINGS,
+  someOtherStrings: SOME_OTHER_STRINGS
 };
 
 export const ANOTHER_ENTITY: SampleEntityData = {
-  aString: 'bar',
-  anotherString: 'baz',
-  aFullTextString: 'How vexingly quick daft zebras jump!',
-  anotherFullTextString: 'Pack my box with five dozen liquor jugs.',
-  aNumber: 23,
-  anotherNumber: 13,
+  aString: ANOTHER_STRING,
+  anotherString: A_THIRD_STRING,
+  someText: SOME_OTHER_TEXT,
+  someOtherText: SOME_MORE_TEXT,
+  aNumber: ANOTHER_NUMBER,
+  anotherNumber: A_THIRD_NUMBER,
   aBoolean: true,
   anotherBoolean: true,
-  aGeoPoint: ANOTHER_GEOPOINT,
-  anotherGeoPoint: A_THIRD_GEOPOINT,
+  aPoint: ANOTHER_POINT,
+  anotherPoint: A_THIRD_POINT,
   aDate: ANOTHER_DATE,
   anotherDate: A_THIRD_DATE,
-  anArray: ANOTHER_ARRAY,
-  anotherArray: A_THIRD_ARRAY
+  someStrings: SOME_OTHER_STRINGS,
+  someOtherStrings: SOME_MORE_STRINGS
 };
 
 export const A_THIRD_ENTITY: SampleEntityData = {
-  aString: 'baz',
-  anotherString: 'qux',
-  aFullTextString: 'Sphinx of black quartz, judge my vow.',
-  anotherFullTextString: 'Mr. Jock, TV quiz Ph.D., bags few lynx.',
-  aNumber: 13,
-  anotherNumber: 7,
+  aString: A_THIRD_STRING,
+  anotherString: A_STRING,
+  someText: SOME_MORE_TEXT,
+  someOtherText: SOME_TEXT,
+  aNumber: A_THIRD_NUMBER,
+  anotherNumber: A_NUMBER,
   aBoolean: false,
   anotherBoolean: false,
-  aGeoPoint: A_THIRD_GEOPOINT,
-  anotherGeoPoint: A_GEOPOINT,
+  aPoint: A_THIRD_POINT,
+  anotherPoint: A_POINT,
   aDate: A_THIRD_DATE,
   anotherDate: A_DATE,
-  anArray: A_THIRD_ARRAY,
-  anotherArray: AN_ARRAY
+  someStrings: SOME_MORE_STRINGS,
+  someOtherStrings: SOME_STRINGS
 };
 
 export const A_PARTIAL_ENTITY: SampleEntityData = {
-  aString: 'foo',
+  aString: A_STRING,
   anotherString: null,
-  aFullTextString: 'The quick brown fox jumped over the lazy dog.',
-  anotherFullTextString: null,
-  aNumber: 42,
+  someText: SOME_TEXT,
+  someOtherText: null,
+  aNumber: A_NUMBER,
   anotherNumber: null,
   aBoolean: true,
   anotherBoolean: null,
-  aGeoPoint: A_GEOPOINT,
-  anotherGeoPoint: null,
+  aPoint: A_POINT,
+  anotherPoint: null,
   aDate: A_DATE,
   anotherDate: null,
-  anArray: AN_ARRAY,
-  anotherArray: null
+  someStrings: SOME_STRINGS,
+  someOtherStrings: null
 };
 
 export const AN_EMPTY_ENTITY: SampleEntityData = {
   aString: null,
   anotherString: null,
-  aFullTextString: null,
-  anotherFullTextString: null,
+  someText: null,
+  someOtherText: null,
   aNumber: null,
   anotherNumber: null,
   aBoolean: null,
   anotherBoolean: null,
-  aGeoPoint: null,
-  anotherGeoPoint: null,
+  aPoint: null,
+  anotherPoint: null,
   aDate: null,
   anotherDate: null,
-  anArray: null,
-  anotherArray: null
+  someStrings: null,
+  someOtherStrings: null
 };
 
 export const AN_ESCAPED_ENTITY: SampleEntityData = {
   aString: "foo ,.<>{}[]\"':;!@#$%^*()-+=~& bar",
   anotherString: null,
-  aFullTextString: "zany ,.<>{}[]\"':;!@#$%^&*()-+=~| fox",
-  anotherFullTextString: null,
+  someText: "zany ,.<>{}[]\"':;!@#$%^&*()-+=~| fox",
+  someOtherText: null,
   aNumber: null,
   anotherNumber: null,
   aBoolean: null,
   anotherBoolean: null,
-  aGeoPoint: null,
-  anotherGeoPoint: null,
+  aPoint: null,
+  anotherPoint: null,
   aDate: null,
   anotherDate: null,
-  anArray: [ 'alfa ,.<>{}[]"\':;!@#$%^&*()-+=~ bravo', 'charlie delta' ],
-  anotherArray: null
+  someStrings: [ 'alfa ,.<>{}[]"\':;!@#$%^&*()-+=~ bravo', 'charlie delta' ],
+  someOtherStrings: null
 };
 

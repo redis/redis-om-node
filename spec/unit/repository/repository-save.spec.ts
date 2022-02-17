@@ -5,9 +5,10 @@ import Repository from '../../../lib/repository/repository';
 import { JsonRepository, HashRepository } from '../../../lib/repository/repository';
 
 import {
-  AN_ARRAY, AN_ARRAY_JOINED,
+  A_STRING, A_NUMBER, A_NUMBER_STRING, SOME_TEXT,
+  SOME_STRINGS, SOME_STRINGS_JOINED,
   A_DATE, A_DATE_EPOCH, A_DATE_EPOCH_STRING,
-  A_GEOPOINT, A_GEOPOINT_STRING } from '../../helpers/example-data';
+  A_POINT, A_POINT_STRING } from '../../helpers/example-data';
 
 import { simpleHashSchema, SimpleHashEntity, SimpleJsonEntity, simpleJsonSchema } from '../helpers/test-entity-and-schema';
 
@@ -37,16 +38,16 @@ describe("Repository", () => {
       describe.each([
 
         ["when saving a fully populated entity", {
-          providedString: 'foo', providedNumber: 42, providedBoolean: false,
-          providedGeoPoint: A_GEOPOINT, providedDate: A_DATE, providedArray: AN_ARRAY,
-          expectedData: { aString: 'foo', aNumber: '42', aBoolean: '0',
-            aGeoPoint: A_GEOPOINT_STRING, aDate: A_DATE_EPOCH_STRING, anArray: AN_ARRAY_JOINED }
+          providedString: A_STRING, providedNumber: A_NUMBER, providedBoolean: false, providedText: SOME_TEXT,
+          providedPoint: A_POINT, providedDate: A_DATE, providedArray: SOME_STRINGS,
+          expectedData: { aString: A_STRING, aNumber: A_NUMBER_STRING, aBoolean: '0', someText: SOME_TEXT,
+            aPoint: A_POINT_STRING, aDate: A_DATE_EPOCH_STRING, someStrings: SOME_STRINGS_JOINED }
         }],
   
         [ "when saving a partially populated entity", {
-          providedString: 'foo', providedNumber: 42, providedBoolean: null,
-          providedGeoPoint: null, providedDate: null, providedArray: null,
-          expectedData: { aString: 'foo', aNumber: '42' }
+          providedString: A_STRING, providedNumber: A_NUMBER, providedBoolean: null, providedText: null,
+          providedPoint: null, providedDate: null, providedArray: null,
+          expectedData: { aString: A_STRING, aNumber: A_NUMBER_STRING }
         }]
   
       ])("%s", (_, data) => {
@@ -55,9 +56,10 @@ describe("Repository", () => {
           entity.aString = data.providedString;
           entity.aNumber = data.providedNumber;
           entity.aBoolean = data.providedBoolean;
-          entity.aGeoPoint = data.providedGeoPoint;
+          entity.someText = data.providedText;
+          entity.aPoint = data.providedPoint;
           entity.aDate = data.providedDate;
-          entity.anArray = data.providedArray;
+          entity.someStrings = data.providedArray;
           entityId = await repository.save(entity);
           expectedKey = `SimpleHashEntity:${entityId}`;
         });
@@ -72,9 +74,10 @@ describe("Repository", () => {
           entity.aString = null;
           entity.aNumber = null;
           entity.aBoolean = null;
-          entity.aGeoPoint = null;
+          entity.someText = null;
+          entity.aPoint = null;
           entity.aDate = null;
-          entity.anArray = null;
+          entity.someStrings = null;
           entityId = await repository.save(entity);
           expectedKey = `SimpleHashEntity:${entityId}`;
         });
@@ -96,16 +99,16 @@ describe("Repository", () => {
       describe.each([
 
         ["when saving a fully populated entity", {
-          providedString: 'foo', providedNumber: 42, providedBoolean: false,
-          providedGeoPoint: A_GEOPOINT, providedDate: A_DATE, providedArray: AN_ARRAY,
-          expectedData: { aString: 'foo', aNumber: 42, aBoolean: false,
-            aGeoPoint: A_GEOPOINT_STRING, aDate: A_DATE_EPOCH, anArray: AN_ARRAY }
+          providedString: A_STRING, providedNumber: A_NUMBER, providedBoolean: false, providedText: SOME_TEXT,
+          providedPoint: A_POINT, providedDate: A_DATE, providedArray: SOME_STRINGS,
+          expectedData: { aString: A_STRING, aNumber: A_NUMBER, aBoolean: false, someText: SOME_TEXT,
+            aPoint: A_POINT_STRING, aDate: A_DATE_EPOCH, someStrings: SOME_STRINGS }
         }],
   
         [ "when saving a partially populated entity", {
-          providedString: 'foo', providedNumber: 42, providedBoolean: null,
-          providedGeoPoint: null, providedDate: null, providedArray: null,
-          expectedData: { aString: 'foo', aNumber: 42 }
+          providedString: A_STRING, providedNumber: A_NUMBER, providedBoolean: null, providedText: null,
+          providedPoint: null, providedDate: null, providedArray: null,
+          expectedData: { aString: A_STRING, aNumber: A_NUMBER }
         }]
 
       ])("%s", (_, data) => {
@@ -114,9 +117,10 @@ describe("Repository", () => {
           entity.aString = data.providedString;
           entity.aNumber = data.providedNumber;
           entity.aBoolean = data.providedBoolean;
-          entity.aGeoPoint = data.providedGeoPoint
+          entity.someText = data.providedText;
+          entity.aPoint = data.providedPoint
           entity.aDate = data.providedDate;
-          entity.anArray = data.providedArray;
+          entity.someStrings = data.providedArray;
           entityId = await repository.save(entity);
           expectedKey = `SimpleJsonEntity:${entityId}`;
         });
@@ -131,9 +135,10 @@ describe("Repository", () => {
           entity.aString = null;
           entity.aNumber = null;
           entity.aBoolean = null;
-          entity.aGeoPoint = null;
+          entity.someText = null;
+          entity.aPoint = null;
           entity.aDate = null;
-          entity.anArray = null;
+          entity.someStrings = null;
           entityId = await repository.save(entity);
           expectedKey = `SimpleJsonEntity:${entityId}`;
         });

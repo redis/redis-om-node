@@ -19,9 +19,10 @@ import { SchemaOptions } from './schema-options';
  *   aString: { type: 'string' },
  *   aNumber: { type: 'number' },
  *   aBoolean: { type: 'boolean' },
- *   aGeoPoint: { type: 'geopoint' },
+ *   someText: { type: 'text' },
+ *   aPoint: { type: 'point' },
  *   aDate: { type: 'date' },
- *   anArray: { type: 'array' }
+ *   someStrings: { type: 'string[]' }
  * }, {
  *   dataStructure: 'JSON'
  * });
@@ -129,6 +130,11 @@ export default class Schema<TEntity extends Entity> {
             return;
           }
 
+          if (fieldType === 'text' && isStringable(value)) {
+            this.entityData[fieldAlias] = value.toString();
+            return;
+          }
+
           if (fieldType === 'number' && isNumber(value)) {
             this.entityData[fieldAlias] = value;
             return;
@@ -139,7 +145,7 @@ export default class Schema<TEntity extends Entity> {
             return;
           }
 
-          if (fieldType === 'geopoint' && isPoint(value)) {
+          if (fieldType === 'point' && isPoint(value)) {
             let { longitude, latitude } = value;
             this.entityData[fieldAlias] = { longitude, latitude };
             return;
@@ -162,7 +168,7 @@ export default class Schema<TEntity extends Entity> {
             return;
           }
 
-          if (fieldType === 'array' && isArray(value)) {
+          if (fieldType === 'string[]' && isArray(value)) {
             this.entityData[fieldAlias] = value.map((v: any) => v.toString());
             return;
           }
@@ -221,7 +227,7 @@ export default class Schema<TEntity extends Entity> {
 
   private validateFieldDef(field: string) {
     let fieldDef: FieldDefinition = this.definition[field];
-    if (!['array', 'boolean', 'number', 'string', 'geopoint', 'date'].includes(fieldDef.type))
-      throw Error(`The field '${field}' is configured with a type of '${fieldDef.type}'. Valid types include 'array', 'boolean', 'date', 'geopoint', 'number', and 'string'.`);
+    if (!['boolean', 'date', 'number', 'point', 'string', 'string[]', 'text'].includes(fieldDef.type))
+      throw Error(`The field '${field}' is configured with a type of '${fieldDef.type}'. Valid types include 'boolean', 'date', 'number', 'point', 'string', 'string[]', and 'text'.`);
   }
 }
