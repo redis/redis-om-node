@@ -2,7 +2,7 @@ import { mocked } from 'ts-jest/utils';
 import { Point } from '../../../lib';
 
 import Client from "../../../lib/client";
-import Search from "../../../lib/search/search";
+import { Search } from "../../../lib/search/search";
 import WhereField from '../../../lib/search/where-field';
 
 import { A_POINT } from '../../helpers/example-data';

@@ -1,7 +1,7 @@
 import { mocked } from 'ts-jest/utils';
 
 import Client from '../../../lib/client';
-import Search from '../../../lib/search/search';
+import { Search, RawSearch } from '../../../lib/search/search';
 import Repository from '../../../lib/repository/repository';
 import { HashRepository } from '../../../lib/repository/repository';
 
@@ -17,14 +17,31 @@ beforeEach(() => {
 });
 
 describe("Repository", () => {
-
-  let client: Client;
+  
   let repository: Repository<SimpleEntity>;
-  let search: Search<SimpleEntity>;
+  let client: Client;
+  
+  beforeAll(() => client = new Client());
+
+  describe("#searchRaw", () => {
+    let search: RawSearch<SimpleEntity>;
+
+    beforeEach(async () => {
+      repository = new HashRepository(simpleSchema, client);
+      search = repository.searchRaw("NOT A VALID QUERY BUT HEY WHATEVER");
+    });
+
+    it("creates a new Search with the schema and client", () => {
+      expect(RawSearch).toHaveBeenCalledWith(simpleSchema, client, "NOT A VALID QUERY BUT HEY WHATEVER");
+    });
+
+    it("returns the search", () => {
+      expect(search).toBeInstanceOf(RawSearch);
+    });
+  });
 
   describe("#search", () => {
-
-    beforeAll(() => client = new Client());
+    let search: Search<SimpleEntity>;
 
     beforeEach(async () => {
       repository = new HashRepository(simpleSchema, client);

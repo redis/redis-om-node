@@ -26,14 +26,17 @@ export type SubSearchFunction<TEntity extends Entity> = (search: Search<TEntity>
 type AndOrConstructor = new (left: Where, right: Where) => Where;
 
 /**
- * Entry point to fluent search. Requires the RediSearch or RedisJSON is installed.
+ * Abstract base class for {@link Search} and {@link RawSearch} that
+ * contains methods to return search results.
  * @template TEntity The type of {@link Entity} being sought.
  */
-export default class Search<TEntity extends Entity> {
-  private schema: Schema<TEntity>;
-  private client: Client;
+export abstract class AbstractSearch<TEntity extends Entity> {
 
-  private rootWhere?: Where;
+  /** @internal */
+  protected schema: Schema<TEntity>;
+
+  /** @internal */
+  protected client: Client;
 
   /** @internal */
   constructor(schema: Schema<TEntity>, client: Client) {
@@ -42,24 +45,13 @@ export default class Search<TEntity extends Entity> {
   }
 
   /** @internal */
-  get query() : string {
-    if (this.rootWhere === undefined) return '*';
-    return `${this.rootWhere.toString()}`;
-  }
-
-  /**
-   * Returns the current instance. Syntactic sugar to make your code more fluent.
-   * @returns this
-   */
-  get return() : Search<TEntity> {
-    return this;
-  }
+  abstract get query(): string;
 
   /**
    * Returns the number of {@link Entity | Entities} that match this query.
    * @returns 
    */
-  async count(): Promise<number> {
+   async count(): Promise<number> {
     let searchResults = await this.callSearch()
     return this.schema.dataStructure === 'JSON'
       ? new JsonSearchResultsConverter(this.schema, searchResults).count
@@ -80,6 +72,14 @@ export default class Search<TEntity extends Entity> {
   }
 
   /**
+   * Returns only the first {@link Entity} that matches this query.
+   */
+  async first(): Promise<TEntity> {
+    let foundEntity = await this.page(0, 1);
+    return foundEntity[0] ?? null;
+  }
+
+  /**
    * Returns all the {@link Entity | Entities} that match this query. This method
    * makes multiple calls to Redis until all the {@link Entity | Entities} are returned.
    * You can specify the batch size by setting the `pageSize` property on the
@@ -93,7 +93,7 @@ export default class Search<TEntity extends Entity> {
    * @param options.pageSize Number of {@link Entity | Entities} returned per batch.
    * @returns An array of {@link Entity | Entities} matching the query.
    */
-  async all(options = { pageSize: 10 }): Promise<TEntity[]> {
+   async all(options = { pageSize: 10 }): Promise<TEntity[]> {
     let entities: TEntity[] = [];
     let offset = 0;
     let pageSize = options.pageSize;
@@ -109,11 +109,11 @@ export default class Search<TEntity extends Entity> {
   }
 
   /**
-   * Returns only the first {@link Entity} that matches this query.
+   * Returns the current instance. Syntactic sugar to make your code more fluent.
+   * @returns this
    */
-  async first(): Promise<TEntity> {
-    let foundEntity = await this.page(0, 1);
-    return foundEntity[0] ?? null;
+   get return() : AbstractSearch<TEntity> {
+    return this;
   }
 
   /**
@@ -139,11 +139,69 @@ export default class Search<TEntity extends Entity> {
 
   /**
    * 
-   * Alias for (@link Search.first).
+   * Alias for {@link Search.first}.
    */
   async returnFirst(): Promise<TEntity> {
     return await this.first();
   }
+
+  private async callSearch(offset = 0, count = 0) {
+    let options: SearchOptions = { 
+      indexName: this.schema.indexName,
+      query: this.query,
+      offset,
+      count
+    };
+
+    let searchResults
+    try {
+      searchResults = await this.client.search(options);
+    } catch (error) {
+      let message = (error as Error).message
+      if (message.startsWith("Syntax error")) {
+        throw new RedisError(`The query to RediSearch had a syntax error: "${message}".\nThis is often the result of using a stop word in the query. Either change the query to not use a stop word or change the stop words in the schema definition. You can check the RediSearch source for the default stop words at: https://github.com/RediSearch/RediSearch/blob/master/src/stopwords.h.`)
+      }
+      throw error
+    }
+    return searchResults
+  }
+}
+
+/**
+ * Entry point to raw search which allows using raw RediSearch queries
+ * against Redis OM. Requires that RediSearch (and optionally RedisJSON) be
+ * installed.
+ * @template TEntity The type of {@link Entity} being sought.
+ */
+export class RawSearch<TEntity extends Entity> extends AbstractSearch<TEntity> {
+  private rawQuery: string;
+
+  /** @internal */
+  constructor(schema: Schema<TEntity>, client: Client, query: string = '*') {
+    super(schema, client);
+    this.rawQuery = query;
+  }
+
+  /** @internal */
+  get query() : string {
+    return this.rawQuery;
+  }
+}
+
+/**
+ * Entry point to fluent search. This is the default Redis OM experience.
+ * Requires that RediSearch (and optionally RedisJSON) be installed.
+ * @template TEntity The type of {@link Entity} being sought.
+ */
+export class Search<TEntity extends Entity> extends AbstractSearch<TEntity> {
+  private rootWhere?: Where;
+
+  /** @internal */
+  get query() : string {
+    if (this.rootWhere === undefined) return '*';
+    return `${this.rootWhere.toString()}`;
+  }
+
 
   /**
    * Sets up a query matching a particular field. If there are multiple calls
@@ -196,27 +254,6 @@ export default class Search<TEntity extends Entity> {
   or(subSearchFn: SubSearchFunction<TEntity>): Search<TEntity>;
   or(fieldOrFn: string | SubSearchFunction<TEntity>): WhereField<TEntity> | Search<TEntity> {
     return this.anyWhere(WhereOr, fieldOrFn);
-  }
-
-  private async callSearch(offset = 0, count = 0) {
-    let options: SearchOptions = { 
-      indexName: this.schema.indexName,
-      query: this.query,
-      offset,
-      count
-    };
-
-    let searchResults
-    try {
-      searchResults = await this.client.search(options);
-    } catch (error) {
-      let message = (error as Error).message
-      if (message.startsWith("Syntax error")) {
-        throw new RedisError(`The query to RediSearch had a syntax error: "${message}".\nThis is often the result of using a stop word in the query. Either change the query to not use a stop word or change the stop words in the schema definition. You can check the RediSearch source for the default stop words at: https://github.com/RediSearch/RediSearch/blob/master/src/stopwords.h.`)
-      }
-      throw error
-    }
-    return searchResults
   }
 
   private anyWhere(ctor: AndOrConstructor, fieldOrFn: string | SubSearchFunction<TEntity>): WhereField<TEntity> | Search<TEntity> {

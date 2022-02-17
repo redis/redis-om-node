@@ -1,7 +1,7 @@
 import { mocked } from 'ts-jest/utils';
 
 import Client from "../../../lib/client";
-import Search from "../../../lib/search/search";
+import { Search } from "../../../lib/search/search";
 import WhereField from '../../../lib/search/where-field';
 
 import { A_STRING , A_NUMBER } from '../../helpers/example-data';

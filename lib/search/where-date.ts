@@ -1,5 +1,5 @@
 import Entity from "../entity/entity";
-import Search from "./search";
+import { Search } from "./search";
 import WhereField from "./where-field";
 
 export default class WhereDate<TEntity extends Entity> extends WhereField<TEntity> {

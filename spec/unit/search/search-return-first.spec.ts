@@ -1,7 +1,7 @@
 import { mocked } from 'ts-jest/utils';
 
 import Client from "../../../lib/client";
-import Search from "../../../lib/search/search";
+import { Search, RawSearch } from "../../../lib/search/search";
 
 import { simpleHashSchema, SimpleHashEntity, SimpleJsonEntity, simpleJsonSchema } from "../helpers/test-entity-and-schema";
 import { mockClientSearchToReturnNothing, mockClientSearchToReturnSingleHash,
@@ -10,29 +10,32 @@ import { mockClientSearchToReturnNothing, mockClientSearchToReturnSingleHash,
 jest.mock('../../../lib/client');
 
 
-beforeEach(() => mocked(Client).mockReset());
-beforeEach(() => mocked(Client.prototype.search).mockReset());
+type HashSearch = Search<SimpleHashEntity> | RawSearch<SimpleHashEntity>;
+type JsonSearch = Search<SimpleJsonEntity> | RawSearch<SimpleJsonEntity>;
 
-describe("Search", () => {
+beforeEach(() => {
+  mocked(Client).mockReset();
+  mocked(Client.prototype.search).mockReset();
+});
 
-  let client: Client;
+describe.each([
+  [ "FluentSearch", 
+    new Search<SimpleHashEntity>(simpleHashSchema, new Client()),
+    new Search<SimpleJsonEntity>(simpleJsonSchema, new Client()) ],
+  [ "RawSearch",
+    new RawSearch<SimpleHashEntity>(simpleHashSchema, new Client()),
+    new RawSearch<SimpleJsonEntity>(simpleJsonSchema, new Client()) ]
+])("%s", (_, hashSearch: HashSearch, jsonSearch: JsonSearch) => {
 
   describe("#returnFirst", () => {
-
-    beforeAll(() => client = new Client());
-
     describe("when running against hashes", () => {
-
-      let search: Search<SimpleHashEntity>
       let entity: SimpleHashEntity;
       let indexName = 'SimpleHashEntity:index', query = '*';
-
-      beforeEach(() => search = new Search<SimpleHashEntity>(simpleHashSchema, client));
 
       describe("when querying no results", () => {
         beforeEach( async () => {
           mockClientSearchToReturnNothing();
-          entity = await search.return.first();
+          entity = await hashSearch.return.first();
         });
 
         it("asks the client for the first result of a given repository", () => {
@@ -47,7 +50,7 @@ describe("Search", () => {
       describe("when getting a result", () => {
         beforeEach(async () => {
           mockClientSearchToReturnSingleHash();
-          entity = await search.return.first();
+          entity = await hashSearch.return.first();
         });
 
         it("asks the client for the first result of a given repository", () => {
@@ -66,17 +69,13 @@ describe("Search", () => {
     });
 
     describe("when running against JSON Objects", () => {
-
-      let search: Search<SimpleJsonEntity>
       let entity: SimpleJsonEntity;
       let indexName = 'SimpleJsonEntity:index', query = '*';
-
-      beforeEach(() => search = new Search<SimpleJsonEntity>(simpleJsonSchema, client));
 
       describe("when querying no results", () => {
         beforeEach( async () => {
           mockClientSearchToReturnNothing();
-          entity = await search.return.first();
+          entity = await jsonSearch.return.first();
         });
 
         it("asks the client for the first result of a given repository", () => {
@@ -91,7 +90,7 @@ describe("Search", () => {
       describe("when getting a result", () => {
         beforeEach(async () => {
           mockClientSearchToReturnSingleJsonString();
-          entity = await search.return.first();
+          entity = await jsonSearch.return.first();
         });
 
         it("asks the client for the first result of a given repository", () => {

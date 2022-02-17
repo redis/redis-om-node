@@ -126,6 +126,9 @@ describe("Demo", () => {
       .and('title').matchesExactly('the walmart')
       .and('fullMoon').is.true().returnAll();
 
+    // execute a raw search
+    someEntities = repository.searchRaw('@fullMoon:{true} @location:[23.45 67.89 50 mi]').returnAll();
+
     // close the client
     client.close();
   });

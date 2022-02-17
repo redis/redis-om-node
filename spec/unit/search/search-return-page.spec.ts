@@ -1,7 +1,7 @@
 import { mocked } from 'ts-jest/utils';
 
 import Client from "../../../lib/client";
-import Search from "../../../lib/search/search";
+import { Search, RawSearch } from "../../../lib/search/search";
 
 import { simpleHashSchema, SimpleHashEntity, SimpleJsonEntity, simpleJsonSchema } from "../helpers/test-entity-and-schema";
 import { mockClientSearchToReturnNothing,
@@ -12,28 +12,33 @@ import { mockClientSearchToReturnNothing,
 jest.mock('../../../lib/client');
 
 
-beforeEach(() => mocked(Client).mockReset());
-beforeEach(() => mocked(Client.prototype.search).mockReset());
+type HashSearch = Search<SimpleHashEntity> | RawSearch<SimpleHashEntity>;
+type JsonSearch = Search<SimpleJsonEntity> | RawSearch<SimpleJsonEntity>;
 
-describe("Search", () => {
+beforeEach(() => {
+  mocked(Client).mockReset();
+  mocked(Client.prototype.search).mockReset();
+});
 
-  let client: Client;
+describe.each([
+  [ "FluentSearch", 
+    new Search<SimpleHashEntity>(simpleHashSchema, new Client()),
+    new Search<SimpleJsonEntity>(simpleJsonSchema, new Client()) ],
+  [ "RawSearch",
+    new RawSearch<SimpleHashEntity>(simpleHashSchema, new Client()),
+    new RawSearch<SimpleJsonEntity>(simpleJsonSchema, new Client()) ]
+])("%s", (_, hashSearch: HashSearch, jsonSearch: JsonSearch) => {
 
   describe("#return", () => {
 
-    beforeAll(() => client = new Client());
-
     describe("when running against hashes", () => {
-      let search: Search<SimpleHashEntity>;
       let entities: SimpleHashEntity[];
       let indexName = 'SimpleHashEntity:index', query = '*';
-
-      beforeEach(() => search = new Search<SimpleHashEntity>(simpleHashSchema, client));
 
       describe("when querying no results", () => {
         beforeEach(async () => {
           mockClientSearchToReturnNothing();
-          entities = await search.return.page(0, 5);
+          entities = await hashSearch.return.page(0, 5);
         });
 
         it("askes the client for results", () => {
@@ -48,7 +53,7 @@ describe("Search", () => {
       describe("when querying a single result", () => {
         beforeEach(async () => {
           mockClientSearchToReturnSingleHash();
-          entities = await search.return.page(0, 5);
+          entities = await hashSearch.return.page(0, 5);
         });
 
         it("askes the client for results", () => {
@@ -68,7 +73,7 @@ describe("Search", () => {
       describe("when querying multiple results", () => {
         beforeEach(async () => {
           mockClientSearchToReturnMultipleHashes();
-          entities = await search.return.page(0, 5);
+          entities = await hashSearch.return.page(0, 5);
         });
 
         it("askes the client for results", () => {
@@ -89,16 +94,13 @@ describe("Search", () => {
     });
 
     describe("when running against JSON objects", () => {
-      let search: Search<SimpleJsonEntity>;
       let entities: SimpleJsonEntity[];
       let indexName = 'SimpleJsonEntity:index', query = '*';
-
-      beforeEach(() => search = new Search<SimpleJsonEntity>(simpleJsonSchema, client));
 
       describe("when querying no results", () => {
         beforeEach(async () => {
           mockClientSearchToReturnNothing();
-          entities = await search.return.page(0, 5);
+          entities = await jsonSearch.return.page(0, 5);
         });
 
         it("askes the client for results", () => {
@@ -113,7 +115,7 @@ describe("Search", () => {
       describe("when querying a single result", () => {
         beforeEach(async () => {
           mockClientSearchToReturnSingleJsonString();
-          entities = await search.return.page(0, 5);
+          entities = await jsonSearch.return.page(0, 5);
         });
 
         it("askes the client for results", () => {
@@ -133,7 +135,7 @@ describe("Search", () => {
       describe("when querying multiple results", () => {
         beforeEach(async () => {
           mockClientSearchToReturnMultipleJsonStrings();
-          entities = await search.return.page(0, 5);
+          entities = await jsonSearch.return.page(0, 5);
         });
 
         it("askes the client for results", () => {

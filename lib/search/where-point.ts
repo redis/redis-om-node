@@ -1,6 +1,6 @@
 import { Point } from "../schema/schema-definitions";
 import Entity from "../entity/entity";
-import Search from "./search";
+import { Search } from "./search";
 import WhereField from "./where-field";
 
 type Units = 'm' | 'km' | 'ft' | 'mi';

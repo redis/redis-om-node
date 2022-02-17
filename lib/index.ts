@@ -7,7 +7,7 @@ import Schema from "./schema/schema";
 import { Point, SchemaDefinition, FieldDefinition, Field, NumberField, StringField, BooleanField, PointField, StringArrayField,
   IdStrategy, StopWordOptions } from "./schema/schema-definitions";
 import { SchemaOptions } from "./schema/schema-options";
-import Search, { SubSearchFunction } from "./search/search";
+import { SubSearchFunction, Search, RawSearch } from "./search/search";
 import Where from "./search/where";
 import WhereField from "./search/where-field";
 import { Circle, CircleFunction } from "./search/where-point";
@@ -20,6 +20,6 @@ export {
   Repository, EntityCreationData,
   Schema, SchemaDefinition, SchemaOptions, Point,
   FieldDefinition, Field, NumberField, StringField, BooleanField, PointField, StringArrayField, IdStrategy, StopWordOptions,
-  Search, SubSearchFunction,
+  Search, RawSearch, SubSearchFunction,
   Where, WhereField, Circle, CircleFunction
 };

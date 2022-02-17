@@ -1,7 +1,7 @@
 import { mocked } from 'ts-jest/utils';
 
 import Client from "../../../lib/client";
-import Search from "../../../lib/search/search";
+import { Search, RawSearch } from "../../../lib/search/search";
 
 import { simpleHashSchema, SimpleHashEntity, SimpleJsonEntity, simpleJsonSchema } from "../helpers/test-entity-and-schema";
 
@@ -36,14 +36,13 @@ const EXPECTED_POINT_QUERY = `@aPoint:[${POINT_LONGITUDE} ${POINT_LATITUDE} ${PO
 const EXPECTED_DATE_QUERY = `@aDate:[${A_DATE_EPOCH} +inf]`;
 const EXPECTED_ARRAY_QUERY = `@someStrings:{${A_STRING}|${ANOTHER_STRING}}`;
 
-beforeEach(() => mocked(Client).mockReset());
-
 describe("Search", () => {
-  
   describe("#query", () => {
 
     let client: Client;
+
     beforeAll(() => client = new Client());
+    beforeEach(() => mocked(Client).mockReset());
 
     describe("when querying against hashes", () => {
 
