@@ -55,6 +55,15 @@ describe("search for hashes", () => {
     ]));
   });
 
+  it("performs a raw search", async () => {
+    entities = await repository.searchRaw('@aString:{foo} @aNumber:[42 42]').returnAll();
+
+    expect(entities).toHaveLength(1);
+    expect(entities).toEqual(expect.arrayContaining([
+      expect.objectContaining({ entityId: '1', ...AN_ENTITY })
+    ]));
+  });
+
   it("searches a string", async () => {
     entities = await repository.search().where('aString').eq('foo').returnAll();
 

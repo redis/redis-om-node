@@ -1,7 +1,7 @@
 import { mocked } from 'ts-jest/utils';
 
 import Client from "../../../lib/client";
-import { Search, RawSearch } from "../../../lib/search/search";
+import { Search } from "../../../lib/search/search";
 
 import { simpleHashSchema, SimpleHashEntity, SimpleJsonEntity, simpleJsonSchema } from "../helpers/test-entity-and-schema";
 
