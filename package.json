@@ -1,6 +1,6 @@
 {
   "name": "redis-om",
-  "version": "0.1.8",
+  "version": "0.2.0",
   "description": "Object mapping, and more, for Redis and Node.js. Written in TypeScript.",
   "main": "dist/index.js",
   "types": "./dist/index.d.ts",
@@ -25,7 +25,7 @@
     "redis",
     "orm"
   ],
-  "license": "BSD-3-Clause",
+  "license": "MIT",
   "author": "Guy Royse <guy@guyroyse.com> (http://guyroyse.com/)",
   "engines": {
     "node": ">=12"
