@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Added point radius search allowing simple geographic searches.
 - Added 'date' data type with UNIX, ISO-8601, and JavaScript flavors.
 - Added date search, also with UNIX, ISO-8601, and JavaScript flavors.
+- Added raw searches. You can now issue raw RediSearch commands if the fluent interface doesn't do something you need to do.
 
 ### Changed
 - String fields and searches can now be set to numbers or booleans and will be coerced to a string.
