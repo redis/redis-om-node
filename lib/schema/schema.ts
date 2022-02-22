@@ -73,7 +73,7 @@ export default class Schema<TEntity extends Entity> {
    * The configured data structure, a string with the value of either `HASH` or `JSON`,
    * that this Schema uses to store {@link Entity | Entities} in Redis.
    * */
-  get dataStructure(): SearchDataStructure { return this.options?.dataStructure ?? 'HASH'; }
+  get dataStructure(): SearchDataStructure { return this.options?.dataStructure ?? 'JSON'; }
 
   /**
    * The configured usage of stop words, a string with the value of either `OFF`, `DEFAULT`,

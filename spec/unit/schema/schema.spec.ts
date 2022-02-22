@@ -12,7 +12,7 @@ describe("Schema", () => {
 
     it("has the constructor for the entity", () => expect(schema.entityCtor).toBe(TestEntity));
     it("generates an empty Redis schema", () => expect(schema.redisSchema).toEqual([]));
-    it("provides the default data structure", () => expect(schema.dataStructure).toBe("HASH"));
+    it("provides the default data structure", () => expect(schema.dataStructure).toBe("JSON"));
     it("generates the keyspace prefix from the entity constructor name", () => expect(schema.prefix).toBe("TestEntity"));
     it("generates the index name from the entity constructor name", () => expect(schema.indexName).toBe("TestEntity:index"));
     it("generates default Redis IDs", () => expect(schema.generateId()).toMatch(/^[0-9ABCDEFGHJKMNPQRSTVWXYZ]{26}$/));

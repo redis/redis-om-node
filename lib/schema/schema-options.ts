@@ -20,7 +20,8 @@ export type SchemaOptions = {
    */
   indexName?: string;
 
-  /** The data structure used to store the {@link Entity} in Redis. */
+  /** The data structure used to store the {@link Entity} in Redis. Can be set
+    * to either `JSON` or `HASH`. Defaults to JSON. */
   dataStructure?: SearchDataStructure;
 
   /**
