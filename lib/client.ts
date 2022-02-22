@@ -5,6 +5,7 @@ import { JsonRepository, HashRepository } from './repository/repository';
 import Entity from './entity/entity';
 import Schema from './schema/schema';
 import RedisError from './errors';
+import { RediSearchSchema } from 'redis';
 
 /**
  * Alias for any old JavaScript object.
@@ -25,8 +26,8 @@ export type SearchDataStructure = 'HASH' | 'JSON';
 export type CreateIndexOptions = {
   indexName: string,
   dataStructure: SearchDataStructure,
-  prefix: string,
   schema: string[],
+  prefix: string,
   stopWords?: string[]
 }
 
@@ -108,6 +109,7 @@ export default class Client {
     this.validateShimOpen();
 
     let { indexName, dataStructure, prefix, schema, stopWords } = options;
+
     let command = [
       'FT.CREATE', indexName,
       'ON', dataStructure,

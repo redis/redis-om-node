@@ -1,4 +1,4 @@
-import { createClient } from '@node-redis/client';
+import { createClient } from 'redis';
 
 import RedisError from '../errors';
 
@@ -26,10 +26,6 @@ export default class RedisShim {
   hgetall(key: string) {
     return this.redis.hGetAll(key);
   }
-
-  // async dropIndex(indexName: string) {
-  //   await this.redis.ft.dropIndex(indexName);
-  // }
 
   async hsetall(key: string, data: { [key: string]: string }) {
     try {
