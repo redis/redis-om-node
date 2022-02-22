@@ -1,4 +1,4 @@
-import { mocked } from 'ts-jest/utils';
+import { mocked } from 'jest-mock';
 
 import Client from '../../../lib/client';
 import { JsonRepository, HashRepository } from '../../../lib/repository/repository';

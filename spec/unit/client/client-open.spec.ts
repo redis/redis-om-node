@@ -1,4 +1,4 @@
-import { mocked } from 'ts-jest/utils';
+import { mocked } from 'jest-mock';
 
 import RedisShim from '../../../lib/redis/redis-shim';
 import Client from '../../../lib/client';

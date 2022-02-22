@@ -27,6 +27,10 @@ export default class RedisShim {
     return this.redis.hGetAll(key);
   }
 
+  // async dropIndex(indexName: string) {
+  //   await this.redis.ft.dropIndex(indexName);
+  // }
+
   async hsetall(key: string, data: { [key: string]: string }) {
     try {
       await this.redis.executeIsolated(async isolatedClient => {
