@@ -78,8 +78,8 @@ describe("Search", () => {
       });
 
       it("generates a query that escapes all punctuation", () => {
-        let query = where.eq(",.<>{}[]\"':;!@#$%^&*()-+=~| ").query;
-        expect(query).toBe("(@aString:{\\,\\.\\<\\>\\{\\}\\[\\]\\\"\\'\\:\\;\\!\\@\\#\\$\\%\\^\\&\\*\\(\\)\\-\\+\\=\\~\\|\\ })");
+        let query = where.eq(",.<>{}[]\"':;!@#$%^&*()-+=~|/\\ ").query;
+        expect(query).toBe("(@aString:{\\,\\.\\<\\>\\{\\}\\[\\]\\\"\\'\\:\\;\\!\\@\\#\\$\\%\\^\\&\\*\\(\\)\\-\\+\\=\\~\\|\\/\\\\\\ })");
       });
     });
 
