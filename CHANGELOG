@@ -22,6 +22,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - *Breaking Change*: Removed the `textSearch` from strings as it was no longer needed with 'string' and 'text' types replacing it.
 - *Breaking Change*: Schema data structure now defaults to JSON instead of HASH.
 
+### Fixed
+- Wildcard searches on text fields no longer fail.
+- Tag searches now escape slash and backslash characters.
+
 ### Removed
 - *Breaking Change*: Repository constructor cannot be directly called. Use client.fetchRepository instead.
 

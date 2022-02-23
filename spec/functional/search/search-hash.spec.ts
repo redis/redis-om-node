@@ -82,6 +82,15 @@ describe("search for hashes", () => {
     ]));
   });
 
+  it("searches a string with full text and wildcards", async () => {
+    entities = await repository.search().where('someText').matches('br*').returnAll();
+
+    expect(entities).toHaveLength(1);
+    expect(entities).toEqual(expect.arrayContaining([
+      expect.objectContaining({ entityId: '1', ...AN_ENTITY })
+    ]));
+  });
+
   it("searches a string with full text and an exact match", async () => {
     entities = await repository.search().where('someText').exactly.matches('quick brown').returnAll();
 
