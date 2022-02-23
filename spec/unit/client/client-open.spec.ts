@@ -1,4 +1,4 @@
-import { mocked } from 'ts-jest/utils';
+import { mocked } from 'jest-mock';
 
 import RedisShim from '../../../lib/redis/redis-shim';
 import Client from '../../../lib/client';
@@ -10,37 +10,86 @@ beforeEach(() => mocked(RedisShim).mockReset());
 
 describe("Client", () => {
 
-  let client: Client;
+  let client: Client, self: Client;
 
-  beforeEach(async () => client = new Client());
+  beforeEach(() => client = new Client());
 
   describe("#open", () => {
-    describe("when called without a url", () => {
-      beforeEach(async () => await client.open());
+    describe("when not called", () => {
+      it("is not open", () => {
+        expect(client.isOpen()).toBe(false);
+      });
+    })
 
-      it("constructs a new RedisShim", () => expect(RedisShim).toHaveBeenCalled());
-      it("opens the shim with the default url", async () => {
-        expect(RedisShim.prototype.open).toHaveBeenCalledWith('redis://localhost:6379');
+    describe("when called without a url", () => {
+      beforeEach(async () => self = await client.open());
+
+      it("constructs a new RedisShim with the default url", () => {
+        expect(RedisShim).toHaveBeenCalledWith('redis://localhost:6379');
+      });
+
+      it("opens the shim", async () => {
+        expect(RedisShim.prototype.open).toHaveBeenCalled();
+      });
+      
+      it("is open", () => {
         expect(client.isOpen()).toBe(true);
+      });
+
+      it("returns itself", async () => {
+        expect(self).toBe(client);
+      });
+
+      describe("when trying to call it again", () => {
+        beforeEach(async () => self = await client.open());
+
+        it("doesn't reconstruct a RedisShim", () => {
+          expect(RedisShim).toBeCalledTimes(1);
+        });
+  
+        it("doesn't open the shim again", async () => {
+          expect(RedisShim.prototype.open).toBeCalledTimes(1);
+        });
+  
+        it("returns itself", async () => {
+          expect(self).toBe(client);
+        });
       });
     });
 
     describe("when called with a url", () => {
-      beforeEach(async () => await client.open('foo'));
+      beforeEach(async () => self = await client.open('foo'));
 
-      it("constructs a new RedisShim", () => expect(RedisShim).toHaveBeenCalled());
-      it("opens the shim with the default url", async () => {
-        expect(RedisShim.prototype.open).toHaveBeenCalledWith('foo');
+      it("constructs a new RedisShim with the provided url", () => {
+        expect(RedisShim).toHaveBeenCalledWith('foo')
+      });
+      
+      it("opens the shim", async () => {
+        expect(RedisShim.prototype.open).toHaveBeenCalled();
+      });
+
+      it("is open", () => {
         expect(client.isOpen()).toBe(true);
       });
-    });
 
-    describe("when called on an already open client", () => {
-      beforeEach(async () => await client.open('foo'));
+      it("returns itself", async () => {
+        expect(self).toBe(client);
+      });
 
-      it("errors when called on an open client", async () => {
-        await client.open();
-        expect(client.isOpen()).toBe(true);
+      describe("when trying to call it again", () => {
+        beforeEach(async () => self = await client.open('foo'));
+
+        it("doesn't reconstruct a RedisShim", () => {
+          expect(RedisShim).toBeCalledTimes(1);
+        });
+  
+        it("doesn't open the shim again", async () => {
+          expect(RedisShim.prototype.open).toBeCalledTimes(1);
+        });
+  
+        it("returns itself", async () => {
+          expect(self).toBe(client);
+        });
       });
     });
   });

@@ -14,23 +14,24 @@ describe("Repository", () => {
 
   let client: Client;
   let entityId = 'foo';
+  let ttl = 60;
 
-  describe("#remove", () => {
+  describe("#expire", () => {
 
     beforeAll(() => client = new Client());
 
-    it("removes a hash", async () => {
+    it("expires a hash", async () => {
       let repository = new HashRepository<SimpleHashEntity>(simpleHashSchema, client);
       let expectedKey = `SimpleHashEntity:${entityId}`;
-      await repository.remove(entityId);
-      expect(Client.prototype.unlink).toHaveBeenCalledWith(expectedKey);
+      await repository.expire(entityId, ttl);
+      expect(Client.prototype.expire).toHaveBeenCalledWith(expectedKey, ttl);
     });
 
-    it("removes JSON", async () => {
+    it("expires a JSON", async () => {
       let repository = new JsonRepository<SimpleJsonEntity>(simpleJsonSchema, client);
       let expectedKey = `SimpleJsonEntity:${entityId}`;
-      await repository.remove(entityId);
-      expect(Client.prototype.unlink).toHaveBeenCalledWith(expectedKey);
+      await repository.expire(entityId, ttl);
+      expect(Client.prototype.expire).toHaveBeenCalledWith(expectedKey, ttl);
     });
   });
 });

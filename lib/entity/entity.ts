@@ -1,4 +1,5 @@
 import { Point, SchemaDefinition } from "../schema/schema-definitions";
+import Schema from "../schema/schema";
 
 /**
  * Valid values for properties of an {@link Entity}.
@@ -15,7 +16,7 @@ export type EntityData = Record<string, EntityValue>;
  * @template TEntity The {@link Entity} type.
  */
 export type EntityConstructor<TEntity> = new (
-  schemaDef: SchemaDefinition, 
+  schema: Schema<any>,
   id: string,
   data?: EntityData) => TEntity;
 
@@ -38,15 +39,21 @@ export default abstract class Entity {
   readonly entityData: EntityData;
 
   private schemaDef: SchemaDefinition;
+  private prefix: string;
 
   /** 
    * Creates an new Entity.
    * @internal
    */
-  constructor(schemaDef: SchemaDefinition, id: string, data: EntityData = {}) {
-    this.schemaDef = schemaDef;
+  constructor(schema: Schema<any>, id: string, data: EntityData = {}) {
+    this.schemaDef = schema.definition;
+    this.prefix = schema.prefix;
     this.entityId = id;
     this.entityData = data;
+  }
+
+  get keyName(): string {
+    return `${this.prefix}:${this.entityId}`;
   }
 
   toJSON() {

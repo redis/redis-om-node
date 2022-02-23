@@ -1,3 +1,5 @@
+import { createClient } from 'redis';
+
 import Client from '../../lib/client';
 import Schema from '../../lib/schema/schema';
 import Entity from '../../lib/entity/entity';
@@ -8,6 +10,11 @@ import { Point } from '../../lib';
 describe("Demo", () => {
 
   it("demos", async () => {
+
+    // establish an existing connection to Redis
+    let redis = createClient();
+    redis.on('error', (err) => console.log('Redis Client Error', err));
+    await redis.connect();
 
     // define the interface, just for TypeScript
     interface BigfootSighting {
@@ -34,9 +41,8 @@ describe("Demo", () => {
       private f2c(f: number): number { return ( f - 32 ) * 5 / 9; }
     }
 
-    // get a client and open it
-    let client = new Client();
-    await client.open();
+    // get a client use an existing Redis connection
+    let client = await new Client().use(redis);
     await client.execute<void>(['FLUSHALL']);
     await client.execute<string>(['PING']);
 
@@ -72,6 +78,7 @@ describe("Demo", () => {
     entity.fullMoon = false;
 
     let entityId = await repository.save(entity);
+    await repository.expire(entityId, 60);
 
     // create an entity (#2)
     entity = await repository.createEntity({

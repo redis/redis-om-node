@@ -12,7 +12,7 @@ import { SchemaOptions } from './schema-options';
 /**
  * Defines a schema that determines how an {@link Entity} is mapped to Redis
  * data structures. Construct by passing in an {@link EntityConstructor}, 
- * a {@link SchemaDefinition}, and {@link SchemaOptions}:
+ * a {@link SchemaDefinition}, and optionally {@link SchemaOptions}:
  * 
  * ```typescript
  * let schema = new Schema(Foo, {
@@ -24,7 +24,7 @@ import { SchemaOptions } from './schema-options';
  *   aDate: { type: 'date' },
  *   someStrings: { type: 'string[]' }
  * }, {
- *   dataStructure: 'JSON'
+ *   dataStructure: 'HASH'
  * });
  * ```
  * 
@@ -73,7 +73,7 @@ export default class Schema<TEntity extends Entity> {
    * The configured data structure, a string with the value of either `HASH` or `JSON`,
    * that this Schema uses to store {@link Entity | Entities} in Redis.
    * */
-  get dataStructure(): SearchDataStructure { return this.options?.dataStructure ?? 'HASH'; }
+  get dataStructure(): SearchDataStructure { return this.options?.dataStructure ?? 'JSON'; }
 
   /**
    * The configured usage of stop words, a string with the value of either `OFF`, `DEFAULT`,

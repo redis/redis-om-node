@@ -104,7 +104,7 @@ export type EntityCreationData = Record<string, number | boolean | string | stri
    */
   createEntity(data: EntityCreationData = {}): TEntity {
     let id = this.schema.generateId();
-    let entity = new this.schema.entityCtor(this.schema.definition, id);
+    let entity = new this.schema.entityCtor(this.schema, id);
     for (let key in data) {
       if (this.schema.entityCtor.prototype.hasOwnProperty(key)) {
         (entity as Record<string, any>)[key] = data[key]
@@ -153,7 +153,7 @@ export type EntityCreationData = Record<string, number | boolean | string | stri
   async fetch(id: string): Promise<TEntity> {
     let key = this.makeKey(id);
     let entityData = await this.readEntity(key);
-    return new this.schema.entityCtor(this.schema.definition, id, entityData);
+    return new this.schema.entityCtor(this.schema, id, entityData);
   }
 
   /**
@@ -164,6 +164,17 @@ export type EntityCreationData = Record<string, number | boolean | string | stri
   async remove(id: string): Promise<void> {
     let key = this.makeKey(id);
     await this.client.unlink(key);
+  }
+
+  /**
+   * Set the time to live of the {@link Entity}. If the {@link Entity} is not
+   * found, does nothing.
+   * @param id The ID of the {@link Entity} to set and expiration for.
+   * @param ttlInSeconds THe time to live in seconds.
+   */
+  async expire(id: string, ttlInSeconds: number) {
+    let key =  this.makeKey(id);
+    await this.client.expire(key, ttlInSeconds);
   }
 
   /**

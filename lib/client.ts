@@ -1,5 +1,4 @@
-import RedisShim from './redis/redis-shim';
-
+import RedisShim, { RedisConnection } from './redis/redis-shim';
 import Repository from './repository/repository';
 import { JsonRepository, HashRepository } from './repository/repository';
 import Entity from './entity/entity';
@@ -25,8 +24,8 @@ export type SearchDataStructure = 'HASH' | 'JSON';
 export type CreateIndexOptions = {
   indexName: string,
   dataStructure: SearchDataStructure,
-  prefix: string,
   schema: string[],
+  prefix: string,
   stopWords?: string[]
 }
 
@@ -56,13 +55,28 @@ export default class Client {
   protected shim?: RedisShim;
 
   /**
+   * Attaches an existing Node Redis connection to this Redis OM client. Closes
+   * any existing connection.
+   * @param connection An existing Node Redis client.
+   * @returns This {@link Client} instance.
+   */
+  async use(connection: RedisConnection): Promise<Client> {
+    await this.close();
+    this.shim = new RedisShim(connection);
+    return this;
+  }
+
+  /**
    * Open a connection to Redis at the provided URL.
    * @param url A URL to Redis as defined with the [IANA](https://www.iana.org/assignments/uri-schemes/prov/redis).
+   * @returns This {@link Client} instance.
    */
-  async open(url: string = 'redis://localhost:6379') {
-    let shim = this.shim ?? new RedisShim();
-    await shim.open(url);
-    this.shim = shim;
+  async open(url: string = 'redis://localhost:6379'): Promise<Client> {
+    if (!this.isOpen()) {
+      this.shim = new RedisShim(url);
+      await this.shim.open();
+    }
+    return this;
   }
 
   /**
@@ -71,7 +85,7 @@ export default class Client {
    * @param command The command to execute.
    * @returns The raw results of calling the Redis command.
    */
-   async execute<TResult>(command: (string|number|boolean)[]) : Promise<TResult> {
+  async execute<TResult>(command: (string|number|boolean)[]) : Promise<TResult> {
     this.validateShimOpen();
     return await this.shim.execute<TResult>(command.map(arg => {
       if (arg === false) return '0';
@@ -108,6 +122,7 @@ export default class Client {
     this.validateShimOpen();
 
     let { indexName, dataStructure, prefix, schema, stopWords } = options;
+
     let command = [
       'FT.CREATE', indexName,
       'ON', dataStructure,
@@ -141,6 +156,12 @@ export default class Client {
     this.validateShimOpen();
     await this.shim.unlink(key);
   }
+  
+  /** @internal */
+  async expire(key: string, ttl: number) {
+    this.validateShimOpen();
+    await this.shim?.expire(key, ttl);
+  }
 
   /** @internal */
   async hgetall(key: string): Promise<HashData> {
@@ -169,7 +190,7 @@ export default class Client {
   }
 
   /**
-   * @returns Whether a connection is already open
+   * @returns Whether a connection is already open.
    */
   isOpen() {
     return !!this.shim;

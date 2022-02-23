@@ -14,15 +14,15 @@ describe("Client", () => {
 
   beforeEach(async () => client = new Client());
 
-  describe("#hsetall", () => {
+  describe("#expire", () => {
     describe("when called on an open client", () => {
       beforeEach(async () => {
         await client.open();
       });
 
       it("passes the command to the shim", async () => {
-        await client.hsetall('foo', { foo: 'bar', baz: 'qux' });
-        expect(RedisShim.prototype.hsetall).toHaveBeenCalledWith('foo', { foo: 'bar', baz: 'qux' });
+        await client.expire('foo', 60);
+        expect(RedisShim.prototype.expire).toHaveBeenCalledWith('foo', 60);
       });
     });
 
@@ -33,12 +33,12 @@ describe("Client", () => {
       });
       
       it("errors when called on a closed client", () => 
-      expect(async () => await client.hsetall('foo', { foo: 'bar', baz: 'qux' }))
+      expect(async () => await client.expire('foo', 60))
         .rejects.toThrow("Redis connection needs opened."));
     });
     
     it("errors when called on a new client", async () =>
-      expect(async () => await client.hsetall('foo', { foo: 'bar', baz: 'qux' }))
+      expect(async () => await client.expire('foo', 60))
         .rejects.toThrow("Redis connection needs opened."));
   });
 });

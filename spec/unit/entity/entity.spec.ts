@@ -18,7 +18,7 @@ let entity: SimpleEntity;
 
 describe("Entity", () => {
   describe("without data", () => {
-    beforeEach(() => entity = new SimpleEntity(simpleSchema.definition, ENTITY_ID));
+    beforeEach(() => entity = new SimpleEntity(simpleSchema, ENTITY_ID));
 
     it("has the passed in Redis ID", () => expect(entity.entityId).toBe(ENTITY_ID));
     it("returns null for the number property", () => expect(entity.aNumber).toBeNull());
@@ -28,11 +28,12 @@ describe("Entity", () => {
     it("returns null for the point property", () => expect(entity.aPoint).toBeNull());
     it("returns null for the date property", () => expect(entity.aDate).toBeNull());
     it("returns null for the string[] property", () => expect(entity.someStrings).toBeNull());
+    it("returns the expected key name", () => expect(entity.keyName).toBe(`SimpleEntity:${ENTITY_ID}`));
     it("serializes to the expected JSON", () => expect(JSON.stringify(entity)).toBe(EXPECTED_NULL_JSON));
   });
 
   describe("with data", () => {
-    beforeEach(() => entity = new SimpleEntity(simpleSchema.definition, ENTITY_ID, {
+    beforeEach(() => entity = new SimpleEntity(simpleSchema, ENTITY_ID, {
       aNumber: A_NUMBER, aString: A_STRING, aBoolean: false, someText: SOME_TEXT, aPoint: A_POINT, aDate: A_DATE, someStrings: SOME_STRINGS }));
 
     it("has the passed in Redis ID", () => expect(entity.entityId).toBe(ENTITY_ID));
@@ -43,6 +44,7 @@ describe("Entity", () => {
     it("returns a point for the point property", () => expect(entity.aPoint).toEqual(A_POINT));
     it("returns a date for the date property", () => expect(entity.aDate).toEqual(A_DATE));
     it("returns a string[] for the string[] property", () => expect(entity.someStrings).toEqual(SOME_STRINGS));
+    it("returns the expected key name", () => expect(entity.keyName).toBe(`SimpleEntity:${ENTITY_ID}`));
     it("serializes to the expected JSON", () => expect(JSON.stringify(entity)).toBe(EXPECTED_JSON));
 
     describe("changing the data", () => {
@@ -276,7 +278,7 @@ describe("Entity", () => {
   });
 
   describe("with aliased data", () => {
-    beforeEach(() => entity = new AliasedEntity(aliasedSchema.definition, ENTITY_ID, {
+    beforeEach(() => entity = new AliasedEntity(aliasedSchema, ENTITY_ID, {
       anotherNumber: ANOTHER_NUMBER, anotherString: ANOTHER_STRING,
       anotherBoolean: true, someOtherText: SOME_OTHER_TEXT,
       anotherPoint: ANOTHER_POINT, anotherDate: ANOTHER_DATE, someOtherStrings: SOME_OTHER_STRINGS }));
@@ -289,6 +291,7 @@ describe("Entity", () => {
     it("returns a point for the point property", () => expect(entity.aPoint).toEqual(ANOTHER_POINT));
     it("returns a date for the date property", () => expect(entity.aDate).toEqual(ANOTHER_DATE));
     it("returns a string[] for the string[] property", () => expect(entity.someStrings).toEqual(SOME_OTHER_STRINGS));
+    it("returns the expected key name", () => expect(entity.keyName).toBe(`AliasedEntity:${ENTITY_ID}`));
     it("serializes to the expected JSON", () => expect(JSON.stringify(entity)).toBe(EXPECTED_ALIASED_JSON));
 
     describe("changing the data", () => {
