@@ -167,6 +167,17 @@ export type EntityCreationData = Record<string, number | boolean | string | stri
   }
 
   /**
+   * Set the time to live of the {@link Entity}. If the {@link Entity} is not
+   * found, does nothing.
+   * @param id The ID of the {@link Entity} to set and expiration for.
+   * @param ttlInSeconds THe time to live in seconds.
+   */
+  async expire(id: string, ttlInSeconds: number) {
+    let key =  this.makeKey(id);
+    await this.client.expire(key, ttlInSeconds);
+  }
+
+  /**
    * Kicks off the process of building a query. Requires that RediSearch (and optionally
    * RedisJSON) be is installed on your instance of Redis.
    * @template TEntity The type of {@link Entity} sought.

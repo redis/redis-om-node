@@ -156,6 +156,12 @@ export default class Client {
     this.validateShimOpen();
     await this.shim.unlink(key);
   }
+  
+  /** @internal */
+  async expire(key: string, ttl: number) {
+    this.validateShimOpen();
+    await this.shim?.expire(key, ttl);
+  }
 
   /** @internal */
   async hgetall(key: string): Promise<HashData> {

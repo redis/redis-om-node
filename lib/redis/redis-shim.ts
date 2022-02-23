@@ -32,6 +32,10 @@ export default class RedisShim {
     await this.redis.unlink(key);
   }
 
+  async expire(key: string, ttl: number) {
+    await this.redis.expire(key, ttl);
+  }
+
   hgetall(key: string) {
     return this.redis.hGetAll(key);
   }

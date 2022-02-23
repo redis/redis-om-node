@@ -4,13 +4,16 @@
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and Redis OM adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## 0.2.0 - 2022-02-15
+## 0.2.0 - 2022-02-23
 ### Added
 - Added 'point' data type representing a spot on the globe.
 - Added point radius search allowing simple geographic searches.
 - Added 'date' data type with UNIX, ISO-8601, and JavaScript flavors.
 - Added date search, also with UNIX, ISO-8601, and JavaScript flavors.
 - Added raw searches. You can now issue raw RediSearch commands if the fluent interface doesn't do something you need to do.
+- Added ability to attach to an existing Node Redis connection using the Client.use().
+- Added keyName method to Entity allowing you to get the Redis keyname storing that entity.
+- Added expire method to Repository allowing you to expire entities.
 
 ### Changed
 - String fields and searches can now be set to numbers or booleans and will be coerced to a string.

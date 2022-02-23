@@ -78,6 +78,7 @@ describe("Demo", () => {
     entity.fullMoon = false;
 
     let entityId = await repository.save(entity);
+    await repository.expire(entityId, 60);
 
     // create an entity (#2)
     entity = await repository.createEntity({
