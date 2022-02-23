@@ -55,7 +55,8 @@ export default class Client {
   protected shim?: RedisShim;
 
   /**
-   * Attaches an existing Node Redis connection to this Redis OM client.
+   * Attaches an existing Node Redis connection to this Redis OM client. Closes
+   * any existing connection.
    * @param connection An existing Node Redis client.
    * @returns This {@link Client} instance.
    */

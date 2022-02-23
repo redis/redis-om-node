@@ -137,8 +137,5 @@ describe("Demo", () => {
 
     // close the client
     client.close();
-
-    // close Redis connection
-    redis.quit();
   });
 });
