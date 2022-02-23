@@ -1,11 +1,9 @@
-import RedisShim from './redis/redis-shim';
-
+import RedisShim, { RedisConnection } from './redis/redis-shim';
 import Repository from './repository/repository';
 import { JsonRepository, HashRepository } from './repository/repository';
 import Entity from './entity/entity';
 import Schema from './schema/schema';
 import RedisError from './errors';
-import { RediSearchSchema } from 'redis';
 
 /**
  * Alias for any old JavaScript object.
@@ -57,13 +55,27 @@ export default class Client {
   protected shim?: RedisShim;
 
   /**
+   * Attaches an existing Node Redis connection to this Redis OM client.
+   * @param connection An existing Node Redis client.
+   * @returns This {@link Client} instance.
+   */
+  async use(connection: RedisConnection): Promise<Client> {
+    await this.close();
+    this.shim = new RedisShim(connection);
+    return this;
+  }
+
+  /**
    * Open a connection to Redis at the provided URL.
    * @param url A URL to Redis as defined with the [IANA](https://www.iana.org/assignments/uri-schemes/prov/redis).
+   * @returns This {@link Client} instance.
    */
-  async open(url: string = 'redis://localhost:6379') {
-    let shim = this.shim ?? new RedisShim();
-    await shim.open(url);
-    this.shim = shim;
+  async open(url: string = 'redis://localhost:6379'): Promise<Client> {
+    if (!this.isOpen()) {
+      this.shim = new RedisShim(url);
+      await this.shim.open();
+    }
+    return this;
   }
 
   /**
@@ -72,7 +84,7 @@ export default class Client {
    * @param command The command to execute.
    * @returns The raw results of calling the Redis command.
    */
-   async execute<TResult>(command: (string|number|boolean)[]) : Promise<TResult> {
+  async execute<TResult>(command: (string|number|boolean)[]) : Promise<TResult> {
     this.validateShimOpen();
     return await this.shim.execute<TResult>(command.map(arg => {
       if (arg === false) return '0';
@@ -171,7 +183,7 @@ export default class Client {
   }
 
   /**
-   * @returns Whether a connection is already open
+   * @returns Whether a connection is already open.
    */
   isOpen() {
     return !!this.shim;

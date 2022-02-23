@@ -2,12 +2,21 @@ import { createClient } from 'redis';
 
 import RedisError from '../errors';
 
+export type RedisConnection = ReturnType<typeof createClient>;
+
 export default class RedisShim {
 
-  private redis!: ReturnType<typeof createClient>;
+  private redis!: RedisConnection;
 
-  async open(url: string) {
-    this.redis = createClient({ url });
+  constructor(urlOrConnection: string | RedisConnection) {
+    if (typeof(urlOrConnection) === 'string') {
+      this.redis = createClient({ url: urlOrConnection });
+    } else {
+      this.redis = urlOrConnection;
+    }
+  }
+
+  async open() {
     await this.redis.connect();
   }
 
