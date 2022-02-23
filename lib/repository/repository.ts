@@ -104,7 +104,7 @@ export type EntityCreationData = Record<string, number | boolean | string | stri
    */
   createEntity(data: EntityCreationData = {}): TEntity {
     let id = this.schema.generateId();
-    let entity = new this.schema.entityCtor(this.schema.definition, id);
+    let entity = new this.schema.entityCtor(this.schema, id);
     for (let key in data) {
       if (this.schema.entityCtor.prototype.hasOwnProperty(key)) {
         (entity as Record<string, any>)[key] = data[key]
@@ -153,7 +153,7 @@ export type EntityCreationData = Record<string, number | boolean | string | stri
   async fetch(id: string): Promise<TEntity> {
     let key = this.makeKey(id);
     let entityData = await this.readEntity(key);
-    return new this.schema.entityCtor(this.schema.definition, id, entityData);
+    return new this.schema.entityCtor(this.schema, id, entityData);
   }
 
   /**

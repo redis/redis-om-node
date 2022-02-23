@@ -12,7 +12,7 @@ import { SchemaOptions } from './schema-options';
 /**
  * Defines a schema that determines how an {@link Entity} is mapped to Redis
  * data structures. Construct by passing in an {@link EntityConstructor}, 
- * a {@link SchemaDefinition}, and {@link SchemaOptions}:
+ * a {@link SchemaDefinition}, and optionally {@link SchemaOptions}:
  * 
  * ```typescript
  * let schema = new Schema(Foo, {
@@ -24,7 +24,7 @@ import { SchemaOptions } from './schema-options';
  *   aDate: { type: 'date' },
  *   someStrings: { type: 'string[]' }
  * }, {
- *   dataStructure: 'JSON'
+ *   dataStructure: 'HASH'
  * });
  * ```
  * 
