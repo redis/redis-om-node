@@ -30,7 +30,7 @@ export default class WhereText<TEntity extends Entity> extends WhereField<TEntit
   }
 
   toString(): string {
-    let matchPunctuation = /[,.<>{}[\]"':;!@#$%^&*()\-+=~|]/g;
+    let matchPunctuation = /[,.<>{}[\]"':;!@#$%^&()\-+=~|]/g;
     let escapedValue = this.value.replace(matchPunctuation, '\\$&');
 
     if (this.exactValue) {
