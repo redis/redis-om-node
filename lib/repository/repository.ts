@@ -67,17 +67,26 @@ export type EntityCreationData = Record<string, number | boolean | string | stri
    * that RediSearch or RedisJSON is installed on your instance of Redis.
    */
   async createIndex() {
-    let options : CreateIndexOptions = {
-      indexName: this.schema.indexName,
-      dataStructure: this.schema.dataStructure,
-      prefix: `${this.schema.prefix}:`,
-      schema: this.schema.redisSchema
-    };
 
-    if (this.schema.useStopWords === 'OFF') options.stopWords = []
-    if (this.schema.useStopWords === 'CUSTOM') options.stopWords = this.schema.stopWords
+    let currentIndexHash = await this.client.get(this.schema.indexHashName)
 
-    await this.client.createIndex(options);
+    if (currentIndexHash !== this.schema.indexHash) {
+
+      await this.dropIndex();
+
+      let options : CreateIndexOptions = {
+        indexName: this.schema.indexName,
+        dataStructure: this.schema.dataStructure,
+        prefix: `${this.schema.prefix}:`,
+        schema: this.schema.redisSchema
+      };
+      
+      if (this.schema.useStopWords === 'OFF') options.stopWords = []
+      if (this.schema.useStopWords === 'CUSTOM') options.stopWords = this.schema.stopWords
+      
+      await this.client.createIndex(options);
+      await this.client.set(this.schema.indexHashName, this.schema.indexHash);
+    }
   }
 
   /**
@@ -87,6 +96,7 @@ export type EntityCreationData = Record<string, number | boolean | string | stri
    */
   async dropIndex() {
     try {
+      await this.client.unlink(this.schema.indexHashName);
       await this.client.dropIndex(this.schema.indexName);
     } catch (e) {
       if (e instanceof Error && e.message === "Unknown Index name") {
