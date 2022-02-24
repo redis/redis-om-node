@@ -36,6 +36,14 @@ export default class RedisShim {
     await this.redis.expire(key, ttl);
   }
 
+  get(key: string) {
+    return this.redis.get(key);
+  }
+
+  set(key: string, value: string) {
+    return this.redis.set(key, value);
+  }
+
   hgetall(key: string) {
     return this.redis.hGetAll(key);
   }

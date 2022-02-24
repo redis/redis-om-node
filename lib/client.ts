@@ -164,6 +164,18 @@ export default class Client {
   }
 
   /** @internal */
+  async get(key: string): Promise<string | null> {
+    this.validateShimOpen();
+    return await this.shim.get(key);
+  }
+
+  /** @internal */
+  async set(key: string, value: string) {
+    this.validateShimOpen();
+    await this.shim.set(key, value);
+  }
+
+  /** @internal */
   async hgetall(key: string): Promise<HashData> {
     this.validateShimOpen();
     return await this.shim.hgetall(key);
