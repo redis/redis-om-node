@@ -1,3 +1,4 @@
+import { Hash, createHash } from 'crypto';
 import { ulid } from 'ulid'
 import { RedisError } from '..';
 import { SearchDataStructure } from '../client';
@@ -69,6 +70,9 @@ export default class Schema<TEntity extends Entity> {
   /** The configured name for the RediSearch index for this Schema. */
   get indexName(): string { return this.options?.indexName ?? `${this.prefix}:index`; }
 
+  /** The configured name for the RediSearch index hash for this Schema. */
+  get indexHashName(): string { return this.options?.indexHashName ?? `${this.prefix}:index:hash`; }
+
   /**
    * The configured data structure, a string with the value of either `HASH` or `JSON`,
    * that this Schema uses to store {@link Entity | Entities} in Redis.
@@ -87,6 +91,22 @@ export default class Schema<TEntity extends Entity> {
    * than `CUSTOM`.
    */
   get stopWords(): string[] { return this.options?.stopWords ?? []; }
+
+  /** The hash value of this index. Stored in Redis under {@link Schema.indexHashName}. */
+  get indexHash(): string {
+
+    let data = JSON.stringify({
+      definition: this.definition,
+      prefix: this.prefix,
+      indexName: this.indexName,
+      indexHashName: this.indexHashName,
+      dataStructure: this.dataStructure,
+      useStopWords: this.useStopWords,
+      stopWords: this.stopWords,
+    });
+
+    return createHash('sha1').update(data).digest('base64');
+  }
 
   /** @internal */
   get redisSchema(): string[] { return new SchemaBuilder(this).redisSchema; }

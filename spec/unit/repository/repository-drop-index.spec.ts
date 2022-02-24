@@ -20,23 +20,38 @@ describe("Repository", () => {
 
     beforeAll(() => client = new Client());
 
-    beforeEach(async () => {
-      repository = new HashRepository(simpleSchema, client);
-    });
-    
-    it("asks the client to drop the index with data from the schema", async () => {
-      await repository.dropIndex();
-      expect(Client.prototype.dropIndex).toHaveBeenCalledWith(simpleSchema.indexName);
+    beforeEach(() => repository = new HashRepository(simpleSchema, client));
+
+    describe("when the index exists", () => {
+      beforeEach(async () => await repository.dropIndex());
+
+      it("asks the client to drop the index", async () => {
+        expect(Client.prototype.dropIndex).toHaveBeenCalledWith(simpleSchema.indexName);
+      });
+
+      it("asks the client to remove the index hash", async () => {
+        expect(Client.prototype.unlink).toHaveBeenCalledWith(simpleSchema.indexHashName);
+      });
     });
 
-    it("eats the exception if the index is missing", async () => {
-      mocked(Client.prototype.dropIndex).mockRejectedValue(new Error("Unknown Index name"));
-      await repository.dropIndex(); // it doesn't throw an exception
+    describe("when the index doesn't exist", () => {
+      beforeEach(async () => {
+        mocked(Client.prototype.dropIndex).mockRejectedValue(new Error("Unknown Index name"));
+      });
+
+      it("eats the exception", async () => {
+        await repository.dropIndex(); // it doesn't throw an exception
+      });
     });
 
-    it("propogates the exception if it errors and it's not a missing index exception", async () => {
-      mocked(Client.prototype.dropIndex).mockRejectedValue(new Error("Some other error"));
-      expect(async () => await repository.dropIndex()).rejects.toThrow("Some other error");
+    describe("when dropping the index throws some other Redis exception", () => {
+      beforeEach(async () => {
+        mocked(Client.prototype.dropIndex).mockRejectedValue(new Error("Some other error"));
+      });
+
+      it("propogates the exception", async () => {
+        expect(async () => await repository.dropIndex()).rejects.toThrow("Some other error");
+      });
     });
   });
 });
