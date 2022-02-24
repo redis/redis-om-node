@@ -4,22 +4,22 @@
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and Redis OM adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## 0.2.0 - 2022-02-23
+## 0.2.0 - 2022-02-25
 ### Added
-- Added 'point' data type representing a spot on the globe.
-- Added point radius search allowing simple geographic searches.
+- Added 'point' data type that represents a spot on the globe.
 - Added 'date' data type with UNIX, ISO-8601, and JavaScript flavors.
-- Added date search, also with UNIX, ISO-8601, and JavaScript flavors.
-- Added raw searches. You can now issue raw RediSearch commands if the fluent interface doesn't do something you need to do.
-- Added ability to attach to an existing Node Redis connection using the Client.use().
-- Added keyName method to Entity allowing you to get the Redis keyname storing that entity.
-- Added expire method to Repository allowing you to expire entities.
+- Perform radius searches on 'point' data type using `.inRadius`.
+- Perform searches on 'date' data type using `.before`, `.after`, etc.
+- Issue raw RediSearch commands using `Repository.searchRaw`.
+- Attach existing Node Redis connections using `Client.use`. Handy if you need to do raw Redis stuff too!
+- Added `.keyName` property on `Entity` that lets you to get the Redis keyname storing that `Entity`.
+- Added `.expire` method to `Repository` allowing you to expire an `Entity`.
 
 ### Changed
 - String fields and searches can now be set to numbers or booleans and will be coerced to a string.
 - *Breaking Change*: Changed 'array' type in Schema definitions to 'string[]' in preparation for adding other types of arrays.
 - *Breaking Change*: Split 'string' type into 'string' and 'text' types, representing string values that support `.eq` searches and text values that support `.match` searches.
-- *Breaking Change*: Removed the `textSearch` from strings as it was no longer needed with 'string' and 'text' types replacing it.
+- *Breaking Change*: Removed the `textSearch` property from strings as it was no longer needed with 'string' and 'text' types replacing it.
 - *Breaking Change*: Schema data structure now defaults to JSON instead of HASH.
 
 ### Fixed
@@ -27,7 +27,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Tag searches now escape slash and backslash characters.
 
 ### Removed
-- *Breaking Change*: Repository constructor cannot be directly called. Use client.fetchRepository instead.
+- *Breaking Change*: `Repository` constructor cannot be directly called. Use `client.fetchRepository` instead.
 
 
 ## 0.1.7 - 2022-01-07
