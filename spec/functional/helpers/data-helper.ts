@@ -35,11 +35,19 @@ export function createHashEntitySchema() : Schema<SampleHashEntity> {
   return createSchemaOfType<SampleHashEntity>(SampleHashEntity, 'HASH');
 }
 
+export function createChangedHashEntitySchema() : Schema<SampleHashEntity> {
+  return createSchemaOfType<SampleHashEntity>(SampleHashEntity, 'HASH', 'sample-hash-entity');
+}
+
 export function createJsonEntitySchema() : Schema<SampleJsonEntity> {
   return createSchemaOfType<SampleJsonEntity>(SampleJsonEntity, 'JSON');
 }
 
-function createSchemaOfType<TEntity extends Entity>(ctor: EntityConstructor<TEntity>, dataStructure: SearchDataStructure) : Schema<TEntity> {
+export function createChangedJsonEntitySchema() : Schema<SampleJsonEntity> {
+  return createSchemaOfType<SampleJsonEntity>(SampleJsonEntity, 'JSON', 'sample-json-entity');
+}
+
+function createSchemaOfType<TEntity extends Entity>(ctor: EntityConstructor<TEntity>, dataStructure: SearchDataStructure, prefix?: string) : Schema<TEntity> {
   return new Schema<TEntity>(
     ctor, {
       aString: { type: 'string' },
@@ -57,6 +65,7 @@ function createSchemaOfType<TEntity extends Entity>(ctor: EntityConstructor<TEnt
       someStrings: { type: 'string[]' },
       someOtherStrings: { type: 'string[]' }
     }, {
+      prefix,
       dataStructure
     });
 }
