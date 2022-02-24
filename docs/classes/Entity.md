@@ -15,6 +15,10 @@ class Foo extends Entity {}
 
 - [entityId](Entity.md#entityid)
 
+### Accessors
+
+- [keyName](Entity.md#keyname)
+
 ### Methods
 
 - [toJSON](Entity.md#tojson)
@@ -29,7 +33,21 @@ The generated entity ID.
 
 #### Defined in
 
-[lib/entity/entity.ts:27](https://github.com/redis/redis-om-node/blob/ee688a6/lib/entity/entity.ts#L27)
+[lib/entity/entity.ts:33](https://github.com/redis/redis-om-node/blob/39d7998/lib/entity/entity.ts#L33)
+
+## Accessors
+
+### keyName
+
+• `get` **keyName**(): `string`
+
+#### Returns
+
+`string`
+
+#### Defined in
+
+[lib/entity/entity.ts:55](https://github.com/redis/redis-om-node/blob/39d7998/lib/entity/entity.ts#L55)
 
 ## Methods
 
@@ -43,4 +61,4 @@ The generated entity ID.
 
 #### Defined in
 
-[lib/entity/entity.ts:47](https://github.com/redis/redis-om-node/blob/ee688a6/lib/entity/entity.ts#L47)
+[lib/entity/entity.ts:59](https://github.com/redis/redis-om-node/blob/39d7998/lib/entity/entity.ts#L59)

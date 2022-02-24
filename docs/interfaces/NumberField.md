@@ -1,6 +1,6 @@
-[redis-om](../README.md) / NumericField
+[redis-om](../README.md) / NumberField
 
-# Interface: NumericField
+# Interface: NumberField
 
 A field representing a number.
 
@@ -8,14 +8,14 @@ A field representing a number.
 
 - [`Field`](Field.md)
 
-  ↳ **`NumericField`**
+  ↳ **`NumberField`**
 
 ## Table of contents
 
 ### Properties
 
-- [alias](NumericField.md#alias)
-- [type](NumericField.md#type)
+- [alias](NumberField.md#alias)
+- [type](NumberField.md#type)
 
 ## Properties
 
@@ -32,7 +32,7 @@ The default field name in Redis is the key name defined in the
 
 #### Defined in
 
-[lib/schema/schema-definitions.ts:7](https://github.com/redis/redis-om-node/blob/ee688a6/lib/schema/schema-definitions.ts#L7)
+[lib/schema/schema-definitions.ts:15](https://github.com/redis/redis-om-node/blob/39d7998/lib/schema/schema-definitions.ts#L15)
 
 ___
 
@@ -44,4 +44,4 @@ Yep. It's a number.
 
 #### Defined in
 
-[lib/schema/schema-definitions.ts:13](https://github.com/redis/redis-om-node/blob/ee688a6/lib/schema/schema-definitions.ts#L13)
+[lib/schema/schema-definitions.ts:21](https://github.com/redis/redis-om-node/blob/39d7998/lib/schema/schema-definitions.ts#L21)

@@ -1,21 +1,21 @@
-[redis-om](../README.md) / BooleanField
+[redis-om](../README.md) / TextField
 
-# Interface: BooleanField
+# Interface: TextField
 
-A field representing a boolean.
+A field representing searchable text.
 
 ## Hierarchy
 
 - [`Field`](Field.md)
 
-  ↳ **`BooleanField`**
+  ↳ **`TextField`**
 
 ## Table of contents
 
 ### Properties
 
-- [alias](BooleanField.md#alias)
-- [type](BooleanField.md#type)
+- [alias](TextField.md#alias)
+- [type](TextField.md#type)
 
 ## Properties
 
@@ -38,10 +38,10 @@ ___
 
 ### type
 
-• **type**: ``"boolean"``
+• **type**: ``"text"``
 
-Yep. It's a boolean.
+Yep. It's searchable text.
 
 #### Defined in
 
-[lib/schema/schema-definitions.ts:47](https://github.com/redis/redis-om-node/blob/39d7998/lib/schema/schema-definitions.ts#L47)
+[lib/schema/schema-definitions.ts:41](https://github.com/redis/redis-om-node/blob/39d7998/lib/schema/schema-definitions.ts#L41)

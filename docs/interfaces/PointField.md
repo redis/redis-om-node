@@ -1,21 +1,21 @@
-[redis-om](../README.md) / BooleanField
+[redis-om](../README.md) / PointField
 
-# Interface: BooleanField
+# Interface: PointField
 
-A field representing a boolean.
+A field representing a point on the globe.
 
 ## Hierarchy
 
 - [`Field`](Field.md)
 
-  ↳ **`BooleanField`**
+  ↳ **`PointField`**
 
 ## Table of contents
 
 ### Properties
 
-- [alias](BooleanField.md#alias)
-- [type](BooleanField.md#type)
+- [alias](PointField.md#alias)
+- [type](PointField.md#type)
 
 ## Properties
 
@@ -38,10 +38,10 @@ ___
 
 ### type
 
-• **type**: ``"boolean"``
+• **type**: ``"point"``
 
-Yep. It's a boolean.
+Yep. It's a point.
 
 #### Defined in
 
-[lib/schema/schema-definitions.ts:47](https://github.com/redis/redis-om-node/blob/39d7998/lib/schema/schema-definitions.ts#L47)
+[lib/schema/schema-definitions.ts:53](https://github.com/redis/redis-om-node/blob/39d7998/lib/schema/schema-definitions.ts#L53)

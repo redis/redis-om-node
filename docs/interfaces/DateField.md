@@ -1,21 +1,21 @@
-[redis-om](../README.md) / BooleanField
+[redis-om](../README.md) / DateField
 
-# Interface: BooleanField
+# Interface: DateField
 
-A field representing a boolean.
+A field representing a date/time.
 
 ## Hierarchy
 
 - [`Field`](Field.md)
 
-  ↳ **`BooleanField`**
+  ↳ **`DateField`**
 
 ## Table of contents
 
 ### Properties
 
-- [alias](BooleanField.md#alias)
-- [type](BooleanField.md#type)
+- [alias](DateField.md#alias)
+- [type](DateField.md#type)
 
 ## Properties
 
@@ -38,10 +38,10 @@ ___
 
 ### type
 
-• **type**: ``"boolean"``
+• **type**: ``"date"``
 
-Yep. It's a boolean.
+Yep. It's a date.
 
 #### Defined in
 
-[lib/schema/schema-definitions.ts:47](https://github.com/redis/redis-om-node/blob/39d7998/lib/schema/schema-definitions.ts#L47)
+[lib/schema/schema-definitions.ts:59](https://github.com/redis/redis-om-node/blob/39d7998/lib/schema/schema-definitions.ts#L59)

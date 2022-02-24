@@ -3,13 +3,13 @@
 # Class: Repository<TEntity\>
 
 A repository is the main interaction point for reading, writing, and
-removing [Entities](Entity.md) from Redis. Create one by passing
-in a [Schema](Schema.md) and a [Client](Client.md). Then use the [Repository.fetch](Repository.md#fetch),
-[Repository.save](Repository.md#save), and [Repository.remove](Repository.md#remove) methods to manage your
-data:
+removing [Entities](Entity.md) from Redis. Create one by calling
+[Client.fetchRepository](Client.md#fetchrepository) and passing in a [Schema](Schema.md). Then
+use the [Repository.fetch](Repository.md#fetch), [Repository.save](Repository.md#save), and
+[Repository.remove](Repository.md#remove) methods to manage your data:
 
 ```typescript
-let repository = new Repository<Foo>(schema, client);
+let repository = client.fetchRepository<Foo>(schema);
 
 let foo = await repository.fetch('01FK6TCJBDK41RJ766A4SBWDJ9');
 foo.aString = 'bar';
@@ -17,8 +17,8 @@ foo.aBoolean = false;
 await repository.save(foo);
 ```
 
-Be sure to use the repository to create a new instance of [Entity](Entity.md) you want
-to create before you save it:
+Be sure to use the repository to create a new instance of an
+[Entity](Entity.md) you want to create before you save it:
 
 ```typescript
 let foo = await repository.createEntity();
@@ -45,9 +45,9 @@ let entities = await repository.search()
 
 ## Table of contents
 
-### Constructors
+### Properties
 
-- [constructor](Repository.md#constructor)
+- [client](Repository.md#client)
 
 ### Methods
 
@@ -55,35 +55,22 @@ let entities = await repository.search()
 - [createEntity](Repository.md#createentity)
 - [createIndex](Repository.md#createindex)
 - [dropIndex](Repository.md#dropindex)
+- [expire](Repository.md#expire)
 - [fetch](Repository.md#fetch)
 - [remove](Repository.md#remove)
 - [save](Repository.md#save)
 - [search](Repository.md#search)
+- [searchRaw](Repository.md#searchraw)
 
-## Constructors
+## Properties
 
-### constructor
+### client
 
-• **new Repository**<`TEntity`\>(`schema`, `client`)
-
-Constructs a new Repository.
-
-#### Type parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `TEntity` | extends [`Entity`](Entity.md)<`TEntity`\> | The type of [Entity](Entity.md) that this repository manages. |
-
-#### Parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `schema` | [`Schema`](Schema.md)<`TEntity`\> | The [Schema](Schema.md) for this Repository. |
-| `client` | [`Client`](Client.md) | An open [Client](Client.md). |
+• `Protected` **client**: [`Client`](Client.md)
 
 #### Defined in
 
-[lib/repository/repository.ts:66](https://github.com/redis/redis-om-node/blob/ee688a6/lib/repository/repository.ts#L66)
+[lib/repository/repository.ts:56](https://github.com/redis/redis-om-node/blob/39d7998/lib/repository/repository.ts#L56)
 
 ## Methods
 
@@ -108,7 +95,7 @@ The newly created and saved Entity.
 
 #### Defined in
 
-[lib/repository/repository.ts:156](https://github.com/redis/redis-om-node/blob/ee688a6/lib/repository/repository.ts#L156)
+[lib/repository/repository.ts:150](https://github.com/redis/redis-om-node/blob/39d7998/lib/repository/repository.ts#L150)
 
 ___
 
@@ -132,7 +119,7 @@ A newly created Entity.
 
 #### Defined in
 
-[lib/repository/repository.ts:113](https://github.com/redis/redis-om-node/blob/ee688a6/lib/repository/repository.ts#L113)
+[lib/repository/repository.ts:115](https://github.com/redis/redis-om-node/blob/39d7998/lib/repository/repository.ts#L115)
 
 ___
 
@@ -149,7 +136,7 @@ that RediSearch or RedisJSON is installed on your instance of Redis.
 
 #### Defined in
 
-[lib/repository/repository.ts:77](https://github.com/redis/redis-om-node/blob/ee688a6/lib/repository/repository.ts#L77)
+[lib/repository/repository.ts:69](https://github.com/redis/redis-om-node/blob/39d7998/lib/repository/repository.ts#L69)
 
 ___
 
@@ -157,7 +144,7 @@ ___
 
 ▸ **dropIndex**(): `Promise`<`void`\>
 
-Removes an existing index from Redis. Use this method if you want to swap out you index
+Removes an existing index from Redis. Use this method if you want to swap out your index
 because your [Entity](Entity.md) has changed. Requires that RediSearch or RedisJSON is installed
 on your instance of Redis.
 
@@ -167,7 +154,31 @@ on your instance of Redis.
 
 #### Defined in
 
-[lib/repository/repository.ts:96](https://github.com/redis/redis-om-node/blob/ee688a6/lib/repository/repository.ts#L96)
+[lib/repository/repository.ts:97](https://github.com/redis/redis-om-node/blob/39d7998/lib/repository/repository.ts#L97)
+
+___
+
+### expire
+
+▸ **expire**(`id`, `ttlInSeconds`): `Promise`<`void`\>
+
+Set the time to live of the [Entity](Entity.md). If the [Entity](Entity.md) is not
+found, does nothing.
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `id` | `string` | The ID of the [Entity](Entity.md) to set and expiration for. |
+| `ttlInSeconds` | `number` | THe time to live in seconds. |
+
+#### Returns
+
+`Promise`<`void`\>
+
+#### Defined in
+
+[lib/repository/repository.ts:185](https://github.com/redis/redis-om-node/blob/39d7998/lib/repository/repository.ts#L185)
 
 ___
 
@@ -193,7 +204,7 @@ The matching Entity.
 
 #### Defined in
 
-[lib/repository/repository.ts:169](https://github.com/redis/redis-om-node/blob/ee688a6/lib/repository/repository.ts#L169)
+[lib/repository/repository.ts:163](https://github.com/redis/redis-om-node/blob/39d7998/lib/repository/repository.ts#L163)
 
 ___
 
@@ -216,7 +227,7 @@ not found, does nothing.
 
 #### Defined in
 
-[lib/repository/repository.ts:190](https://github.com/redis/redis-om-node/blob/ee688a6/lib/repository/repository.ts#L190)
+[lib/repository/repository.ts:174](https://github.com/redis/redis-om-node/blob/39d7998/lib/repository/repository.ts#L174)
 
 ___
 
@@ -241,7 +252,7 @@ The ID of the Entity just saved.
 
 #### Defined in
 
-[lib/repository/repository.ts:130](https://github.com/redis/redis-om-node/blob/ee688a6/lib/repository/repository.ts#L130)
+[lib/repository/repository.ts:132](https://github.com/redis/redis-om-node/blob/39d7998/lib/repository/repository.ts#L132)
 
 ___
 
@@ -249,8 +260,8 @@ ___
 
 ▸ **search**(): [`Search`](Search.md)<`TEntity`\>
 
-Kicks off the processes of building a query. Requires that RediSearch or
-RedisJSON is installed on your instance of Redis.
+Kicks off the process of building a query. Requires that RediSearch (and optionally
+RedisJSON) be is installed on your instance of Redis.
 
 #### Returns
 
@@ -260,4 +271,32 @@ A [Search](Search.md) object.
 
 #### Defined in
 
-[lib/repository/repository.ts:201](https://github.com/redis/redis-om-node/blob/ee688a6/lib/repository/repository.ts#L201)
+[lib/repository/repository.ts:196](https://github.com/redis/redis-om-node/blob/39d7998/lib/repository/repository.ts#L196)
+
+___
+
+### searchRaw
+
+▸ **searchRaw**(`query`): [`RawSearch`](RawSearch.md)<`TEntity`\>
+
+Creates a search that bypassed Redis OM and instead allows you to execute a raw
+RediSearch query. Requires that RediSearch (and optionally RedisJSON) be installed
+on your instance of Redis.
+
+**`query`** The raw RediSearch query you want to rune.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `query` | `string` |
+
+#### Returns
+
+[`RawSearch`](RawSearch.md)<`TEntity`\>
+
+A [RawSearch](RawSearch.md) object.
+
+#### Defined in
+
+[lib/repository/repository.ts:208](https://github.com/redis/redis-om-node/blob/39d7998/lib/repository/repository.ts#L208)
