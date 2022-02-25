@@ -35,11 +35,11 @@
   - 🔌 [Connect to Redis with a Client](#-connect-to-redis-with-a-client)
     - [Redis Connection Strings](#redis-connection-strings)
   - 📇 [Define an Entity and a Schema](#-define-an-entity-and-a-schema)
-  - 🖋 [Reading and Writing with Repository](#-reading-and-writing-with-repository)
+  - 🖋 [Reading, Writing, and Removing with Repository](#-reading-writing-and-removing-with-repository)
     - [Missing Entities and Null Values](#missing-entities-and-null-values)
     - [A Note for TypeScript Users](#a-note-for-typescript-users)
   - 🧮 [Embedding Your Own Logic into Entities](#-embedding-your-own-logic-into-entities)
-  - 📄 [Using RedisJSON](#-using-redisjson)
+  - 📄 [Using Hashes](#-using-hashes)
   - 🔎 [Using RediSearch](#-using-redisearch)
     - [Build the Index](#build-the-index)
     - [Finding All The Things (and Returning Them)](#finding-all-the-things-and-returning-them)
@@ -47,14 +47,15 @@
       - [First Things First](#first-things-first)
       - [Counting](#counting)
     - [Finding Specific Things](#finding-specific-things)
-      - [Searching on Whole Strings](#searching-on-whole-strings)
+      - [Searching on Strings](#searching-on-strings)
       - [Searching on Numbers](#searching-on-numbers)
       - [Searching on Booleans](#searching-on-booleans)
-      - [Searching Arrays](#searching-arrays)
+      - [Searching on Dates](#searching-on-dates)
+      - [Searching String Arrays](#searching-string-arrays)
       - [Full-Text Search](#full-text-search)
       - [Searching on Points](#searching-on-points)
       - [Chaining Searches](#chaining-searches)
-  - 👊 [Combining RedisJSON and RediSearch](#-combining-redisjson-and-redisearch)
+      - [Running Raw Searches](#running-raw-searches)
   - 📚 [Documentation](#-documentation)
   - ⛏️ [Troubleshooting](#%EF%B8%8F-troubleshooting)
   - ❤️ [Contributing](#%EF%B8%8F-contributing)
@@ -71,7 +72,7 @@ class Album extends Entity {}
 
 let schema = new Schema(Album, {
   artist: { type: 'string' },
-  title: { type: 'string', textSearch: true },
+  title: { type: 'text' },
   year: { type: 'number' }
 });
 ```
@@ -138,7 +139,7 @@ Excellent. Setup done. Let's write some code!
 You connect to Redis using a [*client*](docs/classes/Client.md). The `Client` class has methods to open, close, and execute raw commands against Redis.
 
 ```javascript
-let { Client } = require('redis-om')
+import { Client } from 'redis-om'
 
 (async function() {
 
@@ -167,8 +168,7 @@ import { Client } from 'redis-om';
 
 (async function() {
 
-  let client = new Client();
-  await client.open('redis://localhost:6379');
+  let client = await new Client().open('redis://localhost:6379');
 
   let aString = await client.execute<string>(['PING']);
   // 'PONG'
@@ -186,6 +186,24 @@ import { Client } from 'redis-om';
 </details>
 
 Mostly you'll use `.open`, `.close`, and `.fetchRepository` (which we'll talk about soon enough). But, on occasion, you might need to talk to Redis directly. The `.execute` method allows you to do that.
+
+If you find you need to talk to Redis directly a *lot* or you need more than just a basic connection to Redis, you'll want to take a look at the `.use` method on `Client`. It will allow you to bind an existing [Node Redis](https://github.com/redis/node-redis) connection to your Redis OM Client:
+
+```javascript
+import { createClient } from 'redis'
+import { Client } from 'redis-om'
+
+(async function() {
+
+  let redis = createClient('redis://localhost:6379')
+  let client = await new Client().use(redis)
+
+  await redis.set('foo', 'bar')
+  let value = await client.execute(['GET', 'foo'])
+})()
+```
+
+Use `.use` to take advantage of things like [clustering](https://github.com/redis/node-redis#clustering). Details on all that stuff are way beyond the scope of this README. You can read about it in the Node Redis [documentation](https://github.com/redis/node-redis).
 
 ### Redis Connection Strings
 
@@ -212,14 +230,14 @@ class Album extends Entity {}
 class Studio extends Entity {}
 ```
 
-[Schemas](docs/classes/Schema.md) define the fields on your entity, their types, and how they are mapped internally to Redis. By default, entities map to Hashes in Redis, but you can also use JSON (more on that later):
+[Schemas](docs/classes/Schema.md) define the fields on your entity, their types, and how they are mapped internally to Redis. By default, entities map to JSON documents using RedisJSON, but you can change it to use Hashes if want (more on that later):
 
 ```javascript
 let albumSchema = new Schema(Album, {
   artist: { type: 'string' },
-  title: { type: 'string' },
+  title: { type: 'text' },
   year: { type: 'number' },
-  genres: { type: 'array' },
+  genres: { type: 'string[]' },
   outOfPublication: { type: 'boolean' }
 })
 
@@ -227,38 +245,46 @@ let studioSchema = new Studio(Studio, {
   name: { type: 'string' },
   city: { type: 'string' },
   state: { type: 'string' },
-  location: { type: 'point' }
+  location: { type: 'point' },
+  established: { type: 'date' }
 })
 ```
 
-When you create a `Schema`, it modifies the entity you handed it, adding getters and setters for the properties you define. The type those getters and setters accept and return are defined with the type parameter above. Valid values are: `string`, `number`, `boolean`, `array`, or `point`. The first three do exactly what you think—they define a property that is a String, a Number, or a Boolean. `array` specifically defines an array of Strings and `point` defines a point somehwere on the globe as a longitude and a latitude.
+When you create a `Schema`, it modifies the entity you handed it, adding getters and setters for the properties you define. The type those getters and setters accept and return are defined with the type parameter above. Valid values are: `string`, `number`, `boolean`, `string[]`, `date`, `point`, or `text`.
+
+The first three do exactly what you think—they define a property that is a [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String), a [Number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number), or a [Boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean). `string[]` does what you'd think as well, specifically defining an [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array) of Strings.
+
+`date` is a little different, but still more or less what you'd expect. It defines a property that returns a [Date](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date) and can be set using not only a Date but also a String containing an [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) date or a number with the [UNIX epoch time](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date#the_ecmascript_epoch_and_timestamps) in *milliseconds*.
+
+A `point` defines a point somewhere on the globe as a longitude and a latitude. It defines a property that returns and accepts a simple object with `longitude` and `latitude` properties. Like this:
+
+```javascript
+let point = { longitude: 12.34, latitude: 56.78 }
+```
+
+A `text` field is a lot like a `string`. If you're just reading and writing objects, they are identical. But if you want to *search* on them, they are very, very different. I'll cover that in detail when I talk about [using RediSearch](#-using-redisearch) but the tl;dr is that `string` fields can only be matched on their whole value—no partial matches—and are best for keys while `text` fields have full-text search enabled on them and are optimized for human-readable text.
 
 There are several other options available when defining a schema for your entity. Check them out in the [detailed documentation](docs/classes/Schema.md) for the `Schema` class.
 
-## 🖋 Reading and Writing with Repository
+## 🖋 Reading, Writing, and Removing with Repository
 
-Now that we have a client and a schema, we have what we need to make a [*repository*](docs/classes/Repository.md). A repository provides the means to read, write, and remove entities. Creating a repository is pretty straightforward:
+Now that we have a client and a schema, we have what we need to make a [*repository*](docs/classes/Repository.md). A repository provides the means to read, write, and remove entities. Creating a repository is pretty straightforward—just ask the client for it:
 
 ```javascript
 import { Repository } from 'redis-om'
 
-let albumRepository = new Repository(albumSchema, client)
-```
-
-Alternatively, you can just ask the client for a repository:
-
-```javascript
+let albumRepository = client.fetchRepository(albumSchema)
 let studioRepository = client.fetchRepository(studioSchema)
 ```
 
-Regardless of how we got it, once we have a repository, we can use it to create entities:
+Once we have a repository, we can use it to create entities:
 
 ```javascript
 let album = albumRepository.createEntity()
 album.entityId // '01FJYWEYRHYFT8YTEGQBABJ43J'
 ```
 
-Note that entities created by `.createEntity` are not saved to Redis (at least not yet). They've only been instantiated and populated with an entity ID. This ID is a [ULID](https://github.com/ulid/spec), and is a unique id representing that object. To create a new entity *and* save it to Redis, we need to set all the properties on the entity that we care about, and call `.save`:
+Note that entities created by `.createEntity` are not saved to Redis (at least not yet). They've only been instantiated and populated with an entity ID. This ID is a [ULID](https://github.com/ulid/spec) and is a unique id representing that object. To create a new entity *and* save it to Redis, we need to set all the properties on the entity that we care about, and call `.save`:
 
 ```javascript
 let album = albumRepository.createEntity()
@@ -278,7 +304,8 @@ let studio = studioRepository.createEntity({
   name: "Bad Racket Recording Studio",
   city: "Cleveland",
   state: "Ohio",
-  location: { longitude: -81.6764187, latitude: 41.5080462 }
+  location: { longitude: -81.6764187, latitude: 41.5080462 },
+  established: new Date('2010-12-27')
 })
 
 let id = await studioRepository.save(studio) // '01FVDN241NGTPHSAV0DFDBXC90'
@@ -291,7 +318,8 @@ let studio = studioRepository.createAndSave({
   name: "Bad Racket Recording Studio",
   city: "Cleveland",
   state: "Ohio",
-  location: { longitude: -81.6764187, latitude: 41.5080462 }
+  location: { longitude: -81.6764187, latitude: 41.5080462 },
+  established: new Date('2010-12-27')
 })
 ```
 
@@ -319,6 +347,13 @@ Or `.remove` it:
 
 ```javascript
 await studioRepository.remove('01FVDN241NGTPHSAV0DFDBXC90')
+```
+
+You can also set an entity to expire after a certain number of seconds. Redis will automatically remove that entity when the time's up. Use the `.expire` method to do this:
+
+```javascript
+let ttlInSeconds = 12 * 60 * 60  // 12 hours
+await studioRepository.expire('01FVDN241NGTPHSAV0DFDBXC90', ttlInSeconds)
 ```
 
 ### Missing Entities and Null Values
@@ -349,7 +384,7 @@ let id = await albumRepository.save(album)
 let exists = await client.execute(['EXISTS', 'Album:01FJYWEYRHYFT8YTEGQBABJ43J']) // 0
 ```
 
-It does this because Redis doesn't distinguish between missing and null. You could have an entity that is all nulls. Or you could not. Redis doesn't know which is your intention, and so always returns *something* when you call `.fetch`.
+It does this because Redis—particularly Redis Hashes—doesn't distinguish between missing and null. You could have an entity that is all nulls. Or you could not. Redis doesn't know which is your intention, and so always returns *something* when you call `.fetch`.
 
 ### A Note for TypeScript Users
 
@@ -381,7 +416,7 @@ let albumSchema = new Schema(Album, {
   artist: { type: 'string' },
   title: { type: 'string' },
   year: { type: 'number' },
-  genres: { type: 'array' },
+  genres: { type: 'string[]' },
   outOfPublication: { type: 'boolean' }
 })
 ```
@@ -414,23 +449,23 @@ class Album extends Entity {
 }
 ```
 
-## 📄 Using RedisJSON
+## 📄 Using Hashes
 
-By default, Redis OM stores your entities in Hashes. But if you're using [RedisJSON][redis-json-url], you can instead choose to store your entities as JSON. It works exactly the same as using Hashes, but when you define your schema, just pass in an option telling it to use JSON:
+By default, Redis OM stores your entities in JSON documents. But if you're not using [RedisJSON][redis-json-url], you can instead choose to store your entities as Hashes. It works exactly the same as using JSON, but when you define your schema, just pass in an option telling it to use Hashes:
 
 ```javascript
 let albumSchema = new Schema(Album, {
   artist: { type: 'string' },
   title: { type: 'string' },
   year: { type: 'number' },
-  genres: { type: 'array' },
+  genres: { type: 'string[]' },
   outOfPublication: { type: 'boolean' }
 }, {
-  dataStructure: 'JSON'
+  dataStructure: 'HASH'
 })
 ```
 
-Everything else works the same.
+Everything else is the same.
 
 ## 🔎 Using RediSearch
 
@@ -454,12 +489,15 @@ To use search you have to build an index. If you don't, you'll get errors. To bu
 await albumRepository.createIndex();
 ```
 
-If you change your schema, you'll need to rebuild your index. To do that, you'll need to drop the index and create it again:
+If you change your schema, no worries. Redis OM will automatically rebuild the index for you. Just call `.createIndex` again. And don't worry if you call `.createIndex` when your schema *hasn't* changed. Redis OM will only rebuild your index if the schema has changed. So, you can safely use it in your startup code.
+
+However, if you have a *lot* of data, rebuilding an index can take some time. So, you might want to explicitly manage the building and rebuilding of your indices in some sort of deployment code script thing. To support those devops sorts of things, Redis OM includes a `.dropIndex` method to explicit remove an index without rebuilding it:
 
 ```javascript
 await albumRepository.dropIndex();
-await albumRepository.createIndex();
 ```
+
+You probably won't use this in your application, but if you come up with a cool use for it, I'd love to hear about it!
 
 ### Finding All The Things (and Returning Them)
 
@@ -471,7 +509,7 @@ let albums = await albumRepository.search().return.all()
 
 #### Pagination
 
-It's possible that you have a *lot* of albums; I know I do. In that case, you can page through the results. Just pass in the zero-based offset and the number of results you want:
+It's possible you have a *lot* of albums; I know I do. In that case, you can page through the results. Just pass in the zero-based offset and the number of results you want:
 
 ```javascript
 let offset = 100
@@ -493,7 +531,7 @@ Note: If you have *no* albums, this will return `null`.
 
 #### Counting
 
-Sometimes you just want to know how many entities you have. For that, you can call `.count`:
+Sometimes you just want to know how many albums you have. For that, you can call `.count`:
 
 ```javascript
 let count = await albumRepository.search().return.count()
@@ -501,13 +539,13 @@ let count = await albumRepository.search().return.count()
 
 ### Finding Specific Things
 
-It's fine and dandy to return all the things. But that's not what you usually want to do. You want to find *specific* things. Redis OM will let you find those specific things by [strings](#searching-on-whole-strings), [numbers](#searching-on-numbers), and [booleans](#searching-on-booleans). You can also search for strings that are in an [array](#searching-arrays), perform [full-text search](#full-text-search) within strings, and search for [points](#searching-on-points) on the globe within a particular area.
+It's fine and dandy to return all the things. But that's not what you usually want to do. You want to find *specific* things. Redis OM will let you find those specific things by [strings](#searching-on-strings), [numbers](#searching-on-numbers), and [booleans](#searching-on-booleans). You can also search for strings that are in an [array](#searching-string-arrays), perform [full-text search](#full-text-search) within strings, search by [date](#searching-on-dates), and search for [points](#searching-on-points) on the globe within a particular area.
 
 And it does it with a fluent interface that allows—but does not demand—code that reads like a sentence. See below for exhaustive examples of all the syntax available to you.
 
-#### Searching on Whole Strings
+#### Searching on Strings
 
-You can search for a whole string. This syntax will not search for partial strings or words within a string. If you want to do that, check out [Full-Text Search](#full-text-search).
+When you set the field type in your schema to `string`, you can search for a whole string. This syntax will not search for partial strings or words within a string. It only matches the *entire* string. If you want to search for words or partial words within text you need to use the `text` type and search it using the [Full-Text Search](#full-text-search) syntax.
 
 ```javascript
 let albums
@@ -528,7 +566,7 @@ albums = await albumRepository.search().where('artist').is.not.equalTo('Mushroom
 
 #### Searching on Numbers
 
-You can search against fields that contain numbers—both integers and floating-point numbers—with all the comparisons you'd expect to see:
+When you set the field type in your schema to `number`, you can store both integers and floating-point numbers. And you can search against it with all the comparisons you'd expect to see:
 
 ```javascript
 let albums
@@ -582,7 +620,7 @@ albums = await albumRepository.search().where('year').is.not.between(1980, 1989)
 
 #### Searching on Booleans
 
-You can search against fields that contain booleans:
+You can search against fields that contain booleans if you defined a field type of `boolean` in your schema:
 
 ```javascript
 let albums
@@ -624,9 +662,103 @@ albums = await albumRepository.search().where('outOfPublication').is.not.true().
 albums = await albumRepository.search().where('outOfPublication').is.not.false().return.all()
 ```
 
-#### Searching Arrays
+#### Searching on Dates
 
-You can search on *whole strings* that are in an array:
+If you have a field type of `date` in your schema, you can search on it using [Dates](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date), [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) formated strings, or the [UNIX epoch time](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date#the_ecmascript_epoch_and_timestamps) in *milliseconds*:
+
+```javascript
+studios = await studioRepository.search().where('established').on(new Date('2010-12-27')).return.all()
+studios = await studioRepository.search().where('established').on('2010-12-27').return.all()
+studios = await studioRepository.search().where('established').on(1293408000000).return.all()
+```
+
+There are several date comparison methods to use. And they can be negated:
+
+```javascript
+let date = new Date('2010-12-27')
+let laterDate = new Date('2020-12-27')
+
+studios = await studioRepository.search().where('established').on(date).return.all()
+studios = await studioRepository.search().where('established').not.on(date).return.all()
+studios = await studioRepository.search().where('established').before(date).return.all()
+studios = await studioRepository.search().where('established').not.before(date).return.all()
+studios = await studioRepository.search().where('established').after(date).return.all()
+studios = await studioRepository.search().where('established').not.after(date).return.all()
+studios = await studioRepository.search().where('established').onOrBefore(date).return.all()
+studios = await studioRepository.search().where('established').not.onOrBefore(date).return.all()
+studios = await studioRepository.search().where('established').onOrAfter(date).return.all()
+studios = await studioRepository.search().where('established').not.onOrAfter(date).return.all()
+studios = await studioRepository.search().where('established').between(date, laterDate).return.all()
+studios = await studioRepository.search().where('established').not.between(date, laterDate).return.all()
+```
+
+More fluent variations work too:
+
+```javascript
+let date = new Date('2010-12-27')
+let laterDate = new Date('2020-12-27')
+
+studios = await studioRepository.search().where('established').is.on(date).return.all()
+studios = await studioRepository.search().where('established').is.not.on(date).return.all()
+
+studios = await studioRepository.search().where('established').is.before(date).return.all()
+studios = await studioRepository.search().where('established').is.not.before(date).return.all()
+
+studios = await studioRepository.search().where('established').is.onOrBefore(date).return.all()
+studios = await studioRepository.search().where('established').is.not.onOrBefore(date).return.all()
+
+studios = await studioRepository.search().where('established').is.after(date).return.all()
+studios = await studioRepository.search().where('established').is.not.after(date).return.all()
+
+studios = await studioRepository.search().where('established').is.onOrAfter(date).return.all()
+studios = await studioRepository.search().where('established').is.not.onOrAfter(date).return.all()
+
+studios = await studioRepository.search().where('established').is.between(date, laterDate).return.all()
+studios = await studioRepository.search().where('established').is.not.between(date, laterDate).return.all()
+```
+
+And, since dates are really just numbers, all the numeric comparisons work too:
+
+```javascript
+let date = new Date('2010-12-27')
+let laterDate = new Date('2020-12-27')
+
+studios = await studioRepository.search().where('established').eq(date).return.all()
+studios = await studioRepository.search().where('established').not.eq(date).return.all()
+studios = await studioRepository.search().where('established').equals(date).return.all()
+studios = await studioRepository.search().where('established').does.equal(date).return.all()
+studios = await studioRepository.search().where('established').does.not.equal(date).return.all()
+studios = await studioRepository.search().where('established').is.equalTo(date).return.all()
+studios = await studioRepository.search().where('established').is.not.equalTo(date).return.all()
+
+studios = await studioRepository.search().where('established').gt(date).return.all()
+studios = await studioRepository.search().where('established').not.gt(date).return.all()
+studios = await studioRepository.search().where('established').greaterThan(date).return.all()
+studios = await studioRepository.search().where('established').is.greaterThan(date).return.all()
+studios = await studioRepository.search().where('established').is.not.greaterThan(date).return.all()
+      
+studios = await studioRepository.search().where('established').gte(date).return.all()
+studios = await studioRepository.search().where('established').not.gte(date).return.all()
+studios = await studioRepository.search().where('established').greaterThanOrEqualTo(date).return.all()
+studios = await studioRepository.search().where('established').is.greaterThanOrEqualTo(date).return.all()
+studios = await studioRepository.search().where('established').is.not.greaterThanOrEqualTo(date).return.all()
+
+studios = await studioRepository.search().where('established').lt(date).return.all()
+studios = await studioRepository.search().where('established').not.lt(date).return.all()
+studios = await studioRepository.search().where('established').lessThan(date).return.all()
+studios = await studioRepository.search().where('established').is.lessThan(date).return.all()
+studios = await studioRepository.search().where('established').is.not.lessThan(date).return.all()
+      
+studios = await studioRepository.search().where('established').lte(date).return.all()
+studios = await studioRepository.search().where('established').not.lte(date).return.all()
+studios = await studioRepository.search().where('established').lessThanOrEqualTo(date).return.all()
+studios = await studioRepository.search().where('established').is.lessThanOrEqualTo(date).return.all()
+studios = await studioRepository.search().where('established').is.not.lessThanOrEqualTo(date).return.all()
+```
+
+#### Searching String Arrays
+
+If you have a field type of `string[]` you can search for *whole strings* that are in that array:
 
 ```javascript
 let albums
@@ -654,15 +786,11 @@ albums = await albumRepository.search().where('genres').does.not.containOneOf('r
 
 #### Full-Text Search
 
-By default, a string matches the entire string. So, if the title of your album is "The Righteous & The Butterfly", to find that album using its title, you'll need to provide the exact and entire string. However, you can configure a string for full-text search in the schema by setting `textSearch` to `true`:
+If you've defined a field with a type of `text` in your schema, you can store text in it and perform full-text searches against it. Full-text search is different from how a `string` is searched, which can only match the entire string. With full-text search, you can look for words, partial words, and exact phrases within a body of text.
 
-```javascript
-  ...
-  title: { type: 'string', textSearch: true },
-  ...
-```
+Full-text search is optimized for human-readable text and it's pretty clever. It understands that certain words (like *a*, *an*, or *the*) are common and ignores them. It understands how words relate to each other and so if you search for *give*, it matches *gives*, *given*, *giving*, and *gave* too. It ignores punctuation.
 
-Doing this gives you the full power of [RediSearch][redisearch-url] by enabling full-text search against that string instead of matching the whole string. Full-text search is pretty clever. It understands that certain words (like *a*, *an*, or *the*) are common and ignores them. It understands how words relate to each other and so if you search for 'give', it matches 'gave', 'gives', 'given', and 'giving' too. Plus, if you need to, you can override this to do exact matches of a word or phrase.
+Here are some examples of doing full-text search against some album titles:
 
 ```javascript
 let albums
@@ -677,21 +805,32 @@ albums = await albumRepository.search().where('title').match('beautiful children
 albums = await albumRepository.search().where('title').matchExact('beautiful stories').return.all()
 ```
 
-Redis OM also exposes word prefix searches from RediSearch. If you are looking for a word that starts with a particular value, just tack a `*` on the end and it'll match accordingly:
+If you want to search for a part of a word, you can do that too, but only the front part of a word. To do it, just tack a `*` on the end of your partial word and it'll match accordingly:
 
 ```javascript
 // finds all albums where the title contains a word that starts with 'right'
 albums = await albumRepository.search().where('title').match('right*').return.all()
 ```
 
-But do not combine these. I repeat, **DO NOT COMBINE THESE**. Prefix searches and exact matches are not compatible. If you try to exactly match a prefixed search, you'll get an error.
+However, this only works for the front part of a word. And you need to provide *at least* two characters. So, for example, the following queries will *not* work:
+
+```javascript
+// INVALID: Wildcard must be at the end of the word
+albums = await albumRepository.search().where('title').match('*fly').return.all()
+albums = await albumRepository.search().where('title').match('*hild*').return.all()
+
+// INVALID: At least two characters required before wildcard
+albums = await albumRepository.search().where('title').match('b*').return.all()
+```
+
+Also, do not combine partial-word searches with exact matches. Partial-word searches and exact matches are not compatible in RediSearch. If you try to exactly match a partial-word search, you'll get an error.
 
 ```javascript
 // THIS WILL ERROR
 albums = await albumRepository.search().where('title').matchExact('beautiful sto*').return.all()
 ```
 
-Again, there are several alternatives to make this a bit more fluent and, of course, negation is available:
+As always, there are several alternatives to make this a bit more fluent and, of course, negation is available:
 
 ```javascript
 albums = await albumRepository.search().where('title').not.match('butterfly').return.all()
@@ -725,7 +864,7 @@ studios = await studioRepository.search().where('location').inRadius(
 
 Note that coordinates are specified with the longitude *first*, and then the latitude. This might be the opposite of what you expect but is consistent with how Redis implements coordinates in [RediSearch](https://oss.redis.com/redisearch/Query_Syntax/) and with [GeoSets](https://redis.io/commands#geo).
 
-If you don't want to rely on argument order, you can also specify longitude and latitude more explicity:
+If you don't want to rely on argument order, you can also specify longitude and latitude more explicitly:
 
 ```javascript
 // finds all the studios with 50 miles of downtown Cleveland using a point
@@ -781,7 +920,7 @@ studios = await studioRepository.search().where('location').inRadius(
   circle => circle.origin(-81.7758995, 41.4976393).radius(50).m).return.all()
 ```
 
-If you don't specify the origin, Redis OM will use a longitude 0.0 and a latitude 0.0 (.i.e [Null Island](https://en.wikipedia.org/wiki/Null_Island)):
+If you don't specify the origin, Redis OM will use a longitude 0.0 and a latitude 0.0, also known as [Null Island](https://en.wikipedia.org/wiki/Null_Island):
 
 ```javascript
 // finds all the studios within 50 miles of Null Island (probably ain't much there)
@@ -838,7 +977,7 @@ let albums = await albumRepository.search
   .and('year').is.greaterThan(1990).return.all()
 ```
 
-These are executed in order from left to right, and ignore any order of operations. So this query will match an artist of "Mushroomhead" OR a title matching "butterfly", before it goes on to match that the year is greater than 1990.
+These are executed in order from left to right, and ignore any order of operations. So this query will match an artist of "Mushroomhead" OR a title matching "butterfly" before it goes on to match that the year is greater than 1990.
 
 If you'd like to change this you can nest your queries:
 
@@ -853,24 +992,19 @@ let albums = await albumRepository.search
 
 This query finds all Mushroomhead albums after 1990 or albums that have "butterfly" in the title.
 
-## 👊 Combining RedisJSON and RediSearch
+#### Running Raw Searches
 
-One final note: All of the search capabilities of RediSearch that Redis OM exposes work with Hashes. However, RediSearch also plays nice with RedisJSON. All you need to do to use search with RedisJSON is to enable it in the schema:
+The fluent search interface is nice, but sometimes you need to do something just a bit more. If you want, you can execute a search against your entities using the native RediSearch query syntax. I'm not going to explain the syntax here as it's a bit involved, but you can [read it for yourself](https://oss.redis.com/redisearch/Query_Syntax/) in the RediSearch documentation.
 
+To execute a raw search, just call `.searchRaw` on the repository with your query:
 
 ```javascript
-let albumSchema = new Schema(Album, {
-  artist: { type: 'string' },
-  title: { type: 'string' },
-  year: { type: 'number' },
-  genres: { type: 'array' },
-  outOfPublication: { type: 'boolean' }
-}, {
-  dataStructure: 'JSON'
-})
+// finds all the Mushroomhead albums with the word 'beautiful' in the title from 1990 and beyond
+let query = "@artist:{Mushroomhead} @title:beautiful @year:[1990 +inf]"
+let albums = albumRepository.searchRaw(query).return.all();
 ```
 
-Everything else just works the same.
+The nice thing here is that it returns the same entities that you've been using for everything else. It's just a lower-level way of executing a query for when you need that extra bit of power.
 
 ## 📚 Documentation
 
