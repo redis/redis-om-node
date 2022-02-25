@@ -1,6 +1,6 @@
 import Entity from "../entity/entity";
 import Schema from "./schema";
-import { ArrayField, FieldDefinition, StringField } from './schema-definitions';
+import { StringArrayField, FieldDefinition, StringField } from './schema-definitions';
 
 export default class SchemaBuilder<TEntity extends Entity> {
 
@@ -41,17 +41,13 @@ export default class SchemaBuilder<TEntity extends Entity> {
 
     schemaEntry.push(fieldAlias)
 
+    if (fieldType === 'date') schemaEntry.push('NUMERIC');
     if (fieldType === 'boolean') schemaEntry.push('TAG');
     if (fieldType === 'number') schemaEntry.push('NUMERIC');
-    if (fieldType === 'array')
-      schemaEntry.push('TAG', 'SEPARATOR', (fieldDef as ArrayField).separator ?? '|');
-
-    if (fieldType === 'string') {
-      if ((fieldDef as StringField).textSearch)
-        schemaEntry.push('TEXT');
-      else
-        schemaEntry.push('TAG', 'SEPARATOR', (fieldDef as StringField).separator ?? '|');
-    }
+    if (fieldType === 'point') schemaEntry.push('GEO');
+    if (fieldType === 'string[]') schemaEntry.push('TAG', 'SEPARATOR', (fieldDef as StringArrayField).separator ?? '|');
+    if (fieldType === 'string') schemaEntry.push('TAG', 'SEPARATOR', (fieldDef as StringField).separator ?? '|');
+    if (fieldType === 'text') schemaEntry.push('TEXT');
 
     return schemaEntry;
   }
@@ -62,17 +58,17 @@ export default class SchemaBuilder<TEntity extends Entity> {
     let fieldDef: FieldDefinition = this.schema.definition[field];
     let fieldType = fieldDef.type;
     let fieldAlias = fieldDef.alias ?? field;
-    let fieldPath = `\$.${fieldAlias}${fieldType === 'array' ? '[*]' : ''}`;
+    let fieldPath = `\$.${fieldAlias}${fieldType === 'string[]' ? '[*]' : ''}`;
 
     schemaEntry.push(fieldPath, 'AS', fieldAlias);
 
     if (fieldType === 'boolean') schemaEntry.push('TAG');
     if (fieldType === 'number') schemaEntry.push('NUMERIC');
-    if (fieldType === 'array') schemaEntry.push('TAG');
-    if (fieldType === 'string') {
-      if ((fieldDef as StringField).textSearch) schemaEntry.push('TEXT');
-      else schemaEntry.push('TAG', 'SEPARATOR', (fieldDef as StringField).separator ?? '|');
-    }
+    if (fieldType === 'point') schemaEntry.push('GEO');
+    if (fieldType === 'date') schemaEntry.push('NUMERIC');
+    if (fieldType === 'string[]') schemaEntry.push('TAG');
+    if (fieldType === 'string') schemaEntry.push('TAG', 'SEPARATOR', (fieldDef as StringField).separator ?? '|');
+    if (fieldType === 'text') schemaEntry.push('TEXT');
 
     return schemaEntry;
   }

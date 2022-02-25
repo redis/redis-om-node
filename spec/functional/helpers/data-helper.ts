@@ -3,145 +3,74 @@ import { saveHash, saveJson } from './redis-helper';
 import Client, { SearchDataStructure } from "../../../lib/client";
 import Entity, { EntityConstructor } from "../../../lib/entity/entity";
 import Schema from '../../../lib/schema/schema';
+import { Point } from '../../../lib';
 
-interface CommonEntity {
+import { SampleEntityData } from "../../helpers/example-data";
+
+interface SampleEntity {
   aString?: string | null;
   anotherString?: string | null;
-  aFullTextString?: string | null;
-  anotherFullTextString?: string | null;
+  someText?: string | null;
+  someOtherText?: string | null;
   aNumber?: number | null;
   anotherNumber?: number | null;
   aBoolean?: boolean | null;
   anotherBoolean?: boolean | null;
-  anArray?: string[] | null;
-  anotherArray?: string[] | null;
+  aPoint?: Point | null;
+  anotherPoint?: Point | null;
+  aDate?: Date | null;
+  anotherDate?: Date | null;
+  someStrings?: string[] | null;
+  someOtherStrings?: string[] | null;
 }
 
-export interface HashEntity extends CommonEntity {}
-export interface JsonEntity extends CommonEntity {}
+export interface SampleHashEntity extends SampleEntity {}
+export interface SampleJsonEntity extends SampleEntity {}
 
-class CommonEntity extends Entity {}
-export class HashEntity extends CommonEntity {}
-export class JsonEntity extends CommonEntity {}
+class SampleEntity extends Entity {}
+export class SampleHashEntity extends SampleEntity {}
+export class SampleJsonEntity extends SampleEntity {}
 
-export function createHashEntitySchema() : Schema<HashEntity> {
-  return createSchemaOfType<HashEntity>(HashEntity, 'HASH');
+export function createHashEntitySchema() : Schema<SampleHashEntity> {
+  return createSchemaOfType<SampleHashEntity>(SampleHashEntity, 'HASH');
 }
 
-export function createJsonEntitySchema() : Schema<JsonEntity> {
-  return createSchemaOfType<JsonEntity>(JsonEntity, 'JSON');
+export function createChangedHashEntitySchema() : Schema<SampleHashEntity> {
+  return createSchemaOfType<SampleHashEntity>(SampleHashEntity, 'HASH', 'sample-hash-entity');
 }
 
-function createSchemaOfType<TEntity extends Entity>(ctor: EntityConstructor<TEntity>, dataStructure: SearchDataStructure) : Schema<TEntity> {
+export function createJsonEntitySchema() : Schema<SampleJsonEntity> {
+  return createSchemaOfType<SampleJsonEntity>(SampleJsonEntity, 'JSON');
+}
+
+export function createChangedJsonEntitySchema() : Schema<SampleJsonEntity> {
+  return createSchemaOfType<SampleJsonEntity>(SampleJsonEntity, 'JSON', 'sample-json-entity');
+}
+
+function createSchemaOfType<TEntity extends Entity>(ctor: EntityConstructor<TEntity>, dataStructure: SearchDataStructure, prefix?: string) : Schema<TEntity> {
   return new Schema<TEntity>(
     ctor, {
       aString: { type: 'string' },
       anotherString: { type: 'string' },
-      aFullTextString: { type: 'string', textSearch: true },
-      anotherFullTextString: { type: 'string', textSearch: true },
+      someText: { type: 'text' },
+      someOtherText: { type: 'text' },
       aNumber: { type: 'number' },
       anotherNumber: { type: 'number' },
       aBoolean: { type: 'boolean' },
       anotherBoolean: { type: 'boolean' },
-      anArray: { type: 'array' },
-      anotherArray: { type: 'array' }
+      aPoint: { type: 'point' },
+      anotherPoint: { type: 'point' },
+      aDate: { type: 'date' },
+      anotherDate: { type: 'date' },
+      someStrings: { type: 'string[]' },
+      someOtherStrings: { type: 'string[]' }
     }, {
+      prefix,
       dataStructure
     });
 }
 
-type CommonEntityData = {
-  aString: string | null;
-  anotherString: string | null;
-  aFullTextString: string | null;
-  anotherFullTextString: string | null;
-  aNumber: number | null;
-  anotherNumber: number | null;
-  aBoolean: boolean | null;
-  anotherBoolean: boolean | null;
-  anArray: string[] | null;
-  anotherArray: string[] | null;  
-};
-
-export const AN_ENTITY: CommonEntityData = {
-  aString: 'foo',
-  anotherString: 'bar',
-  aFullTextString: 'The quick brown fox jumped over the lazy dog.',
-  anotherFullTextString: 'The five boxing wizards jump quickly.',
-  aNumber: 42,
-  anotherNumber: 23,
-  aBoolean: true,
-  anotherBoolean: false,
-  anArray: [ 'alfa', 'bravo', 'charlie'],
-  anotherArray: [ 'bravo', 'charlie', 'delta' ]
-};
-
-export const ANOTHER_ENTITY: CommonEntityData = {
-  aString: 'bar',
-  anotherString: 'baz',
-  aFullTextString: 'How vexingly quick daft zebras jump!',
-  anotherFullTextString: 'Pack my box with five dozen liquor jugs.',
-  aNumber: 23,
-  anotherNumber: 13,
-  aBoolean: true,
-  anotherBoolean: true,
-  anArray: [ 'bravo', 'charlie', 'delta' ],
-  anotherArray: [ 'charlie', 'delta', 'echo' ]
-};
-
-export const A_THIRD_ENTITY: CommonEntityData = {
-  aString: 'baz',
-  anotherString: 'qux',
-  aFullTextString: 'Sphinx of black quartz, judge my vow.',
-  anotherFullTextString: 'Mr. Jock, TV quiz Ph.D., bags few lynx.',
-  aNumber: 13,
-  anotherNumber: 7,
-  aBoolean: false,
-  anotherBoolean: false,
-  anArray: [ 'charlie', 'delta', 'echo' ],
-  anotherArray: [ 'delta', 'echo', 'foxtrot' ]
-};
-
-export const A_PARTIAL_ENTITY: CommonEntityData = {
-  aString: 'foo',
-  anotherString: null,
-  aFullTextString: 'The quick brown fox jumped over the lazy dog.',
-  anotherFullTextString: null,
-  aNumber: 42,
-  anotherNumber: null,
-  aBoolean: true,
-  anotherBoolean: null,
-  anArray: [ 'alfa', 'bravo', 'charlie'],
-  anotherArray: null
-};
-
-export const AN_EMPTY_ENTITY: CommonEntityData = {
-  aString: null,
-  anotherString: null,
-  aFullTextString: null,
-  anotherFullTextString: null,
-  aNumber: null,
-  anotherNumber: null,
-  aBoolean: null,
-  anotherBoolean: null,
-  anArray: null,
-  anotherArray: null
-};
-
-export const AN_ESCAPED_ENTITY: CommonEntityData = {
-  aString: "foo ,.<>{}[]\"':;!@#$%^*()-+=~& bar",
-  anotherString: null,
-  aFullTextString: "zany ,.<>{}[]\"':;!@#$%^&*()-+=~| fox",
-  anotherFullTextString: null,
-  aNumber: null,
-  anotherNumber: null,
-  aBoolean: null,
-  anotherBoolean: null,
-  anArray: [ 'alfa ,.<>{}[]"\':;!@#$%^&*()-+=~ bravo', 'charlie delta' ],
-  anotherArray: null
-};
-
-export async function loadTestHash(client: Client, key: string, data: CommonEntityData) {
+export async function loadTestHash(client: Client, key: string, data: SampleEntityData) {
 
   let command: string[] = [];
 
@@ -149,22 +78,28 @@ export async function loadTestHash(client: Client, key: string, data: CommonEnti
     let value = (data as any)[field];
     if (value !== null) {
       if (typeof value === 'boolean') command.push(field, value ? '1' : '0');
-      if (typeof value === 'number') command.push(field, value.toString());
-      if (typeof value === 'string') command.push(field, value);
-      if (Array.isArray(value)) command.push(field, value.join('|'));
+      else if (typeof value === 'number') command.push(field, value.toString());
+      else if (typeof value === 'string') command.push(field, value);
+      else if (Array.isArray(value)) command.push(field, value.join('|'));
+      else if (value instanceof Date) command.push(field, value.getTime().toString());
+      else if (typeof value === 'object') command.push(field, `${value.longitude},${value.latitude}`)
     }
   }
 
   if (command.length > 0) await saveHash(client, key, command);
 }
 
-export async function loadTestJson(client: Client, key: string, data: CommonEntityData) {
+export async function loadTestJson(client: Client, key: string, data: SampleEntityData) {
 
   let json: any = {};
 
   for (let field in data) {
     let value = (data as any)[field];
-    if (value !== null) json[field] = value;
+    if (value !== null) {
+      if (value instanceof Date) json[field] = value.getTime();
+      else if (typeof value === 'object' && !Array.isArray(value)) json[field] = `${value.longitude},${value.latitude}`;
+      else json[field] = value;
+    }
   }
 
   await saveJson(client, key, JSON.stringify(json));

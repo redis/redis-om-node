@@ -1,6 +1,7 @@
 import Entity from "../entity/entity";
-import Search from "./search";
+import { Search } from "./search";
 import Where from "./where";
+import { CircleFunction } from "./where-point";
 
 /**
  * Interface with all the methods from all the concrete
@@ -10,66 +11,78 @@ interface WhereField<TEntity> extends Where {
 
   /**
    * Adds an equals comparison to the query.
+   * 
+   * NOTE: this function is not available for strings where full-text
+   * search is enabled. In that scenario, use `.match`.
    * @param value The value to be compared
    * @returns The {@link Search} that was called to create this {@link WhereField}.
    */
-  eq(value: string | number | boolean): Search<TEntity>;
+  eq(value: string | number | boolean | Date): Search<TEntity>;
 
   /**
    * Adds an equals comparison to the query.
+   * 
+   * NOTE: this function is not available for strings where full-text
+   * search is enabled. In that scenario, use `.match`.
    * @param value The value to be compared
    * @returns The {@link Search} that was called to create this {@link WhereField}.
    */
-  equal(value: string | number | boolean): Search<TEntity>;
+  equal(value: string | number | boolean | Date): Search<TEntity>;
 
   /**
    * Adds an equals comparison to the query.
+   *
+   * NOTE: this function is not available for strings where full-text
+   * search is enabled. In that scenario, use `.match`.
    * @param value The value to be compared
    * @returns The {@link Search} that was called to create this {@link WhereField}.
    */
-  equals(value: string | number | boolean): Search<TEntity>;
+  equals(value: string | number | boolean | Date): Search<TEntity>;
 
   /**
    * Adds an equals comparison to the query.
+   *
+   * NOTE: this function is not available for strings where full-text
+   * search is enabled. In that scenario, use `.match`.
    * @param value The value to be compared
    * @returns The {@link Search} that was called to create this {@link WhereField}.
    */
-  equalTo(value: string | number | boolean): Search<TEntity>;
+  equalTo(value: string | number | boolean | Date): Search<TEntity>;
 
   /**
    * Adds a full-text search comparison to the query.
    * @param value The word or phrase sought.
    * @returns The {@link Search} that was called to create this {@link WhereField}.
    */
-  match(value: string): Search<TEntity>;
+  match(value: string | number | boolean): Search<TEntity>;
 
   /**
    * Adds a full-text search comparison to the query.
    * @param value The word or phrase sought.
    * @returns The {@link Search} that was called to create this {@link WhereField}.
    */
-  matches(value: string): Search<TEntity>;
+  matches(value: string | number | boolean): Search<TEntity>;
 
   /**
    * Adds a full-text search comparison to the query that matches an exact word or phrase.
    * @param value The word or phrase sought.
    * @returns The {@link Search} that was called to create this {@link WhereField}.
    */
-  matchExact(value: string): Search<TEntity>;
+  matchExact(value: string | number | boolean): Search<TEntity>;
 
   /**
    * Adds a full-text search comparison to the query that matches an exact word or phrase.
    * @param value The word or phrase sought.
    * @returns The {@link Search} that was called to create this {@link WhereField}.
    */
-  matchExactly(value: string): Search<TEntity>;
+  matchExactly(value: string | number | boolean): Search<TEntity>;
 
   /**
    * Adds a full-text search comparison to the query that matches an exact word or phrase.
    * @param value The word or phrase sought.
    * @returns The {@link Search} that was called to create this {@link WhereField}.
    */
-  matchesExactly(value: string): Search<TEntity>;
+  matchesExactly(value: string | number | boolean): Search<TEntity>;
 
   /**
    * Makes a call to {@link WhereField.match} a {@link WhereField.matchExact} call. Calling
@@ -99,59 +112,59 @@ interface WhereField<TEntity> extends Where {
 
   /**
    * Adds a greater than comparison against a field to the search query.
-   * @param value The number to compare against.
+   * @param value The value to compare against.
    * @returns The {@link Search} that was called to create this {@link WhereField}.
    */
-  gt(value: number): Search<TEntity>;
+  gt(value: string | number | Date): Search<TEntity>;
 
   /**
    * Adds a greater than comparison against a field to the search query.
-   * @param value The number to compare against.
+   * @param value The value to compare against.
    * @returns The {@link Search} that was called to create this {@link WhereField}.
    */
-  greaterThan(value: number): Search<TEntity>;
+  greaterThan(value: string | number | Date): Search<TEntity>;
 
   /**
    * Adds a greater than or equal to comparison against a field to the search query.
-   * @param value The number to compare against.
+   * @param value The value to compare against.
    * @returns The {@link Search} that was called to create this {@link WhereField}.
    */
-  gte(value: number): Search<TEntity>;
+  gte(value: string | number | Date): Search<TEntity>;
 
   /**
    * Adds a greater than or equal to comparison against a field to the search query.
-   * @param value The number to compare against.
+   * @param value The value to compare against.
    * @returns The {@link Search} that was called to create this {@link WhereField}.
    */
-  greaterThanOrEqualTo(value: number): Search<TEntity>;
+  greaterThanOrEqualTo(value: string | number | Date): Search<TEntity>;
 
   /**
    * Adds a less than comparison against a field to the search query.
-   * @param value The number to compare against.
+   * @param value The value to compare against.
    * @returns The {@link Search} that was called to create this {@link WhereField}.
    */
-  lt(value: number): Search<TEntity>;
+  lt(value: string | number | Date): Search<TEntity>;
 
   /**
    * Adds a less than comparison against a field to the search query.
-   * @param value The number to compare against.
+   * @param value The value to compare against.
    * @returns The {@link Search} that was called to create this {@link WhereField}.
    */
-  lessThan(value: number): Search<TEntity>;
+  lessThan(value: string | number | Date): Search<TEntity>;
 
   /**
    * Adds a less than or equal to comparison against a field to the search query.
-   * @param value The number to compare against.
+   * @param value The value to compare against.
    * @returns The {@link Search} that was called to create this {@link WhereField}.
    */
-  lte(value: number): Search<TEntity>;
+  lte(value: string | number | Date): Search<TEntity>;
 
   /**
    * Adds a less than or equal to comparison against a field to the search query.
-   * @param value The number to compare against.
+   * @param value The value to compare against.
    * @returns The {@link Search} that was called to create this {@link WhereField}.
    */
-  lessThanOrEqualTo(value: number): Search<TEntity>;
+  lessThanOrEqualTo(value: string | number | Date): Search<TEntity>;
 
   /**
    * Adds an inclusive range comparison against a field to the search query.
@@ -159,24 +172,24 @@ interface WhereField<TEntity> extends Where {
    * @param upper The upper bound of the range.
    * @returns The {@link Search} that was called to create this {@link WhereField}.
    */
-  between(lower: number, upper: number): Search<TEntity>;
+  between(lower: string | number | Date, upper: string | number | Date): Search<TEntity>;
 
   /**
-   * Adds a whole-string match for a value within an array to the search query.
+   * Adds a whole-string match for a value within a string array to the search query.
    * @param value The string to be matched.
    * @returns The {@link Search} that was called to create this {@link WhereField}.
    */
   contain(value: string): Search<TEntity>;
 
   /**
-   * Adds a whole-string match for a value within an array to the search query.
+   * Adds a whole-string match for a value within a string array to the search query.
    * @param value The string to be matched.
    * @returns The {@link Search} that was called to create this {@link WhereField}.
    */
   contains(value: string): Search<TEntity>;
 
   /**
-   * Adds a whole-string match against an array to the query. If any of the provided
+   * Adds a whole-string match against a string array to the query. If any of the provided
    * strings in `value` is matched in the array, this matched.
    * @param value An array of strings that you want to match one of.
    * @returns The {@link Search} that was called to create this {@link WhereField}.
@@ -184,12 +197,61 @@ interface WhereField<TEntity> extends Where {
   containOneOf(...value: string[]): Search<TEntity>;
 
   /**
-   * Adds a whole-string match against an array to the query. If any of the provided
+   * Adds a whole-string match against a string array to the query. If any of the provided
    * strings in `value` is matched in the array, this matched.
    * @param value An array of strings that you want to match one of.
    * @returns The {@link Search} that was called to create this {@link WhereField}.
    */
   containsOneOf(...value: string[]): Search<TEntity>;
+
+  /**
+   * Adds a search for points that fall within a defined circle.
+   * @param circleFn A function that returns a {@link Circle} instance defining the search area.
+   * @returns The {@link Search} that was called to create this {@link WhereField}.
+   */
+  inCircle(circleFn: CircleFunction): Search<TEntity>;
+
+  /**
+   * Adds a search for points that fall within a defined radius.
+   * @param circleFn A function that returns a {@link Circle} instance defining the search area.
+   * @returns The {@link Search} that was called to create this {@link WhereField}.
+   */
+  inRadius(circleFn: CircleFunction): Search<TEntity>;
+
+  /**
+   * Add a search for an exact UTC datetime to the query.
+   * @param value The datetime to match.
+   * @returns The {@link Search} that was called to create this {@link WhereField}.
+   */
+  on(value: string | number | Date): Search<TEntity>;
+
+  /**
+   * Add a search that matches all datetimes *before* the provided UTC datetime to the query.
+   * @param value The datetime to compare against.
+   * @returns The {@link Search} that was called to create this {@link WhereField}.
+   */
+  before(value: string | number | Date): Search<TEntity>;
+
+  /**
+   * Add a search that matches all datetimes *after* the provided UTC datetime to the query.
+   * @param value The datetime to compare against.
+   * @returns The {@link Search} that was called to create this {@link WhereField}.
+   */
+  after(value: string | number | Date): Search<TEntity>;
+
+  /**
+   * Add a search that matches all datetimes *on or before* the provided UTC datetime to the query.
+   * @param value The datetime to compare against.
+   * @returns The {@link Search} that was called to create this {@link WhereField}.
+   */
+  onOrBefore(value: string | number | Date): Search<TEntity>;
+
+  /**
+   * Add a search that matches all datetimes *on or after* the provided UTC datetime to the query.
+   * @param value The datetime to compare against.
+   * @returns The {@link Search} that was called to create this {@link WhereField}.
+   */
+  onOrAfter(value: string | number | Date): Search<TEntity>;
 }
 
 /**
@@ -224,7 +286,7 @@ interface WhereField<TEntity> extends Where {
    * Returns the current instance. Syntactic sugar to make your code more fluent.
    * @returns this
    */
-   get does() {
+  get does() {
     return this;
   }
 
@@ -233,7 +295,7 @@ interface WhereField<TEntity> extends Where {
    * *not* met. Calling this multiple times will negate the negation.
    * @returns this
    */
-   get not() {
+  get not() {
     this.negate();
     return this;
   }

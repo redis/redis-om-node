@@ -1,15 +1,22 @@
-import { createClient } from '@node-redis/client';
+import { createClient } from 'redis';
 
-import { RedisClientType, } from '@node-redis/client/dist/lib/client';
-import { RedisScripts, RedisModules } from '@node-redis/client/dist/lib/commands';
 import RedisError from '../errors';
+
+export type RedisConnection = ReturnType<typeof createClient>;
 
 export default class RedisShim {
 
-  private redis!: RedisClientType<RedisModules, RedisScripts>;
+  private redis!: RedisConnection;
 
-  async open(url: string) {
-    this.redis = createClient({ url });
+  constructor(urlOrConnection: string | RedisConnection) {
+    if (typeof(urlOrConnection) === 'string') {
+      this.redis = createClient({ url: urlOrConnection });
+    } else {
+      this.redis = urlOrConnection;
+    }
+  }
+
+  async open() {
     await this.redis.connect();
   }
 
@@ -23,6 +30,18 @@ export default class RedisShim {
 
   async unlink(key: string) {
     await this.redis.unlink(key);
+  }
+
+  async expire(key: string, ttl: number) {
+    await this.redis.expire(key, ttl);
+  }
+
+  get(key: string) {
+    return this.redis.get(key);
+  }
+
+  set(key: string, value: string) {
+    return this.redis.set(key, value);
   }
 
   hgetall(key: string) {

@@ -1,23 +1,26 @@
 import Client, { SearchDataStructure, HashData, JsonData } from "./client";
-import Entity, { EntityConstructor, EntityData } from "./entity/entity";
+import Entity, { EntityConstructor, EntityData, EntityValue } from "./entity/entity";
 import RedisError from "./errors";
-import Repository, { EntityCreationData } from "./repository/repository";
+import Repository from "./repository/repository";
+import { EntityCreationData } from "./repository/repository";
 import Schema from "./schema/schema";
-import { SchemaDefinition, FieldDefinition, Field, NumericField, StringField, BooleanField, ArrayField,
-  IdStrategy, StopWordOptions } from "./schema/schema-definitions";
+import { 
+  SchemaDefinition, IdStrategy, StopWordOptions, Point, FieldDefinition, 
+  Field, BooleanField, DateField, NumberField, PointField, StringField, StringArrayField, TextField } from "./schema/schema-definitions";
 import { SchemaOptions } from "./schema/schema-options";
-import Search, { SubSearchFunction } from "./search/search";
+import { AbstractSearch, Search, RawSearch, SubSearchFunction } from "./search/search";
 import Where from "./search/where";
 import WhereField from "./search/where-field";
+import { Circle, CircleFunction } from "./search/where-point";
 
 
 export {
   Client, SearchDataStructure, HashData, JsonData, 
-  Entity, EntityConstructor, EntityData,
-  RedisError,
-  Repository, EntityCreationData,
-  Schema, SchemaDefinition, SchemaOptions,
-  FieldDefinition, Field, NumericField, StringField, BooleanField, ArrayField, IdStrategy, StopWordOptions,
-  Search, SubSearchFunction,
-  Where, WhereField
+  Entity, EntityConstructor, EntityData, EntityValue, 
+  RedisError, Repository, EntityCreationData,
+  Schema, SchemaDefinition, SchemaOptions, Point,
+  FieldDefinition, IdStrategy, StopWordOptions,
+  Field, BooleanField, DateField, NumberField, PointField, StringField, StringArrayField, TextField,
+  AbstractSearch, Search, RawSearch, SubSearchFunction,
+  Where, WhereField, Circle, CircleFunction
 };

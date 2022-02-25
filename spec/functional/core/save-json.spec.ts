@@ -1,16 +1,21 @@
-import { fetchJson, keyExists } from '../helpers/redis-helper';
-import { JsonEntity, AN_ENTITY, A_PARTIAL_ENTITY, AN_EMPTY_ENTITY, createJsonEntitySchema} from '../helpers/data-helper';
-
 import Client from '../../../lib/client';
 import Schema from '../../../lib/schema/schema';
 import Repository from '../../../lib/repository/repository';
 
+import { SampleJsonEntity, createJsonEntitySchema} from '../helpers/data-helper';
+import { fetchJson, flushAll, keyExists } from '../helpers/redis-helper';
+
+import {
+  AN_ENTITY, A_PARTIAL_ENTITY, AN_EMPTY_ENTITY,
+  A_POINT_STRING, ANOTHER_POINT_STRING,
+  A_DATE_EPOCH, ANOTHER_DATE_EPOCH } from '../../helpers/example-data';
+
 describe("save JSON", () => {
 
   let client: Client;
-  let repository: Repository<JsonEntity>;
-  let schema: Schema<JsonEntity>;
-  let entity: JsonEntity;
+  let repository: Repository<SampleJsonEntity>;
+  let schema: Schema<SampleJsonEntity>;
+  let entity: SampleJsonEntity;
   let entityId: string;
   let entityKey: string;
 
@@ -19,13 +24,10 @@ describe("save JSON", () => {
     await client.open();
 
     schema = createJsonEntitySchema();
-    repository = client.fetchRepository<JsonEntity>(schema);
+    repository = client.fetchRepository<SampleJsonEntity>(schema);
   });
   
-  beforeEach(async () => {
-    await client.execute(['FLUSHALL']);
-  });
-
+  beforeEach(async () => await flushAll(client));
   afterAll(async () => await client.close());
 
   describe("when saving a fully populated entity to redis", () => {
@@ -33,23 +35,40 @@ describe("save JSON", () => {
       entity = repository.createEntity({
         aString: AN_ENTITY.aString,
         anotherString: AN_ENTITY.anotherString,
-        aFullTextString: AN_ENTITY.aFullTextString,
-        anotherFullTextString: AN_ENTITY.anotherFullTextString,
+        someText: AN_ENTITY.someText,
+        someOtherText: AN_ENTITY.someOtherText,
         aNumber: AN_ENTITY.aNumber,
         anotherNumber: AN_ENTITY.anotherNumber,
         aBoolean: AN_ENTITY.aBoolean,
         anotherBoolean: AN_ENTITY.anotherBoolean,
-        anArray: AN_ENTITY.anArray,
-        anotherArray: AN_ENTITY.anotherArray
+        aPoint: AN_ENTITY.aPoint,
+        anotherPoint: AN_ENTITY.anotherPoint,
+        aDate: AN_ENTITY.aDate,
+        anotherDate: AN_ENTITY.anotherDate,
+        someStrings: AN_ENTITY.someStrings,
+        someOtherStrings: AN_ENTITY.someOtherStrings
       });
       entityId = await repository.save(entity);
-      entityKey = `JsonEntity:${entityId}`;
+      entityKey = `SampleJsonEntity:${entityId}`;
     });
 
     it("creates the expected JSON", async () => {
       let json = await fetchJson(client, entityKey);
       let data = JSON.parse(json);
-      expect(data).toEqual(expect.objectContaining(AN_ENTITY));
+      expect(data.aString).toBe(AN_ENTITY.aString);
+      expect(data.anotherString).toBe(AN_ENTITY.anotherString);
+      expect(data.someText).toBe(AN_ENTITY.someText);
+      expect(data.someOtherText).toBe(AN_ENTITY.someOtherText);
+      expect(data.aNumber).toBe(AN_ENTITY.aNumber);
+      expect(data.anotherNumber).toBe(AN_ENTITY.anotherNumber);
+      expect(data.aBoolean).toBe(AN_ENTITY.aBoolean);
+      expect(data.anotherBoolean).toBe(AN_ENTITY.anotherBoolean);
+      expect(data.aPoint).toBe(A_POINT_STRING);
+      expect(data.anotherPoint).toBe(ANOTHER_POINT_STRING);
+      expect(data.aDate).toBe(A_DATE_EPOCH);
+      expect(data.anotherDate).toBe(ANOTHER_DATE_EPOCH);
+      expect(data.someStrings).toEqual(AN_ENTITY.someStrings);
+      expect(data.someOtherStrings).toEqual(AN_ENTITY.someOtherStrings);
     });
   });
 
@@ -58,17 +77,21 @@ describe("save JSON", () => {
       entity = repository.createEntity({
         aString: A_PARTIAL_ENTITY.aString,
         anotherString: A_PARTIAL_ENTITY.anotherString,
-        aFullTextString: A_PARTIAL_ENTITY.aFullTextString,
-        anotherFullTextString: A_PARTIAL_ENTITY.anotherFullTextString,
+        someText: A_PARTIAL_ENTITY.someText,
+        someOtherText: A_PARTIAL_ENTITY.someOtherText,
         aNumber: A_PARTIAL_ENTITY.aNumber,
         anotherNumber: A_PARTIAL_ENTITY.anotherNumber,
         aBoolean: A_PARTIAL_ENTITY.aBoolean,
         anotherBoolean: A_PARTIAL_ENTITY.anotherBoolean,
-        anArray: A_PARTIAL_ENTITY.anArray,
-        anotherArray: A_PARTIAL_ENTITY.anotherArray
+        aPoint: A_PARTIAL_ENTITY.aPoint,
+        anotherPoint: A_PARTIAL_ENTITY.anotherPoint,
+        aDate: A_PARTIAL_ENTITY.aDate,
+        anotherDate: A_PARTIAL_ENTITY.anotherDate,
+        someStrings: A_PARTIAL_ENTITY.someStrings,
+        someOtherStrings: A_PARTIAL_ENTITY.someOtherStrings
       });
       entityId = await repository.save(entity);
-      entityKey = `JsonEntity:${entityId}`;
+      entityKey = `SampleJsonEntity:${entityId}`;
     });
 
     it("creates the expected JSON", async () => {
@@ -76,14 +99,18 @@ describe("save JSON", () => {
       let data = JSON.parse(json);
       expect(data.aString).toBe(A_PARTIAL_ENTITY.aString);
       expect(data.anotherString).toBeUndefined();
-      expect(data.aFullTextString).toBe(A_PARTIAL_ENTITY.aFullTextString);
-      expect(data.anotherFullTextString).toBeUndefined();
+      expect(data.someText).toBe(A_PARTIAL_ENTITY.someText);
+      expect(data.someOtherText).toBeUndefined();
       expect(data.aNumber).toBe(A_PARTIAL_ENTITY.aNumber);
       expect(data.anotherNumber).toBeUndefined();
       expect(data.aBoolean).toBe(A_PARTIAL_ENTITY.aBoolean);
       expect(data.anotherBoolean).toBeUndefined();
-      expect(data.anArray).toEqual(A_PARTIAL_ENTITY.anArray);
-      expect(data.anotherArray).toBeUndefined();
+      expect(data.aPoint).toBe(A_POINT_STRING);
+      expect(data.anotherPoint).toBeUndefined();
+      expect(data.aDate).toBe(A_DATE_EPOCH);
+      expect(data.anotherDate).toBeUndefined();
+      expect(data.someStrings).toEqual(A_PARTIAL_ENTITY.someStrings);
+      expect(data.someOtherStrings).toBeUndefined();
     });
   });
 
@@ -92,17 +119,21 @@ describe("save JSON", () => {
       entity = repository.createEntity({
         aString: AN_EMPTY_ENTITY.aString,
         anotherString: AN_EMPTY_ENTITY.anotherString,
-        aFullTextString: AN_EMPTY_ENTITY.aFullTextString,
-        anotherFullTextString: AN_EMPTY_ENTITY.anotherFullTextString,
+        someText: AN_EMPTY_ENTITY.someText,
+        someOtherText: AN_EMPTY_ENTITY.someOtherText,
         aNumber: AN_EMPTY_ENTITY.aNumber,
         anotherNumber: AN_EMPTY_ENTITY.anotherNumber,
         aBoolean: AN_EMPTY_ENTITY.aBoolean,
         anotherBoolean: AN_EMPTY_ENTITY.anotherBoolean,
-        anArray: AN_EMPTY_ENTITY.anArray,
-        anotherArray: AN_EMPTY_ENTITY.anotherArray
+        aPoint: AN_EMPTY_ENTITY.aPoint,
+        anotherPoint: AN_EMPTY_ENTITY.anotherPoint,
+        aDate: AN_EMPTY_ENTITY.aDate,
+        anotherDate: AN_EMPTY_ENTITY.anotherDate,
+        someStrings: AN_EMPTY_ENTITY.someStrings,
+        someOtherStrings: AN_EMPTY_ENTITY.someOtherStrings
       });
       entityId = await repository.save(entity);
-      entityKey = `JsonEntity:${entityId}`;
+      entityKey = `SampleJsonEntity:${entityId}`;
     });
 
     it("does not save JSON", async () => {

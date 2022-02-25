@@ -1,8 +1,7 @@
 import { HashData, JsonData } from "../client";
 import Entity from "../entity/entity";
 import { EntityData } from '../entity/entity';
-import HashConverter from "../repository/hash-converter";
-import JsonConverter from "../repository/json-converter";
+import { JsonConverter, HashConverter } from "../repository/converter";
 import Schema from "../schema/schema";
 
 export abstract class SearchResultsConverter<TEntity extends Entity> {
@@ -56,7 +55,7 @@ export class HashSearchResultsConverter<TEntity extends Entity> extends SearchRe
 
     let converter = new HashConverter(this.schema.definition);
     let entityData: EntityData = converter.toEntityData(hashData);
-    return new this.schema.entityCtor(this.schema.definition, id, entityData);
+    return new this.schema.entityCtor(this.schema, id, entityData);
   }
 }
 
@@ -66,6 +65,6 @@ export class JsonSearchResultsConverter<TEntity extends Entity> extends SearchRe
     let jsonData: JsonData = JSON.parse(jsonString);
     let converter = new JsonConverter(this.schema.definition);
     let entityData: EntityData = converter.toEntityData(jsonData);
-    return new this.schema.entityCtor(this.schema.definition, id, entityData);
+    return new this.schema.entityCtor(this.schema, id, entityData);
   }
 }
