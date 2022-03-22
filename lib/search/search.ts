@@ -15,6 +15,7 @@ import WhereText from './where-text';
 
 import { HashSearchResultsConverter, JsonSearchResultsConverter } from "./results-converter";
 import { RedisError } from "..";
+import { SortOptions } from "../client";
 import WhereDate from "./where-date";
 
 /**
@@ -37,6 +38,9 @@ export abstract class AbstractSearch<TEntity extends Entity> {
 
   /** @internal */
   protected client: Client;
+  
+  /** @internal */
+  protected sort?: SortOptions;
 
   /** @internal */
   constructor(schema: Schema<TEntity>, client: Client) {
@@ -46,6 +50,65 @@ export abstract class AbstractSearch<TEntity extends Entity> {
 
   /** @internal */
   abstract get query(): string;
+
+  /**
+   * Applies sorting for the query.
+   * @param field The field to sort by.
+   * @param order The order of returned {@link Entity | Entities} Defaults to `ASC` (ascending) if not specified
+   * @returns this
+   */
+  sortBy(field:string, order:'ASC'|'DESC'='ASC') : Search<TEntity> {
+    let fieldDef = this.schema.definition[field];
+
+    if (fieldDef === undefined) 
+      throw new Error(`The field '${field}' is not part of the schema.`);
+
+    if(this.schema.dataStructure === 'JSON')
+      throw new Error(`Sorting is not supported for schemas with JSON datastructures. Refer to https://oss.redis.com/redisearch/Indexing_JSON/#sortable_not_supported_on_tag`);
+
+    if(fieldDef.type === 'array')
+      throw new Error(`Sorting is not supported for array field types.`);
+
+    if(!fieldDef.sortable)
+      throw new Error(`Sorting is not enabled at '${field}'. Enable sorting in the field's schema.`);
+
+    this.sort = { field, order };
+    return this;
+  }
+
+  /**
+   * Find the minimal value of a field.
+   * @returns The {@link Entity | Entities} with the minimal value 
+   */
+  async min (field:string) : Promise<TEntity> {
+    this.sortBy(field, 'ASC');
+    return await this.first();
+  }
+
+  /**
+   * Find the minimal value of a field.
+   * @returns The {@link Entity | Entities} with the minimal value 
+   */
+  async returnMin (field:string) : Promise<TEntity> {
+    return await this.min(field);
+  }
+
+  /**
+   * Find the maximal value of a field.
+   * @returns The {@link Entity | Entities} with the maximal value 
+   */
+  async max (field:string) : Promise<TEntity> {
+    this.sortBy(field, 'DESC');
+    return await this.first();
+  }
+
+  /**
+   * Find the maximal value of a field.
+   * @returns The {@link Entity | Entities} with the maximal value 
+   */
+  async returnMax (field:string) : Promise<TEntity> {
+    return await this.max(field);
+  }
 
   /**
    * Returns the number of {@link Entity | Entities} that match this query.
@@ -254,6 +317,28 @@ export class Search<TEntity extends Entity> extends AbstractSearch<TEntity> {
   or(subSearchFn: SubSearchFunction<TEntity>): Search<TEntity>;
   or(fieldOrFn: string | SubSearchFunction<TEntity>): WhereField<TEntity> | Search<TEntity> {
     return this.anyWhere(WhereOr, fieldOrFn);
+  }
+
+  private async callSearch(offset = 0, count = 0) {
+    let options: SearchOptions = { 
+      indexName: this.schema.indexName,
+      query: this.query,
+      offset,
+      count,
+      sort:this.sort
+    };
+
+    let searchResults
+    try {
+      searchResults = await this.client.search(options);
+    } catch (error) {
+      let message = (error as Error).message
+      if (message.startsWith("Syntax error")) {
+        throw new RedisError(`The query to RediSearch had a syntax error: "${message}".\nThis is often the result of using a stop word in the query. Either change the query to not use a stop word or change the stop words in the schema definition. You can check the RediSearch source for the default stop words at: https://github.com/RediSearch/RediSearch/blob/master/src/stopwords.h.`)
+      }
+      throw error
+    }
+    return searchResults
   }
 
   private anyWhere(ctor: AndOrConstructor, fieldOrFn: string | SubSearchFunction<TEntity>): WhereField<TEntity> | Search<TEntity> {

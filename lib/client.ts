@@ -30,11 +30,18 @@ export type CreateIndexOptions = {
 }
 
 /** @internal */
+export interface SortOptions {
+    field:string;
+    order:'ASC'|'DESC';
+}
+
+/** @internal */
 export type SearchOptions = {
-  indexName: string,
-  query: string,
-  offset: number,
-  count: number
+    indexName: string,
+    query: string,
+    offset: number,
+    count: number,
+    sort?: SortOptions;
 }
 
 /**
@@ -145,10 +152,10 @@ export default class Client {
   /** @internal */
   async search(options: SearchOptions) {
     this.validateShimOpen();
-    let { indexName, query, offset, count } = options
-    return await this.shim.execute<any[]>([
-      'FT.SEARCH', indexName, query,
-      'LIMIT', offset.toString(), count.toString() ]);
+    let { indexName, query, offset, count, sort } = options
+    const Q = ['FT.SEARCH', indexName, query, 'LIMIT', offset.toString(), count.toString() ]
+    if(sort !== undefined) Q.push('SORTBY', sort.field, sort.order);
+    return await this.shim!.execute<any[]>(Q);
   }
 
   /** @internal */

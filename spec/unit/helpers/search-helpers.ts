@@ -93,6 +93,29 @@ export function mockClientSearchToReturnMultipleHashes() {
     .mockResolvedValue(['3']);
 }
 
+export function mockClientSearchToReturnMultipleSortedByNumberHashes() {
+    mocked(Client.prototype.search)
+      .mockResolvedValueOnce([
+        '3',
+        'SimpleHashEntity:3', [
+            'aString', 'baz',
+            'aNumber', '13',
+            'aBoolean', '0',
+            'anArray', 'baz|qux|quux' ],
+        'SimpleHashEntity:2', [
+            'aString', 'bar',
+            'aNumber', '23',
+            'aBoolean', '1',
+            'anArray', 'bar|baz|qux' ],
+        'SimpleHashEntity:1', [
+            'aString', 'foo',
+            'aNumber', '42',
+            'aBoolean', '0',
+            'anArray', 'foo|bar|baz' ],
+        ])
+      .mockResolvedValue(['3']);
+  }
+
 export function mockClientSearchToReturnMultipleJsonStrings() {
   mocked(Client.prototype.search)
     .mockResolvedValueOnce([

@@ -19,12 +19,18 @@ export interface Field {
 export interface NumberField extends Field {
   /** Yep. It's a number. */
   type: 'number';
+
+  /** Enables sorting by this field. */
+  sortable?: boolean;
 }
 
 /** A field representing a whole string. */
 export interface StringField extends Field {
   /** Yep. It's a string. */
   type: 'string';
+
+  /** Enables sorting by this field. */
+  sortable?: boolean;
 
   /**
    * Due to how RediSearch works, strings and arrays are sometimes stored the same in Redis, as a
@@ -45,6 +51,11 @@ export interface TextField extends Field {
 export interface BooleanField extends Field {
   /** Yep. It's a boolean. */
   type: 'boolean';
+
+  /** Enables sorting by this field. Keep in mind that booleans are represented by 0's and 1's so 
+   * sorting will work accoordingly
+   */
+  sortable?: boolean;
 }
 
 /** A field representing a point on the globe. */

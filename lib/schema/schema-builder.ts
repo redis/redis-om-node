@@ -1,6 +1,6 @@
 import Entity from "../entity/entity";
 import Schema from "./schema";
-import { StringArrayField, FieldDefinition, StringField } from './schema-definitions';
+import { StringArrayField, FieldDefinition, NumericField, StringField } from './schema-definitions';
 
 export default class SchemaBuilder<TEntity extends Entity> {
 
@@ -41,13 +41,39 @@ export default class SchemaBuilder<TEntity extends Entity> {
 
     schemaEntry.push(fieldAlias)
 
-    if (fieldType === 'date') schemaEntry.push('NUMERIC');
-    if (fieldType === 'boolean') schemaEntry.push('TAG');
-    if (fieldType === 'number') schemaEntry.push('NUMERIC');
-    if (fieldType === 'point') schemaEntry.push('GEO');
-    if (fieldType === 'string[]') schemaEntry.push('TAG', 'SEPARATOR', (fieldDef as StringArrayField).separator ?? '|');
-    if (fieldType === 'string') schemaEntry.push('TAG', 'SEPARATOR', (fieldDef as StringField).separator ?? '|');
-    if (fieldType === 'text') schemaEntry.push('TEXT');
+    if (fieldType === 'date') {
+      schemaEntry.push('NUMERIC');
+      if ((fieldDef as StringField).sortable) schemaEntry.push('SORTABLE');
+    }
+    
+    if (fieldType === 'boolean') {
+      schemaEntry.push('TAG');
+      if ((fieldDef as StringField).sortable) schemaEntry.push('SORTABLE');
+    }
+    
+    if (fieldType === 'number') {
+      schemaEntry.push('NUMERIC');
+      if ((fieldDef as NumericField).sortable) schemaEntry.push('SORTABLE');
+    }
+    
+    if (fieldType === 'point') {
+      schemaEntry.push('GEO');
+    }
+    
+    if (fieldType === 'string[]') {
+      schemaEntry.push('TAG', 'SEPARATOR', (fieldDef as StringArrayField).separator ?? '|');
+      if ((fieldDef as StringField).sortable) schemaEntry.push('SORTABLE');
+    }
+
+    if (fieldType === 'string') {
+      schemaEntry.push('TAG', 'SEPARATOR', (fieldDef as StringField).separator ?? '|');
+      if ((fieldDef as StringField).sortable) schemaEntry.push('SORTABLE');
+    }
+    
+    if (fieldType === 'text') {
+      schemaEntry.push('TEXT');
+      if ((fieldDef as StringField).sortable) schemaEntry.push('SORTABLE');
+    }
 
     return schemaEntry;
   }
@@ -61,6 +87,8 @@ export default class SchemaBuilder<TEntity extends Entity> {
     let fieldPath = `\$.${fieldAlias}${fieldType === 'string[]' ? '[*]' : ''}`;
 
     schemaEntry.push(fieldPath, 'AS', fieldAlias);
+    
+    // TODO: add sortable here too
 
     if (fieldType === 'boolean') schemaEntry.push('TAG');
     if (fieldType === 'number') schemaEntry.push('NUMERIC');
