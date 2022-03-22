@@ -1,7 +1,7 @@
-import { mocked } from 'ts-jest/utils';
+import { mocked } from 'jest-mock';
 
 import Client from "../../../lib/client";
-import Search from "../../../lib/search/search";
+import { Search } from "../../../lib/search/search";
 import WhereField from '../../../lib/search/where-field';
 
 import { simpleHashSchema, SimpleHashEntity, SimpleJsonEntity, simpleJsonSchema } from "../helpers/test-entity-and-schema";

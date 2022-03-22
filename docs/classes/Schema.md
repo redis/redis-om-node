@@ -4,16 +4,19 @@
 
 Defines a schema that determines how an [Entity](Entity.md) is mapped to Redis
 data structures. Construct by passing in an [EntityConstructor](../README.md#entityconstructor),
-a [SchemaDefinition](../README.md#schemadefinition), and [SchemaOptions](../README.md#schemaoptions):
+a [SchemaDefinition](../README.md#schemadefinition), and optionally [SchemaOptions](../README.md#schemaoptions):
 
 ```typescript
 let schema = new Schema(Foo, {
   aString: { type: 'string' },
   aNumber: { type: 'number' },
   aBoolean: { type: 'boolean' },
-  anArray: { type: 'array' }
+  someText: { type: 'text' },
+  aPoint: { type: 'point' },
+  aDate: { type: 'date' },
+  someStrings: { type: 'string[]' }
 }, {
-  dataStructure: 'JSON'
+  dataStructure: 'HASH'
 });
 ```
 
@@ -35,6 +38,8 @@ its constructor.
 ### Accessors
 
 - [dataStructure](Schema.md#datastructure)
+- [indexHash](Schema.md#indexhash)
+- [indexHashName](Schema.md#indexhashname)
 - [indexName](Schema.md#indexname)
 - [prefix](Schema.md#prefix)
 - [stopWords](Schema.md#stopwords)
@@ -66,7 +71,7 @@ its constructor.
 
 #### Defined in
 
-[lib/schema/schema.ts:54](https://github.com/redis/redis-om-node/blob/ee688a6/lib/schema/schema.ts#L54)
+[lib/schema/schema.ts:58](https://github.com/redis/redis-om-node/blob/39d7998/lib/schema/schema.ts#L58)
 
 ## Accessors
 
@@ -83,7 +88,39 @@ that this Schema uses to store [Entities](Entity.md) in Redis.
 
 #### Defined in
 
-[lib/schema/schema.ts:73](https://github.com/redis/redis-om-node/blob/ee688a6/lib/schema/schema.ts#L73)
+[lib/schema/schema.ts:80](https://github.com/redis/redis-om-node/blob/39d7998/lib/schema/schema.ts#L80)
+
+___
+
+### indexHash
+
+• `get` **indexHash**(): `string`
+
+The hash value of this index. Stored in Redis under [Schema.indexHashName](Schema.md#indexhashname).
+
+#### Returns
+
+`string`
+
+#### Defined in
+
+[lib/schema/schema.ts:96](https://github.com/redis/redis-om-node/blob/39d7998/lib/schema/schema.ts#L96)
+
+___
+
+### indexHashName
+
+• `get` **indexHashName**(): `string`
+
+The configured name for the RediSearch index hash for this Schema.
+
+#### Returns
+
+`string`
+
+#### Defined in
+
+[lib/schema/schema.ts:74](https://github.com/redis/redis-om-node/blob/39d7998/lib/schema/schema.ts#L74)
 
 ___
 
@@ -99,7 +136,7 @@ The configured name for the RediSearch index for this Schema.
 
 #### Defined in
 
-[lib/schema/schema.ts:67](https://github.com/redis/redis-om-node/blob/ee688a6/lib/schema/schema.ts#L67)
+[lib/schema/schema.ts:71](https://github.com/redis/redis-om-node/blob/39d7998/lib/schema/schema.ts#L71)
 
 ___
 
@@ -115,7 +152,7 @@ The configured keyspace prefix in Redis for this Schema.
 
 #### Defined in
 
-[lib/schema/schema.ts:64](https://github.com/redis/redis-om-node/blob/ee688a6/lib/schema/schema.ts#L64)
+[lib/schema/schema.ts:68](https://github.com/redis/redis-om-node/blob/39d7998/lib/schema/schema.ts#L68)
 
 ___
 
@@ -132,7 +169,7 @@ than `CUSTOM`.
 
 #### Defined in
 
-[lib/schema/schema.ts:86](https://github.com/redis/redis-om-node/blob/ee688a6/lib/schema/schema.ts#L86)
+[lib/schema/schema.ts:93](https://github.com/redis/redis-om-node/blob/39d7998/lib/schema/schema.ts#L93)
 
 ___
 
@@ -150,7 +187,7 @@ for more details.
 
 #### Defined in
 
-[lib/schema/schema.ts:80](https://github.com/redis/redis-om-node/blob/ee688a6/lib/schema/schema.ts#L80)
+[lib/schema/schema.ts:87](https://github.com/redis/redis-om-node/blob/39d7998/lib/schema/schema.ts#L87)
 
 ## Methods
 
@@ -166,4 +203,4 @@ Generates a unique string using the configured [IdStrategy](../README.md#idstrat
 
 #### Defined in
 
-[lib/schema/schema.ts:95](https://github.com/redis/redis-om-node/blob/ee688a6/lib/schema/schema.ts#L95)
+[lib/schema/schema.ts:118](https://github.com/redis/redis-om-node/blob/39d7998/lib/schema/schema.ts#L118)

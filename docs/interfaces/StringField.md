@@ -2,7 +2,7 @@
 
 # Interface: StringField
 
-A field representing a string.
+A field representing a whole string.
 
 ## Hierarchy
 
@@ -16,7 +16,6 @@ A field representing a string.
 
 - [alias](StringField.md#alias)
 - [separator](StringField.md#separator)
-- [textSearch](StringField.md#textsearch)
 - [type](StringField.md#type)
 
 ## Properties
@@ -34,7 +33,7 @@ The default field name in Redis is the key name defined in the
 
 #### Defined in
 
-[lib/schema/schema-definitions.ts:7](https://github.com/redis/redis-om-node/blob/ee688a6/lib/schema/schema-definitions.ts#L7)
+[lib/schema/schema-definitions.ts:15](https://github.com/redis/redis-om-node/blob/39d7998/lib/schema/schema-definitions.ts#L15)
 
 ___
 
@@ -42,26 +41,14 @@ ___
 
 • `Optional` **separator**: `string`
 
-Due to how RediSearch works, non-full-text strings and arrays are sometimes stored the same
-in Redis, as a simple string. This is the separator used to split those strings when it is an
-array. If your StringField contains this separator, this can cause problems. You can change it
-here to avoid those problems. Defaults to `|`.
+Due to how RediSearch works, strings and arrays are sometimes stored the same in Redis, as a
+simple string. This is the separator used to split those strings when it is an array. If your
+StringField contains this separator, this can cause problems. You can change it here to avoid
+those problems. Defaults to `|`.
 
 #### Defined in
 
-[lib/schema/schema-definitions.ts:30](https://github.com/redis/redis-om-node/blob/ee688a6/lib/schema/schema-definitions.ts#L30)
-
-___
-
-### textSearch
-
-• `Optional` **textSearch**: `boolean`
-
-Enables full-text search on this field when set to `true`. Defaults to `false`.
-
-#### Defined in
-
-[lib/schema/schema-definitions.ts:22](https://github.com/redis/redis-om-node/blob/ee688a6/lib/schema/schema-definitions.ts#L22)
+[lib/schema/schema-definitions.ts:35](https://github.com/redis/redis-om-node/blob/39d7998/lib/schema/schema-definitions.ts#L35)
 
 ___
 
@@ -73,4 +60,4 @@ Yep. It's a string.
 
 #### Defined in
 
-[lib/schema/schema-definitions.ts:19](https://github.com/redis/redis-om-node/blob/ee688a6/lib/schema/schema-definitions.ts#L19)
+[lib/schema/schema-definitions.ts:27](https://github.com/redis/redis-om-node/blob/39d7998/lib/schema/schema-definitions.ts#L27)

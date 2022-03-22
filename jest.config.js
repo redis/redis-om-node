@@ -1,7 +1,7 @@
 module.exports = {
   collectCoverage: true,
   coverageDirectory: "coverage",
-projects: [{
+  projects: [{
     displayName: "unit",
     roots: [ "<rootDir>/lib/", "<rootDir>/spec/unit/" ],
     clearMocks: true,

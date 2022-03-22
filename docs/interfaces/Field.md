@@ -8,13 +8,19 @@ Base interface for all fields.
 
 - **`Field`**
 
-  ↳ [`NumericField`](NumericField.md)
+  ↳ [`BooleanField`](BooleanField.md)
+
+  ↳ [`DateField`](DateField.md)
+
+  ↳ [`NumberField`](NumberField.md)
+
+  ↳ [`PointField`](PointField.md)
 
   ↳ [`StringField`](StringField.md)
 
-  ↳ [`BooleanField`](BooleanField.md)
+  ↳ [`StringArrayField`](StringArrayField.md)
 
-  ↳ [`ArrayField`](ArrayField.md)
+  ↳ [`TextField`](TextField.md)
 
 ## Table of contents
 
@@ -33,4 +39,4 @@ The default field name in Redis is the key name defined in the
 
 #### Defined in
 
-[lib/schema/schema-definitions.ts:7](https://github.com/redis/redis-om-node/blob/ee688a6/lib/schema/schema-definitions.ts#L7)
+[lib/schema/schema-definitions.ts:15](https://github.com/redis/redis-om-node/blob/39d7998/lib/schema/schema-definitions.ts#L15)

@@ -20,7 +20,15 @@ export type SchemaOptions = {
    */
   indexName?: string;
 
-  /** The data structure used to store the {@link Entity} in Redis. */
+  /**
+   * The name used by Redis OM to store the hash of the index for this {@link Schema}.
+   * Defaults to prefix followed by `:index:hash`. So, for a prefix of `Foo`, it would
+   * use `Foo:index:hash`.
+   */
+  indexHashName?: string;
+
+   /** The data structure used to store the {@link Entity} in Redis. Can be set
+    * to either `JSON` or `HASH`. Defaults to JSON. */
   dataStructure?: SearchDataStructure;
 
   /**

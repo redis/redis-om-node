@@ -1,3 +1,11 @@
+/** Defines a point on the globe using longitude and latitude. */
+export type Point = {
+  /** The longitude of the point. */
+  longitude: number,
+  /** The latitude of the point. */
+  latitude: number
+}
+
 /** Base interface for all fields. */
 export interface Field {
   /**
@@ -8,7 +16,7 @@ export interface Field {
 }
 
 /** A field representing a number. */
-export interface NumericField extends Field {
+export interface NumberField extends Field {
   /** Yep. It's a number. */
   type: 'number';
 
@@ -16,24 +24,27 @@ export interface NumericField extends Field {
   sortable?: boolean;
 }
 
-/** A field representing a string. */
+/** A field representing a whole string. */
 export interface StringField extends Field {
   /** Yep. It's a string. */
   type: 'string';
-
-  /** Enables full-text search on this field when set to `true`. Defaults to `false`. */
-  textSearch?: boolean;
 
   /** Enables sorting by this field. */
   sortable?: boolean;
 
   /**
-   * Due to how RediSearch works, non-full-text strings and arrays are sometimes stored the same
-   * in Redis, as a simple string. This is the separator used to split those strings when it is an
-   * array. If your StringField contains this separator, this can cause problems. You can change it
-   * here to avoid those problems. Defaults to `|`.
+   * Due to how RediSearch works, strings and arrays are sometimes stored the same in Redis, as a
+   * simple string. This is the separator used to split those strings when it is an array. If your
+   * StringField contains this separator, this can cause problems. You can change it here to avoid
+   * those problems. Defaults to `|`.
    */
   separator?: string;
+}
+
+/** A field representing searchable text. */
+export interface TextField extends Field {
+  /** Yep. It's searchable text. */
+  type: 'text';
 }
 
 /** A field representing a boolean. */
@@ -47,22 +58,34 @@ export interface BooleanField extends Field {
   sortable?: boolean;
 }
 
+/** A field representing a point on the globe. */
+export interface PointField extends Field {
+  /** Yep. It's a point. */
+  type: 'point';
+}
+
+/** A field representing a date/time. */
+export interface DateField extends Field {
+  /** Yep. It's a date. */
+  type: 'date';
+}
+
 /** A field representing an array of strings. */
-export interface ArrayField extends Field {
-  /** Yep. It's an array. */
-  type: 'array';
+export interface StringArrayField extends Field {
+  /** Yep. It's a string array. */
+  type: 'string[]';
 
   /**
    * Due to how RediSearch works, non-full-text strings and arrays are sometimes stored the same
    * in Redis, as a simple string. This is the separator used to split those strings when it is an
-   * array. If your ArrayField contains this separator, this can cause problems. You can change it
+   * array. If your StringArrayField contains this separator, this can cause problems. You can change it
    * here to avoid those problems. Defaults to `|`.
    */
    separator?: string;
 }
 
 /** Contains instructions telling how to map a property on an {@link Entity} to Redis. */
-export type FieldDefinition = NumericField | StringField | BooleanField | ArrayField;
+export type FieldDefinition = StringField | TextField | NumberField | BooleanField | PointField | DateField | StringArrayField;
 
 /**
 * Group of {@link FieldDefinition}s that define the schema for an {@link Entity}.

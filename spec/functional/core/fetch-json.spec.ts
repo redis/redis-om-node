@@ -1,26 +1,28 @@
-import { AN_EMPTY_ENTITY, AN_ENTITY, A_PARTIAL_ENTITY,
-  createJsonEntitySchema, JsonEntity, loadTestJson } from '../helpers/data-helper';
-
 import Client from '../../../lib/client';
 import Schema from '../../../lib/schema/schema';
 import Repository from '../../../lib/repository/repository';
 
+import { SampleJsonEntity, createJsonEntitySchema, loadTestJson } from '../helpers/data-helper';
+import { flushAll } from '../helpers/redis-helper';
+
+import { AN_ENTITY, A_PARTIAL_ENTITY, AN_EMPTY_ENTITY } from '../../helpers/example-data';
+
 describe("fetch JSON", () => {
 
   let client: Client;
-  let repository: Repository<JsonEntity>;
-  let schema: Schema<JsonEntity>;
+  let repository: Repository<SampleJsonEntity>;
+  let schema: Schema<SampleJsonEntity>;
 
   beforeAll(async () => {
     client = new Client();
     await client.open();
-    await client.execute(['FLUSHALL']);
-    await loadTestJson(client, 'JsonEntity:full', AN_ENTITY);
-    await loadTestJson(client, 'JsonEntity:partial', A_PARTIAL_ENTITY);
-    await loadTestJson(client, 'JsonEntity:empty', AN_EMPTY_ENTITY);
+    await flushAll(client);
+    await loadTestJson(client, 'SampleJsonEntity:full', AN_ENTITY);
+    await loadTestJson(client, 'SampleJsonEntity:partial', A_PARTIAL_ENTITY);
+    await loadTestJson(client, 'SampleJsonEntity:empty', AN_EMPTY_ENTITY);
 
     schema = createJsonEntitySchema();
-    repository = client.fetchRepository<JsonEntity>(schema);
+    repository = client.fetchRepository<SampleJsonEntity>(schema);
   });
 
   afterAll(async () => await client.close());

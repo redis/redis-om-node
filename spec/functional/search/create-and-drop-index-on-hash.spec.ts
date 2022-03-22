@@ -1,75 +1,148 @@
-import { createHashEntitySchema, HashEntity } from '../helpers/data-helper';
-import { fetchIndexInfo  } from '../helpers/redis-helper';
-
 import Client from '../../../lib/client';
 import Schema from '../../../lib/schema/schema';
 import Repository from '../../../lib/repository/repository';
 
+import { createHashEntitySchema, createChangedHashEntitySchema, SampleHashEntity } from '../helpers/data-helper';
+import { fetchIndexHash, fetchIndexInfo, flushAll  } from '../helpers/redis-helper';
+
 describe("create and drop index on hash", () => {
 
   let client: Client;
-  let repository: Repository<HashEntity>;
-  let schema: Schema<HashEntity>;
-  let result: string[];
+  let repository: Repository<SampleHashEntity>;
+  let schema: Schema<SampleHashEntity>;
+  let indexInfo: string[];
+  let indexHash: string;
 
   beforeAll(async () => {
     client = new Client();
     await client.open();
 
     schema = createHashEntitySchema();
-    repository = client.fetchRepository<HashEntity>(schema);
+    repository = client.fetchRepository<SampleHashEntity>(schema);
   });
 
   afterAll(async () => await client.close());
   
   describe("when the index is created", () => {
     beforeEach(async () => {
-      await client.execute(['FLUSHALL']);
+      await flushAll(client);
       await repository.createIndex();
-      result = await fetchIndexInfo(client, 'HashEntity:index');
+      indexInfo = await fetchIndexInfo(client, 'SampleHashEntity:index');
+      indexHash = await fetchIndexHash(client, 'SampleHashEntity:index:hash');
     });
 
     it("has the expected name", () => {
-      let indexName = result[1];
-      expect(indexName).toBe('HashEntity:index');
+      let indexName = indexInfo[1];
+      expect(indexName).toBe('SampleHashEntity:index');
     });
   
     it("has the expected key type", () => {
-      let keyType = result[5][1];
+      let keyType = indexInfo[5][1];
       expect(keyType).toBe('HASH');
     });
   
     it("has the expected prefixes", () => {
-      let prefixes = result[5][3];
-      expect(prefixes).toEqual([ 'HashEntity:' ]);
+      let prefixes = indexInfo[5][3];
+      expect(prefixes).toEqual([ 'SampleHashEntity:' ]);
     });
-  
+
+    it("has the expected hash", () => {
+      expect(indexHash).toBe("zKp4FaWplnMhiWjQtln/EjDrobg=");
+    });
+
     it("has the expected fields", () => {
-      let fields = result[7];
-      expect(fields).toHaveLength(10);
+      let fields = indexInfo[7];
+      expect(fields).toHaveLength(14);
       expect(fields).toEqual([
         [ 'identifier', 'aString', 'attribute', 'aString', 'type', 'TAG', 'SEPARATOR', '|' ],
         [ 'identifier', 'anotherString', 'attribute', 'anotherString', 'type', 'TAG', 'SEPARATOR', '|' ],
-        [ 'identifier', 'aFullTextString', 'attribute', 'aFullTextString', 'type', 'TEXT', 'WEIGHT', '1' ],
-        [ 'identifier', 'anotherFullTextString', 'attribute', 'anotherFullTextString', 'type', 'TEXT', 'WEIGHT', '1' ],
+        [ 'identifier', 'someText', 'attribute', 'someText', 'type', 'TEXT', 'WEIGHT', '1' ],
+        [ 'identifier', 'someOtherText', 'attribute', 'someOtherText', 'type', 'TEXT', 'WEIGHT', '1' ],
         [ 'identifier', 'aNumber', 'attribute', 'aNumber', 'type', 'NUMERIC' ],
         [ 'identifier', 'anotherNumber', 'attribute', 'anotherNumber', 'type', 'NUMERIC' ],
         [ 'identifier', 'aBoolean', 'attribute', 'aBoolean', 'type', 'TAG', 'SEPARATOR', ',' ],
         [ 'identifier', 'anotherBoolean', 'attribute', 'anotherBoolean', 'type', 'TAG', 'SEPARATOR', ',' ],
-        [ 'identifier', 'anArray', 'attribute', 'anArray', 'type', 'TAG', 'SEPARATOR', '|' ],
-        [ 'identifier', 'anotherArray', 'attribute', 'anotherArray', 'type', 'TAG', 'SEPARATOR', '|' ]
+        [ 'identifier', 'aPoint', 'attribute', 'aPoint', 'type', 'GEO' ],
+        [ 'identifier', 'anotherPoint', 'attribute', 'anotherPoint', 'type', 'GEO' ],
+        [ 'identifier', 'aDate', 'attribute', 'aDate', 'type', 'NUMERIC' ],
+        [ 'identifier', 'anotherDate', 'attribute', 'anotherDate', 'type', 'NUMERIC' ],
+        [ 'identifier', 'someStrings', 'attribute', 'someStrings', 'type', 'TAG', 'SEPARATOR', '|' ],
+        [ 'identifier', 'someOtherStrings', 'attribute', 'someOtherStrings', 'type', 'TAG', 'SEPARATOR', '|' ]
       ]);
     });
 
-    describe("when the index is dropped", () => {
-      beforeEach(async () => {
-        await repository.dropIndex();
-      });
-      
-      it("the index no longer exists", () => {
-        expect(async () => await fetchIndexInfo(client, 'HashEntity:index'))
+    describe("and then the index is dropped", () => {
+      beforeEach(async () => await repository.dropIndex());
+
+      it("the index no longer exists", async () => {
+        expect(async () => await fetchIndexInfo(client, 'SampleHashEntity:index'))
           .rejects.toThrow("Unknown Index name");
+      });
+
+      it("the index hash no longer exists", async () => {
+        let hash = await fetchIndexHash(client, 'SampleHashEntity:index:hash');
+        expect(hash).toBeNull();
       });  
+    });
+
+    describe("and then the index is recreated but not changed", () => {
+      beforeEach(async () => {
+        await repository.createIndex();
+        indexInfo = await fetchIndexInfo(client, 'SampleHashEntity:index');
+        indexHash = await fetchIndexHash(client, 'SampleHashEntity:index:hash');
+      });
+
+      it("still has the expected attributes", () => {
+        let indexName = indexInfo[1];
+        let keyType = indexInfo[5][1];
+        let prefixes = indexInfo[5][3];
+        let fields = indexInfo[7];
+  
+        expect(indexName).toBe('SampleHashEntity:index');
+        expect(keyType).toBe('HASH');
+        expect(prefixes).toEqual([ 'SampleHashEntity:' ]);
+        expect(indexHash).toBe("zKp4FaWplnMhiWjQtln/EjDrobg=");
+
+        expect(fields).toHaveLength(14);
+        expect(fields).toEqual([
+          [ 'identifier', 'aString', 'attribute', 'aString', 'type', 'TAG', 'SEPARATOR', '|' ],
+          [ 'identifier', 'anotherString', 'attribute', 'anotherString', 'type', 'TAG', 'SEPARATOR', '|' ],
+          [ 'identifier', 'someText', 'attribute', 'someText', 'type', 'TEXT', 'WEIGHT', '1' ],
+          [ 'identifier', 'someOtherText', 'attribute', 'someOtherText', 'type', 'TEXT', 'WEIGHT', '1' ],
+          [ 'identifier', 'aNumber', 'attribute', 'aNumber', 'type', 'NUMERIC' ],
+          [ 'identifier', 'anotherNumber', 'attribute', 'anotherNumber', 'type', 'NUMERIC' ],
+          [ 'identifier', 'aBoolean', 'attribute', 'aBoolean', 'type', 'TAG', 'SEPARATOR', ',' ],
+          [ 'identifier', 'anotherBoolean', 'attribute', 'anotherBoolean', 'type', 'TAG', 'SEPARATOR', ',' ],
+          [ 'identifier', 'aPoint', 'attribute', 'aPoint', 'type', 'GEO' ],
+          [ 'identifier', 'anotherPoint', 'attribute', 'anotherPoint', 'type', 'GEO' ],
+          [ 'identifier', 'aDate', 'attribute', 'aDate', 'type', 'NUMERIC' ],
+          [ 'identifier', 'anotherDate', 'attribute', 'anotherDate', 'type', 'NUMERIC' ],
+          [ 'identifier', 'someStrings', 'attribute', 'someStrings', 'type', 'TAG', 'SEPARATOR', '|' ],
+          [ 'identifier', 'someOtherStrings', 'attribute', 'someOtherStrings', 'type', 'TAG', 'SEPARATOR', '|' ]
+        ]);
+      });
+    });
+
+    describe("and then the index is changed", () => {
+      beforeEach(async () => {
+        schema = createChangedHashEntitySchema();
+        repository = client.fetchRepository<SampleHashEntity>(schema);
+    
+        await repository.createIndex();
+        indexInfo = await fetchIndexInfo(client, 'sample-hash-entity:index');
+        indexHash = await fetchIndexHash(client, 'sample-hash-entity:index:hash');
+      });
+
+      it("has new attributes", () => {
+        let indexName = indexInfo[1];
+        let keyType = indexInfo[5][1];
+        let prefixes = indexInfo[5][3];
+  
+        expect(indexName).toBe('sample-hash-entity:index');
+        expect(keyType).toBe('HASH');
+        expect(prefixes).toEqual([ 'sample-hash-entity:' ]);
+        expect(indexHash).toBe("Uhz7OGbc9cz2SDIjQ6O3aRd9YBE=");
+      });
     });
   });
 });
