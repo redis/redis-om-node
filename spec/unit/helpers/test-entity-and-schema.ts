@@ -59,7 +59,7 @@ export const simpleSortableHashSchema = new Schema(SimpleHashEntity, {
     aString: { type: 'string', sortable:true },
     aNumber: { type: 'number', sortable:true },
     aBoolean: { type: 'boolean', sortable:true },
-    anArray: { type: 'array' }
+    anArray: { type: 'string[]' }
   }, {
     dataStructure: 'HASH'
   });

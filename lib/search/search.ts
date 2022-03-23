@@ -57,7 +57,7 @@ export abstract class AbstractSearch<TEntity extends Entity> {
    * @param order The order of returned {@link Entity | Entities} Defaults to `ASC` (ascending) if not specified
    * @returns this
    */
-  sortBy(field:string, order:'ASC'|'DESC'='ASC') : Search<TEntity> {
+  sortBy(field:string, order:'ASC'|'DESC'='ASC') : AbstractSearch<TEntity> {
     let fieldDef = this.schema.definition[field];
 
     if (fieldDef === undefined) 
@@ -66,11 +66,11 @@ export abstract class AbstractSearch<TEntity extends Entity> {
     if(this.schema.dataStructure === 'JSON')
       throw new Error(`Sorting is not supported for schemas with JSON datastructures. Refer to https://oss.redis.com/redisearch/Indexing_JSON/#sortable_not_supported_on_tag`);
 
-    if(fieldDef.type === 'array')
+    if(fieldDef.type === 'string[]')
       throw new Error(`Sorting is not supported for array field types.`);
 
-    if(!fieldDef.sortable)
-      throw new Error(`Sorting is not enabled at '${field}'. Enable sorting in the field's schema.`);
+    // if(!fieldDef.sortable)
+    //   throw new Error(`Sorting is not enabled at '${field}'. Enable sorting in the field's schema.`);
 
     this.sort = { field, order };
     return this;
@@ -230,6 +230,7 @@ export abstract class AbstractSearch<TEntity extends Entity> {
   }
 }
 
+
 /**
  * Entry point to raw search which allows using raw RediSearch queries
  * against Redis OM. Requires that RediSearch (and optionally RedisJSON) be
@@ -251,6 +252,7 @@ export class RawSearch<TEntity extends Entity> extends AbstractSearch<TEntity> {
   }
 }
 
+
 /**
  * Entry point to fluent search. This is the default Redis OM experience.
  * Requires that RediSearch (and optionally RedisJSON) be installed.
@@ -264,7 +266,6 @@ export class Search<TEntity extends Entity> extends AbstractSearch<TEntity> {
     if (this.rootWhere === undefined) return '*';
     return `${this.rootWhere.toString()}`;
   }
-
 
   /**
    * Sets up a query matching a particular field. If there are multiple calls
@@ -317,28 +318,6 @@ export class Search<TEntity extends Entity> extends AbstractSearch<TEntity> {
   or(subSearchFn: SubSearchFunction<TEntity>): Search<TEntity>;
   or(fieldOrFn: string | SubSearchFunction<TEntity>): WhereField<TEntity> | Search<TEntity> {
     return this.anyWhere(WhereOr, fieldOrFn);
-  }
-
-  private async callSearch(offset = 0, count = 0) {
-    let options: SearchOptions = { 
-      indexName: this.schema.indexName,
-      query: this.query,
-      offset,
-      count,
-      sort:this.sort
-    };
-
-    let searchResults
-    try {
-      searchResults = await this.client.search(options);
-    } catch (error) {
-      let message = (error as Error).message
-      if (message.startsWith("Syntax error")) {
-        throw new RedisError(`The query to RediSearch had a syntax error: "${message}".\nThis is often the result of using a stop word in the query. Either change the query to not use a stop word or change the stop words in the schema definition. You can check the RediSearch source for the default stop words at: https://github.com/RediSearch/RediSearch/blob/master/src/stopwords.h.`)
-      }
-      throw error
-    }
-    return searchResults
   }
 
   private anyWhere(ctor: AndOrConstructor, fieldOrFn: string | SubSearchFunction<TEntity>): WhereField<TEntity> | Search<TEntity> {

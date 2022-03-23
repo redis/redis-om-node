@@ -2,7 +2,7 @@ import { mocked } from 'ts-jest/utils';
 import { Repository } from '../../../lib';
 
 import Client from "../../../lib/client";
-import Search from "../../../lib/search/search";
+import { Search } from "../../../lib/search/search";
 import { mockClientSearchToReturnMultipleHashes, mockClientSearchToReturnMultipleSortedByNumberHashes, mockClientSearchToReturnSingleHash, SIMPLE_ENTITY_1, SIMPLE_ENTITY_2, SIMPLE_ENTITY_3 } from '../helpers/search-helpers';
 
 import { SimpleHashEntity, simpleHashSchema, simpleSortableHashSchema } from "../helpers/test-entity-and-schema";
