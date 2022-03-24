@@ -82,6 +82,8 @@ export default class SchemaBuilder<TEntity extends Entity> {
         fieldDetails = this.buildSortableNumeric(fieldDef as Sortable);
         break;
       case 'boolean':
+        if ((fieldDef as Sortable).sortable)
+          logger.warn(`You have marked the boolean field '${field}' as sortable but RediSearch doesn't support the SORTABLE argument on a TAG for JSON. Ignored.`);
         fieldDetails = this.buildTag();
         break;
       case 'number':
@@ -95,7 +97,7 @@ export default class SchemaBuilder<TEntity extends Entity> {
         break;
       case 'string':
         if ((fieldDef as Sortable).sortable)
-          logger.warn(`You have marked the JSON string '${field}' as sortable but RediSearch doesn't support the SORTABLE argument on TAGs for JSON. Ignored.`);
+          logger.warn(`You have marked the string field '${field}' as sortable but RediSearch doesn't support the SORTABLE argument on a TAG for JSON. Ignored.`);
         fieldDetails = this.buildSeparableTag(fieldDef as Separable)
         break;
       case 'text':
