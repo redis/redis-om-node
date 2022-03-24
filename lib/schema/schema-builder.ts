@@ -2,29 +2,12 @@ import Entity from "../entity/entity";
 import Schema from "./schema";
 import { Sortable, FieldDefinition, Separable } from './schema-definitions';
 
+import * as logger from '../shims/logger'
+import RedisError from "../errors";
+
 export default class SchemaBuilder<TEntity extends Entity> {
 
   private schema: Schema<TEntity>;
-
-  private hashSchemaEntryBuilders = {
-    'date': (fieldDef: FieldDefinition) => this.buildSortableNumeric(fieldDef as Sortable),
-    'boolean': (fieldDef: FieldDefinition) => this.buildSortableTag(fieldDef as Sortable),
-    'number': (fieldDef: FieldDefinition) => this.buildSortableNumeric(fieldDef as Sortable),
-    'point': () => this.buildGeo(),
-    'string[]': (fieldDef: FieldDefinition) => this.buildSeparableTag(fieldDef as Separable),
-    'string': (fieldDef: FieldDefinition) => this.buildSeparableAndSortableTag(fieldDef as Sortable),
-    'text': (fieldDef: FieldDefinition) => this.buildSortableText(fieldDef as Sortable),
-  };
-
-  private jsonSchemaEntryBuilders = {
-    'date': (fieldDef: FieldDefinition) => this.buildSortableNumeric(fieldDef as Sortable),
-    'boolean': () => this.buildTag(),
-    'number': (fieldDef: FieldDefinition) => this.buildSortableNumeric(fieldDef as Sortable),
-    'point': () => this.buildGeo(),
-    'string[]': () => this.buildTag(),
-    'string': (fieldDef: FieldDefinition) => this.buildSeparableTag(fieldDef as Separable),
-    'text': (fieldDef: FieldDefinition) => this.buildSortableText(fieldDef as Sortable),
-  };
 
   constructor(schema: Schema<TEntity>) {
     this.schema = schema;
@@ -56,7 +39,35 @@ export default class SchemaBuilder<TEntity extends Entity> {
     let fieldDef: FieldDefinition = this.schema.definition[field];
     let fieldType = fieldDef.type;
     let fieldAlias = fieldDef.alias ?? field
-    return [ fieldAlias, ...this.hashSchemaEntryBuilders[fieldType](fieldDef) ];
+    let fieldDetails: string[];
+
+    switch (fieldType) {
+      case 'date': 
+        fieldDetails = this.buildSortableNumeric(fieldDef as Sortable);
+        break;
+      case 'boolean': 
+        fieldDetails = this.buildSortableTag(fieldDef as Sortable);
+        break;
+      case 'number': 
+        fieldDetails = this.buildSortableNumeric(fieldDef as Sortable);
+        break;
+      case 'point':
+        fieldDetails = this.buildGeo();
+        break;
+      case 'string[]': 
+        fieldDetails = this.buildSeparableTag(fieldDef as Separable);
+        break;
+      case 'string': 
+        fieldDetails = this.buildSeparableAndSortableTag(fieldDef as Sortable & Separable);
+        break;
+      case 'text': 
+        fieldDetails = this.buildSortableText(fieldDef as Sortable);
+        break;
+      default:
+        throw new RedisError("Invalid field type in Schema");
+    };
+  
+    return [ fieldAlias, ...fieldDetails ];
   }
 
   private buildJsonSchemaEntry(field: string): string[] {
@@ -64,7 +75,37 @@ export default class SchemaBuilder<TEntity extends Entity> {
     let fieldType = fieldDef.type;
     let fieldAlias = fieldDef.alias ?? field;
     let fieldPath = `\$.${fieldAlias}${fieldType === 'string[]' ? '[*]' : ''}`;
-    return [ fieldPath, 'AS', fieldAlias, ...this.jsonSchemaEntryBuilders[fieldType](fieldDef) ];
+    let fieldDetails: string[];
+
+    switch (fieldType) {
+      case 'date':
+        fieldDetails = this.buildSortableNumeric(fieldDef as Sortable);
+        break;
+      case 'boolean':
+        fieldDetails = this.buildTag();
+        break;
+      case 'number':
+        fieldDetails = this.buildSortableNumeric(fieldDef as Sortable);
+        break;
+      case 'point':
+        fieldDetails = this.buildGeo();
+        break;
+      case 'string[]':
+        fieldDetails = this.buildTag();
+        break;
+      case 'string':
+        if ((fieldDef as Sortable).sortable)
+          logger.warn(`You have marked the JSON string '${field}' as sortable but RediSearch doesn't support the SORTABLE argument on TAGs for JSON. Ignored.`);
+        fieldDetails = this.buildSeparableTag(fieldDef as Separable)
+        break;
+      case 'text':
+        fieldDetails = this.buildSortableText(fieldDef as Sortable)
+        break;
+      default:
+        throw new RedisError("Invalid field type in Schema");
+    }
+
+    return [ fieldPath, 'AS', fieldAlias, ...fieldDetails ];
   }
 
   private buildSortableNumeric(fieldDef: Sortable): string[] {
