@@ -1,9 +1,9 @@
 import { mocked } from 'jest-mock';
 
-import RedisShim, { RedisConnection } from '../../../lib/redis/redis-shim';
+import RedisShim, { RedisConnection } from '../../../lib/shims/redis-shim';
 import Client from '../../../lib/client';
 
-jest.mock('../../../lib/redis/redis-shim');
+jest.mock('../../../lib/shims/redis-shim');
 
 const BOGUS_CONNECTION = { THIS_IS_NOT: 'a real connection' };
 

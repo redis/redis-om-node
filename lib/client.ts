@@ -1,4 +1,4 @@
-import RedisShim, { RedisConnection } from './redis/redis-shim';
+import RedisShim, { RedisConnection } from './shims/redis-shim';
 import Repository from './repository/repository';
 import { JsonRepository, HashRepository } from './repository/repository';
 import Entity from './entity/entity';
