@@ -63,8 +63,6 @@ export default class SchemaBuilder<TEntity extends Entity> {
       case 'text': 
         fieldDetails = this.buildSortableText(fieldDef as Sortable);
         break;
-      default:
-        throw new RedisError("Invalid field type in Schema");
     };
   
     return [ fieldAlias, ...fieldDetails ];
@@ -103,8 +101,6 @@ export default class SchemaBuilder<TEntity extends Entity> {
       case 'text':
         fieldDetails = this.buildSortableText(fieldDef as Sortable)
         break;
-      default:
-        throw new RedisError("Invalid field type in Schema");
     }
 
     return [ fieldPath, 'AS', fieldAlias, ...fieldDetails ];
