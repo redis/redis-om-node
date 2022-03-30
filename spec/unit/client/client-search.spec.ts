@@ -20,6 +20,15 @@ describe("Client", () => {
         await client.open();
       });
 
+      it("passes a command with neither limit nor sort options to the shim", async () => {
+        await client.search({
+          indexName: 'index',
+          query: 'query'
+        });
+        expect(RedisShim.prototype.execute).toHaveBeenCalledWith([
+          'FT.SEARCH', 'index', 'query' ]);
+      });
+
       it("passes a command without sort options to the shim", async () => {
         await client.search({
           indexName: 'index',
@@ -30,18 +39,17 @@ describe("Client", () => {
           'FT.SEARCH', 'index', 'query', 'LIMIT', '0', '5' ]);
       });
 
-      it("passes a command with a sort field to the shim", async () => {
+      it("passes a command without limit options to the shim", async () => {
         await client.search({
           indexName: 'index',
           query: 'query',
-          limit: { offset: 0, count: 5 },
           sort: { field: 'sortField', order: 'ASC' }
         });
         expect(RedisShim.prototype.execute).toHaveBeenCalledWith([
-          'FT.SEARCH', 'index', 'query', 'LIMIT', '0', '5', 'SORTBY', 'sortField', 'ASC' ]);
+          'FT.SEARCH', 'index', 'query', 'SORTBY', 'sortField', 'ASC' ]);
       });
 
-      it("passes a command with a sort field to the shim", async () => {
+      it("passes a command with limit and sort options to the shim", async () => {
         await client.search({
           indexName: 'index',
           query: 'query',
