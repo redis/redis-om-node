@@ -61,7 +61,8 @@ export class HashSearchResultsConverter<TEntity extends Entity> extends SearchRe
 
 export class JsonSearchResultsConverter<TEntity extends Entity> extends SearchResultsConverter<TEntity> {
   protected arrayToEntity(id: string, array: string[]): TEntity {
-    let jsonString = array[1];
+    let index = array.findIndex(value => value === '$') + 1;
+    let jsonString = array[index];
     let jsonData: JsonData = JSON.parse(jsonString);
     let converter = new JsonConverter(this.schema.definition);
     let entityData: EntityData = converter.toEntityData(jsonData);
