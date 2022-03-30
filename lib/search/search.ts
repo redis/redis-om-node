@@ -1,6 +1,7 @@
 import Schema from "../schema/schema";
-import Client, { SearchOptions } from "../client";
+import Client, { LimitOptions, SearchOptions } from "../client";
 import Entity from '../entity/entity';
+import * as logger from '../shims/logger'
 
 import Where from './where';
 import WhereAnd from './where-and';
@@ -15,7 +16,9 @@ import WhereText from './where-text';
 
 import { HashSearchResultsConverter, JsonSearchResultsConverter } from "./results-converter";
 import { RedisError } from "..";
+import { SortOptions } from "../client";
 import WhereDate from "./where-date";
+import { Sortable } from "../schema/schema-definitions";
 
 /**
  * A function that takes a {@link Search} and returns a {@link Search}. Used in nested queries.
@@ -37,6 +40,9 @@ export abstract class AbstractSearch<TEntity extends Entity> {
 
   /** @internal */
   protected client: Client;
+  
+  /** @internal */
+  protected sort?: SortOptions;
 
   /** @internal */
   constructor(schema: Schema<TEntity>, client: Client) {
@@ -48,10 +54,99 @@ export abstract class AbstractSearch<TEntity extends Entity> {
   abstract get query(): string;
 
   /**
+   * Applies an ascending sort to the query.
+   * @param field The field to sort by.
+   * @returns this
+   */
+   sortAscending(field: string) : AbstractSearch<TEntity> {
+     return this.sortBy(field, 'ASC');
+   }
+
+  /**
+   * Alias for {@link Search.sortDescending}.
+   */
+   sortDesc(field: string) : AbstractSearch<TEntity> {
+    return this.sortDescending(field);
+  }
+
+  /**
+   * Applies a descending sort to the query.
+   * @param field The field to sort by.
+   * @returns this
+   */
+   sortDescending(field: string) : AbstractSearch<TEntity> {
+    return this.sortBy(field, 'DESC');
+  }
+
+ /**
+  * Alias for {@link Search.sortAscending}.
+  */
+  sortAsc(field: string) : AbstractSearch<TEntity> {
+   return this.sortAscending(field);
+ }
+
+/**
+   * Applies sorting for the query.
+   * @param field The field to sort by.
+   * @param order The order of returned {@link Entity | Entities} Defaults to `ASC` (ascending) if not specified
+   * @returns this
+   */
+  sortBy(field: string, order: 'ASC'|'DESC' = 'ASC') : AbstractSearch<TEntity> {
+    let fieldDef = this.schema.definition[field];
+    let dataStructure = this.schema.dataStructure;
+
+    if (fieldDef === undefined) {
+      let message = `'sortBy' was called on field '${field}' which is not defined in the Schema.`;
+      logger.error(message);
+      throw new RedisError(message)
+    }
+
+    let type = fieldDef.type;
+    let markedSortable = (fieldDef as Sortable).sortable;
+
+    const UNSORTABLE = [ 'point', 'string[]' ];
+    const JSON_SORTABLE = [ 'number', 'text', 'date' ];
+    const HASH_SORTABLE = [ 'string', 'boolean', 'number', 'text', 'date' ];
+  
+    if (UNSORTABLE.includes(type)) {
+      let message = `'sortBy' was called on '${type}' field '${field}' which cannot be sorted.`;
+      logger.error(message);
+      throw new RedisError(message)
+    }
+
+    if (dataStructure === 'JSON' && JSON_SORTABLE.includes(type) && !markedSortable)
+      logger.warn(`'sortBy' was called on field '${field}' which is not marked as sortable in the Schema. This may result is slower searches. If possible, mark the field as sortable in the Schema.`);
+
+    if (dataStructure === 'HASH' && HASH_SORTABLE.includes(type) && !markedSortable)
+      logger.warn(`'sortBy' was called on field '${field}' which is not marked as sortable in the Schema. This may result is slower searches. If possible, mark the field as sortable in the Schema.`);
+
+    this.sort = { field, order };
+    return this;
+  }
+
+  /**
+   * Finds the {@link Entity} with the minimal value for a field.
+   * @param field The field with the minimal value.
+   * @returns The {@link Entity} with the minimal value 
+   */
+  async min(field: string) : Promise<TEntity> {
+    return await this.sortBy(field, 'ASC').first();
+  }
+
+  /**
+   * Finds the {@link Entity} with the maximal value for a field.
+   * @param field The field with the maximal value.
+   * @returns The {@link Entity} with the maximal value 
+   */
+  async max(field: string) : Promise<TEntity> {
+    return await this.sortBy(field, 'DESC').first();
+  }
+
+  /**
    * Returns the number of {@link Entity | Entities} that match this query.
    * @returns 
    */
-   async count(): Promise<number> {
+  async count(): Promise<number> {
     let searchResults = await this.callSearch()
     return this.schema.dataStructure === 'JSON'
       ? new JsonSearchResultsConverter(this.schema, searchResults).count
@@ -65,7 +160,7 @@ export abstract class AbstractSearch<TEntity extends Entity> {
    * @returns An array of {@link Entity | Entities} matching the query.
    */
   async page(offset: number, count: number): Promise<TEntity[]> {
-    let searchResults = await this.callSearch(offset, count)
+    let searchResults = await this.callSearch({ offset, count });
     return this.schema.dataStructure === 'JSON'
       ? new JsonSearchResultsConverter(this.schema, searchResults).entities
       : new HashSearchResultsConverter(this.schema, searchResults).entities;
@@ -117,6 +212,20 @@ export abstract class AbstractSearch<TEntity extends Entity> {
   }
 
   /**
+   * Alias for {@link Search.min}.
+   */
+  async returnMin (field: string) : Promise<TEntity> {
+    return await this.min(field);
+  }
+  
+  /**
+   * Alias for {@link Search.max}.
+   */
+  async returnMax (field: string) : Promise<TEntity> {
+    return await this.max(field);
+  }
+
+  /**
    * Alias for {@link Search.count}.
    */
    async returnCount(): Promise<number> {
@@ -138,20 +247,20 @@ export abstract class AbstractSearch<TEntity extends Entity> {
   }
 
   /**
-   * 
    * Alias for {@link Search.first}.
    */
   async returnFirst(): Promise<TEntity> {
     return await this.first();
   }
 
-  private async callSearch(offset = 0, count = 0) {
+  private async callSearch(limit: LimitOptions = { offset: 0, count: 0 }) {
     let options: SearchOptions = { 
       indexName: this.schema.indexName,
       query: this.query,
-      offset,
-      count
+      limit
     };
+
+    if (this.sort !== undefined) options.sort = this.sort;
 
     let searchResults
     try {
@@ -166,6 +275,7 @@ export abstract class AbstractSearch<TEntity extends Entity> {
     return searchResults
   }
 }
+
 
 /**
  * Entry point to raw search which allows using raw RediSearch queries
@@ -188,6 +298,7 @@ export class RawSearch<TEntity extends Entity> extends AbstractSearch<TEntity> {
   }
 }
 
+
 /**
  * Entry point to fluent search. This is the default Redis OM experience.
  * Requires that RediSearch (and optionally RedisJSON) be installed.
@@ -201,7 +312,6 @@ export class Search<TEntity extends Entity> extends AbstractSearch<TEntity> {
     if (this.rootWhere === undefined) return '*';
     return `${this.rootWhere.toString()}`;
   }
-
 
   /**
    * Sets up a query matching a particular field. If there are multiple calls

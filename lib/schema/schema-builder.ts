@@ -1,6 +1,9 @@
 import Entity from "../entity/entity";
 import Schema from "./schema";
-import { StringArrayField, FieldDefinition, StringField } from './schema-definitions';
+import { Sortable, FieldDefinition, Separable } from './schema-definitions';
+
+import * as logger from '../shims/logger'
+import RedisError from "../errors";
 
 export default class SchemaBuilder<TEntity extends Entity> {
 
@@ -13,7 +16,7 @@ export default class SchemaBuilder<TEntity extends Entity> {
   get redisSchema(): string[] {
     if (this.schema.dataStructure === 'JSON') return this.buildJsonSchema()
     if (this.schema.dataStructure === 'HASH') return this.buildHashSchema();
-    throw Error("'FOO' in an invalid data structure. Valid data structures are 'HASH' and 'JSON'.");
+    throw Error(`'${this.schema.dataStructure}' in an invalid data structure. Valid data structures are 'HASH' and 'JSON'.`);
   }
 
   private buildHashSchema() : string[] {
@@ -33,44 +36,119 @@ export default class SchemaBuilder<TEntity extends Entity> {
   }
 
   private buildHashSchemaEntry(field: string) : string[] {
-    let schemaEntry: string[] = [];
-
     let fieldDef: FieldDefinition = this.schema.definition[field];
     let fieldType = fieldDef.type;
-    let fieldAlias = fieldDef.alias ?? field;
+    let fieldAlias = fieldDef.alias ?? field
+    let fieldDetails: string[];
 
-    schemaEntry.push(fieldAlias)
-
-    if (fieldType === 'date') schemaEntry.push('NUMERIC');
-    if (fieldType === 'boolean') schemaEntry.push('TAG');
-    if (fieldType === 'number') schemaEntry.push('NUMERIC');
-    if (fieldType === 'point') schemaEntry.push('GEO');
-    if (fieldType === 'string[]') schemaEntry.push('TAG', 'SEPARATOR', (fieldDef as StringArrayField).separator ?? '|');
-    if (fieldType === 'string') schemaEntry.push('TAG', 'SEPARATOR', (fieldDef as StringField).separator ?? '|');
-    if (fieldType === 'text') schemaEntry.push('TEXT');
-
-    return schemaEntry;
+    switch (fieldType) {
+      case 'date': 
+        fieldDetails = this.buildSortableNumeric(fieldDef as Sortable);
+        break;
+      case 'boolean': 
+        fieldDetails = this.buildSortableTag(fieldDef as Sortable);
+        break;
+      case 'number': 
+        fieldDetails = this.buildSortableNumeric(fieldDef as Sortable);
+        break;
+      case 'point':
+        fieldDetails = this.buildGeo();
+        break;
+      case 'string[]': 
+        fieldDetails = this.buildSeparableTag(fieldDef as Separable);
+        break;
+      case 'string': 
+        fieldDetails = this.buildSeparableAndSortableTag(fieldDef as Sortable & Separable);
+        break;
+      case 'text': 
+        fieldDetails = this.buildSortableText(fieldDef as Sortable);
+        break;
+    };
+  
+    return [ fieldAlias, ...fieldDetails ];
   }
 
   private buildJsonSchemaEntry(field: string): string[] {
-    let schemaEntry: string[] = [];
-  
     let fieldDef: FieldDefinition = this.schema.definition[field];
     let fieldType = fieldDef.type;
     let fieldAlias = fieldDef.alias ?? field;
     let fieldPath = `\$.${fieldAlias}${fieldType === 'string[]' ? '[*]' : ''}`;
+    let fieldDetails: string[];
 
-    schemaEntry.push(fieldPath, 'AS', fieldAlias);
+    switch (fieldType) {
+      case 'date':
+        fieldDetails = this.buildSortableNumeric(fieldDef as Sortable);
+        break;
+      case 'boolean':
+        if ((fieldDef as Sortable).sortable)
+          logger.warn(`You have marked the boolean field '${field}' as sortable but RediSearch doesn't support the SORTABLE argument on a TAG for JSON. Ignored.`);
+        fieldDetails = this.buildTag();
+        break;
+      case 'number':
+        fieldDetails = this.buildSortableNumeric(fieldDef as Sortable);
+        break;
+      case 'point':
+        fieldDetails = this.buildGeo();
+        break;
+      case 'string[]':
+        fieldDetails = this.buildTag();
+        break;
+      case 'string':
+        if ((fieldDef as Sortable).sortable)
+          logger.warn(`You have marked the string field '${field}' as sortable but RediSearch doesn't support the SORTABLE argument on a TAG for JSON. Ignored.`);
+        fieldDetails = this.buildSeparableTag(fieldDef as Separable)
+        break;
+      case 'text':
+        fieldDetails = this.buildSortableText(fieldDef as Sortable)
+        break;
+    }
 
-    if (fieldType === 'boolean') schemaEntry.push('TAG');
-    if (fieldType === 'number') schemaEntry.push('NUMERIC');
-    if (fieldType === 'point') schemaEntry.push('GEO');
-    if (fieldType === 'date') schemaEntry.push('NUMERIC');
-    if (fieldType === 'string[]') schemaEntry.push('TAG');
-    if (fieldType === 'string') schemaEntry.push('TAG', 'SEPARATOR', (fieldDef as StringField).separator ?? '|');
-    if (fieldType === 'text') schemaEntry.push('TEXT');
+    return [ fieldPath, 'AS', fieldAlias, ...fieldDetails ];
+  }
 
-    return schemaEntry;
+  private buildSortableNumeric(fieldDef: Sortable): string[] {
+    return this.buildSortableField('NUMERIC', fieldDef.sortable);
+  }
+
+  private buildTag(): string[] {
+    return this.buildField('TAG');
+  }
+
+  private buildSortableTag(fieldDef: Sortable): string[] {
+    return this.buildSortableField('TAG', fieldDef.sortable);
+  }
+
+  private buildSeparableTag(fieldDef: Separable): string[] {
+    return this.buildSeparableField('TAG', fieldDef.separator);
+  }
+
+  private buildSeparableAndSortableTag(fieldDef: Separable & Sortable): string[] {
+    return this.buildSeparableAndSortableField('TAG', fieldDef.separator, fieldDef.sortable);
+  }
+
+  private buildSortableText(fieldDef: Sortable): string[] {
+    return this.buildSortableField('TEXT', fieldDef.sortable);
+  }
+
+  private buildGeo(): string[] {
+    return this.buildField('GEO');
+  }
+
+  private buildField(type: 'TEXT' | 'NUMERIC' | 'TAG' | 'GEO'): string[] {
+    return [type];
+  }
+
+  private buildSeparableField(type: 'TAG', separator?: string): string[] {
+    return [type, 'SEPARATOR', separator ?? '|'];
+  }
+
+  private buildSortableField(type: 'TEXT' | 'NUMERIC' | 'TAG', sortable?: boolean): string[] {
+    return sortable ? [type, 'SORTABLE'] : [type];
+  }
+
+  private buildSeparableAndSortableField(type: 'TAG', separator?: string, sortable?: boolean): string[] {
+    let result = [type, 'SEPARATOR', separator ?? '|'];
+    if (sortable) result.push('SORTABLE');
+    return result;
   }
 }
-

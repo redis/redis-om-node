@@ -43,6 +43,18 @@ describe("search for hashes", () => {
     ]));
   });
 
+  it("performs a sorted search", async () => {
+    entities = await repository.search().sortAscending('aNumber').returnAll();
+
+    expect(entities).toHaveLength(4);
+    expect(entities).toEqual([
+      expect.objectContaining({ entityId: '4', ...AN_ESCAPED_ENTITY }),
+      expect.objectContaining({ entityId: '3', ...A_THIRD_ENTITY }),
+      expect.objectContaining({ entityId: '2', ...ANOTHER_ENTITY }),
+      expect.objectContaining({ entityId: '1', ...AN_ENTITY })
+    ]);
+  });
+
   it("performs a paginated search", async () => {
     entities = await repository.search().returnAll({ pageSize: 2 });
 

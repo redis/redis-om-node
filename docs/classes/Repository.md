@@ -70,7 +70,7 @@ let entities = await repository.search()
 
 #### Defined in
 
-[lib/repository/repository.ts:56](https://github.com/redis/redis-om-node/blob/39d7998/lib/repository/repository.ts#L56)
+[lib/repository/repository.ts:56](https://github.com/redis/redis-om-node/blob/0843d26/lib/repository/repository.ts#L56)
 
 ## Methods
 
@@ -95,7 +95,7 @@ The newly created and saved Entity.
 
 #### Defined in
 
-[lib/repository/repository.ts:150](https://github.com/redis/redis-om-node/blob/39d7998/lib/repository/repository.ts#L150)
+[lib/repository/repository.ts:150](https://github.com/redis/redis-om-node/blob/0843d26/lib/repository/repository.ts#L150)
 
 ___
 
@@ -119,7 +119,7 @@ A newly created Entity.
 
 #### Defined in
 
-[lib/repository/repository.ts:115](https://github.com/redis/redis-om-node/blob/39d7998/lib/repository/repository.ts#L115)
+[lib/repository/repository.ts:115](https://github.com/redis/redis-om-node/blob/0843d26/lib/repository/repository.ts#L115)
 
 ___
 
@@ -136,7 +136,7 @@ that RediSearch or RedisJSON is installed on your instance of Redis.
 
 #### Defined in
 
-[lib/repository/repository.ts:69](https://github.com/redis/redis-om-node/blob/39d7998/lib/repository/repository.ts#L69)
+[lib/repository/repository.ts:69](https://github.com/redis/redis-om-node/blob/0843d26/lib/repository/repository.ts#L69)
 
 ___
 
@@ -154,7 +154,7 @@ on your instance of Redis.
 
 #### Defined in
 
-[lib/repository/repository.ts:97](https://github.com/redis/redis-om-node/blob/39d7998/lib/repository/repository.ts#L97)
+[lib/repository/repository.ts:97](https://github.com/redis/redis-om-node/blob/0843d26/lib/repository/repository.ts#L97)
 
 ___
 
@@ -178,7 +178,7 @@ found, does nothing.
 
 #### Defined in
 
-[lib/repository/repository.ts:185](https://github.com/redis/redis-om-node/blob/39d7998/lib/repository/repository.ts#L185)
+[lib/repository/repository.ts:185](https://github.com/redis/redis-om-node/blob/0843d26/lib/repository/repository.ts#L185)
 
 ___
 
@@ -204,7 +204,7 @@ The matching Entity.
 
 #### Defined in
 
-[lib/repository/repository.ts:163](https://github.com/redis/redis-om-node/blob/39d7998/lib/repository/repository.ts#L163)
+[lib/repository/repository.ts:163](https://github.com/redis/redis-om-node/blob/0843d26/lib/repository/repository.ts#L163)
 
 ___
 
@@ -227,7 +227,7 @@ not found, does nothing.
 
 #### Defined in
 
-[lib/repository/repository.ts:174](https://github.com/redis/redis-om-node/blob/39d7998/lib/repository/repository.ts#L174)
+[lib/repository/repository.ts:174](https://github.com/redis/redis-om-node/blob/0843d26/lib/repository/repository.ts#L174)
 
 ___
 
@@ -252,7 +252,7 @@ The ID of the Entity just saved.
 
 #### Defined in
 
-[lib/repository/repository.ts:132](https://github.com/redis/redis-om-node/blob/39d7998/lib/repository/repository.ts#L132)
+[lib/repository/repository.ts:132](https://github.com/redis/redis-om-node/blob/0843d26/lib/repository/repository.ts#L132)
 
 ___
 
@@ -271,7 +271,7 @@ A [Search](Search.md) object.
 
 #### Defined in
 
-[lib/repository/repository.ts:196](https://github.com/redis/redis-om-node/blob/39d7998/lib/repository/repository.ts#L196)
+[lib/repository/repository.ts:196](https://github.com/redis/redis-om-node/blob/0843d26/lib/repository/repository.ts#L196)
 
 ___
 
@@ -299,4 +299,4 @@ A [RawSearch](RawSearch.md) object.
 
 #### Defined in
 
-[lib/repository/repository.ts:208](https://github.com/redis/redis-om-node/blob/39d7998/lib/repository/repository.ts#L208)
+[lib/repository/repository.ts:208](https://github.com/redis/redis-om-node/blob/0843d26/lib/repository/repository.ts#L208)

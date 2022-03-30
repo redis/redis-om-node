@@ -52,16 +52,16 @@ function createSchemaOfType<TEntity extends Entity>(ctor: EntityConstructor<TEnt
     ctor, {
       aString: { type: 'string' },
       anotherString: { type: 'string' },
-      someText: { type: 'text' },
-      someOtherText: { type: 'text' },
-      aNumber: { type: 'number' },
-      anotherNumber: { type: 'number' },
+      someText: { type: 'text', sortable: true },
+      someOtherText: { type: 'text', sortable: true },
+      aNumber: { type: 'number', sortable: true },
+      anotherNumber: { type: 'number', sortable: true },
       aBoolean: { type: 'boolean' },
       anotherBoolean: { type: 'boolean' },
       aPoint: { type: 'point' },
       anotherPoint: { type: 'point' },
-      aDate: { type: 'date' },
-      anotherDate: { type: 'date' },
+      aDate: { type: 'date', sortable: true },
+      anotherDate: { type: 'date', sortable: true },
       someStrings: { type: 'string[]' },
       someOtherStrings: { type: 'string[]' }
     }, {

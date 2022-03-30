@@ -41,7 +41,7 @@ describe.each([
         it("asks the client for the first result of a given repository", () => {
           expect(Client.prototype.search).toHaveBeenCalledTimes(1);
           expect(Client.prototype.search).toHaveBeenCalledWith({
-            indexName, query, offset: 0, count: 1 });
+            indexName, query, limit: { offset: 0, count: 1 } });
         });
 
         it("return no result", () => expect(entity).toBe(null));
@@ -56,7 +56,7 @@ describe.each([
         it("asks the client for the first result of a given repository", () => {
           expect(Client.prototype.search).toHaveBeenCalledTimes(1)
           expect(Client.prototype.search).toHaveBeenCalledWith({
-            indexName, query, offset: 0, count: 1 });
+            indexName, query, limit: { offset: 0, count: 1 } });
         });
 
         it("returns the first result of a given repository", () => {
@@ -81,7 +81,7 @@ describe.each([
         it("asks the client for the first result of a given repository", () => {
           expect(Client.prototype.search).toHaveBeenCalledTimes(1);
           expect(Client.prototype.search).toHaveBeenCalledWith({
-              indexName, query, offset: 0, count: 1 });
+              indexName, query, limit: { offset: 0, count: 1 } });
         });
 
         it("return no result", () => expect(entity).toBe(null));
@@ -96,7 +96,7 @@ describe.each([
         it("asks the client for the first result of a given repository", () => {
           expect(Client.prototype.search).toHaveBeenCalledTimes(1)
           expect(Client.prototype.search).toHaveBeenCalledWith({
-            indexName, query, offset: 0, count: 1 });
+            indexName, query, limit: { offset: 0, count: 1 } });
         });
 
         it("returns the first result of a given repository", () => {

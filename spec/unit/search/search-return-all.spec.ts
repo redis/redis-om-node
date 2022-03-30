@@ -46,7 +46,7 @@ describe("Search", () => {
           it("askes the client for a single page of results", () => {
             expect(Client.prototype.search).toHaveBeenCalledTimes(1);
             expect(Client.prototype.search).toHaveBeenCalledWith({
-              indexName, query, offset: 0, count: 10 });
+              indexName, query, limit: { offset: 0, count: 10 } });
           });
   
           it("returns no results", () => expect(entities).toHaveLength(0));
@@ -61,7 +61,7 @@ describe("Search", () => {
           it("askes the client for a a single page of results", () => {
             expect(Client.prototype.search).toHaveBeenCalledTimes(1);
             expect(Client.prototype.search).toHaveBeenCalledWith({
-              indexName, query, offset: 0, count: 10 });
+              indexName, query, limit: { offset: 0, count: 10 } });
           });
   
           it("returns the expected single result", () => {
@@ -81,7 +81,7 @@ describe("Search", () => {
           it("askes the client for a single page of results", () => {
             expect(Client.prototype.search).toHaveBeenCalledTimes(1);
             expect(Client.prototype.search).toHaveBeenCalledWith({
-              indexName, query, offset: 0, count: 10 });
+              indexName, query, limit: { offset: 0, count: 10 } });
           });
   
           it("returns all the results", async () => {
@@ -103,7 +103,7 @@ describe("Search", () => {
           it("askes the client for multiple pages of results", () => {
             expect(Client.prototype.search).toHaveBeenCalledTimes(3);
             expect(Client.prototype.search).toHaveBeenCalledWith({
-              indexName, query, offset: 0, count: 2 });
+              indexName, query, limit: { offset: 0, count: 2 } });
           });
   
           it("returns all the results", async () => {
@@ -132,7 +132,7 @@ describe("Search", () => {
           it("askes the client for a single page of results", () => {
             expect(Client.prototype.search).toHaveBeenCalledTimes(1);
             expect(Client.prototype.search).toHaveBeenCalledWith({
-              indexName, query, offset: 0, count: 10 });
+              indexName, query, limit: { offset: 0, count: 10 } });
           });
   
           it("returns no results", () => expect(entities).toHaveLength(0))
@@ -147,7 +147,7 @@ describe("Search", () => {
           it("askes the client for a single page of results", () => {
             expect(Client.prototype.search).toHaveBeenCalledTimes(1);
             expect(Client.prototype.search).toHaveBeenCalledWith({
-              indexName, query, offset: 0, count: 10 });
+              indexName, query, limit: { offset: 0, count: 10 } });
           });
   
           it("returns the expected single result", () => {
@@ -167,7 +167,7 @@ describe("Search", () => {
           it("askes the client for a single page of results", () => {
             expect(Client.prototype.search).toHaveBeenCalledTimes(1);
             expect(Client.prototype.search).toHaveBeenCalledWith({
-              indexName, query, offset: 0, count: 10 });
+              indexName, query, limit: { offset: 0, count: 10 } });
           });
   
           it("returns all the results", async () => {
@@ -189,11 +189,11 @@ describe("Search", () => {
           it("askes the client for a multiple pages of results", () => {
             expect(Client.prototype.search).toHaveBeenCalledTimes(3);
             expect(Client.prototype.search).toHaveBeenCalledWith({
-              indexName, query, offset: 0, count: 2 });
+              indexName, query, limit: { offset: 0, count: 2 } });
             expect(Client.prototype.search).toHaveBeenCalledWith({
-              indexName, query, offset: 2, count: 2 });
+              indexName, query, limit: { offset: 2, count: 2 } });
             expect(Client.prototype.search).toHaveBeenCalledWith({
-              indexName, query, offset: 4, count: 2 });
+              indexName, query, limit: { offset: 4, count: 2 } });
           });
   
           it("returns all the results", async () => {

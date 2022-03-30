@@ -1,4 +1,4 @@
-import RedisShim, { RedisConnection } from './redis/redis-shim';
+import RedisShim, { RedisConnection } from './shims/redis-shim';
 import Repository from './repository/repository';
 import { JsonRepository, HashRepository } from './repository/repository';
 import Entity from './entity/entity';
@@ -30,11 +30,23 @@ export type CreateIndexOptions = {
 }
 
 /** @internal */
+export type LimitOptions = {
+  offset: number;
+  count: number;
+}
+
+/** @internal */
+export type SortOptions = {
+  field: string;
+  order: 'ASC' | 'DESC';
+}
+
+/** @internal */
 export type SearchOptions = {
   indexName: string,
   query: string,
-  offset: number,
-  count: number
+  limit?: LimitOptions,
+  sort?: SortOptions;
 }
 
 /**
@@ -145,10 +157,16 @@ export default class Client {
   /** @internal */
   async search(options: SearchOptions) {
     this.validateShimOpen();
-    let { indexName, query, offset, count } = options
-    return await this.shim.execute<any[]>([
-      'FT.SEARCH', indexName, query,
-      'LIMIT', offset.toString(), count.toString() ]);
+    let { indexName, query, limit, sort } = options
+    let command = ['FT.SEARCH', indexName, query];
+
+    if (limit !== undefined)
+      command.push('LIMIT', limit.offset.toString(), limit.count.toString());
+
+    if (sort !== undefined)
+      command.push('SORTBY', sort.field, sort.order);
+
+    return await this.shim.execute<any[]>(command);
   }
 
   /** @internal */

@@ -4,6 +4,11 @@
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and Redis OM adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 0.2.1 - 2022-03-30
+### Added
+- Added limited ability to sort search results using `.sortBy`.
+- Added `.min` and `.max` which returns the `Entity` with the minimum or maximum value for a provided field.
+
 ## 0.2.0 - 2022-02-25
 ### Added
 - Added 'point' data type that represents a spot on the globe.
