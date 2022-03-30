@@ -27,7 +27,7 @@ describe.each([
     new RawSearch<SimpleJsonEntity>(simpleJsonSchema, new Client()) ]
 ])("%s", (_, hashSearch: HashSearch, jsonSearch: JsonSearch) => {
 
-  describe("#returnFirst", () => {
+  describe("#returnMin", () => {
     describe("when running against hashes", () => {
       let entity: SimpleHashEntity;
       let indexName = 'SimpleHashEntity:index', query = '*';
@@ -35,13 +35,17 @@ describe.each([
       describe("when querying no results", () => {
         beforeEach( async () => {
           mockClientSearchToReturnNothing();
-          entity = await hashSearch.return.first();
+          entity = await hashSearch.return.min('aNumber');
         });
 
         it("asks the client for the first result of a given repository", () => {
           expect(Client.prototype.search).toHaveBeenCalledTimes(1);
           expect(Client.prototype.search).toHaveBeenCalledWith({
-            indexName, query, limit: { offset: 0, count: 1 } });
+            indexName,
+            query,
+            limit: { offset: 0, count: 1 },
+            sort: { field: 'aNumber', order: 'ASC' }
+          });
         });
 
         it("return no result", () => expect(entity).toBe(null));
@@ -50,13 +54,17 @@ describe.each([
       describe("when getting a result", () => {
         beforeEach(async () => {
           mockClientSearchToReturnSingleHash();
-          entity = await hashSearch.return.first();
+          entity = await hashSearch.return.min('aNumber');
         });
 
         it("asks the client for the first result of a given repository", () => {
           expect(Client.prototype.search).toHaveBeenCalledTimes(1)
           expect(Client.prototype.search).toHaveBeenCalledWith({
-            indexName, query, limit: { offset: 0, count: 1 } });
+            indexName,
+            query,
+            limit: { offset: 0, count: 1 },
+            sort: { field: 'aNumber', order: 'ASC' }
+          });
         });
 
         it("returns the first result of a given repository", () => {
@@ -75,13 +83,17 @@ describe.each([
       describe("when querying no results", () => {
         beforeEach( async () => {
           mockClientSearchToReturnNothing();
-          entity = await jsonSearch.return.first();
+          entity = await jsonSearch.return.min('aNumber');
         });
 
         it("asks the client for the first result of a given repository", () => {
           expect(Client.prototype.search).toHaveBeenCalledTimes(1);
           expect(Client.prototype.search).toHaveBeenCalledWith({
-              indexName, query, limit: { offset: 0, count: 1 } });
+            indexName,
+            query,
+            limit: { offset: 0, count: 1 },
+            sort: { field: 'aNumber', order: 'ASC' }
+          });
         });
 
         it("return no result", () => expect(entity).toBe(null));
@@ -90,13 +102,17 @@ describe.each([
       describe("when getting a result", () => {
         beforeEach(async () => {
           mockClientSearchToReturnSingleJsonString();
-          entity = await jsonSearch.return.first();
+          entity = await jsonSearch.return.min('aNumber');
         });
 
         it("asks the client for the first result of a given repository", () => {
           expect(Client.prototype.search).toHaveBeenCalledTimes(1)
           expect(Client.prototype.search).toHaveBeenCalledWith({
-            indexName, query, limit: { offset: 0, count: 1 } });
+            indexName,
+            query,
+            limit: { offset: 0, count: 1 },
+            sort: { field: 'aNumber', order: 'ASC' }
+          });
         });
 
         it("returns the first result of a given repository", () => {

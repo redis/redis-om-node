@@ -56,10 +56,13 @@ export const simpleHashSchema = new Schema(SimpleHashEntity, {
 });
 
 export const simpleSortableHashSchema = new Schema(SimpleHashEntity, {
-    aString: { type: 'string', sortable:true },
-    aNumber: { type: 'number', sortable:true },
-    aBoolean: { type: 'boolean', sortable:true },
-    anArray: { type: 'string[]' }
+    aString: { type: 'string', sortable: true },
+    someText: { type: 'text', sortable: true },
+    aNumber: { type: 'number', sortable: true },
+    aBoolean: { type: 'boolean', sortable: true },
+    aPoint: { type: 'point' },
+    aDate: { type: 'date', sortable: true },
+    someStrings: { type: 'string[]' }
   }, {
     dataStructure: 'HASH'
   });
@@ -71,6 +74,18 @@ export const simpleJsonSchema = new Schema(SimpleJsonEntity, {
   aBoolean: { type: 'boolean' },
   aPoint: { type: 'point' },
   aDate: { type: 'date' },
+  someStrings: { type: 'string[]' }
+}, {
+  dataStructure: 'JSON'
+});
+
+export const simpleSortableJsonSchema = new Schema(SimpleHashEntity, {
+  aString: { type: 'string', sortable: true },
+  someText: { type: 'text', sortable: true },
+  aNumber: { type: 'number', sortable: true },
+  aBoolean: { type: 'boolean', sortable: true },
+  aPoint: { type: 'point' },
+  aDate: { type: 'date', sortable: true },
   someStrings: { type: 'string[]' }
 }, {
   dataStructure: 'JSON'

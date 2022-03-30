@@ -30,7 +30,7 @@ describe("Search", () => {
 
     let actualCount: number;
 
-    describe("#count", () => {
+    describe("#returnCount", () => {
       let query = '*', offset = 0, count = 0;
 
       describe("when counting results from hashes", () => {
@@ -43,7 +43,7 @@ describe("Search", () => {
         it("askes the client for results", () => {
           expect(Client.prototype.search).toHaveBeenCalledTimes(1);
           expect(Client.prototype.search).toHaveBeenCalledWith({
-            indexName: 'SimpleHashEntity:index', query, offset, count });
+            indexName: 'SimpleHashEntity:index', query, limit: { offset, count } });
         });
 
         it("returns the expected count", () => expect(actualCount).toBe(3));
@@ -58,7 +58,7 @@ describe("Search", () => {
         it("askes the client for results", () => {
           expect(Client.prototype.search).toHaveBeenCalledTimes(1);
           expect(Client.prototype.search).toHaveBeenCalledWith({
-            indexName: 'SimpleJsonEntity:index', query, offset, count });
+            indexName: 'SimpleJsonEntity:index', query, limit: { offset, count } });
         });
     
         it("returns the expected count", () => expect(actualCount).toBe(3));

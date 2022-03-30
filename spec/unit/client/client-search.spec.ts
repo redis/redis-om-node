@@ -20,25 +20,54 @@ describe("Client", () => {
         await client.open();
       });
 
-      it("passes the command to the shim with specified limits", async () => {
-        await client.search({ indexName: 'index', query: 'query', offset: 0, count: 5 });
-        expect(RedisShim.prototype.execute).toHaveBeenCalledWith([ 'FT.SEARCH', 'index', 'query', 'LIMIT', '0', '5' ]);
+      it("passes a command without sort options to the shim", async () => {
+        await client.search({
+          indexName: 'index',
+          query: 'query',
+          limit: { offset: 0, count: 5 }
+        });
+        expect(RedisShim.prototype.execute).toHaveBeenCalledWith([
+          'FT.SEARCH', 'index', 'query', 'LIMIT', '0', '5' ]);
+      });
+
+      it("passes a command with a sort field to the shim", async () => {
+        await client.search({
+          indexName: 'index',
+          query: 'query',
+          limit: { offset: 0, count: 5 },
+          sort: { field: 'sortField', order: 'ASC' }
+        });
+        expect(RedisShim.prototype.execute).toHaveBeenCalledWith([
+          'FT.SEARCH', 'index', 'query', 'LIMIT', '0', '5', 'SORTBY', 'sortField', 'ASC' ]);
+      });
+
+      it("passes a command with a sort field to the shim", async () => {
+        await client.search({
+          indexName: 'index',
+          query: 'query',
+          limit: { offset: 0, count: 5 },
+          sort: { field: 'sortField', order: 'ASC' }
+        });
+        expect(RedisShim.prototype.execute).toHaveBeenCalledWith([
+          'FT.SEARCH', 'index', 'query', 'LIMIT', '0', '5', 'SORTBY', 'sortField', 'ASC' ]);
       });
     });
 
+    describe("when called on an unopened client", () => {
+      it("throws an error", async () =>
+        expect(async () => await client.search({ indexName: 'index', query: 'query' }))
+          .rejects.toThrow("Redis connection needs opened."));
+    });
+    
     describe("when called on a closed client", () => {
       beforeEach(async () => {
         await client.open();
         await client.close();
       });
-      
-      it("errors when called on a closed client", () => 
-        expect(async () => await client.search({ indexName: 'index', query: 'query', offset: 0, count: 10 }))
+
+      it("throws an error", () => 
+        expect(async () => await client.search({ indexName: 'index', query: 'query' }))
           .rejects.toThrow("Redis connection needs opened."));
     });
-    
-    it("errors when called on a new client", async () =>
-      expect(async () => await client.search({ indexName: 'index', query: 'query', offset: 0, count: 10 }))
-        .rejects.toThrow("Redis connection needs opened."));
   });
 });
