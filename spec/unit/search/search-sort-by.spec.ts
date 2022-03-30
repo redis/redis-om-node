@@ -1,4 +1,4 @@
-import { mocked } from 'ts-jest/utils';
+import { mocked } from 'jest-mock';
 
 import Client from "../../../lib/client";
 import { Search, RawSearch } from "../../../lib/search/search";
@@ -13,8 +13,8 @@ import {
 import { RedisError } from '../../../lib';
 
 
-const warnSpy = jest.spyOn(logger, 'warn');
-const errorSpy = jest.spyOn(logger, 'error');
+const warnSpy = jest.spyOn(logger, 'warn').mockImplementation();
+const errorSpy = jest.spyOn(logger, 'error').mockImplementation();
 
 jest.mock('../../../lib/client');
 
