@@ -27,6 +27,7 @@ Base interface for all fields.
 ### Properties
 
 - [alias](Field.md#alias)
+- [type](Field.md#type)
 
 ## Properties
 
@@ -39,4 +40,16 @@ The default field name in Redis is the key name defined in the
 
 #### Defined in
 
-[lib/schema/schema-definitions.ts:15](https://github.com/redis/redis-om-node/blob/39d7998/lib/schema/schema-definitions.ts#L15)
+[lib/schema/schema-definitions.ts:18](https://github.com/redis/redis-om-node/blob/0843d26/lib/schema/schema-definitions.ts#L18)
+
+___
+
+### type
+
+• **type**: `string`
+
+The type of the field (i.e. string, number, boolean, etc.)
+
+#### Defined in
+
+[lib/schema/schema-definitions.ts:12](https://github.com/redis/redis-om-node/blob/0843d26/lib/schema/schema-definitions.ts#L12)

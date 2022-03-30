@@ -33,7 +33,7 @@ The generated entity ID.
 
 #### Defined in
 
-[lib/entity/entity.ts:33](https://github.com/redis/redis-om-node/blob/39d7998/lib/entity/entity.ts#L33)
+[lib/entity/entity.ts:33](https://github.com/redis/redis-om-node/blob/0843d26/lib/entity/entity.ts#L33)
 
 ## Accessors
 
@@ -47,7 +47,7 @@ The generated entity ID.
 
 #### Defined in
 
-[lib/entity/entity.ts:55](https://github.com/redis/redis-om-node/blob/39d7998/lib/entity/entity.ts#L55)
+[lib/entity/entity.ts:55](https://github.com/redis/redis-om-node/blob/0843d26/lib/entity/entity.ts#L55)
 
 ## Methods
 
@@ -61,4 +61,4 @@ The generated entity ID.
 
 #### Defined in
 
-[lib/entity/entity.ts:59](https://github.com/redis/redis-om-node/blob/39d7998/lib/entity/entity.ts#L59)
+[lib/entity/entity.ts:59](https://github.com/redis/redis-om-node/blob/0843d26/lib/entity/entity.ts#L59)
