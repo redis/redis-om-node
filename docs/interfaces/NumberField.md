@@ -8,6 +8,8 @@ A field representing a number.
 
 - [`Field`](Field.md)
 
+- [`Sortable`](Sortable.md)
+
   ↳ **`NumberField`**
 
 ## Table of contents
@@ -15,6 +17,7 @@ A field representing a number.
 ### Properties
 
 - [alias](NumberField.md#alias)
+- [sortable](NumberField.md#sortable)
 - [type](NumberField.md#type)
 
 ## Properties
@@ -32,7 +35,23 @@ The default field name in Redis is the key name defined in the
 
 #### Defined in
 
-[lib/schema/schema-definitions.ts:15](https://github.com/redis/redis-om-node/blob/39d7998/lib/schema/schema-definitions.ts#L15)
+[lib/schema/schema-definitions.ts:18](https://github.com/redis/redis-om-node/blob/0843d26/lib/schema/schema-definitions.ts#L18)
+
+___
+
+### sortable
+
+• `Optional` **sortable**: `boolean`
+
+Enables sorting by this field.
+
+#### Inherited from
+
+[Sortable](Sortable.md).[sortable](Sortable.md#sortable)
+
+#### Defined in
+
+[lib/schema/schema-definitions.ts:24](https://github.com/redis/redis-om-node/blob/0843d26/lib/schema/schema-definitions.ts#L24)
 
 ___
 
@@ -42,6 +61,10 @@ ___
 
 Yep. It's a number.
 
+#### Overrides
+
+[Field](Field.md).[type](Field.md#type)
+
 #### Defined in
 
-[lib/schema/schema-definitions.ts:21](https://github.com/redis/redis-om-node/blob/39d7998/lib/schema/schema-definitions.ts#L21)
+[lib/schema/schema-definitions.ts:41](https://github.com/redis/redis-om-node/blob/0843d26/lib/schema/schema-definitions.ts#L41)

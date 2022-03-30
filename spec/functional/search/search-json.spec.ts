@@ -22,7 +22,7 @@ describe("search for JSON documents", () => {
     await loadTestJson(client, 'SampleJsonEntity:2', ANOTHER_ENTITY);
     await loadTestJson(client, 'SampleJsonEntity:3', A_THIRD_ENTITY);
     await loadTestJson(client, 'SampleJsonEntity:4', AN_ESCAPED_ENTITY);
-    
+
     schema = createJsonEntitySchema();
     repository = client.fetchRepository<SampleJsonEntity>(schema);
 
@@ -41,6 +41,18 @@ describe("search for JSON documents", () => {
       expect.objectContaining({ entityId: '3', ...A_THIRD_ENTITY }),
       expect.objectContaining({ entityId: '4', ...AN_ESCAPED_ENTITY })
     ]));
+  });
+
+  it("performs a sorted search", async () => {
+    entities = await repository.search().sortAscending('aNumber').returnAll();
+
+    expect(entities).toHaveLength(4);
+    expect(entities).toEqual([
+      expect.objectContaining({ entityId: '4', ...AN_ESCAPED_ENTITY }),
+      expect.objectContaining({ entityId: '3', ...A_THIRD_ENTITY }),
+      expect.objectContaining({ entityId: '2', ...ANOTHER_ENTITY }),
+      expect.objectContaining({ entityId: '1', ...AN_ENTITY }),
+    ]);
   });
 
   it("performs a paginated search", async () => {

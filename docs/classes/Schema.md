@@ -71,7 +71,7 @@ its constructor.
 
 #### Defined in
 
-[lib/schema/schema.ts:58](https://github.com/redis/redis-om-node/blob/39d7998/lib/schema/schema.ts#L58)
+[lib/schema/schema.ts:58](https://github.com/redis/redis-om-node/blob/0843d26/lib/schema/schema.ts#L58)
 
 ## Accessors
 
@@ -88,7 +88,7 @@ that this Schema uses to store [Entities](Entity.md) in Redis.
 
 #### Defined in
 
-[lib/schema/schema.ts:80](https://github.com/redis/redis-om-node/blob/39d7998/lib/schema/schema.ts#L80)
+[lib/schema/schema.ts:80](https://github.com/redis/redis-om-node/blob/0843d26/lib/schema/schema.ts#L80)
 
 ___
 
@@ -104,7 +104,7 @@ The hash value of this index. Stored in Redis under [Schema.indexHashName](Schem
 
 #### Defined in
 
-[lib/schema/schema.ts:96](https://github.com/redis/redis-om-node/blob/39d7998/lib/schema/schema.ts#L96)
+[lib/schema/schema.ts:96](https://github.com/redis/redis-om-node/blob/0843d26/lib/schema/schema.ts#L96)
 
 ___
 
@@ -120,7 +120,7 @@ The configured name for the RediSearch index hash for this Schema.
 
 #### Defined in
 
-[lib/schema/schema.ts:74](https://github.com/redis/redis-om-node/blob/39d7998/lib/schema/schema.ts#L74)
+[lib/schema/schema.ts:74](https://github.com/redis/redis-om-node/blob/0843d26/lib/schema/schema.ts#L74)
 
 ___
 
@@ -136,7 +136,7 @@ The configured name for the RediSearch index for this Schema.
 
 #### Defined in
 
-[lib/schema/schema.ts:71](https://github.com/redis/redis-om-node/blob/39d7998/lib/schema/schema.ts#L71)
+[lib/schema/schema.ts:71](https://github.com/redis/redis-om-node/blob/0843d26/lib/schema/schema.ts#L71)
 
 ___
 
@@ -152,7 +152,7 @@ The configured keyspace prefix in Redis for this Schema.
 
 #### Defined in
 
-[lib/schema/schema.ts:68](https://github.com/redis/redis-om-node/blob/39d7998/lib/schema/schema.ts#L68)
+[lib/schema/schema.ts:68](https://github.com/redis/redis-om-node/blob/0843d26/lib/schema/schema.ts#L68)
 
 ___
 
@@ -169,7 +169,7 @@ than `CUSTOM`.
 
 #### Defined in
 
-[lib/schema/schema.ts:93](https://github.com/redis/redis-om-node/blob/39d7998/lib/schema/schema.ts#L93)
+[lib/schema/schema.ts:93](https://github.com/redis/redis-om-node/blob/0843d26/lib/schema/schema.ts#L93)
 
 ___
 
@@ -187,7 +187,7 @@ for more details.
 
 #### Defined in
 
-[lib/schema/schema.ts:87](https://github.com/redis/redis-om-node/blob/39d7998/lib/schema/schema.ts#L87)
+[lib/schema/schema.ts:87](https://github.com/redis/redis-om-node/blob/0843d26/lib/schema/schema.ts#L87)
 
 ## Methods
 
@@ -203,4 +203,4 @@ Generates a unique string using the configured [IdStrategy](../README.md#idstrat
 
 #### Defined in
 
-[lib/schema/schema.ts:118](https://github.com/redis/redis-om-node/blob/39d7998/lib/schema/schema.ts#L118)
+[lib/schema/schema.ts:118](https://github.com/redis/redis-om-node/blob/0843d26/lib/schema/schema.ts#L118)

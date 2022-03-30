@@ -56,6 +56,7 @@
       - [Searching on Points](#searching-on-points)
       - [Chaining Searches](#chaining-searches)
       - [Running Raw Searches](#running-raw-searches)
+    - [Sorting Search Results](#sorting-search-results)
   - 📚 [Documentation](#-documentation)
   - ⛏️ [Troubleshooting](#%EF%B8%8F-troubleshooting)
   - ❤️ [Contributing](#%EF%B8%8F-contributing)
@@ -1005,6 +1006,41 @@ let albums = albumRepository.searchRaw(query).return.all();
 ```
 
 The nice thing here is that it returns the same entities that you've been using for everything else. It's just a lower-level way of executing a query for when you need that extra bit of power.
+
+### Sorting Search Results
+
+RediSearch provides a basic mechanism for sorting your search results and Redis OM exposes it. You can sort on a single field and can sort on the following types: `string`, `number`, `boolean`, `date`, and `text`. To sort, simply call `.sortBy`, `.sortAscending`, or `.sortDescending`:
+
+```javascript
+let albumsByYear = await albumRepository.search
+  .where('artist').equals('Mushroomhread')
+    .sortAscending('year').return.all()
+
+let albumsByTitle = await albumRepository.search
+  .where('artist').equals('Mushroomhread')
+    .sortBy('title', 'DESC').return.all()
+```
+
+You can also tell RediSearch to preload the sorting index to improve performance when you sort. This doesn't work with *all* of the types that you can sort by, but it's still pretty useful. To preload the index, mark the field in the `Schema` with the `sortable` property:
+
+```javascript
+let albumSchema = new Schema(Album, {
+  artist: { type: 'string' },
+  title: { type: 'text', sortable: true },
+  year: { type: 'number', sortable: true },
+  genres: { type: 'string[]' },
+  outOfPublication: { type: 'boolean' }
+})
+```
+
+If you're schema is for a JSON data structure (the default), you can mark `number`, `date`, and `text` fields as sortable. You can also mark `string` and `boolean` field sortable, but this will have no effect and will generate a warning.
+
+If you're schema is for a Hash, you can mark `string`, `number`, `boolean`, `date`, and `text` fields as sortable.
+
+Fields of the types `point` and `string[]` are never sortable.
+
+If this seems like a confusion flowchart to parse, don't worry. If you call `.sortBy` on a field in the Schema that's not marked as `sortable` and it *could* be, Redis OM will log a warning to let you know.
+
 
 ## 📚 Documentation
 

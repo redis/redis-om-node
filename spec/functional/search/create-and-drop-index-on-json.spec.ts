@@ -47,7 +47,7 @@ describe("create and drop index on JSON", () => {
     });
 
     it("has the expected hash", () => {
-      expect(indexHash).toBe("TK+g8/djN3xByhfQDvSsJFqKrNk=");
+      expect(indexHash).toBe("XgD0DXohHu8y4/JvvbEWhZCoiWk=");
     });
 
     it("has the expected fields", () => {
@@ -56,16 +56,16 @@ describe("create and drop index on JSON", () => {
       expect(fields).toEqual([
         [ 'identifier', '$.aString', 'attribute', 'aString', 'type', 'TAG', 'SEPARATOR', '|' ],
         [ 'identifier', '$.anotherString', 'attribute', 'anotherString', 'type', 'TAG', 'SEPARATOR', '|' ],
-        [ 'identifier', '$.someText', 'attribute', 'someText', 'type', 'TEXT', 'WEIGHT', '1' ],
-        [ 'identifier', '$.someOtherText', 'attribute', 'someOtherText', 'type', 'TEXT', 'WEIGHT', '1' ],
-        [ 'identifier', '$.aNumber', 'attribute', 'aNumber', 'type', 'NUMERIC' ],
-        [ 'identifier', '$.anotherNumber', 'attribute', 'anotherNumber', 'type', 'NUMERIC' ],
+        [ 'identifier', '$.someText', 'attribute', 'someText', 'type', 'TEXT', 'WEIGHT', '1', 'SORTABLE' ],
+        [ 'identifier', '$.someOtherText', 'attribute', 'someOtherText', 'type', 'TEXT', 'WEIGHT', '1', 'SORTABLE' ],
+        [ 'identifier', '$.aNumber', 'attribute', 'aNumber', 'type', 'NUMERIC', 'SORTABLE' ],
+        [ 'identifier', '$.anotherNumber', 'attribute', 'anotherNumber', 'type', 'NUMERIC', 'SORTABLE' ],
         [ 'identifier', '$.aBoolean', 'attribute', 'aBoolean', 'type', 'TAG', 'SEPARATOR', '' ],
         [ 'identifier', '$.anotherBoolean', 'attribute', 'anotherBoolean', 'type', 'TAG', 'SEPARATOR', '' ],
         [ 'identifier', '$.aPoint', 'attribute', 'aPoint', 'type', 'GEO' ],
         [ 'identifier', '$.anotherPoint', 'attribute', 'anotherPoint', 'type', 'GEO' ],
-        [ 'identifier', '$.aDate', 'attribute', 'aDate', 'type', 'NUMERIC' ],
-        [ 'identifier', '$.anotherDate', 'attribute', 'anotherDate', 'type', 'NUMERIC' ],
+        [ 'identifier', '$.aDate', 'attribute', 'aDate', 'type', 'NUMERIC', 'SORTABLE' ],
+        [ 'identifier', '$.anotherDate', 'attribute', 'anotherDate', 'type', 'NUMERIC', 'SORTABLE' ],
         [ 'identifier', '$.someStrings[*]', 'attribute', 'someStrings', 'type', 'TAG', 'SEPARATOR', '' ],
         [ 'identifier', '$.someOtherStrings[*]', 'attribute', 'someOtherStrings', 'type', 'TAG', 'SEPARATOR', '' ]
       ]);
@@ -101,22 +101,22 @@ describe("create and drop index on JSON", () => {
         expect(indexName).toBe('SampleJsonEntity:index');
         expect(keyType).toBe('JSON');
         expect(prefixes).toEqual([ 'SampleJsonEntity:' ]);
-        expect(indexHash).toBe("TK+g8/djN3xByhfQDvSsJFqKrNk=");
+        expect(indexHash).toBe("XgD0DXohHu8y4/JvvbEWhZCoiWk=");
 
         expect(fields).toHaveLength(14);
         expect(fields).toEqual([
           [ 'identifier', '$.aString', 'attribute', 'aString', 'type', 'TAG', 'SEPARATOR', '|' ],
           [ 'identifier', '$.anotherString', 'attribute', 'anotherString', 'type', 'TAG', 'SEPARATOR', '|' ],
-          [ 'identifier', '$.someText', 'attribute', 'someText', 'type', 'TEXT', 'WEIGHT', '1' ],
-          [ 'identifier', '$.someOtherText', 'attribute', 'someOtherText', 'type', 'TEXT', 'WEIGHT', '1' ],
-          [ 'identifier', '$.aNumber', 'attribute', 'aNumber', 'type', 'NUMERIC' ],
-          [ 'identifier', '$.anotherNumber', 'attribute', 'anotherNumber', 'type', 'NUMERIC' ],
+          [ 'identifier', '$.someText', 'attribute', 'someText', 'type', 'TEXT', 'WEIGHT', '1', 'SORTABLE' ],
+          [ 'identifier', '$.someOtherText', 'attribute', 'someOtherText', 'type', 'TEXT', 'WEIGHT', '1', 'SORTABLE' ],
+          [ 'identifier', '$.aNumber', 'attribute', 'aNumber', 'type', 'NUMERIC', 'SORTABLE' ],
+          [ 'identifier', '$.anotherNumber', 'attribute', 'anotherNumber', 'type', 'NUMERIC', 'SORTABLE' ],
           [ 'identifier', '$.aBoolean', 'attribute', 'aBoolean', 'type', 'TAG', 'SEPARATOR', '' ],
           [ 'identifier', '$.anotherBoolean', 'attribute', 'anotherBoolean', 'type', 'TAG', 'SEPARATOR', '' ],
           [ 'identifier', '$.aPoint', 'attribute', 'aPoint', 'type', 'GEO' ],
           [ 'identifier', '$.anotherPoint', 'attribute', 'anotherPoint', 'type', 'GEO' ],
-          [ 'identifier', '$.aDate', 'attribute', 'aDate', 'type', 'NUMERIC' ],
-          [ 'identifier', '$.anotherDate', 'attribute', 'anotherDate', 'type', 'NUMERIC' ],
+          [ 'identifier', '$.aDate', 'attribute', 'aDate', 'type', 'NUMERIC', 'SORTABLE' ],
+          [ 'identifier', '$.anotherDate', 'attribute', 'anotherDate', 'type', 'NUMERIC', 'SORTABLE' ],
           [ 'identifier', '$.someStrings[*]', 'attribute', 'someStrings', 'type', 'TAG', 'SEPARATOR', '' ],
           [ 'identifier', '$.someOtherStrings[*]', 'attribute', 'someOtherStrings', 'type', 'TAG', 'SEPARATOR', '' ]
         ]);
@@ -141,7 +141,7 @@ describe("create and drop index on JSON", () => {
         expect(indexName).toBe('sample-json-entity:index');
         expect(keyType).toBe('JSON');
         expect(prefixes).toEqual([ 'sample-json-entity:' ]);
-        expect(indexHash).toBe("hbAsUqS+C9BibXszh9VA0/+rcXg=");
+        expect(indexHash).toBe("Tm5jE5zHI3uyJd4HFJiMwPBPquo=");
       });
     });
   });
