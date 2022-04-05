@@ -1,4 +1,5 @@
-import { EntityData, EntityValue } from '../entity/entity';
+import EntityData from "../entity/entity-data";
+import EntityValue from "../entity/entity-value";
 import { JsonData, HashData } from '../client';
 import { StringArrayField, SchemaDefinition, FieldDefinition, Point } from "../schema/schema-definitions";
 

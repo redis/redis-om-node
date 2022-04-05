@@ -1,6 +1,6 @@
 import { HashData, JsonData } from "../client";
 import Entity from "../entity/entity";
-import { EntityData } from '../entity/entity';
+import EntityData from '../entity/entity-data';
 import { JsonConverter, HashConverter } from "../repository/converter";
 import Schema from "../schema/schema";
 

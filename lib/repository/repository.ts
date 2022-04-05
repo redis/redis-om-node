@@ -3,7 +3,7 @@ import Client from "../client";
 import Entity from "../entity/entity";
 import { Search, RawSearch } from '../search/search';
 
-import { EntityData } from "../entity/entity";
+import EntityData from "../entity/entity-data";
 import { Point } from "../schema/schema-definitions";
 import { CreateIndexOptions } from "../client";
 import { JsonConverter, HashConverter } from "./converter";

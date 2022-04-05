@@ -1,5 +1,4 @@
-import { FieldDefinition, Point, SchemaDefinition } from "../schema/schema-definitions";
-import Schema from "../schema/schema";
+import EntityData from "./entity-data";
 import EntityField from "./entity-field";
 import EntityBooleanField from "./entity-boolean-field";
 import EntityDateField from "./entity-date-field";
@@ -8,23 +7,12 @@ import EntityPointField from "./entity-point-field";
 import EntityStringArrayField from "./entity-string-array-field";
 import EntityStringField from "./entity-string-field";
 import EntityTextField from "./entity-text-field";
+import EntityFieldConstructor from "./entity-field-constructor";
+import { FieldDefinition, SchemaDefinition } from "../schema/schema-definitions";
+import Schema from "../schema/schema";
+import SchemaFieldType from "../schema/schema-field-type";
 
-/**
- * Valid values for properties of an {@link Entity}.
- */
-export type EntityValue = number | boolean | string | Point | Date | string[];
-
-/**
- * A JavaScript object containing the underlying data of an {@link Entity}.
- */
-export type EntityData = Record<string, EntityValue>;
-
-type EntityFields = Record<string, EntityField>;
-type FieldType = 'string' | 'number' | 'boolean' | 'text' | 'date' | 'point' | 'string[]';
-
-type EntityFieldConstructor = new (alias: string, value?: EntityValue) => EntityField;
-
-const ENTITY_FIELD_CONSTRUCTORS: Record<FieldType, EntityFieldConstructor> = {
+const ENTITY_FIELD_CONSTRUCTORS: Record<SchemaFieldType, EntityFieldConstructor> = {
   'string': EntityStringField,
   'number': EntityNumberField,
   'boolean': EntityBooleanField,
@@ -33,15 +21,6 @@ const ENTITY_FIELD_CONSTRUCTORS: Record<FieldType, EntityFieldConstructor> = {
   'point': EntityPointField,
   'string[]': EntityStringArrayField
 }
-
-/** 
- * A constructor that creates an {@link Entity} of type TEntity.
- * @template TEntity The {@link Entity} type.
- */
-export type EntityConstructor<TEntity> = new (
-  schema: Schema<any>,
-  id: string,
-  data?: EntityData) => TEntity;
 
 /**
  * An Entity is the class from which objects that Redis OM maps to are made. You need
@@ -62,8 +41,7 @@ export default abstract class Entity {
 
   private schemaDef: SchemaDefinition;
   private prefix: string;
-
-  private entityFields: EntityFields = {};
+  private entityFields: Record<string, EntityField> = {};
 
   /** 
    * Creates an new Entity.

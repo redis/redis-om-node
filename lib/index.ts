@@ -1,5 +1,9 @@
 import Client, { SearchDataStructure, HashData, JsonData } from "./client";
-import Entity, { EntityConstructor, EntityData, EntityValue } from "./entity/entity";
+import Entity from "./entity/entity";
+import EntityData from "./entity/entity-data";
+import EntityValue from "./entity/entity-value";
+import EntityConstructor from "./entity/entity-constructor";
+
 import RedisError from "./errors";
 import Repository from "./repository/repository";
 import { EntityCreationData } from "./repository/repository";
@@ -12,7 +16,6 @@ import { AbstractSearch, Search, RawSearch, SubSearchFunction } from "./search/s
 import Where from "./search/where";
 import WhereField from "./search/where-field";
 import { Circle, CircleFunction } from "./search/where-point";
-
 
 export {
   Client, SearchDataStructure, HashData, JsonData, 

@@ -1,10 +1,9 @@
 import { createHash } from 'crypto';
 import { ulid } from 'ulid'
-import { RedisError } from '..';
 import { SearchDataStructure } from '../client';
 
 import Entity from "../entity/entity";
-import { EntityConstructor } from '../entity/entity';
+import EntityConstructor from "../entity/entity-constructor";
 
 import SchemaBuilder from './schema-builder';
 import { FieldDefinition, IdStrategy, SchemaDefinition, StopWordOptions } from './schema-definitions';
