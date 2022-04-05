@@ -128,109 +128,109 @@ describe("Entity", () => {
       it("complains when not a number", () => {
         // @ts-ignore: JavaScript
         expect(() => entity.aNumber = 'foo')
-          .toThrow(`Property 'aNumber' expected type of 'number' but received value of 'foo'.`);
+          .toThrow(`Expected value with type of 'number' but received 'foo'.`);
         // @ts-ignore: JavaScript
         expect(() => entity.aNumber = true)
-          .toThrow(`Property 'aNumber' expected type of 'number' but received value of 'true'.`);
+          .toThrow(`Expected value with type of 'number' but received 'true'.`);
         // @ts-ignore: JavaScript
         expect(() => entity.aNumber = A_POINT)
-          .toThrow(`Property 'aNumber' expected type of 'number' but received value of '${A_POINT}'.`);
+          .toThrow(`Expected value with type of 'number' but received '${A_POINT}'.`);
         // @ts-ignore: JavaScript
         expect(() => entity.aNumber = A_DATE)
-          .toThrow(`Property 'aNumber' expected type of 'number' but received value of '${A_DATE}'.`);
+          .toThrow(`Expected value with type of 'number' but received '${A_DATE}'.`);
         // @ts-ignore: JavaScript
         expect(() => entity.aNumber = SOME_STRINGS)
-          .toThrow(`Property 'aNumber' expected type of 'number' but received value of '${SOME_STRINGS}'.`);
+          .toThrow(`Expected value with type of 'number' but received '${SOME_STRINGS}'.`);
         });
       
       it("complains when not a string", () => {
         // @ts-ignore: JavaScript
         expect(() => entity.aString = A_POINT)
-          .toThrow(`Property 'aString' expected type of 'string' but received value of '${A_POINT}'.`);
+          .toThrow(`Expected value with type of 'string' but received '${A_POINT}'.`);
         // @ts-ignore: JavaScript
         expect(() => entity.aString = A_DATE)
-          .toThrow(`Property 'aString' expected type of 'string' but received value of '${A_DATE}'.`);
+          .toThrow(`Expected value with type of 'string' but received '${A_DATE}'.`);
         // @ts-ignore: JavaScript
         expect(() => entity.aString = SOME_STRINGS)
-          .toThrow(`Property 'aString' expected type of 'string' but received value of '${SOME_STRINGS}'.`);
+          .toThrow(`Expected value with type of 'string' but received '${SOME_STRINGS}'.`);
       });
 
       it("complains when not a boolean", () => {
         // @ts-ignore: JavaScript
         expect(() => entity.aBoolean = 'foo')
-          .toThrow(`Property 'aBoolean' expected type of 'boolean' but received value of 'foo'`)
+          .toThrow(`Expected value with type of 'boolean' but received 'foo'`)
         // @ts-ignore: JavaScript
         expect(() => entity.aBoolean = 42)
-          .toThrow(`Property 'aBoolean' expected type of 'boolean' but received value of '42'`)
+          .toThrow(`Expected value with type of 'boolean' but received '42'`)
         // @ts-ignore: JavaScript
         expect(() => entity.aBoolean = A_POINT)
-          .toThrow(`Property 'aBoolean' expected type of 'boolean' but received value of '${A_POINT}'.`);
+          .toThrow(`Expected value with type of 'boolean' but received '${A_POINT}'.`);
         // @ts-ignore: JavaScript
         expect(() => entity.aBoolean = A_DATE)
-          .toThrow(`Property 'aBoolean' expected type of 'boolean' but received value of '${A_DATE}'.`);
+          .toThrow(`Expected value with type of 'boolean' but received '${A_DATE}'.`);
         // @ts-ignore: JavaScript
         expect(() => entity.aBoolean = SOME_STRINGS)
-          .toThrow(`Property 'aBoolean' expected type of 'boolean' but received value of '${SOME_STRINGS}'`)
+          .toThrow(`Expected value with type of 'boolean' but received '${SOME_STRINGS}'`)
       });
 
       it("complains when not a text", () => {
         // @ts-ignore: JavaScript
         expect(() => entity.someText = A_POINT)
-          .toThrow(`Property 'someText' expected type of 'text' but received value of '${A_POINT}'.`);
+          .toThrow(`Expected value with type of 'text' but received '${A_POINT}'.`);
         // @ts-ignore: JavaScript
         expect(() => entity.someText = A_DATE)
-          .toThrow(`Property 'someText' expected type of 'text' but received value of '${A_DATE}'.`);
+          .toThrow(`Expected value with type of 'text' but received '${A_DATE}'.`);
         // @ts-ignore: JavaScript
         expect(() => entity.someText = SOME_STRINGS)
-          .toThrow(`Property 'someText' expected type of 'text' but received value of '${SOME_STRINGS}'.`);
+          .toThrow(`Expected value with type of 'text' but received '${SOME_STRINGS}'.`);
       });
 
       it("complains when not a point", () => {
         // @ts-ignore: JavaScript
         expect(() => entity.aPoint = 'foo')
-          .toThrow(`Property 'aPoint' expected type of 'point' but received value of 'foo'`)
+          .toThrow(`Expected value with type of 'point' but received 'foo'`)
         // @ts-ignore: JavaScript
         expect(() => entity.aPoint = 42)
-          .toThrow(`Property 'aPoint' expected type of 'point' but received value of '42'`)
+          .toThrow(`Expected value with type of 'point' but received '42'`)
         // @ts-ignore: JavaScript
         expect(() => entity.aPoint = true)
-          .toThrow(`Property 'aPoint' expected type of 'point' but received value of 'true'`)
+          .toThrow(`Expected value with type of 'point' but received 'true'`)
         // @ts-ignore: JavaScript
         expect(() => entity.aPoint = A_DATE)
-          .toThrow(`Property 'aPoint' expected type of 'point' but received value of '${A_DATE}'.`);
+          .toThrow(`Expected value with type of 'point' but received '${A_DATE}'.`);
         // @ts-ignore: JavaScript
         expect(() => entity.aPoint = SOME_STRINGS)
-          .toThrow(`Property 'aPoint' expected type of 'point' but received value of '${SOME_STRINGS}'`)
+          .toThrow(`Expected value with type of 'point' but received '${SOME_STRINGS}'`)
       });
 
       it("complains when not a date", () => {
         // @ts-ignore: JavaScript
         expect(() => entity.aDate = true)
-          .toThrow(`Property 'aDate' expected type of 'date' but received value of 'true'`)
+          .toThrow(`Expected value with type of 'date' but received 'true'`)
         // @ts-ignore: JavaScript
         expect(() => entity.aDate = A_POINT)
-          .toThrow(`Property 'aDate' expected type of 'date' but received value of '${A_POINT}'.`);
+          .toThrow(`Expected value with type of 'date' but received '${A_POINT}'.`);
         // @ts-ignore: JavaScript
         expect(() => entity.aDate = SOME_STRINGS)
-          .toThrow(`Property 'aDate' expected type of 'date' but received value of '${SOME_STRINGS}'.`)
+          .toThrow(`Expected value with type of 'date' but received '${SOME_STRINGS}'.`)
       });
 
       it("complains when not an array", () => {
         // @ts-ignore: JavaScript
         expect(() => entity.someStrings = 'foo')
-          .toThrow(`Property 'someStrings' expected type of 'string[]' but received value of 'foo'`)
+          .toThrow(`Expected value with type of 'string[]' but received 'foo'`)
         // @ts-ignore: JavaScript
         expect(() => entity.someStrings = 42)
-          .toThrow(`Property 'someStrings' expected type of 'string[]' but received value of '42'`)
+          .toThrow(`Expected value with type of 'string[]' but received '42'`)
         // @ts-ignore: JavaScript
         expect(() => entity.someStrings = true)
-          .toThrow(`Property 'someStrings' expected type of 'string[]' but received value of 'true'`)
+          .toThrow(`Expected value with type of 'string[]' but received 'true'`)
         // @ts-ignore: JavaScript
         expect(() => entity.someStrings = A_POINT)
-          .toThrow(`Property 'someStrings' expected type of 'string[]' but received value of '${A_POINT}'.`);
+          .toThrow(`Expected value with type of 'string[]' but received '${A_POINT}'.`);
         // @ts-ignore: JavaScript
         expect(() => entity.someStrings = A_DATE)
-          .toThrow(`Property 'someStrings' expected type of 'string[]' but received value of '${A_DATE}'.`);
+          .toThrow(`Expected value with type of 'string[]' but received '${A_DATE}'.`);
       });
     });
 
@@ -254,25 +254,25 @@ describe("Entity", () => {
 
       it("throws error when setting to undefined", () => {
         expect(() => entity.aNumber = undefined)
-          .toThrow(`Property 'aNumber' on entity of type 'SimpleEntity' cannot be set to undefined. Use null instead.`);
+          .toThrow(`Property cannot be set to undefined. Use null instead.`);
 
         expect(() => entity.aString = undefined)
-          .toThrow(`Property 'aString' on entity of type 'SimpleEntity' cannot be set to undefined. Use null instead.`);
+          .toThrow(`Property cannot be set to undefined. Use null instead.`);
 
         expect(() => entity.someText = undefined)
-          .toThrow(`Property 'someText' on entity of type 'SimpleEntity' cannot be set to undefined. Use null instead.`);
+          .toThrow(`Property cannot be set to undefined. Use null instead.`);
 
         expect(() => entity.aBoolean = undefined)
-          .toThrow(`Property 'aBoolean' on entity of type 'SimpleEntity' cannot be set to undefined. Use null instead.`);
+          .toThrow(`Property cannot be set to undefined. Use null instead.`);
 
         expect(() => entity.aPoint = undefined)
-          .toThrow(`Property 'aPoint' on entity of type 'SimpleEntity' cannot be set to undefined. Use null instead.`);
+          .toThrow(`Property cannot be set to undefined. Use null instead.`);
 
         expect(() => entity.aDate = undefined)
-          .toThrow(`Property 'aDate' on entity of type 'SimpleEntity' cannot be set to undefined. Use null instead.`);
+          .toThrow(`Property cannot be set to undefined. Use null instead.`);
 
         expect(() => entity.someStrings = undefined)
-          .toThrow(`Property 'someStrings' on entity of type 'SimpleEntity' cannot be set to undefined. Use null instead.`);
+          .toThrow(`Property cannot be set to undefined. Use null instead.`);
       });
     });
   });
@@ -388,28 +388,28 @@ describe("Entity", () => {
         expect(entity.entityData.anotherDate).toBeUndefined();
         expect(entity.entityData.someOtherStrings).toBeUndefined();
       });
-      
+
       it("errors when properties are set to undefined", () => {
         expect(() => entity.aNumber = undefined)
-          .toThrow(`Property 'aNumber' on entity of type 'AliasedEntity' cannot be set to undefined. Use null instead.`);
+          .toThrow(`Property cannot be set to undefined. Use null instead.`);
 
         expect(() => entity.aString = undefined)
-          .toThrow(`Property 'aString' on entity of type 'AliasedEntity' cannot be set to undefined. Use null instead.`);
+          .toThrow(`Property cannot be set to undefined. Use null instead.`);
 
         expect(() => entity.aBoolean = undefined)
-          .toThrow(`Property 'aBoolean' on entity of type 'AliasedEntity' cannot be set to undefined. Use null instead.`);
+          .toThrow(`Property cannot be set to undefined. Use null instead.`);
 
         expect(() => entity.someText = undefined)
-          .toThrow(`Property 'someText' on entity of type 'AliasedEntity' cannot be set to undefined. Use null instead.`);
+          .toThrow(`Property cannot be set to undefined. Use null instead.`);
 
         expect(() => entity.aPoint = undefined)
-          .toThrow(`Property 'aPoint' on entity of type 'AliasedEntity' cannot be set to undefined. Use null instead.`);
+          .toThrow(`Property cannot be set to undefined. Use null instead.`);
 
         expect(() => entity.aDate = undefined)
-          .toThrow("Property 'aDate' on entity of type 'AliasedEntity' cannot be set to undefined. Use null instead.");
+          .toThrow("Property cannot be set to undefined. Use null instead.");
 
         expect(() => entity.someStrings = undefined)
-          .toThrow("Property 'someStrings' on entity of type 'AliasedEntity' cannot be set to undefined. Use null instead.");
+          .toThrow("Property cannot be set to undefined. Use null instead.");
       });
     });
   });

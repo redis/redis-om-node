@@ -1,4 +1,4 @@
-import { Hash, createHash } from 'crypto';
+import { createHash } from 'crypto';
 import { ulid } from 'ulid'
 import { RedisError } from '..';
 import { SearchDataStructure } from '../client';
@@ -121,113 +121,17 @@ export default class Schema<TEntity extends Entity> {
   }
 
   private defineProperties() {
-    let entityName = this.entityCtor.name;
     for (let field in this.definition) {
       this.validateFieldDef(field);
-
-      let fieldDef: FieldDefinition = this.definition[field];
-      let fieldType = fieldDef.type;
-      let fieldAlias = fieldDef.alias ?? field;
-
       Object.defineProperty(this.entityCtor.prototype, field, {
         configurable: true,
         get: function (): any {
-          return this.entityData[fieldAlias] ?? null;
+          return this.entityFields[field].value;
         },
         set: function(value: any): void {
-
-          if (value === undefined) {
-            throw Error(`Property '${field}' on entity of type '${entityName}' cannot be set to undefined. Use null instead.`);
-          }
-
-          if (value === null) {
-            delete this.entityData[fieldAlias];
-            return;
-          }
-
-          if (fieldType === 'string' && isStringable(value)) {
-            this.entityData[fieldAlias] = value.toString();
-            return;
-          }
-
-          if (fieldType === 'text' && isStringable(value)) {
-            this.entityData[fieldAlias] = value.toString();
-            return;
-          }
-
-          if (fieldType === 'number' && isNumber(value)) {
-            this.entityData[fieldAlias] = value;
-            return;
-          }
-
-          if (fieldType === 'boolean' && isBoolean(value)) {
-            this.entityData[fieldAlias] = value;
-            return;
-          }
-
-          if (fieldType === 'point' && isPoint(value)) {
-            let { longitude, latitude } = value;
-            this.entityData[fieldAlias] = { longitude, latitude };
-            return;
-          }
-
-          if (fieldType === 'date' && isDateable(value) && isDate(value)) {
-            this.entityData[fieldAlias] = value;
-            return;
-          } 
-          
-          if (fieldType === 'date' && isDateable(value) && isString(value)) {
-            this.entityData[fieldAlias] = new Date(value);
-            return;
-          }
-          
-          if (fieldType === 'date' && isDateable(value) && isNumber(value)) {
-            let date = new Date();
-            date.setTime(value);
-            this.entityData[fieldAlias] = date;
-            return;
-          }
-
-          if (fieldType === 'string[]' && isArray(value)) {
-            this.entityData[fieldAlias] = value.map((v: any) => v.toString());
-            return;
-          }
-
-          throw new RedisError(`Property '${field}' expected type of '${fieldType}' but received value of '${value}'.`);
+          this.entityFields[field].value = value;
         }
       });
-
-      function isStringable(value: any) {
-        return isString(value) || isNumber(value) || isBoolean(value);
-      }
-
-      function isDateable(value: any) {
-        return isDate(value) || isString(value) || isNumber(value);
-      }
-
-      function isPoint(value: any) {
-        return isNumber(value.longitude) && isNumber(value.latitude);
-      }
-
-      function isString(value: any) {
-        return typeof(value) === 'string';
-      }  
-
-      function isNumber(value: any) {
-        return typeof(value) === 'number';
-      }  
-
-      function isBoolean(value: any) {
-        return typeof(value) === 'boolean';
-      }  
-
-      function isDate(value: any) {
-        return value instanceof Date;
-      }
-
-      function isArray(value: any) {
-        return Array.isArray(value);
-      }
     }
   }
 

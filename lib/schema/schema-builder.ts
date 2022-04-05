@@ -16,7 +16,7 @@ export default class SchemaBuilder<TEntity extends Entity> {
   get redisSchema(): string[] {
     if (this.schema.dataStructure === 'JSON') return this.buildJsonSchema()
     if (this.schema.dataStructure === 'HASH') return this.buildHashSchema();
-    throw Error(`'${this.schema.dataStructure}' in an invalid data structure. Valid data structures are 'HASH' and 'JSON'.`);
+    throw new RedisError(`'${this.schema.dataStructure}' in an invalid data structure. Valid data structures are 'HASH' and 'JSON'.`);
   }
 
   private buildHashSchema() : string[] {
