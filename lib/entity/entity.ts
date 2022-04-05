@@ -1,13 +1,13 @@
 import { FieldDefinition, Point, SchemaDefinition } from "../schema/schema-definitions";
 import Schema from "../schema/schema";
 import EntityField from "./entity-field";
-import EntityStringField from "./entity-field-string";
-import EntityBooleanField from "./entity-field-boolean";
-import EntityNumberField from "./entity-field-number";
-import EntityTextField from "./entity-field-text";
-import EntityDateField from "./entity-field-date";
-import EntityPointField from "./entity-field-point";
-import EntityStringArrayField from "./entity-field-string-array";
+import EntityBooleanField from "./entity-boolean-field";
+import EntityDateField from "./entity-date-field";
+import EntityNumberField from "./entity-number-field";
+import EntityPointField from "./entity-point-field";
+import EntityStringArrayField from "./entity-string-array-field";
+import EntityStringField from "./entity-string-field";
+import EntityTextField from "./entity-text-field";
 
 /**
  * Valid values for properties of an {@link Entity}.
