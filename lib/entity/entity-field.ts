@@ -3,11 +3,11 @@ import EntityValue from "./entity-value";
 abstract class EntityField {
 
   private _alias: string;
-  private _value: EntityValue;
+  private _value: EntityValue = null;
 
   constructor(alias: string, value?: EntityValue) {
     this._alias = alias;
-    this._value = value ?? null;
+    this.value = value ?? null;
   }
 
   get alias() {

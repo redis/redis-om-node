@@ -1,8 +1,7 @@
-import { 
+import {
   A_STRING, ANOTHER_STRING, A_THIRD_STRING,
-  A_NUMBER, ANOTHER_NUMBER, ANOTHER_NUMBER_STRING, A_THIRD_NUMBER, A_THIRD_NUMBER_STRING,
-  A_DATE, A_DATE_ISO, ANOTHER_DATE, ANOTHER_DATE_EPOCH, ANOTHER_DATE_ISO, 
-  A_THIRD_DATE, A_THIRD_DATE_EPOCH, A_THIRD_DATE_ISO,
+  A_NUMBER, ANOTHER_NUMBER, A_THIRD_NUMBER,
+  A_DATE, A_DATE_ISO, ANOTHER_DATE, ANOTHER_DATE_ISO, A_THIRD_DATE,
   A_POINT, A_POINT_JSON, ANOTHER_POINT, ANOTHER_POINT_JSON, A_THIRD_POINT,
   SOME_STRINGS, SOME_STRINGS_JSON, SOME_OTHER_STRINGS, SOME_OTHER_STRINGS_JSON, SOME_MORE_STRINGS,
   SOME_TEXT, SOME_OTHER_TEXT, SOME_MORE_TEXT  } from '../../helpers/example-data';
@@ -58,39 +57,14 @@ describe("Entity", () => {
         expect(entity.entityData.aString).toBe(ANOTHER_STRING);
       });
 
-      it("stores a string when the string property is changed to a number", () => {
-        entity.aString = ANOTHER_NUMBER;
-        expect(entity.entityData.aString).toBe(ANOTHER_NUMBER_STRING);
-      });
-
-      it("stores a string when the string property is changed to a boolean", () => {
-        entity.aString = false;
-        expect(entity.entityData.aString).toBe('false');
-      });
-
-      it("stores a boolean when the boolean property is changed to true", () => {
+      it("stores a boolean when the boolean property is changed", () => {
         entity.aBoolean = true;
         expect(entity.entityData.aBoolean).toBe(true);
-      });
-
-      it("stores a boolean when the booelan property is changed to false", () => {
-        entity.aBoolean = false;
-        expect(entity.entityData.aBoolean).toBe(false);
       });
 
       it("stores a string when the text property is changed to a string", () => {
         entity.someText = SOME_OTHER_TEXT;
         expect(entity.entityData.someText).toBe(SOME_OTHER_TEXT);
-      });
-
-      it("stores a string when the text property is changed to a number", () => {
-        entity.someText = ANOTHER_NUMBER;
-        expect(entity.entityData.someText).toBe(ANOTHER_NUMBER_STRING);
-      });
-
-      it("stores a string when the text property is changed to a boolean", () => {
-        entity.someText = false;
-        expect(entity.entityData.someText).toBe('false');
       });
 
       it("stores a point when the point property is changed", () => {
@@ -103,134 +77,9 @@ describe("Entity", () => {
         expect(entity.entityData.aDate).toEqual(ANOTHER_DATE);
       });
 
-      it("stores a date when the date property is changed to a UNIX epoch", () => {
-        entity.aDate = ANOTHER_DATE_EPOCH;
-        expect(entity.entityData.aDate).toEqual(ANOTHER_DATE);
-      });
-
-      it("stores a date when the date property is changed to a ISO date", () => {
-        entity.aDate = ANOTHER_DATE_ISO;
-        expect(entity.entityData.aDate).toEqual(ANOTHER_DATE);
-      });
-
       it("stores a string[] when the string[] property is changed", () => {
         entity.someStrings = SOME_OTHER_STRINGS;
         expect(entity.entityData.someStrings).toEqual(SOME_OTHER_STRINGS);
-      });
-
-      it("stores a string[] when the string[] property is changed to an any[]", () => {
-        entity.someStrings = [ 42, true, 23, false ];
-        expect(entity.entityData.someStrings).toEqual([ '42', 'true', '23', 'false' ])
-      });
-    });
-
-    describe("changing to mismatched types", () => {
-      it("complains when not a number", () => {
-        // @ts-ignore: JavaScript
-        expect(() => entity.aNumber = 'foo')
-          .toThrow(`Expected value with type of 'number' but received 'foo'.`);
-        // @ts-ignore: JavaScript
-        expect(() => entity.aNumber = true)
-          .toThrow(`Expected value with type of 'number' but received 'true'.`);
-        // @ts-ignore: JavaScript
-        expect(() => entity.aNumber = A_POINT)
-          .toThrow(`Expected value with type of 'number' but received '${A_POINT}'.`);
-        // @ts-ignore: JavaScript
-        expect(() => entity.aNumber = A_DATE)
-          .toThrow(`Expected value with type of 'number' but received '${A_DATE}'.`);
-        // @ts-ignore: JavaScript
-        expect(() => entity.aNumber = SOME_STRINGS)
-          .toThrow(`Expected value with type of 'number' but received '${SOME_STRINGS}'.`);
-        });
-      
-      it("complains when not a string", () => {
-        // @ts-ignore: JavaScript
-        expect(() => entity.aString = A_POINT)
-          .toThrow(`Expected value with type of 'string' but received '${A_POINT}'.`);
-        // @ts-ignore: JavaScript
-        expect(() => entity.aString = A_DATE)
-          .toThrow(`Expected value with type of 'string' but received '${A_DATE}'.`);
-        // @ts-ignore: JavaScript
-        expect(() => entity.aString = SOME_STRINGS)
-          .toThrow(`Expected value with type of 'string' but received '${SOME_STRINGS}'.`);
-      });
-
-      it("complains when not a boolean", () => {
-        // @ts-ignore: JavaScript
-        expect(() => entity.aBoolean = 'foo')
-          .toThrow(`Expected value with type of 'boolean' but received 'foo'`)
-        // @ts-ignore: JavaScript
-        expect(() => entity.aBoolean = 42)
-          .toThrow(`Expected value with type of 'boolean' but received '42'`)
-        // @ts-ignore: JavaScript
-        expect(() => entity.aBoolean = A_POINT)
-          .toThrow(`Expected value with type of 'boolean' but received '${A_POINT}'.`);
-        // @ts-ignore: JavaScript
-        expect(() => entity.aBoolean = A_DATE)
-          .toThrow(`Expected value with type of 'boolean' but received '${A_DATE}'.`);
-        // @ts-ignore: JavaScript
-        expect(() => entity.aBoolean = SOME_STRINGS)
-          .toThrow(`Expected value with type of 'boolean' but received '${SOME_STRINGS}'`)
-      });
-
-      it("complains when not a text", () => {
-        // @ts-ignore: JavaScript
-        expect(() => entity.someText = A_POINT)
-          .toThrow(`Expected value with type of 'text' but received '${A_POINT}'.`);
-        // @ts-ignore: JavaScript
-        expect(() => entity.someText = A_DATE)
-          .toThrow(`Expected value with type of 'text' but received '${A_DATE}'.`);
-        // @ts-ignore: JavaScript
-        expect(() => entity.someText = SOME_STRINGS)
-          .toThrow(`Expected value with type of 'text' but received '${SOME_STRINGS}'.`);
-      });
-
-      it("complains when not a point", () => {
-        // @ts-ignore: JavaScript
-        expect(() => entity.aPoint = 'foo')
-          .toThrow(`Expected value with type of 'point' but received 'foo'`)
-        // @ts-ignore: JavaScript
-        expect(() => entity.aPoint = 42)
-          .toThrow(`Expected value with type of 'point' but received '42'`)
-        // @ts-ignore: JavaScript
-        expect(() => entity.aPoint = true)
-          .toThrow(`Expected value with type of 'point' but received 'true'`)
-        // @ts-ignore: JavaScript
-        expect(() => entity.aPoint = A_DATE)
-          .toThrow(`Expected value with type of 'point' but received '${A_DATE}'.`);
-        // @ts-ignore: JavaScript
-        expect(() => entity.aPoint = SOME_STRINGS)
-          .toThrow(`Expected value with type of 'point' but received '${SOME_STRINGS}'`)
-      });
-
-      it("complains when not a date", () => {
-        // @ts-ignore: JavaScript
-        expect(() => entity.aDate = true)
-          .toThrow(`Expected value with type of 'date' but received 'true'`)
-        // @ts-ignore: JavaScript
-        expect(() => entity.aDate = A_POINT)
-          .toThrow(`Expected value with type of 'date' but received '${A_POINT}'.`);
-        // @ts-ignore: JavaScript
-        expect(() => entity.aDate = SOME_STRINGS)
-          .toThrow(`Expected value with type of 'date' but received '${SOME_STRINGS}'.`)
-      });
-
-      it("complains when not an array", () => {
-        // @ts-ignore: JavaScript
-        expect(() => entity.someStrings = 'foo')
-          .toThrow(`Expected value with type of 'string[]' but received 'foo'`)
-        // @ts-ignore: JavaScript
-        expect(() => entity.someStrings = 42)
-          .toThrow(`Expected value with type of 'string[]' but received '42'`)
-        // @ts-ignore: JavaScript
-        expect(() => entity.someStrings = true)
-          .toThrow(`Expected value with type of 'string[]' but received 'true'`)
-        // @ts-ignore: JavaScript
-        expect(() => entity.someStrings = A_POINT)
-          .toThrow(`Expected value with type of 'string[]' but received '${A_POINT}'.`);
-        // @ts-ignore: JavaScript
-        expect(() => entity.someStrings = A_DATE)
-          .toThrow(`Expected value with type of 'string[]' but received '${A_DATE}'.`);
       });
     });
 
@@ -250,29 +99,6 @@ describe("Entity", () => {
         expect(entity.entityData.aPoint).toBeUndefined();
         expect(entity.entityData.aDate).toBeUndefined();
         expect(entity.entityData.someStrings).toBeUndefined();
-      });
-
-      it("throws error when setting to undefined", () => {
-        expect(() => entity.aNumber = undefined)
-          .toThrow(`Property cannot be set to undefined. Use null instead.`);
-
-        expect(() => entity.aString = undefined)
-          .toThrow(`Property cannot be set to undefined. Use null instead.`);
-
-        expect(() => entity.someText = undefined)
-          .toThrow(`Property cannot be set to undefined. Use null instead.`);
-
-        expect(() => entity.aBoolean = undefined)
-          .toThrow(`Property cannot be set to undefined. Use null instead.`);
-
-        expect(() => entity.aPoint = undefined)
-          .toThrow(`Property cannot be set to undefined. Use null instead.`);
-
-        expect(() => entity.aDate = undefined)
-          .toThrow(`Property cannot be set to undefined. Use null instead.`);
-
-        expect(() => entity.someStrings = undefined)
-          .toThrow(`Property cannot be set to undefined. Use null instead.`);
       });
     });
   });
@@ -305,39 +131,14 @@ describe("Entity", () => {
         expect(entity.entityData.anotherString).toBe(A_THIRD_STRING);
       });
 
-      it("stores a string when the string property is changed to a number", () => {
-        entity.aString = A_THIRD_NUMBER;
-        expect(entity.entityData.anotherString).toBe(A_THIRD_NUMBER_STRING);
-      });
-
-      it("stores a string when the string property is changed to a boolean", () => {
-        entity.aString = true;
-        expect(entity.entityData.anotherString).toBe('true');
-      });
-
-      it("stores a boolean when the booelan property is changed to true", () => {
+      it("stores a boolean when the booelan property is changed", () => {
         entity.aBoolean = true;
         expect(entity.entityData.anotherBoolean).toBe(true);
       });
 
-      it("stores a boolean when the booelan property is changed to false", () => {
-        entity.aBoolean = false;
-        expect(entity.entityData.anotherBoolean).toBe(false);
-      });
-
-      it("stores a string when the text property is changed to a string", () => {
+      it("stores a string when the text property is changed", () => {
         entity.someText = SOME_MORE_TEXT;
         expect(entity.entityData.someOtherText).toBe(SOME_MORE_TEXT);
-      });
-
-      it("stores a string when the text property is changed to a number", () => {
-        entity.someText = A_THIRD_NUMBER;
-        expect(entity.entityData.someOtherText).toBe(A_THIRD_NUMBER_STRING);
-      });
-
-      it("stores a string when the text property is changed to a boolean", () => {
-        entity.someText = false;
-        expect(entity.entityData.someOtherText).toBe('false');
       });
 
       it("stores a point when the point property is changed", () => {
@@ -350,27 +151,12 @@ describe("Entity", () => {
         expect(entity.entityData.anotherDate).toEqual(A_THIRD_DATE);
       });
 
-      it("stores a date when the date property is changed to a UNIX epoch", () => {
-        entity.aDate = A_THIRD_DATE_EPOCH;
-        expect(entity.entityData.anotherDate).toEqual(A_THIRD_DATE);
-      });
-
-      it("stores a date when the date property is changed to a ISO date", () => {
-        entity.aDate = A_THIRD_DATE_ISO;
-        expect(entity.entityData.anotherDate).toEqual(A_THIRD_DATE);
-      });
-
       it("stores a string[] when the string[] property is changed", () => {
         entity.someStrings = SOME_MORE_STRINGS;
         expect(entity.entityData.someOtherStrings).toEqual(SOME_MORE_STRINGS);
       });
-
-      it("stores a string[] when the string[] property is changed to an any[]", () => {
-        entity.someStrings = [ 42, true, 23, false ];
-        expect(entity.entityData.someOtherStrings).toEqual([ '42', 'true', '23', 'false' ])
-      });
     });
-  
+
     describe("deleting the data", () => {
       it("removes nulled properties", () => {
         entity.aNumber = null;
@@ -387,29 +173,6 @@ describe("Entity", () => {
         expect(entity.entityData.anotherPoint).toBeUndefined();
         expect(entity.entityData.anotherDate).toBeUndefined();
         expect(entity.entityData.someOtherStrings).toBeUndefined();
-      });
-
-      it("errors when properties are set to undefined", () => {
-        expect(() => entity.aNumber = undefined)
-          .toThrow(`Property cannot be set to undefined. Use null instead.`);
-
-        expect(() => entity.aString = undefined)
-          .toThrow(`Property cannot be set to undefined. Use null instead.`);
-
-        expect(() => entity.aBoolean = undefined)
-          .toThrow(`Property cannot be set to undefined. Use null instead.`);
-
-        expect(() => entity.someText = undefined)
-          .toThrow(`Property cannot be set to undefined. Use null instead.`);
-
-        expect(() => entity.aPoint = undefined)
-          .toThrow(`Property cannot be set to undefined. Use null instead.`);
-
-        expect(() => entity.aDate = undefined)
-          .toThrow("Property cannot be set to undefined. Use null instead.");
-
-        expect(() => entity.someStrings = undefined)
-          .toThrow("Property cannot be set to undefined. Use null instead.");
       });
     });
   });

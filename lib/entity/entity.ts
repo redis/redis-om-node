@@ -1,4 +1,5 @@
 import EntityData from "./entity-data";
+import EntityValue from "./entity-value";
 import EntityField from "./entity-field";
 import EntityBooleanField from "./entity-boolean-field";
 import EntityDateField from "./entity-date-field";
@@ -34,11 +35,6 @@ export default abstract class Entity {
   /** The generated entity ID. */
   readonly entityId: string;
 
-  /** 
-   * The underlying data to be written to Redis.
-   * @internal
-   */
-
   private schemaDef: SchemaDefinition;
   private prefix: string;
   private entityFields: Record<string, EntityField> = {};
@@ -51,8 +47,14 @@ export default abstract class Entity {
     this.schemaDef = schema.definition;
     this.prefix = schema.prefix;
     this.entityId = id;
+    this.createFields(data);
+  }
 
-    // loop through the schema, adding fields and setting data as we go
+  /**
+   * Create the fields on the Entity.
+   * @internal
+   */
+  private createFields(data: EntityData) {
     for (let field in this.schemaDef) {
       let fieldDef: FieldDefinition = this.schemaDef[field];
       let fieldType = fieldDef.type;
@@ -64,13 +66,19 @@ export default abstract class Entity {
     }
   }
 
+  /**
+   * @returns The keyname this {@link Entity} is stored with in Redis.
+   */
   get keyName(): string {
     return `${this.prefix}:${this.entityId}`;
   }
 
-  get entityData() : Record<string, any> {
-
-    let data: Record<string, any> = {};
+  /** 
+   * The underlying data to be written to Redis.
+   * @internal
+   */
+  get entityData() : Record<string, EntityValue> {
+    let data: Record<string, EntityValue> = {};
     for (let field in this.entityFields) {
       let entityField: EntityField = this.entityFields[field];
       if (entityField.value !== null) data[entityField.alias] = entityField.value;
@@ -79,6 +87,10 @@ export default abstract class Entity {
     return data;
   }
 
+  /**
+   * Converts this {@link Entity} to a JavaScript object suitable for stringification.
+   * @returns a JavaScript object.
+   */
   toJSON() {
     let json: Record<string, any> = { entityId: this.entityId }
     for (let field in this.schemaDef) {
