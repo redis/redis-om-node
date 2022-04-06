@@ -150,7 +150,7 @@ Contains instructions telling how to map a property on an [Entity](classes/Entit
 
 #### Defined in
 
-[lib/schema/schema-definitions.ts:81](https://github.com/redis/redis-om-node/blob/0843d26/lib/schema/schema-definitions.ts#L81)
+[lib/schema/definition/schema-definitions.ts:81](https://github.com/redis/redis-om-node/blob/0843d26/lib/schema/definition/schema-definitions.ts#L81)
 
 ___
 
@@ -170,7 +170,7 @@ A function that generates random [Entity IDs](classes/Entity.md#entityid).
 
 #### Defined in
 
-[lib/schema/schema-definitions.ts:89](https://github.com/redis/redis-om-node/blob/0843d26/lib/schema/schema-definitions.ts#L89)
+[lib/schema/definition/schema-definitions.ts:89](https://github.com/redis/redis-om-node/blob/0843d26/lib/schema/definition/schema-definitions.ts#L89)
 
 ___
 
@@ -189,7 +189,7 @@ Defines a point on the globe using longitude and latitude.
 
 #### Defined in
 
-[lib/schema/schema-definitions.ts:2](https://github.com/redis/redis-om-node/blob/0843d26/lib/schema/schema-definitions.ts#L2)
+[lib/schema/definition/schema-definitions.ts:2](https://github.com/redis/redis-om-node/blob/0843d26/lib/schema/definition/schema-definitions.ts#L2)
 
 ___
 
@@ -201,7 +201,7 @@ Group of [FieldDefinition](README.md#fielddefinition)s that define the schema fo
 
 #### Defined in
 
-[lib/schema/schema-definitions.ts:86](https://github.com/redis/redis-om-node/blob/0843d26/lib/schema/schema-definitions.ts#L86)
+[lib/schema/definition/schema-definitions.ts:86](https://github.com/redis/redis-om-node/blob/0843d26/lib/schema/definition/schema-definitions.ts#L86)
 
 ___
 
@@ -249,7 +249,7 @@ Valid values for how to use stop words for a given [Schema](classes/Schema.md).
 
 #### Defined in
 
-[lib/schema/schema-definitions.ts:92](https://github.com/redis/redis-om-node/blob/0843d26/lib/schema/schema-definitions.ts#L92)
+[lib/schema/definition/schema-definitions.ts:92](https://github.com/redis/redis-om-node/blob/0843d26/lib/schema/definition/schema-definitions.ts#L92)
 
 ___
 

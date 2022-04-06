@@ -38,7 +38,7 @@ The default field name in Redis is the key name defined in the
 
 #### Defined in
 
-[lib/schema/schema-definitions.ts:18](https://github.com/redis/redis-om-node/blob/0843d26/lib/schema/schema-definitions.ts#L18)
+[lib/schema/definition/schema-definitions.ts:18](https://github.com/redis/redis-om-node/blob/0843d26/lib/schema/definition/schema-definitions.ts#L18)
 
 ___
 
@@ -57,7 +57,7 @@ those problems. Defaults to `|`.
 
 #### Defined in
 
-[lib/schema/schema-definitions.ts:35](https://github.com/redis/redis-om-node/blob/0843d26/lib/schema/schema-definitions.ts#L35)
+[lib/schema/definition/schema-definitions.ts:35](https://github.com/redis/redis-om-node/blob/0843d26/lib/schema/definition/schema-definitions.ts#L35)
 
 ___
 
@@ -73,7 +73,7 @@ Enables sorting by this field.
 
 #### Defined in
 
-[lib/schema/schema-definitions.ts:24](https://github.com/redis/redis-om-node/blob/0843d26/lib/schema/schema-definitions.ts#L24)
+[lib/schema/definition/schema-definitions.ts:24](https://github.com/redis/redis-om-node/blob/0843d26/lib/schema/definition/schema-definitions.ts#L24)
 
 ___
 
@@ -89,4 +89,4 @@ Yep. It's a string.
 
 #### Defined in
 
-[lib/schema/schema-definitions.ts:47](https://github.com/redis/redis-om-node/blob/0843d26/lib/schema/schema-definitions.ts#L47)
+[lib/schema/definition/schema-definitions.ts:47](https://github.com/redis/redis-om-node/blob/0843d26/lib/schema/definition/schema-definitions.ts#L47)

@@ -31,4 +31,4 @@ those problems. Defaults to `|`.
 
 #### Defined in
 
-[lib/schema/schema-definitions.ts:35](https://github.com/redis/redis-om-node/blob/0843d26/lib/schema/schema-definitions.ts#L35)
+[lib/schema/definition/schema-definitions.ts:35](https://github.com/redis/redis-om-node/blob/0843d26/lib/schema/definition/schema-definitions.ts#L35)

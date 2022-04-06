@@ -1,15 +1,15 @@
 import EntityData from "./entity-data";
 import EntityValue from "./entity-value";
-import EntityField from "./entity-field";
-import EntityBooleanField from "./entity-boolean-field";
-import EntityDateField from "./entity-date-field";
-import EntityNumberField from "./entity-number-field";
-import EntityPointField from "./entity-point-field";
-import EntityStringArrayField from "./entity-string-array-field";
-import EntityStringField from "./entity-string-field";
-import EntityTextField from "./entity-text-field";
-import EntityFieldConstructor from "./entity-field-constructor";
-import { FieldDefinition, SchemaDefinition } from "../schema/schema-definitions";
+import EntityField from "./fields/entity-field";
+import EntityBooleanField from "./fields/entity-boolean-field";
+import EntityDateField from "./fields/entity-date-field";
+import EntityNumberField from "./fields/entity-number-field";
+import EntityPointField from "./fields/entity-point-field";
+import EntityStringArrayField from "./fields/entity-string-array-field";
+import EntityStringField from "./fields/entity-string-field";
+import EntityTextField from "./fields/entity-text-field";
+import EntityFieldConstructor from "./fields/entity-field-constructor";
+import { FieldDefinition, SchemaDefinition } from "../schema/definition/schema-definitions";
 import Schema from "../schema/schema";
 import SchemaFieldType from "../schema/schema-field-type";
 
@@ -26,7 +26,7 @@ const ENTITY_FIELD_CONSTRUCTORS: Record<SchemaFieldType, EntityFieldConstructor>
 /**
  * An Entity is the class from which objects that Redis OM maps to are made. You need
  * to subclass Entity in your application:
- * 
+ *
  * ```typescript
  * class Foo extends Entity {}
  * ```
@@ -39,7 +39,7 @@ export default abstract class Entity {
   private prefix: string;
   private entityFields: Record<string, EntityField> = {};
 
-  /** 
+  /**
    * Creates an new Entity.
    * @internal
    */
@@ -73,7 +73,7 @@ export default abstract class Entity {
     return `${this.prefix}:${this.entityId}`;
   }
 
-  /** 
+  /**
    * The underlying data to be written to Redis.
    * @internal
    */

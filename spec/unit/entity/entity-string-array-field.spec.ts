@@ -1,4 +1,4 @@
-import EntityStringArrayField from "../../../lib/entity/entity-string-array-field";
+import EntityStringArrayField from "../../../lib/entity/fields/entity-string-array-field";
 import { A_DATE, A_NUMBER, A_POINT, A_STRING, SOME_STRINGS } from "../../helpers/example-data";
 
 const ALIAS = 'foo';

@@ -1,4 +1,4 @@
-import { Point } from "../schema/schema-definitions";
+import Point from "./point";
 
 /**
  * Valid types for properties on an {@link Entity}.

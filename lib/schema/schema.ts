@@ -1,19 +1,22 @@
 import { createHash } from 'crypto';
 import { ulid } from 'ulid'
-import { SearchDataStructure } from '../client';
 
 import Entity from "../entity/entity";
 import EntityConstructor from "../entity/entity-constructor";
 
+import IdStrategy from './options/id-strategy';
+import DataStructure from './options/data-structure';
+import StopWordOptions from './options/stop-word-options';
+import SchemaOptions from './options/schema-options';
+
 import SchemaBuilder from './schema-builder';
-import { FieldDefinition, IdStrategy, SchemaDefinition, StopWordOptions } from './schema-definitions';
-import { SchemaOptions } from './schema-options';
+import { FieldDefinition, SchemaDefinition } from './definition/schema-definitions';
 
 /**
  * Defines a schema that determines how an {@link Entity} is mapped to Redis
- * data structures. Construct by passing in an {@link EntityConstructor}, 
+ * data structures. Construct by passing in an {@link EntityConstructor},
  * a {@link SchemaDefinition}, and optionally {@link SchemaOptions}:
- * 
+ *
  * ```typescript
  * let schema = new Schema(Foo, {
  *   aString: { type: 'string' },
@@ -27,10 +30,10 @@ import { SchemaOptions } from './schema-options';
  *   dataStructure: 'HASH'
  * });
  * ```
- * 
+ *
  * A Schema is primarily used by a {@link Repository} which requires a Schema in
  * its constructor.
- *  
+ *
  * @template TEntity The {@link Entity} this Schema defines.
  */
 export default class Schema<TEntity extends Entity> {
@@ -76,7 +79,7 @@ export default class Schema<TEntity extends Entity> {
    * The configured data structure, a string with the value of either `HASH` or `JSON`,
    * that this Schema uses to store {@link Entity | Entities} in Redis.
    * */
-  get dataStructure(): SearchDataStructure { return this.options?.dataStructure ?? 'JSON'; }
+  get dataStructure(): DataStructure { return this.options?.dataStructure ?? 'JSON'; }
 
   /**
    * The configured usage of stop words, a string with the value of either `OFF`, `DEFAULT`,
@@ -112,7 +115,7 @@ export default class Schema<TEntity extends Entity> {
 
   /**
    * Generates a unique string using the configured {@link IdStrategy}.
-   * @returns 
+   * @returns
    */
   generateId(): string {
     let ulidStrategy: IdStrategy = () => ulid();
@@ -143,7 +146,7 @@ export default class Schema<TEntity extends Entity> {
 
     if (this.options?.idStrategy && !(this.options.idStrategy instanceof Function))
       throw Error("ID strategy must be a function that takes no arguments and returns a string.");
-  
+
     if (this.prefix === '') throw Error(`Prefix must be a non-empty string.`);
     if (this.indexName === '') throw Error(`Index name must be a non-empty string.`);
   }

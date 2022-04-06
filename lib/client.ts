@@ -53,12 +53,12 @@ export type SearchOptions = {
  * A Client is the starting point for working with Redis OM. Clients manage the
  * connection to Redis and provide limited functionality for executing Redis commands.
  * Create a client and open it before you use it:
- * 
+ *
  * ```typescript
  * let client = new Client();
  * await client.open();
  * ```
- * 
+ *
  * A Client is primarily used by a {@link Repository} which requires a client in
  * its constructor.
  */
@@ -110,7 +110,7 @@ export default class Client {
    * Creates a repository for the given schema.
    * @template TEntity The entity type for this {@lin Schema} and {@link Repository}.
    * @param schema The schema.
-   * @returns A repository for the provided schema. 
+   * @returns A repository for the provided schema.
    */
   fetchRepository<TEntity extends Entity>(schema: Schema<TEntity>) : Repository<TEntity> {
     this.validateShimOpen();
@@ -174,7 +174,7 @@ export default class Client {
     this.validateShimOpen();
     await this.shim.unlink(key);
   }
-  
+
   /** @internal */
   async expire(key: string, ttl: number) {
     this.validateShimOpen();

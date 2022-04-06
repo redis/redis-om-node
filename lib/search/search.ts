@@ -18,7 +18,7 @@ import { HashSearchResultsConverter, JsonSearchResultsConverter } from "./result
 import { RedisError } from "..";
 import { SortOptions } from "../client";
 import WhereDate from "./where-date";
-import { Sortable } from "../schema/schema-definitions";
+import { Sortable } from "../schema/definition/schema-definitions";
 
 /**
  * A function that takes a {@link Search} and returns a {@link Search}. Used in nested queries.
@@ -40,7 +40,7 @@ export abstract class AbstractSearch<TEntity extends Entity> {
 
   /** @internal */
   protected client: Client;
-  
+
   /** @internal */
   protected sort?: SortOptions;
 
@@ -107,7 +107,7 @@ export abstract class AbstractSearch<TEntity extends Entity> {
     const UNSORTABLE = [ 'point', 'string[]' ];
     const JSON_SORTABLE = [ 'number', 'text', 'date' ];
     const HASH_SORTABLE = [ 'string', 'boolean', 'number', 'text', 'date' ];
-  
+
     if (UNSORTABLE.includes(type)) {
       let message = `'sortBy' was called on '${type}' field '${field}' which cannot be sorted.`;
       logger.error(message);
@@ -127,7 +127,7 @@ export abstract class AbstractSearch<TEntity extends Entity> {
   /**
    * Finds the {@link Entity} with the minimal value for a field.
    * @param field The field with the minimal value.
-   * @returns The {@link Entity} with the minimal value 
+   * @returns The {@link Entity} with the minimal value
    */
   async min(field: string) : Promise<TEntity> {
     return await this.sortBy(field, 'ASC').first();
@@ -136,7 +136,7 @@ export abstract class AbstractSearch<TEntity extends Entity> {
   /**
    * Finds the {@link Entity} with the maximal value for a field.
    * @param field The field with the maximal value.
-   * @returns The {@link Entity} with the maximal value 
+   * @returns The {@link Entity} with the maximal value
    */
   async max(field: string) : Promise<TEntity> {
     return await this.sortBy(field, 'DESC').first();
@@ -144,7 +144,7 @@ export abstract class AbstractSearch<TEntity extends Entity> {
 
   /**
    * Returns the number of {@link Entity | Entities} that match this query.
-   * @returns 
+   * @returns
    */
   async count(): Promise<number> {
     let searchResults = await this.callSearch()
@@ -179,11 +179,11 @@ export abstract class AbstractSearch<TEntity extends Entity> {
    * makes multiple calls to Redis until all the {@link Entity | Entities} are returned.
    * You can specify the batch size by setting the `pageSize` property on the
    * options:
-   * 
+   *
    * ```typescript
    * let entities = await repository.search().returnAll({ pageSize: 100 });
    * ```
-   * 
+   *
    * @param options Options for the call.
    * @param options.pageSize Number of {@link Entity | Entities} returned per batch.
    * @returns An array of {@link Entity | Entities} matching the query.
@@ -217,7 +217,7 @@ export abstract class AbstractSearch<TEntity extends Entity> {
   async returnMin (field: string) : Promise<TEntity> {
     return await this.min(field);
   }
-  
+
   /**
    * Alias for {@link Search.max}.
    */
@@ -254,7 +254,7 @@ export abstract class AbstractSearch<TEntity extends Entity> {
   }
 
   private async callSearch(limit: LimitOptions = { offset: 0, count: 0 }) {
-    let options: SearchOptions = { 
+    let options: SearchOptions = {
       indexName: this.schema.indexName,
       query: this.query,
       limit

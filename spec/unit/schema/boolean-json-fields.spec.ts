@@ -2,7 +2,7 @@ import Schema from '../../../lib/schema/schema';
 import Entity from '../../../lib/entity/entity';
 import * as logger from '../../../lib/shims/logger';
 
-import { SchemaDefinition } from '../../../lib/schema/schema-definitions';
+import { SchemaDefinition } from '../../../lib/schema/definition/schema-definitions';
 import { SearchDataStructure } from '../../../lib';
 
 const warnSpy = jest.spyOn(logger, 'warn');
@@ -16,7 +16,7 @@ describe("Schema", () => {
       expectedRedisSchema: ['$.aField', 'AS', 'aField', 'TAG'],
       expectedWarning: null
     }],
-    
+
     ["that defines an aliased boolean for a JSON", {
       schemaDef: { aField: { type: 'boolean', alias: 'anotherField' } } as SchemaDefinition,
       dataStructure: 'JSON',

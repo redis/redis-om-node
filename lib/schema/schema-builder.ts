@@ -1,6 +1,6 @@
 import Entity from "../entity/entity";
 import Schema from "./schema";
-import { Sortable, FieldDefinition, Separable } from './schema-definitions';
+import { Sortable, FieldDefinition, Separable } from './definition/schema-definitions';
 
 import * as logger from '../shims/logger'
 import RedisError from "../errors";
@@ -26,7 +26,7 @@ export default class SchemaBuilder<TEntity extends Entity> {
     }
     return redisSchema;
   }
-  
+
   private buildJsonSchema(): string[] {
     let redisSchema: string[] = [];
     for (let field in this.schema.definition) {
@@ -42,29 +42,29 @@ export default class SchemaBuilder<TEntity extends Entity> {
     let fieldDetails: string[];
 
     switch (fieldType) {
-      case 'date': 
+      case 'date':
         fieldDetails = this.buildSortableNumeric(fieldDef as Sortable);
         break;
-      case 'boolean': 
+      case 'boolean':
         fieldDetails = this.buildSortableTag(fieldDef as Sortable);
         break;
-      case 'number': 
+      case 'number':
         fieldDetails = this.buildSortableNumeric(fieldDef as Sortable);
         break;
       case 'point':
         fieldDetails = this.buildGeo();
         break;
-      case 'string[]': 
+      case 'string[]':
         fieldDetails = this.buildSeparableTag(fieldDef as Separable);
         break;
-      case 'string': 
+      case 'string':
         fieldDetails = this.buildSeparableAndSortableTag(fieldDef as Sortable & Separable);
         break;
-      case 'text': 
+      case 'text':
         fieldDetails = this.buildSortableText(fieldDef as Sortable);
         break;
     };
-  
+
     return [ fieldAlias, ...fieldDetails ];
   }
 

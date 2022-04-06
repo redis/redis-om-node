@@ -1,4 +1,4 @@
-import EntityStringField from "../../../lib/entity/entity-string-field";
+import EntityStringField from "../../../lib/entity/fields/entity-string-field";
 import { A_DATE, A_NUMBER, A_NUMBER_STRING, A_POINT, A_STRING, SOME_STRINGS } from "../../helpers/example-data";
 
 const ALIAS = 'foo';

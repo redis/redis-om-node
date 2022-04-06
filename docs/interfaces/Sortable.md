@@ -34,4 +34,4 @@ Enables sorting by this field.
 
 #### Defined in
 
-[lib/schema/schema-definitions.ts:24](https://github.com/redis/redis-om-node/blob/0843d26/lib/schema/schema-definitions.ts#L24)
+[lib/schema/definition/schema-definitions.ts:24](https://github.com/redis/redis-om-node/blob/0843d26/lib/schema/definition/schema-definitions.ts#L24)

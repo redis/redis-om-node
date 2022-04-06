@@ -1,5 +1,5 @@
 import EntityField from "./entity-field";
-import EntityValue from "./entity-value";
+import EntityValue from "../entity-value";
 
 class EntityDateField extends EntityField {
   protected convertValue(value: EntityValue): EntityValue {

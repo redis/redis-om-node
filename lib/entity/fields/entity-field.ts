@@ -1,4 +1,4 @@
-import EntityValue from "./entity-value";
+import EntityValue from "../entity-value";
 
 abstract class EntityField {
 

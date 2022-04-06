@@ -1,10 +1,12 @@
-import { SearchDataStructure } from "../client";
-import { IdStrategy, StopWordOptions } from "./schema-definitions";
+import DataStructure from "./data-structure";
+import IdStrategy from "./id-strategy";
+import StopWordOptions from "./stop-word-options";
+
 
 /**
  * Configuration options for a {@link Schema}.
  */
-export type SchemaOptions = {
+type SchemaOptions = {
 
   /**
    * The string that comes before the ID when creating Redis keys for
@@ -29,7 +31,7 @@ export type SchemaOptions = {
 
    /** The data structure used to store the {@link Entity} in Redis. Can be set
     * to either `JSON` or `HASH`. Defaults to JSON. */
-  dataStructure?: SearchDataStructure;
+  dataStructure?: DataStructure;
 
   /**
    * A function that generates a random {@link Entity.entityId | Entity ID}. Defaults
@@ -40,7 +42,7 @@ export type SchemaOptions = {
   idStrategy?: IdStrategy;
 
   /**
-   * Configures the usage of stop words. Valid values are `OFF`, `DEFAULT`, and `CUSTOM`. 
+   * Configures the usage of stop words. Valid values are `OFF`, `DEFAULT`, and `CUSTOM`.
    * Setting this to `OFF` disables all stop words. Setting this to `DEFAULT` uses the
    * stop words intrinsic to RediSearch. Setting this to `CUSTOM` tells RediSearch to
    * use the stop words in `stopWords`.
@@ -53,3 +55,5 @@ export type SchemaOptions = {
    */
   stopWords?: string[]
 }
+
+export default SchemaOptions;

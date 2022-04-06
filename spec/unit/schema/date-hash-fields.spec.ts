@@ -1,6 +1,6 @@
 import Schema from '../../../lib/schema/schema';
 import Entity from '../../../lib/entity/entity';
-import { SchemaDefinition } from '../../../lib/schema/schema-definitions';
+import { SchemaDefinition } from '../../../lib/schema/definition/schema-definitions';
 import { SearchDataStructure } from '../../../lib';
 
 describe("Schema", () => {
@@ -11,7 +11,7 @@ describe("Schema", () => {
       dataStructure: 'HASH',
       expectedRedisSchema: ['aField', 'NUMERIC']
     }],
-    
+
     ["that defines an aliased date for a HASH", {
       schemaDef: { aField: { type: 'date', alias: 'anotherField' } } as SchemaDefinition,
       dataStructure: 'HASH',

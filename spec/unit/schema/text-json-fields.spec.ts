@@ -1,6 +1,6 @@
 import Schema from '../../../lib/schema/schema';
 import Entity from '../../../lib/entity/entity';
-import { SchemaDefinition } from '../../../lib/schema/schema-definitions';
+import { SchemaDefinition } from '../../../lib/schema/definition/schema-definitions';
 import { SearchDataStructure } from '../../../lib';
 
 describe("Schema", () => {
@@ -11,7 +11,7 @@ describe("Schema", () => {
       dataStructure: 'JSON',
       expectedRedisSchema: ['$.aField', 'AS', 'aField', 'TEXT']
     }],
-    
+
     ["that defines an aliased text for a JSON", {
       schemaDef: { aField: { type: 'text', alias: 'anotherField' } } as SchemaDefinition,
       dataStructure: 'JSON',

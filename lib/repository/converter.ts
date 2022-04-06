@@ -1,7 +1,8 @@
 import EntityData from "../entity/entity-data";
 import EntityValue from "../entity/entity-value";
 import { JsonData, HashData } from '../client';
-import { StringArrayField, SchemaDefinition, FieldDefinition, Point } from "../schema/schema-definitions";
+import { StringArrayField, SchemaDefinition, FieldDefinition } from "../schema/definition/schema-definitions";
+import Point from "../entity/point";
 
 class AbstractConverter {
   protected schemaDef: SchemaDefinition

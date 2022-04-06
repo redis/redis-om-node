@@ -1,5 +1,4 @@
-import { Point } from "../../lib/schema/schema-definitions";
-
+import Point from "../../lib/entity/point";
 
 export const A_STRING = 'foo';
 export const ANOTHER_STRING = 'bar';
@@ -71,7 +70,7 @@ export type SampleEntityData = {
   aDate: Date | null;
   anotherDate: Date | null;
   someStrings: string[] | null;
-  someOtherStrings: string[] | null;  
+  someOtherStrings: string[] | null;
 };
 
 export const AN_ENTITY: SampleEntityData = {

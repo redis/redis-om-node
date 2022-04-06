@@ -35,7 +35,7 @@ The default field name in Redis is the key name defined in the
 
 #### Defined in
 
-[lib/schema/schema-definitions.ts:18](https://github.com/redis/redis-om-node/blob/0843d26/lib/schema/schema-definitions.ts#L18)
+[lib/schema/definition/schema-definitions.ts:18](https://github.com/redis/redis-om-node/blob/0843d26/lib/schema/definition/schema-definitions.ts#L18)
 
 ___
 
@@ -54,7 +54,7 @@ those problems. Defaults to `|`.
 
 #### Defined in
 
-[lib/schema/schema-definitions.ts:35](https://github.com/redis/redis-om-node/blob/0843d26/lib/schema/schema-definitions.ts#L35)
+[lib/schema/definition/schema-definitions.ts:35](https://github.com/redis/redis-om-node/blob/0843d26/lib/schema/definition/schema-definitions.ts#L35)
 
 ___
 
@@ -70,4 +70,4 @@ Yep. It's a string array.
 
 #### Defined in
 
-[lib/schema/schema-definitions.ts:77](https://github.com/redis/redis-om-node/blob/0843d26/lib/schema/schema-definitions.ts#L77)
+[lib/schema/definition/schema-definitions.ts:77](https://github.com/redis/redis-om-node/blob/0843d26/lib/schema/definition/schema-definitions.ts#L77)

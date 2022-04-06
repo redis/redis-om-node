@@ -1,4 +1,4 @@
-import EntityBooleanField from "../../../lib/entity/entity-boolean-field";
+import EntityBooleanField from "../../../lib/entity/fields/entity-boolean-field";
 import { A_DATE, A_NUMBER, A_POINT, A_STRING, SOME_STRINGS } from "../../helpers/example-data";
 
 const ALIAS = 'foo';

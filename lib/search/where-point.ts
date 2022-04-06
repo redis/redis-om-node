@@ -1,4 +1,4 @@
-import { Point } from "../schema/schema-definitions";
+import Point from "../entity/point";
 import Entity from "../entity/entity";
 import { Search } from "./search";
 import WhereField from "./where-field";
@@ -25,7 +25,7 @@ export class Circle {
 
   /**
    * Sets the longitude. If not set, defaults to 0.0.
-   * 
+   *
    * @param value The longitude.
    * @returns This instance.
    */
@@ -36,7 +36,7 @@ export class Circle {
 
   /**
    * Sets the latitude. If not set, defaults to 0.0.
-   * 
+   *
    * @param value The latitude.
    * @returns This instance.
    */
@@ -48,7 +48,7 @@ export class Circle {
   /**
    * Sets the origin of the circle using a {@link Point}. If not
    * set, defaults to [Null Island](https://en.wikipedia.org/wiki/Null_Island).
-   * 
+   *
    * @param point A {@link Point} containing the longitude and latitude of the origin.
    * @returns This instance.
    */
@@ -57,7 +57,7 @@ export class Circle {
   /**
    * Sets the origin of the circle. If not set, defaults to
    * [Null Island](https://en.wikipedia.org/wiki/Null_Island).
-   * 
+   *
    * @param longitude The longitude.
    * @param latitude The latitude.
    * @returns This instance.
@@ -80,7 +80,7 @@ export class Circle {
   /**
    * Sets the radius of the {@link Circle}. Defaults to 1. If units are
    * not specified, defaults to meters.
-   * 
+   *
    * @param size The radius of the circle.
    * @returns This instance.
    */

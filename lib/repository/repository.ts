@@ -1,10 +1,11 @@
 import Schema from "../schema/schema"
 import Client from "../client";
 import Entity from "../entity/entity";
+import EntityData from "../entity/entity-data";
+import Point from "../entity/point";
+
 import { Search, RawSearch } from '../search/search';
 
-import EntityData from "../entity/entity-data";
-import { Point } from "../schema/schema-definitions";
 import { CreateIndexOptions } from "../client";
 import { JsonConverter, HashConverter } from "./converter";
 
@@ -20,42 +21,42 @@ export type EntityCreationData = Record<string, number | boolean | string | stri
  * {@link Client.fetchRepository} and passing in a {@link Schema}. Then
  * use the {@link Repository.fetch}, {@link Repository.save}, and
  * {@link Repository.remove} methods to manage your data:
- * 
+ *
  * ```typescript
  * let repository = client.fetchRepository<Foo>(schema);
- * 
+ *
  * let foo = await repository.fetch('01FK6TCJBDK41RJ766A4SBWDJ9');
  * foo.aString = 'bar';
  * foo.aBoolean = false;
  * await repository.save(foo);
  * ```
- * 
+ *
  * Be sure to use the repository to create a new instance of an
  * {@link Entity} you want to create before you save it:
- 
+
  * ```typescript
  * let foo = await repository.createEntity();
  * foo.aString = 'bar';
  * foo.aBoolean = false;
  * await repository.save(foo);
  * ```
- * 
+ *
  * If you want to the {@link Repository.search} method, you need to create an index
  * first, and you need RediSearch or RedisJSON installed on your instance of Redis:
- * 
+ *
  * ```typescript
  * await repository.createIndex();
  * let entities = await repository.search()
  *   .where('aString').eq('bar')
  *   .and('aBoolean').is.false().returnAll();
  * ```
- * 
+ *
  * @template TEntity The type of {@link Entity} that this repository manages.
  */
  export default abstract class Repository<TEntity extends Entity> {
   protected client: Client;
   private schema: Schema<TEntity>;
-  
+
   /** @internal */
   constructor(schema: Schema<TEntity>, client: Client) {
     this.schema = schema;
@@ -80,10 +81,10 @@ export type EntityCreationData = Record<string, number | boolean | string | stri
         prefix: `${this.schema.prefix}:`,
         schema: this.schema.redisSchema
       };
-      
+
       if (this.schema.useStopWords === 'OFF') options.stopWords = []
       if (this.schema.useStopWords === 'CUSTOM') options.stopWords = this.schema.stopWords
-      
+
       await this.client.createIndex(options);
       await this.client.set(this.schema.indexHashName, this.schema.indexHash);
     }
@@ -146,12 +147,12 @@ export type EntityCreationData = Record<string, number | boolean | string | stri
    * {@link Repository.createEntity} followed by {@link Repository.save}.
    * @param data Optional values with which to initialize the entity.
    * @returns The newly created and saved Entity.
-   */ 
+   */
   async createAndSave(data: EntityCreationData = {}): Promise<TEntity> {
     let entity = this.createEntity(data);
     await this.save(entity)
     return entity
-  }  
+  }
 
   /**
    * Read and return an {@link Entity} from Redis with the given id. If

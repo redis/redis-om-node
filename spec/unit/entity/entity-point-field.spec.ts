@@ -1,4 +1,4 @@
-import EntityPointField from "../../../lib/entity/entity-point-field";
+import EntityPointField from "../../../lib/entity/fields/entity-point-field";
 import { A_DATE, A_NUMBER, A_POINT, A_STRING, SOME_STRINGS } from "../../helpers/example-data";
 
 const ALIAS = 'foo';

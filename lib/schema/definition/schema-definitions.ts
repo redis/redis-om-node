@@ -1,18 +1,10 @@
-/** Defines a point on the globe using longitude and latitude. */
-export type Point = {
-  /** The longitude of the point. */
-  longitude: number,
-  /** The latitude of the point. */
-  latitude: number
-}
-
 /** Base interface for all fields. */
 export interface Field {
   /** The type of the field (i.e. string, number, boolean, etc.) */
   type: string;
 
   /**
-   * The default field name in Redis is the key name defined in the 
+   * The default field name in Redis is the key name defined in the
    * {@link SchemaDefinition}. Overrides the Redis key name if set.
    */
   alias?: string;
@@ -84,9 +76,3 @@ export type FieldDefinition = StringField | TextField | NumberField | BooleanFie
 * Group of {@link FieldDefinition}s that define the schema for an {@link Entity}.
  */
 export type SchemaDefinition = Record<string, FieldDefinition>;
-
-/** A function that generates random {@link Entity.entityId | Entity IDs}. */
-export type IdStrategy = () => string;
-
-/** Valid values for how to use stop words for a given {@link Schema}. */
-export type StopWordOptions = 'OFF' | 'DEFAULT' | 'CUSTOM';

@@ -1,4 +1,4 @@
-import EntityDateField from "../../../lib/entity/entity-date-field";
+import EntityDateField from "../../../lib/entity/fields/entity-date-field";
 import { A_DATE, A_DATE_EPOCH, A_DATE_ISO, A_NUMBER, A_POINT, A_STRING, SOME_STRINGS } from "../../helpers/example-data";
 
 const ALIAS = 'foo';
