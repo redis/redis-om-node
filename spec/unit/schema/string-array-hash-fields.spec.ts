@@ -1,7 +1,7 @@
 import Schema from '../../../lib/schema/schema';
 import Entity from '../../../lib/entity/entity';
-import { SchemaDefinition } from '../../../lib/schema/definition/schema-definitions';
-import { SearchDataStructure } from '../../../lib';
+import SchemaDefinition from '../../../lib/schema/definition/schema-definition';
+import DataStructure from '../../../lib/schema/options/data-structure';
 
 describe("Schema", () => {
   describe.each([
@@ -36,7 +36,7 @@ describe("Schema", () => {
 
     it("generates a Redis schema for the field", () => {
       let schemaDef = data.schemaDef;
-      let dataStructure = data.dataStructure as SearchDataStructure;
+      let dataStructure = data.dataStructure as DataStructure;
       let expectedRedisSchema = data.expectedRedisSchema;
 
       let schema = new Schema<TestEntity>(TestEntity, schemaDef, { dataStructure });

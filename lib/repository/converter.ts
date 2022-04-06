@@ -1,7 +1,9 @@
 import EntityData from "../entity/entity-data";
 import EntityValue from "../entity/entity-value";
 import { JsonData, HashData } from '../client';
-import { StringArrayField, SchemaDefinition, FieldDefinition } from "../schema/definition/schema-definitions";
+import SchemaDefinition from "../schema/definition/schema-definition";
+import FieldDefinition from "../schema/definition/field-definition";
+import StringArrayFieldDefinition from "../schema/definition/string-array-field-definition";
 import Point from "../entity/point";
 
 class AbstractConverter {
@@ -73,7 +75,7 @@ let toHashConverters = {
   'text': (value: EntityValue) => (value as string).toString(),
   'point': (value: EntityValue) => pointToString(value as Point),
   'date': (value: EntityValue) => dateToString(value as Date),
-  'string[]': (value: EntityValue, fieldDef: FieldDefinition) => stringArrayToString(value as string[], fieldDef as StringArrayField)
+  'string[]': (value: EntityValue, fieldDef: FieldDefinition) => stringArrayToString(value as string[], fieldDef as StringArrayFieldDefinition)
 };
 
 let fromHashConverters = {
@@ -83,7 +85,7 @@ let fromHashConverters = {
   'text': (value: string) => value,
   'point': stringToPoint,
   'date': stringToDate,
-  'string[]': (value: string, fieldDef: FieldDefinition) => stringToStringArray(value, fieldDef as StringArrayField)
+  'string[]': (value: string, fieldDef: FieldDefinition) => stringToStringArray(value, fieldDef as StringArrayFieldDefinition)
 };
 
 let toJsonConverters = {
@@ -119,7 +121,7 @@ function dateToNumber(value: Date): number {
   return value.getTime();
 }
 
-function stringArrayToString(value: string[], fieldDef: StringArrayField): string {
+function stringArrayToString(value: string[], fieldDef: StringArrayFieldDefinition): string {
   return value.join(fieldDef.separator ?? '|');
 }
 
@@ -148,7 +150,7 @@ function stringToDate(value: string): Date {
   return date;
 }
 
-function stringToStringArray(value: string, fieldDef: StringArrayField) {
+function stringToStringArray(value: string, fieldDef: StringArrayFieldDefinition) {
   return value.split(fieldDef.separator ?? '|');
 }
 

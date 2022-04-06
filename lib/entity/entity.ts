@@ -9,9 +9,10 @@ import EntityStringArrayField from "./fields/entity-string-array-field";
 import EntityStringField from "./fields/entity-string-field";
 import EntityTextField from "./fields/entity-text-field";
 import EntityFieldConstructor from "./fields/entity-field-constructor";
-import { FieldDefinition, SchemaDefinition } from "../schema/definition/schema-definitions";
 import Schema from "../schema/schema";
-import SchemaFieldType from "../schema/schema-field-type";
+import SchemaDefinition from "../schema/definition/schema-definition";
+import FieldDefinition from "../schema/definition/field-definition";
+import SchemaFieldType from "../schema/definition/schema-field-type";
 
 const ENTITY_FIELD_CONSTRUCTORS: Record<SchemaFieldType, EntityFieldConstructor> = {
   'string': EntityStringField,

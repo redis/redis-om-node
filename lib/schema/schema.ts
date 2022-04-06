@@ -9,8 +9,10 @@ import DataStructure from './options/data-structure';
 import StopWordOptions from './options/stop-word-options';
 import SchemaOptions from './options/schema-options';
 
-import SchemaBuilder from './schema-builder';
-import { FieldDefinition, SchemaDefinition } from './definition/schema-definitions';
+import SchemaDefinition from './definition/schema-definition';
+import FieldDefinition from './definition/field-definition';
+import JsonSchemaBuilder from './builders/json-schema-builder';
+import HashSchemaBuilder from './builders/hash-schema-builder';
 
 /**
  * Defines a schema that determines how an {@link Entity} is mapped to Redis
@@ -111,7 +113,11 @@ export default class Schema<TEntity extends Entity> {
   }
 
   /** @internal */
-  get redisSchema(): string[] { return new SchemaBuilder(this).redisSchema; }
+  get redisSchema(): string[] {
+    if (this.dataStructure === 'HASH') return new HashSchemaBuilder(this).redisSchema;
+    if (this.dataStructure === 'JSON') return new JsonSchemaBuilder(this).redisSchema;
+    throw new Error(`'${this.dataStructure}' in an invalid data structure. Valid data structures are 'HASH' and 'JSON'.`);
+  }
 
   /**
    * Generates a unique string using the configured {@link IdStrategy}.

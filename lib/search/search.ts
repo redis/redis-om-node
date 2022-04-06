@@ -18,7 +18,7 @@ import { HashSearchResultsConverter, JsonSearchResultsConverter } from "./result
 import { RedisError } from "..";
 import { SortOptions } from "../client";
 import WhereDate from "./where-date";
-import { Sortable } from "../schema/definition/schema-definitions";
+import SortableFieldDefinition from "../schema/definition/sortable-field-definition";
 
 /**
  * A function that takes a {@link Search} and returns a {@link Search}. Used in nested queries.
@@ -102,7 +102,7 @@ export abstract class AbstractSearch<TEntity extends Entity> {
     }
 
     let type = fieldDef.type;
-    let markedSortable = (fieldDef as Sortable).sortable;
+    let markedSortable = (fieldDef as SortableFieldDefinition).sortable;
 
     const UNSORTABLE = [ 'point', 'string[]' ];
     const JSON_SORTABLE = [ 'number', 'text', 'date' ];

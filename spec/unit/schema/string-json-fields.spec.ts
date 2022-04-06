@@ -1,9 +1,9 @@
 import Schema from '../../../lib/schema/schema';
 import Entity from '../../../lib/entity/entity';
-import * as logger from '../../../lib/shims/logger';
+import SchemaDefinition from '../../../lib/schema/definition/schema-definition';
+import DataStructure from '../../../lib/schema/options/data-structure';
 
-import { SchemaDefinition } from '../../../lib/schema/definition/schema-definitions';
-import { SearchDataStructure } from '../../../lib';
+import * as logger from '../../../lib/shims/logger';
 
 const warnSpy = jest.spyOn(logger, 'warn');
 
@@ -100,7 +100,7 @@ describe("Schema", () => {
 
     let redisSchema: string[];
     let schemaDef = data.schemaDef;
-    let dataStructure = data.dataStructure as SearchDataStructure;
+    let dataStructure = data.dataStructure as DataStructure;
     let expectedRedisSchema = data.expectedRedisSchema;
     let expectedWarning = data.expectedWarning;
 

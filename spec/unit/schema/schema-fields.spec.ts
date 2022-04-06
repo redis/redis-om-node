@@ -1,7 +1,7 @@
 import Schema from '../../../lib/schema/schema';
 import Entity from '../../../lib/entity/entity';
 import EntityData from '../../../lib/entity/entity-data';
-import { SearchDataStructure } from '../../../lib/client';
+import DataStructure from '../../../lib/schema/options/data-structure';
 import Point from '../../../lib/entity/point';
 import {
   A_STRING, ANOTHER_STRING,
@@ -42,7 +42,7 @@ describe("Schema", () => {
         aPoint: { type: 'point' },
         aDate: { type: 'date' },
         someStrings: { type: 'string[]' }
-      }, { dataStructure: dataStructure as SearchDataStructure });
+      }, { dataStructure: dataStructure as DataStructure });
     });
 
     beforeEach(() => {
