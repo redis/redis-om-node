@@ -1,7 +1,20 @@
 import EntityField from "./entity-field";
 import EntityValue from "../entity-value";
+import { RedisHashData, RedisJsonData } from "../../client";
 
 class EntityDateField extends EntityField {
+  toRedisJson(): RedisJsonData {
+    let data: RedisJsonData = {};
+    if (this.value !== null) data[this.name] = this.valueAsNumber;
+    return data;
+  };
+
+  toRedisHash(): RedisHashData {
+    let data: RedisHashData = {};
+    if (this.value !== null) data[this.name] = this.valueAsNumber.toString();
+    return data;
+  };
+
   protected convertValue(value: EntityValue): EntityValue {
     if (this.isString(value)) {
       return new Date(value as string);
@@ -28,6 +41,10 @@ class EntityDateField extends EntityField {
 
   private isDate(value: EntityValue) {
     return value instanceof Date;
+  }
+
+  private get valueAsNumber(): number {
+    return (this.value as Date).getTime();
   }
 }
 

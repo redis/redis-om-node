@@ -3,12 +3,13 @@ import SchemaBuilder from "./schema-builder";
 import FieldDefinition from "../definition/field-definition";
 import SeparableFieldDefinition from "../definition/separable-field-definition";
 import SortableFieldDefinition from "../definition/sortable-field-definition";
+import SchemaFieldType from "../definition/schema-field-type";
 
 export default class HashSchemaBuilder<TEntity extends Entity> extends SchemaBuilder<TEntity> {
 
   protected buildEntry(field: string) : string[] {
     let fieldDef: FieldDefinition = this.schema.definition[field];
-    let fieldType = fieldDef.type;
+    let fieldType: SchemaFieldType = fieldDef.type;
     let fieldAlias = fieldDef.alias ?? field
     let fieldDetails: string[];
 

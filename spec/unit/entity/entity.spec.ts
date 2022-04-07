@@ -1,17 +1,33 @@
 import {
   A_STRING, ANOTHER_STRING, A_THIRD_STRING,
   A_NUMBER, ANOTHER_NUMBER, A_THIRD_NUMBER,
-  A_DATE, A_DATE_ISO, ANOTHER_DATE, ANOTHER_DATE_ISO, A_THIRD_DATE,
-  A_POINT, A_POINT_JSON, ANOTHER_POINT, ANOTHER_POINT_JSON, A_THIRD_POINT,
+  A_DATE, A_DATE_ISO, A_DATE_EPOCH, ANOTHER_DATE, ANOTHER_DATE_ISO, ANOTHER_DATE_EPOCH, A_THIRD_DATE,
+  A_POINT, A_POINT_JSON, A_POINT_STRING, ANOTHER_POINT, ANOTHER_POINT_JSON, ANOTHER_POINT_STRING, A_THIRD_POINT,
   SOME_STRINGS, SOME_STRINGS_JSON, SOME_OTHER_STRINGS, SOME_OTHER_STRINGS_JSON, SOME_MORE_STRINGS,
-  SOME_TEXT, SOME_OTHER_TEXT, SOME_MORE_TEXT  } from '../../helpers/example-data';
+  SOME_TEXT, SOME_OTHER_TEXT, SOME_MORE_TEXT, A_DATE_EPOCH_STRING, A_NUMBER_STRING, SOME_STRINGS_JOINED, ANOTHER_DATE_EPOCH_STRING, ANOTHER_NUMBER_STRING, SOME_OTHER_STRINGS_JOINED } from '../../helpers/example-data';
 
 import { AliasedEntity, aliasedSchema, SimpleEntity, simpleSchema } from '../helpers/test-entity-and-schema';
 
 const ENTITY_ID = 'foo';
-const EXPECTED_JSON = `{"entityId":"${ENTITY_ID}","aString":"${A_STRING}","someText":"${SOME_TEXT}","aNumber":${A_NUMBER},"aBoolean":false,"aPoint":${A_POINT_JSON},"aDate":"${A_DATE_ISO}","someStrings":${SOME_STRINGS_JSON}}`;
+
 const EXPECTED_NULL_JSON = `{"entityId":"${ENTITY_ID}","aString":null,"someText":null,"aNumber":null,"aBoolean":null,"aPoint":null,"aDate":null,"someStrings":null}`;
+const EXPECTED_JSON = `{"entityId":"${ENTITY_ID}","aString":"${A_STRING}","someText":"${SOME_TEXT}","aNumber":${A_NUMBER},"aBoolean":false,"aPoint":${A_POINT_JSON},"aDate":"${A_DATE_ISO}","someStrings":${SOME_STRINGS_JSON}}`;
 const EXPECTED_ALIASED_JSON = `{"entityId":"${ENTITY_ID}","aString":"${ANOTHER_STRING}","someText":"${SOME_OTHER_TEXT}","aNumber":${ANOTHER_NUMBER},"aBoolean":true,"aPoint":${ANOTHER_POINT_JSON},"aDate":"${ANOTHER_DATE_ISO}","someStrings":${SOME_OTHER_STRINGS_JSON}}`;
+
+const EXPECTED_NULL_JSON_DATA = {};
+const EXPECTED_JSON_DATA = { aBoolean: false, aDate: A_DATE_EPOCH, aNumber: A_NUMBER,
+  aPoint: A_POINT_STRING, aString: A_STRING, someStrings: SOME_STRINGS, someText: SOME_TEXT };
+const EXPECTED_ALIASED_JSON_DATA = { anotherBoolean: true, anotherDate: ANOTHER_DATE_EPOCH,
+  anotherNumber: ANOTHER_NUMBER, anotherPoint: ANOTHER_POINT_STRING, anotherString: ANOTHER_STRING,
+  someOtherStrings: SOME_OTHER_STRINGS, someOtherText: SOME_OTHER_TEXT };
+
+const EXPECTED_NULL_HASH_DATA = {};
+const EXPECTED_HASH_DATA = { aBoolean: '0', aDate: A_DATE_EPOCH_STRING, aNumber: A_NUMBER_STRING,
+  aPoint: A_POINT_STRING, aString: A_STRING, someStrings: SOME_STRINGS_JOINED, someText: SOME_TEXT };
+const EXPECTED_ALIASED_HASH_DATA = { anotherBoolean: '1', anotherDate: ANOTHER_DATE_EPOCH_STRING,
+  anotherNumber: ANOTHER_NUMBER_STRING, anotherPoint: ANOTHER_POINT_STRING, anotherString: ANOTHER_STRING,
+  someOtherStrings: SOME_OTHER_STRINGS_JOINED, someOtherText: SOME_OTHER_TEXT };
+
 
 let entity: SimpleEntity;
 
@@ -29,6 +45,8 @@ describe("Entity", () => {
     it("returns null for the string[] property", () => expect(entity.someStrings).toBeNull());
     it("returns the expected key name", () => expect(entity.keyName).toBe(`SimpleEntity:${ENTITY_ID}`));
     it("serializes to the expected JSON", () => expect(JSON.stringify(entity)).toBe(EXPECTED_NULL_JSON));
+    it("converts to the expected RedisJSON data", () => expect(entity.toRedisJson()).toEqual(EXPECTED_NULL_JSON_DATA));
+    it("converts to the expected Redis Hash data", () => expect(entity.toRedisHash()).toEqual(EXPECTED_NULL_HASH_DATA));
   });
 
   describe("with data", () => {
@@ -45,6 +63,8 @@ describe("Entity", () => {
     it("returns a string[] for the string[] property", () => expect(entity.someStrings).toEqual(SOME_STRINGS));
     it("returns the expected key name", () => expect(entity.keyName).toBe(`SimpleEntity:${ENTITY_ID}`));
     it("serializes to the expected JSON", () => expect(JSON.stringify(entity)).toBe(EXPECTED_JSON));
+    it("converts to the expected RedisJSON data", () => expect(entity.toRedisJson()).toEqual(EXPECTED_JSON_DATA));
+    it("converts to the expected Redis Hash data", () => expect(entity.toRedisHash()).toEqual(EXPECTED_HASH_DATA));
 
     describe("changing the data", () => {
       it("stores a number when the number property is changed", () => {
@@ -119,6 +139,8 @@ describe("Entity", () => {
     it("returns a string[] for the string[] property", () => expect(entity.someStrings).toEqual(SOME_OTHER_STRINGS));
     it("returns the expected key name", () => expect(entity.keyName).toBe(`AliasedEntity:${ENTITY_ID}`));
     it("serializes to the expected JSON", () => expect(JSON.stringify(entity)).toBe(EXPECTED_ALIASED_JSON));
+    it("converts to the expected RedisJSON data", () => expect(entity.toRedisJson()).toEqual(EXPECTED_ALIASED_JSON_DATA));
+    it("converts to the expected Redis Hash data", () => expect(entity.toRedisHash()).toEqual(EXPECTED_ALIASED_HASH_DATA));
 
     describe("changing the data", () => {
       it("stores a number when the number property is changed", () => {

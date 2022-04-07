@@ -6,16 +6,16 @@ import Schema from './schema/schema';
 import RedisError from './errors';
 
 /**
- * Alias for any old JavaScript object.
+ * Alias for a JavaScript object used by HSET.
  * @internal
  */
-export type HashData = { [key: string ]: any };
+export type RedisHashData = { [key: string ]: any };
 
 /**
- * Alias for any old JavaScript object.
+ * Alias for any old JavaScript object used by JSON.SET.
  * @internal
  */
-export type JsonData = { [key: string ]: any };
+export type RedisJsonData = { [key: string ]: any };
 
 /** The type of data structure in Redis to map objects to. */
 export type SearchDataStructure = 'HASH' | 'JSON';
@@ -194,26 +194,26 @@ export default class Client {
   }
 
   /** @internal */
-  async hgetall(key: string): Promise<HashData> {
+  async hgetall(key: string): Promise<RedisHashData> {
     this.validateShimOpen();
     return await this.shim.hgetall(key);
   }
 
   /** @internal */
-  async hsetall(key: string, data: HashData) {
+  async hsetall(key: string, data: RedisHashData) {
     this.validateShimOpen();
     await this.shim.hsetall(key, data)
   }
 
   /** @internal */
-  async jsonget(key: string): Promise<JsonData> {
+  async jsonget(key: string): Promise<RedisJsonData> {
     this.validateShimOpen();
     let json = await this.shim.execute<string>([ 'JSON.GET', key, '.' ]);
     return JSON.parse(json);
   }
 
   /** @internal */
-  async jsonset(key: string, data: JsonData) {
+  async jsonset(key: string, data: RedisJsonData) {
     this.validateShimOpen();
     let json = JSON.stringify(data);
     await this.shim.execute<string>([ 'JSON.SET', key, '.', json ]);

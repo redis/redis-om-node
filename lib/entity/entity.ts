@@ -13,6 +13,7 @@ import Schema from "../schema/schema";
 import SchemaDefinition from "../schema/definition/schema-definition";
 import FieldDefinition from "../schema/definition/field-definition";
 import SchemaFieldType from "../schema/definition/schema-field-type";
+import { RedisJsonData, RedisHashData } from "../client";
 
 const ENTITY_FIELD_CONSTRUCTORS: Record<SchemaFieldType, EntityFieldConstructor> = {
   'string': EntityStringField,
@@ -56,14 +57,14 @@ export default abstract class Entity {
    * @internal
    */
   private createFields(data: EntityData) {
-    for (let field in this.schemaDef) {
-      let fieldDef: FieldDefinition = this.schemaDef[field];
+    for (let fieldName in this.schemaDef) {
+      let fieldDef: FieldDefinition = this.schemaDef[fieldName];
       let fieldType = fieldDef.type;
-      let fieldAlias = fieldDef.alias ?? field;
+      let fieldAlias = fieldDef.alias ?? fieldName;
       let fieldValue = data[fieldAlias] ?? null
 
-      let entityField = new ENTITY_FIELD_CONSTRUCTORS[fieldType](fieldAlias, fieldValue);
-      this.entityFields[field] = entityField;
+      let entityField = new ENTITY_FIELD_CONSTRUCTORS[fieldType](fieldName, fieldDef, fieldValue);
+      this.entityFields[fieldName] = entityField;
     }
   }
 
@@ -82,7 +83,7 @@ export default abstract class Entity {
     let data: Record<string, EntityValue> = {};
     for (let field in this.entityFields) {
       let entityField: EntityField = this.entityFields[field];
-      if (entityField.value !== null) data[entityField.alias] = entityField.value;
+      if (entityField.value !== null) data[entityField.name] = entityField.value;
     }
 
     return data;
@@ -98,5 +99,31 @@ export default abstract class Entity {
       json[field] = (this as Record<string, any>)[field];
     }
     return json;
+  }
+
+  /**
+   * Converts this {@link Entity} to a JavaScript object suitable for writing to RedisJSON.
+   * @internal
+   */
+  toRedisJson(): RedisJsonData {
+    let data: RedisJsonData = {};
+    for (let field in this.entityFields) {
+      let entityField: EntityField = this.entityFields[field];
+      data = { ...data, ...entityField.toRedisJson() }
+    }
+    return data;
+  }
+
+  /**
+   * Converts this {@link Entity} to a JavaScript object suitable for writing to RedisJSON.
+   * @internal
+   */
+   toRedisHash(): RedisHashData {
+    let data: RedisHashData = {};
+    for (let field in this.entityFields) {
+      let entityField: EntityField = this.entityFields[field];
+      data = { ...data, ...entityField.toRedisHash() }
+    }
+    return data;
   }
 }

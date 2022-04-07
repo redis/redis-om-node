@@ -1,6 +1,6 @@
 import EntityData from "../entity/entity-data";
 import EntityValue from "../entity/entity-value";
-import { JsonData, HashData } from '../client';
+import { RedisJsonData, RedisHashData } from '../client';
 import SchemaDefinition from "../schema/definition/schema-definition";
 import FieldDefinition from "../schema/definition/field-definition";
 import StringArrayFieldDefinition from "../schema/definition/string-array-field-definition";
@@ -17,8 +17,8 @@ class AbstractConverter {
 /** @internal */
 export class HashConverter extends AbstractConverter {
 
-  toHashData(entityData: EntityData): HashData {
-    let hashData: HashData = {};
+  toHashData(entityData: EntityData): RedisHashData {
+    let hashData: RedisHashData = {};
     for (let fieldName in this.schemaDef) {
       let entityValue = entityData[fieldName];
       let fieldDef = this.schemaDef[fieldName];
@@ -28,7 +28,7 @@ export class HashConverter extends AbstractConverter {
     return hashData;
   }
 
-  toEntityData(hashData: HashData): EntityData{
+  toEntityData(hashData: RedisHashData): EntityData {
     let entityData: EntityData = {};
     for (let fieldName in this.schemaDef) {
       let hashValue = hashData[fieldName];
@@ -43,8 +43,8 @@ export class HashConverter extends AbstractConverter {
 /** @internal */
 export class JsonConverter extends AbstractConverter {
 
-  toJsonData(entityData: EntityData): JsonData {
-    let jsonData: JsonData = {};
+  toJsonData(entityData: EntityData): RedisJsonData {
+    let jsonData: RedisJsonData = {};
     for (let fieldName in this.schemaDef) {
       let fieldValue = entityData[fieldName];
       let fieldDef = this.schemaDef[fieldName];
@@ -54,7 +54,7 @@ export class JsonConverter extends AbstractConverter {
     return jsonData;
   }
 
-  toEntityData(jsonData: JsonData): EntityData {
+  toEntityData(jsonData: RedisJsonData): EntityData {
     let entityData: EntityData = {};
     if (jsonData === null) return entityData;
     for (let fieldName in this.schemaDef) {

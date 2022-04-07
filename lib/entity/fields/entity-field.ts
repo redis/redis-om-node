@@ -1,17 +1,22 @@
+import { RedisHashData, RedisJsonData } from "../../client";
+import FieldDefinition from "../../schema/definition/field-definition";
 import EntityValue from "../entity-value";
 
 abstract class EntityField {
 
-  private _alias: string;
+  private _name: string;
   private _value: EntityValue = null;
 
-  constructor(alias: string, value?: EntityValue) {
-    this._alias = alias;
+  protected fieldDef: FieldDefinition;
+
+  constructor(name: string, fieldDef: FieldDefinition, value?: EntityValue) {
+    this.fieldDef = fieldDef;
     this.value = value ?? null;
+    this._name = name;
   }
 
-  get alias() {
-    return this._alias;
+  get name(): string {
+    return this.fieldDef.alias ?? this._name;
   }
 
   get value(): EntityValue {
@@ -21,6 +26,18 @@ abstract class EntityField {
   set value(value: EntityValue) {
     this.valdiateValue(value);
     this._value = this.convertValue(value);
+  };
+
+  toRedisJson(): RedisJsonData {
+    let data: RedisJsonData = {};
+    if (this.value !== null) data[this.name] = this.value;
+    return data;
+  };
+
+  toRedisHash(): RedisHashData {
+    let data: RedisHashData = {};
+    if (this.value !== null) data[this.name] = this.value.toString();
+    return data;
   };
 
   protected convertValue(value: EntityValue): EntityValue{

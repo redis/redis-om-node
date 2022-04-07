@@ -1,4 +1,4 @@
-import { HashData, JsonData } from "../client";
+import { RedisHashData, RedisJsonData } from "../client";
 import Entity from "../entity/entity";
 import EntityData from '../entity/entity-data';
 import { JsonConverter, HashConverter } from "../repository/converter";
@@ -22,17 +22,17 @@ export abstract class SearchResultsConverter<TEntity extends Entity> {
   get ids(): string[] {
     return this.keys.map(key => (key as string).replace(/^.*:/, ""));
   }
-  
+
   get keys(): string[] {
     let [_count, ...keysAndValues] = this.results;
     return keysAndValues.filter((_entry, index) => index % 2 === 0);
   }
-  
+
   get values(): any[] {
     let [_count, ...keysAndValues] = this.results;
     return keysAndValues.filter((_entry, index) => index % 2 !== 0)
   }
-  
+
   get entities(): TEntity[] {
     let ids = this.ids;
     let values = this.values;
@@ -47,8 +47,8 @@ export class HashSearchResultsConverter<TEntity extends Entity> extends SearchRe
   protected arrayToEntity(id: string, array: string[]): TEntity {
     let keys = array.filter((_entry, index) => index % 2 === 0);
     let values = array.filter((_entry, index) => index % 2 !== 0);
-    
-    let hashData: HashData = keys.reduce((object: any, key, index) => {
+
+    let hashData: RedisHashData = keys.reduce((object: any, key, index) => {
       object[key] = values[index]
       return object
     }, {});
@@ -63,7 +63,7 @@ export class JsonSearchResultsConverter<TEntity extends Entity> extends SearchRe
   protected arrayToEntity(id: string, array: string[]): TEntity {
     let index = array.findIndex(value => value === '$') + 1;
     let jsonString = array[index];
-    let jsonData: JsonData = JSON.parse(jsonString);
+    let jsonData: RedisJsonData = JSON.parse(jsonString);
     let converter = new JsonConverter(this.schema.definition);
     let entityData: EntityData = converter.toEntityData(jsonData);
     return new this.schema.entityCtor(this.schema, id, entityData);

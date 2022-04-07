@@ -1,4 +1,4 @@
-import Client, { SearchDataStructure, HashData, JsonData } from "./client";
+import Client, { SearchDataStructure, RedisHashData, RedisJsonData } from "./client";
 
 import Point from "./entity/point";
 import Entity from "./entity/entity";
@@ -36,7 +36,7 @@ import { Circle, CircleFunction } from "./search/where-point";
 
 
 export {
-  Client, SearchDataStructure, HashData, JsonData,
+  Client, SearchDataStructure, RedisHashData as HashData, RedisJsonData as JsonData,
   Entity, EntityData, EntityValue, EntityConstructor,
   RedisError, Repository, EntityCreationData,
   Schema, SchemaDefinition, Point,

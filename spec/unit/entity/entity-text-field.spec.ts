@@ -1,38 +1,49 @@
-import EntityStringField from "../../../lib/entity/fields/entity-string-field";
-import { A_DATE, A_NUMBER, A_NUMBER_STRING, A_POINT, A_STRING, SOME_STRINGS } from "../../helpers/example-data";
+import { FieldDefinition } from "../../../lib";
+import EntityTextField from "../../../lib/entity/fields/entity-text-field";
+import { A_DATE, A_NUMBER, A_NUMBER_STRING, A_POINT, SOME_TEXT, SOME_STRINGS } from "../../helpers/example-data";
 
-const ALIAS = 'foo';
+const FIELD_NAME = 'foo';
+const FIELD_DEF: FieldDefinition = { type: 'text' };
+const EXPECTED_NULL_JSON_DATA = {};
+const EXPECTED_JSON_STRING_DATA = { foo: SOME_TEXT };
+const EXPECTED_JSON_BOOLEAN_DATA = { foo: "true" };
+const EXPECTED_JSON_NUMBER_DATA = { foo: A_NUMBER_STRING };
 
-describe("EntityStringField", () => {
+describe("EntityTextField", () => {
 
-  let field: EntityStringField;
+  let field: EntityTextField;
 
   describe("when created", () => {
 
-    beforeEach(() => field = new EntityStringField(ALIAS));
+    beforeEach(() => field = new EntityTextField(FIELD_NAME, FIELD_DEF));
 
-    it("has the expected alias", () => expect(field.alias).toBe(ALIAS));
+    it("has the expected alias", () => expect(field.name).toBe(FIELD_NAME));
     it("has a value of null", () => expect(field.value).toBeNull());
+    it("converts to the expected RedisJSON data", () => expect(field.toRedisJson()).toEqual(EXPECTED_NULL_JSON_DATA));
 
     it("can be set to a string", () => {
-      field.value = A_STRING;
-      expect(field.value).toBe(A_STRING)
+      field.value = SOME_TEXT;
+      expect(field.value).toBe(SOME_TEXT);
+      expect(field.toRedisJson()).toEqual(EXPECTED_JSON_STRING_DATA);
     });
 
     it("can be set to a boolean", () => {
       field.value = true;
       expect(field.value).toBe("true");
+      expect(field.toRedisJson()).toEqual(EXPECTED_JSON_BOOLEAN_DATA);
     });
 
     it("can be set to a number", () => {
       field.value = A_NUMBER;
       expect(field.value).toBe(A_NUMBER_STRING);
+      expect(field.toRedisJson()).toEqual(EXPECTED_JSON_NUMBER_DATA);
     });
 
     it("can be set to null", () => {
-      field.value = A_STRING; // set it to something else first
+      field.value = SOME_TEXT; // set it to something else first
       field.value = null;
       expect(field.value).toBeNull();
+      expect(field.toRedisJson()).toEqual(EXPECTED_NULL_JSON_DATA);
     });
 
     it("cannot be set to undefined", () => {
@@ -44,57 +55,66 @@ describe("EntityStringField", () => {
     it("cannot be set to a Point", () => {
       // @ts-ignore: JavaScript trap
       expect(() => field.value = A_POINT)
-        .toThrow(`Expected value with type of 'string' but received '${A_POINT}'.`);
+        .toThrow(`Expected value with type of 'text' but received '${A_POINT}'.`);
     });
 
     it("cannot be set to a Date", () => {
       // @ts-ignore: JavaScript trap
       expect(() => field.value = A_DATE)
-        .toThrow(`Expected value with type of 'string' but received '${A_DATE}'.`);
+        .toThrow(`Expected value with type of 'text' but received '${A_DATE}'.`);
     });
 
     it("cannot be set to an array of strings", () => {
       // @ts-ignore: JavaScript trap
       expect(() => field.value = SOME_STRINGS)
-        .toThrow(`Expected value with type of 'string' but received '${SOME_STRINGS}'.`);
+        .toThrow(`Expected value with type of 'text' but received '${SOME_STRINGS}'.`);
     });
   });
 
+  describe("when created with an alias", () => {
+    beforeEach(() => field = new EntityTextField(FIELD_NAME, { type: 'text', alias: 'bar' }));
+    it("has the aliased name", () => expect(field.name).toBe('bar'));
+  });
+
   describe("when created with a string", () => {
-    beforeEach(() => field = new EntityStringField(ALIAS, A_STRING));
-    it("has the expected value", () => expect(field.value).toBe(A_STRING));
+    beforeEach(() => field = new EntityTextField(FIELD_NAME, FIELD_DEF, SOME_TEXT));
+    it("has the expected value", () => expect(field.value).toBe(SOME_TEXT));
+    it("converts to the expected RedisJSON data", () => expect(field.toRedisJson()).toEqual(EXPECTED_JSON_STRING_DATA));
   });
 
   describe("when created with a boolean", () => {
-    beforeEach(() => field = new EntityStringField(ALIAS, true));
+    beforeEach(() => field = new EntityTextField(FIELD_NAME, FIELD_DEF, true));
     it("has the expected value", () => expect(field.value).toBe("true"));
+    it("converts to the expected RedisJSON data", () => expect(field.toRedisJson()).toEqual(EXPECTED_JSON_BOOLEAN_DATA));
   });
 
   describe("when created with a number", () => {
-    beforeEach(() => field = new EntityStringField(ALIAS, A_NUMBER));
+    beforeEach(() => field = new EntityTextField(FIELD_NAME, FIELD_DEF, A_NUMBER));
     it("has the expected value", () => expect(field.value).toBe(A_NUMBER_STRING));
+    it("converts to the expected RedisJSON data", () => expect(field.toRedisJson()).toEqual(EXPECTED_JSON_NUMBER_DATA));
   });
 
   describe("when created with a null", () => {
-    beforeEach(() => field = new EntityStringField(ALIAS, null));
+    beforeEach(() => field = new EntityTextField(FIELD_NAME, FIELD_DEF, null));
     it("has the expected value", () => expect(field.value).toBeNull());
+    it("converts to the expected RedisJSON data", () => expect(field.toRedisJson()).toEqual(EXPECTED_NULL_JSON_DATA));
   });
 
   it("complains when created with a Point", () => {
     // @ts-ignore: JavaScript trap
-    expect(() => new EntityStringField(ALIAS, A_POINT))
-      .toThrow(`Expected value with type of 'string' but received '${A_POINT}'.`);
+    expect(() => new EntityTextField(FIELD_NAME, FIELD_DEF, A_POINT))
+      .toThrow(`Expected value with type of 'text' but received '${A_POINT}'.`);
   });
 
   it("complains when created with a Date", () => {
     // @ts-ignore: JavaScript trap
-    expect(() => new EntityStringField(ALIAS, A_DATE))
-      .toThrow(`Expected value with type of 'string' but received '${A_DATE}'.`);
+    expect(() => new EntityTextField(FIELD_NAME, FIELD_DEF, A_DATE))
+      .toThrow(`Expected value with type of 'text' but received '${A_DATE}'.`);
   });
 
   it("complains when created with an array of strings", () => {
     // @ts-ignore: JavaScript trap
-    expect(() => new EntityStringField(ALIAS, SOME_STRINGS))
-      .toThrow(`Expected value with type of 'string' but received '${SOME_STRINGS}'.`);
+    expect(() => new EntityTextField(FIELD_NAME, FIELD_DEF, SOME_STRINGS))
+      .toThrow(`Expected value with type of 'text' but received '${SOME_STRINGS}'.`);
   });
 });
