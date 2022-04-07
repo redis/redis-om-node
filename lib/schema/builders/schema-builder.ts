@@ -14,9 +14,9 @@ export default abstract class SchemaBuilder<TEntity extends Entity> {
 
   get redisSchema(): string[] {
     const redisSchema: string[] = [];
-    for (const field in this.schema.definition) {
+    Object.keys(this.schema.definition).forEach(field => {
       redisSchema.push(...this.buildEntry(field));
-    }
+    })
     return redisSchema;
   }
 

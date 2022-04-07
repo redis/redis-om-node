@@ -19,23 +19,23 @@ export class HashConverter extends AbstractConverter {
 
   toHashData(entityData: EntityData): HashData {
     const hashData: HashData = {};
-    for (const fieldName in this.schemaDef) {
+    Object.keys(this.schemaDef).forEach(fieldName => {
       const entityValue = entityData[fieldName];
       const fieldDef = this.schemaDef[fieldName];
       const fieldType = fieldDef.type;
       if (entityValue !== undefined) hashData[fieldName] = toHashConverters[fieldType](entityValue, fieldDef);
-    }
+    })
     return hashData;
   }
 
   toEntityData(hashData: HashData): EntityData {
     const entityData: EntityData = {};
-    for (const fieldName in this.schemaDef) {
+    Object.keys(this.schemaDef).forEach(fieldName => {
       const hashValue = hashData[fieldName];
       const fieldDef = this.schemaDef[fieldName]
       const fieldType = fieldDef.type;
       if (hashValue !== undefined) entityData[fieldName] = fromHashConverters[fieldType](hashValue, fieldDef)
-    }
+    })
     return entityData;
   }
 }
@@ -45,25 +45,25 @@ export class JsonConverter extends AbstractConverter {
 
   toJsonData(entityData: EntityData): JsonData {
     const jsonData: JsonData = {};
-    for (const fieldName in this.schemaDef) {
+    Object.keys(this.schemaDef).forEach(fieldName => {
       const fieldValue = entityData[fieldName];
       const fieldDef = this.schemaDef[fieldName];
       const fieldType = fieldDef.type;
       if (fieldValue !== undefined) jsonData[fieldName] = toJsonConverters[fieldType](fieldValue);
-    }
+    })
     return jsonData;
   }
 
   toEntityData(jsonData: JsonData): EntityData {
     const entityData: EntityData = {};
     if (jsonData === null) return entityData;
-    for (const fieldName in this.schemaDef) {
+    Object.keys(this.schemaDef).forEach(fieldName => {
       const jsonValue = jsonData[fieldName];
       const fieldDef = this.schemaDef[fieldName]
       const fieldType = fieldDef.type;
       if (jsonValue !== undefined && jsonValue !== null)
         entityData[fieldName] = fromJsonConverters[fieldType](jsonValue);
-    }
+    })
     return entityData;
   }
 }

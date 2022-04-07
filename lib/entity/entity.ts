@@ -56,7 +56,7 @@ export default abstract class Entity {
    * @internal
    */
   private createFields(data: EntityData) {
-    for (const field in this.schemaDef) {
+    Object.keys(this.schemaDef).forEach(field => {
       const fieldDef: FieldDefinition = this.schemaDef[field];
       const fieldType = fieldDef.type;
       const fieldAlias = fieldDef.alias ?? field;
@@ -64,7 +64,7 @@ export default abstract class Entity {
 
       const entityField = new ENTITY_FIELD_CONSTRUCTORS[fieldType](fieldAlias, fieldValue);
       this.entityFields[field] = entityField;
-    }
+    })
   }
 
   /**
@@ -80,10 +80,10 @@ export default abstract class Entity {
    */
   get entityData(): Record<string, EntityValue> {
     const data: Record<string, EntityValue> = {};
-    for (const field in this.entityFields) {
+    Object.keys(this.entityFields).forEach(field => {
       const entityField: EntityField = this.entityFields[field];
       if (entityField.value !== null) data[entityField.alias] = entityField.value;
-    }
+    })
 
     return data;
   }
@@ -94,9 +94,9 @@ export default abstract class Entity {
    */
   toJSON() {
     const json: Record<string, any> = { entityId: this.entityId }
-    for (const field in this.schemaDef) {
+    Object.keys(this.schemaDef).forEach(field => {
       json[field] = (this as Record<string, any>)[field];
-    }
+    })
     return json;
   }
 }

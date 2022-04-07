@@ -116,11 +116,11 @@ export default abstract class Repository<TEntity extends Entity> {
   createEntity(data: EntityCreationData = {}): TEntity {
     const id = this.schema.generateId();
     const entity = new this.schema.entityCtor(this.schema, id);
-    for (const key in data) {
+    Object.keys(data).forEach(key => {
       if (this.schema.entityCtor.prototype.hasOwnProperty(key)) {
         (entity as Record<string, any>)[key] = data[key]
       }
-    }
+    })
     return entity;
   }
 

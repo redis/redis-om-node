@@ -129,7 +129,7 @@ export default class Schema<TEntity extends Entity> {
   }
 
   private defineProperties() {
-    for (const field in this.definition) {
+    Object.keys(this.definition).forEach(field => {
       this.validateFieldDef(field);
       Object.defineProperty(this.entityCtor.prototype, field, {
         configurable: true,
@@ -140,7 +140,7 @@ export default class Schema<TEntity extends Entity> {
           this.entityFields[field].value = value;
         }
       });
-    }
+    })
   }
 
   private validateOptions() {

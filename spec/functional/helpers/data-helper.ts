@@ -74,7 +74,7 @@ export async function loadTestHash(client: Client, key: string, data: SampleEnti
 
   let command: string[] = [];
 
-  for (let field in data) {
+  Object.keys(data).forEach(field => {
     let value = (data as any)[field];
     if (value !== null) {
       if (typeof value === 'boolean') command.push(field, value ? '1' : '0');
@@ -84,7 +84,7 @@ export async function loadTestHash(client: Client, key: string, data: SampleEnti
       else if (value instanceof Date) command.push(field, value.getTime().toString());
       else if (typeof value === 'object') command.push(field, `${value.longitude},${value.latitude}`)
     }
-  }
+  })
 
   if (command.length > 0) await saveHash(client, key, command);
 }
@@ -93,14 +93,14 @@ export async function loadTestJson(client: Client, key: string, data: SampleEnti
 
   let json: any = {};
 
-  for (let field in data) {
+  Object.keys(data).forEach(field => {
     let value = (data as any)[field];
     if (value !== null) {
       if (value instanceof Date) json[field] = value.getTime();
       else if (typeof value === 'object' && !Array.isArray(value)) json[field] = `${value.longitude},${value.latitude}`;
       else json[field] = value;
     }
-  }
+  })
 
   await saveJson(client, key, JSON.stringify(json));
 }
