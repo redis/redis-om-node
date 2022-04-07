@@ -23,9 +23,9 @@ export type EntityCreationData = Record<string, number | boolean | string | stri
  * {@link Repository.remove} methods to manage your data:
  *
  * ```typescript
- * let repository = client.fetchRepository<Foo>(schema);
+ * const repository = client.fetchRepository<Foo>(schema);
  *
- * let foo = await repository.fetch('01FK6TCJBDK41RJ766A4SBWDJ9');
+ * const foo = await repository.fetch('01FK6TCJBDK41RJ766A4SBWDJ9');
  * foo.aString = 'bar';
  * foo.aBoolean = false;
  * await repository.save(foo);
@@ -35,7 +35,7 @@ export type EntityCreationData = Record<string, number | boolean | string | stri
  * {@link Entity} you want to create before you save it:
 
  * ```typescript
- * let foo = await repository.createEntity();
+ * const foo = await repository.createEntity();
  * foo.aString = 'bar';
  * foo.aBoolean = false;
  * await repository.save(foo);
@@ -46,14 +46,14 @@ export type EntityCreationData = Record<string, number | boolean | string | stri
  *
  * ```typescript
  * await repository.createIndex();
- * let entities = await repository.search()
+ * const entities = await repository.search()
  *   .where('aString').eq('bar')
  *   .and('aBoolean').is.false().returnAll();
  * ```
  *
  * @template TEntity The type of {@link Entity} that this repository manages.
  */
- export default abstract class Repository<TEntity extends Entity> {
+export default abstract class Repository<TEntity extends Entity> {
   protected client: Client;
   private schema: Schema<TEntity>;
 
@@ -69,13 +69,13 @@ export type EntityCreationData = Record<string, number | boolean | string | stri
    */
   async createIndex() {
 
-    let currentIndexHash = await this.client.get(this.schema.indexHashName)
+    const currentIndexHash = await this.client.get(this.schema.indexHashName)
 
     if (currentIndexHash !== this.schema.indexHash) {
 
       await this.dropIndex();
 
-      let options : CreateIndexOptions = {
+      const options: CreateIndexOptions = {
         indexName: this.schema.indexName,
         dataStructure: this.schema.dataStructure,
         prefix: `${this.schema.prefix}:`,
@@ -114,9 +114,9 @@ export type EntityCreationData = Record<string, number | boolean | string | stri
    * @returns A newly created Entity.
    */
   createEntity(data: EntityCreationData = {}): TEntity {
-    let id = this.schema.generateId();
-    let entity = new this.schema.entityCtor(this.schema, id);
-    for (let key in data) {
+    const id = this.schema.generateId();
+    const entity = new this.schema.entityCtor(this.schema, id);
+    for (const key in data) {
       if (this.schema.entityCtor.prototype.hasOwnProperty(key)) {
         (entity as Record<string, any>)[key] = data[key]
       }
@@ -130,8 +130,8 @@ export type EntityCreationData = Record<string, number | boolean | string | stri
    * @param entity The Entity to save.
    * @returns The ID of the Entity just saved.
    */
-  async save(entity: TEntity) : Promise<string> {
-    let key = this.makeKey(entity.entityId);
+  async save(entity: TEntity): Promise<string> {
+    const key = this.makeKey(entity.entityId);
 
     if (Object.keys(entity.entityData).length === 0) {
       await this.client.unlink(key);
@@ -149,7 +149,7 @@ export type EntityCreationData = Record<string, number | boolean | string | stri
    * @returns The newly created and saved Entity.
    */
   async createAndSave(data: EntityCreationData = {}): Promise<TEntity> {
-    let entity = this.createEntity(data);
+    const entity = this.createEntity(data);
     await this.save(entity)
     return entity
   }
@@ -162,8 +162,8 @@ export type EntityCreationData = Record<string, number | boolean | string | stri
    * @returns The matching Entity.
    */
   async fetch(id: string): Promise<TEntity> {
-    let key = this.makeKey(id);
-    let entityData = await this.readEntity(key);
+    const key = this.makeKey(id);
+    const entityData = await this.readEntity(key);
     return new this.schema.entityCtor(this.schema, id, entityData);
   }
 
@@ -173,7 +173,7 @@ export type EntityCreationData = Record<string, number | boolean | string | stri
    * @param id The ID of the {@link Entity} you with to delete.
    */
   async remove(id: string): Promise<void> {
-    let key = this.makeKey(id);
+    const key = this.makeKey(id);
     await this.client.unlink(key);
   }
 
@@ -184,7 +184,7 @@ export type EntityCreationData = Record<string, number | boolean | string | stri
    * @param ttlInSeconds THe time to live in seconds.
    */
   async expire(id: string, ttlInSeconds: number) {
-    let key =  this.makeKey(id);
+    const key = this.makeKey(id);
     await this.client.expire(key, ttlInSeconds);
   }
 
@@ -232,12 +232,12 @@ export class HashRepository<TEntity extends Entity> extends Repository<TEntity> 
   }
 
   protected async writeEntity(key: string, data: EntityData): Promise<void> {
-    let hashData = this.converter.toHashData(data);
+    const hashData = this.converter.toHashData(data);
     await this.client.hsetall(key, hashData);
   }
 
   protected async readEntity(key: string): Promise<EntityData> {
-    let hashData = await this.client.hgetall(key);
+    const hashData = await this.client.hgetall(key);
     return this.converter.toEntityData(hashData);
   }
 }
@@ -252,12 +252,12 @@ export class JsonRepository<TEntity extends Entity> extends Repository<TEntity> 
   }
 
   protected async writeEntity(key: string, data: EntityData): Promise<void> {
-    let jsonData = this.converter.toJsonData(data);
+    const jsonData = this.converter.toJsonData(data);
     await this.client.jsonset(key, jsonData);
   }
 
   protected async readEntity(key: string): Promise<EntityData> {
-    let jsonData = await this.client.jsonget(key);
+    const jsonData = await this.client.jsonget(key);
     return this.converter.toEntityData(jsonData);
   }
 }

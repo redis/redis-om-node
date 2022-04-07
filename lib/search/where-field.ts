@@ -259,7 +259,7 @@ interface WhereField<TEntity> extends Where {
  * with extend. When you call {@link Search.where}, a
  * subclass of this is returned.
  */
- abstract class WhereField<TEntity extends Entity> {
+abstract class WhereField<TEntity extends Entity> {
   private negated: boolean = false;
 
   /** @internal */
@@ -309,8 +309,8 @@ interface WhereField<TEntity> extends Where {
 
   /** @internal */
   protected buildQuery(valuePortion: string): string {
-    let negationPortion = this.negated ? '-' : '';
-    let fieldPortion = this.field;
+    const negationPortion = this.negated ? '-' : '';
+    const fieldPortion = this.field;
     return `(${negationPortion}@${fieldPortion}:${valuePortion})`;
   }
 }

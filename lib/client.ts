@@ -9,13 +9,13 @@ import RedisError from './errors';
  * Alias for any old JavaScript object.
  * @internal
  */
-export type HashData = { [key: string ]: any };
+export type HashData = { [key: string]: any };
 
 /**
  * Alias for any old JavaScript object.
  * @internal
  */
-export type JsonData = { [key: string ]: any };
+export type JsonData = { [key: string]: any };
 
 /** The type of data structure in Redis to map objects to. */
 export type SearchDataStructure = 'HASH' | 'JSON';
@@ -55,7 +55,7 @@ export type SearchOptions = {
  * Create a client and open it before you use it:
  *
  * ```typescript
- * let client = new Client();
+ * const client = new Client();
  * await client.open();
  * ```
  *
@@ -97,7 +97,7 @@ export default class Client {
    * @param command The command to execute.
    * @returns The raw results of calling the Redis command.
    */
-  async execute<TResult>(command: (string|number|boolean)[]) : Promise<TResult> {
+  async execute<TResult>(command: (string | number | boolean)[]): Promise<TResult> {
     this.validateShimOpen();
     return await this.shim.execute<TResult>(command.map(arg => {
       if (arg === false) return '0';
@@ -112,7 +112,7 @@ export default class Client {
    * @param schema The schema.
    * @returns A repository for the provided schema.
    */
-  fetchRepository<TEntity extends Entity>(schema: Schema<TEntity>) : Repository<TEntity> {
+  fetchRepository<TEntity extends Entity>(schema: Schema<TEntity>): Repository<TEntity> {
     this.validateShimOpen();
     if (schema.dataStructure === 'JSON') {
       return new JsonRepository(schema, this);
@@ -133,15 +133,15 @@ export default class Client {
   async createIndex(options: CreateIndexOptions) {
     this.validateShimOpen();
 
-    let { indexName, dataStructure, prefix, schema, stopWords } = options;
+    const { indexName, dataStructure, prefix, schema, stopWords } = options;
 
-    let command = [
+    const command = [
       'FT.CREATE', indexName,
       'ON', dataStructure,
-      'PREFIX', '1', `${prefix}` ];
+      'PREFIX', '1', `${prefix}`];
 
     if (stopWords !== undefined)
-      command.push('STOPWORDS', `${stopWords.length}`, ...stopWords );
+      command.push('STOPWORDS', `${stopWords.length}`, ...stopWords);
 
     command.push('SCHEMA', ...schema);
 
@@ -151,14 +151,14 @@ export default class Client {
   /** @internal */
   async dropIndex(indexName: string) {
     this.validateShimOpen();
-    await this.shim.execute([ 'FT.DROPINDEX', indexName ]);
+    await this.shim.execute(['FT.DROPINDEX', indexName]);
   }
 
   /** @internal */
   async search(options: SearchOptions) {
     this.validateShimOpen();
-    let { indexName, query, limit, sort } = options
-    let command = ['FT.SEARCH', indexName, query];
+    const { indexName, query, limit, sort } = options
+    const command = ['FT.SEARCH', indexName, query];
 
     if (limit !== undefined)
       command.push('LIMIT', limit.offset.toString(), limit.count.toString());
@@ -208,15 +208,15 @@ export default class Client {
   /** @internal */
   async jsonget(key: string): Promise<JsonData> {
     this.validateShimOpen();
-    let json = await this.shim.execute<string>([ 'JSON.GET', key, '.' ]);
+    const json = await this.shim.execute<string>(['JSON.GET', key, '.']);
     return JSON.parse(json);
   }
 
   /** @internal */
   async jsonset(key: string, data: JsonData) {
     this.validateShimOpen();
-    let json = JSON.stringify(data);
-    await this.shim.execute<string>([ 'JSON.SET', key, '.', json ]);
+    const json = JSON.stringify(data);
+    await this.shim.execute<string>(['JSON.SET', key, '.', json]);
   }
 
   /**

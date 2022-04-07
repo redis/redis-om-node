@@ -20,7 +20,7 @@ import HashSchemaBuilder from './builders/hash-schema-builder';
  * a {@link SchemaDefinition}, and optionally {@link SchemaOptions}:
  *
  * ```typescript
- * let schema = new Schema(Foo, {
+ * const schema = new Schema(Foo, {
  *   aString: { type: 'string' },
  *   aNumber: { type: 'number' },
  *   aBoolean: { type: 'boolean' },
@@ -59,7 +59,7 @@ export default class Schema<TEntity extends Entity> {
    * @param schemaDef Defines all of the fields for the Schema and how they are mapped to Redis.
    * @param options Additional options for this Schema.
    */
-  constructor(ctor: EntityConstructor<TEntity>, schemaDef: SchemaDefinition, options?: SchemaOptions ) {
+  constructor(ctor: EntityConstructor<TEntity>, schemaDef: SchemaDefinition, options?: SchemaOptions) {
     this.entityCtor = ctor;
     this.definition = schemaDef;
     this.options = options;
@@ -99,7 +99,7 @@ export default class Schema<TEntity extends Entity> {
   /** The hash value of this index. Stored in Redis under {@link Schema.indexHashName}. */
   get indexHash(): string {
 
-    let data = JSON.stringify({
+    const data = JSON.stringify({
       definition: this.definition,
       prefix: this.prefix,
       indexName: this.indexName,
@@ -124,19 +124,19 @@ export default class Schema<TEntity extends Entity> {
    * @returns
    */
   generateId(): string {
-    let ulidStrategy: IdStrategy = () => ulid();
+    const ulidStrategy: IdStrategy = () => ulid();
     return (this.options?.idStrategy ?? ulidStrategy)();
   }
 
   private defineProperties() {
-    for (let field in this.definition) {
+    for (const field in this.definition) {
       this.validateFieldDef(field);
       Object.defineProperty(this.entityCtor.prototype, field, {
         configurable: true,
         get: function (): any {
           return this.entityFields[field].value;
         },
-        set: function(value: any): void {
+        set: function (value: any): void {
           this.entityFields[field].value = value;
         }
       });
@@ -158,7 +158,7 @@ export default class Schema<TEntity extends Entity> {
   }
 
   private validateFieldDef(field: string) {
-    let fieldDef: FieldDefinition = this.definition[field];
+    const fieldDef: FieldDefinition = this.definition[field];
     if (!['boolean', 'date', 'number', 'point', 'string', 'string[]', 'text'].includes(fieldDef.type))
       throw Error(`The field '${field}' is configured with a type of '${fieldDef.type}'. Valid types include 'boolean', 'date', 'number', 'point', 'string', 'string[]', and 'text'.`);
   }

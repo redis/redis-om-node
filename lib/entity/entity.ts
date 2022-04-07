@@ -56,13 +56,13 @@ export default abstract class Entity {
    * @internal
    */
   private createFields(data: EntityData) {
-    for (let field in this.schemaDef) {
-      let fieldDef: FieldDefinition = this.schemaDef[field];
-      let fieldType = fieldDef.type;
-      let fieldAlias = fieldDef.alias ?? field;
-      let fieldValue = data[fieldAlias] ?? null
+    for (const field in this.schemaDef) {
+      const fieldDef: FieldDefinition = this.schemaDef[field];
+      const fieldType = fieldDef.type;
+      const fieldAlias = fieldDef.alias ?? field;
+      const fieldValue = data[fieldAlias] ?? null
 
-      let entityField = new ENTITY_FIELD_CONSTRUCTORS[fieldType](fieldAlias, fieldValue);
+      const entityField = new ENTITY_FIELD_CONSTRUCTORS[fieldType](fieldAlias, fieldValue);
       this.entityFields[field] = entityField;
     }
   }
@@ -78,10 +78,10 @@ export default abstract class Entity {
    * The underlying data to be written to Redis.
    * @internal
    */
-  get entityData() : Record<string, EntityValue> {
-    let data: Record<string, EntityValue> = {};
-    for (let field in this.entityFields) {
-      let entityField: EntityField = this.entityFields[field];
+  get entityData(): Record<string, EntityValue> {
+    const data: Record<string, EntityValue> = {};
+    for (const field in this.entityFields) {
+      const entityField: EntityField = this.entityFields[field];
       if (entityField.value !== null) data[entityField.alias] = entityField.value;
     }
 
@@ -93,8 +93,8 @@ export default abstract class Entity {
    * @returns a JavaScript object.
    */
   toJSON() {
-    let json: Record<string, any> = { entityId: this.entityId }
-    for (let field in this.schemaDef) {
+    const json: Record<string, any> = { entityId: this.entityId }
+    for (const field in this.schemaDef) {
       json[field] = (this as Record<string, any>)[field];
     }
     return json;

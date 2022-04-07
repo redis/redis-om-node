@@ -58,14 +58,14 @@ export abstract class AbstractSearch<TEntity extends Entity> {
    * @param field The field to sort by.
    * @returns this
    */
-   sortAscending(field: string) : AbstractSearch<TEntity> {
-     return this.sortBy(field, 'ASC');
-   }
+  sortAscending(field: string): AbstractSearch<TEntity> {
+    return this.sortBy(field, 'ASC');
+  }
 
   /**
    * Alias for {@link Search.sortDescending}.
    */
-   sortDesc(field: string) : AbstractSearch<TEntity> {
+  sortDesc(field: string): AbstractSearch<TEntity> {
     return this.sortDescending(field);
   }
 
@@ -74,42 +74,42 @@ export abstract class AbstractSearch<TEntity extends Entity> {
    * @param field The field to sort by.
    * @returns this
    */
-   sortDescending(field: string) : AbstractSearch<TEntity> {
+  sortDescending(field: string): AbstractSearch<TEntity> {
     return this.sortBy(field, 'DESC');
   }
 
- /**
-  * Alias for {@link Search.sortAscending}.
-  */
-  sortAsc(field: string) : AbstractSearch<TEntity> {
-   return this.sortAscending(field);
- }
-
-/**
-   * Applies sorting for the query.
-   * @param field The field to sort by.
-   * @param order The order of returned {@link Entity | Entities} Defaults to `ASC` (ascending) if not specified
-   * @returns this
+  /**
+   * Alias for {@link Search.sortAscending}.
    */
-  sortBy(field: string, order: 'ASC'|'DESC' = 'ASC') : AbstractSearch<TEntity> {
-    let fieldDef = this.schema.definition[field];
-    let dataStructure = this.schema.dataStructure;
+  sortAsc(field: string): AbstractSearch<TEntity> {
+    return this.sortAscending(field);
+  }
+
+  /**
+     * Applies sorting for the query.
+     * @param field The field to sort by.
+     * @param order The order of returned {@link Entity | Entities} Defaults to `ASC` (ascending) if not specified
+     * @returns this
+     */
+  sortBy(field: string, order: 'ASC' | 'DESC' = 'ASC'): AbstractSearch<TEntity> {
+    const fieldDef = this.schema.definition[field];
+    const dataStructure = this.schema.dataStructure;
 
     if (fieldDef === undefined) {
-      let message = `'sortBy' was called on field '${field}' which is not defined in the Schema.`;
+      const message = `'sortBy' was called on field '${field}' which is not defined in the Schema.`;
       logger.error(message);
       throw new RedisError(message)
     }
 
-    let type = fieldDef.type;
-    let markedSortable = (fieldDef as SortableFieldDefinition).sortable;
+    const type = fieldDef.type;
+    const markedSortable = (fieldDef as SortableFieldDefinition).sortable;
 
-    const UNSORTABLE = [ 'point', 'string[]' ];
-    const JSON_SORTABLE = [ 'number', 'text', 'date' ];
-    const HASH_SORTABLE = [ 'string', 'boolean', 'number', 'text', 'date' ];
+    const UNSORTABLE = ['point', 'string[]'];
+    const JSON_SORTABLE = ['number', 'text', 'date'];
+    const HASH_SORTABLE = ['string', 'boolean', 'number', 'text', 'date'];
 
     if (UNSORTABLE.includes(type)) {
-      let message = `'sortBy' was called on '${type}' field '${field}' which cannot be sorted.`;
+      const message = `'sortBy' was called on '${type}' field '${field}' which cannot be sorted.`;
       logger.error(message);
       throw new RedisError(message)
     }
@@ -129,7 +129,7 @@ export abstract class AbstractSearch<TEntity extends Entity> {
    * @param field The field with the minimal value.
    * @returns The {@link Entity} with the minimal value
    */
-  async min(field: string) : Promise<TEntity> {
+  async min(field: string): Promise<TEntity> {
     return await this.sortBy(field, 'ASC').first();
   }
 
@@ -138,7 +138,7 @@ export abstract class AbstractSearch<TEntity extends Entity> {
    * @param field The field with the maximal value.
    * @returns The {@link Entity} with the maximal value
    */
-  async max(field: string) : Promise<TEntity> {
+  async max(field: string): Promise<TEntity> {
     return await this.sortBy(field, 'DESC').first();
   }
 
@@ -147,7 +147,7 @@ export abstract class AbstractSearch<TEntity extends Entity> {
    * @returns
    */
   async count(): Promise<number> {
-    let searchResults = await this.callSearch()
+    const searchResults = await this.callSearch()
     return this.schema.dataStructure === 'JSON'
       ? new JsonSearchResultsConverter(this.schema, searchResults).count
       : new HashSearchResultsConverter(this.schema, searchResults).count;
@@ -160,7 +160,7 @@ export abstract class AbstractSearch<TEntity extends Entity> {
    * @returns An array of {@link Entity | Entities} matching the query.
    */
   async page(offset: number, count: number): Promise<TEntity[]> {
-    let searchResults = await this.callSearch({ offset, count });
+    const searchResults = await this.callSearch({ offset, count });
     return this.schema.dataStructure === 'JSON'
       ? new JsonSearchResultsConverter(this.schema, searchResults).entities
       : new HashSearchResultsConverter(this.schema, searchResults).entities;
@@ -170,7 +170,7 @@ export abstract class AbstractSearch<TEntity extends Entity> {
    * Returns only the first {@link Entity} that matches this query.
    */
   async first(): Promise<TEntity> {
-    let foundEntity = await this.page(0, 1);
+    const foundEntity = await this.page(0, 1);
     return foundEntity[0] ?? null;
   }
 
@@ -181,20 +181,20 @@ export abstract class AbstractSearch<TEntity extends Entity> {
    * options:
    *
    * ```typescript
-   * let entities = await repository.search().returnAll({ pageSize: 100 });
+   * const entities = await repository.search().returnAll({ pageSize: 100 });
    * ```
    *
    * @param options Options for the call.
    * @param options.pageSize Number of {@link Entity | Entities} returned per batch.
    * @returns An array of {@link Entity | Entities} matching the query.
    */
-   async all(options = { pageSize: 10 }): Promise<TEntity[]> {
-    let entities: TEntity[] = [];
+  async all(options = { pageSize: 10 }): Promise<TEntity[]> {
+    const entities: TEntity[] = [];
     let offset = 0;
-    let pageSize = options.pageSize;
+    const pageSize = options.pageSize;
 
     while (true) {
-      let foundEntities = await this.page(offset, pageSize);
+      const foundEntities = await this.page(offset, pageSize);
       entities.push(...foundEntities);
       if (foundEntities.length < pageSize) break;
       offset += pageSize;
@@ -207,35 +207,35 @@ export abstract class AbstractSearch<TEntity extends Entity> {
    * Returns the current instance. Syntactic sugar to make your code more fluent.
    * @returns this
    */
-   get return() : AbstractSearch<TEntity> {
+  get return(): AbstractSearch<TEntity> {
     return this;
   }
 
   /**
    * Alias for {@link Search.min}.
    */
-  async returnMin (field: string) : Promise<TEntity> {
+  async returnMin(field: string): Promise<TEntity> {
     return await this.min(field);
   }
 
   /**
    * Alias for {@link Search.max}.
    */
-  async returnMax (field: string) : Promise<TEntity> {
+  async returnMax(field: string): Promise<TEntity> {
     return await this.max(field);
   }
 
   /**
    * Alias for {@link Search.count}.
    */
-   async returnCount(): Promise<number> {
+  async returnCount(): Promise<number> {
     return await this.count();
   }
 
   /**
    * Alias for {@link Search.page}.
    */
-   async returnPage(offset: number, count: number): Promise<TEntity[]> {
+  async returnPage(offset: number, count: number): Promise<TEntity[]> {
     return await this.page(offset, count);
   }
 
@@ -254,7 +254,7 @@ export abstract class AbstractSearch<TEntity extends Entity> {
   }
 
   private async callSearch(limit: LimitOptions = { offset: 0, count: 0 }) {
-    let options: SearchOptions = {
+    const options: SearchOptions = {
       indexName: this.schema.indexName,
       query: this.query,
       limit
@@ -262,11 +262,11 @@ export abstract class AbstractSearch<TEntity extends Entity> {
 
     if (this.sort !== undefined) options.sort = this.sort;
 
-    let searchResults
+    let searchResults;
     try {
       searchResults = await this.client.search(options);
     } catch (error) {
-      let message = (error as Error).message
+      const message = (error as Error).message
       if (message.startsWith("Syntax error")) {
         throw new RedisError(`The query to RediSearch had a syntax error: "${message}".\nThis is often the result of using a stop word in the query. Either change the query to not use a stop word or change the stop words in the schema definition. You can check the RediSearch source for the default stop words at: https://github.com/RediSearch/RediSearch/blob/master/src/stopwords.h.`)
       }
@@ -293,7 +293,7 @@ export class RawSearch<TEntity extends Entity> extends AbstractSearch<TEntity> {
   }
 
   /** @internal */
-  get query() : string {
+  get query(): string {
     return this.rawQuery;
   }
 }
@@ -308,7 +308,7 @@ export class Search<TEntity extends Entity> extends AbstractSearch<TEntity> {
   private rootWhere?: Where;
 
   /** @internal */
-  get query() : string {
+  get query(): string {
     if (this.rootWhere === undefined) return '*';
     return `${this.rootWhere.toString()}`;
   }
@@ -375,7 +375,7 @@ export class Search<TEntity extends Entity> extends AbstractSearch<TEntity> {
   }
 
   private anyWhereForField(ctor: AndOrConstructor, field: string): WhereField<TEntity> {
-    let where = this.createWhere(field);
+    const where = this.createWhere(field);
 
     if (this.rootWhere === undefined) {
       this.rootWhere = where;
@@ -387,8 +387,8 @@ export class Search<TEntity extends Entity> extends AbstractSearch<TEntity> {
   }
 
   private anyWhereForFunction(ctor: AndOrConstructor, subSearchFn: SubSearchFunction<TEntity>): Search<TEntity> {
-    let search = new Search<TEntity>(this.schema, this.client);
-    let subSearch = subSearchFn(search);
+    const search = new Search<TEntity>(this.schema, this.client);
+    const subSearch = subSearchFn(search);
 
     if (subSearch.rootWhere === undefined) {
       throw new Error("Sub-search without and root where was somehow defined.");
@@ -404,7 +404,7 @@ export class Search<TEntity extends Entity> extends AbstractSearch<TEntity> {
   }
 
   private createWhere(field: string): WhereField<TEntity> {
-    let fieldDef = this.schema.definition[field];
+    const fieldDef = this.schema.definition[field];
 
     if (fieldDef === undefined) throw new Error(`The field '${field}' is not part of the schema.`);
 

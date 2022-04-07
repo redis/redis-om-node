@@ -18,22 +18,22 @@ class AbstractConverter {
 export class HashConverter extends AbstractConverter {
 
   toHashData(entityData: EntityData): HashData {
-    let hashData: HashData = {};
-    for (let fieldName in this.schemaDef) {
-      let entityValue = entityData[fieldName];
-      let fieldDef = this.schemaDef[fieldName];
-      let fieldType = fieldDef.type;
+    const hashData: HashData = {};
+    for (const fieldName in this.schemaDef) {
+      const entityValue = entityData[fieldName];
+      const fieldDef = this.schemaDef[fieldName];
+      const fieldType = fieldDef.type;
       if (entityValue !== undefined) hashData[fieldName] = toHashConverters[fieldType](entityValue, fieldDef);
     }
     return hashData;
   }
 
-  toEntityData(hashData: HashData): EntityData{
-    let entityData: EntityData = {};
-    for (let fieldName in this.schemaDef) {
-      let hashValue = hashData[fieldName];
-      let fieldDef = this.schemaDef[fieldName]
-      let fieldType = fieldDef.type;
+  toEntityData(hashData: HashData): EntityData {
+    const entityData: EntityData = {};
+    for (const fieldName in this.schemaDef) {
+      const hashValue = hashData[fieldName];
+      const fieldDef = this.schemaDef[fieldName]
+      const fieldType = fieldDef.type;
       if (hashValue !== undefined) entityData[fieldName] = fromHashConverters[fieldType](hashValue, fieldDef)
     }
     return entityData;
@@ -44,23 +44,23 @@ export class HashConverter extends AbstractConverter {
 export class JsonConverter extends AbstractConverter {
 
   toJsonData(entityData: EntityData): JsonData {
-    let jsonData: JsonData = {};
-    for (let fieldName in this.schemaDef) {
-      let fieldValue = entityData[fieldName];
-      let fieldDef = this.schemaDef[fieldName];
-      let fieldType = fieldDef.type;
+    const jsonData: JsonData = {};
+    for (const fieldName in this.schemaDef) {
+      const fieldValue = entityData[fieldName];
+      const fieldDef = this.schemaDef[fieldName];
+      const fieldType = fieldDef.type;
       if (fieldValue !== undefined) jsonData[fieldName] = toJsonConverters[fieldType](fieldValue);
     }
     return jsonData;
   }
 
   toEntityData(jsonData: JsonData): EntityData {
-    let entityData: EntityData = {};
+    const entityData: EntityData = {};
     if (jsonData === null) return entityData;
-    for (let fieldName in this.schemaDef) {
-      let jsonValue = jsonData[fieldName];
-      let fieldDef = this.schemaDef[fieldName]
-      let fieldType = fieldDef.type;
+    for (const fieldName in this.schemaDef) {
+      const jsonValue = jsonData[fieldName];
+      const fieldDef = this.schemaDef[fieldName]
+      const fieldType = fieldDef.type;
       if (jsonValue !== undefined && jsonValue !== null)
         entityData[fieldName] = fromJsonConverters[fieldType](jsonValue);
     }
@@ -68,7 +68,7 @@ export class JsonConverter extends AbstractConverter {
   }
 }
 
-let toHashConverters = {
+const toHashConverters = {
   'number': (value: EntityValue) => (value as number).toString(),
   'boolean': (value: EntityValue) => (value as boolean) ? '1' : '0',
   'string': (value: EntityValue) => (value as string).toString(),
@@ -78,7 +78,7 @@ let toHashConverters = {
   'string[]': (value: EntityValue, fieldDef: FieldDefinition) => stringArrayToString(value as string[], fieldDef as StringArrayFieldDefinition)
 };
 
-let fromHashConverters = {
+const fromHashConverters = {
   'number': stringToNumber,
   'boolean': stringToBoolean,
   'string': (value: string) => value,
@@ -88,7 +88,7 @@ let fromHashConverters = {
   'string[]': (value: string, fieldDef: FieldDefinition) => stringToStringArray(value, fieldDef as StringArrayFieldDefinition)
 };
 
-let toJsonConverters = {
+const toJsonConverters = {
   'number': (value: EntityValue) => value,
   'boolean': (value: EntityValue) => value,
   'string': (value: EntityValue) => value,
@@ -98,7 +98,7 @@ let toJsonConverters = {
   'string[]': (value: EntityValue) => value
 };
 
-let fromJsonConverters = {
+const fromJsonConverters = {
   'number': (value: any) => (value as number),
   'boolean': (value: any) => (value as boolean),
   'string': (value: any) => (value as string),
@@ -109,7 +109,7 @@ let fromJsonConverters = {
 }
 
 function pointToString(value: Point): string {
-  let {longitude, latitude} = value;
+  const { longitude, latitude } = value;
   return `${longitude},${latitude}`;
 }
 
@@ -126,7 +126,7 @@ function stringArrayToString(value: string[], fieldDef: StringArrayFieldDefiniti
 }
 
 function stringToNumber(value: string): number {
-  let number = Number.parseFloat(value);
+  const number = Number.parseFloat(value);
   if (Number.isNaN(number) === false) return number;
   throw Error(`Non-numeric value of '${value}' read from Redis for number field.`);
 }
@@ -138,14 +138,14 @@ function stringToBoolean(value: string): boolean {
 }
 
 function stringToPoint(value: string): Point {
-  let [ longitude, latitude ] = value.split(',').map(Number.parseFloat);
+  const [longitude, latitude] = value.split(',').map(Number.parseFloat);
   return { longitude, latitude };
 }
 
 function stringToDate(value: string): Date {
-  let parsed = Number.parseInt(value);
+  const parsed = Number.parseInt(value);
   if (Number.isNaN(parsed)) throw Error(`Non-numeric value of '${value}' read from Redis for date field.`);
-  let date = new Date();
+  const date = new Date();
   date.setTime(parsed);
   return date;
 }
@@ -155,7 +155,7 @@ function stringToStringArray(value: string, fieldDef: StringArrayFieldDefinition
 }
 
 function numberToDate(value: number): Date {
-  let date = new Date();
+  const date = new Date();
   date.setTime(value);
   return date;
 }

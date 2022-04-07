@@ -13,7 +13,7 @@ export async function saveJson(client: Client, key: string, json: string) {
 }
 
 export async function keyExists(client: Client, key: string): Promise<boolean> {
-  let exists = await client.execute<number>(['EXISTS', key]);
+  const exists = await client.execute<number>(['EXISTS', key]);
   return !!exists;
 }
 

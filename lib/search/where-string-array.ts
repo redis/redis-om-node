@@ -20,8 +20,8 @@ export default class WhereStringArray<TEntity extends Entity> extends WhereField
   containOneOf(...value: string[]): Search<TEntity> { return this.containsOneOf(...value); }
 
   toString(): string {
-    let matchPunctuation = /[,.<>{}[\]"':;!@#$%^&*()\-+=~| ]/g;
-    let escapedValue = this.value.map(s => s.replace(matchPunctuation, '\\$&')).join('|');
+    const matchPunctuation = /[,.<>{}[\]"':;!@#$%^&*()\-+=~| ]/g;
+    const escapedValue = this.value.map(s => s.replace(matchPunctuation, '\\$&')).join('|');
     return this.buildQuery(`{${escapedValue}}`);
   }
 }

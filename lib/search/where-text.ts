@@ -37,8 +37,8 @@ export default class WhereText<TEntity extends Entity> extends WhereField<TEntit
   equalTo(_: string | number | boolean): Search<TEntity> { return this.throwEqualsExcpetion(); }
 
   toString(): string {
-    let matchPunctuation = /[,.<>{}[\]"':;!@#$%^&()\-+=~|]/g;
-    let escapedValue = this.value.replace(matchPunctuation, '\\$&');
+    const matchPunctuation = /[,.<>{}[\]"':;!@#$%^&()\-+=~|]/g;
+    const escapedValue = this.value.replace(matchPunctuation, '\\$&');
 
     if (this.exactValue) {
       return this.buildQuery(`"${escapedValue}"`);

@@ -24,50 +24,50 @@ interface SampleEntity {
   someOtherStrings?: string[] | null;
 }
 
-export interface SampleHashEntity extends SampleEntity {}
-export interface SampleJsonEntity extends SampleEntity {}
+export interface SampleHashEntity extends SampleEntity { }
+export interface SampleJsonEntity extends SampleEntity { }
 
-class SampleEntity extends Entity {}
-export class SampleHashEntity extends SampleEntity {}
-export class SampleJsonEntity extends SampleEntity {}
+class SampleEntity extends Entity { }
+export class SampleHashEntity extends SampleEntity { }
+export class SampleJsonEntity extends SampleEntity { }
 
-export function createHashEntitySchema() : Schema<SampleHashEntity> {
+export function createHashEntitySchema(): Schema<SampleHashEntity> {
   return createSchemaOfType<SampleHashEntity>(SampleHashEntity, 'HASH');
 }
 
-export function createChangedHashEntitySchema() : Schema<SampleHashEntity> {
+export function createChangedHashEntitySchema(): Schema<SampleHashEntity> {
   return createSchemaOfType<SampleHashEntity>(SampleHashEntity, 'HASH', 'sample-hash-entity');
 }
 
-export function createJsonEntitySchema() : Schema<SampleJsonEntity> {
+export function createJsonEntitySchema(): Schema<SampleJsonEntity> {
   return createSchemaOfType<SampleJsonEntity>(SampleJsonEntity, 'JSON');
 }
 
-export function createChangedJsonEntitySchema() : Schema<SampleJsonEntity> {
+export function createChangedJsonEntitySchema(): Schema<SampleJsonEntity> {
   return createSchemaOfType<SampleJsonEntity>(SampleJsonEntity, 'JSON', 'sample-json-entity');
 }
 
-function createSchemaOfType<TEntity extends Entity>(ctor: EntityConstructor<TEntity>, dataStructure: SearchDataStructure, prefix?: string) : Schema<TEntity> {
+function createSchemaOfType<TEntity extends Entity>(ctor: EntityConstructor<TEntity>, dataStructure: SearchDataStructure, prefix?: string): Schema<TEntity> {
   return new Schema<TEntity>(
     ctor, {
-      aString: { type: 'string' },
-      anotherString: { type: 'string' },
-      someText: { type: 'text', sortable: true },
-      someOtherText: { type: 'text', sortable: true },
-      aNumber: { type: 'number', sortable: true },
-      anotherNumber: { type: 'number', sortable: true },
-      aBoolean: { type: 'boolean' },
-      anotherBoolean: { type: 'boolean' },
-      aPoint: { type: 'point' },
-      anotherPoint: { type: 'point' },
-      aDate: { type: 'date', sortable: true },
-      anotherDate: { type: 'date', sortable: true },
-      someStrings: { type: 'string[]' },
-      someOtherStrings: { type: 'string[]' }
-    }, {
-      prefix,
-      dataStructure
-    });
+    aString: { type: 'string' },
+    anotherString: { type: 'string' },
+    someText: { type: 'text', sortable: true },
+    someOtherText: { type: 'text', sortable: true },
+    aNumber: { type: 'number', sortable: true },
+    anotherNumber: { type: 'number', sortable: true },
+    aBoolean: { type: 'boolean' },
+    anotherBoolean: { type: 'boolean' },
+    aPoint: { type: 'point' },
+    anotherPoint: { type: 'point' },
+    aDate: { type: 'date', sortable: true },
+    anotherDate: { type: 'date', sortable: true },
+    someStrings: { type: 'string[]' },
+    someOtherStrings: { type: 'string[]' }
+  }, {
+    prefix,
+    dataStructure
+  });
 }
 
 export async function loadTestHash(client: Client, key: string, data: SampleEntityData) {

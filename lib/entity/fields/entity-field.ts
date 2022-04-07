@@ -23,7 +23,7 @@ abstract class EntityField {
     this._value = this.convertValue(value);
   };
 
-  protected convertValue(value: EntityValue): EntityValue{
+  protected convertValue(value: EntityValue): EntityValue {
     return value;
   }
 
@@ -36,15 +36,15 @@ abstract class EntityField {
   }
 
   protected isString(value: EntityValue) {
-    return typeof(value) === 'string';
+    return typeof value === 'string';
   }
 
   protected isNumber(value: EntityValue) {
-    return typeof(value) === 'number';
+    return typeof value === 'number';
   }
 
   protected isBoolean(value: EntityValue) {
-    return typeof(value) === 'boolean';
+    return typeof value === 'boolean';
   }
 }
 

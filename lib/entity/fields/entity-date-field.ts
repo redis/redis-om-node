@@ -8,7 +8,7 @@ class EntityDateField extends EntityField {
     }
 
     if (this.isNumber(value)) {
-      let newValue = new Date();
+      const newValue = new Date();
       newValue.setTime(value as number);
       return newValue;
     }

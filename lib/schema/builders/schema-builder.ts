@@ -13,8 +13,8 @@ export default abstract class SchemaBuilder<TEntity extends Entity> {
   }
 
   get redisSchema(): string[] {
-    let redisSchema: string[] = [];
-    for (let field in this.schema.definition) {
+    const redisSchema: string[] = [];
+    for (const field in this.schema.definition) {
       redisSchema.push(...this.buildEntry(field));
     }
     return redisSchema;
@@ -63,7 +63,7 @@ export default abstract class SchemaBuilder<TEntity extends Entity> {
   }
 
   private buildSeparableAndSortableField(type: 'TAG', separator?: string, sortable?: boolean): string[] {
-    let result = [type, 'SEPARATOR', separator ?? '|'];
+    const result = [type, 'SEPARATOR', separator ?? '|'];
     if (sortable) result.push('SORTABLE');
     return result;
   }

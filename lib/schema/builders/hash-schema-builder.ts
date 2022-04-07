@@ -6,10 +6,10 @@ import SortableFieldDefinition from "../definition/sortable-field-definition";
 
 export default class HashSchemaBuilder<TEntity extends Entity> extends SchemaBuilder<TEntity> {
 
-  protected buildEntry(field: string) : string[] {
-    let fieldDef: FieldDefinition = this.schema.definition[field];
-    let fieldType = fieldDef.type;
-    let fieldAlias = fieldDef.alias ?? field
+  protected buildEntry(field: string): string[] {
+    const fieldDef: FieldDefinition = this.schema.definition[field];
+    const fieldType = fieldDef.type;
+    const fieldAlias = fieldDef.alias ?? field
     let fieldDetails: string[];
 
     switch (fieldType) {
@@ -36,6 +36,6 @@ export default class HashSchemaBuilder<TEntity extends Entity> extends SchemaBui
         break;
     };
 
-    return [ fieldAlias, ...fieldDetails ];
+    return [fieldAlias, ...fieldDetails];
   }
 }
