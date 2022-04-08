@@ -5,7 +5,9 @@ import { A_DATE, A_NUMBER, A_POINT, A_POINT_STRING, A_STRING, SOME_STRINGS } fro
 const FIELD_NAME = 'foo';
 const FIELD_DEF: FieldDefinition = { type: 'point' };
 const EXPECTED_NULL_JSON_DATA = {};
+const EXPECTED_NULL_HASH_DATA = {};
 const EXPECTED_JSON_DATA = { foo: A_POINT_STRING };
+const EXPECTED_HASH_DATA = { foo: A_POINT_STRING };
 
 describe("EntityPointField", () => {
 
@@ -18,24 +20,23 @@ describe("EntityPointField", () => {
     it("has the expected alias", () => expect(field.name).toBe(FIELD_NAME));
     it("has a value of null", () => expect(field.value).toBeNull());
     it("converts to the expected Redis JSON data", () => expect(field.toRedisJson()).toEqual(EXPECTED_NULL_JSON_DATA));
+    it("converts to the expected Redis Hash data", () => expect(field.toRedisHash()).toEqual(EXPECTED_NULL_HASH_DATA));
 
-    it("can be set to a point", () => {
-      field.value = A_POINT;
-      expect(field.value).toEqual(A_POINT)
-      expect(field.toRedisJson()).toEqual(EXPECTED_JSON_DATA);
+    describe("when created with a point", () => {
+      beforeEach(() => field.value = A_POINT);
+      it("has the expected value", () => expect(field.value).toEqual(A_POINT));
+      it("converts to the expected Redis JSON data", () => expect(field.toRedisJson()).toEqual(EXPECTED_JSON_DATA));
+      it("converts to the expected Redis Hash data", () => expect(field.toRedisHash()).toEqual(EXPECTED_HASH_DATA));
     });
 
-    it("can be set to null", () => {
-      field.value = A_POINT; // set it to something else first
-      field.value = null;
-      expect(field.value).toBeNull();
-      expect(field.toRedisJson()).toEqual(EXPECTED_NULL_JSON_DATA);
-    });
-
-    it("cannot be set to undefined", () => {
-      // @ts-ignore: JavaScript trap
-      expect(() => field.value = undefined)
-        .toThrow("Property cannot be set to undefined. Use null instead.");
+    describe("when created with a null", () => {
+      beforeEach(() => {
+        field.value = A_POINT; // set it to something else first
+        field.value = null;
+      });
+      it("has the expected value", () => expect(field.value).toBeNull());
+      it("converts to the expected Redis JSON data", () => expect(field.toRedisJson()).toEqual(EXPECTED_NULL_JSON_DATA));
+      it("converts to the expected Redis Hash data", () => expect(field.toRedisHash()).toEqual(EXPECTED_NULL_HASH_DATA));
     });
 
     it("cannot be set to a string", () => {
@@ -78,12 +79,14 @@ describe("EntityPointField", () => {
     beforeEach(() => field = new EntityPointField(FIELD_NAME, FIELD_DEF, A_POINT));
     it("has the expected value", () => expect(field.value).toEqual(A_POINT));
     it("converts to the expected Redis JSON data", () => expect(field.toRedisJson()).toEqual(EXPECTED_JSON_DATA));
+    it("converts to the expected Redis Hash data", () => expect(field.toRedisHash()).toEqual(EXPECTED_HASH_DATA));
   });
 
   describe("when created with a null", () => {
     beforeEach(() => field = new EntityPointField(FIELD_NAME, FIELD_DEF, null));
     it("has the expected value", () => expect(field.value).toBeNull());
     it("converts to the expected Redis JSON data", () => expect(field.toRedisJson()).toEqual(EXPECTED_NULL_JSON_DATA));
+    it("converts to the expected Redis Hash data", () => expect(field.toRedisHash()).toEqual(EXPECTED_NULL_HASH_DATA));
   });
 
   it("complains when created with a string", () => {

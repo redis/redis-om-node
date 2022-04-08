@@ -1,11 +1,13 @@
 import { FieldDefinition } from "../../../lib";
 import EntityNumberField from "../../../lib/entity/fields/entity-number-field";
-import { A_DATE, A_NUMBER, A_POINT, A_STRING, SOME_STRINGS } from "../../helpers/example-data";
+import { A_DATE, A_NUMBER, A_NUMBER_STRING, A_POINT, A_STRING, SOME_STRINGS } from "../../helpers/example-data";
 
 const FIELD_NAME = 'foo';
 const FIELD_DEF: FieldDefinition = { type: 'number' };
 const EXPECTED_NULL_JSON_DATA = {};
+const EXPECTED_NULL_HASH_DATA = {};
 const EXPECTED_JSON_DATA = { foo: A_NUMBER };
+const EXPECTED_HASH_DATA = { foo: A_NUMBER_STRING };
 
 describe("EntityNumberField", () => {
 
@@ -18,18 +20,23 @@ describe("EntityNumberField", () => {
     it("has the expected alias", () => expect(field.name).toBe(FIELD_NAME));
     it("has a value of null", () => expect(field.value).toBeNull());
     it("converts to the expected Redis JSON data", () => expect(field.toRedisJson()).toEqual(EXPECTED_NULL_JSON_DATA));
+    it("converts to the expected Redis Hash data", () => expect(field.toRedisHash()).toEqual(EXPECTED_NULL_HASH_DATA));
 
-    it("can be set to a number", () => {
-      field.value = A_NUMBER;
-      expect(field.value).toBe(A_NUMBER)
-      expect(field.toRedisJson()).toEqual(EXPECTED_JSON_DATA);
+    describe("when created with a number", () => {
+      beforeEach(() => field.value = A_NUMBER);
+      it("has the expected value", () => expect(field.value).toBe(A_NUMBER));
+      it("converts to the expected Redis JSON data", () => expect(field.toRedisJson()).toEqual(EXPECTED_JSON_DATA));
+      it("converts to the expected Redis Hash data", () => expect(field.toRedisHash()).toEqual(EXPECTED_HASH_DATA));
     });
 
-    it("can be set to null", () => {
-      field.value = A_NUMBER; // set it to something else first
-      field.value = null;
-      expect(field.value).toBeNull();
-      expect(field.toRedisJson()).toEqual(EXPECTED_NULL_JSON_DATA);
+    describe("when created with a null", () => {
+      beforeEach(() => {
+        field.value = A_NUMBER; // set it to something else first
+        field.value = null;
+      });
+      it("has the expected value", () => expect(field.value).toBeNull());
+      it("converts to the expected Redis JSON data", () => expect(field.toRedisJson()).toEqual(EXPECTED_NULL_JSON_DATA));
+      it("converts to the expected Redis Hash data", () => expect(field.toRedisHash()).toEqual(EXPECTED_NULL_HASH_DATA));
     });
 
     it("cannot be set to undefined", () => {
@@ -78,12 +85,14 @@ describe("EntityNumberField", () => {
     beforeEach(() => field = new EntityNumberField(FIELD_NAME, FIELD_DEF, A_NUMBER));
     it("has the expected value", () => expect(field.value).toBe(A_NUMBER));
     it("converts to the expected Redis JSON data", () => expect(field.toRedisJson()).toEqual(EXPECTED_JSON_DATA));
+    it("converts to the expected Redis Hash data", () => expect(field.toRedisHash()).toEqual(EXPECTED_HASH_DATA));
   });
 
   describe("when created with a null", () => {
     beforeEach(() => field = new EntityNumberField(FIELD_NAME, FIELD_DEF, null));
     it("has the expected value", () => expect(field.value).toBeNull());
     it("converts to the expected Redis JSON data", () => expect(field.toRedisJson()).toEqual(EXPECTED_NULL_JSON_DATA));
+    it("converts to the expected Redis Hash data", () => expect(field.toRedisHash()).toEqual(EXPECTED_NULL_HASH_DATA));
   });
 
   it("complains when created with a string", () => {

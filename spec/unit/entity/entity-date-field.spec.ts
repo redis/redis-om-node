@@ -1,11 +1,13 @@
 import { FieldDefinition } from "../../../lib";
 import EntityDateField from "../../../lib/entity/fields/entity-date-field";
-import { A_DATE, A_DATE_EPOCH, A_DATE_ISO, A_NUMBER, A_POINT, A_STRING, SOME_STRINGS } from "../../helpers/example-data";
+import { A_DATE, A_DATE_EPOCH, A_DATE_EPOCH_STRING, A_DATE_ISO, A_NUMBER, A_POINT, A_STRING, SOME_STRINGS } from "../../helpers/example-data";
 
 const FIELD_NAME = 'foo';
 const FIELD_DEF: FieldDefinition = { type: 'date' };
 const EXPECTED_NULL_JSON_DATA = {};
+const EXPECTED_NULL_HASH_DATA = {};
 const EXPECTED_JSON_DATA = { foo: A_DATE_EPOCH };
+const EXPECTED_HASH_DATA = { foo: A_DATE_EPOCH_STRING };
 
 describe("EntityDateField", () => {
 
@@ -18,30 +20,37 @@ describe("EntityDateField", () => {
     it("has the expected alias", () => expect(field.name).toBe(FIELD_NAME));
     it("has a value of null", () => expect(field.value).toBeNull());
     it("converts to the expected Redis JSON data", () => expect(field.toRedisJson()).toEqual(EXPECTED_NULL_JSON_DATA));
+    it("converts to the expected Redis Hash data", () => expect(field.toRedisHash()).toEqual(EXPECTED_NULL_HASH_DATA));
 
-    it("can be set to a date", () => {
-      field.value = A_DATE;
-      expect(field.value).toEqual(A_DATE)
-      expect(field.toRedisJson()).toEqual(EXPECTED_JSON_DATA);
+    describe("when set to a date", () => {
+      beforeEach(() => field.value = A_DATE);
+      it("has the expected value", () => expect(field.value).toEqual(A_DATE));
+      it("converts to the expected Redis JSON data", () => expect(field.toRedisJson()).toEqual(EXPECTED_JSON_DATA));
+      it("converts to the expected Redis Hash data", () => expect(field.toRedisHash()).toEqual(EXPECTED_HASH_DATA));
     });
 
-    it("can be set to an ISO date", () => {
-      field.value = A_DATE_ISO;
-      expect(field.value).toEqual(A_DATE)
-      expect(field.toRedisJson()).toEqual(EXPECTED_JSON_DATA);
+    describe("when created with an ISO date", () => {
+      beforeEach(() => field.value = A_DATE_ISO);
+      it("has the expected value", () => expect(field.value).toEqual(A_DATE));
+      it("converts to the expected Redis JSON data", () => expect(field.toRedisJson()).toEqual(EXPECTED_JSON_DATA));
+      it("converts to the expected Redis Hash data", () => expect(field.toRedisHash()).toEqual(EXPECTED_HASH_DATA));
     });
 
-    it("can be set to a UNIX epoch date", () => {
-      field.value = A_DATE_EPOCH;
-      expect(field.value).toEqual(A_DATE)
-      expect(field.toRedisJson()).toEqual(EXPECTED_JSON_DATA);
+    describe("when created with a UNIX epoch date", () => {
+      beforeEach(() => field.value = A_DATE_EPOCH);
+      it("has the expected value", () => expect(field.value).toEqual(A_DATE));
+      it("converts to the expected Redis JSON data", () => expect(field.toRedisJson()).toEqual(EXPECTED_JSON_DATA));
+      it("converts to the expected Redis Hash data", () => expect(field.toRedisHash()).toEqual(EXPECTED_HASH_DATA));
     });
 
-    it("can be set to null", () => {
-      field.value = A_DATE; // set it to something else first
-      field.value = null;
-      expect(field.value).toBeNull();
-      expect(field.toRedisJson()).toEqual(EXPECTED_NULL_JSON_DATA);
+    describe("when created with a null", () => {
+      beforeEach(() => {
+        field.value = A_DATE; // set it to something else first
+        field.value = null;
+        });
+      it("has the expected value", () => expect(field.value).toBeNull());
+      it("converts to the expected Redis JSON data", () => expect(field.toRedisJson()).toEqual(EXPECTED_NULL_JSON_DATA));
+      it("converts to the expected Redis Hash data", () => expect(field.toRedisHash()).toEqual(EXPECTED_NULL_HASH_DATA));
     });
 
     it("cannot be set to undefined", () => {
@@ -78,24 +87,28 @@ describe("EntityDateField", () => {
     beforeEach(() => field = new EntityDateField(FIELD_NAME, FIELD_DEF, A_DATE));
     it("has the expected value", () => expect(field.value).toEqual(A_DATE));
     it("converts to the expected Redis JSON data", () => expect(field.toRedisJson()).toEqual(EXPECTED_JSON_DATA));
+    it("converts to the expected Redis Hash data", () => expect(field.toRedisHash()).toEqual(EXPECTED_HASH_DATA));
   });
 
   describe("when created with an ISO date", () => {
     beforeEach(() => field = new EntityDateField(FIELD_NAME, FIELD_DEF, A_DATE_ISO));
     it("has the expected value", () => expect(field.value).toEqual(A_DATE));
     it("converts to the expected Redis JSON data", () => expect(field.toRedisJson()).toEqual(EXPECTED_JSON_DATA));
+    it("converts to the expected Redis Hash data", () => expect(field.toRedisHash()).toEqual(EXPECTED_HASH_DATA));
   });
 
   describe("when created with a UNIX epoch date", () => {
     beforeEach(() => field = new EntityDateField(FIELD_NAME, FIELD_DEF, A_DATE_EPOCH));
     it("has the expected value", () => expect(field.value).toEqual(A_DATE));
     it("converts to the expected Redis JSON data", () => expect(field.toRedisJson()).toEqual(EXPECTED_JSON_DATA));
+    it("converts to the expected Redis Hash data", () => expect(field.toRedisHash()).toEqual(EXPECTED_HASH_DATA));
   });
 
   describe("when created with a null", () => {
     beforeEach(() => field = new EntityDateField(FIELD_NAME, FIELD_DEF, null));
     it("has the expected value", () => expect(field.value).toBeNull());
     it("converts to the expected Redis JSON data", () => expect(field.toRedisJson()).toEqual(EXPECTED_NULL_JSON_DATA));
+    it("converts to the expected Redis Hash data", () => expect(field.toRedisHash()).toEqual(EXPECTED_NULL_HASH_DATA));
   });
 
   it("complains when created with a boolean", () => {
