@@ -45,7 +45,7 @@ describe("Entity", () => {
     it("returns null for the string[] property", () => expect(entity.someStrings).toBeNull());
     it("returns the expected key name", () => expect(entity.keyName).toBe(`SimpleEntity:${ENTITY_ID}`));
     it("serializes to the expected JSON", () => expect(JSON.stringify(entity)).toBe(EXPECTED_NULL_JSON));
-    it("converts to the expected RedisJSON data", () => expect(entity.toRedisJson()).toEqual(EXPECTED_NULL_JSON_DATA));
+    it("converts to the expected Redis JSON data", () => expect(entity.toRedisJson()).toEqual(EXPECTED_NULL_JSON_DATA));
     it("converts to the expected Redis Hash data", () => expect(entity.toRedisHash()).toEqual(EXPECTED_NULL_HASH_DATA));
   });
 
@@ -63,7 +63,7 @@ describe("Entity", () => {
     it("returns a string[] for the string[] property", () => expect(entity.someStrings).toEqual(SOME_STRINGS));
     it("returns the expected key name", () => expect(entity.keyName).toBe(`SimpleEntity:${ENTITY_ID}`));
     it("serializes to the expected JSON", () => expect(JSON.stringify(entity)).toBe(EXPECTED_JSON));
-    it("converts to the expected RedisJSON data", () => expect(entity.toRedisJson()).toEqual(EXPECTED_JSON_DATA));
+    it("converts to the expected Redis JSON data", () => expect(entity.toRedisJson()).toEqual(EXPECTED_JSON_DATA));
     it("converts to the expected Redis Hash data", () => expect(entity.toRedisHash()).toEqual(EXPECTED_HASH_DATA));
 
     describe("changing the data", () => {
@@ -139,7 +139,7 @@ describe("Entity", () => {
     it("returns a string[] for the string[] property", () => expect(entity.someStrings).toEqual(SOME_OTHER_STRINGS));
     it("returns the expected key name", () => expect(entity.keyName).toBe(`AliasedEntity:${ENTITY_ID}`));
     it("serializes to the expected JSON", () => expect(JSON.stringify(entity)).toBe(EXPECTED_ALIASED_JSON));
-    it("converts to the expected RedisJSON data", () => expect(entity.toRedisJson()).toEqual(EXPECTED_ALIASED_JSON_DATA));
+    it("converts to the expected Redis JSON data", () => expect(entity.toRedisJson()).toEqual(EXPECTED_ALIASED_JSON_DATA));
     it("converts to the expected Redis Hash data", () => expect(entity.toRedisHash()).toEqual(EXPECTED_ALIASED_HASH_DATA));
 
     describe("changing the data", () => {

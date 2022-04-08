@@ -136,7 +136,7 @@ export type EntityCreationData = Record<string, number | boolean | string | stri
     if (Object.keys(entity.entityData).length === 0) {
       await this.client.unlink(key);
     } else {
-      await this.writeEntity(key, entity.entityData);
+      await this.writeEntity(entity);
     }
 
     return entity.entityId;
@@ -211,7 +211,7 @@ export type EntityCreationData = Record<string, number | boolean | string | stri
   }
 
   /** @internal */
-  protected abstract writeEntity(key: string, data: EntityData): Promise<void>;
+  protected abstract writeEntity(entity: TEntity): Promise<void>;
 
   /** @internal */
   protected abstract readEntity(key: string): Promise<EntityData>;
@@ -231,9 +231,8 @@ export class HashRepository<TEntity extends Entity> extends Repository<TEntity> 
     this.converter = new HashConverter(schema.definition);
   }
 
-  protected async writeEntity(key: string, data: EntityData): Promise<void> {
-    let hashData = this.converter.toHashData(data);
-    await this.client.hsetall(key, hashData);
+  protected async writeEntity(entity: TEntity): Promise<void> {
+    await this.client.hsetall(entity.keyName, entity.toRedisHash());
   }
 
   protected async readEntity(key: string): Promise<EntityData> {
@@ -251,9 +250,8 @@ export class JsonRepository<TEntity extends Entity> extends Repository<TEntity> 
     this.converter = new JsonConverter(schema.definition);
   }
 
-  protected async writeEntity(key: string, data: EntityData): Promise<void> {
-    let jsonData = this.converter.toJsonData(data);
-    await this.client.jsonset(key, jsonData);
+  protected async writeEntity(entity: TEntity): Promise<void> {
+    await this.client.jsonset(entity.keyName, entity.toRedisJson());
   }
 
   protected async readEntity(key: string): Promise<EntityData> {

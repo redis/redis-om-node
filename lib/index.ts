@@ -36,7 +36,7 @@ import { Circle, CircleFunction } from "./search/where-point";
 
 
 export {
-  Client, SearchDataStructure, RedisHashData as HashData, RedisJsonData as JsonData,
+  Client, SearchDataStructure, RedisHashData, RedisJsonData,
   Entity, EntityData, EntityValue, EntityConstructor,
   RedisError, Repository, EntityCreationData,
   Schema, SchemaDefinition, Point,

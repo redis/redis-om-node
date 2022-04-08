@@ -19,7 +19,7 @@ describe("EntityTextField", () => {
 
     it("has the expected alias", () => expect(field.name).toBe(FIELD_NAME));
     it("has a value of null", () => expect(field.value).toBeNull());
-    it("converts to the expected RedisJSON data", () => expect(field.toRedisJson()).toEqual(EXPECTED_NULL_JSON_DATA));
+    it("converts to the expected Redis JSON data", () => expect(field.toRedisJson()).toEqual(EXPECTED_NULL_JSON_DATA));
 
     it("can be set to a string", () => {
       field.value = SOME_TEXT;
@@ -79,25 +79,25 @@ describe("EntityTextField", () => {
   describe("when created with a string", () => {
     beforeEach(() => field = new EntityTextField(FIELD_NAME, FIELD_DEF, SOME_TEXT));
     it("has the expected value", () => expect(field.value).toBe(SOME_TEXT));
-    it("converts to the expected RedisJSON data", () => expect(field.toRedisJson()).toEqual(EXPECTED_JSON_STRING_DATA));
+    it("converts to the expected Redis JSON data", () => expect(field.toRedisJson()).toEqual(EXPECTED_JSON_STRING_DATA));
   });
 
   describe("when created with a boolean", () => {
     beforeEach(() => field = new EntityTextField(FIELD_NAME, FIELD_DEF, true));
     it("has the expected value", () => expect(field.value).toBe("true"));
-    it("converts to the expected RedisJSON data", () => expect(field.toRedisJson()).toEqual(EXPECTED_JSON_BOOLEAN_DATA));
+    it("converts to the expected Redis JSON data", () => expect(field.toRedisJson()).toEqual(EXPECTED_JSON_BOOLEAN_DATA));
   });
 
   describe("when created with a number", () => {
     beforeEach(() => field = new EntityTextField(FIELD_NAME, FIELD_DEF, A_NUMBER));
     it("has the expected value", () => expect(field.value).toBe(A_NUMBER_STRING));
-    it("converts to the expected RedisJSON data", () => expect(field.toRedisJson()).toEqual(EXPECTED_JSON_NUMBER_DATA));
+    it("converts to the expected Redis JSON data", () => expect(field.toRedisJson()).toEqual(EXPECTED_JSON_NUMBER_DATA));
   });
 
   describe("when created with a null", () => {
     beforeEach(() => field = new EntityTextField(FIELD_NAME, FIELD_DEF, null));
     it("has the expected value", () => expect(field.value).toBeNull());
-    it("converts to the expected RedisJSON data", () => expect(field.toRedisJson()).toEqual(EXPECTED_NULL_JSON_DATA));
+    it("converts to the expected Redis JSON data", () => expect(field.toRedisJson()).toEqual(EXPECTED_NULL_JSON_DATA));
   });
 
   it("complains when created with a Point", () => {

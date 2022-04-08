@@ -17,7 +17,7 @@ describe("EntityDateField", () => {
 
     it("has the expected alias", () => expect(field.name).toBe(FIELD_NAME));
     it("has a value of null", () => expect(field.value).toBeNull());
-    it("converts to the expected RedisJSON data", () => expect(field.toRedisJson()).toEqual(EXPECTED_NULL_JSON_DATA));
+    it("converts to the expected Redis JSON data", () => expect(field.toRedisJson()).toEqual(EXPECTED_NULL_JSON_DATA));
 
     it("can be set to a date", () => {
       field.value = A_DATE;
@@ -77,25 +77,25 @@ describe("EntityDateField", () => {
   describe("when created with a date", () => {
     beforeEach(() => field = new EntityDateField(FIELD_NAME, FIELD_DEF, A_DATE));
     it("has the expected value", () => expect(field.value).toEqual(A_DATE));
-    it("converts to the expected RedisJSON data", () => expect(field.toRedisJson()).toEqual(EXPECTED_JSON_DATA));
+    it("converts to the expected Redis JSON data", () => expect(field.toRedisJson()).toEqual(EXPECTED_JSON_DATA));
   });
 
   describe("when created with an ISO date", () => {
     beforeEach(() => field = new EntityDateField(FIELD_NAME, FIELD_DEF, A_DATE_ISO));
     it("has the expected value", () => expect(field.value).toEqual(A_DATE));
-    it("converts to the expected RedisJSON data", () => expect(field.toRedisJson()).toEqual(EXPECTED_JSON_DATA));
+    it("converts to the expected Redis JSON data", () => expect(field.toRedisJson()).toEqual(EXPECTED_JSON_DATA));
   });
 
   describe("when created with a UNIX epoch date", () => {
     beforeEach(() => field = new EntityDateField(FIELD_NAME, FIELD_DEF, A_DATE_EPOCH));
     it("has the expected value", () => expect(field.value).toEqual(A_DATE));
-    it("converts to the expected RedisJSON data", () => expect(field.toRedisJson()).toEqual(EXPECTED_JSON_DATA));
+    it("converts to the expected Redis JSON data", () => expect(field.toRedisJson()).toEqual(EXPECTED_JSON_DATA));
   });
 
   describe("when created with a null", () => {
     beforeEach(() => field = new EntityDateField(FIELD_NAME, FIELD_DEF, null));
     it("has the expected value", () => expect(field.value).toBeNull());
-    it("converts to the expected RedisJSON data", () => expect(field.toRedisJson()).toEqual(EXPECTED_NULL_JSON_DATA));
+    it("converts to the expected Redis JSON data", () => expect(field.toRedisJson()).toEqual(EXPECTED_NULL_JSON_DATA));
   });
 
   it("complains when created with a boolean", () => {

@@ -17,7 +17,7 @@ describe("EntityBooleanField", () => {
 
     it("has the expected name", () => expect(field.name).toBe(FIELD_NAME));
     it("has a value of null", () => expect(field.value).toBeNull());
-    it("converts to the expected RedisJSON data", () => expect(field.toRedisJson()).toEqual(EXPECTED_NULL_JSON_DATA));
+    it("converts to the expected Redis JSON data", () => expect(field.toRedisJson()).toEqual(EXPECTED_NULL_JSON_DATA));
 
     it("can be set to a boolean", () => {
       field.value = true;
@@ -77,13 +77,13 @@ describe("EntityBooleanField", () => {
   describe("when created with a boolean", () => {
     beforeEach(() => field = new EntityBooleanField(FIELD_NAME, FIELD_DEF, true));
     it("has the expected value", () => expect(field.value).toBe(true));
-    it("converts to the expected RedisJSON data", () => expect(field.toRedisJson()).toEqual(EXPECTED_JSON_DATA));
+    it("converts to the expected Redis JSON data", () => expect(field.toRedisJson()).toEqual(EXPECTED_JSON_DATA));
   });
 
   describe("when created with a null", () => {
     beforeEach(() => field = new EntityBooleanField(FIELD_NAME, FIELD_DEF, null));
     it("has the expected value", () => expect(field.value).toBeNull());
-    it("converts to the expected RedisJSON data", () => expect(field.toRedisJson()).toEqual(EXPECTED_NULL_JSON_DATA));
+    it("converts to the expected Redis JSON data", () => expect(field.toRedisJson()).toEqual(EXPECTED_NULL_JSON_DATA));
   });
 
   it("complains when created with a string", () => {

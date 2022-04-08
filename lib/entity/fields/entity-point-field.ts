@@ -1,6 +1,5 @@
 import EntityField from "./entity-field";
 import EntityValue from "../entity-value";
-import { JsonData } from "../..";
 import Point from "../point";
 import { RedisHashData, RedisJsonData } from "../../client";
 

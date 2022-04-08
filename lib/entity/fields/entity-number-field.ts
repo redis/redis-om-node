@@ -1,6 +1,5 @@
 import EntityField from "./entity-field";
 import EntityValue from "../entity-value";
-import { JsonData } from "../..";
 
 class EntityNumberField extends EntityField {
   protected valdiateValue(value: EntityValue) {

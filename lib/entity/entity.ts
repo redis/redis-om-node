@@ -109,7 +109,7 @@ export default abstract class Entity {
     let data: RedisJsonData = {};
     for (let field in this.entityFields) {
       let entityField: EntityField = this.entityFields[field];
-      data = { ...data, ...entityField.toRedisJson() }
+      data = { ...data, ...entityField.toRedisJson() };
     }
     return data;
   }
@@ -122,7 +122,7 @@ export default abstract class Entity {
     let data: RedisHashData = {};
     for (let field in this.entityFields) {
       let entityField: EntityField = this.entityFields[field];
-      data = { ...data, ...entityField.toRedisHash() }
+      data = { ...data, ...entityField.toRedisHash() };
     }
     return data;
   }
