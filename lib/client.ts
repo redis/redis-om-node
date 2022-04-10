@@ -227,6 +227,6 @@ export default class Client {
   }
 
   private validateShimOpen(): asserts this is { shim: RedisShim } {
-    if (!this.shim) throw new RedisError("Redis connection needs opened.");
+    if (!this.shim) throw new RedisError("Redis connection needs to be open.");
   }
 }
