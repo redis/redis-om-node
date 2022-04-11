@@ -1,15 +1,7 @@
-import EntityField from "./entity-field";
 import EntityValue from "../entity-value";
+import EntityStringishField from "./entity-stringish-field";
 
-class EntityStringField extends EntityField {
-  protected convertValue(value: EntityValue): EntityValue {
-    if (value !== null && this.isStringable(value)) {
-      return value.toString()
-    }
-
-    return super.convertValue(value);
-  }
-
+class EntityStringField extends EntityStringishField {
   protected valdiateValue(value: EntityValue) {
     super.valdiateValue(value);
     if (value !== null && !this.isStringable(value))

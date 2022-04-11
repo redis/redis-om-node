@@ -40,16 +40,12 @@ abstract class EntityField {
     return data;
   };
 
-  protected convertValue(value: EntityValue): EntityValue{
-    return value;
-  }
-
   protected valdiateValue(value: EntityValue) {
     if (value === undefined) throw Error(`Property cannot be set to undefined. Use null instead.`);
   }
 
-  protected isStringable(value: EntityValue) {
-    return this.isString(value) || this.isNumber(value) || this.isBoolean(value);
+  protected convertValue(value: EntityValue): EntityValue{
+    return value;
   }
 
   protected isString(value: EntityValue) {

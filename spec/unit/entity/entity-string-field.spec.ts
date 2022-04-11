@@ -83,7 +83,7 @@ describe("EntityStringField", () => {
   });
 
   describe("when created with an alias", () => {
-    beforeEach(() => field = new EntityStringField(FIELD_NAME, { type: 'string', alias: 'bar' }));
+    beforeEach(() => field = new EntityStringField(FIELD_NAME, { type: 'string',  alias: 'bar' }));
     it("has the aliased name", () => expect(field.name).toBe('bar'));
   });
 

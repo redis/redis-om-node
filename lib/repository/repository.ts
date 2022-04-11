@@ -8,6 +8,7 @@ import { Search, RawSearch } from '../search/search';
 
 import { CreateIndexOptions } from "../client";
 import { JsonConverter, HashConverter } from "./converter";
+import { json } from "stream/consumers";
 
 /**
  * Initialization data for {@link Entity} creation when calling
@@ -55,7 +56,7 @@ export type EntityCreationData = Record<string, number | boolean | string | stri
  */
  export default abstract class Repository<TEntity extends Entity> {
   protected client: Client;
-  private schema: Schema<TEntity>;
+  protected schema: Schema<TEntity>;
 
   /** @internal */
   constructor(schema: Schema<TEntity>, client: Client) {
@@ -162,9 +163,7 @@ export type EntityCreationData = Record<string, number | boolean | string | stri
    * @returns The matching Entity.
    */
   async fetch(id: string): Promise<TEntity> {
-    let key = this.makeKey(id);
-    let entityData = await this.readEntity(key);
-    return new this.schema.entityCtor(this.schema, id, entityData);
+    return await this.readEntity(id);
   }
 
   /**
@@ -214,7 +213,7 @@ export type EntityCreationData = Record<string, number | boolean | string | stri
   protected abstract writeEntity(entity: TEntity): Promise<void>;
 
   /** @internal */
-  protected abstract readEntity(key: string): Promise<EntityData>;
+  protected abstract readEntity(key: string): Promise<TEntity>;
 
   /** @internal */
   protected makeKey(id: string): string {
@@ -235,9 +234,11 @@ export class HashRepository<TEntity extends Entity> extends Repository<TEntity> 
     await this.client.hsetall(entity.keyName, entity.toRedisHash());
   }
 
-  protected async readEntity(key: string): Promise<EntityData> {
+  protected async readEntity(id: string): Promise<TEntity> {
+    let key = this.makeKey(id);
     let hashData = await this.client.hgetall(key);
-    return this.converter.toEntityData(hashData);
+    let entityData = this.converter.toEntityData(hashData);
+    return new this.schema.entityCtor(this.schema, id, entityData);
   }
 }
 
@@ -254,8 +255,10 @@ export class JsonRepository<TEntity extends Entity> extends Repository<TEntity> 
     await this.client.jsonset(entity.keyName, entity.toRedisJson());
   }
 
-  protected async readEntity(key: string): Promise<EntityData> {
+  protected async readEntity(id: string): Promise<TEntity> {
+    let key = this.makeKey(id);
     let jsonData = await this.client.jsonget(key);
-    return this.converter.toEntityData(jsonData);
+    let entityData = this.converter.toEntityData(jsonData);
+    return new this.schema.entityCtor(this.schema, id, entityData);
   }
 }

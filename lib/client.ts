@@ -9,7 +9,7 @@ import RedisError from './errors';
  * Alias for a JavaScript object used by HSET.
  * @internal
  */
-export type RedisHashData = { [key: string ]: any };
+export type RedisHashData = { [key: string ]: string };
 
 /**
  * Alias for any old JavaScript object used by JSON.SET.

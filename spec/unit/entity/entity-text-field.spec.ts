@@ -1,13 +1,13 @@
 import { FieldDefinition } from "../../../lib";
 import EntityTextField from "../../../lib/entity/fields/entity-text-field";
-import { A_DATE, A_NUMBER, A_NUMBER_STRING, A_POINT, SOME_TEXT, SOME_STRINGS } from "../../helpers/example-data";
+import { A_DATE, A_NUMBER, A_NUMBER_STRING, A_POINT, A_STRING, SOME_STRINGS } from "../../helpers/example-data";
 
 const FIELD_NAME = 'foo';
-const FIELD_DEF: FieldDefinition = { type: 'text' };
+const FIELD_DEF: FieldDefinition = { type: 'string' };
 const EXPECTED_NULL_JSON_DATA = {};
 const EXPECTED_NULL_HASH_DATA = {};
-const EXPECTED_JSON_STRING_DATA = { foo: SOME_TEXT };
-const EXPECTED_HASH_STRING_DATA = { foo: SOME_TEXT };
+const EXPECTED_JSON_STRING_DATA = { foo: A_STRING };
+const EXPECTED_HASH_STRING_DATA = { foo: A_STRING };
 const EXPECTED_JSON_BOOLEAN_DATA = { foo: "true" };
 const EXPECTED_HASH_BOOLEAN_DATA = { foo: "true" };
 const EXPECTED_JSON_NUMBER_DATA = { foo: A_NUMBER_STRING };
@@ -27,8 +27,8 @@ describe("EntityTextField", () => {
     it("converts to the expected Redis Hash data", () => expect(field.toRedisHash()).toEqual(EXPECTED_NULL_HASH_DATA));
 
     describe("when created with a string", () => {
-      beforeEach(() => field.value = SOME_TEXT);
-      it("has the expected value", () => expect(field.value).toBe(SOME_TEXT));
+      beforeEach(() => field.value = A_STRING);
+      it("has the expected value", () => expect(field.value).toBe(A_STRING));
       it("converts to the expected Redis JSON data", () => expect(field.toRedisJson()).toEqual(EXPECTED_JSON_STRING_DATA));
       it("converts to the expected Redis Hash data", () => expect(field.toRedisHash()).toEqual(EXPECTED_HASH_STRING_DATA));
     });
@@ -49,7 +49,7 @@ describe("EntityTextField", () => {
 
     describe("when created with a null", () => {
       beforeEach(() => {
-        field.value = SOME_TEXT; // set it to something else first
+        field.value = A_STRING; // set it to something else first
         field.value = null;
       });
       it("has the expected value", () => expect(field.value).toBeNull());
@@ -83,13 +83,13 @@ describe("EntityTextField", () => {
   });
 
   describe("when created with an alias", () => {
-    beforeEach(() => field = new EntityTextField(FIELD_NAME, { type: 'text', alias: 'bar' }));
+    beforeEach(() => field = new EntityTextField(FIELD_NAME, { type: 'string',  alias: 'bar' }));
     it("has the aliased name", () => expect(field.name).toBe('bar'));
   });
 
   describe("when created with a string", () => {
-    beforeEach(() => field = new EntityTextField(FIELD_NAME, FIELD_DEF, SOME_TEXT));
-    it("has the expected value", () => expect(field.value).toBe(SOME_TEXT));
+    beforeEach(() => field = new EntityTextField(FIELD_NAME, FIELD_DEF, A_STRING));
+    it("has the expected value", () => expect(field.value).toBe(A_STRING));
     it("converts to the expected Redis JSON data", () => expect(field.toRedisJson()).toEqual(EXPECTED_JSON_STRING_DATA));
     it("converts to the expected Redis Hash data", () => expect(field.toRedisHash()).toEqual(EXPECTED_HASH_STRING_DATA));
   });

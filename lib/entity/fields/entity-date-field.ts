@@ -15,6 +15,12 @@ class EntityDateField extends EntityField {
     return data;
   };
 
+  protected valdiateValue(value: EntityValue) {
+    super.valdiateValue(value);
+    if (value !== null && !this.isDateable(value))
+      throw Error(`Expected value with type of 'date' but received '${value}'.`);
+  }
+
   protected convertValue(value: EntityValue): EntityValue {
     if (this.isString(value)) {
       return new Date(value as string);
@@ -27,12 +33,6 @@ class EntityDateField extends EntityField {
     }
 
     return super.convertValue(value);
-  }
-
-  protected valdiateValue(value: EntityValue) {
-    super.valdiateValue(value);
-    if (value !== null && !this.isDateable(value))
-      throw Error(`Expected value with type of 'date' but received '${value}'.`);
   }
 
   private isDateable(value: EntityValue) {
