@@ -6,10 +6,13 @@ import StringArrayFieldDefinition from "../../schema/definition/string-array-fie
 class EntityStringArrayField extends EntityField {
   toRedisHash(): RedisHashData {
     let data: RedisHashData = {};
-    let separator = (this.fieldDef as StringArrayFieldDefinition).separator ?? '|';
-    if (this.value !== null) data[this.name] = (this.value as string[]).join(separator);
+    if (this.value !== null) data[this.name] = (this.value as string[]).join(this.separator);
     return data;
-  };
+  }
+
+  fromRedisHash(value: string) {
+    this.value = value.split(this.separator);
+  }
 
   protected valdiateValue(value: EntityValue) {
     super.valdiateValue(value);
@@ -23,6 +26,10 @@ class EntityStringArrayField extends EntityField {
     }
 
     return super.convertValue(value);
+  }
+
+  private get separator() {
+    return (this.fieldDef as StringArrayFieldDefinition).separator ?? '|';
   }
 
   private isArray(value: any) {

@@ -26,19 +26,27 @@ abstract class EntityField {
   set value(value: EntityValue) {
     this.valdiateValue(value);
     this._value = this.convertValue(value);
-  };
+  }
 
   toRedisJson(): RedisJsonData {
     let data: RedisJsonData = {};
     if (this.value !== null) data[this.name] = this.value;
     return data;
-  };
+  }
+
+  fromRedisJson(value: any) {
+    this.value = value;
+  }
 
   toRedisHash(): RedisHashData {
     let data: RedisHashData = {};
     if (this.value !== null) data[this.name] = this.value.toString();
     return data;
-  };
+  }
+
+  fromRedisHash(value: string) {
+    this.value = value;
+  }
 
   protected valdiateValue(value: EntityValue) {
     if (value === undefined) throw Error(`Property cannot be set to undefined. Use null instead.`);

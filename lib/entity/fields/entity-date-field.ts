@@ -7,13 +7,26 @@ class EntityDateField extends EntityField {
     let data: RedisJsonData = {};
     if (this.value !== null) data[this.name] = this.valueAsNumber;
     return data;
-  };
+  }
+
+  fromRedisJson(value: any) {
+    if (this.isNumber(value)) this.value = value;
+    else throw Error(`Non-numeric value of '${value}' read from Redis for date field.`);
+  }
 
   toRedisHash(): RedisHashData {
     let data: RedisHashData = {};
     if (this.value !== null) data[this.name] = this.valueAsNumber.toString();
     return data;
-  };
+  }
+
+  fromRedisHash(value: string) {
+    let parsed = Number.parseInt(value);
+    if (Number.isNaN(parsed)) throw Error(`Non-numeric value of '${value}' read from Redis for date field.`);
+    let date = new Date();
+    date.setTime(parsed);
+    this.value = date;
+  }
 
   protected valdiateValue(value: EntityValue) {
     super.valdiateValue(value);

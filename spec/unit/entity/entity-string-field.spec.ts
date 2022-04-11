@@ -26,6 +26,31 @@ describe("EntityStringField", () => {
     it("converts to the expected Redis JSON data", () => expect(field.toRedisJson()).toEqual(EXPECTED_NULL_JSON_DATA));
     it("converts to the expected Redis Hash data", () => expect(field.toRedisHash()).toEqual(EXPECTED_NULL_HASH_DATA));
 
+    describe("when loaded from Redis JSON data", () => {
+      beforeEach(() => field.fromRedisJson(A_STRING));
+      it("has the expected value", () => expect(field.value).toEqual(A_STRING));
+    });
+
+    describe("when loaded from Redis JSON data containing a number", () => {
+      beforeEach(() => field.fromRedisJson(A_NUMBER));
+      it("has the expected value", () => expect(field.value).toEqual(A_NUMBER_STRING));
+    });
+
+    describe("when loaded from Redis JSON data containing a boolean", () => {
+      beforeEach(() => field.fromRedisJson(true));
+      it("has the expected value", () => expect(field.value).toEqual("true"));
+    });
+
+    it("complains when loaded from invalid Redis JSON data", () => {
+      expect(() => field.fromRedisJson(SOME_STRINGS))
+        .toThrow(`Expected value with type of 'string' but received 'alfa,bravo,charlie'.`);
+    });
+
+    describe("when loaded from Redis Hash data", () => {
+      beforeEach(() => field.fromRedisHash(A_STRING));
+      it("has the expected value", () => expect(field.value).toEqual(A_STRING));
+    });
+
     describe("when created with a string", () => {
       beforeEach(() => field.value = A_STRING);
       it("has the expected value", () => expect(field.value).toBe(A_STRING));

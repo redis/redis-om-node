@@ -22,6 +22,27 @@ describe("EntityDateField", () => {
     it("converts to the expected Redis JSON data", () => expect(field.toRedisJson()).toEqual(EXPECTED_NULL_JSON_DATA));
     it("converts to the expected Redis Hash data", () => expect(field.toRedisHash()).toEqual(EXPECTED_NULL_HASH_DATA));
 
+    describe("when loaded from Redis JSON data", () => {
+      beforeEach(() => field.fromRedisJson(A_DATE_EPOCH));
+      it("has the expected value", () => expect(field.value).toEqual(A_DATE));
+    });
+
+    it("complains when loaded from invalid Redis JSON data", () => {
+      expect(() => field.fromRedisJson('foo'))
+        .toThrow(`Non-numeric value of 'foo' read from Redis for date field.`);
+    });
+
+    describe("when loaded from Redis Hash data", () => {
+      beforeEach(() => field.fromRedisHash(A_DATE_EPOCH_STRING));
+      it("has the expected value", () => expect(field.value).toEqual(A_DATE));
+    });
+
+    it("complains when loaded from invalid Redis Hash data", () => {
+      // @ts-ignore: JavaScript trap
+      expect(() => field.fromRedisHash('foo'))
+        .toThrow("Non-numeric value of 'foo' read from Redis for date field.");
+    });
+
     describe("when set to a date", () => {
       beforeEach(() => field.value = A_DATE);
       it("has the expected value", () => expect(field.value).toEqual(A_DATE));

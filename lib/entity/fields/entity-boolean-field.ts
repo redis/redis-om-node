@@ -9,6 +9,16 @@ class EntityBooleanField extends EntityField {
     return data;
   };
 
+  fromRedisHash(value: string) {
+    if (value === '0') {
+      this.value = false;
+    } else if (value === '1') {
+      this.value = true;
+    } else {
+      throw Error(`Non-boolean value of '${value}' read from Redis for boolean field.`);
+    }
+  }
+
   protected valdiateValue(value: EntityValue) {
     super.valdiateValue(value);
     if (value !== null && !this.isBoolean(value))

@@ -22,6 +22,30 @@ describe("EntityPointField", () => {
     it("converts to the expected Redis JSON data", () => expect(field.toRedisJson()).toEqual(EXPECTED_NULL_JSON_DATA));
     it("converts to the expected Redis Hash data", () => expect(field.toRedisHash()).toEqual(EXPECTED_NULL_HASH_DATA));
 
+    describe("when loaded from Redis JSON data", () => {
+      beforeEach(() => field.fromRedisJson(A_POINT_STRING));
+      it("has the expected value", () => expect(field.value).toEqual(A_POINT));
+    });
+
+    it("complains when loaded from invalid Redis JSON data", () => {
+      expect(() => field.fromRedisJson('foo'))
+        .toThrow(`Non-point value of 'foo' read from Redis for point field.`);
+      expect(() => field.fromRedisJson(42))
+        .toThrow(`Non-point value of '42' read from Redis for point field.`);
+      expect(() => field.fromRedisJson(true))
+        .toThrow(`Non-point value of 'true' read from Redis for point field.`);
+    });
+
+    describe("when loaded from Redis Hash data", () => {
+      beforeEach(() => field.fromRedisHash(A_POINT_STRING));
+      it("has the expected value", () => expect(field.value).toEqual(A_POINT));
+    });
+
+    it("complains when loaded from invalid Redis Hash data", () => {
+      expect(() => field.fromRedisHash('foo'))
+        .toThrow("Non-point value of 'foo' read from Redis for point field.");
+    });
+
     describe("when created with a point", () => {
       beforeEach(() => field.value = A_POINT);
       it("has the expected value", () => expect(field.value).toEqual(A_POINT));

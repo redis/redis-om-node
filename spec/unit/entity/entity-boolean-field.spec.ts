@@ -24,6 +24,32 @@ describe("EntityBooleanField", () => {
     it("converts to the expected Redis JSON data", () => expect(field.toRedisJson()).toEqual(EXPECTED_NULL_JSON_DATA));
     it("converts to the expected Redis Hash data", () => expect(field.toRedisHash()).toEqual(EXPECTED_NULL_HASH_DATA));
 
+    describe("when loaded from Redis JSON data", () => {
+      beforeEach(() => field.fromRedisJson(true));
+      it("has the expected value", () => expect(field.value).toEqual(true));
+    });
+
+    it("complains when loaded from invalid Redis JSON data", () => {
+      expect(() => field.fromRedisJson('foo'))
+        .toThrow(`Expected value with type of 'boolean' but received 'foo'.`);
+    });
+
+    describe("when loaded from true Redis Hash data", () => {
+      beforeEach(() => field.fromRedisHash('1'));
+      it("has the expected value", () => expect(field.value).toEqual(true));
+    });
+
+    describe("when loaded from false Redis Hash data", () => {
+      beforeEach(() => field.fromRedisHash('0'));
+      it("has the expected value", () => expect(field.value).toEqual(false));
+    });
+
+    it("complains when loaded from invalid Redis Hash data", () => {
+      // @ts-ignore: JavaScript trap
+      expect(() => field.fromRedisHash('foo'))
+        .toThrow("Non-boolean value of 'foo' read from Redis for boolean field.");
+    });
+
     describe("when set to true", () => {
       beforeEach(() => field.value = true);
       it("has the expected value", () => expect(field.value).toEqual(true));

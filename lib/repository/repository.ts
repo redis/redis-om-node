@@ -1,14 +1,12 @@
 import Schema from "../schema/schema"
 import Client from "../client";
 import Entity from "../entity/entity";
-import EntityData from "../entity/entity-data";
 import Point from "../entity/point";
 
 import { Search, RawSearch } from '../search/search';
 
 import { CreateIndexOptions } from "../client";
 import { JsonConverter, HashConverter } from "./converter";
-import { json } from "stream/consumers";
 
 /**
  * Initialization data for {@link Entity} creation when calling
@@ -132,14 +130,7 @@ export type EntityCreationData = Record<string, number | boolean | string | stri
    * @returns The ID of the Entity just saved.
    */
   async save(entity: TEntity) : Promise<string> {
-    let key = this.makeKey(entity.entityId);
-
-    if (Object.keys(entity.entityData).length === 0) {
-      await this.client.unlink(key);
-    } else {
-      await this.writeEntity(entity);
-    }
-
+    await this.writeEntity(entity);
     return entity.entityId;
   }
 
@@ -231,7 +222,12 @@ export class HashRepository<TEntity extends Entity> extends Repository<TEntity> 
   }
 
   protected async writeEntity(entity: TEntity): Promise<void> {
-    await this.client.hsetall(entity.keyName, entity.toRedisHash());
+    let data = entity.toRedisHash();
+    if (Object.keys(data).length === 0) {
+      await this.client.unlink(entity.keyName);
+    } else {
+      await this.client.hsetall(entity.keyName, entity.toRedisHash());
+    }
   }
 
   protected async readEntity(id: string): Promise<TEntity> {

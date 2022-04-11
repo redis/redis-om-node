@@ -29,6 +29,26 @@ describe("EntityStringArrayField", () => {
     it("converts to the expected Redis JSON data", () => expect(field.toRedisJson()).toEqual(EXPECTED_NULL_JSON_DATA));
     it("converts to the expected Redis Hash data", () => expect(field.toRedisHash()).toEqual(EXPECTED_NULL_HASH_DATA));
 
+    describe("when loaded from Redis JSON data", () => {
+      beforeEach(() => field.fromRedisJson(SOME_STRINGS));
+      it("has the expected value", () => expect(field.value).toEqual(SOME_STRINGS));
+    });
+
+    describe("when loaded from Redis JSON data with stringable types", () => {
+      beforeEach(() => field.fromRedisJson(SOME_STRINGABLES));
+      it("has the expected value", () => expect(field.value).toEqual(EXPECTED_ANY_ARRAY));
+    });
+
+    it("complains when loaded from invalid Redis JSON data", () => {
+      expect(() => field.fromRedisJson('foo'))
+        .toThrow(`Expected value with type of 'string[]' but received 'foo'.`);
+    });
+
+    describe("when loaded from Redis Hash data", () => {
+      beforeEach(() => field.fromRedisHash(SOME_STRINGS.join('|')));
+      it("has the expected value", () => expect(field.value).toEqual(SOME_STRINGS));
+    });
+
     describe("when set to a string[]", () => {
       beforeEach(() => field.value = SOME_STRINGS);
       it("has the expected value", () => expect(field.value).toEqual(SOME_STRINGS));
@@ -98,6 +118,11 @@ describe("EntityStringArrayField", () => {
   describe("when created with a separator and a string[]", () => {
     beforeEach(() => field = new EntityStringArrayField(FIELD_NAME, { type: 'string[]', separator: ';' }, SOME_STRINGS));
     it("converts to the expected Redis Hash data", () => expect(field.toRedisHash()).toEqual(EXPECTED_HASH_SEPARATOR_DATA));
+
+    describe("and then loaded from Redis Hash data", () => {
+      beforeEach(() => field.fromRedisHash(SOME_STRINGS.join(';')));
+      it("has the expected value", () => expect(field.value).toEqual(SOME_STRINGS));
+    });
   });
 
   describe("when created with a separator and an any[]", () => {

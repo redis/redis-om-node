@@ -22,6 +22,27 @@ describe("EntityNumberField", () => {
     it("converts to the expected Redis JSON data", () => expect(field.toRedisJson()).toEqual(EXPECTED_NULL_JSON_DATA));
     it("converts to the expected Redis Hash data", () => expect(field.toRedisHash()).toEqual(EXPECTED_NULL_HASH_DATA));
 
+    describe("when loaded from Redis JSON data", () => {
+      beforeEach(() => field.fromRedisJson(A_NUMBER));
+      it("has the expected value", () => expect(field.value).toEqual(A_NUMBER));
+    });
+
+    it("complains when loaded from invalid Redis JSON data", () => {
+      expect(() => field.fromRedisJson('foo'))
+        .toThrow(`Expected value with type of 'number' but received 'foo'.`);
+    });
+
+    describe("when loaded from Redis Hash data", () => {
+      beforeEach(() => field.fromRedisHash(A_NUMBER_STRING));
+      it("has the expected value", () => expect(field.value).toEqual(A_NUMBER));
+    });
+
+    it("complains when loaded from invalid Redis Hash data", () => {
+      // @ts-ignore: JavaScript trap
+      expect(() => field.fromRedisHash('foo'))
+        .toThrow("Non-numeric value of 'foo' read from Redis for number field.");
+    });
+
     describe("when created with a number", () => {
       beforeEach(() => field.value = A_NUMBER);
       it("has the expected value", () => expect(field.value).toBe(A_NUMBER));

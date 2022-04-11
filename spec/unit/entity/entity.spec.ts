@@ -1,10 +1,12 @@
 import {
-  A_STRING, ANOTHER_STRING, A_THIRD_STRING,
-  A_NUMBER, ANOTHER_NUMBER, A_THIRD_NUMBER,
-  A_DATE, A_DATE_ISO, A_DATE_EPOCH, ANOTHER_DATE, ANOTHER_DATE_ISO, ANOTHER_DATE_EPOCH, A_THIRD_DATE,
-  A_POINT, A_POINT_JSON, A_POINT_STRING, ANOTHER_POINT, ANOTHER_POINT_JSON, ANOTHER_POINT_STRING, A_THIRD_POINT,
-  SOME_STRINGS, SOME_STRINGS_JSON, SOME_OTHER_STRINGS, SOME_OTHER_STRINGS_JSON, SOME_MORE_STRINGS,
-  SOME_TEXT, SOME_OTHER_TEXT, SOME_MORE_TEXT, A_DATE_EPOCH_STRING, A_NUMBER_STRING, SOME_STRINGS_JOINED, ANOTHER_DATE_EPOCH_STRING, ANOTHER_NUMBER_STRING, SOME_OTHER_STRINGS_JOINED } from '../../helpers/example-data';
+  A_STRING, ANOTHER_STRING,
+  A_NUMBER, A_NUMBER_STRING, ANOTHER_NUMBER, ANOTHER_NUMBER_STRING,
+  A_DATE, A_DATE_ISO, A_DATE_EPOCH, A_DATE_EPOCH_STRING,
+  ANOTHER_DATE, ANOTHER_DATE_ISO, ANOTHER_DATE_EPOCH, ANOTHER_DATE_EPOCH_STRING,
+  A_POINT, A_POINT_JSON, A_POINT_STRING, ANOTHER_POINT, ANOTHER_POINT_JSON, ANOTHER_POINT_STRING,
+  SOME_STRINGS, SOME_STRINGS_JSON, SOME_STRINGS_JOINED,
+  SOME_OTHER_STRINGS, SOME_OTHER_STRINGS_JSON, SOME_OTHER_STRINGS_JOINED,
+  SOME_TEXT, SOME_OTHER_TEXT } from '../../helpers/example-data';
 
 import { AliasedEntity, aliasedSchema, SimpleEntity, simpleSchema } from '../helpers/test-entity-and-schema';
 
@@ -34,7 +36,6 @@ let entity: SimpleEntity;
 describe("Entity", () => {
   describe("without data", () => {
     beforeEach(() => entity = new SimpleEntity(simpleSchema, ENTITY_ID));
-
     it("has the passed in Redis ID", () => expect(entity.entityId).toBe(ENTITY_ID));
     it("returns null for the number property", () => expect(entity.aNumber).toBeNull());
     it("returns null for the string property", () => expect(entity.aString).toBeNull());
@@ -51,7 +52,8 @@ describe("Entity", () => {
 
   describe("with data", () => {
     beforeEach(() => entity = new SimpleEntity(simpleSchema, ENTITY_ID, {
-      aNumber: A_NUMBER, aString: A_STRING, aBoolean: false, someText: SOME_TEXT, aPoint: A_POINT, aDate: A_DATE, someStrings: SOME_STRINGS }));
+      aNumber: A_NUMBER, aString: A_STRING, aBoolean: false, someText: SOME_TEXT,
+      aPoint: A_POINT, aDate: A_DATE, someStrings: SOME_STRINGS }));
 
     it("has the passed in Redis ID", () => expect(entity.entityId).toBe(ENTITY_ID));
     it("returns a number for the number property", () => expect(entity.aNumber).toBe(A_NUMBER));
@@ -69,56 +71,37 @@ describe("Entity", () => {
     describe("changing the data", () => {
       it("stores a number when the number property is changed", () => {
         entity.aNumber = ANOTHER_NUMBER;
-        expect(entity.entityData.aNumber).toBe(ANOTHER_NUMBER);
+        expect(entity.aNumber).toBe(ANOTHER_NUMBER);
       });
 
       it("stores a string when the string property is changed", () => {
         entity.aString = ANOTHER_STRING;
-        expect(entity.entityData.aString).toBe(ANOTHER_STRING);
+        expect(entity.aString).toBe(ANOTHER_STRING);
       });
 
       it("stores a boolean when the boolean property is changed", () => {
         entity.aBoolean = true;
-        expect(entity.entityData.aBoolean).toBe(true);
+        expect(entity.aBoolean).toBe(true);
       });
 
       it("stores a string when the text property is changed to a string", () => {
         entity.someText = SOME_OTHER_TEXT;
-        expect(entity.entityData.someText).toBe(SOME_OTHER_TEXT);
+        expect(entity.someText).toBe(SOME_OTHER_TEXT);
       });
 
       it("stores a point when the point property is changed", () => {
         entity.aPoint = ANOTHER_POINT;
-        expect(entity.entityData.aPoint).toEqual(ANOTHER_POINT);
+        expect(entity.aPoint).toEqual(ANOTHER_POINT);
       });
 
       it("stores a date when the date property is changed", () => {
         entity.aDate = ANOTHER_DATE;
-        expect(entity.entityData.aDate).toEqual(ANOTHER_DATE);
+        expect(entity.aDate).toEqual(ANOTHER_DATE);
       });
 
       it("stores a string[] when the string[] property is changed", () => {
         entity.someStrings = SOME_OTHER_STRINGS;
-        expect(entity.entityData.someStrings).toEqual(SOME_OTHER_STRINGS);
-      });
-    });
-
-    describe("deleting the data", () => {
-      it("removes nulled properties", () => {
-        entity.aNumber = null;
-        entity.aString = null;
-        entity.someText = null;
-        entity.aBoolean = null;
-        entity.aPoint = null;
-        entity.aDate = null;
-        entity.someStrings = null;
-        expect(entity.entityData.aNumber).toBeUndefined();
-        expect(entity.entityData.aString).toBeUndefined();
-        expect(entity.entityData.aBoolean).toBeUndefined();
-        expect(entity.entityData.someText).toBeUndefined();
-        expect(entity.entityData.aPoint).toBeUndefined();
-        expect(entity.entityData.aDate).toBeUndefined();
-        expect(entity.entityData.someStrings).toBeUndefined();
+        expect(entity.someStrings).toEqual(SOME_OTHER_STRINGS);
       });
     });
   });
@@ -141,61 +124,5 @@ describe("Entity", () => {
     it("serializes to the expected JSON", () => expect(JSON.stringify(entity)).toBe(EXPECTED_ALIASED_JSON));
     it("converts to the expected Redis JSON data", () => expect(entity.toRedisJson()).toEqual(EXPECTED_ALIASED_JSON_DATA));
     it("converts to the expected Redis Hash data", () => expect(entity.toRedisHash()).toEqual(EXPECTED_ALIASED_HASH_DATA));
-
-    describe("changing the data", () => {
-      it("stores a number when the number property is changed", () => {
-        entity.aNumber = A_THIRD_NUMBER;
-        expect(entity.entityData.anotherNumber).toBe(A_THIRD_NUMBER);
-      });
-
-      it("stores a string when the string property is changed", () => {
-        entity.aString = A_THIRD_STRING;
-        expect(entity.entityData.anotherString).toBe(A_THIRD_STRING);
-      });
-
-      it("stores a boolean when the booelan property is changed", () => {
-        entity.aBoolean = true;
-        expect(entity.entityData.anotherBoolean).toBe(true);
-      });
-
-      it("stores a string when the text property is changed", () => {
-        entity.someText = SOME_MORE_TEXT;
-        expect(entity.entityData.someOtherText).toBe(SOME_MORE_TEXT);
-      });
-
-      it("stores a point when the point property is changed", () => {
-        entity.aPoint = A_THIRD_POINT;
-        expect(entity.entityData.anotherPoint).toEqual(A_THIRD_POINT);
-      });
-
-      it("stores a date when the date property is changed", () => {
-        entity.aDate = A_THIRD_DATE;
-        expect(entity.entityData.anotherDate).toEqual(A_THIRD_DATE);
-      });
-
-      it("stores a string[] when the string[] property is changed", () => {
-        entity.someStrings = SOME_MORE_STRINGS;
-        expect(entity.entityData.someOtherStrings).toEqual(SOME_MORE_STRINGS);
-      });
-    });
-
-    describe("deleting the data", () => {
-      it("removes nulled properties", () => {
-        entity.aNumber = null;
-        entity.aString = null;
-        entity.aBoolean = null;
-        entity.someText = null;
-        entity.aPoint = null;
-        entity.aDate = null;
-        entity.someStrings = null;
-        expect(entity.entityData.anotherNumber).toBeUndefined();
-        expect(entity.entityData.anotherString).toBeUndefined();
-        expect(entity.entityData.anotherBoolean).toBeUndefined();
-        expect(entity.entityData.someOtherText).toBeUndefined();
-        expect(entity.entityData.anotherPoint).toBeUndefined();
-        expect(entity.entityData.anotherDate).toBeUndefined();
-        expect(entity.entityData.someOtherStrings).toBeUndefined();
-      });
-    });
   });
 });

@@ -7,7 +7,7 @@ import { HashRepository } from '../../../lib/repository/repository';
 import { simpleSchema, SimpleEntity } from '../helpers/test-entity-and-schema';
 import {
   A_NUMBER, A_STRING, SOME_STRINGS, SOME_TEXT, A_DATE, A_POINT,
-  ANOTHER_NUMBER, ANOTHER_STRING, SOME_OTHER_STRINGS, SOME_OTHER_TEXT, ANOTHER_DATE, ANOTHER_POINT } from '../../helpers/example-data';
+  SOME_OTHER_STRINGS, SOME_OTHER_TEXT, ANOTHER_DATE, ANOTHER_POINT } from '../../helpers/example-data';
 
 jest.mock('../../../lib/client');
 
@@ -29,10 +29,9 @@ describe("Repository", () => {
 
     describe("when creating an entity", () => {
       beforeEach(() => entity = repository.createEntity());
-  
+
       it("is of the expected type", () => expect(entity).toBeInstanceOf(SimpleEntity));
       it("has a generated entity id", () => expect(entity.entityId).toMatch(ULID_REGEX));
-      it("has no entity data", () => expect(entity.entityData).toEqual({}));
       it("has empty properties", () => {
         expect(entity.aBoolean).toBe(null);
         expect(entity.aNumber).toBe(null);
@@ -51,10 +50,6 @@ describe("Repository", () => {
 
       it("is of the expected type", () => expect(entity).toBeInstanceOf(SimpleEntity));
       it("has a generated entity id", () => expect(entity.entityId).toMatch(ULID_REGEX));
-      it("has the expected entity data", () => expect(entity.entityData).toEqual({
-        aBoolean: true, aNumber: A_NUMBER, aString: A_STRING, someText: SOME_TEXT,
-        aPoint: A_POINT, aDate: A_DATE, someStrings: SOME_STRINGS }));
-
       it("has populated properties", () => {
         expect(entity.aBoolean).toBe(true);
         expect(entity.aNumber).toBe(A_NUMBER);
@@ -70,7 +65,6 @@ describe("Repository", () => {
       beforeEach(() => entity = repository.createEntity({ aString: A_STRING, someStrings: SOME_STRINGS }));
       it("is of the expected type", () => expect(entity).toBeInstanceOf(SimpleEntity));
       it("has a generated entity id", () => expect(entity.entityId).toMatch(ULID_REGEX));
-      it("has the expected entity data", () => expect(entity.entityData).toEqual({ aString: A_STRING, someStrings: SOME_STRINGS }));
       it("has populated properties", () => {
         expect(entity.aBoolean).toBe(null);
         expect(entity.aNumber).toBe(null);
@@ -84,18 +78,14 @@ describe("Repository", () => {
 
     describe("when creating an entity with extra data", () => {
       beforeEach(() => entity = repository.createEntity({
-        aBoolean: true, aNumber: A_NUMBER, aString: A_STRING, 
+        aBoolean: true, aNumber: A_NUMBER, aString: A_STRING,
         anotherBoolean: false, anotherNumber: 23, anotherString: 'bar',
-        someText: SOME_TEXT, someOtherText: SOME_OTHER_TEXT, 
+        someText: SOME_TEXT, someOtherText: SOME_OTHER_TEXT,
         aPoint: A_POINT, aDate: A_DATE, someStrings: SOME_STRINGS,
         anotherPoint: ANOTHER_POINT, anotherDate: ANOTHER_DATE, someOtherStrings: SOME_OTHER_STRINGS }));
-  
+
       it("is of the expected type", () => expect(entity).toBeInstanceOf(SimpleEntity));
       it("has a generated entity id", () => expect(entity.entityId).toMatch(ULID_REGEX));
-      it("has the expected entity data", () => expect(entity.entityData).toEqual({
-        aBoolean: true, aNumber: A_NUMBER, aString: A_STRING, someText: SOME_TEXT,
-        aPoint: A_POINT, aDate: A_DATE, someStrings: SOME_STRINGS }));
-
       it("has populated properties", () => {
         expect(entity.aBoolean).toBe(true);
         expect(entity.aNumber).toBe(A_NUMBER);
