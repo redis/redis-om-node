@@ -27,6 +27,11 @@ describe("EntityPointField", () => {
       it("has the expected value", () => expect(field.value).toEqual(A_POINT));
     });
 
+    describe("when loaded from Redis JSON data containing a null", () => {
+      beforeEach(() => field.fromRedisJson(null));
+      it("has the expected value", () => expect(field.value).toBeNull());
+    });
+
     it("complains when loaded from invalid Redis JSON data", () => {
       expect(() => field.fromRedisJson('foo'))
         .toThrow(`Non-point value of 'foo' read from Redis for point field.`);

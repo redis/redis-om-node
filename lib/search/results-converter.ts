@@ -1,7 +1,5 @@
 import { RedisHashData, RedisJsonData } from "../client";
 import Entity from "../entity/entity";
-import EntityData from '../entity/entity-data';
-import { JsonConverter, HashConverter } from "../repository/converter";
 import Schema from "../schema/schema";
 
 export abstract class SearchResultsConverter<TEntity extends Entity> {
@@ -53,9 +51,9 @@ export class HashSearchResultsConverter<TEntity extends Entity> extends SearchRe
       return object
     }, {});
 
-    let converter = new HashConverter(this.schema.definition);
-    let entityData: EntityData = converter.toEntityData(hashData);
-    return new this.schema.entityCtor(this.schema, id, entityData);
+    let entity = new this.schema.entityCtor(this.schema, id);
+    entity.fromRedisHash(hashData);
+    return entity;
   }
 }
 
@@ -64,8 +62,8 @@ export class JsonSearchResultsConverter<TEntity extends Entity> extends SearchRe
     let index = array.findIndex(value => value === '$') + 1;
     let jsonString = array[index];
     let jsonData: RedisJsonData = JSON.parse(jsonString);
-    let converter = new JsonConverter(this.schema.definition);
-    let entityData: EntityData = converter.toEntityData(jsonData);
-    return new this.schema.entityCtor(this.schema, id, entityData);
+    let entity = new this.schema.entityCtor(this.schema, id);
+    entity.fromRedisJson(jsonData);
+    return entity;
   }
 }

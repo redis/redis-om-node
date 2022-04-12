@@ -129,15 +129,20 @@ export default class Schema<TEntity extends Entity> {
   }
 
   private defineProperties() {
-    for (let field in this.definition) {
-      this.validateFieldDef(field);
-      Object.defineProperty(this.entityCtor.prototype, field, {
+    for (let fieldName in this.definition) {
+
+      let fieldDef: FieldDefinition = this.definition[fieldName];
+      let fieldAlias = fieldDef.alias ?? fieldName;
+
+      this.validateFieldDef(fieldName, fieldDef);
+
+      Object.defineProperty(this.entityCtor.prototype, fieldName, {
         configurable: true,
         get: function (): any {
-          return this.entityFields[field].value;
+          return this.entityFields[fieldAlias].value;
         },
         set: function(value: any): void {
-          this.entityFields[field].value = value;
+          this.entityFields[fieldAlias].value = value;
         }
       });
     }
@@ -157,8 +162,7 @@ export default class Schema<TEntity extends Entity> {
     if (this.indexName === '') throw Error(`Index name must be a non-empty string.`);
   }
 
-  private validateFieldDef(field: string) {
-    let fieldDef: FieldDefinition = this.definition[field];
+  private validateFieldDef(field: string, fieldDef: FieldDefinition) {
     if (!['boolean', 'date', 'number', 'point', 'string', 'string[]', 'text'].includes(fieldDef.type))
       throw Error(`The field '${field}' is configured with a type of '${fieldDef.type}'. Valid types include 'boolean', 'date', 'number', 'point', 'string', 'string[]', and 'text'.`);
   }

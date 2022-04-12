@@ -6,13 +6,7 @@ import Point from "../entity/point";
 import { Search, RawSearch } from '../search/search';
 
 import { CreateIndexOptions } from "../client";
-import { JsonConverter, HashConverter } from "./converter";
-
-/**
- * Initialization data for {@link Entity} creation when calling
- * {@link Repository.createEntity} or {@link Repository.createAndSave}.
- */
-export type EntityCreationData = Record<string, number | boolean | string | string[] | Point | Date | null>;
+import EntityData from "../entity/entity-data";
 
 /**
  * A repository is the main interaction point for reading, writing, and
@@ -112,15 +106,9 @@ export type EntityCreationData = Record<string, number | boolean | string | stri
    * @param data Optional values with which to initialize the entity.
    * @returns A newly created Entity.
    */
-  createEntity(data: EntityCreationData = {}): TEntity {
+  createEntity(data: EntityData = {}): TEntity {
     let id = this.schema.generateId();
-    let entity = new this.schema.entityCtor(this.schema, id);
-    for (let key in data) {
-      if (this.schema.entityCtor.prototype.hasOwnProperty(key)) {
-        (entity as Record<string, any>)[key] = data[key]
-      }
-    }
-    return entity;
+    return new this.schema.entityCtor(this.schema, id, data);
   }
 
   /**
@@ -140,7 +128,7 @@ export type EntityCreationData = Record<string, number | boolean | string | stri
    * @param data Optional values with which to initialize the entity.
    * @returns The newly created and saved Entity.
    */
-  async createAndSave(data: EntityCreationData = {}): Promise<TEntity> {
+  async createAndSave(data: EntityData = {}): Promise<TEntity> {
     let entity = this.createEntity(data);
     await this.save(entity)
     return entity
@@ -214,13 +202,6 @@ export type EntityCreationData = Record<string, number | boolean | string | stri
 
 /** @internal */
 export class HashRepository<TEntity extends Entity> extends Repository<TEntity> {
-  private converter: HashConverter;
-
-  constructor(schema: Schema<TEntity>, client: Client) {
-    super(schema, client);
-    this.converter = new HashConverter(schema.definition);
-  }
-
   protected async writeEntity(entity: TEntity): Promise<void> {
     let data = entity.toRedisHash();
     if (Object.keys(data).length === 0) {
@@ -233,20 +214,14 @@ export class HashRepository<TEntity extends Entity> extends Repository<TEntity> 
   protected async readEntity(id: string): Promise<TEntity> {
     let key = this.makeKey(id);
     let hashData = await this.client.hgetall(key);
-    let entityData = this.converter.toEntityData(hashData);
-    return new this.schema.entityCtor(this.schema, id, entityData);
+    let entity = new this.schema.entityCtor(this.schema, id);
+    entity.fromRedisHash(hashData);
+    return entity;
   }
 }
 
 /** @internal */
 export class JsonRepository<TEntity extends Entity> extends Repository<TEntity> {
-  private converter: JsonConverter;
-
-  constructor(schema: Schema<TEntity>, client: Client) {
-    super(schema, client);
-    this.converter = new JsonConverter(schema.definition);
-  }
-
   protected async writeEntity(entity: TEntity): Promise<void> {
     await this.client.jsonset(entity.keyName, entity.toRedisJson());
   }
@@ -254,7 +229,8 @@ export class JsonRepository<TEntity extends Entity> extends Repository<TEntity> 
   protected async readEntity(id: string): Promise<TEntity> {
     let key = this.makeKey(id);
     let jsonData = await this.client.jsonget(key);
-    let entityData = this.converter.toEntityData(jsonData);
-    return new this.schema.entityCtor(this.schema, id, entityData);
+    let entity = new this.schema.entityCtor(this.schema, id);
+    entity.fromRedisJson(jsonData);
+    return entity;
   }
 }

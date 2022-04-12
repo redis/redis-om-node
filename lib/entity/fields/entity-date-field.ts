@@ -10,7 +10,7 @@ class EntityDateField extends EntityField {
   }
 
   fromRedisJson(value: any) {
-    if (this.isNumber(value)) this.value = value;
+    if (this.isNumber(value) || value === null) this.value = value;
     else throw Error(`Non-numeric value of '${value}' read from Redis for date field.`);
   }
 

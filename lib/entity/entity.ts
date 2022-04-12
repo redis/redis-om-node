@@ -65,7 +65,7 @@ export default abstract class Entity {
       let fieldValue = data[fieldAlias] ?? null
 
       let entityField = new ENTITY_FIELD_CONSTRUCTORS[fieldType](fieldName, fieldDef, fieldValue);
-      this.entityFields[fieldName] = entityField;
+      this.entityFields[fieldAlias] = entityField;
     }
   }
 
@@ -102,6 +102,16 @@ export default abstract class Entity {
   }
 
   /**
+   * Loads this {@link Entity} from Redis JSON data.
+   * @internal
+   */
+  fromRedisJson(data: RedisJsonData) {
+    for (let field in data) {
+      this.entityFields[field].fromRedisJson(data[field]);
+    }
+  }
+
+  /**
    * Converts this {@link Entity} to a JavaScript object suitable for writing to a Redis Hash.
    * @internal
    */
@@ -112,5 +122,15 @@ export default abstract class Entity {
       data = { ...data, ...entityField.toRedisHash() };
     }
     return data;
+  }
+
+  /**
+   * Loads this {@link Entity} from Redis Hash data.
+   * @internal
+   */
+  fromRedisHash(data: RedisHashData) {
+    for (let field in data) {
+      this.entityFields[field].fromRedisHash(data[field]);
+    }
   }
 }

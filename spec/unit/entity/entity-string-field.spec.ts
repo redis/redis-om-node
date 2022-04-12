@@ -41,6 +41,11 @@ describe("EntityStringField", () => {
       it("has the expected value", () => expect(field.value).toEqual("true"));
     });
 
+    describe("when loaded from Redis JSON data containing a null", () => {
+      beforeEach(() => field.fromRedisJson(null));
+      it("has the expected value", () => expect(field.value).toBeNull());
+    });
+
     it("complains when loaded from invalid Redis JSON data", () => {
       expect(() => field.fromRedisJson(SOME_STRINGS))
         .toThrow(`Expected value with type of 'string' but received 'alfa,bravo,charlie'.`);

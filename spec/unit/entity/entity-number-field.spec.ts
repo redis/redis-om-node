@@ -27,6 +27,11 @@ describe("EntityNumberField", () => {
       it("has the expected value", () => expect(field.value).toEqual(A_NUMBER));
     });
 
+    describe("when loaded from Redis JSON data containing a null", () => {
+      beforeEach(() => field.fromRedisJson(null));
+      it("has the expected value", () => expect(field.value).toBeNull());
+    });
+
     it("complains when loaded from invalid Redis JSON data", () => {
       expect(() => field.fromRedisJson('foo'))
         .toThrow(`Expected value with type of 'number' but received 'foo'.`);

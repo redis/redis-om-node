@@ -13,7 +13,9 @@ class EntityPointField extends EntityField {
   };
 
   fromRedisJson(value: any) {
-    if (value.toString().match(IS_COORD_PAIR)) {
+    if (value === null) {
+      this.value = null;
+    } else if (value.toString().match(IS_COORD_PAIR)) {
       let [ longitude, latitude ] = value.split(',').map(Number.parseFloat);
       this.value = { longitude, latitude };
     } else {

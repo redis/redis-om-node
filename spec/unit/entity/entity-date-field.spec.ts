@@ -27,6 +27,11 @@ describe("EntityDateField", () => {
       it("has the expected value", () => expect(field.value).toEqual(A_DATE));
     });
 
+    describe("when loaded from Redis JSON data containing a null", () => {
+      beforeEach(() => field.fromRedisJson(null));
+      it("has the expected value", () => expect(field.value).toBeNull());
+    });
+
     it("complains when loaded from invalid Redis JSON data", () => {
       expect(() => field.fromRedisJson('foo'))
         .toThrow(`Non-numeric value of 'foo' read from Redis for date field.`);

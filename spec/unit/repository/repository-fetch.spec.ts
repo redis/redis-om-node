@@ -5,7 +5,7 @@ import Repository from '../../../lib/repository/repository';
 import { JsonRepository, HashRepository } from '../../../lib/repository/repository';
 
 import {
-  A_NUMBER, A_NUMBER_STRING, A_STRING, SOME_TEXT, 
+  A_NUMBER, A_NUMBER_STRING, A_STRING, SOME_TEXT,
   SOME_STRINGS, SOME_STRINGS_JOINED,
   A_DATE, A_DATE_EPOCH, A_POINT, A_POINT_STRING } from '../../helpers/example-data';
 
@@ -46,7 +46,7 @@ describe("Repository", () => {
 
       let repository: Repository<SimpleHashEntity>;
       let entity: SimpleHashEntity;
-    
+
       beforeEach(async () => {
         repository = new HashRepository(simpleHashSchema, client);
         mocked(Client.prototype.hgetall).mockResolvedValue(data.mockedData)
@@ -73,12 +73,12 @@ describe("Repository", () => {
         mockedData: {},
         expectedData: { aString: null, aNumber: null, aBoolean: null, someText: null, aPoint: null, aDate: null, someStrings: null }
       }],
-      
+
       [ "when fetching a missing entity from JSON", {
         mockedData: null,
-        expectedData: { aString: null, aNumber: null, aBoolean: null,someText: null,  aPoint: null, aDate: null, someStrings: null }
+        expectedData: { aString: null, aNumber: null, aBoolean: null,someText: null, aPoint: null, aDate: null, someStrings: null }
       }],
-      
+
       [ "when fetching an entity from JSON with nulls", {
         mockedData: { aString: A_STRING, aNumber: A_NUMBER, aBoolean: null, someText: null, aPoint: null, aDate: null, someStrings: null },
         expectedData: { aString: A_STRING, aNumber: A_NUMBER, aBoolean: null, someText: null, aPoint: null, aDate: null, someStrings: null }
