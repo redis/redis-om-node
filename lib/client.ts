@@ -4,6 +4,7 @@ import { JsonRepository, HashRepository } from './repository/repository';
 import Entity from './entity/entity';
 import Schema from './schema/schema';
 import RedisError from './errors';
+import { ReturnsArray, ReturnsString, ReturnsNumber } from './commands-list'
 
 /**
  * Alias for any old JavaScript object.
@@ -97,9 +98,13 @@ export default class Client {
    * @param command The command to execute.
    * @returns The raw results of calling the Redis command.
    */
-  async execute<TResult>(command: (string | number | boolean)[]): Promise<TResult> {
+  async execute<TResult extends [ReturnsArray, ...Array<string | number | boolean>]>(command: TResult): Promise<Array<string>>;
+  async execute<TResult extends [ReturnsString, ...Array<string | number | boolean>]>(command: TResult): Promise<string>;
+  async execute<TResult extends [ReturnsNumber, ...Array<string | number | boolean>]>(command: TResult): Promise<number>;
+  async execute<TResult>(command: [...Array<string | number | boolean>]): Promise<TResult>;
+  async execute<TResult extends [ReturnsArray | ReturnsString | ReturnsNumber, ...Array<string | number | boolean>]>(command: TResult): Promise<string | number | Array<string>> {
     this.validateShimOpen();
-    return await this.shim.execute<TResult>(command.map(arg => {
+    return await this.shim.execute<any>(command.map(arg => {
       if (arg === false) return '0';
       if (arg === true) return '1';
       return arg.toString();
