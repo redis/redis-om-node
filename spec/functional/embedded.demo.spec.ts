@@ -8,7 +8,8 @@
 // import { Point } from '../../lib';
 // import { Address } from 'cluster';
 
-// describe("Embedded Demo", () => {
+describe("Embedded Demo", () => {
+  it("is not done yet", () => expect(true).toBe(true));
 
 //   it("demos", async () => {
 
@@ -86,7 +87,7 @@
 //         lastName: { type: 'string' },
 //         contactInfo: { type: 'object', schema: contactInfoSchema }
 //       });
-    
+
 //     let repository: Repository<User> = client.fetchRepository<User>(schema);
 
 //     await repository.createIndex();
@@ -98,19 +99,19 @@
 //     entity.firstName = "Larry";
 //     entity.lastName = "User";
 //     entity.contactInfo = new ContactInfo()
-    
+
 //     entity.contactInfo.address.street = "123 Main St";
 //     entity.contactInfo.address.city = "Columbus";
 //     entity.contactInfo.address.state = "Ohio";
 //     entity.contactInfo.address.zipCode = "43210";
 //     entity.contactInfo.address.location = { longitude: 12.34, latitude: 56.78 };
 //     entity.contactInfo.phoneNumbers = [ new PhoneNumber(), new PhoneNumber() ];
-    
+
 //     entity.contactInfo.phoneNumbers[0].type = "Cell"
 //     entity.contactInfo.phoneNumbers[0].areaCode = "614"
 //     entity.contactInfo.phoneNumbers[0].exchange = "555"
 //     entity.contactInfo.phoneNumbers[0].number = "1212"
-    
+
 //     entity.contactInfo.phoneNumbers[1].type = "Work"
 //     entity.contactInfo.phoneNumbers[1].areaCode = "419"
 //     entity.contactInfo.phoneNumbers[1].exchange = "555"
@@ -124,4 +125,4 @@
 //     // close the client
 //     client.close();
 //   });
-// });
+});

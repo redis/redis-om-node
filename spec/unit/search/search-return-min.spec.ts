@@ -20,7 +20,7 @@ beforeEach(() => {
 });
 
 describe.each([
-  [ "FluentSearch", 
+  [ "FluentSearch",
     new Search<SimpleHashEntity>(simpleHashSchema, new Client()),
     new Search<SimpleJsonEntity>(simpleJsonSchema, new Client()) ],
   [ "RawSearch",
@@ -69,9 +69,9 @@ describe.each([
         });
 
         it("returns the first result of a given repository", () => {
-          expect(entity.entityData.aBoolean).toEqual(SIMPLE_ENTITY_1.aBoolean);
-          expect(entity.entityData.aNumber).toEqual(SIMPLE_ENTITY_1.aNumber);
-          expect(entity.entityData.aString).toEqual(SIMPLE_ENTITY_1.aString);
+          expect(entity.aBoolean).toEqual(SIMPLE_ENTITY_1.aBoolean);
+          expect(entity.aNumber).toEqual(SIMPLE_ENTITY_1.aNumber);
+          expect(entity.aString).toEqual(SIMPLE_ENTITY_1.aString);
           expect(entity.entityId).toEqual(SIMPLE_ENTITY_1.entityId);
         });
       });
@@ -117,9 +117,9 @@ describe.each([
         });
 
         it("returns the first result of a given repository", () => {
-          expect(entity.entityData.aBoolean).toEqual(SIMPLE_ENTITY_1.aBoolean);
-          expect(entity.entityData.aNumber).toEqual(SIMPLE_ENTITY_1.aNumber);
-          expect(entity.entityData.aString).toEqual(SIMPLE_ENTITY_1.aString);
+          expect(entity.aBoolean).toEqual(SIMPLE_ENTITY_1.aBoolean);
+          expect(entity.aNumber).toEqual(SIMPLE_ENTITY_1.aNumber);
+          expect(entity.aString).toEqual(SIMPLE_ENTITY_1.aString);
           expect(entity.entityId).toEqual(SIMPLE_ENTITY_1.entityId);
         });
       });

@@ -13,6 +13,8 @@ import Schema from "../schema/schema";
 import SchemaDefinition from "../schema/definition/schema-definition";
 import FieldDefinition from "../schema/definition/field-definition";
 import SchemaFieldType from "../schema/definition/schema-field-type";
+import { RedisJsonData, RedisHashData } from "../client";
+import DataStructure from "../schema/options/data-structure";
 
 const ENTITY_FIELD_CONSTRUCTORS: Record<SchemaFieldType, EntityFieldConstructor> = {
   'string': EntityStringField,
@@ -56,14 +58,14 @@ export default abstract class Entity {
    * @internal
    */
   private createFields(data: EntityData) {
-    Object.keys(this.schemaDef).forEach(field => {
-      const fieldDef: FieldDefinition = this.schemaDef[field];
+    Object.keys(this.schemaDef).forEach(fieldName => {
+      const fieldDef: FieldDefinition = this.schemaDef[fieldName];
       const fieldType = fieldDef.type;
-      const fieldAlias = fieldDef.alias ?? field;
+      const fieldAlias = fieldDef.alias ?? fieldName;
       const fieldValue = data[fieldAlias] ?? null
 
-      const entityField = new ENTITY_FIELD_CONSTRUCTORS[fieldType](fieldAlias, fieldValue);
-      this.entityFields[field] = entityField;
+      const entityField = new ENTITY_FIELD_CONSTRUCTORS[fieldType](fieldName, fieldDef, fieldValue);
+      this.entityFields[fieldAlias] = entityField;
     })
   }
 
@@ -75,28 +77,60 @@ export default abstract class Entity {
   }
 
   /**
-   * The underlying data to be written to Redis.
-   * @internal
-   */
-  get entityData(): Record<string, EntityValue> {
-    const data: Record<string, EntityValue> = {};
-    Object.keys(this.entityFields).forEach(field => {
-      const entityField: EntityField = this.entityFields[field];
-      if (entityField.value !== null) data[entityField.alias] = entityField.value;
-    })
-
-    return data;
-  }
-
-  /**
    * Converts this {@link Entity} to a JavaScript object suitable for stringification.
    * @returns a JavaScript object.
    */
   toJSON() {
-    const json: Record<string, any> = { entityId: this.entityId }
-    Object.keys(this.schemaDef).forEach(field => {
+    let json: Record<string, any> = { entityId: this.entityId }
+    for (let field in this.schemaDef) {
       json[field] = (this as Record<string, any>)[field];
-    })
+    }
     return json;
+  }
+
+  /**
+   * Converts this {@link Entity} to a JavaScript object suitable for writing to RedisJSON.
+   * @internal
+   */
+  toRedisJson(): RedisJsonData {
+    let data: RedisJsonData = {};
+    Object.keys(this.entityFields).forEach(field => {
+      const entityField: EntityField = this.entityFields[field];
+      data = { ...data, ...entityField.toRedisJson() };
+    })
+    return data;
+  }
+
+  /**
+   * Loads this {@link Entity} from Redis JSON data.
+   * @internal
+   */
+  fromRedisJson(data: RedisJsonData) {
+    for (let field in data) {
+      this.entityFields[field].fromRedisJson(data[field]);
+    }
+  }
+
+  /**
+   * Converts this {@link Entity} to a JavaScript object suitable for writing to a Redis Hash.
+   * @internal
+   */
+  toRedisHash(): RedisHashData {
+    let data: RedisHashData = {};
+    for (let field in this.entityFields) {
+      let entityField: EntityField = this.entityFields[field];
+      data = { ...data, ...entityField.toRedisHash() };
+    }
+    return data;
+  }
+
+  /**
+   * Loads this {@link Entity} from Redis Hash data.
+   * @internal
+   */
+  fromRedisHash(data: RedisHashData) {
+    Object.keys(this.schemaDef).forEach(field => {
+      this.entityFields[field].fromRedisHash(data[field]);
+    })
   }
 }

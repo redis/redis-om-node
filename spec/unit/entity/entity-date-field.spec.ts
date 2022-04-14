@@ -1,7 +1,13 @@
+import { FieldDefinition } from "../../../lib";
 import EntityDateField from "../../../lib/entity/fields/entity-date-field";
-import { A_DATE, A_DATE_EPOCH, A_DATE_ISO, A_NUMBER, A_POINT, A_STRING, SOME_STRINGS } from "../../helpers/example-data";
+import { A_DATE, A_DATE_EPOCH, A_DATE_EPOCH_STRING, A_DATE_ISO, A_NUMBER, A_POINT, A_STRING, SOME_STRINGS } from "../../helpers/example-data";
 
-const ALIAS = 'foo';
+const FIELD_NAME = 'foo';
+const FIELD_DEF: FieldDefinition = { type: 'date' };
+const EXPECTED_NULL_JSON_DATA = {};
+const EXPECTED_NULL_HASH_DATA = {};
+const EXPECTED_JSON_DATA = { foo: A_DATE_EPOCH };
+const EXPECTED_HASH_DATA = { foo: A_DATE_EPOCH_STRING };
 
 describe("EntityDateField", () => {
 
@@ -9,30 +15,68 @@ describe("EntityDateField", () => {
 
   describe("when created", () => {
 
-    beforeEach(() => field = new EntityDateField(ALIAS));
+    beforeEach(() => field = new EntityDateField(FIELD_NAME, FIELD_DEF));
 
-    it("has the expected alias", () => expect(field.alias).toBe(ALIAS));
+    it("has the expected alias", () => expect(field.name).toBe(FIELD_NAME));
     it("has a value of null", () => expect(field.value).toBeNull());
+    it("converts to the expected Redis JSON data", () => expect(field.toRedisJson()).toEqual(EXPECTED_NULL_JSON_DATA));
+    it("converts to the expected Redis Hash data", () => expect(field.toRedisHash()).toEqual(EXPECTED_NULL_HASH_DATA));
 
-    it("can be set to a date", () => {
-      field.value = A_DATE;
-      expect(field.value).toEqual(A_DATE)
+    describe("when loaded from Redis JSON data", () => {
+      beforeEach(() => field.fromRedisJson(A_DATE_EPOCH));
+      it("has the expected value", () => expect(field.value).toEqual(A_DATE));
     });
 
-    it("can be set to an ISO date", () => {
-      field.value = A_DATE_ISO;
-      expect(field.value).toEqual(A_DATE)
+    describe("when loaded from Redis JSON data containing a null", () => {
+      beforeEach(() => field.fromRedisJson(null));
+      it("has the expected value", () => expect(field.value).toBeNull());
     });
 
-    it("can be set to a UNIX epoch date", () => {
-      field.value = A_DATE_EPOCH;
-      expect(field.value).toEqual(A_DATE)
+    it("complains when loaded from invalid Redis JSON data", () => {
+      expect(() => field.fromRedisJson('foo'))
+        .toThrow(`Non-numeric value of 'foo' read from Redis for date field.`);
     });
 
-    it("can be set to null", () => {
-      field.value = A_DATE; // set it to something else first
-      field.value = null;
-      expect(field.value).toBeNull();
+    describe("when loaded from Redis Hash data", () => {
+      beforeEach(() => field.fromRedisHash(A_DATE_EPOCH_STRING));
+      it("has the expected value", () => expect(field.value).toEqual(A_DATE));
+    });
+
+    it("complains when loaded from invalid Redis Hash data", () => {
+      // @ts-ignore: JavaScript trap
+      expect(() => field.fromRedisHash('foo'))
+        .toThrow("Non-numeric value of 'foo' read from Redis for date field.");
+    });
+
+    describe("when set to a date", () => {
+      beforeEach(() => field.value = A_DATE);
+      it("has the expected value", () => expect(field.value).toEqual(A_DATE));
+      it("converts to the expected Redis JSON data", () => expect(field.toRedisJson()).toEqual(EXPECTED_JSON_DATA));
+      it("converts to the expected Redis Hash data", () => expect(field.toRedisHash()).toEqual(EXPECTED_HASH_DATA));
+    });
+
+    describe("when created with an ISO date", () => {
+      beforeEach(() => field.value = A_DATE_ISO);
+      it("has the expected value", () => expect(field.value).toEqual(A_DATE));
+      it("converts to the expected Redis JSON data", () => expect(field.toRedisJson()).toEqual(EXPECTED_JSON_DATA));
+      it("converts to the expected Redis Hash data", () => expect(field.toRedisHash()).toEqual(EXPECTED_HASH_DATA));
+    });
+
+    describe("when created with a UNIX epoch date", () => {
+      beforeEach(() => field.value = A_DATE_EPOCH);
+      it("has the expected value", () => expect(field.value).toEqual(A_DATE));
+      it("converts to the expected Redis JSON data", () => expect(field.toRedisJson()).toEqual(EXPECTED_JSON_DATA));
+      it("converts to the expected Redis Hash data", () => expect(field.toRedisHash()).toEqual(EXPECTED_HASH_DATA));
+    });
+
+    describe("when created with a null", () => {
+      beforeEach(() => {
+        field.value = A_DATE; // set it to something else first
+        field.value = null;
+        });
+      it("has the expected value", () => expect(field.value).toBeNull());
+      it("converts to the expected Redis JSON data", () => expect(field.toRedisJson()).toEqual(EXPECTED_NULL_JSON_DATA));
+      it("converts to the expected Redis Hash data", () => expect(field.toRedisHash()).toEqual(EXPECTED_NULL_HASH_DATA));
     });
 
     it("cannot be set to undefined", () => {
@@ -60,41 +104,54 @@ describe("EntityDateField", () => {
     });
   });
 
+  describe("when created with an alias", () => {
+    beforeEach(() => field = new EntityDateField(FIELD_NAME, { type: 'date', alias: 'bar' }));
+    it("has the aliased name", () => expect(field.name).toBe('bar'));
+  });
+
   describe("when created with a date", () => {
-    beforeEach(() => field = new EntityDateField(ALIAS, A_DATE));
+    beforeEach(() => field = new EntityDateField(FIELD_NAME, FIELD_DEF, A_DATE));
     it("has the expected value", () => expect(field.value).toEqual(A_DATE));
+    it("converts to the expected Redis JSON data", () => expect(field.toRedisJson()).toEqual(EXPECTED_JSON_DATA));
+    it("converts to the expected Redis Hash data", () => expect(field.toRedisHash()).toEqual(EXPECTED_HASH_DATA));
   });
 
   describe("when created with an ISO date", () => {
-    beforeEach(() => field = new EntityDateField(ALIAS, A_DATE_ISO));
+    beforeEach(() => field = new EntityDateField(FIELD_NAME, FIELD_DEF, A_DATE_ISO));
     it("has the expected value", () => expect(field.value).toEqual(A_DATE));
+    it("converts to the expected Redis JSON data", () => expect(field.toRedisJson()).toEqual(EXPECTED_JSON_DATA));
+    it("converts to the expected Redis Hash data", () => expect(field.toRedisHash()).toEqual(EXPECTED_HASH_DATA));
   });
 
   describe("when created with a UNIX epoch date", () => {
-    beforeEach(() => field = new EntityDateField(ALIAS, A_DATE_EPOCH));
+    beforeEach(() => field = new EntityDateField(FIELD_NAME, FIELD_DEF, A_DATE_EPOCH));
     it("has the expected value", () => expect(field.value).toEqual(A_DATE));
+    it("converts to the expected Redis JSON data", () => expect(field.toRedisJson()).toEqual(EXPECTED_JSON_DATA));
+    it("converts to the expected Redis Hash data", () => expect(field.toRedisHash()).toEqual(EXPECTED_HASH_DATA));
   });
 
   describe("when created with a null", () => {
-    beforeEach(() => field = new EntityDateField(ALIAS, null));
+    beforeEach(() => field = new EntityDateField(FIELD_NAME, FIELD_DEF, null));
     it("has the expected value", () => expect(field.value).toBeNull());
+    it("converts to the expected Redis JSON data", () => expect(field.toRedisJson()).toEqual(EXPECTED_NULL_JSON_DATA));
+    it("converts to the expected Redis Hash data", () => expect(field.toRedisHash()).toEqual(EXPECTED_NULL_HASH_DATA));
   });
 
   it("complains when created with a boolean", () => {
     // @ts-ignore: JavaScript trap
-    expect(() => new EntityDateField(ALIAS, true))
+    expect(() => new EntityDateField(FIELD_NAME, FIELD_DEF, true))
       .toThrow(`Expected value with type of 'date' but received 'true'.`);
   });
 
   it("complains when created with a Point", () => {
     // @ts-ignore: JavaScript trap
-    expect(() => new EntityDateField(ALIAS, A_POINT))
+    expect(() => new EntityDateField(FIELD_NAME, FIELD_DEF, A_POINT))
       .toThrow(`Expected value with type of 'date' but received '${A_POINT}'.`);
   });
 
   it("complains when created with an array of strings", () => {
     // @ts-ignore: JavaScript trap
-    expect(() => new EntityDateField(ALIAS, SOME_STRINGS))
+    expect(() => new EntityDateField(FIELD_NAME, FIELD_DEF, SOME_STRINGS))
       .toThrow(`Expected value with type of 'date' but received '${SOME_STRINGS}'.`);
   });
 });

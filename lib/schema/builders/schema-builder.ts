@@ -3,7 +3,6 @@ import Schema from "../schema";
 import SeparableFieldDefinition from "../definition/separable-field-definition";
 import SortableFieldDefinition from "../definition/sortable-field-definition";
 
-
 export default abstract class SchemaBuilder<TEntity extends Entity> {
 
   protected schema: Schema<TEntity>;
