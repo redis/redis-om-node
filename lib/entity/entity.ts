@@ -81,10 +81,10 @@ export default abstract class Entity {
    * @returns a JavaScript object.
    */
   toJSON() {
-    let json: Record<string, any> = { entityId: this.entityId }
-    for (let field in this.schemaDef) {
+    const json: Record<string, any> = { entityId: this.entityId }
+    Object.keys(this.schemaDef).forEach(field => {
       json[field] = (this as Record<string, any>)[field];
-    }
+    })
     return json;
   }
 
@@ -106,9 +106,9 @@ export default abstract class Entity {
    * @internal
    */
   fromRedisJson(data: RedisJsonData) {
-    for (let field in data) {
+    Object.keys(data).forEach(field => {
       this.entityFields[field].fromRedisJson(data[field]);
-    }
+    })
   }
 
   /**
@@ -117,10 +117,10 @@ export default abstract class Entity {
    */
   toRedisHash(): RedisHashData {
     let data: RedisHashData = {};
-    for (let field in this.entityFields) {
-      let entityField: EntityField = this.entityFields[field];
+    Object.keys(this.entityFields).forEach(field => {
+      const entityField: EntityField = this.entityFields[field];
       data = { ...data, ...entityField.toRedisHash() };
-    }
+    })
     return data;
   }
 

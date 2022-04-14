@@ -73,10 +73,10 @@ function createSchemaOfType<TEntity extends Entity>(ctor: EntityConstructor<TEnt
 
 export async function loadTestHash(client: Client, key: string, data: SampleEntityData) {
 
-  let command: string[] = [];
+  const command: string[] = [];
 
   Object.keys(data).forEach(field => {
-    let value = (data as any)[field];
+    const value = (data as any)[field];
     if (value !== null) {
       if (typeof value === 'boolean') command.push(field, value ? '1' : '0');
       else if (typeof value === 'number') command.push(field, value.toString());
@@ -92,10 +92,10 @@ export async function loadTestHash(client: Client, key: string, data: SampleEnti
 
 export async function loadTestJson(client: Client, key: string, data: SampleEntityData) {
 
-  let json: any = {};
+  const json: any = {};
 
   Object.keys(data).forEach(field => {
-    let value = (data as any)[field];
+    const value = (data as any)[field];
     if (value !== null) {
       if (value instanceof Date) json[field] = value.getTime();
       else if (typeof value === 'object' && !Array.isArray(value)) json[field] = `${value.longitude},${value.latitude}`;

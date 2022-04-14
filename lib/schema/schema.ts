@@ -131,8 +131,8 @@ export default class Schema<TEntity extends Entity> {
   private defineProperties() {
     Object.keys(this.definition).forEach(fieldName => {
 
-      let fieldDef: FieldDefinition = this.definition[fieldName];
-      let fieldAlias = fieldDef.alias ?? fieldName;
+      const fieldDef: FieldDefinition = this.definition[fieldName];
+      const fieldAlias = fieldDef.alias ?? fieldName;
 
       this.validateFieldDef(fieldName, fieldDef);
 

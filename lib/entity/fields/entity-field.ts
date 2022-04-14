@@ -29,7 +29,7 @@ abstract class EntityField {
   }
 
   toRedisJson(): RedisJsonData {
-    let data: RedisJsonData = {};
+    const data: RedisJsonData = {};
     if (this.value !== null) data[this.name] = this.value;
     return data;
   }
@@ -39,7 +39,7 @@ abstract class EntityField {
   }
 
   toRedisHash(): RedisHashData {
-    let data: RedisHashData = {};
+    const data: RedisHashData = {};
     if (this.value !== null) data[this.name] = this.value.toString();
     return data;
   }

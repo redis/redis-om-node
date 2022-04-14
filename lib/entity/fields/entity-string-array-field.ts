@@ -5,7 +5,7 @@ import StringArrayFieldDefinition from "../../schema/definition/string-array-fie
 
 class EntityStringArrayField extends EntityField {
   toRedisHash(): RedisHashData {
-    let data: RedisHashData = {};
+    const data: RedisHashData = {};
     if (this.value !== null) data[this.name] = (this.value as string[]).join(this.separator);
     return data;
   }
