@@ -1,4 +1,4 @@
-import Client, { SearchDataStructure, HashData, JsonData } from "./client";
+import Client, { SearchDataStructure, RedisHashData, RedisJsonData } from "./client";
 
 import Point from "./entity/point";
 import Entity from "./entity/entity";
@@ -28,7 +28,6 @@ import StopWordOptions from "./schema/options/stop-word-options";
 import Repository from "./repository/repository";
 
 import RedisError from "./errors";
-import { EntityCreationData } from "./repository/repository";
 import { AbstractSearch, Search, RawSearch, SubSearchFunction } from "./search/search";
 import Where from "./search/where";
 import WhereField from "./search/where-field";
@@ -36,9 +35,9 @@ import { Circle, CircleFunction } from "./search/where-point";
 
 
 export {
-  Client, SearchDataStructure, HashData, JsonData,
+  Client, SearchDataStructure, RedisHashData, RedisJsonData,
   Entity, EntityData, EntityValue, EntityConstructor,
-  RedisError, Repository, EntityCreationData,
+  RedisError, Repository,
   Schema, SchemaDefinition, Point,
   FieldDefinition as FieldDefinition,
   SchemaOptions, DataStructure, IdStrategy, StopWordOptions,

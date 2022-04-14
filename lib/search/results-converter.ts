@@ -1,7 +1,5 @@
-import { HashData, JsonData } from "../client";
+import { RedisHashData, RedisJsonData } from "../client";
 import Entity from "../entity/entity";
-import EntityData from '../entity/entity-data';
-import { JsonConverter, HashConverter } from "../repository/converter";
 import Schema from "../schema/schema";
 
 export abstract class SearchResultsConverter<TEntity extends Entity> {
@@ -48,14 +46,14 @@ export class HashSearchResultsConverter<TEntity extends Entity> extends SearchRe
     const keys = array.filter((_entry, index) => index % 2 === 0);
     const values = array.filter((_entry, index) => index % 2 !== 0);
 
-    const hashData: HashData = keys.reduce((object: any, key, index) => {
+    const hashData: RedisHashData = keys.reduce((object: any, key, index) => {
       object[key] = values[index]
       return object
     }, {});
 
-    const converter = new HashConverter(this.schema.definition);
-    const entityData: EntityData = converter.toEntityData(hashData);
-    return new this.schema.entityCtor(this.schema, id, entityData);
+    const entity = new this.schema.entityCtor(this.schema, id);
+    entity.fromRedisHash(hashData);
+    return entity;
   }
 }
 
@@ -63,9 +61,9 @@ export class JsonSearchResultsConverter<TEntity extends Entity> extends SearchRe
   protected arrayToEntity(id: string, array: string[]): TEntity {
     const index = array.findIndex(value => value === '$') + 1;
     const jsonString = array[index];
-    const jsonData: JsonData = JSON.parse(jsonString);
-    const converter = new JsonConverter(this.schema.definition);
-    const entityData: EntityData = converter.toEntityData(jsonData);
-    return new this.schema.entityCtor(this.schema, id, entityData);
+    const jsonData: RedisJsonData = JSON.parse(jsonString);
+    const entity = new this.schema.entityCtor(this.schema, id);
+    entity.fromRedisJson(jsonData);
+    return entity;
   }
 }

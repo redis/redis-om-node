@@ -3,6 +3,7 @@ import SchemaBuilder from "./schema-builder";
 import FieldDefinition from "../definition/field-definition";
 import SeparableFieldDefinition from "../definition/separable-field-definition";
 import SortableFieldDefinition from "../definition/sortable-field-definition";
+import SchemaFieldType from "../definition/schema-field-type";
 
 import * as logger from '../../shims/logger'
 
@@ -10,7 +11,7 @@ export default class JsonSchemaBuilder<TEntity extends Entity> extends SchemaBui
 
   protected buildEntry(field: string): string[] {
     const fieldDef: FieldDefinition = this.schema.definition[field];
-    const fieldType = fieldDef.type;
+    const fieldType: SchemaFieldType = fieldDef.type;
     const fieldAlias = fieldDef.alias ?? field;
     const fieldPath = `\$.${fieldAlias}${fieldType === 'string[]' ? '[*]' : ''}`;
     let fieldDetails: string[];
