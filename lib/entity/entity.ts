@@ -129,7 +129,7 @@ export default abstract class Entity {
    * @internal
    */
   fromRedisHash(data: RedisHashData) {
-    Object.keys(this.schemaDef).forEach(field => {
+    Object.keys(data).forEach(field => {
       this.entityFields[field].fromRedisHash(data[field]);
     })
   }
