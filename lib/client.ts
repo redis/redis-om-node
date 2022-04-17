@@ -101,7 +101,7 @@ export default class Client {
   async execute<TResult extends [ReturnsArray, ...Array<string | number | boolean>]>(command: TResult): Promise<Array<string>>;
   async execute<TResult extends [ReturnsString, ...Array<string | number | boolean>]>(command: TResult): Promise<string>;
   async execute<TResult extends [ReturnsNumber, ...Array<string | number | boolean>]>(command: TResult): Promise<number>;
-  async execute<TResult>(command: [...Array<string | number | boolean>]): Promise<TResult>;
+  async execute<TResult>(command: Array<string | number | boolean>): Promise<TResult>;
   async execute<TResult extends [ReturnsArray | ReturnsString | ReturnsNumber, ...Array<string | number | boolean>]>(command: TResult): Promise<string | number | Array<string>> {
     this.validateShimOpen();
     return await this.shim.execute<any>(command.map(arg => {
@@ -113,7 +113,7 @@ export default class Client {
 
   /**
    * Creates a repository for the given schema.
-   * @template TEntity The entity type for this {@lin Schema} and {@link Repository}.
+   * @template TEntity The entity type for this {@link Schema} and {@link Repository}.
    * @param schema The schema.
    * @returns A repository for the provided schema.
    */
