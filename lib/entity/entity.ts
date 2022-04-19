@@ -106,6 +106,7 @@ export default abstract class Entity {
    * @internal
    */
   fromRedisJson(data: RedisJsonData) {
+    if (!data) return data;
     Object.keys(data).forEach(field => {
       this.entityFields[field].fromRedisJson(data[field]);
     })

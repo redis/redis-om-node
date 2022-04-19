@@ -28,7 +28,7 @@ describe("Client", () => {
         it("passes the command to the shim", async () => {
           expect(RedisShim.prototype.get).toHaveBeenCalledWith('foo');
         });
-  
+
         it("returns the result", async () => expect(result).toBe('bar'));
       });
 
@@ -37,11 +37,11 @@ describe("Client", () => {
           mocked(RedisShim.prototype.get).mockResolvedValue(null);
           result = await client.get('foo');
         });
-        
+
         it("passes the command to the shim", async () => {
           expect(RedisShim.prototype.get).toHaveBeenCalledWith('foo');
         });
-  
+
         it("returns the result", async () => expect(result).toBeNull());
       });
     });
@@ -51,15 +51,15 @@ describe("Client", () => {
         await client.open();
         await client.close();
       });
-      
-      it("errors when called on a closed client", () => 
+
+      it("errors when called on a closed client", () =>
         expect(async () => await client.get('foo'))
-          .rejects.toThrow("Redis connection needs opened."));
+          .rejects.toThrow("Redis connection needs to be open."));
     });
-    
+
     it("errors when called on a new client", async () =>
       expect(async () => await client.get('foo'))
-        .rejects.toThrow("Redis connection needs opened."));
+        .rejects.toThrow("Redis connection needs to be open."));
   });
 
   describe("#set", () => {
@@ -79,15 +79,15 @@ describe("Client", () => {
         await client.open();
         await client.close();
       });
-      
-      it("errors when called on a closed client", () => 
+
+      it("errors when called on a closed client", () =>
         expect(async () => await client.set('foo', 'bar'))
-          .rejects.toThrow("Redis connection needs opened."));
+          .rejects.toThrow("Redis connection needs to be open."));
     });
-    
+
     it("errors when called on a new client", async () =>
       expect(async () => await client.set('foo', 'bar'))
-        .rejects.toThrow("Redis connection needs opened."));
+        .rejects.toThrow("Redis connection needs to be open."));
   });
 
 });

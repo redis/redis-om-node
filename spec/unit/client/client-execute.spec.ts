@@ -21,23 +21,23 @@ describe("Client", () => {
       });
 
       it("passes the command to the shim", async () => {
-        await client.execute([ 'foo', 'bar', 'baz' ]);
-        expect(RedisShim.prototype.execute).toHaveBeenCalledWith([ 'foo', 'bar', 'baz' ]);
+        await client.execute(['foo', 'bar', 'baz']);
+        expect(RedisShim.prototype.execute).toHaveBeenCalledWith(['foo', 'bar', 'baz']);
       });
 
       it("transforms numbers to strings before giving them to the shim", async () => {
-        await client.execute([ 1, 2, 3 ]);
-        expect(RedisShim.prototype.execute).toHaveBeenCalledWith([ '1', '2', '3' ]);
+        await client.execute([1, 2, 3]);
+        expect(RedisShim.prototype.execute).toHaveBeenCalledWith(['1', '2', '3']);
       });
 
       it("transforms booleans to strings before giving them to the shim", async () => {
-        await client.execute([ true, false, true ]);
-        expect(RedisShim.prototype.execute).toHaveBeenCalledWith([ '1', '0', '1' ]);
+        await client.execute([true, false, true]);
+        expect(RedisShim.prototype.execute).toHaveBeenCalledWith(['1', '0', '1']);
       });
 
       it("returns what the shim returns", async () => {
         mocked(RedisShim.prototype.execute).mockResolvedValue('foo');
-        let result = await client.execute<string>([ 'foo', 'bar', 'baz' ]);
+        let result = await client.execute<string>(['foo', 'bar', 'baz']);
         expect(result).toBe('foo');
       });
     });
@@ -47,14 +47,14 @@ describe("Client", () => {
         await client.open();
         await client.close();
       });
-      
-      it("errors when called on a closed client", () => 
-      expect(async () => await client.execute([ 'foo', 'bar', 'baz' ]))
-        .rejects.toThrow("Redis connection needs opened."));
+
+      it("errors when called on a closed client", () =>
+        expect(async () => await client.execute(['foo', 'bar', 'baz']))
+          .rejects.toThrow("Redis connection needs to be open."));
     });
-    
+
     it("errors when called on a new client", async () =>
-      expect(async () => await client.execute([ 'foo', 'bar', 'baz' ]))
-        .rejects.toThrow("Redis connection needs opened."));
+      expect(async () => await client.execute(['foo', 'bar', 'baz']))
+        .rejects.toThrow("Redis connection needs to be open."));
   });
 });
