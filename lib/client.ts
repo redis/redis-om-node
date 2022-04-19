@@ -24,9 +24,9 @@ export type SearchDataStructure = 'HASH' | 'JSON';
 export type CreateIndexOptions = {
   indexName: string,
   dataStructure: SearchDataStructure,
-  schema: string[],
+  schema: Array<string>,
   prefix: string,
-  stopWords?: string[]
+  stopWords?: Array<string>
 }
 
 /** @internal */
@@ -93,7 +93,7 @@ export default class Client {
 
   /**
    * Execute an arbitrary Redis command.
-   * @template TResult Expect result type such as `string`, `string[]`, or whatever complex type Redis returns.
+   * @template TResult Expect result type such as `string`, `Array<string>`, or whatever complex type Redis returns.
    * @param command The command to execute.
    * @returns The raw results of calling the Redis command.
    */

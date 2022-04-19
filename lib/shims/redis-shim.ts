@@ -24,7 +24,7 @@ export default class RedisShim {
     await this.redis.quit();
   }
 
-  execute<TResult>(command: string[]): Promise<TResult> {
+  execute<TResult>(command: Array<string>): Promise<TResult> {
     return this.redis.sendCommand<TResult>(command);
   }
 

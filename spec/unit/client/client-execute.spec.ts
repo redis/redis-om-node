@@ -37,7 +37,7 @@ describe("Client", () => {
 
       it("returns what the shim returns", async () => {
         mocked(RedisShim.prototype.execute).mockResolvedValue('foo');
-        let result = await client.execute<string>(['foo', 'bar', 'baz']);
+        let result = <string>await client.execute(['foo', 'bar', 'baz']);
         expect(result).toBe('foo');
       });
     });

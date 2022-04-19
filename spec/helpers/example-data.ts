@@ -44,15 +44,15 @@ export const A_THIRD_POINT: Point = { longitude: 34.56, latitude: 78.90 };
 export const A_THIRD_POINT_JSON: string = JSON.stringify(A_THIRD_POINT);
 export const A_THIRD_POINT_STRING: string = `${A_THIRD_POINT.longitude},${A_THIRD_POINT.latitude}`;
 
-export const SOME_STRINGS: string[] = [ 'alfa', 'bravo', 'charlie' ];
+export const SOME_STRINGS: Array<string> = ['alfa', 'bravo', 'charlie'];
 export const SOME_STRINGS_JSON: string = JSON.stringify(SOME_STRINGS);
 export const SOME_STRINGS_JOINED: string = SOME_STRINGS.join('|');
 
-export const SOME_OTHER_STRINGS: string[] = [ 'bravo', 'charlie', 'delta' ];
+export const SOME_OTHER_STRINGS: Array<string> = ['bravo', 'charlie', 'delta'];
 export const SOME_OTHER_STRINGS_JSON: string = JSON.stringify(SOME_OTHER_STRINGS);
 export const SOME_OTHER_STRINGS_JOINED: string = SOME_OTHER_STRINGS.join('|');
 
-export const SOME_MORE_STRINGS: string[] = [ 'charlie', 'delta', 'echo' ];
+export const SOME_MORE_STRINGS: Array<string> = ['charlie', 'delta', 'echo'];
 export const SOME_MORE_STRINGS_JSON: string = JSON.stringify(SOME_MORE_STRINGS);
 export const SOME_MORE_STRINGS_JOINED: string = SOME_MORE_STRINGS.join('|');
 
@@ -69,8 +69,8 @@ export type SampleEntityData = {
   anotherPoint: Point | null;
   aDate: Date | null;
   anotherDate: Date | null;
-  someStrings: string[] | null;
-  someOtherStrings: string[] | null;
+  someStrings: Array<string> | null;
+  someOtherStrings: Array<string> | null;
 };
 
 export const AN_ENTITY: SampleEntityData = {
@@ -171,7 +171,7 @@ export const AN_ESCAPED_ENTITY: SampleEntityData = {
   anotherPoint: null,
   aDate: null,
   anotherDate: null,
-  someStrings: [ 'alfa ,.<>{}[]"\':;!@#$%^&*()-+=~ bravo', 'charlie delta' ],
+  someStrings: ['alfa ,.<>{}[]"\':;!@#$%^&*()-+=~ bravo', 'charlie delta'],
   someOtherStrings: null
 };
 

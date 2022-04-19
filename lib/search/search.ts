@@ -104,7 +104,7 @@ export abstract class AbstractSearch<TEntity extends Entity> {
     const type = fieldDef.type;
     const markedSortable = (fieldDef as SortableFieldDefinition).sortable;
 
-    const UNSORTABLE = ['point', 'string[]'];
+    const UNSORTABLE = ['point', 'array'];
     const JSON_SORTABLE = ['number', 'text', 'date'];
     const HASH_SORTABLE = ['string', 'boolean', 'number', 'text', 'date'];
 
@@ -415,9 +415,9 @@ export class Search<TEntity extends Entity> extends AbstractSearch<TEntity> {
     if (fieldDef.type === 'point') return new WherePoint<TEntity>(this, field);
     if (fieldDef.type === 'text') return new WhereText<TEntity>(this, field);
     if (fieldDef.type === 'string') return new WhereString<TEntity>(this, field);
-    if (fieldDef.type === 'string[]') return new WhereStringArray<TEntity>(this, field);
+    if (fieldDef.type === 'array') return new WhereStringArray<TEntity>(this, field);
 
     // @ts-ignore: This is a trap for JavaScript
-    throw new Error(`The field type of '${fieldDef.type}' is not a valid field type. Valid types include 'boolean', 'date', 'number', 'point', 'string', and 'string[]'.`);
+    throw new Error(`The field type of '${fieldDef.type}' is not a valid field type. Valid types include 'boolean', 'date', 'number', 'point', 'string', and 'array'.`);
   }
 }

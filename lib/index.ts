@@ -5,6 +5,7 @@ import Entity from "./entity/entity";
 import EntityData from "./entity/entity-data";
 import EntityValue from "./entity/entity-value";
 import EntityConstructor from "./entity/entity-constructor";
+import { MapEntity } from "./entity/helper-type";
 
 import Schema from "./schema/schema";
 import SchemaDefinition from "./schema/definition/schema-definition";
@@ -43,5 +44,5 @@ export {
   SchemaOptions, DataStructure, IdStrategy, StopWordOptions,
   BaseFieldDefinition as Field, SortableFieldDefinition as Sortable, SeparableFieldDefinition as Separable, BooleanFieldDefinition as BooleanField, DateFieldDefinition as DateField, NumberFieldDefinition as NumberField, PointFieldDefinition as PointField, StringFieldDefinition as StringField, StringArrayFieldDefinition as StringArrayField, TextFieldDefinition as TextField,
   AbstractSearch, Search, RawSearch, SubSearchFunction,
-  Where, WhereField, Circle, CircleFunction
+  Where, WhereField, Circle, CircleFunction, MapEntity
 };

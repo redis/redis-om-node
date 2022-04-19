@@ -27,7 +27,7 @@ import HashSchemaBuilder from './builders/hash-schema-builder';
  *   someText: { type: 'text' },
  *   aPoint: { type: 'point' },
  *   aDate: { type: 'date' },
- *   someStrings: { type: 'string[]' }
+ *   someStrings: { type: 'array' }
  * }, {
  *   dataStructure: 'HASH'
  * });
@@ -94,7 +94,7 @@ export default class Schema<TEntity extends Entity> {
    * The configured stop words. Ignored if {@link Schema.useStopWords} is anything other
    * than `CUSTOM`.
    */
-  get stopWords(): string[] { return this.options?.stopWords ?? []; }
+  get stopWords(): Array<string> { return this.options?.stopWords ?? []; }
 
   /** The hash value of this index. Stored in Redis under {@link Schema.indexHashName}. */
   get indexHash(): string {
@@ -113,7 +113,7 @@ export default class Schema<TEntity extends Entity> {
   }
 
   /** @internal */
-  get redisSchema(): string[] {
+  get redisSchema(): Array<string> {
     if (this.dataStructure === 'HASH') return new HashSchemaBuilder(this).redisSchema;
     if (this.dataStructure === 'JSON') return new JsonSchemaBuilder(this).redisSchema;
     throw new Error(`'${this.dataStructure}' in an invalid data structure. Valid data structures are 'HASH' and 'JSON'.`);
@@ -163,7 +163,7 @@ export default class Schema<TEntity extends Entity> {
   }
 
   private validateFieldDef(field: string, fieldDef: FieldDefinition) {
-    if (!['boolean', 'date', 'number', 'point', 'string', 'string[]', 'text'].includes(fieldDef.type))
-      throw Error(`The field '${field}' is configured with a type of '${fieldDef.type}'. Valid types include 'boolean', 'date', 'number', 'point', 'string', 'string[]', and 'text'.`);
+    if (!['boolean', 'date', 'number', 'point', 'string', 'array', 'text'].includes(fieldDef.type))
+      throw Error(`The field '${field}' is configured with a type of '${fieldDef.type}'. Valid types include 'boolean', 'date', 'number', 'point', 'string', 'array', and 'text'.`);
   }
 }

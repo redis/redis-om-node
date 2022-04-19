@@ -21,8 +21,8 @@ interface SampleEntity {
   anotherPoint?: Point | null;
   aDate?: Date | null;
   anotherDate?: Date | null;
-  someStrings?: string[] | null;
-  someOtherStrings?: string[] | null;
+  someStrings?: Array<string> | null;
+  someOtherStrings?: Array<string> | null;
 }
 
 export interface SampleHashEntity extends SampleEntity { }
@@ -63,8 +63,8 @@ function createSchemaOfType<TEntity extends Entity>(ctor: EntityConstructor<TEnt
     anotherPoint: { type: 'point' },
     aDate: { type: 'date', sortable: true },
     anotherDate: { type: 'date', sortable: true },
-    someStrings: { type: 'string[]' },
-    someOtherStrings: { type: 'string[]' }
+    someStrings: { type: 'array' },
+    someOtherStrings: { type: 'array' }
   }, {
     prefix,
     dataStructure
@@ -73,7 +73,7 @@ function createSchemaOfType<TEntity extends Entity>(ctor: EntityConstructor<TEnt
 
 export async function loadTestHash(client: Client, key: string, data: SampleEntityData) {
 
-  const command: string[] = [];
+  const command: Array<string> = [];
 
   Object.keys(data).forEach(field => {
     const value = (data as any)[field];

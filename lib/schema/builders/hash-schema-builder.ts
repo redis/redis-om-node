@@ -7,11 +7,11 @@ import SchemaFieldType from "../definition/schema-field-type";
 
 export default class HashSchemaBuilder<TEntity extends Entity> extends SchemaBuilder<TEntity> {
 
-  protected buildEntry(field: string): string[] {
+  protected buildEntry(field: string): Array<string> {
     const fieldDef: FieldDefinition = this.schema.definition[field];
     const fieldType: SchemaFieldType = fieldDef.type;
     const fieldAlias = fieldDef.alias ?? field
-    let fieldDetails: string[];
+    let fieldDetails: Array<string>;
 
     switch (fieldType) {
       case 'date':
@@ -26,7 +26,7 @@ export default class HashSchemaBuilder<TEntity extends Entity> extends SchemaBui
       case 'point':
         fieldDetails = this.buildGeo();
         break;
-      case 'string[]':
+      case 'array':
         fieldDetails = this.buildSeparableTag(fieldDef as SeparableFieldDefinition);
         break;
       case 'string':

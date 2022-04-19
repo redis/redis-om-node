@@ -11,57 +11,57 @@ export default abstract class SchemaBuilder<TEntity extends Entity> {
     this.schema = schema;
   }
 
-  get redisSchema(): string[] {
-    const redisSchema: string[] = [];
+  get redisSchema(): Array<string> {
+    const redisSchema: Array<string> = [];
     Object.keys(this.schema.definition).forEach(field => {
       redisSchema.push(...this.buildEntry(field));
     })
     return redisSchema;
   }
 
-  protected abstract buildEntry(field: string): string[];
+  protected abstract buildEntry(field: string): Array<string>;
 
-  protected buildSortableNumeric(fieldDef: SortableFieldDefinition): string[] {
+  protected buildSortableNumeric(fieldDef: SortableFieldDefinition): Array<string> {
     return this.buildSortableField('NUMERIC', fieldDef.sortable);
   }
 
-  protected buildTag(): string[] {
+  protected buildTag(): Array<string> {
     return this.buildField('TAG');
   }
 
-  protected buildSeparableTag(fieldDef: SeparableFieldDefinition): string[] {
+  protected buildSeparableTag(fieldDef: SeparableFieldDefinition): Array<string> {
     return this.buildSeparableField('TAG', fieldDef.separator);
   }
 
-  protected buildSortableTag(fieldDef: SortableFieldDefinition): string[] {
+  protected buildSortableTag(fieldDef: SortableFieldDefinition): Array<string> {
     return this.buildSortableField('TAG', fieldDef.sortable);
   }
 
-  protected buildSeparableAndSortableTag(fieldDef: SeparableFieldDefinition & SortableFieldDefinition): string[] {
+  protected buildSeparableAndSortableTag(fieldDef: SeparableFieldDefinition & SortableFieldDefinition): Array<string> {
     return this.buildSeparableAndSortableField('TAG', fieldDef.separator, fieldDef.sortable);
   }
 
-  protected buildSortableText(fieldDef: SortableFieldDefinition): string[] {
+  protected buildSortableText(fieldDef: SortableFieldDefinition): Array<string> {
     return this.buildSortableField('TEXT', fieldDef.sortable);
   }
 
-  protected buildGeo(): string[] {
+  protected buildGeo(): Array<string> {
     return this.buildField('GEO');
   }
 
-  private buildField(type: 'TEXT' | 'NUMERIC' | 'TAG' | 'GEO'): string[] {
+  private buildField(type: 'TEXT' | 'NUMERIC' | 'TAG' | 'GEO'): Array<string> {
     return [type];
   }
 
-  private buildSeparableField(type: 'TAG', separator?: string): string[] {
+  private buildSeparableField(type: 'TAG', separator?: string): Array<string> {
     return [type, 'SEPARATOR', separator ?? '|'];
   }
 
-  private buildSortableField(type: 'TEXT' | 'NUMERIC' | 'TAG', sortable?: boolean): string[] {
+  private buildSortableField(type: 'TEXT' | 'NUMERIC' | 'TAG', sortable?: boolean): Array<string> {
     return sortable ? [type, 'SORTABLE'] : [type];
   }
 
-  private buildSeparableAndSortableField(type: 'TAG', separator?: string, sortable?: boolean): string[] {
+  private buildSeparableAndSortableField(type: 'TAG', separator?: string, sortable?: boolean): Array<string> {
     const result = [type, 'SEPARATOR', separator ?? '|'];
     if (sortable) result.push('SORTABLE');
     return result;

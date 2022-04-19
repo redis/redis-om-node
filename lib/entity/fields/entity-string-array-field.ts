@@ -6,7 +6,7 @@ import StringArrayFieldDefinition from "../../schema/definition/string-array-fie
 class EntityStringArrayField extends EntityField {
   toRedisHash(): RedisHashData {
     const data: RedisHashData = {};
-    if (this.value !== null) data[this.name] = (this.value as string[]).join(this.separator);
+    if (this.value !== null) data[this.name] = (this.value as Array<string>).join(this.separator);
     return data;
   }
 
@@ -17,12 +17,12 @@ class EntityStringArrayField extends EntityField {
   protected valdiateValue(value: EntityValue) {
     super.valdiateValue(value);
     if (value !== null && !this.isArray(value))
-      throw Error(`Expected value with type of 'string[]' but received '${value}'.`);
+      throw Error(`Expected value with type of 'array' but received '${value}'.`);
   }
 
   protected convertValue(value: EntityValue): EntityValue {
     if (this.isArray(value)) {
-      return (value as string[]).map((v: any) => v.toString());
+      return (value as Array<string>).map((v: any) => v.toString());
     }
 
     return super.convertValue(value);

@@ -96,9 +96,9 @@ describe("Schema", () => {
 
   ])("%s", (_, data) => {
 
-    class TestEntity extends Entity {}
+    class TestEntity extends Entity { }
 
-    let redisSchema: string[];
+    let redisSchema: Array<string>;
     let schemaDef = data.schemaDef;
     let dataStructure = data.dataStructure as DataStructure;
     let expectedRedisSchema = data.expectedRedisSchema;

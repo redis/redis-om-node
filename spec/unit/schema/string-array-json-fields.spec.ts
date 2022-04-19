@@ -6,21 +6,21 @@ import DataStructure from '../../../lib/schema/options/data-structure';
 describe("Schema", () => {
   describe.each([
 
-    ["that defines an unconfigured string[] for a JSON", {
-      schemaDef: { aField: { type: 'string[]' } } as SchemaDefinition,
+    ["that defines an unconfigured array for a JSON", {
+      schemaDef: { aField: { type: 'array' } } as SchemaDefinition,
       dataStructure: 'JSON',
       expectedRedisSchema: ['$.aField[*]', 'AS', 'aField', 'TAG']
     }],
 
-    ["that defines an aliased string[] for a JSON", {
-      schemaDef: { aField: { type: 'string[]', alias: 'anotherField' } } as SchemaDefinition,
+    ["that defines an aliased array for a JSON", {
+      schemaDef: { aField: { type: 'array', alias: 'anotherField' } } as SchemaDefinition,
       dataStructure: 'JSON',
       expectedRedisSchema: ['$.anotherField[*]', 'AS', 'anotherField', 'TAG']
     }]
 
   ])("%s", (_, data) => {
 
-    class TestEntity extends Entity {}
+    class TestEntity extends Entity { }
 
     it("generates a Redis schema for the field", () => {
       let schemaDef = data.schemaDef;

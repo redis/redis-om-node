@@ -9,12 +9,12 @@ import * as logger from '../../shims/logger'
 
 export default class JsonSchemaBuilder<TEntity extends Entity> extends SchemaBuilder<TEntity> {
 
-  protected buildEntry(field: string): string[] {
+  protected buildEntry(field: string): Array<string> {
     const fieldDef: FieldDefinition = this.schema.definition[field];
     const fieldType: SchemaFieldType = fieldDef.type;
     const fieldAlias = fieldDef.alias ?? field;
-    const fieldPath = `\$.${fieldAlias}${fieldType === 'string[]' ? '[*]' : ''}`;
-    let fieldDetails: string[];
+    const fieldPath = `\$.${fieldAlias}${fieldType === 'array' ? '[*]' : ''}`;
+    let fieldDetails: Array<string>;
 
     switch (fieldType) {
       case 'date':
@@ -31,7 +31,7 @@ export default class JsonSchemaBuilder<TEntity extends Entity> extends SchemaBui
       case 'point':
         fieldDetails = this.buildGeo();
         break;
-      case 'string[]':
+      case 'array':
         fieldDetails = this.buildTag();
         break;
       case 'string':

@@ -17,11 +17,11 @@ export abstract class SearchResultsConverter<TEntity extends Entity> {
     return Number.parseInt(count);
   }
 
-  get ids(): string[] {
+  get ids(): Array<string> {
     return this.keys.map(key => (key as string).replace(/^.*:/, ""));
   }
 
-  get keys(): string[] {
+  get keys(): Array<string> {
     const [_count, ...keysAndValues] = this.results;
     return keysAndValues.filter((_entry, index) => index % 2 === 0);
   }
@@ -38,11 +38,11 @@ export abstract class SearchResultsConverter<TEntity extends Entity> {
     return values.map((array, index) => this.arrayToEntity(ids[index], array));
   }
 
-  protected abstract arrayToEntity(id: string, array: string[]): TEntity;
+  protected abstract arrayToEntity(id: string, array: Array<string>): TEntity;
 }
 
 export class HashSearchResultsConverter<TEntity extends Entity> extends SearchResultsConverter<TEntity> {
-  protected arrayToEntity(id: string, array: string[]): TEntity {
+  protected arrayToEntity(id: string, array: Array<string>): TEntity {
     const keys = array.filter((_entry, index) => index % 2 === 0);
     const values = array.filter((_entry, index) => index % 2 !== 0);
 
@@ -58,7 +58,7 @@ export class HashSearchResultsConverter<TEntity extends Entity> extends SearchRe
 }
 
 export class JsonSearchResultsConverter<TEntity extends Entity> extends SearchResultsConverter<TEntity> {
-  protected arrayToEntity(id: string, array: string[]): TEntity {
+  protected arrayToEntity(id: string, array: Array<string>): TEntity {
     const index = array.findIndex(value => value === '$') + 1;
     const jsonString = array[index];
     const jsonData: RedisJsonData = JSON.parse(jsonString);

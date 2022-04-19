@@ -3,7 +3,7 @@ import { Search } from "./search";
 import WhereField from "./where-field";
 
 export default class WhereStringArray<TEntity extends Entity> extends WhereField<TEntity> {
-  private value!: string[];
+  private value!: Array<string>;
 
   contain(value: string): Search<TEntity> {
     this.value = [value];
@@ -12,12 +12,12 @@ export default class WhereStringArray<TEntity extends Entity> extends WhereField
 
   contains(value: string): Search<TEntity> { return this.contain(value); }
 
-  containsOneOf(...value: string[]): Search<TEntity> {
+  containsOneOf(...value: Array<string>): Search<TEntity> {
     this.value = value;
     return this.search;
   }
 
-  containOneOf(...value: string[]): Search<TEntity> { return this.containsOneOf(...value); }
+  containOneOf(...value: Array<string>): Search<TEntity> { return this.containsOneOf(...value); }
 
   toString(): string {
     const matchPunctuation = /[,.<>{}[\]"':;!@#$%^&*()\-+=~| ]/g;

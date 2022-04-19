@@ -14,7 +14,6 @@ import SchemaDefinition from "../schema/definition/schema-definition";
 import FieldDefinition from "../schema/definition/field-definition";
 import SchemaFieldType from "../schema/definition/schema-field-type";
 import { RedisJsonData, RedisHashData } from "../client";
-import DataStructure from "../schema/options/data-structure";
 
 const ENTITY_FIELD_CONSTRUCTORS: Record<SchemaFieldType, EntityFieldConstructor> = {
   'string': EntityStringField,
@@ -23,7 +22,7 @@ const ENTITY_FIELD_CONSTRUCTORS: Record<SchemaFieldType, EntityFieldConstructor>
   'text': EntityTextField,
   'date': EntityDateField,
   'point': EntityPointField,
-  'string[]': EntityStringArrayField
+  'array': EntityStringArrayField
 }
 
 /**

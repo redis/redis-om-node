@@ -6,33 +6,33 @@ import DataStructure from '../../../lib/schema/options/data-structure';
 describe("Schema", () => {
   describe.each([
 
-    ["that defines an unconfigured string[] for a HASH", {
-      schemaDef: { aField: { type: 'string[]' } } as SchemaDefinition,
+    ["that defines an unconfigured array for a HASH", {
+      schemaDef: { aField: { type: 'array' } } as SchemaDefinition,
       dataStructure: 'HASH',
       expectedRedisSchema: ['aField', 'TAG', 'SEPARATOR', '|']
     }],
 
-    ["that defines an aliased string[] for a HASH", {
-      schemaDef: { aField: { type: 'string[]', alias: 'anotherField' } } as SchemaDefinition,
+    ["that defines an aliased array for a HASH", {
+      schemaDef: { aField: { type: 'array', alias: 'anotherField' } } as SchemaDefinition,
       dataStructure: 'HASH',
       expectedRedisSchema: ['anotherField', 'TAG', 'SEPARATOR', '|']
     }],
 
-    ["that defines a separated string[] for a HASH", {
-      schemaDef: { aField: { type: 'string[]', separator: ';' } } as SchemaDefinition,
+    ["that defines a separated array for a HASH", {
+      schemaDef: { aField: { type: 'array', separator: ';' } } as SchemaDefinition,
       dataStructure: 'HASH',
       expectedRedisSchema: ['aField', 'TAG', 'SEPARATOR', ';']
     }],
 
-    ["that defines a separated and aliased string[] for a HASH", {
-      schemaDef: { aField: { type: 'string[]', alias: 'anotherField', separator: ';' } } as SchemaDefinition,
+    ["that defines a separated and aliased array for a HASH", {
+      schemaDef: { aField: { type: 'array', alias: 'anotherField', separator: ';' } } as SchemaDefinition,
       dataStructure: 'HASH',
       expectedRedisSchema: ['anotherField', 'TAG', 'SEPARATOR', ';']
     }]
 
   ])("%s", (_, data) => {
 
-    class TestEntity extends Entity {}
+    class TestEntity extends Entity { }
 
     it("generates a Redis schema for the field", () => {
       let schemaDef = data.schemaDef;
