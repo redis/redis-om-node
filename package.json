@@ -28,7 +28,7 @@
   "license": "MIT",
   "author": "Guy Royse <guy@guyroyse.com> (http://guyroyse.com/)",
   "engines": {
-    "node": ">=13"
+    "node": ">= 14"
   },
   "devDependencies": {
     "@types/jest": "^27.4.0",
