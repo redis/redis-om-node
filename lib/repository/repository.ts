@@ -1,7 +1,6 @@
 import Schema from "../schema/schema"
 import Client from "../client";
 import Entity from "../entity/entity";
-import Point from "../entity/point";
 
 import { Search, RawSearch } from '../search/search';
 
