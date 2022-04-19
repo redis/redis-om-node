@@ -62,12 +62,12 @@ export default abstract class Entity {
       const fieldDef: FieldDefinition = this.schemaDef[fieldName];
       const fieldType = fieldDef.type;
       const fieldAlias = fieldDef.alias ?? fieldName;
-      const fieldValue = data[fieldAlias] ?? null
+      const fieldValue = data[fieldAlias] ?? null;
 
       const entityField = new ENTITY_FIELD_CONSTRUCTORS[fieldType](fieldName, fieldDef, fieldValue);
       this.entityFields[fieldAlias] = entityField;
     })
-  }
+  };
 
   /**
    * @returns The keyname this {@link Entity} is stored with in Redis.
