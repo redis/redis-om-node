@@ -161,6 +161,30 @@ import { Client } from 'redis-om'
 })()
 ```
 
+<details>
+<summary>Or, in TypeScript:</summary>
+
+In Typescript you should type cast the returning type.
+Typecasts can be done in 2 ways, casting it before the returning value `client.execute(["PING"])` or after using the `as` keyword `client.execute(["PING"]) as string`.
+
+```typescript
+import { Client } from 'redis-om';
+(async () => {
+  let client = await new Client().open('redis://localhost:6379');
+
+  let aString = await <string>client.execute(['PING']);
+  // 'PONG'
+
+  let aNumber = await <number>client.execute(['HSET', 'foo', 'bar', 'baz', 'qux', 42]);
+  // 2
+
+  let anArray = await <Array<string>>client.execute(['HGETALL', 'foo']);
+  // [ 'bar', 'baz', 'qux', '42' ]
+  await client.close();
+})();
+```
+</details>
+
 Mostly you'll use `.open`, `.close`, and `.fetchRepository` (which we'll talk about soon enough). But, on occasion, you might need to talk to Redis directly. The `.execute` method allows you to do that.
 
 If you find you need to talk to Redis directly a *lot* or you need more than just a basic connection to Redis, you'll want to take a look at the `.use` method on `Client`. It will allow you to bind an existing [Node Redis](https://github.com/redis/node-redis) connection to your Redis OM Client:
