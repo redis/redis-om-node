@@ -9,7 +9,7 @@ export default class RedisShim {
   private redis!: RedisConnection;
 
   constructor(urlOrConnection: string | RedisConnection) {
-    if (typeof(urlOrConnection) === 'string') {
+    if (typeof urlOrConnection === 'string') {
       this.redis = createClient({ url: urlOrConnection });
     } else {
       this.redis = urlOrConnection;
@@ -24,7 +24,7 @@ export default class RedisShim {
     await this.redis.quit();
   }
 
-  execute<TResult>(command: string[]) : Promise<TResult> {
+  execute<TResult>(command: Array<string>): Promise<TResult> {
     return this.redis.sendCommand<TResult>(command);
   }
 
@@ -54,8 +54,8 @@ export default class RedisShim {
         await isolatedClient.watch(key);
         await isolatedClient
           .multi()
-            .unlink(key)
-            .hSet(key, data)
+          .unlink(key)
+          .hSet(key, data)
           .exec();
       });
     } catch (error: any) {

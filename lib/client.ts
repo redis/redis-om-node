@@ -9,13 +9,13 @@ import RedisError from './errors';
  * Alias for a JavaScript object used by HSET.
  * @internal
  */
-export type RedisHashData = { [key: string ]: string };
+export type RedisHashData = { [key: string]: string };
 
 /**
  * Alias for any old JavaScript object used by JSON.SET.
  * @internal
  */
-export type RedisJsonData = { [key: string ]: any };
+export type RedisJsonData = { [key: string]: any };
 
 /** The type of data structure in Redis to map objects to. */
 export type SearchDataStructure = 'HASH' | 'JSON';
@@ -24,9 +24,9 @@ export type SearchDataStructure = 'HASH' | 'JSON';
 export type CreateIndexOptions = {
   indexName: string,
   dataStructure: SearchDataStructure,
-  schema: string[],
+  schema: Array<string>,
   prefix: string,
-  stopWords?: string[]
+  stopWords?: Array<string>
 }
 
 /** @internal */
@@ -55,7 +55,7 @@ export type SearchOptions = {
  * Create a client and open it before you use it:
  *
  * ```typescript
- * let client = new Client();
+ * const client = new Client();
  * await client.open();
  * ```
  *
@@ -93,13 +93,13 @@ export default class Client {
 
   /**
    * Execute an arbitrary Redis command.
-   * @template TResult Expect result type such as `string`, `string[]`, or whatever complex type Redis returns.
+   * @template TResult Expect result type such as `string`, `Array<string>`, or whatever complex type Redis returns.
    * @param command The command to execute.
    * @returns The raw results of calling the Redis command.
    */
-  async execute<TResult>(command: (string|number|boolean)[]) : Promise<TResult> {
+  async execute(command: Array<string | number | boolean>): Promise<unknown> {
     this.validateShimOpen();
-    return await this.shim.execute<TResult>(command.map(arg => {
+    return await this.shim.execute<any>(command.map(arg => {
       if (arg === false) return '0';
       if (arg === true) return '1';
       return arg.toString();
@@ -108,11 +108,11 @@ export default class Client {
 
   /**
    * Creates a repository for the given schema.
-   * @template TEntity The entity type for this {@lin Schema} and {@link Repository}.
+   * @template TEntity The entity type for this {@link Schema} and {@link Repository}.
    * @param schema The schema.
    * @returns A repository for the provided schema.
    */
-  fetchRepository<TEntity extends Entity>(schema: Schema<TEntity>) : Repository<TEntity> {
+  fetchRepository<TEntity extends Entity>(schema: Schema<TEntity>): Repository<TEntity> {
     this.validateShimOpen();
     if (schema.dataStructure === 'JSON') {
       return new JsonRepository(schema, this);
@@ -133,15 +133,15 @@ export default class Client {
   async createIndex(options: CreateIndexOptions) {
     this.validateShimOpen();
 
-    let { indexName, dataStructure, prefix, schema, stopWords } = options;
+    const { indexName, dataStructure, prefix, schema, stopWords } = options;
 
-    let command = [
+    const command = [
       'FT.CREATE', indexName,
       'ON', dataStructure,
-      'PREFIX', '1', `${prefix}` ];
+      'PREFIX', '1', `${prefix}`];
 
     if (stopWords !== undefined)
-      command.push('STOPWORDS', `${stopWords.length}`, ...stopWords );
+      command.push('STOPWORDS', `${stopWords.length}`, ...stopWords);
 
     command.push('SCHEMA', ...schema);
 
@@ -151,14 +151,14 @@ export default class Client {
   /** @internal */
   async dropIndex(indexName: string) {
     this.validateShimOpen();
-    await this.shim.execute([ 'FT.DROPINDEX', indexName ]);
+    await this.shim.execute(['FT.DROPINDEX', indexName]);
   }
 
   /** @internal */
   async search(options: SearchOptions) {
     this.validateShimOpen();
-    let { indexName, query, limit, sort } = options
-    let command = ['FT.SEARCH', indexName, query];
+    const { indexName, query, limit, sort } = options
+    const command = ['FT.SEARCH', indexName, query];
 
     if (limit !== undefined)
       command.push('LIMIT', limit.offset.toString(), limit.count.toString());
@@ -208,15 +208,15 @@ export default class Client {
   /** @internal */
   async jsonget(key: string): Promise<RedisJsonData> {
     this.validateShimOpen();
-    let json = await this.shim.execute<string>([ 'JSON.GET', key, '.' ]);
+    const json = await this.shim.execute<string>(['JSON.GET', key, '.']);
     return JSON.parse(json);
   }
 
   /** @internal */
   async jsonset(key: string, data: RedisJsonData) {
     this.validateShimOpen();
-    let json = JSON.stringify(data);
-    await this.shim.execute<string>([ 'JSON.SET', key, '.', json ]);
+    const json = JSON.stringify(data);
+    await this.shim.execute<string>(['JSON.SET', key, '.', json]);
   }
 
   /**
@@ -227,6 +227,6 @@ export default class Client {
   }
 
   private validateShimOpen(): asserts this is { shim: RedisShim } {
-    if (!this.shim) throw new RedisError("Redis connection needs opened.");
+    if (!this.shim) throw new RedisError("Redis connection needs to be open.");
   }
 }

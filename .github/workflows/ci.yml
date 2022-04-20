@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [12, 14, 16]
+        node-version: [14, 16]
         redismod: [ "edge" ]
     services:
       redis:
@@ -31,6 +31,8 @@ jobs:
         uses: actions/setup-node@v2.3.0
         with:
           node-version: ${{ matrix.node-version }}
+      - name: Cache dependencies
+        uses: c-hive/gha-npm-cache@v1
 
       - name: Update npm
         run: npm install --global npm

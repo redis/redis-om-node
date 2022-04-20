@@ -29,8 +29,8 @@ type SchemaOptions = {
    */
   indexHashName?: string;
 
-   /** The data structure used to store the {@link Entity} in Redis. Can be set
-    * to either `JSON` or `HASH`. Defaults to JSON. */
+  /** The data structure used to store the {@link Entity} in Redis. Can be set
+   * to either `JSON` or `HASH`. Defaults to JSON. */
   dataStructure?: DataStructure;
 
   /**
@@ -53,7 +53,7 @@ type SchemaOptions = {
    * Stop words to be used by this schema. If `useStopWords` is
    * anything other than `CUSTOM`, this option is ignored.
    */
-  stopWords?: string[]
+  stopWords?: Array<string>
 }
 
 export default SchemaOptions;

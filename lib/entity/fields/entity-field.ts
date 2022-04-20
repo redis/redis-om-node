@@ -29,7 +29,7 @@ abstract class EntityField {
   }
 
   toRedisJson(): RedisJsonData {
-    let data: RedisJsonData = {};
+    const data: RedisJsonData = {};
     if (this.value !== null) data[this.name] = this.value;
     return data;
   }
@@ -39,7 +39,7 @@ abstract class EntityField {
   }
 
   toRedisHash(): RedisHashData {
-    let data: RedisHashData = {};
+    const data: RedisHashData = {};
     if (this.value !== null) data[this.name] = this.value.toString();
     return data;
   }
@@ -52,20 +52,20 @@ abstract class EntityField {
     if (value === undefined) throw Error(`Property cannot be set to undefined. Use null instead.`);
   }
 
-  protected convertValue(value: EntityValue): EntityValue{
+  protected convertValue(value: EntityValue): EntityValue {
     return value;
   }
 
   protected isString(value: EntityValue) {
-    return typeof(value) === 'string';
+    return typeof value === 'string';
   }
 
   protected isNumber(value: EntityValue) {
-    return typeof(value) === 'number';
+    return typeof value === 'number';
   }
 
   protected isBoolean(value: EntityValue) {
-    return typeof(value) === 'boolean';
+    return typeof value === 'boolean';
   }
 }
 

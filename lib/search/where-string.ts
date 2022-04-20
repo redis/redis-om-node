@@ -25,8 +25,8 @@ export default class WhereString<TEntity extends Entity> extends WhereField<TEnt
   get exactly() { return this.throwMatchExcpetionReturningThis(); }
 
   toString(): string {
-    let matchPunctuation = /[,.<>{}[\]"':;!@#$%^&*()\-+=~|/\\ ]/g;
-    let escapedValue = this.value.replace(matchPunctuation, '\\$&');
+    const matchPunctuation = /[,.<>{}[\]"':;!@#$%^&*()\-+=~|/\\ ]/g;
+    const escapedValue = this.value.replace(matchPunctuation, '\\$&');
     return this.buildQuery(`{${escapedValue}}`);
   }
 

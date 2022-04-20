@@ -9,14 +9,14 @@ export default class WhereDate<TEntity extends Entity> extends WhereField<TEntit
   private upperExclusive: boolean = false;
 
   eq(value: Date | number | string): Search<TEntity> {
-    let epoch = this.coerceDateToEpoch(value);
+    const epoch = this.coerceDateToEpoch(value);
     this.lower = epoch;
     this.upper = epoch;
     return this.search;
   }
 
   gt(value: Date | number | string): Search<TEntity> {
-    let epoch = this.coerceDateToEpoch(value);
+    const epoch = this.coerceDateToEpoch(value);
     this.lower = epoch;
     this.lowerExclusive = true;
     return this.search;
@@ -60,8 +60,8 @@ export default class WhereDate<TEntity extends Entity> extends WhereField<TEntit
   onOrBefore(value: Date | number | string): Search<TEntity> { return this.lte(value); }
 
   toString(): string {
-    let lower = this.makeLowerString();
-    let upper = this.makeUpperString();
+    const lower = this.makeLowerString();
+    const upper = this.makeUpperString();
     return this.buildQuery(`[${lower} ${upper}]`);
   }
 
@@ -79,7 +79,7 @@ export default class WhereDate<TEntity extends Entity> extends WhereField<TEntit
 
   private coerceDateToEpoch(value: Date | number | string) {
     if (value instanceof Date) return value.getTime();
-    if (typeof(value) === 'string') return new Date(value).getTime();
+    if (typeof value === 'string') return new Date(value).getTime();
     return value;
   }
 }

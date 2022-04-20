@@ -4,7 +4,7 @@ import { RedisHashData, RedisJsonData } from "../../client";
 
 class EntityDateField extends EntityField {
   toRedisJson(): RedisJsonData {
-    let data: RedisJsonData = {};
+    const data: RedisJsonData = {};
     if (this.value !== null) data[this.name] = this.valueAsNumber;
     return data;
   }
@@ -15,15 +15,15 @@ class EntityDateField extends EntityField {
   }
 
   toRedisHash(): RedisHashData {
-    let data: RedisHashData = {};
+    const data: RedisHashData = {};
     if (this.value !== null) data[this.name] = this.valueAsNumber.toString();
     return data;
   }
 
   fromRedisHash(value: string) {
-    let parsed = Number.parseInt(value);
+    const parsed = Number.parseInt(value);
     if (Number.isNaN(parsed)) throw Error(`Non-numeric value of '${value}' read from Redis for date field.`);
-    let date = new Date();
+    const date = new Date();
     date.setTime(parsed);
     this.value = date;
   }
@@ -40,7 +40,7 @@ class EntityDateField extends EntityField {
     }
 
     if (this.isNumber(value)) {
-      let newValue = new Date();
+      const newValue = new Date();
       newValue.setTime(value as number);
       return newValue;
     }

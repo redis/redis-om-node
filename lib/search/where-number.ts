@@ -52,8 +52,8 @@ export default class WhereNumber<TEntity extends Entity> extends WhereField<TEnt
   lessThanOrEqualTo(value: number): Search<TEntity> { return this.lte(value); }
 
   toString(): string {
-    let lower = this.makeLowerString();
-    let upper = this.makeUpperString();
+    const lower = this.makeLowerString();
+    const upper = this.makeUpperString();
     return this.buildQuery(`[${lower} ${upper}]`);
   }
 

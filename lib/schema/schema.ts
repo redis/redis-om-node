@@ -20,14 +20,14 @@ import HashSchemaBuilder from './builders/hash-schema-builder';
  * a {@link SchemaDefinition}, and optionally {@link SchemaOptions}:
  *
  * ```typescript
- * let schema = new Schema(Foo, {
+ * const schema = new Schema(Foo, {
  *   aString: { type: 'string' },
  *   aNumber: { type: 'number' },
  *   aBoolean: { type: 'boolean' },
  *   someText: { type: 'text' },
  *   aPoint: { type: 'point' },
  *   aDate: { type: 'date' },
- *   someStrings: { type: 'string[]' }
+ *   someStrings: { type: 'array' }
  * }, {
  *   dataStructure: 'HASH'
  * });
@@ -59,7 +59,7 @@ export default class Schema<TEntity extends Entity> {
    * @param schemaDef Defines all of the fields for the Schema and how they are mapped to Redis.
    * @param options Additional options for this Schema.
    */
-  constructor(ctor: EntityConstructor<TEntity>, schemaDef: SchemaDefinition, options?: SchemaOptions ) {
+  constructor(ctor: EntityConstructor<TEntity>, schemaDef: SchemaDefinition, options?: SchemaOptions) {
     this.entityCtor = ctor;
     this.definition = schemaDef;
     this.options = options;
@@ -94,12 +94,12 @@ export default class Schema<TEntity extends Entity> {
    * The configured stop words. Ignored if {@link Schema.useStopWords} is anything other
    * than `CUSTOM`.
    */
-  get stopWords(): string[] { return this.options?.stopWords ?? []; }
+  get stopWords(): Array<string> { return this.options?.stopWords ?? []; }
 
   /** The hash value of this index. Stored in Redis under {@link Schema.indexHashName}. */
   get indexHash(): string {
 
-    let data = JSON.stringify({
+    const data = JSON.stringify({
       definition: this.definition,
       prefix: this.prefix,
       indexName: this.indexName,
@@ -113,7 +113,7 @@ export default class Schema<TEntity extends Entity> {
   }
 
   /** @internal */
-  get redisSchema(): string[] {
+  get redisSchema(): Array<string> {
     if (this.dataStructure === 'HASH') return new HashSchemaBuilder(this).redisSchema;
     if (this.dataStructure === 'JSON') return new JsonSchemaBuilder(this).redisSchema;
     throw new Error(`'${this.dataStructure}' in an invalid data structure. Valid data structures are 'HASH' and 'JSON'.`);
@@ -124,15 +124,15 @@ export default class Schema<TEntity extends Entity> {
    * @returns
    */
   generateId(): string {
-    let ulidStrategy: IdStrategy = () => ulid();
+    const ulidStrategy: IdStrategy = () => ulid();
     return (this.options?.idStrategy ?? ulidStrategy)();
   }
 
   private defineProperties() {
-    for (let fieldName in this.definition) {
+    Object.keys(this.definition).forEach(fieldName => {
 
-      let fieldDef: FieldDefinition = this.definition[fieldName];
-      let fieldAlias = fieldDef.alias ?? fieldName;
+      const fieldDef: FieldDefinition = this.definition[fieldName];
+      const fieldAlias = fieldDef.alias ?? fieldName;
 
       this.validateFieldDef(fieldName, fieldDef);
 
@@ -141,11 +141,11 @@ export default class Schema<TEntity extends Entity> {
         get: function (): any {
           return this.entityFields[fieldAlias].value;
         },
-        set: function(value: any): void {
+        set: function (value: any): void {
           this.entityFields[fieldAlias].value = value;
         }
       });
-    }
+    })
   }
 
   private validateOptions() {
@@ -163,7 +163,7 @@ export default class Schema<TEntity extends Entity> {
   }
 
   private validateFieldDef(field: string, fieldDef: FieldDefinition) {
-    if (!['boolean', 'date', 'number', 'point', 'string', 'string[]', 'text'].includes(fieldDef.type))
-      throw Error(`The field '${field}' is configured with a type of '${fieldDef.type}'. Valid types include 'boolean', 'date', 'number', 'point', 'string', 'string[]', and 'text'.`);
+    if (!['boolean', 'date', 'number', 'point', 'string', 'array', 'text'].includes(fieldDef.type))
+      throw Error(`The field '${field}' is configured with a type of '${fieldDef.type}'. Valid types include 'boolean', 'date', 'number', 'point', 'string', 'array', and 'text'.`);
   }
 }

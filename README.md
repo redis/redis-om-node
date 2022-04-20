@@ -71,7 +71,7 @@ Define an entity:
 ```javascript
 class Album extends Entity {}
 
-let schema = new Schema(Album, {
+const schema = new Schema(Album, {
   artist: { type: 'string' },
   title: { type: 'text' },
   year: { type: 'number' }
@@ -81,7 +81,7 @@ let schema = new Schema(Album, {
 Create a new entity and save it:
 
 ```javascript
-let album = repository.createEntity()
+const album = repository.createEntity()
 album.artist = "Mushroomhead"
 album.title = "The Righteous & The Butterfly"
 album.year = 2014
@@ -91,7 +91,7 @@ await repository.save(album)
 Search for matching entities:
 
 ```javascript
-let albums = await repository.search()
+const albums = await repository.search()
   .where('artist').equals('Mushroomhead')
   .and('title').matches('butterfly')
   .and('year').is.greaterThan(2000).return.all()
@@ -144,16 +144,16 @@ import { Client } from 'redis-om'
 
 (async function() {
 
-  let client = new Client()
+  const client = new Client()
   await client.open('redis://localhost:6379')
 
-  let aString = await client.execute(['PING'])
+  const aString = await client.execute(['PING'])
   // 'PONG'
 
-  let aNumber = await client.execute(['HSET', 'foo', 'bar', 'baz', 'qux', 42])
+  const aNumber = await client.execute(['HSET', 'foo', 'bar', 'baz', 'qux', 42])
   // 2
 
-  let anArray = await client.execute(['HGETALL', 'foo'])
+  const anArray = await client.execute(['HGETALL', 'foo'])
   // [ 'bar', 'baz', 'qux', '42' ]
 
   await client.close()
@@ -164,24 +164,23 @@ import { Client } from 'redis-om'
 <details>
 <summary>Or, in TypeScript:</summary>
 
+In Typescript you should type cast the returning type.
+Typecasts can be done in 2 ways, casting it before the returning value `client.execute(["PING"])` or after using the `as` keyword `client.execute(["PING"]) as string`.
+
 ```typescript
 import { Client } from 'redis-om';
-
-(async function() {
-
+(async () => {
   let client = await new Client().open('redis://localhost:6379');
 
-  let aString = await client.execute<string>(['PING']);
+  let aString = await <string>client.execute(['PING']);
   // 'PONG'
 
-  let aNumber = await client.execute<number>(['HSET', 'foo', 'bar', 'baz', 'qux', 42]);
+  let aNumber = await <number>client.execute(['HSET', 'foo', 'bar', 'baz', 'qux', 42]);
   // 2
 
-  let anArray = await client.execute<string[]>(['HGETALL', 'foo']);
+  let anArray = await <Array<string>>client.execute(['HGETALL', 'foo']);
   // [ 'bar', 'baz', 'qux', '42' ]
-
   await client.close();
-
 })();
 ```
 </details>
@@ -196,11 +195,11 @@ import { Client } from 'redis-om'
 
 (async function() {
 
-  let redis = createClient('redis://localhost:6379')
-  let client = await new Client().use(redis)
+  const redis = createClient('redis://localhost:6379')
+  const client = await new Client().use(redis)
 
   await redis.set('foo', 'bar')
-  let value = await client.execute(['GET', 'foo'])
+  const value = await client.execute(['GET', 'foo'])
 })()
 ```
 
@@ -234,7 +233,7 @@ class Studio extends Entity {}
 [Schemas](docs/classes/Schema.md) define the fields on your entity, their types, and how they are mapped internally to Redis. By default, entities map to JSON documents using RedisJSON, but you can change it to use Hashes if want (more on that later):
 
 ```javascript
-let albumSchema = new Schema(Album, {
+const albumSchema = new Schema(Album, {
   artist: { type: 'string' },
   title: { type: 'text' },
   year: { type: 'number' },
@@ -242,7 +241,7 @@ let albumSchema = new Schema(Album, {
   outOfPublication: { type: 'boolean' }
 })
 
-let studioSchema = new Studio(Studio, {
+const studioSchema = new Studio(Studio, {
   name: { type: 'string' },
   city: { type: 'string' },
   state: { type: 'string' },
@@ -260,7 +259,7 @@ The first three do exactly what you think—they define a property that is a [St
 A `point` defines a point somewhere on the globe as a longitude and a latitude. It defines a property that returns and accepts a simple object with `longitude` and `latitude` properties. Like this:
 
 ```javascript
-let point = { longitude: 12.34, latitude: 56.78 }
+const point = { longitude: 12.34, latitude: 56.78 }
 ```
 
 A `text` field is a lot like a `string`. If you're just reading and writing objects, they are identical. But if you want to *search* on them, they are very, very different. I'll cover that in detail when I talk about [using RediSearch](#-using-redisearch) but the tl;dr is that `string` fields can only be matched on their whole value—no partial matches—and are best for keys while `text` fields have full-text search enabled on them and are optimized for human-readable text.
@@ -274,34 +273,34 @@ Now that we have a client and a schema, we have what we need to make a [*reposit
 ```javascript
 import { Repository } from 'redis-om'
 
-let albumRepository = client.fetchRepository(albumSchema)
-let studioRepository = client.fetchRepository(studioSchema)
+const albumRepository = client.fetchRepository(albumSchema)
+const studioRepository = client.fetchRepository(studioSchema)
 ```
 
 Once we have a repository, we can use it to create entities:
 
 ```javascript
-let album = albumRepository.createEntity()
+const album = albumRepository.createEntity()
 album.entityId // '01FJYWEYRHYFT8YTEGQBABJ43J'
 ```
 
 Note that entities created by `.createEntity` are not saved to Redis (at least not yet). They've only been instantiated and populated with an entity ID. This ID is a [ULID](https://github.com/ulid/spec) and is a unique id representing that object. To create a new entity *and* save it to Redis, we need to set all the properties on the entity that we care about, and call `.save`:
 
 ```javascript
-let album = albumRepository.createEntity()
+const album = albumRepository.createEntity()
 album.artist = "Mushroomhead"
 album.title = "The Righteous & The Butterfly"
 album.year = 2014
 album.genres = [ 'metal' ]
 album.outOfPublication = true
 
-let id = await albumRepository.save(album) // '01FJYWEYRHYFT8YTEGQBABJ43J'
+const id = await albumRepository.save(album) // '01FJYWEYRHYFT8YTEGQBABJ43J'
 ```
 
 As a convenience, you can pass in the values for the entity in the constructor:
 
 ```javascript
-let studio = studioRepository.createEntity({
+const studio = studioRepository.createEntity({
   name: "Bad Racket Recording Studio",
   city: "Cleveland",
   state: "Ohio",
@@ -309,13 +308,13 @@ let studio = studioRepository.createEntity({
   established: new Date('2010-12-27')
 })
 
-let id = await studioRepository.save(studio) // '01FVDN241NGTPHSAV0DFDBXC90'
+const id = await studioRepository.save(studio) // '01FVDN241NGTPHSAV0DFDBXC90'
 ```
 
 And for even *more* convenience, you can create and save in a single call:
 
 ```javascript
-let studio = studioRepository.createAndSave({
+const studio = studioRepository.createAndSave({
   name: "Bad Racket Recording Studio",
   city: "Cleveland",
   state: "Ohio",
@@ -330,13 +329,13 @@ You also use `.save` to update an existing entity:
 album.genres = [ 'metal', 'nu metal', 'avantgarde' ]
 album.outOfPublication = false
 
-let id = await albumRepository.save(album) // '01FJYWEYRHYFT8YTEGQBABJ43J'
+const id = await albumRepository.save(album) // '01FJYWEYRHYFT8YTEGQBABJ43J'
 ```
 
 If you know an object's entity ID you can `.fetch` it:
 
 ```javascript
-let album = await albumRepository.fetch('01FJYWEYRHYFT8YTEGQBABJ43J')
+const album = await albumRepository.fetch('01FJYWEYRHYFT8YTEGQBABJ43J')
 album.artist // "Mushroomhead"
 album.title // "The Righteous & The Butterfly"
 album.year // 2014
@@ -353,7 +352,7 @@ await studioRepository.remove('01FVDN241NGTPHSAV0DFDBXC90')
 You can also set an entity to expire after a certain number of seconds. Redis will automatically remove that entity when the time's up. Use the `.expire` method to do this:
 
 ```javascript
-let ttlInSeconds = 12 * 60 * 60  // 12 hours
+const ttlInSeconds = 12 * 60 * 60  // 12 hours
 await studioRepository.expire('01FVDN241NGTPHSAV0DFDBXC90', ttlInSeconds)
 ```
 
@@ -362,7 +361,7 @@ await studioRepository.expire('01FVDN241NGTPHSAV0DFDBXC90', ttlInSeconds)
 Redis, and by extension Redis OM, doesn't differentiate between missing and null. Missing fields in Redis are returned as `null`, and missing keys return `null`. So, if you fetch an entity that doesn't exist, it will happily return you an entity full of nulls:
 
 ```javascript
-let album = await albumRepository.fetch('DOES_NOT_EXIST')
+const album = await albumRepository.fetch('DOES_NOT_EXIST')
 album.artist // null
 album.title // null
 album.year // null
@@ -373,16 +372,16 @@ album.outOfPublication // null
 Conversely, if you set all the properties on an entity to `null` and then save it, it will remove the entity from Redis:
 
 ```javascript
-let album = await albumRepository.fetch('01FJYWEYRHYFT8YTEGQBABJ43J')
+const album = await albumRepository.fetch('01FJYWEYRHYFT8YTEGQBABJ43J')
 album.artist = null
 album.title = null
 album.year = null
 album.genres = null
 album.outOfPublication = null
 
-let id = await albumRepository.save(album)
+const id = await albumRepository.save(album)
 
-let exists = await client.execute(['EXISTS', 'Album:01FJYWEYRHYFT8YTEGQBABJ43J']) // 0
+const exists = await client.execute(['EXISTS', 'Album:01FJYWEYRHYFT8YTEGQBABJ43J']) // 0
 ```
 
 It does this because Redis—particularly Redis Hashes—doesn't distinguish between missing and null. You could have an entity that is all nulls. Or you could not. Redis doesn't know which is your intention, and so always returns *something* when you call `.fetch`.
@@ -392,7 +391,7 @@ It does this because Redis—particularly Redis Hashes—doesn't distinguish bet
 When you define an entity and schema in TypeScript, all is well. But when you go to *use* that entity, you might have a problem. You'll get an error accessing the properties that the schema added to the entity. This code won't work:
 
 ```typescript
-let album = albumRepository.createEntity()
+const album = albumRepository.createEntity()
 album.artist = "Mushroomhead"                 // Property 'artist' does not exist on type 'Album'
 album.title = "The Righteous & The Butterfly" // Property 'title' does not exist on type 'Album'
 album.year = 2014                             // Property 'year' does not exist on type 'Album'
@@ -413,7 +412,7 @@ interface Album {
 
 class Album extends Entity {}
 
-let albumSchema = new Schema(Album, {
+const albumSchema = new Schema(Album, {
   artist: { type: 'string' },
   title: { type: 'string' },
   year: { type: 'number' },
@@ -455,7 +454,7 @@ class Album extends Entity {
 By default, Redis OM stores your entities in JSON documents. But if you're not using [RedisJSON][redis-json-url], you can instead choose to store your entities as Hashes. It works exactly the same as using JSON, but when you define your schema, just pass in an option telling it to use Hashes:
 
 ```javascript
-let albumSchema = new Schema(Album, {
+const albumSchema = new Schema(Album, {
   artist: { type: 'string' },
   title: { type: 'string' },
   year: { type: 'number' },
@@ -473,7 +472,7 @@ Everything else is the same.
 Using [RediSearch][redisearch-url] with Redis OM is where the power of this fully armed and operational battle station starts to become apparent. If you have RediSearch installed on your Redis server you can use the search capabilities of Redis OM. This enables commands like:
 
 ```javascript
-let albums = await albumRepository.search()
+const albums = await albumRepository.search()
   .where('artist').equals('Mushroomhead')
   .and('title').matches('butterfly')
   .and('year').is.greaterThan(2000)
@@ -505,7 +504,7 @@ You probably won't use this in your application, but if you come up with a cool 
 Once you have an index created (or recreated) you can search. The most basic search is to just return all the things. This will return all of the albums that you've put in Redis:
 
 ```javascript
-let albums = await albumRepository.search().return.all()
+const albums = await albumRepository.search().return.all()
 ```
 
 #### Pagination
@@ -513,9 +512,9 @@ let albums = await albumRepository.search().return.all()
 It's possible you have a *lot* of albums; I know I do. In that case, you can page through the results. Just pass in the zero-based offset and the number of results you want:
 
 ```javascript
-let offset = 100
-let count = 25
-let albums = await albumRepository.search().return.page(offset, count)
+const offset = 100
+const count = 25
+const albums = await albumRepository.search().return.page(offset, count)
 ```
 
 Don't worry if your offset is greater than the number of entities. If it is, you just get an empty array back. No harm, no foul.
@@ -525,7 +524,7 @@ Don't worry if your offset is greater than the number of entities. If it is, you
 Sometimes you only have one album. Or maybe you only care about the first album you find. You can easily grab the first result of your search with `.first`:
 
 ```javascript
-let firstAlbum = await albumRepository.search().return.first();
+const firstAlbum = await albumRepository.search().return.first();
 ```
 
 Note: If you have *no* albums, this will return `null`.
@@ -535,7 +534,7 @@ Note: If you have *no* albums, this will return `null`.
 Sometimes you just want to know how many albums you have. For that, you can call `.count`:
 
 ```javascript
-let count = await albumRepository.search().return.count()
+const count = await albumRepository.search().return.count()
 ```
 
 ### Finding Specific Things
@@ -676,8 +675,8 @@ studios = await studioRepository.search().where('established').on(1293408000000)
 There are several date comparison methods to use. And they can be negated:
 
 ```javascript
-let date = new Date('2010-12-27')
-let laterDate = new Date('2020-12-27')
+const date = new Date('2010-12-27')
+const laterDate = new Date('2020-12-27')
 
 studios = await studioRepository.search().where('established').on(date).return.all()
 studios = await studioRepository.search().where('established').not.on(date).return.all()
@@ -696,8 +695,8 @@ studios = await studioRepository.search().where('established').not.between(date,
 More fluent variations work too:
 
 ```javascript
-let date = new Date('2010-12-27')
-let laterDate = new Date('2020-12-27')
+const date = new Date('2010-12-27')
+const laterDate = new Date('2020-12-27')
 
 studios = await studioRepository.search().where('established').is.on(date).return.all()
 studios = await studioRepository.search().where('established').is.not.on(date).return.all()
@@ -721,8 +720,8 @@ studios = await studioRepository.search().where('established').is.not.between(da
 And, since dates are really just numbers, all the numeric comparisons work too:
 
 ```javascript
-let date = new Date('2010-12-27')
-let laterDate = new Date('2020-12-27')
+const date = new Date('2010-12-27')
+const laterDate = new Date('2020-12-27')
 
 studios = await studioRepository.search().where('established').eq(date).return.all()
 studios = await studioRepository.search().where('established').not.eq(date).return.all()
@@ -972,7 +971,7 @@ studios = await studioRepository.search().where('location').is.not.inCircle(
 So far we've been doing searches that match on a single field. However, we often want to query on multiple fields. Not a problem:
 
 ```javascript
-let albums = await albumRepository.search
+const albums = await albumRepository.search
   .where('artist').equals('Mushroomhread')
   .or('title').matches('butterfly')
   .and('year').is.greaterThan(1990).return.all()
@@ -983,7 +982,7 @@ These are executed in order from left to right, and ignore any order of operatio
 If you'd like to change this you can nest your queries:
 
 ```javascript
-let albums = await albumRepository.search
+const albums = await albumRepository.search
   .where('title').matches('butterfly').return.all()
   .or(search => search
     .where('artist').equals('Mushroomhead')
@@ -1001,8 +1000,8 @@ To execute a raw search, just call `.searchRaw` on the repository with your quer
 
 ```javascript
 // finds all the Mushroomhead albums with the word 'beautiful' in the title from 1990 and beyond
-let query = "@artist:{Mushroomhead} @title:beautiful @year:[1990 +inf]"
-let albums = albumRepository.searchRaw(query).return.all();
+const query = "@artist:{Mushroomhead} @title:beautiful @year:[1990 +inf]"
+const albums = albumRepository.searchRaw(query).return.all();
 ```
 
 The nice thing here is that it returns the same entities that you've been using for everything else. It's just a lower-level way of executing a query for when you need that extra bit of power.
@@ -1012,11 +1011,11 @@ The nice thing here is that it returns the same entities that you've been using 
 RediSearch provides a basic mechanism for sorting your search results and Redis OM exposes it. You can sort on a single field and can sort on the following types: `string`, `number`, `boolean`, `date`, and `text`. To sort, simply call `.sortBy`, `.sortAscending`, or `.sortDescending`:
 
 ```javascript
-let albumsByYear = await albumRepository.search
+const albumsByYear = await albumRepository.search
   .where('artist').equals('Mushroomhread')
     .sortAscending('year').return.all()
 
-let albumsByTitle = await albumRepository.search
+const albumsByTitle = await albumRepository.search
   .where('artist').equals('Mushroomhread')
     .sortBy('title', 'DESC').return.all()
 ```
@@ -1024,7 +1023,7 @@ let albumsByTitle = await albumRepository.search
 You can also tell RediSearch to preload the sorting index to improve performance when you sort. This doesn't work with *all* of the types that you can sort by, but it's still pretty useful. To preload the index, mark the field in the `Schema` with the `sortable` property:
 
 ```javascript
-let albumSchema = new Schema(Album, {
+const albumSchema = new Schema(Album, {
   artist: { type: 'string' },
   title: { type: 'text', sortable: true },
   year: { type: 'number', sortable: true },

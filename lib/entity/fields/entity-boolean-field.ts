@@ -4,7 +4,7 @@ import { RedisHashData } from "../../client";
 
 class EntityBooleanField extends EntityField {
   toRedisHash(): RedisHashData {
-    let data: RedisHashData = {};
+    const data: RedisHashData = {};
     if (this.value !== null) data[this.name] = this.value ? '1' : '0'.toString();
     return data;
   };

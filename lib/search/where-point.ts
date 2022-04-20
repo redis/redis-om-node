@@ -52,7 +52,7 @@ export class Circle {
    * @param point A {@link Point} containing the longitude and latitude of the origin.
    * @returns This instance.
    */
-  origin(point: Point) : Circle;
+  origin(point: Point): Circle;
 
   /**
    * Sets the origin of the circle. If not set, defaults to
@@ -62,15 +62,15 @@ export class Circle {
    * @param latitude The latitude.
    * @returns This instance.
    */
-  origin(longitude: number, latitude: number) : Circle;
+  origin(longitude: number, latitude: number): Circle;
 
   /** @internal */
-  origin(pointOrLongitude: number | Point, latitude?: number) : Circle {
-    if (typeof(pointOrLongitude) === 'number' && latitude !== undefined) {
+  origin(pointOrLongitude: number | Point, latitude?: number): Circle {
+    if (typeof pointOrLongitude === 'number' && latitude !== undefined) {
       this.longitudeOfOrigin = pointOrLongitude;
       this.latitudeOfOrigin = latitude;
     } else {
-      let point = pointOrLongitude as Point;
+      const point = pointOrLongitude as Point;
       this.longitudeOfOrigin = point.longitude;
       this.latitudeOfOrigin = point.latitude;
     }
@@ -187,7 +187,7 @@ export default class WherePoint<TEntity extends Entity> extends WhereField<TEnti
   }
 
   toString(): string {
-    let { longitudeOfOrigin, latitudeOfOrigin, size, units } = this.circle;
+    const { longitudeOfOrigin, latitudeOfOrigin, size, units } = this.circle;
     return this.buildQuery(`[${longitudeOfOrigin} ${latitudeOfOrigin} ${size} ${units}]`);
   }
 }

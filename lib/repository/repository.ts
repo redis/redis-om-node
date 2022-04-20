@@ -1,7 +1,6 @@
 import Schema from "../schema/schema"
 import Client from "../client";
 import Entity from "../entity/entity";
-import Point from "../entity/point";
 
 import { Search, RawSearch } from '../search/search';
 
@@ -16,9 +15,9 @@ import EntityData from "../entity/entity-data";
  * {@link Repository.remove} methods to manage your data:
  *
  * ```typescript
- * let repository = client.fetchRepository<Foo>(schema);
+ * const repository = client.fetchRepository<Foo>(schema);
  *
- * let foo = await repository.fetch('01FK6TCJBDK41RJ766A4SBWDJ9');
+ * const foo = await repository.fetch('01FK6TCJBDK41RJ766A4SBWDJ9');
  * foo.aString = 'bar';
  * foo.aBoolean = false;
  * await repository.save(foo);
@@ -28,7 +27,7 @@ import EntityData from "../entity/entity-data";
  * {@link Entity} you want to create before you save it:
 
  * ```typescript
- * let foo = await repository.createEntity();
+ * const foo = await repository.createEntity();
  * foo.aString = 'bar';
  * foo.aBoolean = false;
  * await repository.save(foo);
@@ -39,14 +38,14 @@ import EntityData from "../entity/entity-data";
  *
  * ```typescript
  * await repository.createIndex();
- * let entities = await repository.search()
+ * const entities = await repository.search()
  *   .where('aString').eq('bar')
  *   .and('aBoolean').is.false().returnAll();
  * ```
  *
  * @template TEntity The type of {@link Entity} that this repository manages.
  */
- export default abstract class Repository<TEntity extends Entity> {
+export default abstract class Repository<TEntity extends Entity> {
   protected client: Client;
   protected schema: Schema<TEntity>;
 
@@ -62,13 +61,13 @@ import EntityData from "../entity/entity-data";
    */
   async createIndex() {
 
-    let currentIndexHash = await this.client.get(this.schema.indexHashName)
+    const currentIndexHash = await this.client.get(this.schema.indexHashName)
 
     if (currentIndexHash !== this.schema.indexHash) {
 
       await this.dropIndex();
 
-      let options : CreateIndexOptions = {
+      const options: CreateIndexOptions = {
         indexName: this.schema.indexName,
         dataStructure: this.schema.dataStructure,
         prefix: `${this.schema.prefix}:`,
@@ -107,7 +106,7 @@ import EntityData from "../entity/entity-data";
    * @returns A newly created Entity.
    */
   createEntity(data: EntityData = {}): TEntity {
-    let id = this.schema.generateId();
+    const id = this.schema.generateId();
     return new this.schema.entityCtor(this.schema, id, data);
   }
 
@@ -117,7 +116,7 @@ import EntityData from "../entity/entity-data";
    * @param entity The Entity to save.
    * @returns The ID of the Entity just saved.
    */
-  async save(entity: TEntity) : Promise<string> {
+  async save(entity: TEntity): Promise<string> {
     await this.writeEntity(entity);
     return entity.entityId;
   }
@@ -129,7 +128,7 @@ import EntityData from "../entity/entity-data";
    * @returns The newly created and saved Entity.
    */
   async createAndSave(data: EntityData = {}): Promise<TEntity> {
-    let entity = this.createEntity(data);
+    const entity = this.createEntity(data);
     await this.save(entity)
     return entity
   }
@@ -151,7 +150,7 @@ import EntityData from "../entity/entity-data";
    * @param id The ID of the {@link Entity} you with to delete.
    */
   async remove(id: string): Promise<void> {
-    let key = this.makeKey(id);
+    const key = this.makeKey(id);
     await this.client.unlink(key);
   }
 
@@ -162,7 +161,7 @@ import EntityData from "../entity/entity-data";
    * @param ttlInSeconds THe time to live in seconds.
    */
   async expire(id: string, ttlInSeconds: number) {
-    let key =  this.makeKey(id);
+    const key = this.makeKey(id);
     await this.client.expire(key, ttlInSeconds);
   }
 
@@ -203,18 +202,18 @@ import EntityData from "../entity/entity-data";
 /** @internal */
 export class HashRepository<TEntity extends Entity> extends Repository<TEntity> {
   protected async writeEntity(entity: TEntity): Promise<void> {
-    let data = entity.toRedisHash();
+    const data = entity.toRedisHash();
     if (Object.keys(data).length === 0) {
       await this.client.unlink(entity.keyName);
-    } else {
-      await this.client.hsetall(entity.keyName, entity.toRedisHash());
+      return;
     }
+    await this.client.hsetall(entity.keyName, entity.toRedisHash());
   }
 
   protected async readEntity(id: string): Promise<TEntity> {
-    let key = this.makeKey(id);
-    let hashData = await this.client.hgetall(key);
-    let entity = new this.schema.entityCtor(this.schema, id);
+    const key = this.makeKey(id);
+    const hashData = await this.client.hgetall(key);
+    const entity = new this.schema.entityCtor(this.schema, id);
     entity.fromRedisHash(hashData);
     return entity;
   }
@@ -227,9 +226,9 @@ export class JsonRepository<TEntity extends Entity> extends Repository<TEntity> 
   }
 
   protected async readEntity(id: string): Promise<TEntity> {
-    let key = this.makeKey(id);
-    let jsonData = await this.client.jsonget(key);
-    let entity = new this.schema.entityCtor(this.schema, id);
+    const key = this.makeKey(id);
+    const jsonData = await this.client.jsonget(key);
+    const entity = new this.schema.entityCtor(this.schema, id);
     entity.fromRedisJson(jsonData);
     return entity;
   }

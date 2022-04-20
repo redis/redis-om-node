@@ -37,14 +37,14 @@ describe("Client", () => {
         await client.open();
         await client.close();
       });
-      
-      it("errors when called on a closed client", () => 
+
+      it("errors when called on a closed client", () =>
         expect(async () => await client.hgetall('foo'))
-          .rejects.toThrow("Redis connection needs opened."));
+          .rejects.toThrow("Redis connection needs to be open."));
     });
-    
+
     it("errors when called on a new client", async () =>
       expect(async () => await client.hgetall('foo'))
-        .rejects.toThrow("Redis connection needs opened."));
+        .rejects.toThrow("Redis connection needs to be open."));
   });
 });

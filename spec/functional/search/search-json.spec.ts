@@ -141,13 +141,13 @@ describe("search for JSON documents", () => {
   it("searches a point", async () => {
     entities = await repository.search()
       .where('aPoint').inCircle(circle => circle.origin(A_POINT).radius(10).meters)
-        .returnAll();
-    
+      .returnAll();
+
     expect(entities).toHaveLength(1);
     expect(entities).toEqual(expect.arrayContaining([
       expect.objectContaining({ entityId: '1', ...AN_ENTITY }),
-    ]));  
-  });  
+    ]));
+  });
 
   it("searches a date", async () => {
     entities = await repository.search().where('aDate').after(A_DATE).returnAll();
@@ -158,7 +158,7 @@ describe("search for JSON documents", () => {
     ]));
   });
 
-  it("searches a string[]", async () => {
+  it("searches a array", async () => {
     entities = await repository.search().where('someStrings').contains('charlie').returnAll();
 
     expect(entities).toHaveLength(3);
@@ -203,7 +203,7 @@ describe("search for JSON documents", () => {
     ]));
   });
 
-  it("searches a string[] with escaped punctuation", async () => {
+  it("searches a array with escaped punctuation", async () => {
     entities = await repository.search().where('someStrings').contains('alfa ,.<>{}[]"\':;!@#$%^&*()-+=~ bravo').returnAll();
 
     expect(entities).toHaveLength(1);
