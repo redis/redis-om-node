@@ -5,8 +5,6 @@ import SeparableFieldDefinition from "../definition/separable-field-definition";
 import SortableFieldDefinition from "../definition/sortable-field-definition";
 import SchemaFieldType from "../definition/schema-field-type";
 
-import * as logger from '../../shims/logger'
-
 export default class JsonSchemaBuilder<TEntity extends Entity> extends SchemaBuilder<TEntity> {
 
   protected buildEntry(field: string): Array<string> {
@@ -22,7 +20,7 @@ export default class JsonSchemaBuilder<TEntity extends Entity> extends SchemaBui
         break;
       case 'boolean':
         if ((fieldDef as SortableFieldDefinition).sortable)
-          logger.warn(`You have marked the boolean field '${field}' as sortable but RediSearch doesn't support the SORTABLE argument on a TAG for JSON. Ignored.`);
+          console.warn(`You have marked the boolean field '${field}' as sortable but RediSearch doesn't support the SORTABLE argument on a TAG for JSON. Ignored.`);
         fieldDetails = this.buildTag();
         break;
       case 'number':
@@ -36,7 +34,7 @@ export default class JsonSchemaBuilder<TEntity extends Entity> extends SchemaBui
         break;
       case 'string':
         if ((fieldDef as SortableFieldDefinition).sortable)
-          logger.warn(`You have marked the string field '${field}' as sortable but RediSearch doesn't support the SORTABLE argument on a TAG for JSON. Ignored.`);
+          console.warn(`You have marked the string field '${field}' as sortable but RediSearch doesn't support the SORTABLE argument on a TAG for JSON. Ignored.`);
         fieldDetails = this.buildSeparableTag(fieldDef as SeparableFieldDefinition)
         break;
       case 'text':
