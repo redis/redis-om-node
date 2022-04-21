@@ -3,9 +3,7 @@ import Entity from '../../../lib/entity/entity';
 import SchemaDefinition from '../../../lib/schema/definition/schema-definition';
 import DataStructure from '../../../lib/schema/options/data-structure';
 
-import * as logger from '../../../lib/shims/logger';
-
-const warnSpy = jest.spyOn(logger, 'warn');
+const warnSpy = jest.spyOn(console, 'warn');
 
 describe("Schema", () => {
   describe.each([

@@ -1,9 +1,9 @@
 import { mocked } from 'jest-mock';
 
-import RedisShim from '../../../lib/shims/redis-shim';
+import RedisShim from '../../../lib/redis-shim';
 import Client from '../../../lib/client';
 
-jest.mock('../../../lib/shims/redis-shim');
+jest.mock('../../../lib/redis-shim');
 
 
 beforeEach(() => mocked(RedisShim).mockReset());
