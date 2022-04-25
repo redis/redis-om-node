@@ -196,6 +196,7 @@ import { Client } from 'redis-om'
 (async function() {
 
   const redis = createClient('redis://localhost:6379')
+  await redis.connect()
   const client = await new Client().use(redis)
 
   await redis.set('foo', 'bar')
