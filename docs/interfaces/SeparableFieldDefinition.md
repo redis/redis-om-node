@@ -1,22 +1,22 @@
-[redis-om](../README.md) / Separable
+[redis-om](../README.md) / SeparableFieldDefinition
 
-# Interface: Separable
+# Interface: SeparableFieldDefinition
 
 Mixin for adding parsing for TAG fields in RediSearch.
 
 ## Hierarchy
 
-- **`Separable`**
+- **`SeparableFieldDefinition`**
 
-  ↳ [`StringField`](StringField.md)
+  ↳ [`StringFieldDefinition`](StringFieldDefinition.md)
 
-  ↳ [`StringArrayField`](StringArrayField.md)
+  ↳ [`StringArrayFieldDefinition`](StringArrayFieldDefinition.md)
 
 ## Table of contents
 
 ### Properties
 
-- [separator](Separable.md#separator)
+- [separator](SeparableFieldDefinition.md#separator)
 
 ## Properties
 
@@ -31,4 +31,4 @@ those problems. Defaults to `|`.
 
 #### Defined in
 
-[lib/schema/definition/schema-definitions.ts:35](https://github.com/redis/redis-om-node/blob/0843d26/lib/schema/definition/schema-definitions.ts#L35)
+[lib/schema/definition/separable-field-definition.ts:9](https://github.com/redis/redis-om-node/blob/9708a58/lib/schema/definition/separable-field-definition.ts#L9)

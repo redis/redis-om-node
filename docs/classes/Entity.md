@@ -33,7 +33,7 @@ The generated entity ID.
 
 #### Defined in
 
-[lib/entity/entity.ts:33](https://github.com/redis/redis-om-node/blob/0843d26/lib/entity/entity.ts#L33)
+[lib/entity/entity.ts:38](https://github.com/redis/redis-om-node/blob/9708a58/lib/entity/entity.ts#L38)
 
 ## Accessors
 
@@ -45,9 +45,11 @@ The generated entity ID.
 
 `string`
 
+The keyname this [Entity](Entity.md) is stored with in Redis.
+
 #### Defined in
 
-[lib/entity/entity.ts:55](https://github.com/redis/redis-om-node/blob/0843d26/lib/entity/entity.ts#L55)
+[lib/entity/entity.ts:74](https://github.com/redis/redis-om-node/blob/9708a58/lib/entity/entity.ts#L74)
 
 ## Methods
 
@@ -55,10 +57,14 @@ The generated entity ID.
 
 ▸ **toJSON**(): `Record`<`string`, `any`\>
 
+Converts this [Entity](Entity.md) to a JavaScript object suitable for stringification.
+
 #### Returns
 
 `Record`<`string`, `any`\>
 
+a JavaScript object.
+
 #### Defined in
 
-[lib/entity/entity.ts:59](https://github.com/redis/redis-om-node/blob/0843d26/lib/entity/entity.ts#L59)
+[lib/entity/entity.ts:82](https://github.com/redis/redis-om-node/blob/9708a58/lib/entity/entity.ts#L82)

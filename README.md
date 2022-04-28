@@ -142,23 +142,19 @@ You connect to Redis using a [*client*](docs/classes/Client.md). The `Client` cl
 ```javascript
 import { Client } from 'redis-om'
 
-(async function() {
+const client = new Client()
+await client.open('redis://localhost:6379')
 
-  const client = new Client()
-  await client.open('redis://localhost:6379')
+const aString = await client.execute(['PING'])
+// 'PONG'
 
-  const aString = await client.execute(['PING'])
-  // 'PONG'
+const aNumber = await client.execute(['HSET', 'foo', 'bar', 'baz', 'qux', 42])
+// 2
 
-  const aNumber = await client.execute(['HSET', 'foo', 'bar', 'baz', 'qux', 42])
-  // 2
+const anArray = await client.execute(['HGETALL', 'foo'])
+// [ 'bar', 'baz', 'qux', '42' ]
 
-  const anArray = await client.execute(['HGETALL', 'foo'])
-  // [ 'bar', 'baz', 'qux', '42' ]
-
-  await client.close()
-
-})()
+await client.close()
 ```
 
 <details>
@@ -169,19 +165,18 @@ Typecasts can be done in 2 ways, casting it before the returning value `client.e
 
 ```typescript
 import { Client } from 'redis-om';
-(async () => {
-  let client = await new Client().open('redis://localhost:6379');
 
-  let aString = await <string>client.execute(['PING']);
-  // 'PONG'
+let client = await new Client().open('redis://localhost:6379');
 
-  let aNumber = await <number>client.execute(['HSET', 'foo', 'bar', 'baz', 'qux', 42]);
-  // 2
+let aString = await <string>client.execute(['PING']);
+// 'PONG'
 
-  let anArray = await <Array<string>>client.execute(['HGETALL', 'foo']);
-  // [ 'bar', 'baz', 'qux', '42' ]
-  await client.close();
-})();
+let aNumber = await <number>client.execute(['HSET', 'foo', 'bar', 'baz', 'qux', 42]);
+// 2
+
+let anArray = await <Array<string>>client.execute(['HGETALL', 'foo']);
+// [ 'bar', 'baz', 'qux', '42' ]
+await client.close();
 ```
 </details>
 
@@ -193,14 +188,12 @@ If you find you need to talk to Redis directly a *lot* or you need more than jus
 import { createClient } from 'redis'
 import { Client } from 'redis-om'
 
-(async function() {
+const redis = createClient('redis://localhost:6379')
+await redis.connect()
+const client = await new Client().use(redis)
 
-  const redis = createClient('redis://localhost:6379')
-  const client = await new Client().use(redis)
-
-  await redis.set('foo', 'bar')
-  const value = await client.execute(['GET', 'foo'])
-})()
+await redis.set('foo', 'bar')
+const value = await client.execute(['GET', 'foo'])
 ```
 
 Use `.use` to take advantage of things like [clustering](https://github.com/redis/node-redis#clustering). Details on all that stuff are way beyond the scope of this README. You can read about it in the Node Redis [documentation](https://github.com/redis/node-redis).
@@ -736,7 +729,7 @@ studios = await studioRepository.search().where('established').not.gt(date).retu
 studios = await studioRepository.search().where('established').greaterThan(date).return.all()
 studios = await studioRepository.search().where('established').is.greaterThan(date).return.all()
 studios = await studioRepository.search().where('established').is.not.greaterThan(date).return.all()
-      
+
 studios = await studioRepository.search().where('established').gte(date).return.all()
 studios = await studioRepository.search().where('established').not.gte(date).return.all()
 studios = await studioRepository.search().where('established').greaterThanOrEqualTo(date).return.all()
@@ -748,7 +741,7 @@ studios = await studioRepository.search().where('established').not.lt(date).retu
 studios = await studioRepository.search().where('established').lessThan(date).return.all()
 studios = await studioRepository.search().where('established').is.lessThan(date).return.all()
 studios = await studioRepository.search().where('established').is.not.lessThan(date).return.all()
-      
+
 studios = await studioRepository.search().where('established').lte(date).return.all()
 studios = await studioRepository.search().where('established').not.lte(date).return.all()
 studios = await studioRepository.search().where('established').lessThanOrEqualTo(date).return.all()

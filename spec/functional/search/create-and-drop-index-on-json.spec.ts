@@ -47,7 +47,7 @@ describe("create and drop index on JSON", () => {
     });
 
     it("has the expected hash", () => {
-      expect(indexHash).toBe("XgD0DXohHu8y4/JvvbEWhZCoiWk=");
+      expect(indexHash).toBe("CG+oldxDhlhKcav02fnypVl5+jI=");
     });
 
     it("has the expected fields", () => {
@@ -101,7 +101,7 @@ describe("create and drop index on JSON", () => {
         expect(indexName).toBe('SampleJsonEntity:index');
         expect(keyType).toBe('JSON');
         expect(prefixes).toEqual(['SampleJsonEntity:']);
-        expect(indexHash).toBe("XgD0DXohHu8y4/JvvbEWhZCoiWk=");
+        expect(indexHash).toBe("CG+oldxDhlhKcav02fnypVl5+jI=");
 
         expect(fields).toHaveLength(14);
         expect(fields).toEqual([
@@ -141,7 +141,7 @@ describe("create and drop index on JSON", () => {
         expect(indexName).toBe('sample-json-entity:index');
         expect(keyType).toBe('JSON');
         expect(prefixes).toEqual(['sample-json-entity:']);
-        expect(indexHash).toBe("Tm5jE5zHI3uyJd4HFJiMwPBPquo=");
+        expect(indexHash).toBe("1H4rkUnjh4UyVJlI5Z6JCCTD1Zg=");
       });
     });
   });
