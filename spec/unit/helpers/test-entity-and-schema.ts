@@ -1,10 +1,10 @@
 import Entity from '../../../lib/entity/entity';
 import Schema from '../../../lib/schema/schema';
-import { Point } from '../../../lib/schema/schema-definitions';
+import Point from '../../../lib/entity/point';
 
-export class SimpleEntity extends Entity {}
-export class SimpleHashEntity extends SimpleEntity {}
-export class SimpleJsonEntity extends SimpleEntity {}
+export class SimpleEntity extends Entity { }
+export class SimpleHashEntity extends SimpleEntity { }
+export class SimpleJsonEntity extends SimpleEntity { }
 
 export interface SimpleEntity {
   aString?: string | number | boolean | null;
@@ -16,12 +16,12 @@ export interface SimpleEntity {
   someStrings?: any[] | null;
 }
 
-export interface SimpleHashEntity extends SimpleEntity {}
-export interface SimpleJsonEntity extends SimpleEntity {}
+export interface SimpleHashEntity extends SimpleEntity { }
+export interface SimpleJsonEntity extends SimpleEntity { }
 
-export class AliasedEntity extends Entity {}
-export class StopWordsOffEntity extends Entity {}
-export class CustomStopWordsEntity extends Entity {}
+export class AliasedEntity extends Entity { }
+export class StopWordsOffEntity extends Entity { }
+export class CustomStopWordsEntity extends Entity { }
 
 export interface AliasedEntity {
   aString?: string | null;
@@ -30,7 +30,7 @@ export interface AliasedEntity {
   aBoolean?: boolean | null;
   aPoint?: Point | null;
   aDate?: Date | null;
-  someStrings?: string[] | null;
+  someStrings?: Array<string> | null;
 }
 
 export const simpleSchema = new Schema(SimpleEntity, {
@@ -40,7 +40,7 @@ export const simpleSchema = new Schema(SimpleEntity, {
   aBoolean: { type: 'boolean' },
   aPoint: { type: 'point' },
   aDate: { type: 'date' },
-  someStrings: { type: 'string[]' }
+  someStrings: { type: 'array' }
 });
 
 export const simpleHashSchema = new Schema(SimpleHashEntity, {
@@ -50,22 +50,22 @@ export const simpleHashSchema = new Schema(SimpleHashEntity, {
   aBoolean: { type: 'boolean' },
   aPoint: { type: 'point' },
   aDate: { type: 'date' },
-  someStrings: { type: 'string[]' }
+  someStrings: { type: 'array' }
 }, {
   dataStructure: 'HASH'
 });
 
 export const simpleSortableHashSchema = new Schema(SimpleHashEntity, {
-    aString: { type: 'string', sortable: true },
-    someText: { type: 'text', sortable: true },
-    aNumber: { type: 'number', sortable: true },
-    aBoolean: { type: 'boolean', sortable: true },
-    aPoint: { type: 'point' },
-    aDate: { type: 'date', sortable: true },
-    someStrings: { type: 'string[]' }
-  }, {
-    dataStructure: 'HASH'
-  });
+  aString: { type: 'string', sortable: true },
+  someText: { type: 'text', sortable: true },
+  aNumber: { type: 'number', sortable: true },
+  aBoolean: { type: 'boolean', sortable: true },
+  aPoint: { type: 'point' },
+  aDate: { type: 'date', sortable: true },
+  someStrings: { type: 'array' }
+}, {
+  dataStructure: 'HASH'
+});
 
 export const simpleJsonSchema = new Schema(SimpleJsonEntity, {
   aString: { type: 'string' },
@@ -74,7 +74,7 @@ export const simpleJsonSchema = new Schema(SimpleJsonEntity, {
   aBoolean: { type: 'boolean' },
   aPoint: { type: 'point' },
   aDate: { type: 'date' },
-  someStrings: { type: 'string[]' }
+  someStrings: { type: 'array' }
 }, {
   dataStructure: 'JSON'
 });
@@ -86,7 +86,7 @@ export const simpleSortableJsonSchema = new Schema(SimpleHashEntity, {
   aBoolean: { type: 'boolean', sortable: true },
   aPoint: { type: 'point' },
   aDate: { type: 'date', sortable: true },
-  someStrings: { type: 'string[]' }
+  someStrings: { type: 'array' }
 }, {
   dataStructure: 'JSON'
 });
@@ -98,7 +98,7 @@ export const aliasedSchema = new Schema(AliasedEntity, {
   aBoolean: { type: 'boolean', alias: 'anotherBoolean' },
   aPoint: { type: 'point', alias: 'anotherPoint' },
   aDate: { type: 'date', alias: 'anotherDate' },
-  someStrings: { type: 'string[]', alias: 'someOtherStrings' }
+  someStrings: { type: 'array', alias: 'someOtherStrings' }
 });
 
 export const stopWordsOffSchema = new Schema(StopWordsOffEntity, {
@@ -111,5 +111,5 @@ export const customStopWordsSchema = new Schema(CustomStopWordsEntity, {
   someText: { type: 'text' }
 }, {
   useStopWords: 'CUSTOM',
-  stopWords: [ 'foo', 'bar', 'baz' ]
+  stopWords: ['foo', 'bar', 'baz']
 });

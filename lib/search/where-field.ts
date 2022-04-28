@@ -194,7 +194,7 @@ interface WhereField<TEntity> extends Where {
    * @param value An array of strings that you want to match one of.
    * @returns The {@link Search} that was called to create this {@link WhereField}.
    */
-  containOneOf(...value: string[]): Search<TEntity>;
+  containOneOf(...value: Array<string>): Search<TEntity>;
 
   /**
    * Adds a whole-string match against a string array to the query. If any of the provided
@@ -202,7 +202,7 @@ interface WhereField<TEntity> extends Where {
    * @param value An array of strings that you want to match one of.
    * @returns The {@link Search} that was called to create this {@link WhereField}.
    */
-  containsOneOf(...value: string[]): Search<TEntity>;
+  containsOneOf(...value: Array<string>): Search<TEntity>;
 
   /**
    * Adds a search for points that fall within a defined circle.
@@ -259,7 +259,7 @@ interface WhereField<TEntity> extends Where {
  * with extend. When you call {@link Search.where}, a
  * subclass of this is returned.
  */
- abstract class WhereField<TEntity extends Entity> {
+abstract class WhereField<TEntity extends Entity> {
   private negated: boolean = false;
 
   /** @internal */
@@ -309,8 +309,8 @@ interface WhereField<TEntity> extends Where {
 
   /** @internal */
   protected buildQuery(valuePortion: string): string {
-    let negationPortion = this.negated ? '-' : '';
-    let fieldPortion = this.field;
+    const negationPortion = this.negated ? '-' : '';
+    const fieldPortion = this.field;
     return `(${negationPortion}@${fieldPortion}:${valuePortion})`;
   }
 }

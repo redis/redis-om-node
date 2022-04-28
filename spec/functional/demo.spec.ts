@@ -22,7 +22,7 @@ describe("Demo", () => {
       date: Date;
       title: string;
       observed: string;
-      classification: string[];
+      classification: Array<string>;
       county: string;
       state: string;
       location: Point;
@@ -38,31 +38,31 @@ describe("Demo", () => {
       get lowTempF() { return this.lowTemp }
       get lowTempC() { return this.f2c(this.lowTemp); }
 
-      private f2c(f: number): number { return ( f - 32 ) * 5 / 9; }
+      private f2c(f: number): number { return (f - 32) * 5 / 9; }
     }
 
     // get a client use an existing Redis connection
     let client = await new Client().use(redis);
-    await client.execute<void>(['FLUSHALL']);
-    await client.execute<string>(['PING']);
+    await client.execute(['FLUSHALL']);
+    await client.execute(['PING']);
 
     let schema = new Schema<BigfootSighting>(
       BigfootSighting, {
-        id: { type: 'string' },
-        date: { type: 'date' },
-        title: { type: 'text' },
-        observed: { type: 'text' },
-        classification: { type: 'string[]' },
-        county: { type: 'string' },
-        state: { type: 'string' },
-        location: { type: 'point' },
-        highTemp: { type: 'number' },
-        lowTemp: { type: 'number' },
-        fullMoon: { type: 'boolean' }
-      }, {
-        useStopWords: 'OFF'
-      });
-    
+      id: { type: 'string' },
+      date: { type: 'date' },
+      title: { type: 'text' },
+      observed: { type: 'text' },
+      classification: { type: 'array' },
+      county: { type: 'string' },
+      state: { type: 'string' },
+      location: { type: 'point' },
+      highTemp: { type: 'number' },
+      lowTemp: { type: 'number' },
+      fullMoon: { type: 'boolean' }
+    }, {
+      useStopWords: 'OFF'
+    });
+
     let repository: Repository<BigfootSighting> = client.fetchRepository<BigfootSighting>(schema);
 
     await repository.createIndex();
@@ -72,9 +72,9 @@ describe("Demo", () => {
     entity.id = '8086';
     entity.date = new Date('1978-10-09T00:00:00.000Z');
     entity.title = "Bigfoot by the Walmart";
-    entity.classification = [ 'Class A', 'Class B' ];
+    entity.classification = ['Class A', 'Class B'];
     entity.location = { longitude: 12.34, latitude: 56.78 },
-    entity.highTemp = 53;
+      entity.highTemp = 53;
     entity.fullMoon = false;
 
     let entityId = await repository.save(entity);
@@ -85,7 +85,7 @@ describe("Demo", () => {
       id: '8086',
       date: new Date('1978-10-09T00:00:00.000Z'),
       title: "Bigfoot by the Walmart",
-      classification: [ 'Class A', 'Class B' ],
+      classification: ['Class A', 'Class B'],
       location: { longitude: 12.34, latitude: 56.78 },
       highTemp: 53,
       fullMoon: false
@@ -98,7 +98,7 @@ describe("Demo", () => {
       id: '8086',
       date: new Date('1978-10-09T00:00:00.000Z'),
       title: "Bigfoot by the Walmart",
-      classification: [ 'Class A', 'Class B' ],
+      classification: ['Class A', 'Class B'],
       location: { longitude: 12.34, latitude: 56.78 },
       highTemp: 53,
       fullMoon: false
@@ -113,7 +113,7 @@ describe("Demo", () => {
     entity.county = "Athens";
     entity.state = "Ohio";
     entity.location = { longitude: 23.45, latitude: 67.89 },
-    await repository.save(entity);
+      await repository.save(entity);
 
     // remove an entity
     await repository.remove(entityId);

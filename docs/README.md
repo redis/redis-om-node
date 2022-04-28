@@ -20,28 +20,29 @@ redis-om
 
 ### Interfaces
 
-- [BooleanField](interfaces/BooleanField.md)
-- [DateField](interfaces/DateField.md)
-- [Field](interfaces/Field.md)
-- [NumberField](interfaces/NumberField.md)
-- [PointField](interfaces/PointField.md)
-- [Separable](interfaces/Separable.md)
-- [Sortable](interfaces/Sortable.md)
-- [StringArrayField](interfaces/StringArrayField.md)
-- [StringField](interfaces/StringField.md)
-- [TextField](interfaces/TextField.md)
+- [BaseFieldDefinition](interfaces/BaseFieldDefinition.md)
+- [BooleanFieldDefinition](interfaces/BooleanFieldDefinition.md)
+- [DateFieldDefinition](interfaces/DateFieldDefinition.md)
+- [NumberFieldDefinition](interfaces/NumberFieldDefinition.md)
+- [PointFieldDefinition](interfaces/PointFieldDefinition.md)
+- [SeparableFieldDefinition](interfaces/SeparableFieldDefinition.md)
+- [SortableFieldDefinition](interfaces/SortableFieldDefinition.md)
+- [StringArrayFieldDefinition](interfaces/StringArrayFieldDefinition.md)
+- [StringFieldDefinition](interfaces/StringFieldDefinition.md)
+- [TextFieldDefinition](interfaces/TextFieldDefinition.md)
 
 ### Type aliases
 
 - [CircleFunction](README.md#circlefunction)
+- [DataStructure](README.md#datastructure)
 - [EntityConstructor](README.md#entityconstructor)
-- [EntityCreationData](README.md#entitycreationdata)
 - [EntityData](README.md#entitydata)
 - [EntityValue](README.md#entityvalue)
 - [FieldDefinition](README.md#fielddefinition)
 - [IdStrategy](README.md#idstrategy)
 - [Point](README.md#point)
 - [SchemaDefinition](README.md#schemadefinition)
+- [SchemaFieldType](README.md#schemafieldtype)
 - [SchemaOptions](README.md#schemaoptions)
 - [SearchDataStructure](README.md#searchdatastructure)
 - [StopWordOptions](README.md#stopwordoptions)
@@ -71,7 +72,19 @@ A function that defines a circle for `.inCircle` searches.
 
 #### Defined in
 
-[lib/search/where-point.ts:9](https://github.com/redis/redis-om-node/blob/0843d26/lib/search/where-point.ts#L9)
+[lib/search/where-point.ts:9](https://github.com/redis/redis-om-node/blob/9708a58/lib/search/where-point.ts#L9)
+
+___
+
+### DataStructure
+
+Ƭ **DataStructure**: ``"HASH"`` \| ``"JSON"``
+
+The type of data structure in Redis to map objects to.
+
+#### Defined in
+
+[lib/schema/options/data-structure.ts:2](https://github.com/redis/redis-om-node/blob/9708a58/lib/schema/options/data-structure.ts#L2)
 
 ___
 
@@ -101,20 +114,7 @@ A constructor that creates an [Entity](classes/Entity.md) of type TEntity.
 
 #### Defined in
 
-[lib/entity/entity.ts:18](https://github.com/redis/redis-om-node/blob/0843d26/lib/entity/entity.ts#L18)
-
-___
-
-### EntityCreationData
-
-Ƭ **EntityCreationData**: `Record`<`string`, `number` \| `boolean` \| `string` \| `string`[] \| [`Point`](README.md#point) \| `Date` \| ``null``\>
-
-Initialization data for [Entity](classes/Entity.md) creation when calling
-[Repository.createEntity](classes/Repository.md#createentity) or [Repository.createAndSave](classes/Repository.md#createandsave).
-
-#### Defined in
-
-[lib/repository/repository.ts:15](https://github.com/redis/redis-om-node/blob/0843d26/lib/repository/repository.ts#L15)
+[lib/entity/entity-constructor.ts:8](https://github.com/redis/redis-om-node/blob/9708a58/lib/entity/entity-constructor.ts#L8)
 
 ___
 
@@ -126,31 +126,31 @@ A JavaScript object containing the underlying data of an [Entity](classes/Entity
 
 #### Defined in
 
-[lib/entity/entity.ts:12](https://github.com/redis/redis-om-node/blob/0843d26/lib/entity/entity.ts#L12)
+[lib/entity/entity-data.ts:6](https://github.com/redis/redis-om-node/blob/9708a58/lib/entity/entity-data.ts#L6)
 
 ___
 
 ### EntityValue
 
-Ƭ **EntityValue**: `number` \| `boolean` \| `string` \| [`Point`](README.md#point) \| `Date` \| `string`[]
+Ƭ **EntityValue**: `string` \| `number` \| `boolean` \| [`Point`](README.md#point) \| `Date` \| `any`[] \| ``null``
 
-Valid values for properties of an [Entity](classes/Entity.md).
+Valid types for properties on an [Entity](classes/Entity.md).
 
 #### Defined in
 
-[lib/entity/entity.ts:7](https://github.com/redis/redis-om-node/blob/0843d26/lib/entity/entity.ts#L7)
+[lib/entity/entity-value.ts:6](https://github.com/redis/redis-om-node/blob/9708a58/lib/entity/entity-value.ts#L6)
 
 ___
 
 ### FieldDefinition
 
-Ƭ **FieldDefinition**: [`StringField`](interfaces/StringField.md) \| [`TextField`](interfaces/TextField.md) \| [`NumberField`](interfaces/NumberField.md) \| [`BooleanField`](interfaces/BooleanField.md) \| [`PointField`](interfaces/PointField.md) \| [`DateField`](interfaces/DateField.md) \| [`StringArrayField`](interfaces/StringArrayField.md)
+Ƭ **FieldDefinition**: [`StringFieldDefinition`](interfaces/StringFieldDefinition.md) \| [`TextFieldDefinition`](interfaces/TextFieldDefinition.md) \| [`NumberFieldDefinition`](interfaces/NumberFieldDefinition.md) \| [`BooleanFieldDefinition`](interfaces/BooleanFieldDefinition.md) \| [`PointFieldDefinition`](interfaces/PointFieldDefinition.md) \| [`DateFieldDefinition`](interfaces/DateFieldDefinition.md) \| [`StringArrayFieldDefinition`](interfaces/StringArrayFieldDefinition.md)
 
 Contains instructions telling how to map a property on an [Entity](classes/Entity.md) to Redis.
 
 #### Defined in
 
-[lib/schema/schema-definitions.ts:81](https://github.com/redis/redis-om-node/blob/0843d26/lib/schema/schema-definitions.ts#L81)
+[lib/schema/definition/field-definition.ts:10](https://github.com/redis/redis-om-node/blob/9708a58/lib/schema/definition/field-definition.ts#L10)
 
 ___
 
@@ -170,7 +170,7 @@ A function that generates random [Entity IDs](classes/Entity.md#entityid).
 
 #### Defined in
 
-[lib/schema/schema-definitions.ts:89](https://github.com/redis/redis-om-node/blob/0843d26/lib/schema/schema-definitions.ts#L89)
+[lib/schema/options/id-strategy.ts:2](https://github.com/redis/redis-om-node/blob/9708a58/lib/schema/options/id-strategy.ts#L2)
 
 ___
 
@@ -189,7 +189,7 @@ Defines a point on the globe using longitude and latitude.
 
 #### Defined in
 
-[lib/schema/schema-definitions.ts:2](https://github.com/redis/redis-om-node/blob/0843d26/lib/schema/schema-definitions.ts#L2)
+[lib/entity/point.ts:2](https://github.com/redis/redis-om-node/blob/9708a58/lib/entity/point.ts#L2)
 
 ___
 
@@ -201,7 +201,19 @@ Group of [FieldDefinition](README.md#fielddefinition)s that define the schema fo
 
 #### Defined in
 
-[lib/schema/schema-definitions.ts:86](https://github.com/redis/redis-om-node/blob/0843d26/lib/schema/schema-definitions.ts#L86)
+[lib/schema/definition/schema-definition.ts:6](https://github.com/redis/redis-om-node/blob/9708a58/lib/schema/definition/schema-definition.ts#L6)
+
+___
+
+### SchemaFieldType
+
+Ƭ **SchemaFieldType**: ``"string"`` \| ``"number"`` \| ``"boolean"`` \| ``"text"`` \| ``"date"`` \| ``"point"`` \| ``"array"``
+
+Valid types a [FieldDefinition](README.md#fielddefinition).
+
+#### Defined in
+
+[lib/schema/definition/schema-field-type.ts:4](https://github.com/redis/redis-om-node/blob/9708a58/lib/schema/definition/schema-field-type.ts#L4)
 
 ___
 
@@ -215,7 +227,7 @@ Configuration options for a [Schema](classes/Schema.md).
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `dataStructure?` | [`SearchDataStructure`](README.md#searchdatastructure) | The data structure used to store the [Entity](classes/Entity.md) in Redis. Can be set to either `JSON` or `HASH`. Defaults to JSON. |
+| `dataStructure?` | [`DataStructure`](README.md#datastructure) | The data structure used to store the [Entity](classes/Entity.md) in Redis. Can be set to either `JSON` or `HASH`. Defaults to JSON. |
 | `idStrategy?` | [`IdStrategy`](README.md#idstrategy) | A function that generates a random [Entity ID](classes/Entity.md#entityid). Defaults to a function that generates [ULIDs](https://github.com/ulid/spec). Combined with prefix to generate a Redis key. If prefix is `Foo` and idStratgey returns `12345` then the generated key would be `Foo:12345`. |
 | `indexHashName?` | `string` | The name used by Redis OM to store the hash of the index for this [Schema](classes/Schema.md). Defaults to prefix followed by `:index:hash`. So, for a prefix of `Foo`, it would use `Foo:index:hash`. |
 | `indexName?` | `string` | The name used by RediSearch to store the index for this [Schema](classes/Schema.md). Defaults to prefix followed by `:index`. So, for a prefix of `Foo`, it would use `Foo:index`. |
@@ -225,7 +237,7 @@ Configuration options for a [Schema](classes/Schema.md).
 
 #### Defined in
 
-[lib/schema/schema-options.ts:7](https://github.com/redis/redis-om-node/blob/0843d26/lib/schema/schema-options.ts#L7)
+[lib/schema/options/schema-options.ts:9](https://github.com/redis/redis-om-node/blob/9708a58/lib/schema/options/schema-options.ts#L9)
 
 ___
 
@@ -237,7 +249,7 @@ The type of data structure in Redis to map objects to.
 
 #### Defined in
 
-[lib/client.ts:21](https://github.com/redis/redis-om-node/blob/0843d26/lib/client.ts#L21)
+[lib/client.ts:21](https://github.com/redis/redis-om-node/blob/9708a58/lib/client.ts#L21)
 
 ___
 
@@ -249,7 +261,7 @@ Valid values for how to use stop words for a given [Schema](classes/Schema.md).
 
 #### Defined in
 
-[lib/schema/schema-definitions.ts:92](https://github.com/redis/redis-om-node/blob/0843d26/lib/schema/schema-definitions.ts#L92)
+[lib/schema/options/stop-word-options.ts:2](https://github.com/redis/redis-om-node/blob/9708a58/lib/schema/options/stop-word-options.ts#L2)
 
 ___
 
@@ -281,4 +293,4 @@ A function that takes a [Search](classes/Search.md) and returns a [Search](class
 
 #### Defined in
 
-[lib/search/search.ts:27](https://github.com/redis/redis-om-node/blob/0843d26/lib/search/search.ts#L27)
+[lib/search/search.ts:27](https://github.com/redis/redis-om-node/blob/9708a58/lib/search/search.ts#L27)
