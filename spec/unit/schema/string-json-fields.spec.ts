@@ -1,9 +1,9 @@
 import Schema from '../../../lib/schema/schema';
 import Entity from '../../../lib/entity/entity';
-import * as logger from '../../../lib/shims/logger';
+import SchemaDefinition from '../../../lib/schema/definition/schema-definition';
+import DataStructure from '../../../lib/schema/options/data-structure';
 
-import { SchemaDefinition } from '../../../lib/schema/schema-definitions';
-import { SearchDataStructure } from '../../../lib';
+import * as logger from '../../../lib/shims/logger';
 
 const warnSpy = jest.spyOn(logger, 'warn');
 
@@ -16,7 +16,7 @@ describe("Schema", () => {
       expectedRedisSchema: ['$.aField', 'AS', 'aField', 'TAG', 'SEPARATOR', '|'],
       expectedWarning: null
     }],
-    
+
     ["that defines an aliased string for a JSON", {
       schemaDef: { aField: { type: 'string', alias: 'anotherField' } } as SchemaDefinition,
       dataStructure: 'JSON',
@@ -58,7 +58,7 @@ describe("Schema", () => {
       expectedRedisSchema: ['$.aField', 'AS', 'aField', 'TAG', 'SEPARATOR', ';'],
       expectedWarning: null
     }],
-    
+
     ["that defines a separated and aliased string for a JSON", {
       schemaDef: { aField: { type: 'string', alias: 'anotherField', separator: ';' } } as SchemaDefinition,
       dataStructure: 'JSON',
@@ -96,11 +96,11 @@ describe("Schema", () => {
 
   ])("%s", (_, data) => {
 
-    class TestEntity extends Entity {}
+    class TestEntity extends Entity { }
 
-    let redisSchema: string[];
+    let redisSchema: Array<string>;
     let schemaDef = data.schemaDef;
-    let dataStructure = data.dataStructure as SearchDataStructure;
+    let dataStructure = data.dataStructure as DataStructure;
     let expectedRedisSchema = data.expectedRedisSchema;
     let expectedWarning = data.expectedWarning;
 

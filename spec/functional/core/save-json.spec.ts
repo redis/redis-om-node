@@ -26,7 +26,7 @@ describe("save JSON", () => {
     schema = createJsonEntitySchema();
     repository = client.fetchRepository<SampleJsonEntity>(schema);
   });
-  
+
   beforeEach(async () => await flushAll(client));
   afterAll(async () => await client.close());
 
@@ -136,9 +136,10 @@ describe("save JSON", () => {
       entityKey = `SampleJsonEntity:${entityId}`;
     });
 
-    it("does not save JSON", async () => {
-      let exists = await keyExists(client, entityKey);
-      expect(exists).toBe(false);
+    it("creates an empty JSON", async () => {
+      let json = await fetchJson(client, entityKey);
+      let data = JSON.parse(json);
+      expect(data).toEqual({});
     });
   });
 });

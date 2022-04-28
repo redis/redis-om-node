@@ -1,37 +1,41 @@
-import { Hash, createHash } from 'crypto';
+import { createHash } from 'crypto';
 import { ulid } from 'ulid'
-import { RedisError } from '..';
-import { SearchDataStructure } from '../client';
 
 import Entity from "../entity/entity";
-import { EntityConstructor } from '../entity/entity';
+import EntityConstructor from "../entity/entity-constructor";
 
-import SchemaBuilder from './schema-builder';
-import { FieldDefinition, IdStrategy, SchemaDefinition, StopWordOptions } from './schema-definitions';
-import { SchemaOptions } from './schema-options';
+import IdStrategy from './options/id-strategy';
+import DataStructure from './options/data-structure';
+import StopWordOptions from './options/stop-word-options';
+import SchemaOptions from './options/schema-options';
+
+import SchemaDefinition from './definition/schema-definition';
+import FieldDefinition from './definition/field-definition';
+import JsonSchemaBuilder from './builders/json-schema-builder';
+import HashSchemaBuilder from './builders/hash-schema-builder';
 
 /**
  * Defines a schema that determines how an {@link Entity} is mapped to Redis
- * data structures. Construct by passing in an {@link EntityConstructor}, 
+ * data structures. Construct by passing in an {@link EntityConstructor},
  * a {@link SchemaDefinition}, and optionally {@link SchemaOptions}:
- * 
+ *
  * ```typescript
- * let schema = new Schema(Foo, {
+ * const schema = new Schema(Foo, {
  *   aString: { type: 'string' },
  *   aNumber: { type: 'number' },
  *   aBoolean: { type: 'boolean' },
  *   someText: { type: 'text' },
  *   aPoint: { type: 'point' },
  *   aDate: { type: 'date' },
- *   someStrings: { type: 'string[]' }
+ *   someStrings: { type: 'array' }
  * }, {
  *   dataStructure: 'HASH'
  * });
  * ```
- * 
+ *
  * A Schema is primarily used by a {@link Repository} which requires a Schema in
  * its constructor.
- *  
+ *
  * @template TEntity The {@link Entity} this Schema defines.
  */
 export default class Schema<TEntity extends Entity> {
@@ -55,7 +59,7 @@ export default class Schema<TEntity extends Entity> {
    * @param schemaDef Defines all of the fields for the Schema and how they are mapped to Redis.
    * @param options Additional options for this Schema.
    */
-  constructor(ctor: EntityConstructor<TEntity>, schemaDef: SchemaDefinition, options?: SchemaOptions ) {
+  constructor(ctor: EntityConstructor<TEntity>, schemaDef: SchemaDefinition, options?: SchemaOptions) {
     this.entityCtor = ctor;
     this.definition = schemaDef;
     this.options = options;
@@ -77,7 +81,7 @@ export default class Schema<TEntity extends Entity> {
    * The configured data structure, a string with the value of either `HASH` or `JSON`,
    * that this Schema uses to store {@link Entity | Entities} in Redis.
    * */
-  get dataStructure(): SearchDataStructure { return this.options?.dataStructure ?? 'JSON'; }
+  get dataStructure(): DataStructure { return this.options?.dataStructure ?? 'JSON'; }
 
   /**
    * The configured usage of stop words, a string with the value of either `OFF`, `DEFAULT`,
@@ -90,12 +94,12 @@ export default class Schema<TEntity extends Entity> {
    * The configured stop words. Ignored if {@link Schema.useStopWords} is anything other
    * than `CUSTOM`.
    */
-  get stopWords(): string[] { return this.options?.stopWords ?? []; }
+  get stopWords(): Array<string> { return this.options?.stopWords ?? []; }
 
   /** The hash value of this index. Stored in Redis under {@link Schema.indexHashName}. */
   get indexHash(): string {
 
-    let data = JSON.stringify({
+    const data = JSON.stringify({
       definition: this.definition,
       prefix: this.prefix,
       indexName: this.indexName,
@@ -109,126 +113,39 @@ export default class Schema<TEntity extends Entity> {
   }
 
   /** @internal */
-  get redisSchema(): string[] { return new SchemaBuilder(this).redisSchema; }
+  get redisSchema(): Array<string> {
+    if (this.dataStructure === 'HASH') return new HashSchemaBuilder(this).redisSchema;
+    if (this.dataStructure === 'JSON') return new JsonSchemaBuilder(this).redisSchema;
+    throw new Error(`'${this.dataStructure}' in an invalid data structure. Valid data structures are 'HASH' and 'JSON'.`);
+  }
 
   /**
    * Generates a unique string using the configured {@link IdStrategy}.
-   * @returns 
+   * @returns
    */
   generateId(): string {
-    let ulidStrategy: IdStrategy = () => ulid();
+    const ulidStrategy: IdStrategy = () => ulid();
     return (this.options?.idStrategy ?? ulidStrategy)();
   }
 
   private defineProperties() {
-    let entityName = this.entityCtor.name;
-    for (let field in this.definition) {
-      this.validateFieldDef(field);
+    Object.keys(this.definition).forEach(fieldName => {
 
-      let fieldDef: FieldDefinition = this.definition[field];
-      let fieldType = fieldDef.type;
-      let fieldAlias = fieldDef.alias ?? field;
+      const fieldDef: FieldDefinition = this.definition[fieldName];
+      const fieldAlias = fieldDef.alias ?? fieldName;
 
-      Object.defineProperty(this.entityCtor.prototype, field, {
+      this.validateFieldDef(fieldName, fieldDef);
+
+      Object.defineProperty(this.entityCtor.prototype, fieldName, {
         configurable: true,
         get: function (): any {
-          return this.entityData[fieldAlias] ?? null;
+          return this.entityFields[fieldAlias].value;
         },
-        set: function(value: any): void {
-
-          if (value === undefined) {
-            throw Error(`Property '${field}' on entity of type '${entityName}' cannot be set to undefined. Use null instead.`);
-          }
-
-          if (value === null) {
-            delete this.entityData[fieldAlias];
-            return;
-          }
-
-          if (fieldType === 'string' && isStringable(value)) {
-            this.entityData[fieldAlias] = value.toString();
-            return;
-          }
-
-          if (fieldType === 'text' && isStringable(value)) {
-            this.entityData[fieldAlias] = value.toString();
-            return;
-          }
-
-          if (fieldType === 'number' && isNumber(value)) {
-            this.entityData[fieldAlias] = value;
-            return;
-          }
-
-          if (fieldType === 'boolean' && isBoolean(value)) {
-            this.entityData[fieldAlias] = value;
-            return;
-          }
-
-          if (fieldType === 'point' && isPoint(value)) {
-            let { longitude, latitude } = value;
-            this.entityData[fieldAlias] = { longitude, latitude };
-            return;
-          }
-
-          if (fieldType === 'date' && isDateable(value) && isDate(value)) {
-            this.entityData[fieldAlias] = value;
-            return;
-          } 
-          
-          if (fieldType === 'date' && isDateable(value) && isString(value)) {
-            this.entityData[fieldAlias] = new Date(value);
-            return;
-          }
-          
-          if (fieldType === 'date' && isDateable(value) && isNumber(value)) {
-            let date = new Date();
-            date.setTime(value);
-            this.entityData[fieldAlias] = date;
-            return;
-          }
-
-          if (fieldType === 'string[]' && isArray(value)) {
-            this.entityData[fieldAlias] = value.map((v: any) => v.toString());
-            return;
-          }
-
-          throw new RedisError(`Property '${field}' expected type of '${fieldType}' but received value of '${value}'.`);
+        set: function (value: any): void {
+          this.entityFields[fieldAlias].value = value;
         }
       });
-
-      function isStringable(value: any) {
-        return isString(value) || isNumber(value) || isBoolean(value);
-      }
-
-      function isDateable(value: any) {
-        return isDate(value) || isString(value) || isNumber(value);
-      }
-
-      function isPoint(value: any) {
-        return isNumber(value.longitude) && isNumber(value.latitude);
-      }
-
-      function isString(value: any) {
-        return typeof(value) === 'string';
-      }  
-
-      function isNumber(value: any) {
-        return typeof(value) === 'number';
-      }  
-
-      function isBoolean(value: any) {
-        return typeof(value) === 'boolean';
-      }  
-
-      function isDate(value: any) {
-        return value instanceof Date;
-      }
-
-      function isArray(value: any) {
-        return Array.isArray(value);
-      }
-    }
+    })
   }
 
   private validateOptions() {
@@ -240,14 +157,13 @@ export default class Schema<TEntity extends Entity> {
 
     if (this.options?.idStrategy && !(this.options.idStrategy instanceof Function))
       throw Error("ID strategy must be a function that takes no arguments and returns a string.");
-  
+
     if (this.prefix === '') throw Error(`Prefix must be a non-empty string.`);
     if (this.indexName === '') throw Error(`Index name must be a non-empty string.`);
   }
 
-  private validateFieldDef(field: string) {
-    let fieldDef: FieldDefinition = this.definition[field];
-    if (!['boolean', 'date', 'number', 'point', 'string', 'string[]', 'text'].includes(fieldDef.type))
-      throw Error(`The field '${field}' is configured with a type of '${fieldDef.type}'. Valid types include 'boolean', 'date', 'number', 'point', 'string', 'string[]', and 'text'.`);
+  private validateFieldDef(field: string, fieldDef: FieldDefinition) {
+    if (!['boolean', 'date', 'number', 'point', 'string', 'array', 'text'].includes(fieldDef.type))
+      throw Error(`The field '${field}' is configured with a type of '${fieldDef.type}'. Valid types include 'boolean', 'date', 'number', 'point', 'string', 'array', and 'text'.`);
   }
 }

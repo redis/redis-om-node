@@ -3,14 +3,14 @@ import Schema from '../../../lib/schema/schema';
 import Repository from '../../../lib/repository/repository';
 
 import { createJsonEntitySchema, createChangedJsonEntitySchema, SampleJsonEntity } from '../helpers/data-helper';
-import { fetchIndexHash, fetchIndexInfo, flushAll  } from '../helpers/redis-helper';
+import { fetchIndexHash, fetchIndexInfo, flushAll } from '../helpers/redis-helper';
 
 describe("create and drop index on JSON", () => {
 
   let client: Client;
   let repository: Repository<SampleJsonEntity>;
   let schema: Schema<SampleJsonEntity>;
-  let indexInfo: string[];
+  let indexInfo: Array<string>;
   let indexHash: string;
 
   beforeAll(async () => {
@@ -43,31 +43,31 @@ describe("create and drop index on JSON", () => {
 
     it("has the expected prefixes", () => {
       let prefixes = indexInfo[5][3];
-      expect(prefixes).toEqual([ 'SampleJsonEntity:' ]);
+      expect(prefixes).toEqual(['SampleJsonEntity:']);
     });
 
     it("has the expected hash", () => {
-      expect(indexHash).toBe("XgD0DXohHu8y4/JvvbEWhZCoiWk=");
+      expect(indexHash).toBe("CG+oldxDhlhKcav02fnypVl5+jI=");
     });
 
     it("has the expected fields", () => {
       let fields = indexInfo[7];
       expect(fields).toHaveLength(14);
       expect(fields).toEqual([
-        [ 'identifier', '$.aString', 'attribute', 'aString', 'type', 'TAG', 'SEPARATOR', '|' ],
-        [ 'identifier', '$.anotherString', 'attribute', 'anotherString', 'type', 'TAG', 'SEPARATOR', '|' ],
-        [ 'identifier', '$.someText', 'attribute', 'someText', 'type', 'TEXT', 'WEIGHT', '1', 'SORTABLE' ],
-        [ 'identifier', '$.someOtherText', 'attribute', 'someOtherText', 'type', 'TEXT', 'WEIGHT', '1', 'SORTABLE' ],
-        [ 'identifier', '$.aNumber', 'attribute', 'aNumber', 'type', 'NUMERIC', 'SORTABLE' ],
-        [ 'identifier', '$.anotherNumber', 'attribute', 'anotherNumber', 'type', 'NUMERIC', 'SORTABLE' ],
-        [ 'identifier', '$.aBoolean', 'attribute', 'aBoolean', 'type', 'TAG', 'SEPARATOR', '' ],
-        [ 'identifier', '$.anotherBoolean', 'attribute', 'anotherBoolean', 'type', 'TAG', 'SEPARATOR', '' ],
-        [ 'identifier', '$.aPoint', 'attribute', 'aPoint', 'type', 'GEO' ],
-        [ 'identifier', '$.anotherPoint', 'attribute', 'anotherPoint', 'type', 'GEO' ],
-        [ 'identifier', '$.aDate', 'attribute', 'aDate', 'type', 'NUMERIC', 'SORTABLE' ],
-        [ 'identifier', '$.anotherDate', 'attribute', 'anotherDate', 'type', 'NUMERIC', 'SORTABLE' ],
-        [ 'identifier', '$.someStrings[*]', 'attribute', 'someStrings', 'type', 'TAG', 'SEPARATOR', '' ],
-        [ 'identifier', '$.someOtherStrings[*]', 'attribute', 'someOtherStrings', 'type', 'TAG', 'SEPARATOR', '' ]
+        ['identifier', '$.aString', 'attribute', 'aString', 'type', 'TAG', 'SEPARATOR', '|'],
+        ['identifier', '$.anotherString', 'attribute', 'anotherString', 'type', 'TAG', 'SEPARATOR', '|'],
+        ['identifier', '$.someText', 'attribute', 'someText', 'type', 'TEXT', 'WEIGHT', '1', 'SORTABLE'],
+        ['identifier', '$.someOtherText', 'attribute', 'someOtherText', 'type', 'TEXT', 'WEIGHT', '1', 'SORTABLE'],
+        ['identifier', '$.aNumber', 'attribute', 'aNumber', 'type', 'NUMERIC', 'SORTABLE'],
+        ['identifier', '$.anotherNumber', 'attribute', 'anotherNumber', 'type', 'NUMERIC', 'SORTABLE'],
+        ['identifier', '$.aBoolean', 'attribute', 'aBoolean', 'type', 'TAG', 'SEPARATOR', ''],
+        ['identifier', '$.anotherBoolean', 'attribute', 'anotherBoolean', 'type', 'TAG', 'SEPARATOR', ''],
+        ['identifier', '$.aPoint', 'attribute', 'aPoint', 'type', 'GEO'],
+        ['identifier', '$.anotherPoint', 'attribute', 'anotherPoint', 'type', 'GEO'],
+        ['identifier', '$.aDate', 'attribute', 'aDate', 'type', 'NUMERIC', 'SORTABLE'],
+        ['identifier', '$.anotherDate', 'attribute', 'anotherDate', 'type', 'NUMERIC', 'SORTABLE'],
+        ['identifier', '$.someStrings[*]', 'attribute', 'someStrings', 'type', 'TAG', 'SEPARATOR', ''],
+        ['identifier', '$.someOtherStrings[*]', 'attribute', 'someOtherStrings', 'type', 'TAG', 'SEPARATOR', '']
       ]);
     });
 
@@ -100,25 +100,25 @@ describe("create and drop index on JSON", () => {
 
         expect(indexName).toBe('SampleJsonEntity:index');
         expect(keyType).toBe('JSON');
-        expect(prefixes).toEqual([ 'SampleJsonEntity:' ]);
-        expect(indexHash).toBe("XgD0DXohHu8y4/JvvbEWhZCoiWk=");
+        expect(prefixes).toEqual(['SampleJsonEntity:']);
+        expect(indexHash).toBe("CG+oldxDhlhKcav02fnypVl5+jI=");
 
         expect(fields).toHaveLength(14);
         expect(fields).toEqual([
-          [ 'identifier', '$.aString', 'attribute', 'aString', 'type', 'TAG', 'SEPARATOR', '|' ],
-          [ 'identifier', '$.anotherString', 'attribute', 'anotherString', 'type', 'TAG', 'SEPARATOR', '|' ],
-          [ 'identifier', '$.someText', 'attribute', 'someText', 'type', 'TEXT', 'WEIGHT', '1', 'SORTABLE' ],
-          [ 'identifier', '$.someOtherText', 'attribute', 'someOtherText', 'type', 'TEXT', 'WEIGHT', '1', 'SORTABLE' ],
-          [ 'identifier', '$.aNumber', 'attribute', 'aNumber', 'type', 'NUMERIC', 'SORTABLE' ],
-          [ 'identifier', '$.anotherNumber', 'attribute', 'anotherNumber', 'type', 'NUMERIC', 'SORTABLE' ],
-          [ 'identifier', '$.aBoolean', 'attribute', 'aBoolean', 'type', 'TAG', 'SEPARATOR', '' ],
-          [ 'identifier', '$.anotherBoolean', 'attribute', 'anotherBoolean', 'type', 'TAG', 'SEPARATOR', '' ],
-          [ 'identifier', '$.aPoint', 'attribute', 'aPoint', 'type', 'GEO' ],
-          [ 'identifier', '$.anotherPoint', 'attribute', 'anotherPoint', 'type', 'GEO' ],
-          [ 'identifier', '$.aDate', 'attribute', 'aDate', 'type', 'NUMERIC', 'SORTABLE' ],
-          [ 'identifier', '$.anotherDate', 'attribute', 'anotherDate', 'type', 'NUMERIC', 'SORTABLE' ],
-          [ 'identifier', '$.someStrings[*]', 'attribute', 'someStrings', 'type', 'TAG', 'SEPARATOR', '' ],
-          [ 'identifier', '$.someOtherStrings[*]', 'attribute', 'someOtherStrings', 'type', 'TAG', 'SEPARATOR', '' ]
+          ['identifier', '$.aString', 'attribute', 'aString', 'type', 'TAG', 'SEPARATOR', '|'],
+          ['identifier', '$.anotherString', 'attribute', 'anotherString', 'type', 'TAG', 'SEPARATOR', '|'],
+          ['identifier', '$.someText', 'attribute', 'someText', 'type', 'TEXT', 'WEIGHT', '1', 'SORTABLE'],
+          ['identifier', '$.someOtherText', 'attribute', 'someOtherText', 'type', 'TEXT', 'WEIGHT', '1', 'SORTABLE'],
+          ['identifier', '$.aNumber', 'attribute', 'aNumber', 'type', 'NUMERIC', 'SORTABLE'],
+          ['identifier', '$.anotherNumber', 'attribute', 'anotherNumber', 'type', 'NUMERIC', 'SORTABLE'],
+          ['identifier', '$.aBoolean', 'attribute', 'aBoolean', 'type', 'TAG', 'SEPARATOR', ''],
+          ['identifier', '$.anotherBoolean', 'attribute', 'anotherBoolean', 'type', 'TAG', 'SEPARATOR', ''],
+          ['identifier', '$.aPoint', 'attribute', 'aPoint', 'type', 'GEO'],
+          ['identifier', '$.anotherPoint', 'attribute', 'anotherPoint', 'type', 'GEO'],
+          ['identifier', '$.aDate', 'attribute', 'aDate', 'type', 'NUMERIC', 'SORTABLE'],
+          ['identifier', '$.anotherDate', 'attribute', 'anotherDate', 'type', 'NUMERIC', 'SORTABLE'],
+          ['identifier', '$.someStrings[*]', 'attribute', 'someStrings', 'type', 'TAG', 'SEPARATOR', ''],
+          ['identifier', '$.someOtherStrings[*]', 'attribute', 'someOtherStrings', 'type', 'TAG', 'SEPARATOR', '']
         ]);
       });
     });
@@ -127,7 +127,7 @@ describe("create and drop index on JSON", () => {
       beforeEach(async () => {
         schema = createChangedJsonEntitySchema();
         repository = client.fetchRepository<SampleJsonEntity>(schema);
-    
+
         await repository.createIndex();
         indexInfo = await fetchIndexInfo(client, 'sample-json-entity:index');
         indexHash = await fetchIndexHash(client, 'sample-json-entity:index:hash');
@@ -137,11 +137,11 @@ describe("create and drop index on JSON", () => {
         let indexName = indexInfo[1];
         let keyType = indexInfo[5][1];
         let prefixes = indexInfo[5][3];
-  
+
         expect(indexName).toBe('sample-json-entity:index');
         expect(keyType).toBe('JSON');
-        expect(prefixes).toEqual([ 'sample-json-entity:' ]);
-        expect(indexHash).toBe("Tm5jE5zHI3uyJd4HFJiMwPBPquo=");
+        expect(prefixes).toEqual(['sample-json-entity:']);
+        expect(indexHash).toBe("1H4rkUnjh4UyVJlI5Z6JCCTD1Zg=");
       });
     });
   });

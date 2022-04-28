@@ -1,14 +1,16 @@
 import Schema from '../../../lib/schema/schema';
-import Entity, { EntityData } from '../../../lib/entity/entity';
-import { SearchDataStructure } from '../../../lib/client';
-import { Point } from '../../../lib/schema/schema-definitions';
+import Entity from '../../../lib/entity/entity';
+import EntityData from '../../../lib/entity/entity-data';
+import DataStructure from '../../../lib/schema/options/data-structure';
+import Point from '../../../lib/entity/point';
 import {
   A_STRING, ANOTHER_STRING,
   A_NUMBER, ANOTHER_NUMBER,
   SOME_STRINGS, SOME_OTHER_STRINGS,
   SOME_TEXT, SOME_OTHER_TEXT,
   A_DATE, ANOTHER_DATE,
-  A_POINT, ANOTHER_POINT } from '../../helpers/example-data';
+  A_POINT, ANOTHER_POINT
+} from '../../helpers/example-data';
 
 describe("Schema", () => {
 
@@ -19,17 +21,17 @@ describe("Schema", () => {
     someText: string;
     aPoint: Point;
     aDate: Date;
-    someStrings: string[];
+    someStrings: Array<string>;
   }
 
-  class TestEntity extends Entity {}
+  class TestEntity extends Entity { }
 
   let schema: Schema<TestEntity>;
   let entity: TestEntity;
 
   describe.each([
-    [ "when configured for HASH", 'HASH'],
-    [ "when configured for JSON", 'JSON']
+    ["when configured for HASH", 'HASH'],
+    ["when configured for JSON", 'JSON']
   ])("%s", (_, dataStructure) => {
 
     beforeAll(() => {
@@ -40,8 +42,8 @@ describe("Schema", () => {
         someText: { type: 'string' },
         aPoint: { type: 'point' },
         aDate: { type: 'date' },
-        someStrings: { type: 'string[]' }
-      }, { dataStructure: dataStructure as SearchDataStructure });
+        someStrings: { type: 'array' }
+      }, { dataStructure: dataStructure as DataStructure });
     });
 
     beforeEach(() => {
@@ -92,7 +94,7 @@ describe("Schema", () => {
       expect(entity.aDate).toBe(ANOTHER_DATE);
     });
 
-    it("adds a string[] getter and setter", () => {
+    it("adds a array getter and setter", () => {
       expect(entity).toHaveProperty('someStrings', SOME_STRINGS);
       entity.someStrings = SOME_OTHER_STRINGS;
       expect(entity.someStrings).toEqual(SOME_OTHER_STRINGS);

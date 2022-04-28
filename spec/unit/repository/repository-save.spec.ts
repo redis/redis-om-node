@@ -43,15 +43,15 @@ describe("Repository", () => {
           expectedData: { aString: A_STRING, aNumber: A_NUMBER_STRING, aBoolean: '0', someText: SOME_TEXT,
             aPoint: A_POINT_STRING, aDate: A_DATE_EPOCH_STRING, someStrings: SOME_STRINGS_JOINED }
         }],
-  
+
         [ "when saving a partially populated entity", {
           providedString: A_STRING, providedNumber: A_NUMBER, providedBoolean: null, providedText: null,
           providedPoint: null, providedDate: null, providedArray: null,
           expectedData: { aString: A_STRING, aNumber: A_NUMBER_STRING }
         }]
-  
+
       ])("%s", (_, data) => {
-  
+
         beforeEach(async () => {
           entity.aString = data.providedString;
           entity.aNumber = data.providedNumber;
@@ -63,12 +63,12 @@ describe("Repository", () => {
           entityId = await repository.save(entity);
           expectedKey = `SimpleHashEntity:${entityId}`;
         });
-  
+
         it("returns the entity id", () => expect(entityId).toBe(entity.entityId));
         it("saves the entity data to the key", () =>
           expect(Client.prototype.hsetall).toHaveBeenCalledWith(expectedKey, data.expectedData));
       });
-  
+
       describe("when saving an empty entity", () => {
         beforeEach(async () => {
           entity.aString = null;
@@ -81,7 +81,7 @@ describe("Repository", () => {
           entityId = await repository.save(entity);
           expectedKey = `SimpleHashEntity:${entityId}`;
         });
-  
+
         it("returns the entity id", () => expect(entityId).toBe(entity.entityId));
         it("unlinks the key", () =>
           expect(Client.prototype.unlink).toHaveBeenCalledWith(expectedKey));
@@ -104,7 +104,7 @@ describe("Repository", () => {
           expectedData: { aString: A_STRING, aNumber: A_NUMBER, aBoolean: false, someText: SOME_TEXT,
             aPoint: A_POINT_STRING, aDate: A_DATE_EPOCH, someStrings: SOME_STRINGS }
         }],
-  
+
         [ "when saving a partially populated entity", {
           providedString: A_STRING, providedNumber: A_NUMBER, providedBoolean: null, providedText: null,
           providedPoint: null, providedDate: null, providedArray: null,
@@ -112,7 +112,7 @@ describe("Repository", () => {
         }]
 
       ])("%s", (_, data) => {
-  
+
         beforeEach(async () => {
           entity.aString = data.providedString;
           entity.aNumber = data.providedNumber;
@@ -124,7 +124,7 @@ describe("Repository", () => {
           entityId = await repository.save(entity);
           expectedKey = `SimpleJsonEntity:${entityId}`;
         });
-  
+
         it("returns the entity id", () => expect(entityId).toBe(entity.entityId));
         it("saves the entity data to the key", () =>
           expect(Client.prototype.jsonset).toHaveBeenCalledWith(expectedKey, data.expectedData));
@@ -142,10 +142,10 @@ describe("Repository", () => {
           entityId = await repository.save(entity);
           expectedKey = `SimpleJsonEntity:${entityId}`;
         });
-  
+
         it("returns the entity id", () => expect(entityId).toBe(entity.entityId));
         it("unlinks the key", () =>
-          expect(Client.prototype.unlink).toHaveBeenCalledWith(expectedKey));
+          expect(Client.prototype.jsonset).toHaveBeenCalledWith(expectedKey, {}));
       });
     });
   });

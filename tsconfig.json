@@ -1,13 +1,13 @@
 {
   "compilerOptions": {
-    "target": "ES2019",
-    "module": "commonjs",
+    "target": "ESNext",
+    "module": "CommonJS",
     "rootDir": "lib",
     "outDir": "./dist",
     "declaration": true,
     "strict": true,
-    "removeComments": true,
     "esModuleInterop": true,
+    "importHelpers": true,
     "forceConsistentCasingInFileNames": true
   },
   "include": [

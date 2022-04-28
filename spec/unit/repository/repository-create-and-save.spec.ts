@@ -39,7 +39,7 @@ describe("Repository", () => {
           entity = await repository.createAndSave({ aString: A_STRING, aNumber: A_NUMBER, aBoolean: false,
             someText: SOME_TEXT, aPoint: A_POINT, aDate: A_DATE, someStrings: SOME_STRINGS });
         });
-  
+
         it("returns the populated entity", () => {
           expect(entity.aString).toBe(A_STRING);
           expect(entity.aNumber).toBe(A_NUMBER);
@@ -56,10 +56,10 @@ describe("Repository", () => {
               aString: A_STRING, aNumber: A_NUMBER_STRING, aBoolean: '0', someText: SOME_TEXT,
               aPoint: A_POINT_STRING, aDate: A_DATE_EPOCH_STRING, someStrings: SOME_STRINGS_JOINED }));
       });
-  
+
       describe("when saving an empty entity", () => {
         beforeEach(async () => entity = await repository.createAndSave({}));
-  
+
         it("returns the empty entity", () => {
           expect(entity.aString).toBeNull();
           expect(entity.aNumber).toBeNull();
@@ -87,7 +87,7 @@ describe("Repository", () => {
           entity = await repository.createAndSave({ aString: A_STRING, aNumber: A_NUMBER, aBoolean: false,
             someText: SOME_TEXT, aPoint: A_POINT, aDate: A_DATE, someStrings: SOME_STRINGS });
         });
-  
+
         it("returns the populated entity", () => {
           expect(entity.aString).toBe(A_STRING);
           expect(entity.aNumber).toBe(A_NUMBER);
@@ -104,10 +104,10 @@ describe("Repository", () => {
               aString: A_STRING, aNumber: A_NUMBER, aBoolean: false, someText: SOME_TEXT,
               aPoint: A_POINT_STRING, aDate: A_DATE_EPOCH, someStrings: SOME_STRINGS }));
       });
-  
+
       describe("when saving an empty entity", () => {
         beforeEach(async () => entity = await repository.createAndSave({}));
-  
+
         it("returns the empty entity", () => {
           expect(entity.aString).toBeNull();
           expect(entity.aNumber).toBeNull();
@@ -119,8 +119,8 @@ describe("Repository", () => {
         });
 
         it("unlinks the key", () =>
-          expect(Client.prototype.unlink).toHaveBeenCalledWith(
-            expect.stringMatching(/^SimpleJsonEntity:/)));
+          expect(Client.prototype.jsonset).toHaveBeenCalledWith(
+            expect.stringMatching(/^SimpleJsonEntity:/), {}));
       });
     });
   });

@@ -24,7 +24,7 @@ describe("Client", () => {
       });
 
       it("passes the command to the shim", async () => {
-        expect(RedisShim.prototype.execute).toHaveBeenCalledWith([ 'JSON.GET', 'foo', '.' ]);
+        expect(RedisShim.prototype.execute).toHaveBeenCalledWith(['JSON.GET', 'foo', '.']);
       });
 
       it("returns the JSON", async () => {
@@ -37,14 +37,14 @@ describe("Client", () => {
         await client.open();
         await client.close();
       });
-      
-      it("errors when called on a closed client", () => 
+
+      it("errors when called on a closed client", () =>
         expect(async () => await client.jsonget('foo'))
-          .rejects.toThrow("Redis connection needs opened."));
+          .rejects.toThrow("Redis connection needs to be open."));
     });
-    
+
     it("errors when called on a new client", async () =>
       expect(async () => await client.jsonget('foo'))
-        .rejects.toThrow("Redis connection needs opened."));
+        .rejects.toThrow("Redis connection needs to be open."));
   });
 });

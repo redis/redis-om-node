@@ -31,13 +31,13 @@ describe("Search", () => {
     const expectToBeNegatedContainsOneQuery: ArrayChecker = search => expect(search.query).toBe(A_NEGATED_CONTAINS_ONE_QUERY);
 
     beforeAll(() => client = new Client());
-  
+
     beforeEach(() => {
       search = new Search<SimpleEntity>(simpleSchema, client);
       where = search.where('someStrings');
-    });    
+    });
 
-    describe("when generating for an string[]", () => {
+    describe("when generating for an array", () => {
 
       it("generates a query with .contains", () => expectToBeContainsQuery(where.contains(A_STRING)));
       it("generates a query with .does.contain", () => expectToBeContainsQuery(where.does.contain(A_STRING)));

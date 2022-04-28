@@ -1,6 +1,6 @@
 {
   "name": "redis-om",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "description": "Object mapping, and more, for Redis and Node.js. Written in TypeScript.",
   "main": "dist/index.js",
   "types": "./dist/index.d.ts",
@@ -28,7 +28,7 @@
   "license": "MIT",
   "author": "Guy Royse <guy@guyroyse.com> (http://guyroyse.com/)",
   "engines": {
-    "node": ">=12"
+    "node": ">= 14"
   },
   "devDependencies": {
     "@types/jest": "^27.4.0",
@@ -37,6 +37,7 @@
     "jest": "^27.5.1",
     "nodemon": "^2.0.13",
     "ts-jest": "^27.1.3",
+    "tslib": "^2.3.1",
     "typedoc": "^0.22.7",
     "typedoc-plugin-markdown": "^3.11.3",
     "typescript": "^4.5.5"

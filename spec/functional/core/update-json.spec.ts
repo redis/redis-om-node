@@ -26,7 +26,7 @@ describe("update JSON", () => {
     schema = createJsonEntitySchema();
     repository = client.fetchRepository<SampleJsonEntity>(schema);
   });
-  
+
   beforeEach(async () => {
     await flushAll(client);
     await loadTestJson(client, 'JsonEntity:full', AN_ENTITY);
@@ -143,9 +143,10 @@ describe("update JSON", () => {
 
     it("returns the expected entity id", () => expect(entityId).toBe('full'));
 
-    it("removes the key from Redis", async () => {
-      let exists = await keyExists(client, entityKey);
-      expect(exists).toBe(false);
+    it("creates the expected JSON", async () => {
+      let json = await fetchJson(client, entityKey);
+      let data = JSON.parse(json);
+      expect(data).toEqual({});
     });
   });
 });

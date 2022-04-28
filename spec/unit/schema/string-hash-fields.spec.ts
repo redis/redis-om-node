@@ -1,7 +1,7 @@
 import Schema from '../../../lib/schema/schema';
 import Entity from '../../../lib/entity/entity';
-import { SchemaDefinition } from '../../../lib/schema/schema-definitions';
-import { SearchDataStructure } from '../../../lib';
+import SchemaDefinition from '../../../lib/schema/definition/schema-definition';
+import DataStructure from '../../../lib/schema/options/data-structure';
 
 describe("Schema", () => {
   describe.each([
@@ -11,7 +11,7 @@ describe("Schema", () => {
       dataStructure: 'HASH',
       expectedRedisSchema: ['aField', 'TAG', 'SEPARATOR', '|']
     }],
-    
+
     ["that defines an aliased string for a HASH", {
       schemaDef: { aField: { type: 'string', alias: 'anotherField' } } as SchemaDefinition,
       dataStructure: 'HASH',
@@ -47,7 +47,7 @@ describe("Schema", () => {
       dataStructure: 'HASH',
       expectedRedisSchema: ['aField', 'TAG', 'SEPARATOR', ';']
     }],
-    
+
     ["that defines a separated and aliased string for a HASH", {
       schemaDef: { aField: { type: 'string', alias: 'anotherField', separator: ';' } } as SchemaDefinition,
       dataStructure: 'HASH',
@@ -84,7 +84,7 @@ describe("Schema", () => {
 
     it("generates a Redis schema for the field", () => {
       let schemaDef = data.schemaDef;
-      let dataStructure = data.dataStructure as SearchDataStructure;
+      let dataStructure = data.dataStructure as DataStructure;
       let expectedRedisSchema = data.expectedRedisSchema;
 
       let schema = new Schema<TestEntity>(TestEntity, schemaDef, { dataStructure });

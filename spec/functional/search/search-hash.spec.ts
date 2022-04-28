@@ -22,7 +22,7 @@ describe("search for hashes", () => {
     await loadTestHash(client, 'SampleHashEntity:2', ANOTHER_ENTITY);
     await loadTestHash(client, 'SampleHashEntity:3', A_THIRD_ENTITY);
     await loadTestHash(client, 'SampleHashEntity:4', AN_ESCAPED_ENTITY);
-    
+
     schema = createHashEntitySchema();
     repository = client.fetchRepository<SampleHashEntity>(schema);
 
@@ -150,7 +150,7 @@ describe("search for hashes", () => {
   it("searches a point", async () => {
     entities = await repository.search()
       .where('aPoint').inCircle(circle => circle.origin(A_POINT).radius(10).meters)
-        .returnAll();
+      .returnAll();
 
     expect(entities).toHaveLength(1);
     expect(entities).toEqual(expect.arrayContaining([
@@ -167,7 +167,7 @@ describe("search for hashes", () => {
     ]));
   });
 
-  it("searches a string[]", async () => {
+  it("searches a array", async () => {
     entities = await repository.search().where('someStrings').contains('charlie').returnAll();
 
     expect(entities).toHaveLength(3);
@@ -212,7 +212,7 @@ describe("search for hashes", () => {
     ]));
   });
 
-  it("searches an string[] with escaped punctuation", async () => {
+  it("searches an array with escaped punctuation", async () => {
     entities = await repository.search().where('someStrings').contains('alfa ,.<>{}[]"\':;!@#$%^&*()-+=~ bravo').returnAll();
 
     expect(entities).toHaveLength(1);
