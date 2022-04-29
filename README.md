@@ -161,7 +161,7 @@ await client.close()
 <summary>Or, in TypeScript:</summary>
 
 In Typescript you should type cast the returning type.
-Typecasts can be done in 2 ways, casting it before the returning value `client.execute(["PING"])` or after using the `as` keyword `client.execute(["PING"]) as string`.
+Typecasts can be done in 2 ways, casting it before the returning value `<string>client.execute(["PING"])` or after using the `as` keyword `client.execute(["PING"]) as string`.
 
 ```typescript
 import { Client } from 'redis-om';
