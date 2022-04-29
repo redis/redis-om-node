@@ -4,6 +4,19 @@
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and Redis OM adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+
+## 0.3.0 - 2022-04-28
+### Changed
+- Internal changes in preparation for adding embeddable objects.
+- Performance improvements.
+- Renamed and reorganized some types that might affect TypeScript users.
+- Removed support for Node 12.
+- Changed examples in README to assume top-level awaits are available.
+
+### Fixed
+- Fixed error in sample code when calling `.use`.
+
+
 ## 0.2.1 - 2022-03-30
 ### Added
 - Added limited ability to sort search results using `.sortBy`.

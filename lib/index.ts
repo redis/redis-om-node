@@ -12,6 +12,7 @@ import Schema from "./schema/schema";
 import SchemaDefinition from "./schema/definition/schema-definition";
 import FieldDefinition from "./schema/definition/field-definition";
 import BaseFieldDefinition from "./schema/definition/base-field-definition";
+import SchemaFieldType from "./schema/definition/schema-field-type";
 import SortableFieldDefinition from "./schema/definition/sortable-field-definition";
 import SeparableFieldDefinition from "./schema/definition/separable-field-definition";
 import StringFieldDefinition from "./schema/definition/string-field-definition";
@@ -41,9 +42,12 @@ export {
   Entity, EntityData, EntityValue, EntityConstructor,
   RedisError, Repository,
   Schema, SchemaDefinition, Point,
-  FieldDefinition as FieldDefinition,
+  FieldDefinition,
   SchemaOptions, DataStructure, IdStrategy, StopWordOptions,
-  BaseFieldDefinition as Field, SortableFieldDefinition as Sortable, SeparableFieldDefinition as Separable, BooleanFieldDefinition as BooleanField, DateFieldDefinition as DateField, NumberFieldDefinition as NumberField, PointFieldDefinition as PointField, StringFieldDefinition as StringField, StringArrayFieldDefinition as StringArrayField, TextFieldDefinition as TextField,
+  BaseFieldDefinition, SortableFieldDefinition, SeparableFieldDefinition,
+  BooleanFieldDefinition, DateFieldDefinition, NumberFieldDefinition,
+  PointFieldDefinition, StringFieldDefinition, StringArrayFieldDefinition,
+  TextFieldDefinition, SchemaFieldType,
   AbstractSearch, Search, RawSearch, SubSearchFunction,
   Where, WhereField, Circle, CircleFunction, mapSchema, MapSchema
 };
