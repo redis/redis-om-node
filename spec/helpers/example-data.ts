@@ -36,11 +36,11 @@ export const A_POINT: Point = { longitude: 12.34, latitude: 56.78 };
 export const A_POINT_JSON: string = JSON.stringify(A_POINT);
 export const A_POINT_STRING: string = `${A_POINT.longitude},${A_POINT.latitude}`;
 
-export const ANOTHER_POINT: Point = { longitude: 23.45, latitude: 67.89 };
+export const ANOTHER_POINT: Point = { longitude: -23.45, latitude: 67.89 };
 export const ANOTHER_POINT_JSON: string = JSON.stringify(ANOTHER_POINT);
 export const ANOTHER_POINT_STRING: string = `${ANOTHER_POINT.longitude},${ANOTHER_POINT.latitude}`;
 
-export const A_THIRD_POINT: Point = { longitude: 34.56, latitude: 78.90 };
+export const A_THIRD_POINT: Point = { longitude: -34.56, latitude: 78.90 };
 export const A_THIRD_POINT_JSON: string = JSON.stringify(A_THIRD_POINT);
 export const A_THIRD_POINT_STRING: string = `${A_THIRD_POINT.longitude},${A_THIRD_POINT.latitude}`;
 

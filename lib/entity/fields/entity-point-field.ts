@@ -3,7 +3,7 @@ import EntityValue from "../entity-value";
 import Point from "../point";
 import { RedisHashData, RedisJsonData } from "../../client";
 
-const IS_COORD_PAIR = /^\d+(\.\d*)?,\d+(\.\d*)?$/;
+const IS_COORD_PAIR = /^-?\d+(\.\d*)?,-?\d+(\.\d*)?$/;
 
 class EntityPointField extends EntityField {
   toRedisJson(): RedisJsonData {
