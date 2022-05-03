@@ -1,9 +1,7 @@
 import Entity from "../../entity/entity";
 import * as logger from '../../shims/logger';
 import FieldDefinition from "../definition/field-definition";
-import SortableFieldDefinition from "../definition/sortable-field-definition";
 import SchemaBuilder from "./schema-builder";
-
 
 export default class JsonSchemaBuilder<TEntity extends Entity> extends SchemaBuilder<TEntity> {
 
@@ -18,7 +16,7 @@ export default class JsonSchemaBuilder<TEntity extends Entity> extends SchemaBui
         fieldDetails = this.buildField('NUMERIC', undefined, fieldDef.sortable)
         break;
       case 'boolean':
-        if ((fieldDef as SortableFieldDefinition).sortable)
+        if (fieldDef.sortable)
           logger.warn(`You have marked the boolean field '${field}' as sortable but RediSearch doesn't support the SORTABLE argument on a TAG for JSON. Ignored.`);
         fieldDetails = this.buildField('TAG', undefined, undefined)
         break;
@@ -32,7 +30,7 @@ export default class JsonSchemaBuilder<TEntity extends Entity> extends SchemaBui
         fieldDetails = this.buildField('TAG', undefined, undefined)
         break;
       case 'string':
-        if ((fieldDef as SortableFieldDefinition).sortable)
+        if (fieldDef.sortable)
           logger.warn(`You have marked the string field '${field}' as sortable but RediSearch doesn't support the SORTABLE argument on a TAG for JSON. Ignored.`);
         fieldDetails = this.buildField('TAG', fieldDef.separator ?? '|', undefined)
         break;
