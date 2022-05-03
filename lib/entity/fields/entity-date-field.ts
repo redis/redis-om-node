@@ -21,7 +21,7 @@ class EntityDateField extends EntityField {
   }
 
   fromRedisHash(value: string) {
-    const parsed = Number.parseInt(value);
+    const parsed = Number.parseFloat(value);
     if (Number.isNaN(parsed)) throw Error(`Non-numeric value of '${value}' read from Redis for date field.`);
     const date = new Date();
     date.setTime(parsed * 1000);

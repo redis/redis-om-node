@@ -17,7 +17,7 @@ export const ANOTHER_NUMBER_STRING = ANOTHER_NUMBER.toString();
 export const A_THIRD_NUMBER = 13;
 export const A_THIRD_NUMBER_STRING = A_THIRD_NUMBER.toString();
 
-export const A_DATE: Date = new Date('1997-07-04T16:56:55.000Z');
+export const A_DATE: Date = new Date('1997-07-04T16:56:55.456Z');
 export const A_DATE_ISO: string = A_DATE.toISOString();
 export const A_DATE_EPOCH: number = A_DATE.getTime() / 1000;
 export const A_DATE_EPOCH_STRING: string = A_DATE_EPOCH.toString();
