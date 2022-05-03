@@ -1,39 +1,35 @@
 import Entity from "../../entity/entity";
-import SchemaBuilder from "./schema-builder";
 import FieldDefinition from "../definition/field-definition";
-import SeparableFieldDefinition from "../definition/separable-field-definition";
-import SortableFieldDefinition from "../definition/sortable-field-definition";
-import SchemaFieldType from "../definition/schema-field-type";
+import SchemaBuilder from "./schema-builder";
 
 export default class HashSchemaBuilder<TEntity extends Entity> extends SchemaBuilder<TEntity> {
 
   protected buildEntry(field: string): Array<string> {
     const fieldDef: FieldDefinition = this.schema.definition[field];
-    const fieldType: SchemaFieldType = fieldDef.type;
     const fieldAlias = fieldDef.alias ?? field
     let fieldDetails: Array<string>;
 
-    switch (fieldType) {
+    switch (fieldDef.type) {
       case 'date':
-        fieldDetails = this.buildSortableNumeric(fieldDef as SortableFieldDefinition);
+        fieldDetails = this.buildField('NUMERIC', undefined, fieldDef.sortable)
         break;
       case 'boolean':
-        fieldDetails = this.buildSortableTag(fieldDef as SortableFieldDefinition);
+        fieldDetails = this.buildField('TAG', undefined, fieldDef.sortable)
         break;
       case 'number':
-        fieldDetails = this.buildSortableNumeric(fieldDef as SortableFieldDefinition);
+        fieldDetails = this.buildField('NUMERIC', undefined, fieldDef.sortable)
         break;
       case 'point':
-        fieldDetails = this.buildGeo();
+        fieldDetails = this.buildField('GEO', undefined, undefined)
         break;
       case 'string[]':
-        fieldDetails = this.buildSeparableTag(fieldDef as SeparableFieldDefinition);
+        fieldDetails = this.buildField('TAG', fieldDef.separator ?? '|', undefined)
         break;
       case 'string':
-        fieldDetails = this.buildSeparableAndSortableTag(fieldDef as SortableFieldDefinition & SeparableFieldDefinition);
+        fieldDetails = this.buildField('TAG', fieldDef.separator ?? '|', fieldDef.sortable)
         break;
       case 'text':
-        fieldDetails = this.buildSortableText(fieldDef as SortableFieldDefinition);
+        fieldDetails = this.buildField('TEXT', undefined, fieldDef.sortable)
         break;
     };
 
