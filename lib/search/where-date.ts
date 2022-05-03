@@ -78,8 +78,8 @@ export default class WhereDate<TEntity extends Entity> extends WhereField<TEntit
   }
 
   private coerceDateToEpoch(value: Date | number | string) {
-    if (value instanceof Date) return value.getTime();
-    if (typeof value === 'string') return new Date(value).getTime();
+    if (value instanceof Date) return value.getTime() / 1000;
+    if (typeof value === 'string') return new Date(value).getTime() / 1000;
     return value;
   }
 }

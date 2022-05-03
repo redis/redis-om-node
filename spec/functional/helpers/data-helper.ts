@@ -82,7 +82,7 @@ export async function loadTestHash(client: Client, key: string, data: SampleEnti
       else if (typeof value === 'number') command.push(field, value.toString());
       else if (typeof value === 'string') command.push(field, value);
       else if (Array.isArray(value)) command.push(field, value.join('|'));
-      else if (value instanceof Date) command.push(field, value.getTime().toString());
+      else if (value instanceof Date) command.push(field, (value.getTime() / 1000).toString());
       else if (typeof value === 'object') command.push(field, `${value.longitude},${value.latitude}`)
     }
   })
@@ -97,7 +97,7 @@ export async function loadTestJson(client: Client, key: string, data: SampleEnti
   Object.keys(data).forEach(field => {
     const value = (data as any)[field];
     if (value !== null) {
-      if (value instanceof Date) json[field] = value.getTime();
+      if (value instanceof Date) json[field] = value.getTime() / 1000;
       else if (typeof value === 'object' && !Array.isArray(value)) json[field] = `${value.longitude},${value.latitude}`;
       else json[field] = value;
     }

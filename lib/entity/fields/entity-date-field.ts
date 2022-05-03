@@ -24,7 +24,7 @@ class EntityDateField extends EntityField {
     const parsed = Number.parseInt(value);
     if (Number.isNaN(parsed)) throw Error(`Non-numeric value of '${value}' read from Redis for date field.`);
     const date = new Date();
-    date.setTime(parsed);
+    date.setTime(parsed * 1000);
     this.value = date;
   }
 
@@ -41,7 +41,7 @@ class EntityDateField extends EntityField {
 
     if (this.isNumber(value)) {
       const newValue = new Date();
-      newValue.setTime(value as number);
+      newValue.setTime(value as number * 1000);
       return newValue;
     }
 
@@ -57,7 +57,7 @@ class EntityDateField extends EntityField {
   }
 
   private get valueAsNumber(): number {
-    return (this.value as Date).getTime();
+    return (this.value as Date).getTime() / 1000;
   }
 }
 
