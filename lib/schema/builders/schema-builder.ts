@@ -23,6 +23,10 @@ export default abstract class SchemaBuilder<TEntity extends Entity> {
     type: 'TEXT' | 'NUMERIC' | 'TAG' | 'GEO',
     separator?: string,
     sortable?: boolean,
+    noindex?: boolean,
+    nostem?: boolean,
+    casesensitive?: boolean,
+    weight?: number,
   ): Array<string> {
     const result: Array<string> = [type]
     if (separator) {
@@ -30,6 +34,18 @@ export default abstract class SchemaBuilder<TEntity extends Entity> {
     }
     if (sortable) {
       result.push('SORTABLE')
+    }
+    if (noindex) {
+      result.push('NOINDEX')
+    }
+    if (nostem) {
+      result.push('NOSTEM')
+    }
+    if (casesensitive) {
+      result.push('CASESENSITIVE')
+    }
+    if (weight) {
+      result.push('WEIGHT', weight.toString())
     }
     return result
   }

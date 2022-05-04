@@ -1,8 +1,12 @@
 import BaseFieldDefinition from "./base-field-definition";
+import NoIndexFieldDefinition from "./noindex-field-definition";
+import NoStemFieldDefinition from "./nostem-field-definition";
+import PhoneticFieldDefinition from "./phonetic-field-definition";
 import SortableFieldDefinition from "./sortable-field-definition";
+import WeightFieldDefinition from "./weight-field-definition";
 
 /** A field representing searchable text. */
-interface TextFieldDefinition extends BaseFieldDefinition, SortableFieldDefinition {
+interface TextFieldDefinition extends BaseFieldDefinition, SortableFieldDefinition, NoIndexFieldDefinition, NoStemFieldDefinition, PhoneticFieldDefinition, WeightFieldDefinition {
   /** Yep. It's searchable text. */
   type: 'text';
 }

@@ -11,25 +11,25 @@ export default class HashSchemaBuilder<TEntity extends Entity> extends SchemaBui
 
     switch (fieldDef.type) {
       case 'date':
-        fieldDetails = this.buildField('NUMERIC', undefined, fieldDef.sortable)
+        fieldDetails = this.buildField('NUMERIC', undefined, fieldDef.sortable, fieldDef.noindex, undefined, undefined, undefined)
         break;
       case 'boolean':
-        fieldDetails = this.buildField('TAG', undefined, fieldDef.sortable)
+        fieldDetails = this.buildField('TAG', undefined, fieldDef.sortable, undefined, undefined, undefined, undefined)
         break;
       case 'number':
-        fieldDetails = this.buildField('NUMERIC', undefined, fieldDef.sortable)
+        fieldDetails = this.buildField('NUMERIC', undefined, fieldDef.sortable, undefined, undefined, undefined, undefined)
         break;
       case 'point':
-        fieldDetails = this.buildField('GEO', undefined, undefined)
+        fieldDetails = this.buildField('GEO', undefined, undefined, undefined, undefined, undefined, undefined)
         break;
       case 'string[]':
-        fieldDetails = this.buildField('TAG', fieldDef.separator ?? '|', undefined)
+        fieldDetails = this.buildField('TAG', fieldDef.separator ?? '|', undefined, undefined, undefined, undefined, undefined)
         break;
       case 'string':
-        fieldDetails = this.buildField('TAG', fieldDef.separator ?? '|', fieldDef.sortable)
+        fieldDetails = this.buildField('TAG', fieldDef.separator ?? '|', fieldDef.sortable, undefined, fieldDef.casesensitive, undefined, undefined)
         break;
       case 'text':
-        fieldDetails = this.buildField('TEXT', undefined, fieldDef.sortable)
+        fieldDetails = this.buildField('TEXT', undefined, fieldDef.sortable, undefined, fieldDef.nostem, undefined, fieldDef.weight)
         break;
     };
 

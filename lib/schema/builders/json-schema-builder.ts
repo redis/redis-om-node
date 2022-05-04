@@ -11,31 +11,36 @@ export default class JsonSchemaBuilder<TEntity extends Entity> extends SchemaBui
     const fieldPath = `\$.${fieldAlias}${fieldDef.type === 'string[]' ? '[*]' : ''}`;
     let fieldDetails: Array<string>;
 
+    // noindex?: boolean,
+    // nostem?: boolean,
+    // casesensitive?: boolean,
+    // weight?: number,
+
     switch (fieldDef.type) {
       case 'date':
-        fieldDetails = this.buildField('NUMERIC', undefined, fieldDef.sortable)
+        fieldDetails = this.buildField('NUMERIC', undefined, fieldDef.sortable, fieldDef.noindex, undefined, undefined, undefined)
         break;
       case 'boolean':
         if (fieldDef.sortable)
           logger.warn(`You have marked the boolean field '${field}' as sortable but RediSearch doesn't support the SORTABLE argument on a TAG for JSON. Ignored.`);
-        fieldDetails = this.buildField('TAG', undefined, undefined)
+        fieldDetails = this.buildField('TAG', undefined, undefined, undefined, undefined, undefined, undefined)
         break;
       case 'number':
-        fieldDetails = this.buildField('NUMERIC', undefined, fieldDef.sortable)
+        fieldDetails = this.buildField('NUMERIC', undefined, fieldDef.sortable, undefined, undefined, undefined, undefined)
         break;
       case 'point':
-        fieldDetails = this.buildField('GEO', undefined, undefined)
+        fieldDetails = this.buildField('GEO', undefined, undefined, undefined, undefined, undefined, undefined)
         break;
       case 'string[]':
-        fieldDetails = this.buildField('TAG', undefined, undefined)
+        fieldDetails = this.buildField('TAG', undefined, undefined, undefined, undefined, undefined, undefined)
         break;
       case 'string':
         if (fieldDef.sortable)
           logger.warn(`You have marked the string field '${field}' as sortable but RediSearch doesn't support the SORTABLE argument on a TAG for JSON. Ignored.`);
-        fieldDetails = this.buildField('TAG', fieldDef.separator ?? '|', undefined)
+        fieldDetails = this.buildField('TAG', fieldDef.separator ?? '|', undefined, undefined, fieldDef.casesensitive, undefined, undefined)
         break;
       case 'text':
-        fieldDetails = this.buildField('TEXT', undefined, fieldDef.sortable)
+        fieldDetails = this.buildField('TEXT', undefined, fieldDef.sortable, undefined, fieldDef.nostem, undefined, fieldDef.weight)
         break;
     }
 
