@@ -17,19 +17,19 @@ export const ANOTHER_NUMBER_STRING = ANOTHER_NUMBER.toString();
 export const A_THIRD_NUMBER = 13;
 export const A_THIRD_NUMBER_STRING = A_THIRD_NUMBER.toString();
 
-export const A_DATE: Date = new Date('1997-07-04T16:56:55.000Z');
+export const A_DATE: Date = new Date('1997-07-04T16:56:55.456Z');
 export const A_DATE_ISO: string = A_DATE.toISOString();
-export const A_DATE_EPOCH: number = A_DATE.getTime();
+export const A_DATE_EPOCH: number = A_DATE.getTime() / 1000;
 export const A_DATE_EPOCH_STRING: string = A_DATE_EPOCH.toString();
 
 export const ANOTHER_DATE: Date = new Date('1969-07-20T20:17:40.000Z');
 export const ANOTHER_DATE_ISO: string = ANOTHER_DATE.toISOString();
-export const ANOTHER_DATE_EPOCH: number = ANOTHER_DATE.getTime();
+export const ANOTHER_DATE_EPOCH: number = ANOTHER_DATE.getTime() / 1000;
 export const ANOTHER_DATE_EPOCH_STRING: string = ANOTHER_DATE_EPOCH.toString();
 
 export const A_THIRD_DATE: Date = new Date('2015-07-14T11:49:57.000Z');
 export const A_THIRD_DATE_ISO: string = A_THIRD_DATE.toISOString();
-export const A_THIRD_DATE_EPOCH: number = A_THIRD_DATE.getTime();
+export const A_THIRD_DATE_EPOCH: number = A_THIRD_DATE.getTime() / 1000;
 export const A_THIRD_DATE_EPOCH_STRING: string = A_THIRD_DATE_EPOCH.toString();
 
 export const A_POINT: Point = { longitude: 12.34, latitude: 56.78 };
