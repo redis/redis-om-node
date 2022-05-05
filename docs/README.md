@@ -72,7 +72,7 @@ A function that defines a circle for `.inCircle` searches.
 
 #### Defined in
 
-[lib/search/where-point.ts:9](https://github.com/redis/redis-om-node/blob/9708a58/lib/search/where-point.ts#L9)
+[lib/search/where-point.ts:9](https://github.com/redis/redis-om-node/blob/20561ae/lib/search/where-point.ts#L9)
 
 ___
 
@@ -84,7 +84,7 @@ The type of data structure in Redis to map objects to.
 
 #### Defined in
 
-[lib/schema/options/data-structure.ts:2](https://github.com/redis/redis-om-node/blob/9708a58/lib/schema/options/data-structure.ts#L2)
+[lib/schema/options/data-structure.ts:2](https://github.com/redis/redis-om-node/blob/20561ae/lib/schema/options/data-structure.ts#L2)
 
 ___
 
@@ -114,7 +114,7 @@ A constructor that creates an [Entity](classes/Entity.md) of type TEntity.
 
 #### Defined in
 
-[lib/entity/entity-constructor.ts:8](https://github.com/redis/redis-om-node/blob/9708a58/lib/entity/entity-constructor.ts#L8)
+[lib/entity/entity-constructor.ts:8](https://github.com/redis/redis-om-node/blob/20561ae/lib/entity/entity-constructor.ts#L8)
 
 ___
 
@@ -126,7 +126,7 @@ A JavaScript object containing the underlying data of an [Entity](classes/Entity
 
 #### Defined in
 
-[lib/entity/entity-data.ts:6](https://github.com/redis/redis-om-node/blob/9708a58/lib/entity/entity-data.ts#L6)
+[lib/entity/entity-data.ts:6](https://github.com/redis/redis-om-node/blob/20561ae/lib/entity/entity-data.ts#L6)
 
 ___
 
@@ -138,7 +138,7 @@ Valid types for properties on an [Entity](classes/Entity.md).
 
 #### Defined in
 
-[lib/entity/entity-value.ts:6](https://github.com/redis/redis-om-node/blob/9708a58/lib/entity/entity-value.ts#L6)
+[lib/entity/entity-value.ts:6](https://github.com/redis/redis-om-node/blob/20561ae/lib/entity/entity-value.ts#L6)
 
 ___
 
@@ -150,7 +150,7 @@ Contains instructions telling how to map a property on an [Entity](classes/Entit
 
 #### Defined in
 
-[lib/schema/definition/field-definition.ts:10](https://github.com/redis/redis-om-node/blob/9708a58/lib/schema/definition/field-definition.ts#L10)
+[lib/schema/definition/field-definition.ts:10](https://github.com/redis/redis-om-node/blob/20561ae/lib/schema/definition/field-definition.ts#L10)
 
 ___
 
@@ -170,7 +170,7 @@ A function that generates random [Entity IDs](classes/Entity.md#entityid).
 
 #### Defined in
 
-[lib/schema/options/id-strategy.ts:2](https://github.com/redis/redis-om-node/blob/9708a58/lib/schema/options/id-strategy.ts#L2)
+[lib/schema/options/id-strategy.ts:2](https://github.com/redis/redis-om-node/blob/20561ae/lib/schema/options/id-strategy.ts#L2)
 
 ___
 
@@ -189,7 +189,7 @@ Defines a point on the globe using longitude and latitude.
 
 #### Defined in
 
-[lib/entity/point.ts:2](https://github.com/redis/redis-om-node/blob/9708a58/lib/entity/point.ts#L2)
+[lib/entity/point.ts:2](https://github.com/redis/redis-om-node/blob/20561ae/lib/entity/point.ts#L2)
 
 ___
 
@@ -201,19 +201,19 @@ Group of [FieldDefinition](README.md#fielddefinition)s that define the schema fo
 
 #### Defined in
 
-[lib/schema/definition/schema-definition.ts:6](https://github.com/redis/redis-om-node/blob/9708a58/lib/schema/definition/schema-definition.ts#L6)
+[lib/schema/definition/schema-definition.ts:6](https://github.com/redis/redis-om-node/blob/20561ae/lib/schema/definition/schema-definition.ts#L6)
 
 ___
 
 ### SchemaFieldType
 
-Ƭ **SchemaFieldType**: ``"string"`` \| ``"number"`` \| ``"boolean"`` \| ``"text"`` \| ``"date"`` \| ``"point"`` \| ``"array"``
+Ƭ **SchemaFieldType**: ``"string"`` \| ``"number"`` \| ``"boolean"`` \| ``"text"`` \| ``"date"`` \| ``"point"`` \| ``"string[]"``
 
 Valid types a [FieldDefinition](README.md#fielddefinition).
 
 #### Defined in
 
-[lib/schema/definition/schema-field-type.ts:4](https://github.com/redis/redis-om-node/blob/9708a58/lib/schema/definition/schema-field-type.ts#L4)
+[lib/schema/definition/schema-field-type.ts:4](https://github.com/redis/redis-om-node/blob/20561ae/lib/schema/definition/schema-field-type.ts#L4)
 
 ___
 
@@ -237,7 +237,7 @@ Configuration options for a [Schema](classes/Schema.md).
 
 #### Defined in
 
-[lib/schema/options/schema-options.ts:9](https://github.com/redis/redis-om-node/blob/9708a58/lib/schema/options/schema-options.ts#L9)
+[lib/schema/options/schema-options.ts:9](https://github.com/redis/redis-om-node/blob/20561ae/lib/schema/options/schema-options.ts#L9)
 
 ___
 
@@ -249,7 +249,7 @@ The type of data structure in Redis to map objects to.
 
 #### Defined in
 
-[lib/client.ts:21](https://github.com/redis/redis-om-node/blob/9708a58/lib/client.ts#L21)
+[lib/client.ts:21](https://github.com/redis/redis-om-node/blob/20561ae/lib/client.ts#L21)
 
 ___
 
@@ -261,7 +261,7 @@ Valid values for how to use stop words for a given [Schema](classes/Schema.md).
 
 #### Defined in
 
-[lib/schema/options/stop-word-options.ts:2](https://github.com/redis/redis-om-node/blob/9708a58/lib/schema/options/stop-word-options.ts#L2)
+[lib/schema/options/stop-word-options.ts:2](https://github.com/redis/redis-om-node/blob/20561ae/lib/schema/options/stop-word-options.ts#L2)
 
 ___
 
@@ -293,4 +293,4 @@ A function that takes a [Search](classes/Search.md) and returns a [Search](class
 
 #### Defined in
 
-[lib/search/search.ts:27](https://github.com/redis/redis-om-node/blob/9708a58/lib/search/search.ts#L27)
+[lib/search/search.ts:27](https://github.com/redis/redis-om-node/blob/20561ae/lib/search/search.ts#L27)

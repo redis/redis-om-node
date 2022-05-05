@@ -35,7 +35,7 @@ The default field name in Redis is the key name defined in the
 
 #### Defined in
 
-[lib/schema/definition/base-field-definition.ts:12](https://github.com/redis/redis-om-node/blob/9708a58/lib/schema/definition/base-field-definition.ts#L12)
+[lib/schema/definition/base-field-definition.ts:12](https://github.com/redis/redis-om-node/blob/20561ae/lib/schema/definition/base-field-definition.ts#L12)
 
 ___
 
@@ -54,13 +54,13 @@ those problems. Defaults to `|`.
 
 #### Defined in
 
-[lib/schema/definition/separable-field-definition.ts:9](https://github.com/redis/redis-om-node/blob/9708a58/lib/schema/definition/separable-field-definition.ts#L9)
+[lib/schema/definition/separable-field-definition.ts:9](https://github.com/redis/redis-om-node/blob/20561ae/lib/schema/definition/separable-field-definition.ts#L9)
 
 ___
 
 ### type
 
-• **type**: ``"array"``
+• **type**: ``"string[]"``
 
 Yep. It's a string array.
 
@@ -70,4 +70,4 @@ Yep. It's a string array.
 
 #### Defined in
 
-[lib/schema/definition/string-array-field-definition.ts:7](https://github.com/redis/redis-om-node/blob/9708a58/lib/schema/definition/string-array-field-definition.ts#L7)
+[lib/schema/definition/string-array-field-definition.ts:7](https://github.com/redis/redis-om-node/blob/20561ae/lib/schema/definition/string-array-field-definition.ts#L7)

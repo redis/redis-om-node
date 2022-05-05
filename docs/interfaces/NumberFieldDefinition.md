@@ -35,7 +35,7 @@ The default field name in Redis is the key name defined in the
 
 #### Defined in
 
-[lib/schema/definition/base-field-definition.ts:12](https://github.com/redis/redis-om-node/blob/9708a58/lib/schema/definition/base-field-definition.ts#L12)
+[lib/schema/definition/base-field-definition.ts:12](https://github.com/redis/redis-om-node/blob/20561ae/lib/schema/definition/base-field-definition.ts#L12)
 
 ___
 
@@ -51,7 +51,7 @@ Enables sorting by this field.
 
 #### Defined in
 
-[lib/schema/definition/sortable-field-definition.ts:4](https://github.com/redis/redis-om-node/blob/9708a58/lib/schema/definition/sortable-field-definition.ts#L4)
+[lib/schema/definition/sortable-field-definition.ts:4](https://github.com/redis/redis-om-node/blob/20561ae/lib/schema/definition/sortable-field-definition.ts#L4)
 
 ___
 
@@ -67,4 +67,4 @@ Yep. It's a number.
 
 #### Defined in
 
-[lib/schema/definition/number-field-definition.ts:7](https://github.com/redis/redis-om-node/blob/9708a58/lib/schema/definition/number-field-definition.ts#L7)
+[lib/schema/definition/number-field-definition.ts:7](https://github.com/redis/redis-om-node/blob/20561ae/lib/schema/definition/number-field-definition.ts#L7)
