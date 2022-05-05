@@ -17,7 +17,7 @@ class EntityStringArrayField extends EntityField {
   protected valdiateValue(value: EntityValue) {
     super.valdiateValue(value);
     if (value !== null && !this.isArray(value))
-      throw Error(`Expected value with type of 'array' but received '${value}'.`);
+      throw Error(`Expected value with type of 'string[]' but received '${value}'.`);
   }
 
   protected convertValue(value: EntityValue): EntityValue {

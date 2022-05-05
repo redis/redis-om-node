@@ -13,6 +13,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ### Fixed
 - Fixed error when reading `point` containing negative value from HASH.
 
+
 ## 0.3.0 - 2022-04-28
 ### Changed
 - Internal changes in preparation for adding embeddable objects.

@@ -26,7 +26,7 @@ export default class HashSchemaBuilder<TEntity extends Entity> extends SchemaBui
       case 'point':
         fieldDetails = this.buildGeo();
         break;
-      case 'array':
+      case 'string[]':
         fieldDetails = this.buildSeparableTag(fieldDef as SeparableFieldDefinition);
         break;
       case 'string':

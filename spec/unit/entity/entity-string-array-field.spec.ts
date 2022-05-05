@@ -5,7 +5,7 @@ import { A_DATE, A_NUMBER, A_POINT, A_STRING, SOME_STRINGS, SOME_STRINGS_JOINED 
 const SOME_STRINGABLES = [42, true, 23, false];
 
 const FIELD_NAME = 'foo';
-const FIELD_DEF: FieldDefinition = { type: 'array' };
+const FIELD_DEF: FieldDefinition = { type: 'string[]' };
 const EXPECTED_ANY_ARRAY = ['42', 'true', '23', 'false'];
 const EXPECTED_NULL_JSON_DATA = {};
 const EXPECTED_NULL_HASH_DATA = {};
@@ -46,7 +46,7 @@ describe("EntityStringArrayField", () => {
 
     it("complains when loaded from invalid Redis JSON data", () => {
       expect(() => field.fromRedisJson('foo'))
-        .toThrow(`Expected value with type of 'array' but received 'foo'.`);
+        .toThrow(`Expected value with type of 'string[]' but received 'foo'.`);
     });
 
     describe("when loaded from Redis Hash data", () => {
@@ -87,41 +87,41 @@ describe("EntityStringArrayField", () => {
     it("cannot be set to a string", () => {
       // @ts-ignore: JavaScript trap
       expect(() => field.value = A_STRING)
-        .toThrow(`Expected value with type of 'array' but received '${A_STRING}'.`);
+        .toThrow(`Expected value with type of 'string[]' but received '${A_STRING}'.`);
     });
 
     it("cannot be set to a boolean", () => {
       // @ts-ignore: JavaScript trap
       expect(() => field.value = true)
-        .toThrow(`Expected value with type of 'array' but received 'true'.`);
+        .toThrow(`Expected value with type of 'string[]' but received 'true'.`);
     });
 
     it("cannot be set to a number", () => {
       // @ts-ignore: JavaScript trap
       expect(() => field.value = A_NUMBER)
-        .toThrow(`Expected value with type of 'array' but received '${A_NUMBER}'.`);
+        .toThrow(`Expected value with type of 'string[]' but received '${A_NUMBER}'.`);
     });
 
     it("cannot be set to a Point", () => {
       // @ts-ignore: JavaScript trap
       expect(() => field.value = A_POINT)
-        .toThrow(`Expected value with type of 'array' but received '${A_POINT}'.`);
+        .toThrow(`Expected value with type of 'string[]' but received '${A_POINT}'.`);
     });
 
     it("cannot be set to a Date", () => {
       // @ts-ignore: JavaScript trap
       expect(() => field.value = A_DATE)
-        .toThrow(`Expected value with type of 'array' but received '${A_DATE}'.`);
+        .toThrow(`Expected value with type of 'string[]' but received '${A_DATE}'.`);
     });
   });
 
   describe("when created with an alias", () => {
-    beforeEach(() => field = new EntityStringArrayField(FIELD_NAME, { type: 'array', alias: 'bar' }));
+    beforeEach(() => field = new EntityStringArrayField(FIELD_NAME, { type: 'string[]', alias: 'bar' }));
     it("has the aliased name", () => expect(field.name).toBe('bar'));
   });
 
   describe("when created with a separator and a array", () => {
-    beforeEach(() => field = new EntityStringArrayField(FIELD_NAME, { type: 'array', separator: ';' }, SOME_STRINGS));
+    beforeEach(() => field = new EntityStringArrayField(FIELD_NAME, { type: 'string[]', separator: ';' }, SOME_STRINGS));
     it("converts to the expected Redis Hash data", () => expect(field.toRedisHash()).toEqual(EXPECTED_HASH_SEPARATOR_DATA));
 
     describe("and then loaded from Redis Hash data", () => {
@@ -131,7 +131,7 @@ describe("EntityStringArrayField", () => {
   });
 
   describe("when created with a separator and an any[]", () => {
-    beforeEach(() => field = new EntityStringArrayField(FIELD_NAME, { type: 'array', separator: ';' }, SOME_STRINGABLES));
+    beforeEach(() => field = new EntityStringArrayField(FIELD_NAME, { type: 'string[]', separator: ';' }, SOME_STRINGABLES));
     it("converts to the expected Redis Hash data", () => expect(field.toRedisHash()).toEqual(EXPECTED_HASH_ANY_SEPARATOR_DATA));
   });
 
@@ -159,30 +159,30 @@ describe("EntityStringArrayField", () => {
   it("complains when created with a string", () => {
     // @ts-ignore: JavaScript trap
     expect(() => new EntityStringArrayField(FIELD_NAME, FIELD_DEF, A_STRING))
-      .toThrow(`Expected value with type of 'array' but received '${A_STRING}'.`);
+      .toThrow(`Expected value with type of 'string[]' but received '${A_STRING}'.`);
   });
 
   it("complains when created with a boolean", () => {
     // @ts-ignore: JavaScript trap
     expect(() => new EntityStringArrayField(FIELD_NAME, FIELD_DEF, true))
-      .toThrow(`Expected value with type of 'array' but received 'true'.`);
+      .toThrow(`Expected value with type of 'string[]' but received 'true'.`);
   });
 
   it("complains when created with a number", () => {
     // @ts-ignore: JavaScript trap
     expect(() => new EntityStringArrayField(FIELD_NAME, FIELD_DEF, A_NUMBER))
-      .toThrow(`Expected value with type of 'array' but received '${A_NUMBER}'.`);
+      .toThrow(`Expected value with type of 'string[]' but received '${A_NUMBER}'.`);
   });
 
   it("complains when created with a Point", () => {
     // @ts-ignore: JavaScript trap
     expect(() => new EntityStringArrayField(FIELD_NAME, FIELD_DEF, A_POINT))
-      .toThrow(`Expected value with type of 'array' but received '${A_POINT}'.`);
+      .toThrow(`Expected value with type of 'string[]' but received '${A_POINT}'.`);
   });
 
   it("complains when created with a Date", () => {
     // @ts-ignore: JavaScript trap
     expect(() => new EntityStringArrayField(FIELD_NAME, FIELD_DEF, A_DATE))
-      .toThrow(`Expected value with type of 'array' but received '${A_DATE}'.`);
+      .toThrow(`Expected value with type of 'string[]' but received '${A_DATE}'.`);
   });
 });

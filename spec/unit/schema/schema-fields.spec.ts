@@ -42,7 +42,7 @@ describe("Schema", () => {
         someText: { type: 'string' },
         aPoint: { type: 'point' },
         aDate: { type: 'date' },
-        someStrings: { type: 'array' }
+        someStrings: { type: 'string[]' }
       }, { dataStructure: dataStructure as DataStructure });
     });
 

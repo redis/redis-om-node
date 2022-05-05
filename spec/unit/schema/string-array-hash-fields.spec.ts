@@ -7,25 +7,25 @@ describe("Schema", () => {
   describe.each([
 
     ["that defines an unconfigured array for a HASH", {
-      schemaDef: { aField: { type: 'array' } } as SchemaDefinition,
+      schemaDef: { aField: { type: 'string[]' } } as SchemaDefinition,
       dataStructure: 'HASH',
       expectedRedisSchema: ['aField', 'TAG', 'SEPARATOR', '|']
     }],
 
     ["that defines an aliased array for a HASH", {
-      schemaDef: { aField: { type: 'array', alias: 'anotherField' } } as SchemaDefinition,
+      schemaDef: { aField: { type: 'string[]', alias: 'anotherField' } } as SchemaDefinition,
       dataStructure: 'HASH',
       expectedRedisSchema: ['anotherField', 'TAG', 'SEPARATOR', '|']
     }],
 
     ["that defines a separated array for a HASH", {
-      schemaDef: { aField: { type: 'array', separator: ';' } } as SchemaDefinition,
+      schemaDef: { aField: { type: 'string[]', separator: ';' } } as SchemaDefinition,
       dataStructure: 'HASH',
       expectedRedisSchema: ['aField', 'TAG', 'SEPARATOR', ';']
     }],
 
     ["that defines a separated and aliased array for a HASH", {
-      schemaDef: { aField: { type: 'array', alias: 'anotherField', separator: ';' } } as SchemaDefinition,
+      schemaDef: { aField: { type: 'string[]', alias: 'anotherField', separator: ';' } } as SchemaDefinition,
       dataStructure: 'HASH',
       expectedRedisSchema: ['anotherField', 'TAG', 'SEPARATOR', ';']
     }]

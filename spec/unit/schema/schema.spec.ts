@@ -35,10 +35,10 @@ describe("Schema", () => {
       aBoolean: { type: 'boolean' }, anotherBoolean: { type: 'boolean' },
       aPoint: { type: 'point' }, anotherPoint: { type: 'point' },
       aDate: { type: 'date' }, anotherDate: { type: 'date' },
-      someStrings: { type: 'array' }, someOtherStrings: { type: 'array' }
+      someStrings: { type: 'string[]' }, someOtherStrings: { type: 'string[]' }
     }));
 
-    it("generates the index hash", () => expect(schema.indexHash).toBe("ksCGXvPQbQNDCDCJF01NE4kZLsM="));
+    it("generates the index hash", () => expect(schema.indexHash).toBe("F+GgQDhzmXhvTNhQczPZtCIJ0BA="));
   });
 
   describe("that overrides the data structure to be JSON", () => {
@@ -107,12 +107,12 @@ describe("Schema", () => {
     it("throws an exception when the type is missing on a field definition", () =>
       // @ts-ignore: JavaScript test
       expect(() => new Schema<TestEntity>(TestEntity, { aField: {} }))
-        .toThrow("The field 'aField' is configured with a type of 'undefined'. Valid types include 'boolean', 'date', 'number', 'point', 'string', 'array', and 'text'."));
+        .toThrow("The field 'aField' is configured with a type of 'undefined'. Valid types include 'boolean', 'date', 'number', 'point', 'string', 'string[]', and 'text'."));
 
     it("throws an exception when the type is invalid on a field definition", () =>
       // @ts-ignore: JavaScript test
       expect(() => new Schema<TestEntity>(TestEntity, { aField: { type: 'foo' } }))
-        .toThrow("The field 'aField' is configured with a type of 'foo'. Valid types include 'boolean', 'date', 'number', 'point', 'string', 'array', and 'text'."));
+        .toThrow("The field 'aField' is configured with a type of 'foo'. Valid types include 'boolean', 'date', 'number', 'point', 'string', 'string[]', and 'text'."));
 
     it("throws an exception when the data structure is invalid", () => {
       // @ts-ignore: JavaScript test

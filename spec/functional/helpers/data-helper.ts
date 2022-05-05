@@ -63,8 +63,8 @@ function createSchemaOfType<TEntity extends Entity>(ctor: EntityConstructor<TEnt
     anotherPoint: { type: 'point' },
     aDate: { type: 'date', sortable: true },
     anotherDate: { type: 'date', sortable: true },
-    someStrings: { type: 'array' },
-    someOtherStrings: { type: 'array' }
+    someStrings: { type: 'string[]' },
+    someOtherStrings: { type: 'string[]' }
   }, {
     prefix,
     dataStructure

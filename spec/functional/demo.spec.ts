@@ -52,7 +52,7 @@ describe("Demo", () => {
       date: { type: 'date' },
       title: { type: 'text' },
       observed: { type: 'text' },
-      classification: { type: 'array' },
+      classification: { type: 'string[]' },
       county: { type: 'string' },
       state: { type: 'string' },
       location: { type: 'point' },

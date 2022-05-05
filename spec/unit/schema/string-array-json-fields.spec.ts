@@ -7,13 +7,13 @@ describe("Schema", () => {
   describe.each([
 
     ["that defines an unconfigured array for a JSON", {
-      schemaDef: { aField: { type: 'array' } } as SchemaDefinition,
+      schemaDef: { aField: { type: 'string[]' } } as SchemaDefinition,
       dataStructure: 'JSON',
       expectedRedisSchema: ['$.aField[*]', 'AS', 'aField', 'TAG']
     }],
 
     ["that defines an aliased array for a JSON", {
-      schemaDef: { aField: { type: 'array', alias: 'anotherField' } } as SchemaDefinition,
+      schemaDef: { aField: { type: 'string[]', alias: 'anotherField' } } as SchemaDefinition,
       dataStructure: 'JSON',
       expectedRedisSchema: ['$.anotherField[*]', 'AS', 'anotherField', 'TAG']
     }]

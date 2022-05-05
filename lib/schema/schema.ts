@@ -27,7 +27,7 @@ import HashSchemaBuilder from './builders/hash-schema-builder';
  *   someText: { type: 'text' },
  *   aPoint: { type: 'point' },
  *   aDate: { type: 'date' },
- *   someStrings: { type: 'array' }
+ *   someStrings: { type: 'string[]' }
  * }, {
  *   dataStructure: 'HASH'
  * });
@@ -163,7 +163,7 @@ export default class Schema<TEntity extends Entity> {
   }
 
   private validateFieldDef(field: string, fieldDef: FieldDefinition) {
-    if (!['boolean', 'date', 'number', 'point', 'string', 'array', 'text'].includes(fieldDef.type))
-      throw Error(`The field '${field}' is configured with a type of '${fieldDef.type}'. Valid types include 'boolean', 'date', 'number', 'point', 'string', 'array', and 'text'.`);
+    if (!['boolean', 'date', 'number', 'point', 'string', 'string[]', 'text'].includes(fieldDef.type))
+      throw Error(`The field '${field}' is configured with a type of '${fieldDef.type}'. Valid types include 'boolean', 'date', 'number', 'point', 'string', 'string[]', and 'text'.`);
   }
 }

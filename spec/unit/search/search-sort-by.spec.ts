@@ -246,12 +246,12 @@ describe.each([
       ["on a array in a Hash", hashSearch, hashMocker,
         {
           field: 'someStrings', sortOrder: 'ASC',
-          expectedError: "'sortBy' was called on 'array' field 'someStrings' which cannot be sorted."
+          expectedError: "'sortBy' was called on 'string[]' field 'someStrings' which cannot be sorted."
         }],
       ["on a array in a JSON Document", jsonSearch, jsonMocker,
         {
           field: 'someStrings', sortOrder: 'ASC',
-          expectedError: "'sortBy' was called on 'array' field 'someStrings' which cannot be sorted."
+          expectedError: "'sortBy' was called on 'string[]' field 'someStrings' which cannot be sorted."
         }],
 
       ["on an invalid field in a Hash", hashSearch, hashMocker,

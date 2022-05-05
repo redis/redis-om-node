@@ -13,7 +13,7 @@ export default class JsonSchemaBuilder<TEntity extends Entity> extends SchemaBui
     const fieldDef: FieldDefinition = this.schema.definition[field];
     const fieldType: SchemaFieldType = fieldDef.type;
     const fieldAlias = fieldDef.alias ?? field;
-    const fieldPath = `\$.${fieldAlias}${fieldType === 'array' ? '[*]' : ''}`;
+    const fieldPath = `\$.${fieldAlias}${fieldType === 'string[]' ? '[*]' : ''}`;
     let fieldDetails: Array<string>;
 
     switch (fieldType) {
@@ -31,7 +31,7 @@ export default class JsonSchemaBuilder<TEntity extends Entity> extends SchemaBui
       case 'point':
         fieldDetails = this.buildGeo();
         break;
-      case 'array':
+      case 'string[]':
         fieldDetails = this.buildTag();
         break;
       case 'string':

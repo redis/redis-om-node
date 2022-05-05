@@ -22,7 +22,7 @@ const ENTITY_FIELD_CONSTRUCTORS: Record<SchemaFieldType, EntityFieldConstructor>
   'text': EntityTextField,
   'date': EntityDateField,
   'point': EntityPointField,
-  'array': EntityStringArrayField
+  'string[]': EntityStringArrayField
 }
 
 /**
