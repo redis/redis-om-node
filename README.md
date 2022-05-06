@@ -129,9 +129,9 @@ Once you have that sweet, sweet `package.json`, let's add our newest favorite pa
 
     $ npm install redis-om --save
 
-Of course, you'll need some Redis, preferably with [RediSearch][redisearch-url] and [RedisJSON][redis-json-url] installed. The easiest way to do this is to set up a free [Redis Cloud][redis-cloud-url] instance. But, you can also use Docker:
+Of course, you'll need some Redis, preferably [Redis Stack][redis-stack-url] as it comes with [RediSearch][redisearch-url] and [RedisJSON][redis-json-url] ready to go. The easiest way to do this is to set up a free [Redis Cloud][redis-cloud-url] instance. But, you can also use Docker:
 
-    $ docker run -p 6379:6379 redislabs/redismod:preview
+    $ docker run -d --name redis-stack -p 6379:6379 -p 8001:8001 redis/redis-stack:latest
 
 Excellent. Setup done. Let's write some code!
 
@@ -1068,6 +1068,7 @@ Contributions are always appreciated. I take PayPal and Bitcoin. Just kidding, I
 [youtube-url]: https://www.youtube.com/redisinc
 
 [redis-cloud-url]: https://redis.com/try-free/
+[redis-stack-url]: https://redis.io/docs/stack/
 [redisearch-url]: https://oss.redis.com/redisearch/
 [redis-json-url]: https://oss.redis.com/redisjson/
 [redis-om-dotnet]: https://github.com/redis/redis-om-dotnet
