@@ -9,41 +9,55 @@ export default class JsonSchemaBuilder<TEntity extends Entity> extends SchemaBui
     const fieldDef: FieldDefinition = this.schema.definition[field];
     const fieldAlias = fieldDef.alias ?? field;
     const fieldPath = `\$.${fieldAlias}${fieldDef.type === 'string[]' ? '[*]' : ''}`;
-    let fieldDetails: Array<string>;
-
-    // noindex?: boolean,
-    // nostem?: boolean,
-    // casesensitive?: boolean,
-    // weight?: number,
+    const fieldInfo = [fieldPath, 'AS', fieldAlias]
 
     switch (fieldDef.type) {
       case 'date':
-        fieldDetails = this.buildField('NUMERIC', undefined, fieldDef.sortable, fieldDef.noindex, undefined, undefined, undefined)
-        break;
+        return [
+          ...fieldInfo, 'NUMERIC',
+          ...this.buildNoIndex(fieldDef),
+          ...this.buildSortable(fieldDef),
+        ]
       case 'boolean':
         if (fieldDef.sortable)
           logger.warn(`You have marked the boolean field '${field}' as sortable but RediSearch doesn't support the SORTABLE argument on a TAG for JSON. Ignored.`);
-        fieldDetails = this.buildField('TAG', undefined, undefined, undefined, undefined, undefined, undefined)
-        break;
+        return [
+          ...fieldInfo, 'TAG',
+        ]
       case 'number':
-        fieldDetails = this.buildField('NUMERIC', undefined, fieldDef.sortable, undefined, undefined, undefined, undefined)
-        break;
+        return [
+          ...fieldInfo, 'NUMERIC',
+          ...this.buildNoIndex(fieldDef),
+          ...this.buildSortable(fieldDef),
+        ]
       case 'point':
-        fieldDetails = this.buildField('GEO', undefined, undefined, undefined, undefined, undefined, undefined)
-        break;
+        return [
+          ...fieldInfo, 'GEO',
+        ]
       case 'string[]':
-        fieldDetails = this.buildField('TAG', undefined, undefined, undefined, undefined, undefined, undefined)
-        break;
+        return [
+          ...fieldInfo, 'TAG',
+        ]
       case 'string':
         if (fieldDef.sortable)
           logger.warn(`You have marked the string field '${field}' as sortable but RediSearch doesn't support the SORTABLE argument on a TAG for JSON. Ignored.`);
-        fieldDetails = this.buildField('TAG', fieldDef.separator ?? '|', undefined, undefined, fieldDef.casesensitive, undefined, undefined)
-        break;
+        return [
+          ...fieldInfo, 'TAG',
+          ...this.buildCaseInsensitive(fieldDef),
+          ...this.buildNoIndex(fieldDef),
+          ...this.buildSeparable(fieldDef),
+          ...this.buildUnNormalized(fieldDef),
+        ]
       case 'text':
-        fieldDetails = this.buildField('TEXT', undefined, fieldDef.sortable, undefined, fieldDef.nostem, undefined, fieldDef.weight)
-        break;
-    }
-
-    return [fieldPath, 'AS', fieldAlias, ...fieldDetails];
+        return [
+          ...fieldInfo, 'TEXT',
+          ...this.buildNoIndex(fieldDef),
+          ...this.buildNoStem(fieldDef),
+          ...this.buildPhonetic(fieldDef),
+          ...this.buildSortable(fieldDef),
+          ...this.buildUnNormalized(fieldDef),
+          ...this.buildWeight(fieldDef),
+        ]
+    };
   }
 }

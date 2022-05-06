@@ -1,4 +1,12 @@
 import Entity from "../../entity/entity";
+import CaseSensitiveFieldDefinition from "../definition/casesensitive-field-definition";
+import NoIndexFieldDefinition from "../definition/noindex-field-definition";
+import NoStemFieldDefinition from "../definition/nostem-field-definition";
+import PhoneticFieldDefinition from "../definition/phonetic-field-definition";
+import SeparableFieldDefinition from "../definition/separable-field-definition";
+import SortableFieldDefinition from "../definition/sortable-field-definition";
+import UnNormalizedFieldDefinition from "../definition/unnormalized-field-definition";
+import WeightFieldDefinition from "../definition/weight-field-definition";
 import Schema from "../schema";
 
 export default abstract class SchemaBuilder<TEntity extends Entity> {
@@ -19,34 +27,35 @@ export default abstract class SchemaBuilder<TEntity extends Entity> {
 
   protected abstract buildEntry(field: string): Array<string>;
 
-  protected buildField(
-    type: 'TEXT' | 'NUMERIC' | 'TAG' | 'GEO',
-    separator?: string,
-    sortable?: boolean,
-    noindex?: boolean,
-    nostem?: boolean,
-    casesensitive?: boolean,
-    weight?: number,
-  ): Array<string> {
-    const result: Array<string> = [type]
-    if (separator) {
-      result.push('SEPARATOR', separator)
-    }
-    if (sortable) {
-      result.push('SORTABLE')
-    }
-    if (noindex) {
-      result.push('NOINDEX')
-    }
-    if (nostem) {
-      result.push('NOSTEM')
-    }
-    if (casesensitive) {
-      result.push('CASESENSITIVE')
-    }
-    if (weight) {
-      result.push('WEIGHT', weight.toString())
-    }
-    return result
+  protected buildCaseInsensitive(field: CaseSensitiveFieldDefinition) {
+    return field.casesensitive ? ['CASEINSENSITIVE'] : []
+  }
+
+  protected buildNoIndex(field: NoIndexFieldDefinition) {
+    return field.noindex ? ['NOINDEX'] : []
+  }
+
+  protected buildNoStem(field: NoStemFieldDefinition) {
+    return field.nostem ? ['NOSTEM'] : []
+  }
+
+  protected buildPhonetic(field: PhoneticFieldDefinition) {
+    return field.matcher ? ['PHONETIC', field.matcher] : []
+  }
+
+  protected buildSeparable(field: SeparableFieldDefinition) {
+    return ['SEPARATOR', field.separator || '|']
+  }
+
+  protected buildSortable(field: SortableFieldDefinition) {
+    return field.sortable ? ['SORTABLE'] : []
+  }
+
+  protected buildUnNormalized(field: UnNormalizedFieldDefinition) {
+    return field.unf ? ['UNF'] : []
+  }
+
+  protected buildWeight(field: WeightFieldDefinition) {
+    return field.weight ? ['WEIGHT', field.weight.toString()] : []
   }
 }
