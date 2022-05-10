@@ -1,6 +1,6 @@
 import { mocked } from 'jest-mock';
 
-import RedisShim from '../../../lib/shims/redis-shim';
+import RedisShim from '../../../lib/redis-shim';
 import Client from '../../../lib/client';
 import Repository from '../../../lib/repository/repository';
 import Entity from '../../../lib/entity/entity';
@@ -8,7 +8,7 @@ import Schema from '../../../lib/schema/schema';
 
 import { JsonRepository, HashRepository } from '../../../lib/repository/repository';
 
-jest.mock('../../../lib/shims/redis-shim');
+jest.mock('../../../lib/redis-shim');
 jest.mock('../../../lib/repository/repository');
 
 beforeEach(() => mocked(RedisShim).mockReset());

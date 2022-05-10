@@ -4,12 +4,12 @@ import Client from "../../../lib/client";
 import { Search, RawSearch } from "../../../lib/search/search";
 
 import { simpleHashSchema, SimpleHashEntity, SimpleJsonEntity, simpleJsonSchema } from "../helpers/test-entity-and-schema";
-import { mockClientSearchToReturnNothing, mockClientSearchToReturnSingleHash,
-  mockClientSearchToReturnSingleJsonString, SIMPLE_ENTITY_1 } from '../helpers/search-helpers';
+import {
+  mockClientSearchToReturnNothing, mockClientSearchToReturnSingleHash,
+  mockClientSearchToReturnSingleJsonString, SIMPLE_ENTITY_1
+} from '../helpers/search-helpers';
 
 jest.mock('../../../lib/client');
-jest.mock('../../../lib/shims/logger')
-
 
 type HashSearch = Search<SimpleHashEntity> | RawSearch<SimpleHashEntity>;
 type JsonSearch = Search<SimpleJsonEntity> | RawSearch<SimpleJsonEntity>;
@@ -20,12 +20,12 @@ beforeEach(() => {
 });
 
 describe.each([
-  [ "FluentSearch",
+  ["FluentSearch",
     new Search<SimpleHashEntity>(simpleHashSchema, new Client()),
-    new Search<SimpleJsonEntity>(simpleJsonSchema, new Client()) ],
-  [ "RawSearch",
+    new Search<SimpleJsonEntity>(simpleJsonSchema, new Client())],
+  ["RawSearch",
     new RawSearch<SimpleHashEntity>(simpleHashSchema, new Client()),
-    new RawSearch<SimpleJsonEntity>(simpleJsonSchema, new Client()) ]
+    new RawSearch<SimpleJsonEntity>(simpleJsonSchema, new Client())]
 ])("%s", (_, hashSearch: HashSearch, jsonSearch: JsonSearch) => {
 
   describe("#returnMin", () => {
@@ -34,7 +34,7 @@ describe.each([
       let indexName = 'SimpleHashEntity:index', query = '*';
 
       describe("when querying no results", () => {
-        beforeEach( async () => {
+        beforeEach(async () => {
           mockClientSearchToReturnNothing();
           entity = await hashSearch.return.min('aNumber');
         });
@@ -82,7 +82,7 @@ describe.each([
       let indexName = 'SimpleJsonEntity:index', query = '*';
 
       describe("when querying no results", () => {
-        beforeEach( async () => {
+        beforeEach(async () => {
           mockClientSearchToReturnNothing();
           entity = await jsonSearch.return.min('aNumber');
         });

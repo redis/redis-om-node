@@ -1,9 +1,9 @@
-module.exports = {
+export default {
   collectCoverage: true,
   coverageDirectory: "coverage",
   projects: [{
     displayName: "unit",
-    roots: [ "<rootDir>/lib/", "<rootDir>/spec/unit/" ],
+    roots: ["<rootDir>/lib/", "<rootDir>/spec/unit/"],
     clearMocks: true,
     globals: {
       "ts-jest": {
@@ -11,12 +11,12 @@ module.exports = {
         diagnostics: true
       },
     },
-    testMatch: [ "**/*.spec.ts" ],
+    testMatch: ["**/*.spec.ts"],
     transform: { "^.+\\.ts$": "ts-jest" },
     detectOpenHandles: true
   }, {
     displayName: "functional",
-    roots: [ "<rootDir>/lib/", "<rootDir>/spec/functional/" ],
+    roots: ["<rootDir>/lib/", "<rootDir>/spec/functional/"],
     clearMocks: true,
     globals: {
       "ts-jest": {
@@ -24,7 +24,7 @@ module.exports = {
         diagnostics: true
       },
     },
-    testMatch: [ "**/*.spec.ts" ],
+    testMatch: ["**/*.spec.ts"],
     transform: { "^.+\\.ts$": "ts-jest" },
     detectOpenHandles: true
   }]

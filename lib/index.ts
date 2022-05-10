@@ -1,5 +1,7 @@
 import Client, { SearchDataStructure, RedisHashData, RedisJsonData } from "./client";
 
+import { mapSchema, MapSchema } from "./mapping";
+
 import Point from "./entity/point";
 import Entity from "./entity/entity";
 import EntityData from "./entity/entity-data";
@@ -47,5 +49,5 @@ export {
   PointFieldDefinition, StringFieldDefinition, StringArrayFieldDefinition,
   TextFieldDefinition, SchemaFieldType,
   AbstractSearch, Search, RawSearch, SubSearchFunction,
-  Where, WhereField, Circle, CircleFunction
+  Where, WhereField, Circle, CircleFunction, mapSchema, MapSchema
 };

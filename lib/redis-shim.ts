@@ -1,6 +1,6 @@
 import { createClient } from 'redis';
 
-import RedisError from '../errors';
+import RedisError from './errors';
 
 export type RedisConnection = ReturnType<typeof createClient>;
 
