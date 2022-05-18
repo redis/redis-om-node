@@ -1,6 +1,9 @@
 /** Mixin for adding casesensitive to a TAG field. */
 interface CaseSensitiveFieldDefinition {
-  /** Enables setting the casesensitive flag of this field. */
+  /**
+   * Is the original case of this field indexed with Redis OM. Defaults
+   * to false.
+   */
   casesensitive?: boolean;
 }
 

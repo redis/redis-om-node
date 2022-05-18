@@ -1,11 +1,11 @@
 import Entity from "../../entity/entity";
 import BaseFieldDefinition from "../definition/base-field-definition";
 import CaseSensitiveFieldDefinition from "../definition/casesensitive-field-definition";
-import NoStemFieldDefinition from "../definition/nostem-field-definition";
+import StemmingFieldDefinition from "../definition/stemming-field-definition";
 import PhoneticFieldDefinition from "../definition/phonetic-field-definition";
 import SeparableFieldDefinition from "../definition/separable-field-definition";
 import SortableFieldDefinition from "../definition/sortable-field-definition";
-import UnNormalizedFieldDefinition from "../definition/unnormalized-field-definition";
+import NormalizedFieldDefinition from "../definition/normalized-field-definition";
 import WeightFieldDefinition from "../definition/weight-field-definition";
 import Schema from "../schema";
 
@@ -31,12 +31,12 @@ export default abstract class SchemaBuilder<TEntity extends Entity> {
     return field.casesensitive ? ['CASEINSENSITIVE'] : []
   }
 
-  protected buildNoIndex(field: BaseFieldDefinition) {
+  protected buildIndexed(field: BaseFieldDefinition) {
     return field.indexed ?? true ? [] : ['NOINDEX']
   }
 
-  protected buildNoStem(field: NoStemFieldDefinition) {
-    return field.nostem ? ['NOSTEM'] : []
+  protected buildStemming(field: StemmingFieldDefinition) {
+    return field.stemming ?? true ? [] : ['NOSTEM']
   }
 
   protected buildPhonetic(field: PhoneticFieldDefinition) {
@@ -51,8 +51,8 @@ export default abstract class SchemaBuilder<TEntity extends Entity> {
     return field.sortable ? ['SORTABLE'] : []
   }
 
-  protected buildUnNormalized(field: UnNormalizedFieldDefinition) {
-    return field.unf ? ['UNF'] : []
+  protected buildNormalized(field: NormalizedFieldDefinition) {
+    return field.normalized ?? true ? [] : ['UNF']
   }
 
   protected buildWeight(field: WeightFieldDefinition) {

@@ -16,30 +16,30 @@ export default class JsonSchemaBuilder<TEntity extends Entity> extends SchemaBui
         return [
           ...fieldInfo, 'NUMERIC',
           ...this.buildSortable(fieldDef),
-          ...this.buildNoIndex(fieldDef),
+          ...this.buildIndexed(fieldDef),
         ]
       case 'boolean':
         if (fieldDef.sortable)
           logger.warn(`You have marked the boolean field '${field}' as sortable but RediSearch doesn't support the SORTABLE argument on a TAG for JSON. Ignored.`);
         return [
           ...fieldInfo, 'TAG',
-          ...this.buildNoIndex(fieldDef),
+          ...this.buildIndexed(fieldDef),
         ]
       case 'number':
         return [
           ...fieldInfo, 'NUMERIC',
           ...this.buildSortable(fieldDef),
-          ...this.buildNoIndex(fieldDef),
+          ...this.buildIndexed(fieldDef),
         ]
       case 'point':
         return [
           ...fieldInfo, 'GEO',
-          ...this.buildNoIndex(fieldDef),
+          ...this.buildIndexed(fieldDef),
         ]
       case 'string[]':
         return [
           ...fieldInfo, 'TAG',
-          ...this.buildNoIndex(fieldDef),
+          ...this.buildIndexed(fieldDef),
         ]
       case 'string':
         if (fieldDef.sortable)
@@ -48,18 +48,18 @@ export default class JsonSchemaBuilder<TEntity extends Entity> extends SchemaBui
           ...fieldInfo, 'TAG',
           ...this.buildCaseInsensitive(fieldDef),
           ...this.buildSeparable(fieldDef),
-          ...this.buildUnNormalized(fieldDef),
-          ...this.buildNoIndex(fieldDef),
+          ...this.buildNormalized(fieldDef),
+          ...this.buildIndexed(fieldDef),
         ]
       case 'text':
         return [
           ...fieldInfo, 'TEXT',
-          ...this.buildNoStem(fieldDef),
+          ...this.buildStemming(fieldDef),
           ...this.buildPhonetic(fieldDef),
           ...this.buildSortable(fieldDef),
-          ...this.buildUnNormalized(fieldDef),
+          ...this.buildNormalized(fieldDef),
           ...this.buildWeight(fieldDef),
-          ...this.buildNoIndex(fieldDef),
+          ...this.buildIndexed(fieldDef),
         ]
     };
   }

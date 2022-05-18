@@ -13,30 +13,30 @@ export default class HashSchemaBuilder<TEntity extends Entity> extends SchemaBui
         return [
           fieldAlias, 'NUMERIC',
           ...this.buildSortable(fieldDef),
-          ...this.buildNoIndex(fieldDef),
+          ...this.buildIndexed(fieldDef),
         ]
       case 'boolean':
         return [
           fieldAlias, 'TAG',
           ...this.buildSortable(fieldDef),
-          ...this.buildNoIndex(fieldDef),
+          ...this.buildIndexed(fieldDef),
         ]
       case 'number':
         return [
           fieldAlias, 'NUMERIC',
           ...this.buildSortable(fieldDef),
-          ...this.buildNoIndex(fieldDef),
+          ...this.buildIndexed(fieldDef),
         ]
       case 'point':
         return [
           fieldAlias, 'GEO',
-          ...this.buildNoIndex(fieldDef),
+          ...this.buildIndexed(fieldDef),
         ]
       case 'string[]':
         return [
           fieldAlias, 'TAG',
           ...this.buildSeparable(fieldDef),
-          ...this.buildNoIndex(fieldDef),
+          ...this.buildIndexed(fieldDef),
         ]
       case 'string':
         return [
@@ -44,18 +44,18 @@ export default class HashSchemaBuilder<TEntity extends Entity> extends SchemaBui
           ...this.buildCaseInsensitive(fieldDef),
           ...this.buildSeparable(fieldDef),
           ...this.buildSortable(fieldDef),
-          ...this.buildUnNormalized(fieldDef),
-          ...this.buildNoIndex(fieldDef),
+          ...this.buildNormalized(fieldDef),
+          ...this.buildIndexed(fieldDef),
         ]
       case 'text':
         return [
           fieldAlias, 'TEXT',
-          ...this.buildNoStem(fieldDef),
+          ...this.buildStemming(fieldDef),
           ...this.buildPhonetic(fieldDef),
           ...this.buildSortable(fieldDef),
-          ...this.buildUnNormalized(fieldDef),
+          ...this.buildNormalized(fieldDef),
           ...this.buildWeight(fieldDef),
-          ...this.buildNoIndex(fieldDef),
+          ...this.buildIndexed(fieldDef),
         ]
     };
   }
