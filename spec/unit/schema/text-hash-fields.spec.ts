@@ -30,16 +30,22 @@ describe("Schema", () => {
       expectedRedisSchema: ['aField', 'TEXT']
     }],
 
-    ["that defines a sorted and aliased text for a HASH", {
-      schemaDef: { aField: { type: 'text', sortable: true, alias: 'anotherField' } } as SchemaDefinition,
+    ["that defines an indexed text for a HASH", {
+      schemaDef: { aField: { type: 'text', indexed: true } } as SchemaDefinition,
       dataStructure: 'HASH',
-      expectedRedisSchema: ['anotherField', 'TEXT', 'SORTABLE']
+      expectedRedisSchema: ['aField', 'TEXT']
     }],
 
-    ["that defines an unsorted and aliased text for a HASH", {
-      schemaDef: { aField: { type: 'text', sortable: false, alias: 'anotherField' } } as SchemaDefinition,
+    ["that defines an unindexed text for a HASH", {
+      schemaDef: { aField: { type: 'text', indexed: false } } as SchemaDefinition,
       dataStructure: 'HASH',
-      expectedRedisSchema: ['anotherField', 'TEXT']
+      expectedRedisSchema: ['aField', 'TEXT', 'NOINDEX']
+    }],
+
+    ["that defines a fully configured text for a HASH", {
+      schemaDef: { aField: { type: 'text', alias: 'anotherField', sortable: true, indexed: false } } as SchemaDefinition,
+      dataStructure: 'HASH',
+      expectedRedisSchema: ['anotherField', 'TEXT', 'SORTABLE', 'NOINDEX']
     }]
 
   ])("%s", (_, data) => {

@@ -16,6 +16,24 @@ describe("Schema", () => {
       schemaDef: { aField: { type: 'string[]', alias: 'anotherField' } } as SchemaDefinition,
       dataStructure: 'JSON',
       expectedRedisSchema: ['$.anotherField[*]', 'AS', 'anotherField', 'TAG']
+    }],
+
+    ["that defines an indexed array for a JSON", {
+      schemaDef: { aField: { type: 'string[]', indexed: true } } as SchemaDefinition,
+      dataStructure: 'JSON',
+      expectedRedisSchema: ['$.aField[*]', 'AS', 'aField', 'TAG']
+    }],
+
+    ["that defines an unindexed array for a JSON", {
+      schemaDef: { aField: { type: 'string[]', indexed: false } } as SchemaDefinition,
+      dataStructure: 'JSON',
+      expectedRedisSchema: ['$.aField[*]', 'AS', 'aField', 'TAG', 'NOINDEX']
+    }],
+
+    ["that defines a fully-configured array for a HASH", {
+      schemaDef: { aField: { type: 'string[]', alias: 'anotherField', indexed: false } } as SchemaDefinition,
+      dataStructure: 'HASH',
+      expectedRedisSchema: ['$.anotherField[*]', 'AS', 'anotherField', 'TAG', 'NOINDEX']
     }]
 
   ])("%s", (_, data) => {

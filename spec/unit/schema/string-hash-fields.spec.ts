@@ -24,22 +24,10 @@ describe("Schema", () => {
       expectedRedisSchema: ['aField', 'TAG', 'SEPARATOR', '|']
     }],
 
-    ["that defines an unsorted and aliased string for a HASH", {
-      schemaDef: { aField: { type: 'string', sortable: false, alias: 'anotherField' } } as SchemaDefinition,
-      dataStructure: 'HASH',
-      expectedRedisSchema: ['anotherField', 'TAG', 'SEPARATOR', '|']
-    }],
-
     ["that defines a sorted string for a HASH", {
       schemaDef: { aField: { type: 'string', sortable: true } } as SchemaDefinition,
       dataStructure: 'HASH',
       expectedRedisSchema: ['aField', 'TAG', 'SEPARATOR', '|', 'SORTABLE']
-    }],
-
-    ["that defines a sorted and aliased string for a HASH", {
-      schemaDef: { aField: { type: 'string', sortable: true, alias: 'anotherField' } } as SchemaDefinition,
-      dataStructure: 'HASH',
-      expectedRedisSchema: ['anotherField', 'TAG', 'SEPARATOR', '|', 'SORTABLE']
     }],
 
     ["that defines a separated string for a HASH", {
@@ -48,34 +36,22 @@ describe("Schema", () => {
       expectedRedisSchema: ['aField', 'TAG', 'SEPARATOR', ';']
     }],
 
-    ["that defines a separated and aliased string for a HASH", {
-      schemaDef: { aField: { type: 'string', alias: 'anotherField', separator: ';' } } as SchemaDefinition,
+    ["that defines an indexed string for a HASH", {
+      schemaDef: { aField: { type: 'string', indexed: true } } as SchemaDefinition,
       dataStructure: 'HASH',
-      expectedRedisSchema: ['anotherField', 'TAG', 'SEPARATOR', ';']
+      expectedRedisSchema: ['aField', 'TAG', 'SEPARATOR', '|']
     }],
 
-    ["that defines a separated and unsorted string for a HASH", {
-      schemaDef: { aField: { type: 'string', sortable: false, separator: ';' } } as SchemaDefinition,
+    ["that defines an unindexed string for a HASH", {
+      schemaDef: { aField: { type: 'string', indexed: false } } as SchemaDefinition,
       dataStructure: 'HASH',
-      expectedRedisSchema: ['aField', 'TAG', 'SEPARATOR', ';']
+      expectedRedisSchema: ['aField', 'TAG', 'SEPARATOR', '|', 'NOINDEX']
     }],
 
-    ["that defines a separated and unsorted and aliased string for a HASH", {
-      schemaDef: { aField: { type: 'string', sortable: false, alias: 'anotherField', separator: ';' } } as SchemaDefinition,
+    ["that defines a fully configured string for a HASH", {
+      schemaDef: { aField: { type: 'string', alias: 'anotherField', sortable: true, separator: ';', index: false } } as SchemaDefinition,
       dataStructure: 'HASH',
-      expectedRedisSchema: ['anotherField', 'TAG', 'SEPARATOR', ';']
-    }],
-
-    ["that defines a separated and sorted string for a HASH", {
-      schemaDef: { aField: { type: 'string', sortable: true, separator: ';' } } as SchemaDefinition,
-      dataStructure: 'HASH',
-      expectedRedisSchema: ['aField', 'TAG', 'SEPARATOR', ';', 'SORTABLE']
-    }],
-
-    ["that defines a separated and sorted and aliased string for a HASH", {
-      schemaDef: { aField: { type: 'string', sortable: true, alias: 'anotherField', separator: ';' } } as SchemaDefinition,
-      dataStructure: 'HASH',
-      expectedRedisSchema: ['anotherField', 'TAG', 'SEPARATOR', ';', 'SORTABLE']
+      expectedRedisSchema: ['anotherField', 'TAG', 'SEPARATOR', ';', 'SORTABLE', 'NOINDEX']
     }]
 
   ])("%s", (_, data) => {

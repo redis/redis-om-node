@@ -30,16 +30,22 @@ describe("Schema", () => {
       expectedRedisSchema: ['aField', 'TAG']
     }],
 
-    ["that defines a sorted and aliased boolean for a HASH", {
-      schemaDef: { aField: { type: 'boolean', sortable: true, alias: 'anotherField' } } as SchemaDefinition,
+    ["that defines an indexed boolean for a HASH", {
+      schemaDef: { aField: { type: 'boolean', indexed: true } } as SchemaDefinition,
       dataStructure: 'HASH',
-      expectedRedisSchema: ['anotherField', 'TAG', 'SORTABLE']
+      expectedRedisSchema: ['aField', 'TAG']
     }],
 
-    ["that defines an unsorted and aliased boolean for a HASH", {
-      schemaDef: { aField: { type: 'boolean', sortable: false, alias: 'anotherField' } } as SchemaDefinition,
+    ["that defines an unidexed boolean for a HASH", {
+      schemaDef: { aField: { type: 'boolean', indexed: false } } as SchemaDefinition,
       dataStructure: 'HASH',
-      expectedRedisSchema: ['anotherField', 'TAG']
+      expectedRedisSchema: ['aField', 'TAG', 'NOINDEX']
+    }],
+
+    ["that defines a fully configured boolean for a HASH", {
+      schemaDef: { aField: { type: 'boolean', alias: 'anotherField', sortable: true, indexed: false } } as SchemaDefinition,
+      dataStructure: 'HASH',
+      expectedRedisSchema: ['anotherField', 'TAG', 'SORTABLE', 'NOINDEX']
     }]
 
   ])("%s", (_, data) => {

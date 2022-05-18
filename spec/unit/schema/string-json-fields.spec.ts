@@ -31,24 +31,10 @@ describe("Schema", () => {
       expectedWarning: null
     }],
 
-    ["that defines an unsorted and aliased string for a JSON", {
-      schemaDef: { aField: { type: 'string', sortable: false, alias: 'anotherField' } } as SchemaDefinition,
-      dataStructure: 'JSON',
-      expectedRedisSchema: ['$.anotherField', 'AS', 'anotherField', 'TAG', 'SEPARATOR', '|'],
-      expectedWarning: null
-    }],
-
     ["that defines a sorted string for a JSON", {
       schemaDef: { aField: { type: 'string', sortable: true } } as SchemaDefinition,
       dataStructure: 'JSON',
       expectedRedisSchema: ['$.aField', 'AS', 'aField', 'TAG', 'SEPARATOR', '|'],
-      expectedWarning: "You have marked the string field 'aField' as sortable but RediSearch doesn't support the SORTABLE argument on a TAG for JSON. Ignored."
-    }],
-
-    ["that defines a sorted and aliased string for a JSON", {
-      schemaDef: { aField: { type: 'string', sortable: true, alias: 'anotherField' } } as SchemaDefinition,
-      dataStructure: 'JSON',
-      expectedRedisSchema: ['$.anotherField', 'AS', 'anotherField', 'TAG', 'SEPARATOR', '|'],
       expectedWarning: "You have marked the string field 'aField' as sortable but RediSearch doesn't support the SORTABLE argument on a TAG for JSON. Ignored."
     }],
 
@@ -59,38 +45,24 @@ describe("Schema", () => {
       expectedWarning: null
     }],
 
-    ["that defines a separated and aliased string for a JSON", {
-      schemaDef: { aField: { type: 'string', alias: 'anotherField', separator: ';' } } as SchemaDefinition,
+    ["that defines an indexed string for a JSON", {
+      schemaDef: { aField: { type: 'string', indexed: true } } as SchemaDefinition,
       dataStructure: 'JSON',
-      expectedRedisSchema: ['$.anotherField', 'AS', 'anotherField', 'TAG', 'SEPARATOR', ';'],
+      expectedRedisSchema: ['$.aField', 'AS', 'aField', 'TAG', 'SEPARATOR', '|'],
       expectedWarning: null
     }],
 
-    ["that defines a separated and unsorted string for a JSON", {
-      schemaDef: { aField: { type: 'string', sortable: false, separator: ';' } } as SchemaDefinition,
+    ["that defines an unindexed string for a JSON", {
+      schemaDef: { aField: { type: 'string', indexed: false } } as SchemaDefinition,
       dataStructure: 'JSON',
-      expectedRedisSchema: ['$.aField', 'AS', 'aField', 'TAG', 'SEPARATOR', ';'],
+      expectedRedisSchema: ['$.aField', 'AS', 'aField', 'TAG', 'SEPARATOR', '|', 'NOINDEX'],
       expectedWarning: null
     }],
 
-    ["that defines a separated and unsorted and aliased string for a JSON", {
-      schemaDef: { aField: { type: 'string', sortable: false, alias: 'anotherField', separator: ';' } } as SchemaDefinition,
+    ["that defines a fully configured string for a JSON", {
+      schemaDef: { aField: { type: 'string', alias: 'anotherField', sortable: true, separator: ';', indexed: false } } as SchemaDefinition,
       dataStructure: 'JSON',
-      expectedRedisSchema: ['$.anotherField', 'AS', 'anotherField', 'TAG', 'SEPARATOR', ';'],
-      expectedWarning: null
-    }],
-
-    ["that defines a separated and sorted string for a JSON", {
-      schemaDef: { aField: { type: 'string', sortable: true, separator: ';' } } as SchemaDefinition,
-      dataStructure: 'JSON',
-      expectedRedisSchema: ['$.aField', 'AS', 'aField', 'TAG', 'SEPARATOR', ';'],
-      expectedWarning: "You have marked the string field 'aField' as sortable but RediSearch doesn't support the SORTABLE argument on a TAG for JSON. Ignored."
-    }],
-
-    ["that defines a separated and sorted and aliased string for a JSON", {
-      schemaDef: { aField: { type: 'string', sortable: true, alias: 'anotherField', separator: ';' } } as SchemaDefinition,
-      dataStructure: 'JSON',
-      expectedRedisSchema: ['$.anotherField', 'AS', 'anotherField', 'TAG', 'SEPARATOR', ';'],
+      expectedRedisSchema: ['$.anotherField', 'AS', 'anotherField', 'TAG', 'SEPARATOR', ';', 'NOINDEX'],
       expectedWarning: "You have marked the string field 'aField' as sortable but RediSearch doesn't support the SORTABLE argument on a TAG for JSON. Ignored."
     }]
 

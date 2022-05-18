@@ -30,16 +30,22 @@ describe("Schema", () => {
       expectedRedisSchema: ['$.aField', 'AS', 'aField', 'TEXT']
     }],
 
-    ["that defines a sorted and aliased text for a JSON", {
-      schemaDef: { aField: { type: 'text', sortable: true, alias: 'anotherField' } } as SchemaDefinition,
+    ["that defines an indexed text for a JSON", {
+      schemaDef: { aField: { type: 'text', indexed: true } } as SchemaDefinition,
       dataStructure: 'JSON',
-      expectedRedisSchema: ['$.anotherField', 'AS', 'anotherField', 'TEXT', 'SORTABLE']
+      expectedRedisSchema: ['$.aField', 'AS', 'aField', 'TEXT']
     }],
 
-    ["that defines an unsorted and aliased text for a JSON", {
-      schemaDef: { aField: { type: 'text', sortable: false, alias: 'anotherField' } } as SchemaDefinition,
+    ["that defines an unindexed text for a JSON", {
+      schemaDef: { aField: { type: 'text', indexed: false } } as SchemaDefinition,
       dataStructure: 'JSON',
-      expectedRedisSchema: ['$.anotherField', 'AS', 'anotherField', 'TEXT']
+      expectedRedisSchema: ['$.aField', 'AS', 'aField', 'TEXT', 'NOINDEX']
+    }],
+
+    ["that defines a fully configured text for a JSON", {
+      schemaDef: { aField: { type: 'text', alias: 'anotherField', sortable: true, indexed: false } } as SchemaDefinition,
+      dataStructure: 'JSON',
+      expectedRedisSchema: ['$.anotherField', 'AS', 'anotherField', 'TEXT', 'SORTABLE', 'NOINDEX']
     }]
 
   ])("%s", (_, data) => {
