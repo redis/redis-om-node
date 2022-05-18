@@ -1,6 +1,6 @@
 import Entity from "../../entity/entity";
+import BaseFieldDefinition from "../definition/base-field-definition";
 import CaseSensitiveFieldDefinition from "../definition/casesensitive-field-definition";
-import NoIndexFieldDefinition from "../definition/noindex-field-definition";
 import NoStemFieldDefinition from "../definition/nostem-field-definition";
 import PhoneticFieldDefinition from "../definition/phonetic-field-definition";
 import SeparableFieldDefinition from "../definition/separable-field-definition";
@@ -31,8 +31,8 @@ export default abstract class SchemaBuilder<TEntity extends Entity> {
     return field.casesensitive ? ['CASEINSENSITIVE'] : []
   }
 
-  protected buildNoIndex(field: NoIndexFieldDefinition) {
-    return field.noindex ? ['NOINDEX'] : []
+  protected buildNoIndex(field: BaseFieldDefinition) {
+    return field.indexed ?? true ? [] : ['NOINDEX']
   }
 
   protected buildNoStem(field: NoStemFieldDefinition) {

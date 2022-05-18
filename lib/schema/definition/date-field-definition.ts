@@ -1,9 +1,8 @@
 import BaseFieldDefinition from "./base-field-definition";
-import NoIndexFieldDefinition from "./noindex-field-definition";
 import SortableFieldDefinition from "./sortable-field-definition";
 
 /** A field representing a date/time. */
-interface DateFieldDefinition extends BaseFieldDefinition, SortableFieldDefinition, NoIndexFieldDefinition {
+interface DateFieldDefinition extends BaseFieldDefinition, SortableFieldDefinition {
   /** Yep. It's a date. */
   type: 'date';
 }

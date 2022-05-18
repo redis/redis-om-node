@@ -30,9 +30,9 @@ describe("Schema", () => {
       expectedRedisSchema: ['$.aField[*]', 'AS', 'aField', 'TAG', 'NOINDEX']
     }],
 
-    ["that defines a fully-configured array for a HASH", {
+    ["that defines a fully-configured array for a JSON", {
       schemaDef: { aField: { type: 'string[]', alias: 'anotherField', indexed: false } } as SchemaDefinition,
-      dataStructure: 'HASH',
+      dataStructure: 'JSON',
       expectedRedisSchema: ['$.anotherField[*]', 'AS', 'anotherField', 'TAG', 'NOINDEX']
     }]
 

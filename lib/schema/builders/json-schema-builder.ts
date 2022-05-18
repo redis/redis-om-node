@@ -15,8 +15,8 @@ export default class JsonSchemaBuilder<TEntity extends Entity> extends SchemaBui
       case 'date':
         return [
           ...fieldInfo, 'NUMERIC',
-          ...this.buildNoIndex(fieldDef),
           ...this.buildSortable(fieldDef),
+          ...this.buildNoIndex(fieldDef),
         ]
       case 'boolean':
         if (fieldDef.sortable)
@@ -28,16 +28,18 @@ export default class JsonSchemaBuilder<TEntity extends Entity> extends SchemaBui
       case 'number':
         return [
           ...fieldInfo, 'NUMERIC',
-          ...this.buildNoIndex(fieldDef),
           ...this.buildSortable(fieldDef),
+          ...this.buildNoIndex(fieldDef),
         ]
       case 'point':
         return [
           ...fieldInfo, 'GEO',
+          ...this.buildNoIndex(fieldDef),
         ]
       case 'string[]':
         return [
           ...fieldInfo, 'TAG',
+          ...this.buildNoIndex(fieldDef),
         ]
       case 'string':
         if (fieldDef.sortable)
@@ -45,19 +47,19 @@ export default class JsonSchemaBuilder<TEntity extends Entity> extends SchemaBui
         return [
           ...fieldInfo, 'TAG',
           ...this.buildCaseInsensitive(fieldDef),
-          ...this.buildNoIndex(fieldDef),
           ...this.buildSeparable(fieldDef),
           ...this.buildUnNormalized(fieldDef),
+          ...this.buildNoIndex(fieldDef),
         ]
       case 'text':
         return [
           ...fieldInfo, 'TEXT',
-          ...this.buildNoIndex(fieldDef),
           ...this.buildNoStem(fieldDef),
           ...this.buildPhonetic(fieldDef),
           ...this.buildSortable(fieldDef),
           ...this.buildUnNormalized(fieldDef),
           ...this.buildWeight(fieldDef),
+          ...this.buildNoIndex(fieldDef),
         ]
     };
   }

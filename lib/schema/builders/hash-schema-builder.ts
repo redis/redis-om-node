@@ -12,48 +12,50 @@ export default class HashSchemaBuilder<TEntity extends Entity> extends SchemaBui
       case 'date':
         return [
           fieldAlias, 'NUMERIC',
-          ...this.buildNoIndex(fieldDef),
           ...this.buildSortable(fieldDef),
+          ...this.buildNoIndex(fieldDef),
         ]
       case 'boolean':
         return [
           fieldAlias, 'TAG',
-          ...this.buildNoIndex(fieldDef),
           ...this.buildSortable(fieldDef),
+          ...this.buildNoIndex(fieldDef),
         ]
       case 'number':
         return [
           fieldAlias, 'NUMERIC',
-          ...this.buildNoIndex(fieldDef),
           ...this.buildSortable(fieldDef),
+          ...this.buildNoIndex(fieldDef),
         ]
       case 'point':
         return [
           fieldAlias, 'GEO',
+          ...this.buildNoIndex(fieldDef),
         ]
       case 'string[]':
         return [
           fieldAlias, 'TAG',
           ...this.buildSeparable(fieldDef),
+          ...this.buildNoIndex(fieldDef),
         ]
       case 'string':
         return [
           fieldAlias, 'TAG',
           ...this.buildCaseInsensitive(fieldDef),
-          ...this.buildNoIndex(fieldDef),
           ...this.buildSeparable(fieldDef),
           ...this.buildSortable(fieldDef),
           ...this.buildUnNormalized(fieldDef),
+          ...this.buildNoIndex(fieldDef),
         ]
       case 'text':
         return [
           fieldAlias, 'TEXT',
-          ...this.buildNoIndex(fieldDef),
           ...this.buildNoStem(fieldDef),
           ...this.buildPhonetic(fieldDef),
           ...this.buildSortable(fieldDef),
           ...this.buildUnNormalized(fieldDef),
           ...this.buildWeight(fieldDef),
+          ...this.buildNoIndex(fieldDef),
         ]
     };
   }

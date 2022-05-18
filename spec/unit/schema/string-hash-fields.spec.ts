@@ -49,7 +49,7 @@ describe("Schema", () => {
     }],
 
     ["that defines a fully configured string for a HASH", {
-      schemaDef: { aField: { type: 'string', alias: 'anotherField', sortable: true, separator: ';', index: false } } as SchemaDefinition,
+      schemaDef: { aField: { type: 'string', alias: 'anotherField', sortable: true, separator: ';', indexed: false } } as SchemaDefinition,
       dataStructure: 'HASH',
       expectedRedisSchema: ['anotherField', 'TAG', 'SEPARATOR', ';', 'SORTABLE', 'NOINDEX']
     }]
