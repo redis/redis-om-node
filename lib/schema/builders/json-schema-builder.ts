@@ -23,6 +23,7 @@ export default class JsonSchemaBuilder<TEntity extends Entity> extends SchemaBui
           logger.warn(`You have marked the boolean field '${field}' as sortable but RediSearch doesn't support the SORTABLE argument on a TAG for JSON. Ignored.`);
         return [
           ...fieldInfo, 'TAG',
+          ...this.buildNoIndex(fieldDef),
         ]
       case 'number':
         return [

@@ -18,6 +18,7 @@ export default class HashSchemaBuilder<TEntity extends Entity> extends SchemaBui
       case 'boolean':
         return [
           fieldAlias, 'TAG',
+          ...this.buildNoIndex(fieldDef),
           ...this.buildSortable(fieldDef),
         ]
       case 'number':
