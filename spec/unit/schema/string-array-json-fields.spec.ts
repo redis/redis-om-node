@@ -9,31 +9,31 @@ describe("Schema", () => {
     ["that defines an unconfigured array for a JSON", {
       schemaDef: { aField: { type: 'string[]' } } as SchemaDefinition,
       dataStructure: 'JSON',
-      expectedRedisSchema: ['$.aField[*]', 'AS', 'aField', 'TAG']
+      expectedRedisSchema: ['$.aField[*]', 'AS', 'aField', 'TAG', 'SEPARATOR', '|']
     }],
 
     ["that defines an aliased array for a JSON", {
       schemaDef: { aField: { type: 'string[]', alias: 'anotherField' } } as SchemaDefinition,
       dataStructure: 'JSON',
-      expectedRedisSchema: ['$.anotherField[*]', 'AS', 'anotherField', 'TAG']
+      expectedRedisSchema: ['$.anotherField[*]', 'AS', 'anotherField', 'TAG', 'SEPARATOR', '|']
     }],
 
     ["that defines an indexed array for a JSON", {
       schemaDef: { aField: { type: 'string[]', indexed: true } } as SchemaDefinition,
       dataStructure: 'JSON',
-      expectedRedisSchema: ['$.aField[*]', 'AS', 'aField', 'TAG']
+      expectedRedisSchema: ['$.aField[*]', 'AS', 'aField', 'TAG', 'SEPARATOR', '|']
     }],
 
     ["that defines an unindexed array for a JSON", {
       schemaDef: { aField: { type: 'string[]', indexed: false } } as SchemaDefinition,
       dataStructure: 'JSON',
-      expectedRedisSchema: ['$.aField[*]', 'AS', 'aField', 'TAG', 'NOINDEX']
+      expectedRedisSchema: ['$.aField[*]', 'AS', 'aField', 'TAG', 'SEPARATOR', '|', 'NOINDEX']
     }],
 
     ["that defines a fully-configured array for a JSON", {
       schemaDef: { aField: { type: 'string[]', alias: 'anotherField', indexed: false } } as SchemaDefinition,
       dataStructure: 'JSON',
-      expectedRedisSchema: ['$.anotherField[*]', 'AS', 'anotherField', 'TAG', 'NOINDEX']
+      expectedRedisSchema: ['$.anotherField[*]', 'AS', 'anotherField', 'TAG', 'SEPARATOR', '|', 'NOINDEX']
     }]
 
   ])("%s", (_, data) => {

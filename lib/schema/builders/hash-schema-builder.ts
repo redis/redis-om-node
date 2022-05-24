@@ -33,11 +33,6 @@ export default class HashSchemaBuilder<TEntity extends Entity> extends SchemaBui
           ...this.buildIndexed(fieldDef),
         ]
       case 'string[]':
-        return [
-          fieldAlias, 'TAG',
-          ...this.buildSeparable(fieldDef),
-          ...this.buildIndexed(fieldDef),
-        ]
       case 'string':
         return [
           fieldAlias, 'TAG',

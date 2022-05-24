@@ -37,13 +37,9 @@ export default class JsonSchemaBuilder<TEntity extends Entity> extends SchemaBui
           ...this.buildIndexed(fieldDef),
         ]
       case 'string[]':
-        return [
-          ...fieldInfo, 'TAG',
-          ...this.buildIndexed(fieldDef),
-        ]
       case 'string':
         if (fieldDef.sortable)
-          logger.warn(`You have marked the string field '${field}' as sortable but RediSearch doesn't support the SORTABLE argument on a TAG for JSON. Ignored.`);
+          logger.warn(`You have marked the ${fieldDef.type} field '${field}' as sortable but RediSearch doesn't support the SORTABLE argument on a TAG for JSON. Ignored.`);
         return [
           ...fieldInfo, 'TAG',
           ...this.buildCaseInsensitive(fieldDef),

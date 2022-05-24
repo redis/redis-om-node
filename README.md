@@ -238,12 +238,21 @@ A `text` field is a lot like a `string`. If you're just reading and writing obje
 
 Additional field options can be set depending on the field type. These correspond to the [Field Options](https://redis.io/commands/ft.create/#field-options) avialable when creating a RediSearch full-text index. Other than the `separator` option, these only affect how content is indexed and searched.
 
-<!-- TODO: render as a table to show which options are applicable to which field types -->
+|  schema type   | RediSearch type | `indexed` | `sortable` | `normalized` | `stemming` | `phonetic` | `weight` | `separator` | `casesensitive` |
+| -------------- | :-------------: | :-------: | :--------: | :----------: | :--------: | :--------: | :------: | :---------: | :-------------: |
+| `string`       |       TAG       |    yes    |  HASH Only |   HASH Only  |      -     |      -     |     -    |     yes     |        yes      |
+| `number`       |     NUMERIC     |    yes    |    yes     |       -      |      -     |      -     |     -    |      -      |         -       |
+| `boolean`      |       TAG       |    yes    |  HASH Only |       -      |      -     |      -     |     -    |      -      |         -       |
+| `string[]`     |       TAG       |    yes    |  HASH Only |   HASH Only  |      -     |      -     |     -    |     yes     |        yes      |
+| `date`         |     NUMERIC     |    yes    |    yes     |       -      |            |      -     |     -    |      -      |         -       |
+| `point`        |       GEO       |    yes    |     -      |       -      |            |      -     |     -    |      -      |         -       |
+| `text`         |       TEXT      |    yes    |    yes     |      yes     |     yes    |     yes    |    yes   |      -      |         -       |
 
 * `indexed`: true | false, whether this field is indexed by RediSearch (default true)
 * `sortable`: true | false, whether to create an additional index to optmize sorting (default false)
 * `normalized`: true | false, whether to apply normalization for sorting (default true)
 * `phonetic`: string defining phonetic matcher which can be one of 'dm:en' for English | 'dm:fr' for French | 'dm:pt' for Portugese)| 'dm:es' for Spanish (default none)
+* `stemming`: true | false, whether word stemming is applied to text fields (default true)
 * `weight`: number, the importance weighting to use when ranking results (default 1)
 * `separator`: string, the character to delimit multiple tags (default '|')
 * `casesensitive`: true | false, whether original letter casing is kept for search (default false)
