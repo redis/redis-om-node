@@ -43,8 +43,10 @@ class EntityPointField extends EntityField {
     if (value !== null) {
       if (!this.isPoint(value))
         throw Error(`Expected value with type of 'point' but received '${value}'.`);
+      // As per https://redis.io/commands/geoadd/ and local testing
+      // Valid latitudes are from -85.05112878 to 85.05112878 degrees (*NOT* -90 to +90)
       const { longitude, latitude } = value as Point;
-      if (Math.abs(latitude) > 90 || Math.abs(longitude) > 180)
+      if (Math.abs(latitude) > 85.05112878 || Math.abs(longitude) > 180)
         throw Error(`Expected value with valid 'point' but received '${longitude},${latitude}'.`);
     }
   }

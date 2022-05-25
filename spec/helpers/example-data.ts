@@ -44,7 +44,7 @@ export const A_THIRD_POINT: Point = { longitude: -34.56, latitude: 78.90 };
 export const A_THIRD_POINT_JSON: string = JSON.stringify(A_THIRD_POINT);
 export const A_THIRD_POINT_STRING: string = `${A_THIRD_POINT.longitude},${A_THIRD_POINT.latitude}`;
 
-export const AN_INVALID_POINT: Point = { longitude: 180.5, latitude: -90.6 };
+export const AN_INVALID_POINT: Point = { longitude: 123.4, latitude: 85.05112879 };
 export const AN_INVALID_POINT_STRING: string = `${AN_INVALID_POINT.longitude},${AN_INVALID_POINT.latitude}`;
 
 export const SOME_STRINGS: Array<string> = ['alfa', 'bravo', 'charlie'];
