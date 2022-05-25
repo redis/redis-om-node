@@ -40,8 +40,13 @@ class EntityPointField extends EntityField {
 
   protected valdiateValue(value: EntityValue) {
     super.valdiateValue(value);
-    if (value !== null && !this.isPoint(value))
-      throw Error(`Expected value with type of 'point' but received '${value}'.`);
+    if (value !== null) {
+      if (!this.isPoint(value))
+        throw Error(`Expected value with type of 'point' but received '${value}'.`);
+      const { longitude, latitude } = value as Point;
+      if (Math.abs(latitude) > 90 || Math.abs(longitude) > 180)
+        throw Error(`Expected value with valid 'point' but received '${longitude},${latitude}'.`);
+    }
   }
 
   private isPoint(value: any) {
