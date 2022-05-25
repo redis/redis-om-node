@@ -28,8 +28,8 @@ class EntityDateField extends EntityField {
     this.value = date;
   }
 
-  protected valdiateValue(value: EntityValue) {
-    super.valdiateValue(value);
+  protected validateValue(value: EntityValue) {
+    super.validateValue(value);
     if (value !== null && !this.isDateable(value))
       throw Error(`Expected value with type of 'date' but received '${value}'.`);
   }

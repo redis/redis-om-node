@@ -24,7 +24,7 @@ abstract class EntityField {
   }
 
   set value(value: EntityValue) {
-    this.valdiateValue(value);
+    this.validateValue(value);
     this._value = this.convertValue(value);
   }
 
@@ -48,7 +48,7 @@ abstract class EntityField {
     this.value = value;
   }
 
-  protected valdiateValue(value: EntityValue) {
+  protected validateValue(value: EntityValue) {
     if (value === undefined) throw Error(`Property cannot be set to undefined. Use null instead.`);
   }
 

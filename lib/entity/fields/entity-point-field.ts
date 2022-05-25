@@ -38,8 +38,8 @@ class EntityPointField extends EntityField {
     }
   }
 
-  protected valdiateValue(value: EntityValue) {
-    super.valdiateValue(value);
+  protected validateValue(value: EntityValue) {
+    super.validateValue(value);
     if (value !== null) {
       if (!this.isPoint(value))
         throw Error(`Expected value with type of 'point' but received '${value}'.`);
