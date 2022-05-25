@@ -13,7 +13,7 @@ interface BaseFieldDefinition {
 
   /**
    * Is this field indexed and thus searchable with Redis OM. Defaults
-   * to true.
+   * to the schema indexedDefault value, currently true.
    */
   indexed?: boolean;
 }

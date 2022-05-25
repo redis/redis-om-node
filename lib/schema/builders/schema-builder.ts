@@ -32,7 +32,7 @@ export default abstract class SchemaBuilder<TEntity extends Entity> {
   }
 
   protected buildIndexed(field: BaseFieldDefinition) {
-    return field.indexed ?? true ? [] : ['NOINDEX']
+    return field.indexed ?? this.schema.indexedDefault ? [] : ['NOINDEX']
   }
 
   protected buildStemming(field: StemmingFieldDefinition) {
