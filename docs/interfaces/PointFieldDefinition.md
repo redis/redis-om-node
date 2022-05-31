@@ -15,6 +15,7 @@ A field representing a point on the globe.
 ### Properties
 
 - [alias](PointFieldDefinition.md#alias)
+- [indexed](PointFieldDefinition.md#indexed)
 - [type](PointFieldDefinition.md#type)
 
 ## Properties
@@ -32,7 +33,24 @@ The default field name in Redis is the key name defined in the
 
 #### Defined in
 
-[lib/schema/definition/base-field-definition.ts:12](https://github.com/redis/redis-om-node/blob/9268f6d/lib/schema/definition/base-field-definition.ts#L12)
+[lib/schema/definition/base-field-definition.ts:12](https://github.com/redis/redis-om-node/blob/48d362b/lib/schema/definition/base-field-definition.ts#L12)
+
+___
+
+### indexed
+
+• `Optional` **indexed**: `boolean`
+
+Is this field indexed and thus searchable with Redis OM. Defaults
+to the schema indexedDefault value, currently true.
+
+#### Inherited from
+
+[BaseFieldDefinition](BaseFieldDefinition.md).[indexed](BaseFieldDefinition.md#indexed)
+
+#### Defined in
+
+[lib/schema/definition/base-field-definition.ts:18](https://github.com/redis/redis-om-node/blob/48d362b/lib/schema/definition/base-field-definition.ts#L18)
 
 ___
 
@@ -48,4 +66,4 @@ Yep. It's a point.
 
 #### Defined in
 
-[lib/schema/definition/point-field-definition.ts:6](https://github.com/redis/redis-om-node/blob/9268f6d/lib/schema/definition/point-field-definition.ts#L6)
+[lib/schema/definition/point-field-definition.ts:6](https://github.com/redis/redis-om-node/blob/48d362b/lib/schema/definition/point-field-definition.ts#L6)
