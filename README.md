@@ -238,7 +238,7 @@ A `text` field is a lot like a `string`. If you're just reading and writing obje
 
 Additional field options can be set depending on the field type. These correspond to the [Field Options](https://redis.io/commands/ft.create/#field-options) avialable when creating a RediSearch full-text index. Other than the `separator` option, these only affect how content is indexed and searched.
 
-|  schema type   | RediSearch type | `indexed` | `sortable` | `normalized` | `stemming` | `phonetic` | `weight` | `separator` | `casesensitive` |
+|  schema type   | RediSearch type | `indexed` | `sortable` | `normalized` | `stemming` | `phonetic` | `weight` | `separator` | `caseSensitive` |
 | -------------- | :-------------: | :-------: | :--------: | :----------: | :--------: | :--------: | :------: | :---------: | :-------------: |
 | `string`       |       TAG       |    yes    |  HASH Only |   HASH Only  |      -     |      -     |     -    |     yes     |        yes      |
 | `number`       |     NUMERIC     |    yes    |    yes     |       -      |      -     |      -     |     -    |      -      |         -       |
@@ -255,7 +255,7 @@ Additional field options can be set depending on the field type. These correspon
 * `stemming`: true | false, whether word stemming is applied to text fields (default true)
 * `weight`: number, the importance weighting to use when ranking results (default 1)
 * `separator`: string, the character to delimit multiple tags (default '|')
-* `casesensitive`: true | false, whether original letter casing is kept for search (default false)
+* `caseSensitive`: true | false, whether original letter casing is kept for search (default false)
 
 Example showing additional options:
 
@@ -267,7 +267,7 @@ const commentSchema = new Schema(Comment, {
   title: { type: 'text', weight: 2 },
   comment: { type: 'text', weight: 1 },
   approved: { type: 'boolean', indexed: false },
-  iphash: { type: 'string', casesensitive: true },
+  iphash: { type: 'string', caseSensitive: true },
   notes: { type: 'string', indexed: false },
 })
 ```

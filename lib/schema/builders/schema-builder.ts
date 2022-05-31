@@ -28,7 +28,7 @@ export default abstract class SchemaBuilder<TEntity extends Entity> {
   protected abstract buildEntry(field: string): Array<string>;
 
   protected buildCaseInsensitive(field: CaseSensitiveFieldDefinition) {
-    return field.casesensitive ? ['CASEINSENSITIVE'] : []
+    return field.caseSensitive ? ['CASESENSITIVE'] : []
   }
 
   protected buildIndexed(field: BaseFieldDefinition) {
