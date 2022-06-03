@@ -48,6 +48,12 @@ describe("Schema", () => {
       expectedRedisSchema: ['aField', 'TAG', 'SEPARATOR', '|', 'NOINDEX']
     }],
 
+    ["that defines a caseSensitive string for a HASH", {
+      schemaDef: { aField: { type: 'string', caseSensitive: true } } as SchemaDefinition,
+      dataStructure: 'HASH',
+      expectedRedisSchema: ['aField', 'TAG', 'CASESENSITIVE', 'SEPARATOR', '|']
+    }],
+
     ["that defines a fully configured string for a HASH", {
       schemaDef: { aField: { type: 'string', alias: 'anotherField', sortable: true, separator: ';', indexed: false } } as SchemaDefinition,
       dataStructure: 'HASH',

@@ -42,10 +42,34 @@ describe("Schema", () => {
       expectedRedisSchema: ['aField', 'TEXT', 'NOINDEX']
     }],
 
-    ["that defines a fully configured text for a HASH", {
-      schemaDef: { aField: { type: 'text', alias: 'anotherField', sortable: true, indexed: false } } as SchemaDefinition,
+    ["that defines a phonetic matcher text for a HASH", {
+      schemaDef: { aField: { type: 'text', matcher: 'dm:en' } } as SchemaDefinition,
       dataStructure: 'HASH',
-      expectedRedisSchema: ['anotherField', 'TEXT', 'SORTABLE', 'NOINDEX']
+      expectedRedisSchema: ['aField', 'TEXT', 'PHONETIC', 'dm:en']
+    }],
+
+    ["that defines an unstemmed text for a HASH", {
+      schemaDef: { aField: { type: 'text', stemming: false } } as SchemaDefinition,
+      dataStructure: 'HASH',
+      expectedRedisSchema: ['aField', 'TEXT', 'NOSTEM']
+    }],
+
+    ["that defines an unnormalized text for a HASH", {
+      schemaDef: { aField: { type: 'text', normalized: false } } as SchemaDefinition,
+      dataStructure: 'HASH',
+      expectedRedisSchema: ['aField', 'TEXT', 'UNF']
+    }],
+
+    ["that defines a weighted text for a HASH", {
+      schemaDef: { aField: { type: 'text', weight: 2 } } as SchemaDefinition,
+      dataStructure: 'HASH',
+      expectedRedisSchema: ['aField', 'TEXT', 'WEIGHT', '2']
+    }],
+
+    ["that defines a fully configured text for a HASH", {
+      schemaDef: { aField: { type: 'text', alias: 'anotherField', sortable: true, matcher: 'dm:en', stemming: false, normalized: false, weight: 2 } } as SchemaDefinition,
+      dataStructure: 'HASH',
+      expectedRedisSchema: ['anotherField', 'TEXT', 'NOSTEM', 'PHONETIC', 'dm:en', 'SORTABLE', 'UNF', 'WEIGHT', '2']
     }]
 
   ])("%s", (_, data) => {
