@@ -59,6 +59,13 @@ describe("Schema", () => {
       expectedWarning: null
     }],
 
+    ["that defines a caseSensitive string for a JSON", {
+      schemaDef: { aField: { type: 'string', caseSensitive: true } } as SchemaDefinition,
+      dataStructure: 'JSON',
+      expectedRedisSchema: ['$.aField', 'AS', 'aField', 'TAG', 'CASESENSITIVE', 'SEPARATOR', '|'],
+      expectedWarning: null
+    }],
+
     ["that defines a fully configured string for a JSON", {
       schemaDef: { aField: { type: 'string', alias: 'anotherField', sortable: true, separator: ';', indexed: false } } as SchemaDefinition,
       dataStructure: 'JSON',
