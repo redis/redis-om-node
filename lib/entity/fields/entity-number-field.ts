@@ -8,8 +8,8 @@ class EntityNumberField extends EntityField {
     this.value = number;
   }
 
-  protected valdiateValue(value: EntityValue) {
-    super.valdiateValue(value);
+  protected validateValue(value: EntityValue) {
+    super.validateValue(value);
     if (value !== null && !this.isNumber(value))
       throw Error(`Expected value with type of 'number' but received '${value}'.`);
   }

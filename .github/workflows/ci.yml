@@ -11,11 +11,10 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [14, 16]
-        redismod: [ "edge" ]
+        node-version: [14, 16, 18]
     services:
       redis:
-        image: redislabs/redismod:${{ matrix.redismod }}
+        image: redis/redis-stack-server:latest
         ports:
           - 6379:6379
         options: >-

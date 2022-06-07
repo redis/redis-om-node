@@ -1,6 +1,6 @@
 import { FieldDefinition } from "../../../lib";
 import EntityPointField from "../../../lib/entity/fields/entity-point-field";
-import { A_DATE, A_NUMBER, A_POINT, A_POINT_STRING, A_STRING, SOME_STRINGS } from "../../helpers/example-data";
+import { AN_INVALID_POINT, AN_INVALID_POINT_STRING, A_DATE, A_NUMBER, A_POINT, A_POINT_STRING, A_STRING, SOME_STRINGS } from "../../helpers/example-data";
 
 const FIELD_NAME = 'foo';
 const FIELD_DEF: FieldDefinition = { type: 'point' };
@@ -146,5 +146,11 @@ describe("EntityPointField", () => {
     // @ts-ignore: JavaScript trap
     expect(() => new EntityPointField(FIELD_NAME, FIELD_DEF, SOME_STRINGS))
       .toThrow(`Expected value with type of 'point' but received '${SOME_STRINGS}'.`);
+  });
+
+  it("complains when created with an invalid point", () => {
+    // @ts-ignore: JavaScript trap
+    expect(() => new EntityPointField(FIELD_NAME, FIELD_DEF, AN_INVALID_POINT))
+      .toThrow(`Expected value with valid 'point' but received '${AN_INVALID_POINT_STRING}'.`);
   });
 });
