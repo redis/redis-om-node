@@ -16,6 +16,7 @@
 
 ### Properties
 
+- [cause](RedisError.md#cause)
 - [message](RedisError.md#message)
 - [name](RedisError.md#name)
 - [stack](RedisError.md#stack)
@@ -44,9 +45,23 @@ Error.constructor
 
 #### Defined in
 
-[lib/errors.ts:2](https://github.com/redis/redis-om-node/blob/20561ae/lib/errors.ts#L2)
+[lib/errors.ts:2](https://github.com/redis/redis-om-node/blob/9268f6d/lib/errors.ts#L2)
 
 ## Properties
+
+### cause
+
+• `Optional` **cause**: `Error`
+
+#### Inherited from
+
+Error.cause
+
+#### Defined in
+
+node_modules/typescript/lib/lib.es2022.error.d.ts:26
+
+___
 
 ### message
 
@@ -58,7 +73,7 @@ Error.message
 
 #### Defined in
 
-node_modules/typescript/lib/lib.es5.d.ts:1023
+node_modules/typescript/lib/lib.es5.d.ts:1029
 
 ___
 
@@ -72,7 +87,7 @@ Error.name
 
 #### Defined in
 
-node_modules/typescript/lib/lib.es5.d.ts:1022
+node_modules/typescript/lib/lib.es5.d.ts:1028
 
 ___
 
@@ -86,7 +101,7 @@ Error.stack
 
 #### Defined in
 
-node_modules/typescript/lib/lib.es5.d.ts:1024
+node_modules/typescript/lib/lib.es5.d.ts:1030
 
 ___
 

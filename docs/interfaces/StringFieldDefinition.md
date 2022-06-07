@@ -38,7 +38,7 @@ The default field name in Redis is the key name defined in the
 
 #### Defined in
 
-[lib/schema/definition/base-field-definition.ts:12](https://github.com/redis/redis-om-node/blob/20561ae/lib/schema/definition/base-field-definition.ts#L12)
+[lib/schema/definition/base-field-definition.ts:12](https://github.com/redis/redis-om-node/blob/9268f6d/lib/schema/definition/base-field-definition.ts#L12)
 
 ___
 
@@ -57,7 +57,7 @@ those problems. Defaults to `|`.
 
 #### Defined in
 
-[lib/schema/definition/separable-field-definition.ts:9](https://github.com/redis/redis-om-node/blob/20561ae/lib/schema/definition/separable-field-definition.ts#L9)
+[lib/schema/definition/separable-field-definition.ts:9](https://github.com/redis/redis-om-node/blob/9268f6d/lib/schema/definition/separable-field-definition.ts#L9)
 
 ___
 
@@ -73,7 +73,7 @@ Enables sorting by this field.
 
 #### Defined in
 
-[lib/schema/definition/sortable-field-definition.ts:4](https://github.com/redis/redis-om-node/blob/20561ae/lib/schema/definition/sortable-field-definition.ts#L4)
+[lib/schema/definition/sortable-field-definition.ts:4](https://github.com/redis/redis-om-node/blob/9268f6d/lib/schema/definition/sortable-field-definition.ts#L4)
 
 ___
 
@@ -89,4 +89,4 @@ Yep. It's a string.
 
 #### Defined in
 
-[lib/schema/definition/string-field-definition.ts:8](https://github.com/redis/redis-om-node/blob/20561ae/lib/schema/definition/string-field-definition.ts#L8)
+[lib/schema/definition/string-field-definition.ts:8](https://github.com/redis/redis-om-node/blob/9268f6d/lib/schema/definition/string-field-definition.ts#L8)

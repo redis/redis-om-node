@@ -33,7 +33,7 @@ The generated entity ID.
 
 #### Defined in
 
-[lib/entity/entity.ts:38](https://github.com/redis/redis-om-node/blob/20561ae/lib/entity/entity.ts#L38)
+[lib/entity/entity.ts:38](https://github.com/redis/redis-om-node/blob/9268f6d/lib/entity/entity.ts#L38)
 
 ## Accessors
 
@@ -49,7 +49,7 @@ The keyname this [Entity](Entity.md) is stored with in Redis.
 
 #### Defined in
 
-[lib/entity/entity.ts:74](https://github.com/redis/redis-om-node/blob/20561ae/lib/entity/entity.ts#L74)
+[lib/entity/entity.ts:74](https://github.com/redis/redis-om-node/blob/9268f6d/lib/entity/entity.ts#L74)
 
 ## Methods
 
@@ -67,4 +67,4 @@ a JavaScript object.
 
 #### Defined in
 
-[lib/entity/entity.ts:82](https://github.com/redis/redis-om-node/blob/20561ae/lib/entity/entity.ts#L82)
+[lib/entity/entity.ts:82](https://github.com/redis/redis-om-node/blob/9268f6d/lib/entity/entity.ts#L82)

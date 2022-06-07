@@ -40,7 +40,7 @@ The default field name in Redis is the key name defined in the
 
 #### Defined in
 
-[lib/schema/definition/base-field-definition.ts:12](https://github.com/redis/redis-om-node/blob/20561ae/lib/schema/definition/base-field-definition.ts#L12)
+[lib/schema/definition/base-field-definition.ts:12](https://github.com/redis/redis-om-node/blob/9268f6d/lib/schema/definition/base-field-definition.ts#L12)
 
 ___
 
@@ -52,4 +52,4 @@ The type of the field (i.e. string, number, boolean, etc.)
 
 #### Defined in
 
-[lib/schema/definition/base-field-definition.ts:6](https://github.com/redis/redis-om-node/blob/20561ae/lib/schema/definition/base-field-definition.ts#L6)
+[lib/schema/definition/base-field-definition.ts:6](https://github.com/redis/redis-om-node/blob/9268f6d/lib/schema/definition/base-field-definition.ts#L6)
