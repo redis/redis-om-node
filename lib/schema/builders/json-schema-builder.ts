@@ -1,49 +1,62 @@
 import Entity from "../../entity/entity";
-import SchemaBuilder from "./schema-builder";
+import * as logger from '../../shims/logger';
 import FieldDefinition from "../definition/field-definition";
-import SeparableFieldDefinition from "../definition/separable-field-definition";
-import SortableFieldDefinition from "../definition/sortable-field-definition";
-import SchemaFieldType from "../definition/schema-field-type";
-
-import * as logger from '../../shims/logger'
+import SchemaBuilder from "./schema-builder";
 
 export default class JsonSchemaBuilder<TEntity extends Entity> extends SchemaBuilder<TEntity> {
 
   protected buildEntry(field: string): Array<string> {
     const fieldDef: FieldDefinition = this.schema.definition[field];
-    const fieldType: SchemaFieldType = fieldDef.type;
     const fieldAlias = fieldDef.alias ?? field;
-    const fieldPath = `\$.${fieldAlias}${fieldType === 'string[]' ? '[*]' : ''}`;
-    let fieldDetails: Array<string>;
+    const fieldPath = `\$.${fieldAlias}${fieldDef.type === 'string[]' ? '[*]' : ''}`;
+    const fieldInfo = [fieldPath, 'AS', fieldAlias]
 
-    switch (fieldType) {
+    switch (fieldDef.type) {
       case 'date':
-        fieldDetails = this.buildSortableNumeric(fieldDef as SortableFieldDefinition);
-        break;
+        return [
+          ...fieldInfo, 'NUMERIC',
+          ...this.buildSortable(fieldDef),
+          ...this.buildIndexed(fieldDef),
+        ]
       case 'boolean':
-        if ((fieldDef as SortableFieldDefinition).sortable)
+        if (fieldDef.sortable)
           logger.warn(`You have marked the boolean field '${field}' as sortable but RediSearch doesn't support the SORTABLE argument on a TAG for JSON. Ignored.`);
-        fieldDetails = this.buildTag();
-        break;
+        return [
+          ...fieldInfo, 'TAG',
+          ...this.buildIndexed(fieldDef),
+        ]
       case 'number':
-        fieldDetails = this.buildSortableNumeric(fieldDef as SortableFieldDefinition);
-        break;
+        return [
+          ...fieldInfo, 'NUMERIC',
+          ...this.buildSortable(fieldDef),
+          ...this.buildIndexed(fieldDef),
+        ]
       case 'point':
-        fieldDetails = this.buildGeo();
-        break;
+        return [
+          ...fieldInfo, 'GEO',
+          ...this.buildIndexed(fieldDef),
+        ]
       case 'string[]':
-        fieldDetails = this.buildTag();
-        break;
       case 'string':
-        if ((fieldDef as SortableFieldDefinition).sortable)
-          logger.warn(`You have marked the string field '${field}' as sortable but RediSearch doesn't support the SORTABLE argument on a TAG for JSON. Ignored.`);
-        fieldDetails = this.buildSeparableTag(fieldDef as SeparableFieldDefinition)
-        break;
+        if (fieldDef.sortable)
+          logger.warn(`You have marked the ${fieldDef.type} field '${field}' as sortable but RediSearch doesn't support the SORTABLE argument on a TAG for JSON. Ignored.`);
+        return [
+          ...fieldInfo, 'TAG',
+          ...this.buildCaseInsensitive(fieldDef),
+          ...this.buildSeparable(fieldDef),
+          ...this.buildNormalized(fieldDef),
+          ...this.buildIndexed(fieldDef),
+        ]
       case 'text':
-        fieldDetails = this.buildSortableText(fieldDef as SortableFieldDefinition)
-        break;
-    }
-
-    return [fieldPath, 'AS', fieldAlias, ...fieldDetails];
+        return [
+          ...fieldInfo, 'TEXT',
+          ...this.buildStemming(fieldDef),
+          ...this.buildPhonetic(fieldDef),
+          ...this.buildSortable(fieldDef),
+          ...this.buildNormalized(fieldDef),
+          ...this.buildWeight(fieldDef),
+          ...this.buildIndexed(fieldDef),
+        ]
+    };
   }
 }

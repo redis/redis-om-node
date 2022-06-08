@@ -31,4 +31,4 @@ those problems. Defaults to `|`.
 
 #### Defined in
 
-[lib/schema/definition/separable-field-definition.ts:9](https://github.com/redis/redis-om-node/blob/20561ae/lib/schema/definition/separable-field-definition.ts#L9)
+[lib/schema/definition/separable-field-definition.ts:9](https://github.com/redis/redis-om-node/blob/48d362b/lib/schema/definition/separable-field-definition.ts#L9)

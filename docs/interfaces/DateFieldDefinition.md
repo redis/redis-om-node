@@ -17,6 +17,7 @@ A field representing a date/time.
 ### Properties
 
 - [alias](DateFieldDefinition.md#alias)
+- [indexed](DateFieldDefinition.md#indexed)
 - [sortable](DateFieldDefinition.md#sortable)
 - [type](DateFieldDefinition.md#type)
 
@@ -35,7 +36,24 @@ The default field name in Redis is the key name defined in the
 
 #### Defined in
 
-[lib/schema/definition/base-field-definition.ts:12](https://github.com/redis/redis-om-node/blob/20561ae/lib/schema/definition/base-field-definition.ts#L12)
+[lib/schema/definition/base-field-definition.ts:12](https://github.com/redis/redis-om-node/blob/48d362b/lib/schema/definition/base-field-definition.ts#L12)
+
+___
+
+### indexed
+
+• `Optional` **indexed**: `boolean`
+
+Is this field indexed and thus searchable with Redis OM. Defaults
+to the schema indexedDefault value, currently true.
+
+#### Inherited from
+
+[BaseFieldDefinition](BaseFieldDefinition.md).[indexed](BaseFieldDefinition.md#indexed)
+
+#### Defined in
+
+[lib/schema/definition/base-field-definition.ts:18](https://github.com/redis/redis-om-node/blob/48d362b/lib/schema/definition/base-field-definition.ts#L18)
 
 ___
 
@@ -51,7 +69,7 @@ Enables sorting by this field.
 
 #### Defined in
 
-[lib/schema/definition/sortable-field-definition.ts:4](https://github.com/redis/redis-om-node/blob/20561ae/lib/schema/definition/sortable-field-definition.ts#L4)
+[lib/schema/definition/sortable-field-definition.ts:4](https://github.com/redis/redis-om-node/blob/48d362b/lib/schema/definition/sortable-field-definition.ts#L4)
 
 ___
 
@@ -67,4 +85,4 @@ Yep. It's a date.
 
 #### Defined in
 
-[lib/schema/definition/date-field-definition.ts:7](https://github.com/redis/redis-om-node/blob/20561ae/lib/schema/definition/date-field-definition.ts#L7)
+[lib/schema/definition/date-field-definition.ts:7](https://github.com/redis/redis-om-node/blob/48d362b/lib/schema/definition/date-field-definition.ts#L7)
