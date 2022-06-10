@@ -1004,9 +1004,9 @@ const albumSchema = new Schema(Album, {
 })
 ```
 
-If you're schema is for a JSON data structure (the default), you can mark `number`, `date`, and `text` fields as sortable. You can also mark `string` and `boolean` field sortable, but this will have no effect and will generate a warning.
+If your schema is for a JSON data structure (the default), you can mark `number`, `date`, and `text` fields as sortable. You can also mark `string` and `boolean` field sortable, but this will have no effect and will generate a warning.
 
-If you're schema is for a Hash, you can mark `string`, `number`, `boolean`, `date`, and `text` fields as sortable.
+If your schema is for a Hash, you can mark `string`, `number`, `boolean`, `date`, and `text` fields as sortable.
 
 Fields of the types `point` and `string[]` are never sortable.
 
