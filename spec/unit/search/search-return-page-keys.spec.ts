@@ -3,7 +3,7 @@ import { mocked } from 'jest-mock';
 import Client from "../../../lib/client";
 import { Search, RawSearch } from "../../../lib/search/search";
 
-import { simpleHashSchema, SimpleHashEntity, SimpleJsonEntity, simpleJsonSchema } from "../helpers/test-entity-and-schema";
+import { simpleHashSchema, SimpleHashEntity } from "../helpers/test-entity-and-schema";
 import { mockClientSearchToReturnNothing,
   mockClientSearchToReturnSingleKey, mockClientSearchToReturnMultipleKeys,
   SIMPLE_ENTITY_1, SIMPLE_ENTITY_2, SIMPLE_ENTITY_3 } from '../helpers/search-helpers';
@@ -12,7 +12,6 @@ jest.mock('../../../lib/client');
 
 
 type HashSearch = Search<SimpleHashEntity> | RawSearch<SimpleHashEntity>;
-type JsonSearch = Search<SimpleJsonEntity> | RawSearch<SimpleJsonEntity>;
 
 beforeEach(() => {
   mocked(Client).mockReset();
