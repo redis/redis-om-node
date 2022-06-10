@@ -156,7 +156,7 @@ export abstract class AbstractSearch<TEntity extends Entity> {
   /**
    * Returns a page of {@link Entity | Entities} that match this query.
    * @param offset The offset for where to start returning {@link Entity | Entities}.
-   * @param pageSize The number of {@link Entity | Entities} to return.
+   * @param count The number of {@link Entity | Entities} to return.
    * @returns An array of {@link Entity | Entities} matching the query.
    */
   async page(offset: number, count: number): Promise<TEntity[]> {
@@ -164,6 +164,17 @@ export abstract class AbstractSearch<TEntity extends Entity> {
     return this.schema.dataStructure === 'JSON'
       ? new JsonSearchResultsConverter(this.schema, searchResults).entities
       : new HashSearchResultsConverter(this.schema, searchResults).entities;
+  }
+
+  /**
+   * Returns a page of key names in Redis that match this query.
+   * @param offset The offset for where to start returning key names.
+   * @param count The number of key names to return.
+   * @returns An array of strings matching the query.
+   */
+  async pageKeys(offset: number, count: number): Promise<string[]> {
+    const [ _count, ...keys] = await this.callSearch({ offset, count }, true);
+    return keys;
   }
 
   /**
@@ -253,11 +264,12 @@ export abstract class AbstractSearch<TEntity extends Entity> {
     return await this.first();
   }
 
-  private async callSearch(limit: LimitOptions = { offset: 0, count: 0 }) {
+  private async callSearch(limit: LimitOptions = { offset: 0, count: 0 }, keysOnly = false) {
     const options: SearchOptions = {
       indexName: this.schema.indexName,
       query: this.query,
-      limit
+      limit,
+      keysOnly
     };
 
     if (this.sort !== undefined) options.sort = this.sort;

@@ -45,7 +45,8 @@ describe.each([
             indexName,
             query,
             limit: { offset: 0, count: 1 },
-            sort: { field: 'aNumber', order: 'ASC' }
+            sort: { field: 'aNumber', order: 'ASC' },
+            keysOnly: false
           });
         });
 
@@ -64,7 +65,8 @@ describe.each([
             indexName,
             query,
             limit: { offset: 0, count: 1 },
-            sort: { field: 'aNumber', order: 'ASC' }
+            sort: { field: 'aNumber', order: 'ASC' },
+            keysOnly: false
           });
         });
 
@@ -93,7 +95,8 @@ describe.each([
             indexName,
             query,
             limit: { offset: 0, count: 1 },
-            sort: { field: 'aNumber', order: 'ASC' }
+            sort: { field: 'aNumber', order: 'ASC' },
+            keysOnly: false
           });
         });
 
@@ -112,7 +115,8 @@ describe.each([
             indexName,
             query,
             limit: { offset: 0, count: 1 },
-            sort: { field: 'aNumber', order: 'ASC' }
+            sort: { field: 'aNumber', order: 'ASC' },
+            keysOnly: false
           });
         });
 
