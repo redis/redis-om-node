@@ -251,6 +251,13 @@ export abstract class AbstractSearch<TEntity extends Entity> {
   }
 
   /**
+   * Alias for {@link Search.page}.
+   */
+  async returnPageKeys(offset: number, count: number): Promise<string[]> {
+    return await this.pageKeys(offset, count);
+  }
+
+  /**
    * Alias for {@link Search.all}.
    */
   async returnAll(options = { pageSize: 10 }): Promise<TEntity[]> {
