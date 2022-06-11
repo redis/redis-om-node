@@ -149,9 +149,14 @@ export default abstract class Repository<TEntity extends Entity> {
    * not found, does nothing.
    * @param id The ID of the {@link Entity} you with to delete.
    */
-  async remove(id: string): Promise<void> {
-    const key = this.makeKey(id);
-    await this.client.unlink(key);
+  async remove(id: string | string[]): Promise<void> {
+    if (Array.isArray(id)) {
+      const keys = id.map((id) => this.makeKey(id));
+      await this.client.unlink(keys);
+    } else {
+      const key = this.makeKey(id);
+      await this.client.unlink(key);
+    }
   }
 
   /**

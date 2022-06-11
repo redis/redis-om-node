@@ -28,7 +28,7 @@ export default class RedisShim {
     return this.redis.sendCommand<TResult>(command);
   }
 
-  async unlink(key: string) {
+  async unlink(key: string | string[]) {
     await this.redis.unlink(key);
   }
 

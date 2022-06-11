@@ -18,6 +18,7 @@ describe("remove hash", () => {
     await client.open();
     await flushAll(client);
     await loadTestHash(client, 'SampleHashEntity:full', AN_ENTITY);
+    await loadTestHash(client, 'SampleHashEntity:full2', AN_ENTITY);
     await loadTestHash(client, 'SampleHashEntity:empty', AN_EMPTY_ENTITY);
     
     schema = createHashEntitySchema();
@@ -36,6 +37,24 @@ describe("remove hash", () => {
 
     exists = await keyExists(client, 'SampleHashEntity:full');
     expect(exists).toBe(false);
+  });
+
+  it("removes many entities", async () => {
+    let firstEntityExists;
+    let secondEntityExists;
+
+    firstEntityExists = await keyExists(client, 'SampleHashEntity:full');
+    expect(firstEntityExists).toBe(true);
+
+    secondEntityExists = await keyExists(client, 'SampleHashEntity:full2');
+    expect(secondEntityExists).toBe(true);
+
+    await repository.remove(['full', 'full2']);
+
+    firstEntityExists = await keyExists(client, 'SampleHashEntity:full');
+    expect(firstEntityExists).toBe(false);
+    firstEntityExists = await keyExists(client, 'SampleHashEntity:full2');
+    expect(firstEntityExists).toBe(false);
   });
 
   it("removes a non-existing entity", async () => {
