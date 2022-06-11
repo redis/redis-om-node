@@ -37,7 +37,7 @@ describe("remove hash", () => {
     await repository.remove(['full', 'full2']);
     let exists = await keyExists(client, 'SampleJsonEntity:full');
     expect(exists).toBe(false);
-    let exists2 = await keyExists(client, 'SampleJsonEntity:full');
+    let exists2 = await keyExists(client, 'SampleJsonEntity:full2');
     expect(exists2).toBe(false);
   });
 
