@@ -2,7 +2,6 @@ import { mocked } from 'jest-mock';
 
 import Client from "../../../lib/client";
 import { Search, RawSearch } from "../../../lib/search/search";
-import * as logger from '../../../lib/shims/logger';
 
 import {
   SimpleHashEntity, simpleHashSchema, simpleSortableHashSchema,
@@ -15,8 +14,8 @@ import {
 import { RedisError } from '../../../lib';
 
 
-const warnSpy = jest.spyOn(logger, 'warn').mockImplementation();
-const errorSpy = jest.spyOn(logger, 'error').mockImplementation();
+const warnSpy = jest.spyOn(global.console, 'warn').mockImplementation();
+const errorSpy = jest.spyOn(global.console, 'error').mockImplementation();
 
 jest.mock('../../../lib/client');
 

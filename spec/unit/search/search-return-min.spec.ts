@@ -8,7 +8,7 @@ import { mockClientSearchToReturnNothing, mockClientSearchToReturnSingleHash,
   mockClientSearchToReturnSingleJsonString, SIMPLE_ENTITY_1 } from '../helpers/search-helpers';
 
 jest.mock('../../../lib/client');
-jest.mock('../../../lib/shims/logger')
+console.warn = jest.fn();
 
 
 type HashSearch = Search<SimpleHashEntity> | RawSearch<SimpleHashEntity>;
