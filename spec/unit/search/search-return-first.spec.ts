@@ -14,7 +14,7 @@ type HashSearch = Search<SimpleHashEntity> | RawSearch<SimpleHashEntity>;
 type JsonSearch = Search<SimpleJsonEntity> | RawSearch<SimpleJsonEntity>;
 
 beforeEach(() => {
-  mocked(Client).mockReset();
+  jest.clearAllMocks();
   mocked(Client.prototype.search).mockReset();
 });
 

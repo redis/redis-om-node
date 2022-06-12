@@ -1,5 +1,3 @@
-import { mocked } from 'jest-mock';
-
 import Client from '../../../lib/client';
 import Repository from '../../../lib/repository/repository';
 import { HashRepository } from '../../../lib/repository/repository';
@@ -14,7 +12,7 @@ jest.mock('../../../lib/client');
 const ULID_REGEX = /^[0-9ABCDEFGHJKMNPQRSTVWXYZ]{26}$/
 
 
-beforeEach(() => mocked(Client).mockReset());
+beforeEach(() => jest.clearAllMocks());
 
 describe("Repository", () => {
 

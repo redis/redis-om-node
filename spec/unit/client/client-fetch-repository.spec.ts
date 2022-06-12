@@ -1,6 +1,4 @@
-import { mocked } from 'jest-mock';
-
-import RedisShim from '../../../lib/shims/redis-shim';
+import { redis } from '../helpers/mock-redis'
 import Client from '../../../lib/client';
 import Repository from '../../../lib/repository/repository';
 import Entity from '../../../lib/entity/entity';
@@ -8,16 +6,18 @@ import Schema from '../../../lib/schema/schema';
 
 import { JsonRepository, HashRepository } from '../../../lib/repository/repository';
 
-jest.mock('../../../lib/shims/redis-shim');
 jest.mock('../../../lib/repository/repository');
 
-beforeEach(() => mocked(RedisShim).mockReset());
+
+beforeEach(() => jest.clearAllMocks());
 
 describe("Client", () => {
 
   let client: Client;
 
   beforeEach(async () => client = new Client());
+
+  afterEach(async () => client.close());
 
   it("passes", () => expect(true).toBe(true));
 
@@ -35,10 +35,10 @@ describe("Client", () => {
 
         beforeEach(async () => {
           await client.open();
-          repository = await client.fetchRepository(schema);
+          repository = client.fetchRepository(schema);
         });
 
-        it("creates a repository with the schema and client", async () => {
+        it("creates a repository with the schema and client", () => {
           expect(HashRepository).toHaveBeenCalledWith(schema, client);
         });
 
@@ -54,13 +54,13 @@ describe("Client", () => {
         });
 
         it("errors when called on a closed client", () =>
-          expect(async () => await client.fetchRepository(schema))
-            .rejects.toThrow("Redis connection needs to be open."));
+          expect(() => client.fetchRepository(schema))
+            .toThrow("Redis connection needs to be open."));
       });
 
-      it("errors when called on a new client", async () =>
-        expect(async () => await client.fetchRepository(schema))
-          .rejects.toThrow("Redis connection needs to be open."));
+      it("errors when called on a new client", () =>
+        expect(() => client.fetchRepository(schema))
+          .toThrow("Redis connection needs to be open."));
     });
 
     describe("when fetching a JsonRepository", () => {
@@ -70,10 +70,10 @@ describe("Client", () => {
 
         beforeEach(async () => {
           await client.open();
-          repository = await client.fetchRepository(schema);
+          repository = client.fetchRepository(schema);
         });
 
-        it("creates a repository with the schema and client", async () => {
+        it("creates a repository with the schema and client", () => {
           expect(JsonRepository).toHaveBeenCalledWith(schema, client);
         });
 
@@ -89,13 +89,13 @@ describe("Client", () => {
         });
 
         it("errors when called on a closed client", () =>
-          expect(async () => await client.fetchRepository(schema))
-            .rejects.toThrow("Redis connection needs to be open."));
+          expect(() => client.fetchRepository(schema))
+            .toThrow("Redis connection needs to be open."));
       });
 
-      it("errors when called on a new client", async () =>
-        expect(async () => await client.fetchRepository(schema))
-          .rejects.toThrow("Redis connection needs to be open."));
+      it("errors when called on a new client", () =>
+        expect(() => client.fetchRepository(schema))
+          .toThrow("Redis connection needs to be open."));
     });
   });
 });

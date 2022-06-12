@@ -1,12 +1,8 @@
-import { mocked } from 'jest-mock';
-
-import RedisShim from '../../../lib/shims/redis-shim';
+import { redis } from '../helpers/mock-redis'
 import Client from '../../../lib/client';
 
-jest.mock('../../../lib/shims/redis-shim');
 
-
-beforeEach(() => mocked(RedisShim).mockReset());
+beforeEach(() => jest.clearAllMocks());
 
 describe("Client", () => {
 
@@ -19,12 +15,12 @@ describe("Client", () => {
     describe("when called on an open client", () => {
       beforeEach(async () => {
         await client.open();
-        mocked(RedisShim.prototype.execute).mockResolvedValue('{ "foo": "bar", "bar": 42, "baz": true, "qux": null }');
+        redis.sendCommand.mockResolvedValue('{ "foo": "bar", "bar": 42, "baz": true, "qux": null }');
         result = await client.jsonget('foo');
       });
 
       it("passes the command to the shim", async () => {
-        expect(RedisShim.prototype.execute).toHaveBeenCalledWith(['JSON.GET', 'foo', '.']);
+        expect(redis.sendCommand).toHaveBeenCalledWith(['JSON.GET', 'foo', '.']);
       });
 
       it("returns the JSON", async () => {

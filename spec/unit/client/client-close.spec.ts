@@ -1,12 +1,8 @@
-import { mocked } from 'jest-mock';
-
-import RedisShim from '../../../lib/shims/redis-shim';
+import { redis } from '../helpers/mock-redis'
 import Client from '../../../lib/client';
 
-jest.mock('../../../lib/shims/redis-shim');
 
-
-beforeEach(() => mocked(RedisShim).mockReset());
+beforeEach(() => jest.clearAllMocks())
 
 describe("Client", () => {
 
@@ -20,9 +16,9 @@ describe("Client", () => {
         await client.open();
         await client.close();
       });
-      
-      it("closes the shim", () => {
-        expect(RedisShim.prototype.close).toHaveBeenCalled();
+
+      it("closes the connection", () => {
+        expect(redis.quit).toHaveBeenCalled();
         expect(client.isOpen()).toBe(false);
       });
     });
@@ -32,13 +28,13 @@ describe("Client", () => {
         await client.open();
         await client.close();
       });
-      
+
       it("happily closes it anyways", async () => {
         await client.close();
         expect(client.isOpen()).toBe(false);
       });
     });
-    
+
     it("happily closes an unopened client", async () => {
       await client.close();
       expect(client.isOpen()).toBe(false);

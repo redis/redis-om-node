@@ -1,12 +1,8 @@
-import { mocked } from 'jest-mock';
-
-import RedisShim from '../../../lib/shims/redis-shim';
+import { redis } from '../helpers/mock-redis'
 import Client from '../../../lib/client';
 
-jest.mock('../../../lib/shims/redis-shim');
 
-
-beforeEach(() => mocked(RedisShim).mockReset());
+beforeEach(() => jest.clearAllMocks());
 
 describe("Client", () => {
 
@@ -25,7 +21,7 @@ describe("Client", () => {
           indexName: 'index', dataStructure: 'HASH', prefix: 'prefix',
           schema: ['foo', 'bar', 'baz']
         });
-        expect(RedisShim.prototype.execute).toHaveBeenCalledWith([
+        expect(redis.sendCommand).toHaveBeenCalledWith([
           'FT.CREATE', 'index',
           'ON', 'HASH',
           'PREFIX', '1', 'prefix',
@@ -38,7 +34,7 @@ describe("Client", () => {
           indexName: 'index', dataStructure: 'HASH', prefix: 'prefix',
           schema: ['foo', 'bar', 'baz'], stopWords: ['bar', 'baz', 'qux']
         });
-        expect(RedisShim.prototype.execute).toHaveBeenCalledWith([
+        expect(redis.sendCommand).toHaveBeenCalledWith([
           'FT.CREATE', 'index',
           'ON', 'HASH',
           'PREFIX', '1', 'prefix',
@@ -52,7 +48,7 @@ describe("Client", () => {
           indexName: 'index', dataStructure: 'HASH', prefix: 'prefix',
           schema: ['foo', 'bar', 'baz'], stopWords: []
         });
-        expect(RedisShim.prototype.execute).toHaveBeenCalledWith([
+        expect(redis.sendCommand).toHaveBeenCalledWith([
           'FT.CREATE', 'index',
           'ON', 'HASH',
           'PREFIX', '1', 'prefix',

@@ -11,7 +11,7 @@ import { simpleSchema, SimpleEntity,
 jest.mock('../../../lib/client');
 
 
-beforeEach(() => mocked(Client).mockReset());
+beforeEach(() => jest.resetAllMocks());
 
 describe("Repository", () => {
   let client: Client;
@@ -40,7 +40,7 @@ describe("Repository", () => {
             prefix: `${simpleSchema.prefix}:`,
             schema: simpleSchema.redisSchema });
         });
-  
+
         it("asks the client to write the index hash", () => {
           expect(Client.prototype.set).toHaveBeenCalledWith(simpleSchema.indexHashName, simpleSchema.indexHash);
         });
@@ -67,7 +67,7 @@ describe("Repository", () => {
         it("does not asks the client to create the index with data from the schema", () => {
           expect(Client.prototype.createIndex).not.toHaveBeenCalled();
         });
-  
+
         it("does not asks the client to write the index hash", () => {
           expect(Client.prototype.set).not.toHaveBeenCalled();
         });
@@ -89,7 +89,7 @@ describe("Repository", () => {
 
         it("asks the client to remove the index hash", async () => {
           expect(Client.prototype.unlink).toHaveBeenCalledWith(simpleSchema.indexHashName);
-        });  
+        });
 
         it("asks the client to create a new index with data from the schema", () => {
           expect(Client.prototype.createIndex).toHaveBeenCalledWith({

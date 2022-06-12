@@ -1,5 +1,3 @@
-import { mocked } from 'jest-mock';
-
 import Client from '../../../lib/client';
 import Repository from '../../../lib/repository/repository';
 import { JsonRepository, HashRepository } from '../../../lib/repository/repository';
@@ -17,7 +15,7 @@ import { simpleHashSchema, SimpleHashEntity, SimpleJsonEntity, simpleJsonSchema 
 jest.mock('../../../lib/client');
 
 
-beforeEach(() => mocked(Client).mockReset());
+beforeEach(() => jest.clearAllMocks());
 
 describe("Repository", () => {
 

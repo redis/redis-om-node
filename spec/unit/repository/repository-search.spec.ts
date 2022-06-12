@@ -12,15 +12,15 @@ jest.mock('../../../lib/search/search');
 
 
 beforeEach(() => {
-  mocked(Client).mockReset();
+  jest.clearAllMocks();
   mocked(Search).mockReset();
 });
 
 describe("Repository", () => {
-  
+
   let repository: Repository<SimpleEntity>;
   let client: Client;
-  
+
   beforeAll(() => client = new Client());
 
   describe("#searchRaw", () => {

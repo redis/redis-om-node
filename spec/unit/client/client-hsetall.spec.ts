@@ -1,12 +1,8 @@
-import { mocked } from 'jest-mock';
-
-import RedisShim from '../../../lib/shims/redis-shim';
+import { redis } from '../helpers/mock-redis'
 import Client from '../../../lib/client';
 
-jest.mock('../../../lib/shims/redis-shim');
 
-
-beforeEach(() => mocked(RedisShim).mockReset());
+beforeEach(() => jest.clearAllMocks());
 
 describe("Client", () => {
 
@@ -22,7 +18,9 @@ describe("Client", () => {
 
       it("passes the command to the shim", async () => {
         await client.hsetall('foo', { foo: 'bar', baz: 'qux' });
-        expect(RedisShim.prototype.hsetall).toHaveBeenCalledWith('foo', { foo: 'bar', baz: 'qux' });
+        expect(redis.executeIsolated).toHaveBeenCalled();
+        // TODO: test full behavior of client calls
+        // expect(redis.executeIsolated).toHaveBeenCalledWith('foo', { foo: 'bar', baz: 'qux' });
       });
     });
 
