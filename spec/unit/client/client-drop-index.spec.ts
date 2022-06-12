@@ -16,7 +16,7 @@ describe("Client", () => {
         await client.open();
       });
 
-      it("passes the command to the shim", async () => {
+      it("passes the command to redis", async () => {
         await client.dropIndex('index');
         expect(redis.sendCommand).toHaveBeenCalledWith(['FT.DROPINDEX', 'index']);
       });

@@ -23,7 +23,7 @@ describe("Client", () => {
       // @ts-ignore: no way to call createClient without actually connecting to Redis
       beforeEach(async () => self = await client.use(BOGUS_CONNECTION));
 
-      it("constructs a new RedisShim with the connection", () => {
+      it("creates a redis client with the connection", () => {
         expect(createClient).not.toHaveBeenCalled();
       });
 
@@ -43,11 +43,11 @@ describe("Client", () => {
         self = await client.use(BOGUS_CONNECTION);
       });
 
-      it("closes the existing shim", () => {
+      it("closes the existing redis connection", () => {
         expect(redis.quit).toHaveBeenCalled();
       })
 
-      it("constructs a new RedisShim with the connection", () => {
+      it("doesn't create a new redis client", () => {
         expect(createClient).not.toHaveBeenCalledWith();
       });
 

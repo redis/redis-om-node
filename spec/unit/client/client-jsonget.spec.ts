@@ -19,7 +19,7 @@ describe("Client", () => {
         result = await client.jsonget('foo');
       });
 
-      it("passes the command to the shim", async () => {
+      it("passes the command to redis", async () => {
         expect(redis.sendCommand).toHaveBeenCalledWith(['JSON.GET', 'foo', '.']);
       });
 

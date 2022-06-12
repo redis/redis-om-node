@@ -16,7 +16,7 @@ describe("Client", () => {
         await client.open();
       });
 
-      it("passes the command to the shim", async () => {
+      it("passes the command to redis", async () => {
         await client.expire('foo', 60);
         expect(redis.expire).toHaveBeenCalledWith('foo', 60);
       });

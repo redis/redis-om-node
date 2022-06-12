@@ -35,7 +35,7 @@ describe("Client", () => {
           'FT.SEARCH', 'index', 'query', 'LIMIT', '0', '5']);
       });
 
-      it("send the expected command when given a sort", async () => {
+      it("sends the expected command when given a sort", async () => {
         await client.search({
           indexName: 'index',
           query: 'query',
@@ -45,7 +45,7 @@ describe("Client", () => {
           'FT.SEARCH', 'index', 'query', 'SORTBY', 'sortField', 'ASC']);
       });
 
-      it("send the expected command when keysOnly is set to false", async () => {
+      it("sends the expected command when keysOnly is set to false", async () => {
         await client.search({
           indexName: 'index',
           query: 'query',
@@ -55,7 +55,7 @@ describe("Client", () => {
           'FT.SEARCH', 'index', 'query']);
       });
 
-      it("send the expected command when keysOnly is set to true", async () => {
+      it("sends the expected command when keysOnly is set to true", async () => {
         await client.search({
           indexName: 'index',
           query: 'query',
