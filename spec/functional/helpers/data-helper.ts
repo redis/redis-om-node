@@ -32,23 +32,15 @@ class SampleEntity extends Entity { }
 export class SampleHashEntity extends SampleEntity { }
 export class SampleJsonEntity extends SampleEntity { }
 
-export function createHashEntitySchema(): Schema<SampleHashEntity> {
-  return createSchemaOfType<SampleHashEntity>(SampleHashEntity, 'HASH');
+export function createHashEntitySchema(prefix: string): Schema<SampleHashEntity> {
+  return createSchemaOfType<SampleHashEntity>(SampleHashEntity, 'HASH', prefix);
 }
 
-export function createChangedHashEntitySchema(): Schema<SampleHashEntity> {
-  return createSchemaOfType<SampleHashEntity>(SampleHashEntity, 'HASH', 'sample-hash-entity');
+export function createJsonEntitySchema(prefix: string): Schema<SampleJsonEntity> {
+  return createSchemaOfType<SampleJsonEntity>(SampleJsonEntity, 'JSON', prefix);
 }
 
-export function createJsonEntitySchema(): Schema<SampleJsonEntity> {
-  return createSchemaOfType<SampleJsonEntity>(SampleJsonEntity, 'JSON');
-}
-
-export function createChangedJsonEntitySchema(): Schema<SampleJsonEntity> {
-  return createSchemaOfType<SampleJsonEntity>(SampleJsonEntity, 'JSON', 'sample-json-entity');
-}
-
-function createSchemaOfType<TEntity extends Entity>(ctor: EntityConstructor<TEntity>, dataStructure: SearchDataStructure, prefix?: string): Schema<TEntity> {
+function createSchemaOfType<TEntity extends Entity>(ctor: EntityConstructor<TEntity>, dataStructure: SearchDataStructure, prefix: string): Schema<TEntity> {
   return new Schema<TEntity>(
     ctor, {
     aString: { type: 'string' },

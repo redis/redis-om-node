@@ -2,8 +2,8 @@ import Client from '../../../lib/client';
 import Schema from '../../../lib/schema/schema';
 import Repository from '../../../lib/repository/repository';
 
-import { SampleJsonEntity, createJsonEntitySchema, loadTestJson } from '../helpers/data-helper';
-import { flushAll } from '../helpers/redis-helper';
+import { SampleJsonEntity, loadTestJson, createJsonEntitySchema } from '../helpers/data-helper';
+import { removeAll } from '../helpers/redis-helper';
 
 import { AN_ENTITY, ANOTHER_ENTITY, A_THIRD_ENTITY, AN_ESCAPED_ENTITY, A_POINT, A_DATE } from '../../helpers/example-data';
 
@@ -17,19 +17,23 @@ describe("search for JSON documents", () => {
   beforeAll(async () => {
     client = new Client();
     await client.open();
-    await flushAll(client);
-    await loadTestJson(client, 'SampleJsonEntity:1', AN_ENTITY);
-    await loadTestJson(client, 'SampleJsonEntity:2', ANOTHER_ENTITY);
-    await loadTestJson(client, 'SampleJsonEntity:3', A_THIRD_ENTITY);
-    await loadTestJson(client, 'SampleJsonEntity:4', AN_ESCAPED_ENTITY);
+    await removeAll(client, 'search-json:');
+    await loadTestJson(client, 'search-json:1', AN_ENTITY);
+    await loadTestJson(client, 'search-json:2', ANOTHER_ENTITY);
+    await loadTestJson(client, 'search-json:3', A_THIRD_ENTITY);
+    await loadTestJson(client, 'search-json:4', AN_ESCAPED_ENTITY);
 
-    schema = createJsonEntitySchema();
+    schema = createJsonEntitySchema('search-json')
     repository = client.fetchRepository<SampleJsonEntity>(schema);
 
     await repository.createIndex();
   });
 
-  afterAll(async () => await client.close());
+  afterAll(async () => {
+    await removeAll(client, 'search-json:');
+    await repository.dropIndex()
+    await client.close()
+  });
 
   it("performs a wildcard search", async () => {
     entities = await repository.search().returnAll();

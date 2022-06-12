@@ -2,8 +2,8 @@ import Client from '../../../lib/client';
 import Schema from '../../../lib/schema/schema';
 import Repository from '../../../lib/repository/repository';
 
-import { SampleJsonEntity, createJsonEntitySchema} from '../helpers/data-helper';
-import { fetchJson, flushAll, keyExists } from '../helpers/redis-helper';
+import { SampleJsonEntity, createJsonEntitySchema } from '../helpers/data-helper';
+import { fetchJson, removeAll, keyExists } from '../helpers/redis-helper';
 
 import {
   AN_ENTITY, A_PARTIAL_ENTITY, AN_EMPTY_ENTITY,
@@ -23,12 +23,16 @@ describe("save JSON", () => {
     client = new Client();
     await client.open();
 
-    schema = createJsonEntitySchema();
+    schema = createJsonEntitySchema('save-json');
     repository = client.fetchRepository<SampleJsonEntity>(schema);
   });
 
-  beforeEach(async () => await flushAll(client));
-  afterAll(async () => await client.close());
+  beforeEach(async () => await removeAll(client, 'save-json:'));
+  afterAll(async () => {
+    await removeAll(client, 'save-json:')
+    await repository.dropIndex()
+    await client.close()
+  });
 
   describe("when saving a fully populated entity to redis", () => {
     beforeEach(async () => {
@@ -49,7 +53,7 @@ describe("save JSON", () => {
         someOtherStrings: AN_ENTITY.someOtherStrings
       });
       entityId = await repository.save(entity);
-      entityKey = `SampleJsonEntity:${entityId}`;
+      entityKey = `save-json:${entityId}`;
     });
 
     it("creates the expected JSON", async () => {
@@ -91,7 +95,7 @@ describe("save JSON", () => {
         someOtherStrings: A_PARTIAL_ENTITY.someOtherStrings
       });
       entityId = await repository.save(entity);
-      entityKey = `SampleJsonEntity:${entityId}`;
+      entityKey = `save-json:${entityId}`;
     });
 
     it("creates the expected JSON", async () => {
@@ -133,7 +137,7 @@ describe("save JSON", () => {
         someOtherStrings: AN_EMPTY_ENTITY.someOtherStrings
       });
       entityId = await repository.save(entity);
-      entityKey = `SampleJsonEntity:${entityId}`;
+      entityKey = `save-json:${entityId}`;
     });
 
     it("creates an empty JSON", async () => {

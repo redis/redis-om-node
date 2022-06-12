@@ -2,8 +2,8 @@ import Client from '../../../lib/client';
 import Schema from '../../../lib/schema/schema';
 import Repository from '../../../lib/repository/repository';
 
-import { SampleJsonEntity, createJsonEntitySchema, loadTestJson } from '../helpers/data-helper';
-import { flushAll, keyExists } from '../helpers/redis-helper';
+import { SampleJsonEntity, loadTestJson, createJsonEntitySchema } from '../helpers/data-helper';
+import { keyExists, removeAll } from '../helpers/redis-helper';
 
 import { ANOTHER_ENTITY, AN_EMPTY_ENTITY, AN_ENTITY, A_THIRD_ENTITY } from '../../helpers/example-data';
 
@@ -17,58 +17,58 @@ describe("remove JSON", () => {
 
   beforeAll(async () => {
     client = await new Client().open();
-    schema = createJsonEntitySchema();
+    schema = createJsonEntitySchema('remove-json')
     repository = client.fetchRepository<SampleJsonEntity>(schema);
   })
 
   beforeEach(async () => {
-    await flushAll(client);
-    await loadTestJson(client, 'SampleJsonEntity:foo', AN_ENTITY);
-    await loadTestJson(client, 'SampleJsonEntity:bar', ANOTHER_ENTITY);
-    await loadTestJson(client, 'SampleJsonEntity:baz', A_THIRD_ENTITY);
+    await removeAll(client, 'remove-json:')
+    await loadTestJson(client, 'remove-json:foo', AN_ENTITY);
+    await loadTestJson(client, 'remove-json:bar', ANOTHER_ENTITY);
+    await loadTestJson(client, 'remove-json:baz', A_THIRD_ENTITY);
   });
 
   afterAll(async () => await client.close());
 
   it("removes a single entity", async () => {
-    exists = await keyExists(client, 'SampleJsonEntity:foo');
+    exists = await keyExists(client, 'remove-json:foo');
     expect(exists).toBe(true);
 
     await repository.remove('foo');
 
-    exists = await keyExists(client, 'SampleJsonEntity:foo');
+    exists = await keyExists(client, 'remove-json:foo');
     expect(exists).toBe(false);
   });
 
   it("removes multiple entities", async () => {
-    exists = await keyExists(client, 'SampleJsonEntity:foo');
+    exists = await keyExists(client, 'remove-json:foo');
     expect(exists).toBe(true);
 
-    exists = await keyExists(client, 'SampleJsonEntity:bar');
+    exists = await keyExists(client, 'remove-json:bar');
     expect(exists).toBe(true);
 
-    exists = await keyExists(client, 'SampleJsonEntity:baz');
+    exists = await keyExists(client, 'remove-json:baz');
     expect(exists).toBe(true);
 
     await repository.remove('foo', 'bar', 'baz');
 
-    exists = await keyExists(client, 'SampleJsonEntity:foo');
+    exists = await keyExists(client, 'remove-json:foo');
     expect(exists).toBe(false);
 
-    exists = await keyExists(client, 'SampleJsonEntity:bar');
+    exists = await keyExists(client, 'remove-json:bar');
     expect(exists).toBe(false);
 
-    exists = await keyExists(client, 'SampleJsonEntity:baz');
+    exists = await keyExists(client, 'remove-json:baz');
     expect(exists).toBe(false);
   });
 
   it("removes a non-existing entity", async () => {
-    exists = await keyExists(client, 'SampleJsonEntity:empty');
+    exists = await keyExists(client, 'remove-json:empty');
     expect(exists).toBe(false);
 
     await repository.remove('empty');
 
-    exists = await keyExists(client, 'SampleJsonEntity:empty');
+    exists = await keyExists(client, 'remove-json:empty');
     expect(exists).toBe(false);
   });
 });

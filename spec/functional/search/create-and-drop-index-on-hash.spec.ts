@@ -2,8 +2,8 @@ import Client from '../../../lib/client';
 import Schema from '../../../lib/schema/schema';
 import Repository from '../../../lib/repository/repository';
 
-import { createHashEntitySchema, createChangedHashEntitySchema, SampleHashEntity } from '../helpers/data-helper';
-import { fetchIndexHash, fetchIndexInfo, flushAll } from '../helpers/redis-helper';
+import { SampleHashEntity, createHashEntitySchema } from '../helpers/data-helper';
+import { fetchIndexHash, fetchIndexInfo, removeAll } from '../helpers/redis-helper';
 
 describe("create and drop index on hash", () => {
 
@@ -17,23 +17,27 @@ describe("create and drop index on hash", () => {
     client = new Client();
     await client.open();
 
-    schema = createHashEntitySchema();
+    schema = createHashEntitySchema('create-drop-hash')
     repository = client.fetchRepository<SampleHashEntity>(schema);
   });
 
-  afterAll(async () => await client.close());
+  afterAll(async () => {
+    await removeAll(client, 'create-drop-hash:');
+    await repository.dropIndex()
+    await client.close()
+  });
 
   describe("when the index is created", () => {
     beforeEach(async () => {
-      await flushAll(client);
+      await removeAll(client, 'create-drop-hash:');
       await repository.createIndex();
-      indexInfo = await fetchIndexInfo(client, 'SampleHashEntity:index');
-      indexHash = await fetchIndexHash(client, 'SampleHashEntity:index:hash');
+      indexInfo = await fetchIndexInfo(client, 'create-drop-hash:index');
+      indexHash = await fetchIndexHash(client, 'create-drop-hash:index:hash');
     });
 
     it("has the expected name", () => {
       let indexName = indexInfo[1];
-      expect(indexName).toBe('SampleHashEntity:index');
+      expect(indexName).toBe('create-drop-hash:index');
     });
 
     it("has the expected key type", () => {
@@ -43,11 +47,11 @@ describe("create and drop index on hash", () => {
 
     it("has the expected prefixes", () => {
       let prefixes = indexInfo[5][3];
-      expect(prefixes).toEqual(['SampleHashEntity:']);
+      expect(prefixes).toEqual(['create-drop-hash:']);
     });
 
     it("has the expected hash", () => {
-      expect(indexHash).toBe("UInOmUVXfuDjIlUOc5+iZWTmTus=");
+      expect(indexHash).toBe("ryZTksm66ndOWrltH5b2z8u8BgI=");
     });
 
     it("has the expected fields", () => {
@@ -75,12 +79,12 @@ describe("create and drop index on hash", () => {
       beforeEach(async () => await repository.dropIndex());
 
       it("the index no longer exists", async () => {
-        expect(async () => await fetchIndexInfo(client, 'SampleHashEntity:index'))
+        expect(async () => await fetchIndexInfo(client, 'create-drop-hash:index'))
           .rejects.toThrow("Unknown Index name");
       });
 
       it("the index hash no longer exists", async () => {
-        let hash = await fetchIndexHash(client, 'SampleHashEntity:index:hash');
+        let hash = await fetchIndexHash(client, 'create-drop-hash:index:hash');
         expect(hash).toBeNull();
       });
     });
@@ -88,8 +92,8 @@ describe("create and drop index on hash", () => {
     describe("and then the index is recreated but not changed", () => {
       beforeEach(async () => {
         await repository.createIndex();
-        indexInfo = await fetchIndexInfo(client, 'SampleHashEntity:index');
-        indexHash = await fetchIndexHash(client, 'SampleHashEntity:index:hash');
+        indexInfo = await fetchIndexInfo(client, 'create-drop-hash:index');
+        indexHash = await fetchIndexHash(client, 'create-drop-hash:index:hash');
       });
 
       it("still has the expected attributes", () => {
@@ -98,10 +102,10 @@ describe("create and drop index on hash", () => {
         let prefixes = indexInfo[5][3];
         let fields = indexInfo[7];
 
-        expect(indexName).toBe('SampleHashEntity:index');
+        expect(indexName).toBe('create-drop-hash:index');
         expect(keyType).toBe('HASH');
-        expect(prefixes).toEqual(['SampleHashEntity:']);
-        expect(indexHash).toBe("UInOmUVXfuDjIlUOc5+iZWTmTus=");
+        expect(prefixes).toEqual(['create-drop-hash:']);
+        expect(indexHash).toBe("ryZTksm66ndOWrltH5b2z8u8BgI=");
 
         expect(fields).toHaveLength(14);
         expect(fields).toEqual([
@@ -125,12 +129,12 @@ describe("create and drop index on hash", () => {
 
     describe("and then the index is changed", () => {
       beforeEach(async () => {
-        schema = createChangedHashEntitySchema();
+        schema = createHashEntitySchema('create-drop-hash-changed')
         repository = client.fetchRepository<SampleHashEntity>(schema);
 
         await repository.createIndex();
-        indexInfo = await fetchIndexInfo(client, 'sample-hash-entity:index');
-        indexHash = await fetchIndexHash(client, 'sample-hash-entity:index:hash');
+        indexInfo = await fetchIndexInfo(client, 'create-drop-hash-changed:index');
+        indexHash = await fetchIndexHash(client, 'create-drop-hash-changed:index:hash');
       });
 
       it("has new attributes", () => {
@@ -138,10 +142,10 @@ describe("create and drop index on hash", () => {
         let keyType = indexInfo[5][1];
         let prefixes = indexInfo[5][3];
 
-        expect(indexName).toBe('sample-hash-entity:index');
+        expect(indexName).toBe('create-drop-hash-changed:index');
         expect(keyType).toBe('HASH');
-        expect(prefixes).toEqual(['sample-hash-entity:']);
-        expect(indexHash).toBe("SArdgZ1xX70Tn02anKnE6vx/fAk=");
+        expect(prefixes).toEqual(['create-drop-hash-changed:']);
+        expect(indexHash).toBe("++rNPbC9OqRfBgIZUGriDJDsS+o=");
       });
     });
   });
