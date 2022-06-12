@@ -9,7 +9,7 @@ import { simpleSchema, SimpleEntity } from '../helpers/test-entity-and-schema';
 jest.mock('../../../lib/client');
 
 
-beforeEach(() => mocked(Client).mockReset());
+beforeEach(() => jest.clearAllMocks());
 
 describe("Repository", () => {
 

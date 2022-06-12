@@ -1,12 +1,8 @@
-import { mocked } from 'jest-mock';
-
-import RedisShim from '../../../lib/shims/redis-shim';
+import { redis } from '../helpers/mock-redis'
 import Client from '../../../lib/client';
 
-jest.mock('../../../lib/shims/redis-shim');
 
-
-beforeEach(() => mocked(RedisShim).mockReset());
+beforeEach(() => jest.clearAllMocks());
 
 describe("Client", () => {
 
@@ -22,21 +18,21 @@ describe("Client", () => {
 
       it("passes the command to the shim", async () => {
         await client.execute(['foo', 'bar', 'baz']);
-        expect(RedisShim.prototype.execute).toHaveBeenCalledWith(['foo', 'bar', 'baz']);
+        expect(redis.sendCommand).toHaveBeenCalledWith(['foo', 'bar', 'baz']);
       });
 
       it("transforms numbers to strings before giving them to the shim", async () => {
         await client.execute([1, 2, 3]);
-        expect(RedisShim.prototype.execute).toHaveBeenCalledWith(['1', '2', '3']);
+        expect(redis.sendCommand).toHaveBeenCalledWith(['1', '2', '3']);
       });
 
       it("transforms booleans to strings before giving them to the shim", async () => {
         await client.execute([true, false, true]);
-        expect(RedisShim.prototype.execute).toHaveBeenCalledWith(['1', '0', '1']);
+        expect(redis.sendCommand).toHaveBeenCalledWith(['1', '0', '1']);
       });
 
       it("returns what the shim returns", async () => {
-        mocked(RedisShim.prototype.execute).mockResolvedValue('foo');
+        redis.sendCommand.mockReturnValue('foo')
         let result = <string>await client.execute(['foo', 'bar', 'baz']);
         expect(result).toBe('foo');
       });

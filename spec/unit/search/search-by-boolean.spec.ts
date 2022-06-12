@@ -1,5 +1,3 @@
-import { mocked } from 'jest-mock';
-
 import Client from "../../../lib/client";
 import { Search } from "../../../lib/search/search";
 import WhereField from '../../../lib/search/where-field';
@@ -9,7 +7,7 @@ import { simpleHashSchema, SimpleHashEntity, SimpleJsonEntity, simpleJsonSchema 
 jest.mock('../../../lib/client');
 
 
-beforeEach(() => mocked(Client).mockReset());
+beforeEach(() => jest.clearAllMocks());
 
 describe("Search", () => {
   describe("#query", () => {

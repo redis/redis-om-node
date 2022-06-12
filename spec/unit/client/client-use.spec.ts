@@ -1,14 +1,10 @@
-import { mocked } from 'jest-mock';
-
-import RedisShim from '../../../lib/shims/redis-shim';
+import { redis, createClient } from '../helpers/mock-redis'
 import Client from '../../../lib/client';
-
-jest.mock('../../../lib/shims/redis-shim');
 
 const BOGUS_CONNECTION = { THIS_IS_NOT: 'a real connection' };
 
 
-beforeEach(() => mocked(RedisShim).mockReset());
+beforeEach(() => jest.clearAllMocks());
 
 describe("Client", () => {
 
@@ -28,7 +24,7 @@ describe("Client", () => {
       beforeEach(async () => self = await client.use(BOGUS_CONNECTION));
 
       it("constructs a new RedisShim with the connection", () => {
-        expect(RedisShim).toHaveBeenCalledWith(BOGUS_CONNECTION);
+        expect(createClient).not.toHaveBeenCalled();
       });
 
       it("is open", () => {
@@ -48,11 +44,11 @@ describe("Client", () => {
       });
 
       it("closes the existing shim", () => {
-        expect(RedisShim.prototype.close).toHaveBeenCalled();
+        expect(redis.quit).toHaveBeenCalled();
       })
 
       it("constructs a new RedisShim with the connection", () => {
-        expect(RedisShim).toHaveBeenCalledWith(BOGUS_CONNECTION);
+        expect(createClient).not.toHaveBeenCalledWith();
       });
 
       it("is open", () => {

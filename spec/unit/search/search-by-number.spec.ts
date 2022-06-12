@@ -1,5 +1,3 @@
-import { mocked } from 'jest-mock';
-
 import Client from "../../../lib/client";
 import { Search } from "../../../lib/search/search";
 import WhereField from '../../../lib/search/where-field';
@@ -10,7 +8,7 @@ import { simpleSchema, SimpleEntity } from "../helpers/test-entity-and-schema";
 jest.mock('../../../lib/client');
 
 
-beforeEach(() => mocked(Client).mockReset());
+beforeEach(() => jest.clearAllMocks());
 
 describe("Search", () => {
   describe("#query", () => {
@@ -51,7 +49,7 @@ describe("Search", () => {
     beforeEach(() => {
       search = new Search<SimpleEntity>(simpleSchema, client);
       where = search.where('aNumber');
-    });  
+    });
 
     describe("when generating a query with a number", () => {
 
@@ -68,7 +66,7 @@ describe("Search", () => {
       it("generates a query with .greaterThan", () => expectToBeGTQuery(where.greaterThan(A_NUMBER)));
       it("generates a query with .is.greaterThan", () => expectToBeGTQuery(where.is.greaterThan(A_NUMBER)));
       it("generates a query with .is.not.greaterThan", () => expectToBeNegatedGTQuery(where.is.not.greaterThan(A_NUMBER)));
-      
+
       it("generates a query with .gte", () => expectToBeGTEQuery(where.gte(A_NUMBER)));
       it("generates a query with .not.gte", () => expectToBeNegatedGTEQuery(where.not.gte(A_NUMBER)));
       it("generates a query with .greaterThanOrEqualTo", () => expectToBeGTEQuery(where.greaterThanOrEqualTo(A_NUMBER)));
@@ -80,7 +78,7 @@ describe("Search", () => {
       it("generates a query with .lessThan", () => expectToBeLTQuery(where.lessThan(A_NUMBER)));
       it("generates a query with .is.lessThan", () => expectToBeLTQuery(where.is.lessThan(A_NUMBER)));
       it("generates a query with .is.not.lessThan", () => expectToBeNegatedLTQuery(where.is.not.lessThan(A_NUMBER)));
-      
+
       it("generates a query with .lte", () => expectToBeLTEQuery(where.lte(A_NUMBER)));
       it("generates a query with .not.lte", () => expectToBeNegatedLTEQuery(where.not.lte(A_NUMBER)));
       it("generates a query with .lessThanOrEqualTo", () => expectToBeLTEQuery(where.lessThanOrEqualTo(A_NUMBER)));

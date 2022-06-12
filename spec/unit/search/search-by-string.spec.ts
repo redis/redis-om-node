@@ -1,5 +1,3 @@
-import { mocked } from 'jest-mock';
-
 import Client from "../../../lib/client";
 import { Search } from "../../../lib/search/search";
 import WhereField from '../../../lib/search/where-field';
@@ -10,7 +8,7 @@ import { simpleSchema, SimpleEntity } from "../helpers/test-entity-and-schema";
 jest.mock('../../../lib/client');
 
 
-beforeEach(() => mocked(Client).mockReset());
+beforeEach(() => jest.clearAllMocks());
 
 describe("Search", () => {
   describe("#query", () => {
@@ -18,7 +16,7 @@ describe("Search", () => {
     let client: Client;
     let search: Search<SimpleEntity>;
     let where: WhereField<SimpleEntity>;
-  
+
     const A_STRING_QUERY = `(@aString:{${A_STRING}})`;
     const A_NEGATED_STRING_QUERY = `(-@aString:{${A_STRING}})`;
     const A_NUMBER_STRING_QUERY = `(@aString:{${A_NUMBER}})`;
@@ -35,7 +33,7 @@ describe("Search", () => {
     const expectToBeNegatedBooleanStringQuery: StringChecker = search => expect(search.query).toBe(A_NEGATED_BOOLEAN_STRING_QUERY);
 
     beforeAll(() => client = new Client());
-  
+
     beforeEach(() => {
       search = new Search<SimpleEntity>(simpleSchema, client);
       where = search.where('aString');

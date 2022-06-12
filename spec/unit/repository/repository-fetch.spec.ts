@@ -15,7 +15,7 @@ import { simpleHashSchema, simpleJsonSchema, SimpleHashEntity, SimpleJsonEntity 
 jest.mock('../../../lib/client');
 
 
-beforeEach(() => mocked(Client).mockReset());
+beforeEach(() => jest.clearAllMocks());
 
 describe("Repository", () => {
 

@@ -1,12 +1,8 @@
-import { mocked } from 'jest-mock';
-
-import RedisShim from '../../../lib/shims/redis-shim';
+import { redis } from '../helpers/mock-redis'
 import Client from '../../../lib/client';
 
-jest.mock('../../../lib/shims/redis-shim');
 
-
-beforeEach(() => mocked(RedisShim).mockReset());
+beforeEach(() => jest.clearAllMocks());
 
 describe("Client", () => {
 
@@ -25,7 +21,7 @@ describe("Client", () => {
           indexName: 'index',
           query: 'query'
         });
-        expect(RedisShim.prototype.execute).toHaveBeenCalledWith([
+        expect(redis.sendCommand).toHaveBeenCalledWith([
           'FT.SEARCH', 'index', 'query']);
       });
 
@@ -35,7 +31,7 @@ describe("Client", () => {
           query: 'query',
           limit: { offset: 0, count: 5 }
         });
-        expect(RedisShim.prototype.execute).toHaveBeenCalledWith([
+        expect(redis.sendCommand).toHaveBeenCalledWith([
           'FT.SEARCH', 'index', 'query', 'LIMIT', '0', '5']);
       });
 
@@ -45,7 +41,7 @@ describe("Client", () => {
           query: 'query',
           sort: { field: 'sortField', order: 'ASC' }
         });
-        expect(RedisShim.prototype.execute).toHaveBeenCalledWith([
+        expect(redis.sendCommand).toHaveBeenCalledWith([
           'FT.SEARCH', 'index', 'query', 'SORTBY', 'sortField', 'ASC']);
       });
 
@@ -55,7 +51,7 @@ describe("Client", () => {
           query: 'query',
           keysOnly: false
         });
-        expect(RedisShim.prototype.execute).toHaveBeenCalledWith([
+        expect(redis.sendCommand).toHaveBeenCalledWith([
           'FT.SEARCH', 'index', 'query']);
       });
 
@@ -65,7 +61,7 @@ describe("Client", () => {
           query: 'query',
           keysOnly: true
         });
-        expect(RedisShim.prototype.execute).toHaveBeenCalledWith([
+        expect(redis.sendCommand).toHaveBeenCalledWith([
           'FT.SEARCH', 'index', 'query', 'RETURN', '0']);
       });
 
@@ -77,7 +73,7 @@ describe("Client", () => {
           sort: { field: 'sortField', order: 'ASC' },
           keysOnly: true
         });
-        expect(RedisShim.prototype.execute).toHaveBeenCalledWith([
+        expect(redis.sendCommand).toHaveBeenCalledWith([
           'FT.SEARCH', 'index', 'query', 'LIMIT', '0', '5',
           'SORTBY', 'sortField', 'ASC', 'RETURN', '0']);
       });

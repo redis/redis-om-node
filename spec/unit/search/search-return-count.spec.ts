@@ -15,7 +15,7 @@ type JsonSearch = Search<SimpleJsonEntity> | RawSearch<SimpleJsonEntity>;
 describe("Search", () => {
 
   beforeEach(() => {
-    mocked(Client).mockReset();
+    jest.clearAllMocks();
     mocked(Client.prototype.search).mockReset();
   });
 

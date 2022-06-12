@@ -1,12 +1,8 @@
-import { mocked } from 'jest-mock';
-
-import RedisShim from '../../../lib/shims/redis-shim';
+import { redis } from '../helpers/mock-redis'
 import Client from '../../../lib/client';
 
-jest.mock('../../../lib/shims/redis-shim');
 
-
-beforeEach(() => mocked(RedisShim).mockReset());
+beforeEach(() => jest.clearAllMocks());
 
 describe("Client", () => {
 
@@ -19,12 +15,12 @@ describe("Client", () => {
     describe("when called on an open client", () => {
       beforeEach(async () => {
         await client.open();
-        mocked(RedisShim.prototype.hgetall).mockResolvedValue({ foo: 'bar', baz: 'qux' });
+        redis.hGetAll.mockResolvedValue({ foo: 'bar', baz: 'qux' });
         result = await client.hgetall('foo');
       });
 
       it("passes the command to the shim", async () => {
-        expect(RedisShim.prototype.hgetall).toHaveBeenCalledWith('foo');
+        expect(redis.hGetAll).toHaveBeenCalledWith('foo');
       });
 
       it("returns the value from the shim", async () => {

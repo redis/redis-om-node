@@ -1,12 +1,8 @@
-import { mocked } from 'jest-mock';
-
-import RedisShim from '../../../lib/shims/redis-shim';
+import { redis } from '../helpers/mock-redis'
 import Client from '../../../lib/client';
 
-jest.mock('../../../lib/shims/redis-shim');
 
-
-beforeEach(() => mocked(RedisShim).mockReset());
+beforeEach(() => jest.clearAllMocks());
 
 describe("Client", () => {
 
@@ -22,17 +18,17 @@ describe("Client", () => {
 
       it("doesn't invoke the shim when passed no keys", async () => {
         await client.unlink();
-        expect(RedisShim.prototype.unlink).not.toHaveBeenCalled();
+        expect(redis.unlink).not.toHaveBeenCalled();
       });
 
       it("passes a single key to the shim", async () => {
         await client.unlink('foo');
-        expect(RedisShim.prototype.unlink).toHaveBeenCalledWith(expect.arrayContaining(['foo']));
+        expect(redis.unlink).toHaveBeenCalledWith(expect.arrayContaining(['foo']));
       });
 
       it("passes multiple keys to the shim", async () => {
         await client.unlink('foo', 'bar', 'baz');
-        expect(RedisShim.prototype.unlink).toHaveBeenCalledWith(expect.arrayContaining(['foo', 'bar', 'baz']));
+        expect(redis.unlink).toHaveBeenCalledWith(expect.arrayContaining(['foo', 'bar', 'baz']));
       });
     });
 
