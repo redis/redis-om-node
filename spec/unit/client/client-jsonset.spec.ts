@@ -17,7 +17,7 @@ describe("Client", () => {
         await client.jsonset('foo', { foo: 'bar', bar: 42, baz: true, qux: null });
       });
 
-      it("passes the command to the shim", async () => {
+      it("passes the command to redis", async () => {
         expect(redis.sendCommand).toHaveBeenCalledWith([
           'JSON.SET', 'foo', '.', '{"foo":"bar","bar":42,"baz":true,"qux":null}']);
       });

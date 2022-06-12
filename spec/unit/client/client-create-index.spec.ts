@@ -16,7 +16,7 @@ describe("Client", () => {
         await client.open();
       });
 
-      it("passes a command to the shim", async () => {
+      it("passes a command to redis", async () => {
         await client.createIndex({
           indexName: 'index', dataStructure: 'HASH', prefix: 'prefix',
           schema: ['foo', 'bar', 'baz']
@@ -29,7 +29,7 @@ describe("Client", () => {
         ]);
       });
 
-      it("passes a command with stop words to the shim", async () => {
+      it("passes a command with stop words to redis", async () => {
         await client.createIndex({
           indexName: 'index', dataStructure: 'HASH', prefix: 'prefix',
           schema: ['foo', 'bar', 'baz'], stopWords: ['bar', 'baz', 'qux']
@@ -43,7 +43,7 @@ describe("Client", () => {
         ]);
       });
 
-      it("passes a command with zero stop words to the shim", async () => {
+      it("passes a command with zero stop words to redis", async () => {
         await client.createIndex({
           indexName: 'index', dataStructure: 'HASH', prefix: 'prefix',
           schema: ['foo', 'bar', 'baz'], stopWords: []

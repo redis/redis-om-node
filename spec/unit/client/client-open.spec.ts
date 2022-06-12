@@ -20,11 +20,11 @@ describe("Client", () => {
     describe("when called without a url", () => {
       beforeEach(async () => self = await client.open());
 
-      it("constructs a new RedisShim with the default url", () => {
+      it("creates a redis client with the default url", () => {
         expect(createClient).toHaveBeenCalledWith({ url: 'redis://localhost:6379' });
       });
 
-      it("opens the shim", async () => {
+      it("connects to redis", async () => {
         expect(redis.connect).toHaveBeenCalled();
       });
 
@@ -39,11 +39,11 @@ describe("Client", () => {
       describe("when trying to call it again", () => {
         beforeEach(async () => self = await client.open());
 
-        it("doesn't reconstruct a RedisShim", () => {
+        it("doesn't re-create a redis client", () => {
           expect(createClient).toBeCalledTimes(1);
         });
 
-        it("doesn't open the shim again", async () => {
+        it("doesn't open redis again", async () => {
           expect(redis.connect).toBeCalledTimes(1);
         });
 
@@ -56,11 +56,11 @@ describe("Client", () => {
     describe("when called with a url", () => {
       beforeEach(async () => self = await client.open('foo'));
 
-      it("constructs a new RedisShim with the provided url", () => {
+      it("creates a new redis client with the provided url", () => {
         expect(createClient).toHaveBeenCalledWith({ url: 'foo' })
       });
 
-      it("opens the shim", async () => {
+      it("connects to redis", async () => {
         expect(redis.connect).toHaveBeenCalled();
       });
 
@@ -75,11 +75,11 @@ describe("Client", () => {
       describe("when trying to call it again", () => {
         beforeEach(async () => self = await client.open('foo'));
 
-        it("doesn't reconstruct a RedisShim", () => {
+        it("doesn't re-create a redis client", () => {
           expect(createClient).toBeCalledTimes(1);
         });
 
-        it("doesn't open the shim again", async () => {
+        it("doesn't open redis again", async () => {
           expect(redis.connect).toBeCalledTimes(1);
         });
 

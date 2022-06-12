@@ -19,11 +19,11 @@ describe("Client", () => {
         result = await client.hgetall('foo');
       });
 
-      it("passes the command to the shim", async () => {
+      it("passes the command to redis", async () => {
         expect(redis.hGetAll).toHaveBeenCalledWith('foo');
       });
 
-      it("returns the value from the shim", async () => {
+      it("returns the value from redis", async () => {
         expect(result).toEqual({ foo: 'bar', baz: 'qux' });
       });
     });

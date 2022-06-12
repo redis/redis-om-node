@@ -16,7 +16,7 @@ describe("Client", () => {
         await client.open();
       });
 
-      it("passes the command to the shim", async () => {
+      it("passes the command to redis", async () => {
         await client.hsetall('foo', { foo: 'bar', baz: 'qux' });
         expect(redis.executeIsolated).toHaveBeenCalled();
         // TODO: test full behavior of client calls

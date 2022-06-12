@@ -21,7 +21,7 @@ describe("Client", () => {
           result = await client.get('foo');
         });
 
-        it("passes the command to the shim", async () => {
+        it("passes the command to redis", async () => {
           expect(redis.get).toHaveBeenCalledWith('foo');
         });
 
@@ -34,7 +34,7 @@ describe("Client", () => {
           result = await client.get('foo');
         });
 
-        it("passes the command to the shim", async () => {
+        it("passes the command to redis", async () => {
           expect(redis.get).toHaveBeenCalledWith('foo');
         });
 
@@ -65,7 +65,7 @@ describe("Client", () => {
         await client.set('foo', 'bar');
       });
 
-      it("passes the command to the shim", async () => {
+      it("passes the command to redis", async () => {
         expect(redis.set).toHaveBeenCalledWith('foo', 'bar');
       });
     });
