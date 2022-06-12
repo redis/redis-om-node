@@ -15,9 +15,9 @@
   "scripts": {
     "build": "rm -rf ./dist && tsc --project ./",
     "docs": "rm -rf ./docs && typedoc",
-    "test-all": "jest --runInBand",
+    "test-all": "jest",
     "test-unit": "jest --selectProjects unit",
-    "test-functional": "jest --selectProjects functional --runInBand"
+    "test-functional": "jest --selectProjects functional"
   },
   "repository": "github:redis/redis-om-node",
   "homepage": "https://github.com/redis/redis-om-node#readme",

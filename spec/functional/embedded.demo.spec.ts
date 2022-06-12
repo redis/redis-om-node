@@ -56,8 +56,6 @@ describe("Embedded Demo", () => {
 
   //     // get a client use an existing Redis connection
   //     let client = await new Client().use(redis);
-  //     await client.execute(['FLUSHALL']);
-  //     await client.execute(['PING']);
 
   //     let addressSchema = new EmbeddedSchema(Address, {
   //       street: { type: 'string' },

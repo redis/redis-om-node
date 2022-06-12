@@ -2,8 +2,8 @@ import Client from '../../../lib/client';
 import Schema from '../../../lib/schema/schema';
 import Repository from '../../../lib/repository/repository';
 
-import { SampleJsonEntity, createJsonEntitySchema, loadTestJson } from '../helpers/data-helper';
-import { flushAll } from '../helpers/redis-helper';
+import { SampleJsonEntity, loadTestJson, createJsonEntitySchema } from '../helpers/data-helper';
+import { removeAll } from '../helpers/redis-helper';
 
 import { AN_ENTITY, A_PARTIAL_ENTITY, AN_EMPTY_ENTITY } from '../../helpers/example-data';
 
@@ -16,16 +16,19 @@ describe("fetch JSON", () => {
   beforeAll(async () => {
     client = new Client();
     await client.open();
-    await flushAll(client);
-    await loadTestJson(client, 'SampleJsonEntity:full', AN_ENTITY);
-    await loadTestJson(client, 'SampleJsonEntity:partial', A_PARTIAL_ENTITY);
-    await loadTestJson(client, 'SampleJsonEntity:empty', AN_EMPTY_ENTITY);
+    await removeAll(client, 'fetch-json:')
+    await loadTestJson(client, 'fetch-json:full', AN_ENTITY);
+    await loadTestJson(client, 'fetch-json:partial', A_PARTIAL_ENTITY);
+    await loadTestJson(client, 'fetch-json:empty', AN_EMPTY_ENTITY);
 
-    schema = createJsonEntitySchema();
+    schema = createJsonEntitySchema('fetch-json');
     repository = client.fetchRepository<SampleJsonEntity>(schema);
   });
 
-  afterAll(async () => await client.close());
+  afterAll(async () => {
+    await removeAll(client, 'fetch-json:')
+    await client.close()
+  });
 
   it("fetches a fully populated entity from Redis", async () => {
     let entity = await repository.fetch('full');
