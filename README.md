@@ -213,7 +213,7 @@ const albumSchema = new Schema(Album, {
   outOfPublication: { type: 'boolean' }
 })
 
-const studioSchema = new Studio(Studio, {
+const studioSchema = new Schema(Studio, {
   name: { type: 'string' },
   city: { type: 'string' },
   state: { type: 'string' },
