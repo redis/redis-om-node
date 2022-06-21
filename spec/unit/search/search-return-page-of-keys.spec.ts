@@ -25,7 +25,7 @@ describe.each([
     new RawSearch<SimpleHashEntity>(simpleHashSchema, new Client()) ]
 ])("%s", (_, hashSearch: HashSearch) => {
 
-  describe("#returnPageKeys", () => {
+  describe("#returnPageOfKeys", () => {
 
     describe("when running against hashes", () => {
       let keys: string[];
