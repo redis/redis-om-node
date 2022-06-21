@@ -167,6 +167,18 @@ export abstract class AbstractSearch<TEntity extends Entity> {
   }
 
   /**
+   * Returns a page of entity IDs that match this query.
+   * @param offset The offset for where to start returning entity IDs.
+   * @param count The number of entity IDs to return.
+   * @returns An array of strings matching the query.
+   */
+   async pageOfIds(offset: number, count: number): Promise<string[]> {
+    const keys = await this.pageOfKeys(offset, count);
+    const ids = keys.map(key => key.replace(`${this.schema.prefix}:`, ''));
+    return ids;
+  }
+
+  /**
    * Returns a page of key names in Redis that match this query.
    * @param offset The offset for where to start returning key names.
    * @param count The number of key names to return.
@@ -251,7 +263,14 @@ export abstract class AbstractSearch<TEntity extends Entity> {
   }
 
   /**
-   * Alias for {@link Search.page}.
+   * Alias for {@link Search.pageOfIds}.
+   */
+  async returnPageOfIds(offset: number, count: number): Promise<string[]> {
+    return await this.pageOfIds(offset, count);
+  }
+
+  /**
+   * Alias for {@link Search.pageOrKeys}.
    */
   async returnPageOfKeys(offset: number, count: number): Promise<string[]> {
     return await this.pageOfKeys(offset, count);
