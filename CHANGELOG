@@ -4,9 +4,13 @@
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and Redis OM adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## 0.3.5 - 2022-06-07
-### Changed
+## 0.3.5 - 2022-06-21
+### Added
 - Added additional field attributes to control RediSearch indexing behavior.
+- Added search methods to retreive just key name or just entity IDs instead of the entire entity. Methods include: .returnAllKeys, .returnAllIds, .returnFirstKey, .returnFirstId, .returnPageOfKeys, .returnPageOfIds, .returnMinKey, .returnMinId, .returnMaxKey, .returnMaxId
+
+### Changed
+- Search methods that return a single item (like .first, .min, etc.)  and can return null are now marked as returning null for TypeScript users.
 
 ## 0.3.4 - 2022-06-07
 ### Changed

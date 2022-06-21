@@ -1,7 +1,7 @@
 import { mocked } from 'jest-mock';
 
 import Client from "../../../lib/client";
-import { 
+import {
   A_NUMBER, ANOTHER_NUMBER, A_THIRD_NUMBER,
   A_NUMBER_STRING, ANOTHER_NUMBER_STRING, A_THIRD_NUMBER_STRING,
   A_POINT, ANOTHER_POINT, A_THIRD_POINT,
@@ -70,6 +70,12 @@ export function mockClientSearchToReturnCountOf(count: number) {
   mocked(Client.prototype.search).mockResolvedValue([count.toString()]);
 }
 
+export function mockClientSearchToReturnSingleKey() {
+  mocked(Client.prototype.search)
+    .mockResolvedValueOnce([ '1', 'SimpleHashEntity:1' ])
+    .mockResolvedValue(['1']);
+}
+
 export function mockClientSearchToReturnSingleHash() {
   mocked(Client.prototype.search)
     .mockResolvedValueOnce([ '1', 'SimpleHashEntity:1', HASH_DATA_1 ])
@@ -80,6 +86,17 @@ export function mockClientSearchToReturnSingleJsonString() {
   mocked(Client.prototype.search)
     .mockResolvedValueOnce([ '1', 'SimpleJsonEntity:1', [ '$', JSON_DATA_1 ]])
     .mockResolvedValue(['1']);
+}
+
+export function mockClientSearchToReturnMultipleKeys() {
+  mocked(Client.prototype.search)
+    .mockResolvedValueOnce([
+      '3',
+      'SimpleHashEntity:1',
+      'SimpleHashEntity:2',
+      'SimpleHashEntity:3'
+    ])
+    .mockResolvedValue(['3']);
 }
 
 export function mockClientSearchToReturnMultipleHashes() {
@@ -102,6 +119,25 @@ export function mockClientSearchToReturnMultipleJsonStrings() {
       'SimpleJsonEntity:3', [ '$', JSON_DATA_3 ]
     ])
     .mockResolvedValue(['3']);
+}
+
+export function mockClientSearchToReturnPaginatedKeys() {
+  mocked(Client.prototype.search)
+    .mockResolvedValueOnce([
+      '5',
+      'SimpleHashEntity:1',
+      'SimpleHashEntity:2'
+    ])
+    .mockResolvedValueOnce([
+      '5',
+      'SimpleHashEntity:3',
+      'SimpleHashEntity:4'
+    ])
+    .mockResolvedValueOnce([
+      '5',
+      'SimpleHashEntity:5'
+    ])
+    .mockResolvedValue(['5']);
 }
 
 export function mockClientSearchToReturnPaginatedHashes() {
@@ -181,7 +217,7 @@ const HASH_DATA_5 = [
   'aBoolean', '0',
   'aPoint', A_THIRD_POINT_STRING,
   'someStrings', SOME_STRINGS_JOINED ];
-    
+
 const JSON_DATA_1 = `{
   "aString": "${A_STRING}",
   "someText": "${SOME_TEXT}",
