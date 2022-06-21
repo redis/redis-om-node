@@ -26,4 +26,4 @@ Enables setting the weight to apply to a text field
 
 #### Defined in
 
-[lib/schema/definition/weight-field-definition.ts:4](https://github.com/redis/redis-om-node/blob/48d362b/lib/schema/definition/weight-field-definition.ts#L4)
+[lib/schema/definition/weight-field-definition.ts:4](https://github.com/redis/redis-om-node/blob/000c57c/lib/schema/definition/weight-field-definition.ts#L4)

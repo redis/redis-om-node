@@ -27,4 +27,4 @@ to true.
 
 #### Defined in
 
-[lib/schema/definition/stemming-field-definition.ts:7](https://github.com/redis/redis-om-node/blob/48d362b/lib/schema/definition/stemming-field-definition.ts#L7)
+[lib/schema/definition/stemming-field-definition.ts:7](https://github.com/redis/redis-om-node/blob/000c57c/lib/schema/definition/stemming-field-definition.ts#L7)
