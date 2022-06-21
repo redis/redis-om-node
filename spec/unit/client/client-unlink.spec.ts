@@ -20,9 +20,19 @@ describe("Client", () => {
         await client.open();
       });
 
-      it("passes the command to the shim", async () => {
+      it("doesn't invoke the shim when passed no keys", async () => {
+        await client.unlink();
+        expect(RedisShim.prototype.unlink).not.toHaveBeenCalled();
+      });
+
+      it("passes a single key to the shim", async () => {
         await client.unlink('foo');
-        expect(RedisShim.prototype.unlink).toHaveBeenCalledWith('foo');
+        expect(RedisShim.prototype.unlink).toHaveBeenCalledWith(expect.arrayContaining(['foo']));
+      });
+
+      it("passes multiple keys to the shim", async () => {
+        await client.unlink('foo', 'bar', 'baz');
+        expect(RedisShim.prototype.unlink).toHaveBeenCalledWith(expect.arrayContaining(['foo', 'bar', 'baz']));
       });
     });
 

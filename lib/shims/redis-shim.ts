@@ -28,8 +28,8 @@ export default class RedisShim {
     return this.redis.sendCommand<TResult>(command);
   }
 
-  async unlink(key: string) {
-    await this.redis.unlink(key);
+  async unlink(keys: string[]) {
+    await this.redis.unlink(keys);
   }
 
   async expire(key: string, ttl: number) {
