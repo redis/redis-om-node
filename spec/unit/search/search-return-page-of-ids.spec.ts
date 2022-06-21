@@ -23,69 +23,67 @@ describe.each([
     new Search<SimpleHashEntity>(simpleHashSchema, new Client()) ],
   [ "RawSearch",
     new RawSearch<SimpleHashEntity>(simpleHashSchema, new Client()) ]
-])("%s", (_, hashSearch: HashSearch) => {
+])("%s", (_, search: HashSearch) => {
 
   describe("#returnPageOfIds", () => {
 
-    describe("when running against hashes", () => {
-      let keys: string[];
-      let indexName = 'SimpleHashEntity:index', query = '*';
+    let keys: string[];
+    let indexName = 'SimpleHashEntity:index', query = '*';
 
-      describe("when querying no results", () => {
-        beforeEach(async () => {
-          mockClientSearchToReturnNothing();
-          keys = await hashSearch.return.pageOfIds(0, 5);
-        });
-
-        it("askes the client for results", () => {
-          expect(Client.prototype.search).toHaveBeenCalledTimes(1);
-          expect(Client.prototype.search).toHaveBeenCalledWith({
-            indexName, query, limit: { offset: 0, count: 5 }, keysOnly: true });
-        });
-
-        it("returns no results", () => expect(keys).toHaveLength(0));
+    describe("when querying no results", () => {
+      beforeEach(async () => {
+        mockClientSearchToReturnNothing();
+        keys = await search.return.pageOfIds(0, 5);
       });
 
-      describe("when querying a single result", () => {
-        beforeEach(async () => {
-          mockClientSearchToReturnSingleKey();
-          keys = await hashSearch.return.pageOfIds(0, 5);
-        });
-
-        it("askes the client for results", () => {
-          expect(Client.prototype.search).toHaveBeenCalledTimes(1);
-          expect(Client.prototype.search).toHaveBeenCalledWith({
-            indexName, query, limit: { offset: 0, count: 5 }, keysOnly: true });
-        });
-
-        it("returns the expected single result", () => {
-          expect(keys).toHaveLength(1);
-          expect(keys).toEqual(expect.arrayContaining([
-            SIMPLE_ENTITY_1.entityId
-          ]));
-        });
+      it("askes the client for results", () => {
+        expect(Client.prototype.search).toHaveBeenCalledTimes(1);
+        expect(Client.prototype.search).toHaveBeenCalledWith({
+          indexName, query, limit: { offset: 0, count: 5 }, keysOnly: true });
       });
 
-      describe("when querying multiple results", () => {
-        beforeEach(async () => {
-          mockClientSearchToReturnMultipleKeys();
-          keys = await hashSearch.return.pageOfIds(0, 5);
-        });
+      it("returns no results", () => expect(keys).toHaveLength(0));
+    });
 
-        it("askes the client for results", () => {
-          expect(Client.prototype.search).toHaveBeenCalledTimes(1);
-          expect(Client.prototype.search).toHaveBeenCalledWith({
-            indexName, query, limit: { offset: 0, count: 5 }, keysOnly: true });
-        });
+    describe("when querying a single result", () => {
+      beforeEach(async () => {
+        mockClientSearchToReturnSingleKey();
+        keys = await search.return.pageOfIds(0, 5);
+      });
 
-        it("returns all the results", async () => {
-          expect(keys).toHaveLength(3);
-          expect(keys).toEqual(expect.arrayContaining([
-            SIMPLE_ENTITY_1.entityId,
-            SIMPLE_ENTITY_2.entityId,
-            SIMPLE_ENTITY_3.entityId
-          ]));
-        });
+      it("askes the client for results", () => {
+        expect(Client.prototype.search).toHaveBeenCalledTimes(1);
+        expect(Client.prototype.search).toHaveBeenCalledWith({
+          indexName, query, limit: { offset: 0, count: 5 }, keysOnly: true });
+      });
+
+      it("returns the expected single result", () => {
+        expect(keys).toHaveLength(1);
+        expect(keys).toEqual(expect.arrayContaining([
+          SIMPLE_ENTITY_1.entityId
+        ]));
+      });
+    });
+
+    describe("when querying multiple results", () => {
+      beforeEach(async () => {
+        mockClientSearchToReturnMultipleKeys();
+        keys = await search.return.pageOfIds(0, 5);
+      });
+
+      it("askes the client for results", () => {
+        expect(Client.prototype.search).toHaveBeenCalledTimes(1);
+        expect(Client.prototype.search).toHaveBeenCalledWith({
+          indexName, query, limit: { offset: 0, count: 5 }, keysOnly: true });
+      });
+
+      it("returns all the results", async () => {
+        expect(keys).toHaveLength(3);
+        expect(keys).toEqual(expect.arrayContaining([
+          SIMPLE_ENTITY_1.entityId,
+          SIMPLE_ENTITY_2.entityId,
+          SIMPLE_ENTITY_3.entityId
+        ]));
       });
     });
   });
