@@ -141,7 +141,19 @@ export default abstract class Repository<TEntity extends Entity> {
    * @returns The matching Entity.
    */
   async fetch(id: string): Promise<TEntity> {
-    return await this.readEntity(id);
+    const entities = await this.fetchMany(id)
+    return entities[0];
+  }
+
+  /**
+   * Read and return the {@link Entity | Entities} from Redis with the given IDs. If
+   * a particular {@link Entity} is not found, returns an {@link Entity} with all
+   * properties set to `null`.
+   * @param ids The IDs of the {@link Entity | Entities} you seek.
+   * @returns The matching Entities.
+   */
+   async fetchMany(...ids: string[]): Promise<TEntity[]> {
+    return await this.readEntities(ids);
   }
 
   /**
@@ -191,7 +203,7 @@ export default abstract class Repository<TEntity extends Entity> {
   protected abstract writeEntity(entity: TEntity): Promise<void>;
 
   /** @internal */
-  protected abstract readEntity(key: string): Promise<TEntity>;
+  protected abstract readEntities(ids: string[]): Promise<TEntity[]>;
 
   /** @internal */
   protected makeKey(id: string): string {
@@ -210,12 +222,15 @@ export class HashRepository<TEntity extends Entity> extends Repository<TEntity> 
     await this.client.hsetall(entity.keyName, entity.toRedisHash());
   }
 
-  protected async readEntity(id: string): Promise<TEntity> {
-    const key = this.makeKey(id);
-    const hashData = await this.client.hgetall(key);
-    const entity = new this.schema.entityCtor(this.schema, id);
-    entity.fromRedisHash(hashData);
-    return entity;
+  protected async readEntities(ids: string[]): Promise<TEntity[]> {
+    return Promise.all(
+      ids.map(async (id) => {
+        const key = this.makeKey(id);
+        const hashData = await this.client.hgetall(key);
+        const entity = new this.schema.entityCtor(this.schema, id);
+        entity.fromRedisHash(hashData);
+        return entity;
+      }));
   }
 }
 
@@ -225,11 +240,14 @@ export class JsonRepository<TEntity extends Entity> extends Repository<TEntity> 
     await this.client.jsonset(entity.keyName, entity.toRedisJson());
   }
 
-  protected async readEntity(id: string): Promise<TEntity> {
-    const key = this.makeKey(id);
-    const jsonData = await this.client.jsonget(key);
-    const entity = new this.schema.entityCtor(this.schema, id);
-    entity.fromRedisJson(jsonData);
-    return entity;
+  protected async readEntities(ids: string[]): Promise<TEntity[]> {
+    return Promise.all(
+      ids.map(async (id) => {
+        const key = this.makeKey(id);
+        const jsonData = await this.client.jsonget(key);
+        const entity = new this.schema.entityCtor(this.schema, id);
+        entity.fromRedisJson(jsonData);
+        return entity;
+      }));
   }
 }
