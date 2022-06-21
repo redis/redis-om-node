@@ -5,7 +5,7 @@ import Repository from '../../../lib/repository/repository';
 import { SampleHashEntity, createHashEntitySchema, loadTestHash } from '../helpers/data-helper';
 import { flushAll, keyExists } from '../helpers/redis-helper';
 
-import { AN_EMPTY_ENTITY, AN_ENTITY } from '../../helpers/example-data';
+import { ANOTHER_ENTITY, AN_EMPTY_ENTITY, AN_ENTITY, A_THIRD_ENTITY } from '../../helpers/example-data';
 
 describe("remove hash", () => {
 
@@ -13,53 +13,56 @@ describe("remove hash", () => {
   let repository: Repository<SampleHashEntity>;
   let schema: Schema<SampleHashEntity>;
 
+  let exists: boolean;
+
   beforeAll(async () => {
-    client = new Client();
-    await client.open();
-    await flushAll(client);
-    await loadTestHash(client, 'SampleHashEntity:full', AN_ENTITY);
-    await loadTestHash(client, 'SampleHashEntity:full2', AN_ENTITY);
-    await loadTestHash(client, 'SampleHashEntity:full3', AN_ENTITY);
-    await loadTestHash(client, 'SampleHashEntity:empty', AN_EMPTY_ENTITY);
-    
+    client = await new Client().open();
     schema = createHashEntitySchema();
     repository = client.fetchRepository<SampleHashEntity>(schema);
+  })
+
+  beforeEach(async () => {
+    await flushAll(client);
+    await loadTestHash(client, 'SampleHashEntity:foo', AN_ENTITY);
+    await loadTestHash(client, 'SampleHashEntity:bar', ANOTHER_ENTITY);
+    await loadTestHash(client, 'SampleHashEntity:baz', A_THIRD_ENTITY);
   });
 
   afterAll(async () => await client.close());
-      
-  it("removes an entity", async () => {
-    let exists;
 
-    exists = await keyExists(client, 'SampleHashEntity:full');
+  it("removes a single entity", async () => {
+    exists = await keyExists(client, 'SampleHashEntity:foo');
     expect(exists).toBe(true);
 
-    await repository.remove('full');
+    await repository.remove('foo');
 
-    exists = await keyExists(client, 'SampleHashEntity:full');
+    exists = await keyExists(client, 'SampleHashEntity:foo');
     expect(exists).toBe(false);
   });
 
-  it("removes many entities", async () => {
-    let firstEntityExists;
-    let secondEntityExists;
+  it("removes multiple entities", async () => {
+    exists = await keyExists(client, 'SampleHashEntity:foo');
+    expect(exists).toBe(true);
 
-    firstEntityExists = await keyExists(client, 'SampleHashEntity:full3');
-    expect(firstEntityExists).toBe(true);
+    exists = await keyExists(client, 'SampleHashEntity:bar');
+    expect(exists).toBe(true);
 
-    secondEntityExists = await keyExists(client, 'SampleHashEntity:full2');
-    expect(secondEntityExists).toBe(true);
+    exists = await keyExists(client, 'SampleHashEntity:baz');
+    expect(exists).toBe(true);
 
-    await repository.remove(['full3', 'full2']);
+    await repository.remove('foo', 'bar', 'baz');
 
-    firstEntityExists = await keyExists(client, 'SampleHashEntity:full3');
-    expect(firstEntityExists).toBe(false);
-    secondEntityExists = await keyExists(client, 'SampleHashEntity:full2');
-    expect(secondEntityExists).toBe(false);
+    exists = await keyExists(client, 'SampleHashEntity:foo');
+    expect(exists).toBe(false);
+
+    exists = await keyExists(client, 'SampleHashEntity:bar');
+    expect(exists).toBe(false);
+
+    exists = await keyExists(client, 'SampleHashEntity:baz');
+    expect(exists).toBe(false);
   });
 
   it("removes a non-existing entity", async () => {
-    let exists;
     exists = await keyExists(client, 'SampleHashEntity:empty');
     expect(exists).toBe(false);
 

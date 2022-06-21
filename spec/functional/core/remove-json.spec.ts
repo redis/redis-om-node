@@ -5,45 +5,70 @@ import Repository from '../../../lib/repository/repository';
 import { SampleJsonEntity, createJsonEntitySchema, loadTestJson } from '../helpers/data-helper';
 import { flushAll, keyExists } from '../helpers/redis-helper';
 
-import { AN_EMPTY_ENTITY, AN_ENTITY } from '../../helpers/example-data';
+import { ANOTHER_ENTITY, AN_EMPTY_ENTITY, AN_ENTITY, A_THIRD_ENTITY } from '../../helpers/example-data';
 
-describe("remove hash", () => {
+describe("remove JSON", () => {
 
   let client: Client;
   let repository: Repository<SampleJsonEntity>;
   let schema: Schema<SampleJsonEntity>;
 
+  let exists: boolean;
+
   beforeAll(async () => {
-    client = new Client();
-    await client.open();
-    await flushAll(client);
-    await loadTestJson(client, 'SampleJsonEntity:full', AN_ENTITY);
-    await loadTestJson(client, 'SampleJsonEntity:full2', AN_ENTITY);
-    await loadTestJson(client, 'SampleJsonEntity:empty', AN_EMPTY_ENTITY);
-    
+    client = await new Client().open();
     schema = createJsonEntitySchema();
     repository = client.fetchRepository<SampleJsonEntity>(schema);
+  })
+
+  beforeEach(async () => {
+    await flushAll(client);
+    await loadTestJson(client, 'SampleJsonEntity:foo', AN_ENTITY);
+    await loadTestJson(client, 'SampleJsonEntity:bar', ANOTHER_ENTITY);
+    await loadTestJson(client, 'SampleJsonEntity:baz', A_THIRD_ENTITY);
   });
 
   afterAll(async () => await client.close());
-      
-  it("removes an entity", async () => {
-    await repository.remove('full');
-    let exists = await keyExists(client, 'SampleJsonEntity:full');
+
+  it("removes a single entity", async () => {
+    exists = await keyExists(client, 'SampleJsonEntity:foo');
+    expect(exists).toBe(true);
+
+    await repository.remove('foo');
+
+    exists = await keyExists(client, 'SampleJsonEntity:foo');
     expect(exists).toBe(false);
   });
 
-  it("removes many entities", async () => {
-    await repository.remove(['full', 'full2']);
-    let exists = await keyExists(client, 'SampleJsonEntity:full');
+  it("removes multiple entities", async () => {
+    exists = await keyExists(client, 'SampleJsonEntity:foo');
+    expect(exists).toBe(true);
+
+    exists = await keyExists(client, 'SampleJsonEntity:bar');
+    expect(exists).toBe(true);
+
+    exists = await keyExists(client, 'SampleJsonEntity:baz');
+    expect(exists).toBe(true);
+
+    await repository.remove('foo', 'bar', 'baz');
+
+    exists = await keyExists(client, 'SampleJsonEntity:foo');
     expect(exists).toBe(false);
-    let exists2 = await keyExists(client, 'SampleJsonEntity:full2');
-    expect(exists2).toBe(false);
+
+    exists = await keyExists(client, 'SampleJsonEntity:bar');
+    expect(exists).toBe(false);
+
+    exists = await keyExists(client, 'SampleJsonEntity:baz');
+    expect(exists).toBe(false);
   });
 
   it("removes a non-existing entity", async () => {
+    exists = await keyExists(client, 'SampleJsonEntity:empty');
+    expect(exists).toBe(false);
+
     await repository.remove('empty');
-    let exists = await keyExists(client, 'SampleJsonEntity:empty');
+
+    exists = await keyExists(client, 'SampleJsonEntity:empty');
     expect(exists).toBe(false);
   });
 });
