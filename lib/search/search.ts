@@ -129,7 +129,7 @@ export abstract class AbstractSearch<TEntity extends Entity> {
    * @param field The field with the minimal value.
    * @returns The {@link Entity} with the minimal value
    */
-  async min(field: string): Promise<TEntity> {
+  async min(field: string): Promise<TEntity | null> {
     return await this.sortBy(field, 'ASC').first();
   }
 
@@ -138,7 +138,7 @@ export abstract class AbstractSearch<TEntity extends Entity> {
    * @param field The field with the maximal value.
    * @returns The {@link Entity} with the maximal value
    */
-  async max(field: string): Promise<TEntity> {
+  async max(field: string): Promise<TEntity | null> {
     return await this.sortBy(field, 'DESC').first();
   }
 
@@ -174,8 +174,7 @@ export abstract class AbstractSearch<TEntity extends Entity> {
    */
    async pageOfIds(offset: number, count: number): Promise<string[]> {
     const keys = await this.pageOfKeys(offset, count);
-    const ids = keys.map(key => key.replace(`${this.schema.prefix}:`, ''));
-    return ids;
+    return this.keysToEntityIds(keys);
   }
 
   /**
@@ -190,11 +189,27 @@ export abstract class AbstractSearch<TEntity extends Entity> {
   }
 
   /**
-   * Returns only the first {@link Entity} that matches this query.
+   * Returns the first {@link Entity} that matches this query.
    */
-  async first(): Promise<TEntity> {
+  async first(): Promise<TEntity | null> {
     const foundEntity = await this.page(0, 1);
     return foundEntity[0] ?? null;
+  }
+
+  /**
+   * Returns the first entity ID that matches this query.
+   */
+   async firstId(): Promise<string | null> {
+    const key = await this.firstKey()
+    return this.keyToEntityId(key)
+  }
+
+  /**
+   * Returns the first key name that matches this query.
+   */
+   async firstKey(): Promise<string | null> {
+    const foundIds = await this.pageOfKeys(0, 1);
+    return foundIds[0] ?? null;
   }
 
   /**
@@ -227,6 +242,54 @@ export abstract class AbstractSearch<TEntity extends Entity> {
   }
 
   /**
+   * Returns all the entity IDs that match this query. This method
+   * makes multiple calls to Redis until all the entity IDs are returned.
+   * You can specify the batch size by setting the `pageSize` property on the
+   * options:
+   *
+   * ```typescript
+   * const keys = await repository.search().returnAllIds({ pageSize: 100 });
+   * ```
+   *
+   * @param options Options for the call.
+   * @param options.pageSize Number of entity IDs returned per batch.
+   * @returns An array of entity IDs matching the query.
+   */
+  async allIds(options = { pageSize: 10 }): Promise<string[]> {
+    const keys = await this.allKeys(options)
+    return this.keysToEntityIds(keys);
+  }
+
+  /**
+   * Returns all the key names in Redis that match this query. This method
+   * makes multiple calls to Redis until all the key names are returned.
+   * You can specify the batch size by setting the `pageSize` property on the
+   * options:
+   *
+   * ```typescript
+   * const keys = await repository.search().returnAllKeys({ pageSize: 100 });
+   * ```
+   *
+   * @param options Options for the call.
+   * @param options.pageSize Number of key names returned per batch.
+   * @returns An array of key names matching the query.
+   */
+  async allKeys(options = { pageSize: 10 }): Promise<string[]> {
+    const keys: string[] = [];
+    let offset = 0;
+    const pageSize = options.pageSize;
+
+    while (true) {
+      const foundKeys = await this.pageOfKeys(offset, pageSize);
+      keys.push(...foundKeys);
+      if (foundKeys.length < pageSize) break;
+      offset += pageSize;
+    }
+
+    return keys;
+  }
+
+  /**
    * Returns the current instance. Syntactic sugar to make your code more fluent.
    * @returns this
    */
@@ -237,14 +300,14 @@ export abstract class AbstractSearch<TEntity extends Entity> {
   /**
    * Alias for {@link Search.min}.
    */
-  async returnMin(field: string): Promise<TEntity> {
+  async returnMin(field: string): Promise<TEntity | null> {
     return await this.min(field);
   }
 
   /**
    * Alias for {@link Search.max}.
    */
-  async returnMax(field: string): Promise<TEntity> {
+  async returnMax(field: string): Promise<TEntity | null> {
     return await this.max(field);
   }
 
@@ -277,17 +340,45 @@ export abstract class AbstractSearch<TEntity extends Entity> {
   }
 
   /**
+   * Alias for {@link Search.first}.
+   */
+  async returnFirst(): Promise<TEntity | null> {
+    return await this.first();
+  }
+
+  /**
+   * Alias for {@link Search.firstId}.
+   */
+  async returnFirstId(): Promise<string | null> {
+    return await this.firstId();
+  }
+
+  /**
+   * Alias for {@link Search.firstKey}.
+   */
+  async returnFirstKey(): Promise<string | null> {
+    return await this.firstKey();
+  }
+
+  /**
    * Alias for {@link Search.all}.
    */
-  async returnAll(options = { pageSize: 10 }): Promise<TEntity[]> {
+   async returnAll(options = { pageSize: 10 }): Promise<TEntity[]> {
     return await this.all(options)
   }
 
   /**
-   * Alias for {@link Search.first}.
+   * Alias for {@link Search.allIds}.
    */
-  async returnFirst(): Promise<TEntity> {
-    return await this.first();
+  async returnAllIds(options = { pageSize: 10 }): Promise<string[]> {
+    return await this.allIds(options)
+  }
+
+  /**
+   * Alias for {@link Search.allKeys}.
+   */
+  async returnAllKeys(options = { pageSize: 10 }): Promise<string[]> {
+    return await this.allKeys(options)
   }
 
   private async callSearch(limit: LimitOptions = { offset: 0, count: 0 }, keysOnly = false) {
@@ -311,6 +402,14 @@ export abstract class AbstractSearch<TEntity extends Entity> {
       throw error
     }
     return searchResults
+  }
+
+  private keysToEntityIds(keys: string[]): string[] {
+    return keys.map(key => this.keyToEntityId(key) ?? '');
+  }
+
+  private keyToEntityId(key: string | null): string | null {
+    return key ? key.replace(`${this.schema.prefix}:`, '') : null;
   }
 }
 

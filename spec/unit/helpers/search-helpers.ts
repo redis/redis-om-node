@@ -121,6 +121,25 @@ export function mockClientSearchToReturnMultipleJsonStrings() {
     .mockResolvedValue(['3']);
 }
 
+export function mockClientSearchToReturnPaginatedKeys() {
+  mocked(Client.prototype.search)
+    .mockResolvedValueOnce([
+      '5',
+      'SimpleHashEntity:1',
+      'SimpleHashEntity:2'
+    ])
+    .mockResolvedValueOnce([
+      '5',
+      'SimpleHashEntity:3',
+      'SimpleHashEntity:4'
+    ])
+    .mockResolvedValueOnce([
+      '5',
+      'SimpleHashEntity:5'
+    ])
+    .mockResolvedValue(['5']);
+}
+
 export function mockClientSearchToReturnPaginatedHashes() {
   mocked(Client.prototype.search)
     .mockResolvedValueOnce([
