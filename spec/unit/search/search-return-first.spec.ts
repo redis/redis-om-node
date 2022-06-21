@@ -29,7 +29,7 @@ describe.each([
 
   describe("#returnFirst", () => {
     describe("when running against hashes", () => {
-      let entity: SimpleHashEntity;
+      let entity: SimpleHashEntity | null;
       let indexName = 'SimpleHashEntity:index', query = '*';
 
       describe("when querying no results", () => {
@@ -60,16 +60,16 @@ describe.each([
         });
 
         it("returns the first result of a given repository", () => {
-          expect(entity.aBoolean).toEqual(SIMPLE_ENTITY_1.aBoolean);
-          expect(entity.aNumber).toEqual(SIMPLE_ENTITY_1.aNumber);
-          expect(entity.aString).toEqual(SIMPLE_ENTITY_1.aString);
-          expect(entity.entityId).toEqual(SIMPLE_ENTITY_1.entityId);
+          expect(entity?.aBoolean).toEqual(SIMPLE_ENTITY_1.aBoolean);
+          expect(entity?.aNumber).toEqual(SIMPLE_ENTITY_1.aNumber);
+          expect(entity?.aString).toEqual(SIMPLE_ENTITY_1.aString);
+          expect(entity?.entityId).toEqual(SIMPLE_ENTITY_1.entityId);
         });
       });
     });
 
     describe("when running against JSON Objects", () => {
-      let entity: SimpleJsonEntity;
+      let entity: SimpleJsonEntity | null;
       let indexName = 'SimpleJsonEntity:index', query = '*';
 
       describe("when querying no results", () => {
@@ -100,10 +100,10 @@ describe.each([
         });
 
         it("returns the first result of a given repository", () => {
-          expect(entity.aBoolean).toEqual(SIMPLE_ENTITY_1.aBoolean);
-          expect(entity.aNumber).toEqual(SIMPLE_ENTITY_1.aNumber);
-          expect(entity.aString).toEqual(SIMPLE_ENTITY_1.aString);
-          expect(entity.entityId).toEqual(SIMPLE_ENTITY_1.entityId);
+          expect(entity?.aBoolean).toEqual(SIMPLE_ENTITY_1.aBoolean);
+          expect(entity?.aNumber).toEqual(SIMPLE_ENTITY_1.aNumber);
+          expect(entity?.aString).toEqual(SIMPLE_ENTITY_1.aString);
+          expect(entity?.entityId).toEqual(SIMPLE_ENTITY_1.entityId);
         });
       });
     });

@@ -25,7 +25,7 @@ describe.each([
 ])("%s", (_, search: HashSearch) => {
 
   describe("#returnFirstId", () => {
-    let id: string;
+    let id: string | null;
     let indexName = 'SimpleHashEntity:index', query = '*';
 
     describe("when querying no results", () => {
