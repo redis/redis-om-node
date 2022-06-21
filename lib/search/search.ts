@@ -134,12 +134,50 @@ export abstract class AbstractSearch<TEntity extends Entity> {
   }
 
   /**
+   * Finds the entity ID with the minimal value for a field.
+   * @param field The field with the minimal value.
+   * @returns The entity ID with the minimal value
+   */
+  async minId(field: string): Promise<string | null> {
+    const key = await this.minKey(field);
+    return this.keyToEntityId(key);
+  }
+
+  /**
+   * Finds the key name in Redis with the minimal value for a field.
+   * @param field The field with the minimal value.
+   * @returns The key name with the minimal value
+   */
+  async minKey(field: string): Promise<string | null> {
+    return await this.sortBy(field, 'ASC').firstKey();
+  }
+
+  /**
    * Finds the {@link Entity} with the maximal value for a field.
    * @param field The field with the maximal value.
-   * @returns The {@link Entity} with the maximal value
+   * @returns The entity ID {@link Entity} with the maximal value
    */
   async max(field: string): Promise<TEntity | null> {
     return await this.sortBy(field, 'DESC').first();
+  }
+
+  /**
+   * Finds the entity ID with the maximal value for a field.
+   * @param field The field with the maximal value.
+   * @returns The entity ID with the maximal value
+   */
+  async maxId(field: string): Promise<string | null>{
+    const key = await this.maxKey(field);
+    return this.keyToEntityId(key);
+  }
+
+  /**
+   * Finds the key name in Redis with the maximal value for a field.
+   * @param field The field with the maximal value.
+   * @returns The key name with the maximal value
+   */
+  async maxKey(field: string): Promise<string | null> {
+    return await this.sortBy(field, 'DESC').firstKey();
   }
 
   /**
@@ -305,10 +343,38 @@ export abstract class AbstractSearch<TEntity extends Entity> {
   }
 
   /**
+   * Alias for {@link Search.minId}.
+   */
+  async returnMinId(field: string): Promise<string | null> {
+    return await this.minId(field);
+  }
+
+  /**
+   * Alias for {@link Search.minKey}.
+   */
+  async returnMinKey(field: string): Promise<string | null> {
+    return await this.minKey(field);
+  }
+
+  /**
    * Alias for {@link Search.max}.
    */
   async returnMax(field: string): Promise<TEntity | null> {
     return await this.max(field);
+  }
+
+  /**
+   * Alias for {@link Search.maxId}.
+   */
+  async returnMaxId(field: string): Promise<string | null> {
+    return await this.maxId(field);
+  }
+
+  /**
+   * Alias for {@link Search.maxKey}.
+   */
+  async returnMaxKey(field: string): Promise<string | null> {
+    return await this.maxKey(field);
   }
 
   /**
