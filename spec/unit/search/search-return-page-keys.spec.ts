@@ -34,7 +34,7 @@ describe.each([
       describe("when querying no results", () => {
         beforeEach(async () => {
           mockClientSearchToReturnNothing();
-          keys = await hashSearch.return.pageKeys(0, 5);
+          keys = await hashSearch.return.pageOfKeys(0, 5);
         });
 
         it("askes the client for results", () => {
@@ -49,7 +49,7 @@ describe.each([
       describe("when querying a single result", () => {
         beforeEach(async () => {
           mockClientSearchToReturnSingleKey();
-          keys = await hashSearch.return.pageKeys(0, 5);
+          keys = await hashSearch.return.pageOfKeys(0, 5);
         });
 
         it("askes the client for results", () => {
@@ -69,7 +69,7 @@ describe.each([
       describe("when querying multiple results", () => {
         beforeEach(async () => {
           mockClientSearchToReturnMultipleKeys();
-          keys = await hashSearch.return.pageKeys(0, 5);
+          keys = await hashSearch.return.pageOfKeys(0, 5);
         });
 
         it("askes the client for results", () => {

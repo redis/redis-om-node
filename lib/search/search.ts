@@ -172,7 +172,7 @@ export abstract class AbstractSearch<TEntity extends Entity> {
    * @param count The number of key names to return.
    * @returns An array of strings matching the query.
    */
-  async pageKeys(offset: number, count: number): Promise<string[]> {
+  async pageOfKeys(offset: number, count: number): Promise<string[]> {
     const [ _count, ...keys] = await this.callSearch({ offset, count }, true);
     return keys;
   }
@@ -253,8 +253,8 @@ export abstract class AbstractSearch<TEntity extends Entity> {
   /**
    * Alias for {@link Search.page}.
    */
-  async returnPageKeys(offset: number, count: number): Promise<string[]> {
-    return await this.pageKeys(offset, count);
+  async returnPageOfKeys(offset: number, count: number): Promise<string[]> {
+    return await this.pageOfKeys(offset, count);
   }
 
   /**
