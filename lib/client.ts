@@ -173,7 +173,7 @@ export default class Client {
   }
 
   /** @internal */
-  async unlink(key: string) {
+  async unlink(key: string | string[]) {
     this.validateShimOpen();
     await this.shim.unlink(key);
   }

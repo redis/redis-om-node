@@ -18,6 +18,7 @@ describe("remove hash", () => {
     await client.open();
     await flushAll(client);
     await loadTestJson(client, 'SampleJsonEntity:full', AN_ENTITY);
+    await loadTestJson(client, 'SampleJsonEntity:full2', AN_ENTITY);
     await loadTestJson(client, 'SampleJsonEntity:empty', AN_EMPTY_ENTITY);
     
     schema = createJsonEntitySchema();
@@ -30,6 +31,14 @@ describe("remove hash", () => {
     await repository.remove('full');
     let exists = await keyExists(client, 'SampleJsonEntity:full');
     expect(exists).toBe(false);
+  });
+
+  it("removes many entities", async () => {
+    await repository.remove(['full', 'full2']);
+    let exists = await keyExists(client, 'SampleJsonEntity:full');
+    expect(exists).toBe(false);
+    let exists2 = await keyExists(client, 'SampleJsonEntity:full2');
+    expect(exists2).toBe(false);
   });
 
   it("removes a non-existing entity", async () => {
