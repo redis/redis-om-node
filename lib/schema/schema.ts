@@ -100,13 +100,14 @@ export class Schema<TEntity extends Entity> {
   get indexHash(): string {
 
     const data = JSON.stringify({
-      definition: this.definition,
+      definition: this.definition,  // TODO: this won't work with embedded schemas
       prefix: this.prefix,
       indexName: this.indexName,
       indexHashName: this.indexHashName,
       dataStructure: this.dataStructure,
       useStopWords: this.useStopWords,
       stopWords: this.stopWords,
+      // indexedDefault: this.indexedDefault
     });
 
     return createHash('sha1').update(data).digest('base64');
@@ -160,6 +161,80 @@ export class Schema<TEntity extends Entity> {
 
     if (this.prefix === '') throw Error(`Prefix must be a non-empty string.`);
     if (this.indexName === '') throw Error(`Index name must be a non-empty string.`);
+  }
+
+  private validateFieldDef(field: string, fieldDef: FieldDefinition) {
+    if (!['boolean', 'date', 'number', 'point', 'string', 'string[]', 'text'].includes(fieldDef.type))
+      throw Error(`The field '${field}' is configured with a type of '${fieldDef.type}'. Valid types include 'boolean', 'date', 'number', 'point', 'string', 'string[]', and 'text'.`);
+  }
+}
+
+/**
+ * Defines an embedded schema that determines how an embedded
+ * {@link Entity} is mapped to Redis data structures. Construct
+ * by passing in an {@link EntityConstructor} and a {@link SchemaDefinition}:
+ *
+ * ```typescript
+ * const schema = new EmbeddedSchema(Foo, {
+ *   aString: { type: 'string' },
+ *   aNumber: { type: 'number' },
+ *   aBoolean: { type: 'boolean' },
+ *   someText: { type: 'text' },
+ *   aPoint: { type: 'point' },
+ *   aDate: { type: 'date' },
+ *   someStrings: { type: 'string[]' }
+ * });
+ * ```
+ *
+ * An EmbeddedSchema is primarily used by the {@link Schema} and other
+ * EmbeddedSchemas.
+ *
+ * @template TEntity The {@link Entity} this Schema defines.
+ */
+ export class EmbeddedSchema<TEntity extends Entity> {
+  /**
+   * The provided {@link EntityConstructor}.
+   * @internal
+   */
+  readonly entityCtor: EntityConstructor<TEntity>;
+
+  /**
+   * The provided {@link SchemaDefinition}.
+   * @internal
+   */
+  readonly definition: SchemaDefinition;
+
+  /**
+   * @template TEntity The {@link Entity} this Schema defines.
+   * @param ctor A constructor that creates an {@link Entity} of type TEntity.
+   * @param schemaDef Defines all of the fields for the Schema and how they are mapped to Redis.
+   * @param options Additional options for this Schema.
+   */
+  constructor(ctor: EntityConstructor<TEntity>, schemaDef: SchemaDefinition) {
+    this.entityCtor = ctor;
+    this.definition = schemaDef;
+
+    this.defineProperties();
+  }
+
+  private defineProperties() {
+    Object.keys(this.definition).forEach(fieldName => {
+
+      const fieldDef: FieldDefinition = this.definition[fieldName];
+      const fieldAlias = fieldDef.alias ?? fieldName;
+
+      this.validateFieldDef(fieldName, fieldDef);
+
+      Object.defineProperty(this.entityCtor.prototype, fieldName, {
+        configurable: true,
+        get: function (): any {
+          return this.entityFields[fieldAlias].value;
+        },
+        set: function (value: any): void {
+          this.entityFields[fieldAlias].value = value;
+        }
+      });
+    })
   }
 
   private validateFieldDef(field: string, fieldDef: FieldDefinition) {
