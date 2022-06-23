@@ -46,7 +46,8 @@ export type SearchOptions = {
   indexName: string,
   query: string,
   limit?: LimitOptions,
-  sort?: SortOptions;
+  sort?: SortOptions,
+  keysOnly?: boolean
 }
 
 /**
@@ -157,7 +158,7 @@ export default class Client {
   /** @internal */
   async search(options: SearchOptions) {
     this.validateShimOpen();
-    const { indexName, query, limit, sort } = options
+    const { indexName, query, limit, sort, keysOnly } = options
     const command = ['FT.SEARCH', indexName, query];
 
     if (limit !== undefined)
@@ -166,13 +167,15 @@ export default class Client {
     if (sort !== undefined)
       command.push('SORTBY', sort.field, sort.order);
 
+    if (keysOnly) command.push('RETURN', '0');
+
     return await this.shim.execute<any[]>(command);
   }
 
   /** @internal */
-  async unlink(key: string) {
+  async unlink(...keys: string[]) {
     this.validateShimOpen();
-    await this.shim.unlink(key);
+    if (keys.length > 0) await this.shim.unlink(keys);
   }
 
   /** @internal */

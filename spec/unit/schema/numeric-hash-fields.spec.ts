@@ -30,16 +30,22 @@ describe("Schema", () => {
       expectedRedisSchema: ['aField', 'NUMERIC']
     }],
 
-    ["that defines a sorted and aliased number for a HASH", {
-      schemaDef: { aField: { type: 'number', sortable: true, alias: 'anotherField' } } as SchemaDefinition,
+    ["that defines an indexed number for a HASH", {
+      schemaDef: { aField: { type: 'number', indexed: true } } as SchemaDefinition,
       dataStructure: 'HASH',
-      expectedRedisSchema: ['anotherField', 'NUMERIC', 'SORTABLE']
+      expectedRedisSchema: ['aField', 'NUMERIC']
     }],
 
-    ["that defines an unsorted and aliased number for a HASH", {
-      schemaDef: { aField: { type: 'number', sortable: false, alias: 'anotherField' } } as SchemaDefinition,
+    ["that defines an unindexed number for a HASH", {
+      schemaDef: { aField: { type: 'number', indexed: false } } as SchemaDefinition,
       dataStructure: 'HASH',
-      expectedRedisSchema: ['anotherField', 'NUMERIC']
+      expectedRedisSchema: ['aField', 'NUMERIC', 'NOINDEX']
+    }],
+
+    ["that defines a fully-configured number for a HASH", {
+      schemaDef: { aField: { type: 'number', alias: 'anotherField', sortable: true, indexed: false } } as SchemaDefinition,
+      dataStructure: 'HASH',
+      expectedRedisSchema: ['anotherField', 'NUMERIC', 'SORTABLE', 'NOINDEX']
     }]
 
   ])("%s", (_, data) => {

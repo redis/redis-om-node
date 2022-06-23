@@ -16,6 +16,24 @@ describe("Schema", () => {
       schemaDef: { aField: { type: 'point', alias: 'anotherField' } } as SchemaDefinition,
       dataStructure: 'HASH',
       expectedRedisSchema: ['anotherField', 'GEO']
+    }],
+
+    ["that defines an indexed point for a HASH", {
+      schemaDef: { aField: { type: 'point', indexed: true } } as SchemaDefinition,
+      dataStructure: 'HASH',
+      expectedRedisSchema: ['aField', 'GEO']
+    }],
+
+    ["that defines an unindexed point for a HASH", {
+      schemaDef: { aField: { type: 'point', indexed: false } } as SchemaDefinition,
+      dataStructure: 'HASH',
+      expectedRedisSchema: ['aField', 'GEO', 'NOINDEX']
+    }],
+
+    ["that defines a fully-configured point for a HASH", {
+      schemaDef: { aField: { type: 'point', alias: 'anotherField', indexed: false } } as SchemaDefinition,
+      dataStructure: 'HASH',
+      expectedRedisSchema: ['anotherField', 'GEO', 'NOINDEX']
     }]
 
   ])("%s", (_, data) => {

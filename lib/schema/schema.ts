@@ -96,6 +96,11 @@ export default class Schema<TEntity extends Entity> {
    */
   get stopWords(): Array<string> { return this.options?.stopWords ?? []; }
 
+  /**
+   * The configured indexed default setting for fields
+   */
+  get indexedDefault(): boolean { return this.options?.indexedDefault ?? true; }
+
   /** The hash value of this index. Stored in Redis under {@link Schema.indexHashName}. */
   get indexHash(): string {
 

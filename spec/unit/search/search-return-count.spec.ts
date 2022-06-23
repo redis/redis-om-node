@@ -18,9 +18,9 @@ describe("Search", () => {
     mocked(Client).mockReset();
     mocked(Client.prototype.search).mockReset();
   });
-  
+
   describe.each([
-    [ "FluentSearch", 
+    [ "FluentSearch",
       new Search<SimpleHashEntity>(simpleHashSchema, new Client()),
       new Search<SimpleJsonEntity>(simpleJsonSchema, new Client()) ],
     [ "RawSearch",
@@ -43,7 +43,7 @@ describe("Search", () => {
         it("askes the client for results", () => {
           expect(Client.prototype.search).toHaveBeenCalledTimes(1);
           expect(Client.prototype.search).toHaveBeenCalledWith({
-            indexName: 'SimpleHashEntity:index', query, limit: { offset, count } });
+            indexName: 'SimpleHashEntity:index', query, limit: { offset, count }, keysOnly: false });
         });
 
         it("returns the expected count", () => expect(actualCount).toBe(3));
@@ -58,9 +58,9 @@ describe("Search", () => {
         it("askes the client for results", () => {
           expect(Client.prototype.search).toHaveBeenCalledTimes(1);
           expect(Client.prototype.search).toHaveBeenCalledWith({
-            indexName: 'SimpleJsonEntity:index', query, limit: { offset, count } });
+            indexName: 'SimpleJsonEntity:index', query, limit: { offset, count }, keysOnly: false });
         });
-    
+
         it("returns the expected count", () => expect(actualCount).toBe(3));
       });
     });

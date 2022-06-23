@@ -20,11 +20,34 @@ describe("Schema", () => {
     it("generates the index hash name from the entity constructor name", () => expect(schema.indexHashName).toBe("TestEntity:index:hash"));
     it("generates default Redis IDs", () => expect(schema.generateId()).toMatch(/^[0-9ABCDEFGHJKMNPQRSTVWXYZ]{26}$/));
     it("generates the index hash", () => expect(schema.indexHash).toBe(DEFAULT_HASH));
+    it('indexes fields by default', () => expect(schema.indexedDefault).toBe(true))
 
     it("provides the default stop word settings", () => {
       expect(schema.useStopWords).toBe('DEFAULT')
       expect(schema.stopWords).toEqual([])
     });
+  });
+
+  describe("that doesn't index fields by default", () => {
+    it("does index a field that is explicitly indexed", () => {
+      schema = new Schema<TestEntity>(TestEntity, {
+        aString: { type: 'string', indexed: true },
+      }, {
+        indexedDefault: false,
+        dataStructure: 'HASH',
+      })
+      expect(schema.redisSchema).toEqual(['aString', 'TAG', 'SEPARATOR', '|'])
+    })
+
+    it("doesn't index a field that isn't explicitly indexed", () => {
+      schema = new Schema<TestEntity>(TestEntity, {
+        aString: { type: 'string' },
+      }, {
+        indexedDefault: false,
+        dataStructure: 'HASH',
+      })
+      expect(schema.redisSchema).toEqual(['aString', 'TAG', 'SEPARATOR', '|', 'NOINDEX'])
+    })
   });
 
   describe("that is well populated", () => {

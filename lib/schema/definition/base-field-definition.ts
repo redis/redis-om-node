@@ -10,6 +10,12 @@ interface BaseFieldDefinition {
    * {@link SchemaDefinition}. Overrides the Redis key name if set.
    */
   alias?: string;
+
+  /**
+   * Is this field indexed and thus searchable with Redis OM. Defaults
+   * to the schema indexedDefault value, currently true.
+   */
+  indexed?: boolean;
 }
 
 export default BaseFieldDefinition;

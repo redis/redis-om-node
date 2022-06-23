@@ -213,7 +213,7 @@ const albumSchema = new Schema(Album, {
   outOfPublication: { type: 'boolean' }
 })
 
-const studioSchema = new Studio(Studio, {
+const studioSchema = new Schema(Studio, {
   name: { type: 'string' },
   city: { type: 'string' },
   state: { type: 'string' },
@@ -235,6 +235,42 @@ const point = { longitude: 12.34, latitude: 56.78 }
 ```
 
 A `text` field is a lot like a `string`. If you're just reading and writing objects, they are identical. But if you want to *search* on them, they are very, very different. I'll cover that in detail when I talk about [using RediSearch](#-using-redisearch) but the tl;dr is that `string` fields can only be matched on their whole value—no partial matches—and are best for keys while `text` fields have full-text search enabled on them and are optimized for human-readable text.
+
+Additional field options can be set depending on the field type. These correspond to the [Field Options](https://redis.io/commands/ft.create/#field-options) avialable when creating a RediSearch full-text index. Other than the `separator` option, these only affect how content is indexed and searched.
+
+|  schema type   | RediSearch type | `indexed` | `sortable` | `normalized` | `stemming` | `phonetic` | `weight` | `separator` | `caseSensitive` |
+| -------------- | :-------------: | :-------: | :--------: | :----------: | :--------: | :--------: | :------: | :---------: | :-------------: |
+| `string`       |       TAG       |    yes    |  HASH Only |   HASH Only  |      -     |      -     |     -    |     yes     |        yes      |
+| `number`       |     NUMERIC     |    yes    |    yes     |       -      |      -     |      -     |     -    |      -      |         -       |
+| `boolean`      |       TAG       |    yes    |  HASH Only |       -      |      -     |      -     |     -    |      -      |         -       |
+| `string[]`     |       TAG       |    yes    |  HASH Only |   HASH Only  |      -     |      -     |     -    |     yes     |        yes      |
+| `date`         |     NUMERIC     |    yes    |    yes     |       -      |            |      -     |     -    |      -      |         -       |
+| `point`        |       GEO       |    yes    |     -      |       -      |            |      -     |     -    |      -      |         -       |
+| `text`         |       TEXT      |    yes    |    yes     |      yes     |     yes    |     yes    |    yes   |      -      |         -       |
+
+* `indexed`: true | false, whether this field is indexed by RediSearch (default true)
+* `sortable`: true | false, whether to create an additional index to optmize sorting (default false)
+* `normalized`: true | false, whether to apply normalization for sorting (default true)
+* `phonetic`: string defining phonetic matcher which can be one of 'dm:en' for English | 'dm:fr' for French | 'dm:pt' for Portugese)| 'dm:es' for Spanish (default none)
+* `stemming`: true | false, whether word stemming is applied to text fields (default true)
+* `weight`: number, the importance weighting to use when ranking results (default 1)
+* `separator`: string, the character to delimit multiple tags (default '|')
+* `caseSensitive`: true | false, whether original letter casing is kept for search (default false)
+
+Example showing additional options:
+
+```javascript
+const commentSchema = new Schema(Comment, {
+  name: { type: 'string', phonetic: 'dm:en' },
+  email: { type: 'string', normalized: false, },
+  posted: { type: 'date', sortable: true },
+  title: { type: 'text', weight: 2 },
+  comment: { type: 'text', weight: 1 },
+  approved: { type: 'boolean', indexed: false },
+  iphash: { type: 'string', caseSensitive: true },
+  notes: { type: 'string', indexed: false },
+})
+```
 
 There are several other options available when defining a schema for your entity. Check them out in the [detailed documentation](docs/classes/Schema.md) for the `Schema` class.
 
@@ -1004,9 +1040,9 @@ const albumSchema = new Schema(Album, {
 })
 ```
 
-If you're schema is for a JSON data structure (the default), you can mark `number`, `date`, and `text` fields as sortable. You can also mark `string` and `boolean` field sortable, but this will have no effect and will generate a warning.
+If your schema is for a JSON data structure (the default), you can mark `number`, `date`, and `text` fields as sortable. You can also mark `string` and `boolean` field sortable, but this will have no effect and will generate a warning.
 
-If you're schema is for a Hash, you can mark `string`, `number`, `boolean`, `date`, and `text` fields as sortable.
+If your schema is for a Hash, you can mark `string`, `number`, `boolean`, `date`, and `text` fields as sortable.
 
 Fields of the types `point` and `string[]` are never sortable.
 

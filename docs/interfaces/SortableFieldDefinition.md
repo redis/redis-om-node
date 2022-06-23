@@ -16,6 +16,8 @@ Mixin for adding sortability to a field.
 
   ↳ [`StringFieldDefinition`](StringFieldDefinition.md)
 
+  ↳ [`StringArrayFieldDefinition`](StringArrayFieldDefinition.md)
+
   ↳ [`TextFieldDefinition`](TextFieldDefinition.md)
 
 ## Table of contents
@@ -34,4 +36,4 @@ Enables sorting by this field.
 
 #### Defined in
 
-[lib/schema/definition/sortable-field-definition.ts:4](https://github.com/redis/redis-om-node/blob/9268f6d/lib/schema/definition/sortable-field-definition.ts#L4)
+[lib/schema/definition/sortable-field-definition.ts:4](https://github.com/redis/redis-om-node/blob/000c57c/lib/schema/definition/sortable-field-definition.ts#L4)

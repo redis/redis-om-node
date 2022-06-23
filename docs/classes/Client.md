@@ -49,7 +49,7 @@ Close the connection to Redis.
 
 #### Defined in
 
-[lib/client.ts:127](https://github.com/redis/redis-om-node/blob/9268f6d/lib/client.ts#L127)
+[lib/client.ts:128](https://github.com/redis/redis-om-node/blob/000c57c/lib/client.ts#L128)
 
 ___
 
@@ -73,7 +73,7 @@ The raw results of calling the Redis command.
 
 #### Defined in
 
-[lib/client.ts:100](https://github.com/redis/redis-om-node/blob/9268f6d/lib/client.ts#L100)
+[lib/client.ts:101](https://github.com/redis/redis-om-node/blob/000c57c/lib/client.ts#L101)
 
 ___
 
@@ -103,7 +103,7 @@ A repository for the provided schema.
 
 #### Defined in
 
-[lib/client.ts:115](https://github.com/redis/redis-om-node/blob/9268f6d/lib/client.ts#L115)
+[lib/client.ts:116](https://github.com/redis/redis-om-node/blob/000c57c/lib/client.ts#L116)
 
 ___
 
@@ -119,7 +119,7 @@ Whether a connection is already open.
 
 #### Defined in
 
-[lib/client.ts:225](https://github.com/redis/redis-om-node/blob/9268f6d/lib/client.ts#L225)
+[lib/client.ts:228](https://github.com/redis/redis-om-node/blob/000c57c/lib/client.ts#L228)
 
 ___
 
@@ -143,7 +143,7 @@ This [Client](Client.md) instance.
 
 #### Defined in
 
-[lib/client.ts:86](https://github.com/redis/redis-om-node/blob/9268f6d/lib/client.ts#L86)
+[lib/client.ts:87](https://github.com/redis/redis-om-node/blob/000c57c/lib/client.ts#L87)
 
 ___
 
@@ -168,4 +168,4 @@ This [Client](Client.md) instance.
 
 #### Defined in
 
-[lib/client.ts:75](https://github.com/redis/redis-om-node/blob/9268f6d/lib/client.ts#L75)
+[lib/client.ts:76](https://github.com/redis/redis-om-node/blob/000c57c/lib/client.ts#L76)

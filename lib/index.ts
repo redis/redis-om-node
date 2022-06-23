@@ -15,6 +15,11 @@ import SortableFieldDefinition from "./schema/definition/sortable-field-definiti
 import SeparableFieldDefinition from "./schema/definition/separable-field-definition";
 import StringFieldDefinition from "./schema/definition/string-field-definition";
 import BooleanFieldDefinition from "./schema/definition/boolean-field-definition";
+import CaseSensitiveFieldDefinition from "./schema/definition/casesensitive-field-definition";
+import NormalizedFieldDefinition from "./schema/definition/normalized-field-definition";
+import PhoneticFieldDefinition from "./schema/definition/phonetic-field-definition";
+import StemmingFieldDefinition from "./schema/definition/stemming-field-definition";
+import WeightFieldDefinition from "./schema/definition/weight-field-definition";
 import NumberFieldDefinition from "./schema/definition/number-field-definition";
 import TextFieldDefinition from "./schema/definition/text-field-definition";
 import DateFieldDefinition from "./schema/definition/date-field-definition";
@@ -45,7 +50,9 @@ export {
   BaseFieldDefinition, SortableFieldDefinition, SeparableFieldDefinition,
   BooleanFieldDefinition, DateFieldDefinition, NumberFieldDefinition,
   PointFieldDefinition, StringFieldDefinition, StringArrayFieldDefinition,
-  TextFieldDefinition, SchemaFieldType,
+  TextFieldDefinition, CaseSensitiveFieldDefinition, NormalizedFieldDefinition,
+  StemmingFieldDefinition, PhoneticFieldDefinition, WeightFieldDefinition,
+  SchemaFieldType,
   AbstractSearch, Search, RawSearch, SubSearchFunction,
   Where, WhereField, Circle, CircleFunction
 };
