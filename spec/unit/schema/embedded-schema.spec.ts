@@ -37,6 +37,5 @@ describe("Schema", () => {
       // @ts-ignore: JavaScript test
       expect(() => new EmbeddedSchema<TestEntity>(TestEntity, { aField: { type: 'foo' } }))
         .toThrow("The field 'aField' is configured with a type of 'foo'. Valid types include 'boolean', 'date', 'number', 'point', 'string', 'string[]', and 'text'."));
-
   });
 });
