@@ -140,10 +140,7 @@ export default abstract class Repository<TEntity extends Entity> {
    * @param id The ID of the {@link Entity} you seek.
    * @returns The matching Entity.
    */
-  async fetch(id: string): Promise<TEntity> {
-    const entities = await this.fetchMany(id)
-    return entities[0];
-  }
+  async fetch(id: string): Promise<TEntity>
 
   /**
    * Read and return the {@link Entity | Entities} from Redis with the given IDs. If
@@ -152,8 +149,11 @@ export default abstract class Repository<TEntity extends Entity> {
    * @param ids The IDs of the {@link Entity | Entities} you seek.
    * @returns The matching Entities.
    */
-   async fetchMany(...ids: string[]): Promise<TEntity[]> {
-    return await this.readEntities(ids);
+  async fetch(...ids: string[]): Promise<TEntity[]>
+
+  async fetch(...id: string[]): Promise<TEntity | TEntity[]> {
+    const entities = await this.readEntities(id)
+    return id.length > 1 ? entities : entities[0];
   }
 
   /**
