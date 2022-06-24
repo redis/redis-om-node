@@ -1,15 +1,10 @@
-import { mocked } from 'jest-mock';
-
+import '../helpers/mock-client'
 import Client from '../../../lib/client';
 import Repository from '../../../lib/repository/repository';
 import { HashRepository } from '../../../lib/repository/repository';
 
 import { simpleSchema, SimpleEntity } from '../helpers/test-entity-and-schema';
 
-jest.mock('../../../lib/client');
-
-
-beforeEach(() => jest.clearAllMocks());
 
 describe("Repository", () => {
 
@@ -18,25 +13,29 @@ describe("Repository", () => {
 
   describe("#dropIndex", () => {
 
-    beforeAll(() => client = new Client());
+    beforeAll(() => {
+      client = new Client()
+    });
 
-    beforeEach(() => repository = new HashRepository(simpleSchema, client));
+    beforeEach(() => {
+      repository = new HashRepository(simpleSchema, client)
+    });
 
     describe("when the index exists", () => {
       beforeEach(async () => await repository.dropIndex());
 
       it("asks the client to drop the index", async () => {
-        expect(Client.prototype.dropIndex).toHaveBeenCalledWith(simpleSchema.indexName);
+        expect(client.dropIndex).toHaveBeenCalledWith(simpleSchema.indexName);
       });
 
       it("asks the client to remove the index hash", async () => {
-        expect(Client.prototype.unlink).toHaveBeenCalledWith(simpleSchema.indexHashName);
+        expect(client.unlink).toHaveBeenCalledWith(simpleSchema.indexHashName);
       });
     });
 
     describe("when the index doesn't exist", () => {
       beforeEach(async () => {
-        mocked(Client.prototype.dropIndex).mockRejectedValue(new Error("Unknown Index name"));
+        vi.mocked(client.dropIndex).mockRejectedValue(new Error("Unknown Index name"));
       });
 
       it("eats the exception", async () => {
@@ -46,7 +45,7 @@ describe("Repository", () => {
 
     describe("when dropping the index throws some other Redis exception", () => {
       beforeEach(async () => {
-        mocked(Client.prototype.dropIndex).mockRejectedValue(new Error("Some other error"));
+        vi.mocked(client.dropIndex).mockRejectedValue(new Error("Some other error"));
       });
 
       it("propogates the exception", async () => {

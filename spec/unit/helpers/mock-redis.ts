@@ -1,15 +1,17 @@
+import { vi } from 'vitest'
+
 export const redis = {
-  connect: jest.fn(),
-  quit: jest.fn(),
-  get: jest.fn(),
-  set: jest.fn(),
-  hGetAll: jest.fn(),
-  expire: jest.fn(),
-  sendCommand: jest.fn(),
-  executeIsolated: jest.fn(),
-  unlink: jest.fn(),
+  connect: vi.fn(),
+  quit: vi.fn(),
+  get: vi.fn(),
+  set: vi.fn(),
+  hGetAll: vi.fn(),
+  expire: vi.fn(),
+  sendCommand: vi.fn(),
+  executeIsolated: vi.fn(),
+  unlink: vi.fn(),
 }
 
-export const createClient = jest.fn(() => redis)
+export const createClient = vi.fn(() => redis)
 
-jest.mock('redis', () => ({ createClient }))
+vi.mock('redis', () => ({ createClient }))

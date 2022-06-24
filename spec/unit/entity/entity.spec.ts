@@ -45,7 +45,9 @@ let entity: SimpleEntity;
 describe("Entity", () => {
   describe("when not aliased", () => {
     describe("without data", () => {
-      beforeEach(() => entity = new SimpleEntity(simpleSchema, ENTITY_ID));
+      beforeEach(() => {
+        entity = new SimpleEntity(simpleSchema, ENTITY_ID)
+      });
       it("has the passed in Redis ID", () => expect(entity.entityId).toBe(ENTITY_ID));
       it("returns null for the number property", () => expect(entity.aNumber).toBeNull());
       it("returns null for the string property", () => expect(entity.aString).toBeNull());
@@ -85,10 +87,12 @@ describe("Entity", () => {
     });
 
     describe("with data", () => {
-      beforeEach(() => entity = new SimpleEntity(simpleSchema, ENTITY_ID, {
-        aNumber: A_NUMBER, aString: A_STRING, aBoolean: false, someText: SOME_TEXT,
-        aPoint: A_POINT, aDate: A_DATE, someStrings: SOME_STRINGS
-      }));
+      beforeEach(() => {
+        entity = new SimpleEntity(simpleSchema, ENTITY_ID, {
+          aNumber: A_NUMBER, aString: A_STRING, aBoolean: false, someText: SOME_TEXT,
+          aPoint: A_POINT, aDate: A_DATE, someStrings: SOME_STRINGS
+        })}
+      );
 
       it("has the passed in Redis ID", () => expect(entity.entityId).toBe(ENTITY_ID));
       it("returns a number for the number property", () => expect(entity.aNumber).toBe(A_NUMBER));
@@ -146,7 +150,9 @@ describe("Entity", () => {
 
   describe("when aliased", () => {
     describe("without data", () => {
-      beforeEach(() => entity = new AliasedEntity(aliasedSchema, ENTITY_ID));
+      beforeEach(() => {
+        entity = new AliasedEntity(aliasedSchema, ENTITY_ID)
+      });
       it("has the passed in Redis ID", () => expect(entity.entityId).toBe(ENTITY_ID));
       it("returns null for the number property", () => expect(entity.aNumber).toBeNull());
       it("returns null for the string property", () => expect(entity.aString).toBeNull());
@@ -185,11 +191,13 @@ describe("Entity", () => {
       });
 
       describe("with data", () => {
-        beforeEach(() => entity = new AliasedEntity(aliasedSchema, ENTITY_ID, {
-          anotherNumber: ANOTHER_NUMBER, anotherString: ANOTHER_STRING,
-          anotherBoolean: true, someOtherText: SOME_OTHER_TEXT,
-          anotherPoint: ANOTHER_POINT, anotherDate: ANOTHER_DATE, someOtherStrings: SOME_OTHER_STRINGS
-        }));
+        beforeEach(() => {
+          entity = new AliasedEntity(aliasedSchema, ENTITY_ID, {
+            anotherNumber: ANOTHER_NUMBER, anotherString: ANOTHER_STRING,
+            anotherBoolean: true, someOtherText: SOME_OTHER_TEXT,
+            anotherPoint: ANOTHER_POINT, anotherDate: ANOTHER_DATE, someOtherStrings: SOME_OTHER_STRINGS
+          })
+        });
 
         it("has the passed in Redis ID", () => expect(entity.entityId).toBe(ENTITY_ID));
         it("returns a number for the number property", () => expect(entity.aNumber).toBe(ANOTHER_NUMBER));

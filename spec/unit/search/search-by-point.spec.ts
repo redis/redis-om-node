@@ -7,10 +7,6 @@ import WhereField from '../../../lib/search/where-field';
 import { A_POINT } from '../../helpers/example-data';
 import { simpleSchema, SimpleEntity } from "../helpers/test-entity-and-schema";
 
-jest.mock('../../../lib/client');
-
-
-beforeEach(() => jest.clearAllMocks());
 
 describe("Search", () => {
   describe("#query", () => {
@@ -44,7 +40,9 @@ describe("Search", () => {
     const longitude = 12.34;
     const latitude = 56.78;
 
-    beforeAll(() => client = new Client());
+    beforeAll(() => {
+      client = new Client()
+    });
 
     beforeEach(() => {
       search = new Search<SimpleEntity>(simpleSchema, client);

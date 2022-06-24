@@ -4,10 +4,6 @@ import WhereField from '../../../lib/search/where-field';
 
 import { simpleHashSchema, SimpleHashEntity, SimpleJsonEntity, simpleJsonSchema } from "../helpers/test-entity-and-schema";
 
-jest.mock('../../../lib/client');
-
-
-beforeEach(() => jest.clearAllMocks());
 
 describe("Search", () => {
   describe("#query", () => {
@@ -24,7 +20,9 @@ describe("Search", () => {
     const A_NEGATED_TRUE_JSON_QUERY = "(-@aBoolean:{true})";
     const A_NEGATED_FALSE_JSON_QUERY = "(-@aBoolean:{false})";
 
-    beforeAll(() => client = new Client());
+    beforeAll(() => {
+      client = new Client()
+    });
 
     describe("when generating a query with a boolean for a hash", () => {
 

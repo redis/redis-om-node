@@ -3,7 +3,7 @@ import Entity from '../../../lib/entity/entity';
 import SchemaDefinition from '../../../lib/schema/definition/schema-definition';
 import DataStructure from '../../../lib/schema/options/data-structure';
 
-const warnSpy = jest.spyOn(global.console, 'warn');
+const warnSpy = vi.spyOn(global.console, 'warn').mockImplementation(() => {})
 
 describe("Schema", () => {
   describe.each([

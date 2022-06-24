@@ -2,22 +2,22 @@ import { redis } from '../helpers/mock-redis'
 import Client from '../../../lib/client';
 
 
-beforeEach(() => jest.clearAllMocks())
-
 describe("Client", () => {
 
   let client: Client;
 
-  beforeEach(async () => client = new Client());
+  beforeEach(() => {
+    client = new Client()
+  });
 
   describe("#close", () => {
     describe("when called on an open client", () => {
       beforeEach(async () => {
-        await client.open();
-        await client.close();
+        client.open();
+        client.close();
       });
 
-      it("closes the connection", () => {
+      it("closes the connection", async () => {
         expect(redis.quit).toHaveBeenCalled();
         expect(client.isOpen()).toBe(false);
       });

@@ -1,5 +1,4 @@
-import { mocked } from 'jest-mock';
-
+import { client } from '../helpers/mock-client'
 import Client from "../../../lib/client";
 import { Search, RawSearch } from "../../../lib/search/search";
 
@@ -7,17 +6,11 @@ import { simpleHashSchema, SimpleHashEntity, SimpleJsonEntity, simpleJsonSchema 
 import { mockClientSearchToReturnNothing, mockClientSearchToReturnSingleHash,
   mockClientSearchToReturnSingleJsonString, SIMPLE_ENTITY_1 } from '../helpers/search-helpers';
 
-jest.mock('../../../lib/client');
-console.warn = jest.fn();
+console.warn = vi.fn();
 
 
 type HashSearch = Search<SimpleHashEntity> | RawSearch<SimpleHashEntity>;
 type JsonSearch = Search<SimpleJsonEntity> | RawSearch<SimpleJsonEntity>;
-
-beforeEach(() => {
-  jest.clearAllMocks();
-  mocked(Client.prototype.search).mockReset();
-});
 
 describe.each([
   [ "FluentSearch",
@@ -40,8 +33,8 @@ describe.each([
         });
 
         it("asks the client for the first result of a given repository", () => {
-          expect(Client.prototype.search).toHaveBeenCalledTimes(1);
-          expect(Client.prototype.search).toHaveBeenCalledWith({
+          expect(client.search).toHaveBeenCalledTimes(1);
+          expect(client.search).toHaveBeenCalledWith({
             indexName,
             query,
             limit: { offset: 0, count: 1 },
@@ -60,8 +53,8 @@ describe.each([
         });
 
         it("asks the client for the first result of a given repository", () => {
-          expect(Client.prototype.search).toHaveBeenCalledTimes(1)
-          expect(Client.prototype.search).toHaveBeenCalledWith({
+          expect(client.search).toHaveBeenCalledTimes(1)
+          expect(client.search).toHaveBeenCalledWith({
             indexName,
             query,
             limit: { offset: 0, count: 1 },
@@ -90,8 +83,8 @@ describe.each([
         });
 
         it("asks the client for the first result of a given repository", () => {
-          expect(Client.prototype.search).toHaveBeenCalledTimes(1);
-          expect(Client.prototype.search).toHaveBeenCalledWith({
+          expect(client.search).toHaveBeenCalledTimes(1);
+          expect(client.search).toHaveBeenCalledWith({
             indexName,
             query,
             limit: { offset: 0, count: 1 },
@@ -110,8 +103,8 @@ describe.each([
         });
 
         it("asks the client for the first result of a given repository", () => {
-          expect(Client.prototype.search).toHaveBeenCalledTimes(1)
-          expect(Client.prototype.search).toHaveBeenCalledWith({
+          expect(client.search).toHaveBeenCalledTimes(1)
+          expect(client.search).toHaveBeenCalledWith({
             indexName,
             query,
             limit: { offset: 0, count: 1 },

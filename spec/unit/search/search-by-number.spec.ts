@@ -5,10 +5,6 @@ import WhereField from '../../../lib/search/where-field';
 import { A_NUMBER, ANOTHER_NUMBER } from '../../helpers/example-data';
 import { simpleSchema, SimpleEntity } from "../helpers/test-entity-and-schema";
 
-jest.mock('../../../lib/client');
-
-
-beforeEach(() => jest.clearAllMocks());
 
 describe("Search", () => {
   describe("#query", () => {
@@ -44,7 +40,9 @@ describe("Search", () => {
     const expectToBeBetweenQuery: RangeChecker = search => expect(search.query).toBe(A_BETWEEN_QUERY);
     const expectToBeNegatedBetweenQuery: RangeChecker = search => expect(search.query).toBe(A_NEGATED_BETWEEN_QUERY);
 
-    beforeAll(() => client = new Client());
+    beforeAll(() => {
+      client = new Client()
+    });
 
     beforeEach(() => {
       search = new Search<SimpleEntity>(simpleSchema, client);

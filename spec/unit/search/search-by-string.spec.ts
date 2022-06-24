@@ -5,10 +5,6 @@ import WhereField from '../../../lib/search/where-field';
 import { A_STRING, A_NUMBER } from '../../helpers/example-data';
 import { simpleSchema, SimpleEntity } from "../helpers/test-entity-and-schema";
 
-jest.mock('../../../lib/client');
-
-
-beforeEach(() => jest.clearAllMocks());
 
 describe("Search", () => {
   describe("#query", () => {
@@ -32,7 +28,9 @@ describe("Search", () => {
     const expectToBeBooleanStringQuery: StringChecker = search => expect(search.query).toBe(A_BOOLEAN_STRING_QUERY);
     const expectToBeNegatedBooleanStringQuery: StringChecker = search => expect(search.query).toBe(A_NEGATED_BOOLEAN_STRING_QUERY);
 
-    beforeAll(() => client = new Client());
+    beforeAll(() => {
+      client = new Client()
+    });
 
     beforeEach(() => {
       search = new Search<SimpleEntity>(simpleSchema, client);

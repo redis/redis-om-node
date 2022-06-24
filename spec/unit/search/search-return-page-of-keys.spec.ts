@@ -1,5 +1,4 @@
-import { mocked } from 'jest-mock';
-
+import { client } from '../helpers/mock-client'
 import Client from "../../../lib/client";
 import { Search, RawSearch } from "../../../lib/search/search";
 
@@ -8,15 +7,8 @@ import { mockClientSearchToReturnNothing,
   mockClientSearchToReturnSingleKey, mockClientSearchToReturnMultipleKeys,
   SIMPLE_ENTITY_1, SIMPLE_ENTITY_2, SIMPLE_ENTITY_3 } from '../helpers/search-helpers';
 
-jest.mock('../../../lib/client');
-
 
 type HashSearch = Search<SimpleHashEntity> | RawSearch<SimpleHashEntity>;
-
-beforeEach(() => {
-  mocked(Client).mockReset();
-  mocked(Client.prototype.search).mockReset();
-});
 
 describe.each([
   [ "FluentSearch",
@@ -37,8 +29,8 @@ describe.each([
       });
 
       it("askes the client for results", () => {
-        expect(Client.prototype.search).toHaveBeenCalledTimes(1);
-        expect(Client.prototype.search).toHaveBeenCalledWith({
+        expect(client.search).toHaveBeenCalledTimes(1);
+        expect(client.search).toHaveBeenCalledWith({
           indexName, query, limit: { offset: 0, count: 5 }, keysOnly: true });
       });
 
@@ -52,8 +44,8 @@ describe.each([
       });
 
       it("askes the client for results", () => {
-        expect(Client.prototype.search).toHaveBeenCalledTimes(1);
-        expect(Client.prototype.search).toHaveBeenCalledWith({
+        expect(client.search).toHaveBeenCalledTimes(1);
+        expect(client.search).toHaveBeenCalledWith({
           indexName, query, limit: { offset: 0, count: 5 }, keysOnly: true });
       });
 
@@ -72,8 +64,8 @@ describe.each([
       });
 
       it("askes the client for results", () => {
-        expect(Client.prototype.search).toHaveBeenCalledTimes(1);
-        expect(Client.prototype.search).toHaveBeenCalledWith({
+        expect(client.search).toHaveBeenCalledTimes(1);
+        expect(client.search).toHaveBeenCalledWith({
           indexName, query, limit: { offset: 0, count: 5 }, keysOnly: true });
       });
 

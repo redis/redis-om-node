@@ -8,8 +8,6 @@ import {
   A_NUMBER, ANOTHER_NUMBER, A_THIRD_NUMBER,
   A_DATE, A_DATE_EPOCH, A_POINT } from '../../helpers/example-data';
 
-jest.mock('../../../lib/client');
-
 
 const POINT_LONGITUDE = A_POINT.longitude;
 const POINT_LATITUDE = A_POINT.latitude;
@@ -39,14 +37,17 @@ describe("Search", () => {
 
     let client: Client;
 
-    beforeAll(() => client = new Client());
-    beforeEach(() => jest.clearAllMocks());
+    beforeAll(() => {
+      client = new Client()
+    });
 
     describe("when querying against hashes", () => {
 
       let search: Search<SimpleHashEntity>;
 
-      beforeEach(() => search = new Search<SimpleHashEntity>(simpleHashSchema, client));
+      beforeEach(() => {
+        search = new Search<SimpleHashEntity>(simpleHashSchema, client)
+      });
 
       it("generates a query matching all items", () => {
         expect(search.query).toBe("*");
@@ -161,7 +162,9 @@ describe("Search", () => {
 
       let search: Search<SimpleJsonEntity>;
 
-      beforeEach(() => search = new Search<SimpleJsonEntity>(simpleJsonSchema, client));
+      beforeEach(() => {
+        search = new Search<SimpleJsonEntity>(simpleJsonSchema, client)
+      });
 
       it("generates a query matching all items", () => {
         expect(search.query).toBe("*");

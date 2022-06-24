@@ -1,4 +1,3 @@
-import { redis } from '../helpers/mock-redis'
 import Client from '../../../lib/client';
 import Repository from '../../../lib/repository/repository';
 import Entity from '../../../lib/entity/entity';
@@ -6,18 +5,20 @@ import Schema from '../../../lib/schema/schema';
 
 import { JsonRepository, HashRepository } from '../../../lib/repository/repository';
 
-jest.mock('../../../lib/repository/repository');
+vi.mock('../../../lib/repository/repository');
 
-
-beforeEach(() => jest.clearAllMocks());
 
 describe("Client", () => {
 
   let client: Client;
 
-  beforeEach(async () => client = new Client());
+  beforeEach(() => {
+    client = new Client()
+  });
 
-  afterEach(async () => client.close());
+  afterEach(() => {
+    client.close()
+  });
 
   it("passes", () => expect(true).toBe(true));
 
@@ -29,7 +30,9 @@ describe("Client", () => {
     let schema: Schema<TestEntity>;
 
     describe("when fetching a HashRepository", () => {
-      beforeAll(() => schema = new Schema(TestEntity, {}, { dataStructure: 'HASH' }));
+      beforeAll(() => {
+        schema = new Schema(TestEntity, {}, { dataStructure: 'HASH' })
+      });
 
       describe("when called on an open client", () => {
 
@@ -64,7 +67,9 @@ describe("Client", () => {
     });
 
     describe("when fetching a JsonRepository", () => {
-      beforeAll(() => schema = new Schema(TestEntity, {}, { dataStructure: 'JSON' }));
+      beforeAll(() => {
+        schema = new Schema(TestEntity, {}, { dataStructure: 'JSON' })
+      });
 
       describe("when called on an open client", () => {
 

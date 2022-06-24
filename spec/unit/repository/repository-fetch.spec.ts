@@ -1,5 +1,4 @@
-import { mocked } from 'jest-mock';
-
+import '../helpers/mock-client'
 import Client from '../../../lib/client';
 import Repository from '../../../lib/repository/repository';
 import { JsonRepository, HashRepository } from '../../../lib/repository/repository';
@@ -12,10 +11,6 @@ import {
 
 import { simpleHashSchema, simpleJsonSchema, SimpleHashEntity, SimpleJsonEntity } from '../helpers/test-entity-and-schema';
 
-jest.mock('../../../lib/client');
-
-
-beforeEach(() => jest.clearAllMocks());
 
 describe("Repository", () => {
 
@@ -24,7 +19,9 @@ describe("Repository", () => {
 
   describe("#fetch", () => {
 
-    beforeAll(() => client = new Client());
+    beforeAll(() => {
+      client = new Client()
+    });
 
     describe.each([
 
@@ -50,7 +47,7 @@ describe("Repository", () => {
 
       beforeEach(async () => {
         repository = new HashRepository(simpleHashSchema, client);
-        mocked(Client.prototype.hgetall).mockResolvedValue(data.mockedData)
+        vi.mocked(client.hgetall).mockResolvedValue(data.mockedData)
         entity = await repository.fetch(entityId);
       });
 
@@ -92,7 +89,7 @@ describe("Repository", () => {
 
       beforeEach(async () => {
         repository = new JsonRepository(simpleJsonSchema, client);
-        mocked(Client.prototype.jsonget).mockResolvedValue(data.mockedData)
+        vi.mocked(client.jsonget).mockResolvedValue(data.mockedData)
         entity = await repository.fetch(entityId);
       });
 

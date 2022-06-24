@@ -2,13 +2,15 @@ import { redis, createClient } from '../helpers/mock-redis'
 import Client from '../../../lib/client';
 
 
-beforeEach(() => jest.clearAllMocks());
+// beforeEach(() => {vi.clearAllMocks()});
 
 describe("Client", () => {
 
   let client: Client, self: Client;
 
-  beforeEach(() => client = new Client());
+  beforeEach(() => {
+    client = new Client()
+  });
 
   describe("#open", () => {
     describe("when not called", () => {
@@ -18,7 +20,7 @@ describe("Client", () => {
     })
 
     describe("when called without a url", () => {
-      beforeEach(async () => self = await client.open());
+      beforeEach(async () => {self = await client.open()});
 
       it("creates a redis client with the default url", () => {
         expect(createClient).toHaveBeenCalledWith({ url: 'redis://localhost:6379' });
@@ -37,7 +39,7 @@ describe("Client", () => {
       });
 
       describe("when trying to call it again", () => {
-        beforeEach(async () => self = await client.open());
+        beforeEach(async () => {self = await client.open()});
 
         it("doesn't re-create a redis client", () => {
           expect(createClient).toBeCalledTimes(1);
@@ -54,7 +56,7 @@ describe("Client", () => {
     });
 
     describe("when called with a url", () => {
-      beforeEach(async () => self = await client.open('foo'));
+      beforeEach(async () => {self = await client.open('foo')});
 
       it("creates a new redis client with the provided url", () => {
         expect(createClient).toHaveBeenCalledWith({ url: 'foo' })
@@ -73,7 +75,7 @@ describe("Client", () => {
       });
 
       describe("when trying to call it again", () => {
-        beforeEach(async () => self = await client.open('foo'));
+        beforeEach(async () => {self = await client.open('foo')});
 
         it("doesn't re-create a redis client", () => {
           expect(createClient).toBeCalledTimes(1);

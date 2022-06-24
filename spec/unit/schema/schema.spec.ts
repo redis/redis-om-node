@@ -10,7 +10,9 @@ describe("Schema", () => {
   let schema: Schema<TestEntity>;
 
   describe("that is empty", () => {
-    beforeEach(() => schema = new Schema<TestEntity>(TestEntity, {}));
+    beforeEach(() => {
+      schema = new Schema<TestEntity>(TestEntity, {})
+    });
 
     it("has the constructor for the entity", () => expect(schema.entityCtor).toBe(TestEntity));
     it("generates an empty Redis schema", () => expect(schema.redisSchema).toEqual([]));
@@ -51,33 +53,41 @@ describe("Schema", () => {
   });
 
   describe("that is well populated", () => {
-    beforeEach(() => schema = new Schema<TestEntity>(TestEntity, {
-      aString: { type: 'string' }, anotherString: { type: 'string' },
-      someText: { type: 'text' }, someOtherText: { type: 'text' },
-      aNumber: { type: 'number' }, anotherNumber: { type: 'number' },
-      aBoolean: { type: 'boolean' }, anotherBoolean: { type: 'boolean' },
-      aPoint: { type: 'point' }, anotherPoint: { type: 'point' },
-      aDate: { type: 'date' }, anotherDate: { type: 'date' },
-      someStrings: { type: 'string[]' }, someOtherStrings: { type: 'string[]' }
-    }));
+    beforeEach(() => {
+      schema = new Schema<TestEntity>(TestEntity, {
+        aString: { type: 'string' }, anotherString: { type: 'string' },
+        someText: { type: 'text' }, someOtherText: { type: 'text' },
+        aNumber: { type: 'number' }, anotherNumber: { type: 'number' },
+        aBoolean: { type: 'boolean' }, anotherBoolean: { type: 'boolean' },
+        aPoint: { type: 'point' }, anotherPoint: { type: 'point' },
+        aDate: { type: 'date' }, anotherDate: { type: 'date' },
+        someStrings: { type: 'string[]' }, someOtherStrings: { type: 'string[]' }
+      })
+    });
 
     it("generates the index hash", () => expect(schema.indexHash).toBe("F+GgQDhzmXhvTNhQczPZtCIJ0BA="));
   });
 
   describe("that overrides the data structure to be JSON", () => {
-    beforeEach(() => schema = new Schema<TestEntity>(TestEntity, {}, { dataStructure: 'JSON' }));
+    beforeEach(() => {
+      schema = new Schema<TestEntity>(TestEntity, {}, { dataStructure: 'JSON' })
+    });
     it("provides a JSON data structure", () => expect(schema.dataStructure).toBe("JSON"));
     it("doesn't affect the index hash", () => expect(schema.indexHash).toBe(DEFAULT_HASH));
   });
 
   describe("that overrides the data structure to be HASH", () => {
-    beforeEach(() => schema = new Schema<TestEntity>(TestEntity, {}, { dataStructure: 'HASH' }));
+    beforeEach(() => {
+      schema = new Schema<TestEntity>(TestEntity, {}, { dataStructure: 'HASH' })
+    });
     it("provides a HASH data structure", () => expect(schema.dataStructure).toBe("HASH"));
     it("generates the index hash", () => expect(schema.indexHash).toBe("nd4P5YFFLxYr/3glJ6Thvlk+0tg="));
   });
 
   describe("that overrides the keyspace prefix", () => {
-    beforeEach(() => schema = new Schema<TestEntity>(TestEntity, {}, { prefix: 'test-prefix' }));
+    beforeEach(() => {
+      schema = new Schema<TestEntity>(TestEntity, {}, { prefix: 'test-prefix' })
+    });
     it("generates the keyspace prefix from the configuration", () => expect(schema.prefix).toBe("test-prefix"));
     it("generates the index name from the configured prefix", () => expect(schema.indexName).toBe("test-prefix:index"));
     it("generates the index hash name from the configured prefix", () => expect(schema.indexHashName).toBe("test-prefix:index:hash"));
@@ -85,43 +95,57 @@ describe("Schema", () => {
   });
 
   describe("that overrides the index name", () => {
-    beforeEach(() => schema = new Schema<TestEntity>(TestEntity, {}, { indexName: 'test-index' }));
+    beforeEach(() => {
+      schema = new Schema<TestEntity>(TestEntity, {}, { indexName: 'test-index' })
+    });
     it("generates the index name from the configured index name, ignoring the prefix", () => expect(schema.indexName).toBe("test-index"));
     it("generates the index hash", () => expect(schema.indexHash).toBe("DgFE5XI/doj0oQNTZQ5yqPHtb6M="));
   });
 
   describe("that overrides the index hash name", () => {
-    beforeEach(() => schema = new Schema<TestEntity>(TestEntity, {}, { indexHashName: 'test-index-hash' }));
+    beforeEach(() => {
+      schema = new Schema<TestEntity>(TestEntity, {}, { indexHashName: 'test-index-hash' })
+    });
     it("generates the index hash name from the configured index hash name, ignoring the prefix", () => expect(schema.indexHashName).toBe("test-index-hash"));
     it("generates the index hash", () => expect(schema.indexHash).toBe("p1OuQrsovszDdUD5pnbxTT5sbpI="));
   });
 
   describe("that overrides the id generation strategy", () => {
-    beforeEach(() => schema = new Schema<TestEntity>(TestEntity, {}, { idStrategy: () => '1' }));
+    beforeEach(() => {
+      schema = new Schema<TestEntity>(TestEntity, {}, { idStrategy: () => '1' })
+    });
     it("generates Redis IDs from the strategy", () => expect(schema.generateId()).toBe('1'));
     it("doesn't affect the index hash", () => expect(schema.indexHash).toBe(DEFAULT_HASH));
   });
 
   describe("that disables stop words", () => {
-    beforeEach(() => schema = new Schema<TestEntity>(TestEntity, {}, { useStopWords: 'OFF' }));
+    beforeEach(() => {
+      schema = new Schema<TestEntity>(TestEntity, {}, { useStopWords: 'OFF' })
+    });
     it("provides the stop words option", () => expect(schema.useStopWords).toBe('OFF'));
     it("generates the index hash", () => expect(schema.indexHash).toBe("W7+Ri6W8CIo8GUkRY+uabQgpNVA="));
   });
 
   describe("that uses default stop words", () => {
-    beforeEach(() => schema = new Schema<TestEntity>(TestEntity, {}, { useStopWords: 'DEFAULT' }));
+    beforeEach(() => {
+      schema = new Schema<TestEntity>(TestEntity, {}, { useStopWords: 'DEFAULT' })
+    });
     it("provides the stop words option", () => expect(schema.useStopWords).toBe('DEFAULT'));
     it("doesn't affect the index hash", () => expect(schema.indexHash).toBe(DEFAULT_HASH));
   });
 
   describe("that uses custom stop words", () => {
-    beforeEach(() => schema = new Schema<TestEntity>(TestEntity, {}, { useStopWords: 'CUSTOM' }));
+    beforeEach(() => {
+      schema = new Schema<TestEntity>(TestEntity, {}, { useStopWords: 'CUSTOM' })
+    });
     it("provides the stop words option", () => expect(schema.useStopWords).toBe('CUSTOM'));
     it("generates the index hash", () => expect(schema.indexHash).toBe("nEC4s/DEz7EvTApCOKzQlXFTgSA="));
   });
 
   describe("that sets custom stop words", () => {
-    beforeEach(() => schema = new Schema<TestEntity>(TestEntity, {}, { stopWords: ['foo', 'bar', 'baz'] }));
+    beforeEach(() => {
+      schema = new Schema<TestEntity>(TestEntity, {}, { stopWords: ['foo', 'bar', 'baz'] })
+    });
     it("provides the custom stop words", () => expect(schema.stopWords).toEqual(['foo', 'bar', 'baz']));
     it("generates the index hash", () => expect(schema.indexHash).toBe("odwqZJal1kQTrLjIqu79U4ZHtDs="));
   });

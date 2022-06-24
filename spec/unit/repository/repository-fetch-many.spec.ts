@@ -1,5 +1,4 @@
-import { mocked } from 'jest-mock';
-
+import '../helpers/mock-client'
 import Client from '../../../lib/client';
 import Repository from '../../../lib/repository/repository';
 import { JsonRepository, HashRepository } from '../../../lib/repository/repository';
@@ -12,10 +11,6 @@ import {
 
 import { simpleHashSchema, simpleJsonSchema, SimpleHashEntity, SimpleJsonEntity } from '../helpers/test-entity-and-schema';
 
-jest.mock('../../../lib/client');
-
-
-beforeEach(() => mocked(Client).mockReset());
 
 describe("Repository", () => {
 
@@ -40,11 +35,13 @@ describe("Repository", () => {
       let repository: Repository<SimpleHashEntity>;
       let entities: SimpleHashEntity[];
 
-      beforeAll(() => client = new Client());
+      beforeAll(() => {
+        client = new Client()
+      });
 
       beforeEach(async () => {
         repository = new HashRepository(simpleHashSchema, client);
-        mocked(Client.prototype.hgetall)
+        vi.mocked(client.hgetall)
           .mockResolvedValueOnce(fullHashMock)
           .mockResolvedValueOnce(partialHashMock)
           .mockResolvedValue(emptyHashMock);
@@ -69,7 +66,7 @@ describe("Repository", () => {
 
       beforeEach(async () => {
         repository = new JsonRepository(simpleJsonSchema, client);
-        mocked(Client.prototype.jsonget)
+        vi.mocked(client.jsonget)
           .mockResolvedValueOnce(fullJsonMock)
           .mockResolvedValueOnce(partialJsonMock)
           .mockResolvedValue(emptyJsonMock)

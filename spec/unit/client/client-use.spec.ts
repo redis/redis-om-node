@@ -4,13 +4,13 @@ import Client from '../../../lib/client';
 const BOGUS_CONNECTION = { THIS_IS_NOT: 'a real connection' };
 
 
-beforeEach(() => jest.clearAllMocks());
-
 describe("Client", () => {
 
   let client: Client, self: Client;
 
-  beforeEach(() => client = new Client());
+  beforeEach(() => {
+    client = new Client()
+  });
 
   describe("#use", () => {
     describe("when not called", () => {
@@ -20,8 +20,10 @@ describe("Client", () => {
     })
 
     describe("when called", () => {
-      // @ts-ignore: no way to call createClient without actually connecting to Redis
-      beforeEach(async () => self = await client.use(BOGUS_CONNECTION));
+      beforeEach(async () => {
+        // @ts-ignore: no way to call createClient without actually connecting to Redis
+        self = await client.use(BOGUS_CONNECTION)
+      });
 
       it("creates a redis client with the connection", () => {
         expect(createClient).not.toHaveBeenCalled();

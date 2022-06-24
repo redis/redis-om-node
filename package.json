@@ -15,9 +15,10 @@
   "scripts": {
     "build": "rm -rf ./dist && tsc --project ./",
     "docs": "rm -rf ./docs && typedoc",
-    "test-all": "jest",
-    "test-unit": "jest --selectProjects unit",
-    "test-functional": "jest --selectProjects functional"
+    "test": "vitest",
+    "test:ui": "vitest --ui",
+    "test:unit": "vitest --dir ./spec/unit",
+    "test:functional": "vitest --dir ./spec/functional"
   },
   "repository": "github:redis/redis-om-node",
   "homepage": "https://github.com/redis/redis-om-node#readme",
@@ -33,6 +34,7 @@
   "devDependencies": {
     "@types/node": "^17.0.38",
     "@types/uuid": "^8.3.4",
+    "@vitest/ui": "^0.15.2",
     "c8": "^7.11.3",
     "nodemon": "^2.0.16",
     "typedoc": "^0.22.17",

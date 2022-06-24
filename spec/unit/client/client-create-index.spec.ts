@@ -2,13 +2,13 @@ import { redis } from '../helpers/mock-redis'
 import Client from '../../../lib/client';
 
 
-beforeEach(() => jest.clearAllMocks());
-
 describe("Client", () => {
 
   let client: Client;
 
-  beforeEach(async () => client = new Client());
+  beforeEach(() => {
+    client = new Client()
+  });
 
   describe("#createIndex", () => {
     describe("when called on an open client", () => {
