@@ -5,6 +5,11 @@ export default defineConfig({
     globals: true,
     clearMocks: true,
     isolate: false,
+    coverage: {
+      exclude: [
+        'spec/*'
+      ]
+    },
     exclude: [
       './node_modules/**',
     ]
