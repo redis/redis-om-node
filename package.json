@@ -15,7 +15,8 @@
   "scripts": {
     "build": "rm -rf ./dist && tsc --project ./",
     "docs": "rm -rf ./docs && typedoc",
-    "test": "vitest --coverage",
+    "test": "vitest",
+    "test:coverage": "vitest --coverage",
     "test:ui": "vitest --ui",
     "test:unit": "vitest --dir ./spec/unit",
     "test:functional": "vitest --dir ./spec/functional"
