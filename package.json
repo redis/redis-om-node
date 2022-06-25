@@ -13,13 +13,19 @@
     "docs/**/*"
   ],
   "scripts": {
-    "build": "tsup lib/index.ts --clean --dts",
+    "build": "tsup",
     "docs": "rm -rf ./docs && typedoc",
     "test": "vitest",
     "test:coverage": "vitest --coverage",
     "test:ui": "vitest --ui",
     "test:unit": "vitest --dir ./spec/unit",
     "test:functional": "vitest --dir ./spec/functional"
+  },
+  "tsup": {
+    "entry": ["lib/index.ts"],
+    "clean": true,
+    "dts": true,
+    "noExternal": ["ulid"]
   },
   "repository": "github:redis/redis-om-node",
   "homepage": "https://github.com/redis/redis-om-node#readme",
