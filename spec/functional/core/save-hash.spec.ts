@@ -1,6 +1,6 @@
-import { Client } from '../../../lib/client';
-import { Schema } from '../../../lib/schema/schema';
-import { Repository } from '../../../lib/repository';
+import { Client } from '$lib/client';
+import { Schema } from '$lib/schema/schema';
+import { Repository } from '$lib/repository';
 
 import { SampleHashEntity, createHashEntitySchema } from '../helpers/data-helper';
 import { fetchHashKeys, fetchHashFields, keyExists, removeAll } from '../helpers/redis-helper';

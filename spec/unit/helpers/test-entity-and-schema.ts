@@ -1,6 +1,6 @@
-import { Entity } from '../../../lib/entity/entity';
-import { Schema } from '../../../lib/schema/schema';
-import { Point } from '../../../lib/entity/point';
+import { Entity } from '$lib/entity/entity';
+import { Schema } from '$lib/schema/schema';
+import { Point } from '$lib/entity/point';
 
 export class SimpleEntity extends Entity { }
 export class SimpleHashEntity extends SimpleEntity { }

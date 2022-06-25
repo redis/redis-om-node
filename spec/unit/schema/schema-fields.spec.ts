@@ -1,8 +1,8 @@
-import { Schema } from '../../../lib/schema/schema';
-import { Entity } from '../../../lib/entity/entity';
-import { EntityData } from '../../../lib/entity/entity-data';
-import { DataStructure } from '../../../lib/schema/options';
-import { Point } from '../../../lib/entity/point';
+import { Schema } from '$lib/schema/schema';
+import { Entity } from '$lib/entity/entity';
+import { EntityData } from '$lib/entity/entity-data';
+import { DataStructure } from '$lib/schema/options';
+import { Point } from '$lib/entity/point';
 import {
   A_STRING, ANOTHER_STRING,
   A_NUMBER, ANOTHER_NUMBER,

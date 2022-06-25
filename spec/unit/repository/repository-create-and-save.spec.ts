@@ -1,7 +1,7 @@
 import '../helpers/mock-client'
-import { Client } from '../../../lib/client';
-import { Repository } from '../../../lib/repository';
-import { JsonRepository, HashRepository } from '../../../lib/repository';
+import { Client } from '$lib/client';
+import { Repository } from '$lib/repository';
+import { JsonRepository, HashRepository } from '$lib/repository';
 
 import {
   A_NUMBER, A_NUMBER_STRING,

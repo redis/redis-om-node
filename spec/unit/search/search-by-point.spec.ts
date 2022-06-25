@@ -1,7 +1,7 @@
 import { Point } from '../../../lib';
 
-import { Client } from "../../../lib/client";
-import { Search, WhereField } from "../../../lib/search";
+import { Client } from "$lib/client";
+import { Search, WhereField } from "$lib/search";
 
 import { A_POINT } from '../../helpers/example-data';
 import { simpleSchema, SimpleEntity } from "../helpers/test-entity-and-schema";

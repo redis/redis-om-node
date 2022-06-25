@@ -20,6 +20,6 @@ export const client = {
 }
 
 
-vi.mock('../../../lib/client', () => ({
+vi.mock('$lib/client', () => ({
   Client: vi.fn(() => client)
 }))

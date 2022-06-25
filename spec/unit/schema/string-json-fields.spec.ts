@@ -1,7 +1,7 @@
-import { Schema } from '../../../lib/schema/schema';
-import { Entity } from '../../../lib/entity/entity';
-import { SchemaDefinition } from '../../../lib/schema/definition';
-import { DataStructure } from '../../../lib/schema/options';
+import { Schema } from '$lib/schema/schema';
+import { Entity } from '$lib/entity/entity';
+import { SchemaDefinition } from '$lib/schema/definition';
+import { DataStructure } from '$lib/schema/options';
 
 const warnSpy = vi.spyOn(global.console, 'warn').mockImplementation(() => {})
 

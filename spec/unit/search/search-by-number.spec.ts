@@ -1,5 +1,5 @@
-import { Client } from "../../../lib/client";
-import { Search, WhereField } from "../../../lib/search";
+import { Client } from "$lib/client";
+import { Search, WhereField } from "$lib/search";
 
 import { A_NUMBER, ANOTHER_NUMBER } from '../../helpers/example-data';
 import { simpleSchema, SimpleEntity } from "../helpers/test-entity-and-schema";

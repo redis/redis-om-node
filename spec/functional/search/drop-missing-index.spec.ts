@@ -1,6 +1,6 @@
-import { Client } from '../../../lib/client';
-import { Schema } from '../../../lib/schema/schema';
-import { Repository } from '../../../lib/repository';
+import { Client } from '$lib/client';
+import { Schema } from '$lib/schema/schema';
+import { Repository } from '$lib/repository';
 
 import { createHashEntitySchema, SampleHashEntity } from '../helpers/data-helper';
 import { fetchIndexInfo  } from '../helpers/redis-helper';

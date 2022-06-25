@@ -1,11 +1,11 @@
-import { Client } from '../../../lib/client';
-import { Repository } from '../../../lib/repository';
-import { Entity } from '../../../lib/entity/entity';
-import { Schema } from '../../../lib/schema/schema';
+import { Client } from '$lib/client';
+import { Repository } from '$lib/repository';
+import { Entity } from '$lib/entity/entity';
+import { Schema } from '$lib/schema/schema';
 
-import { JsonRepository, HashRepository } from '../../../lib/repository';
+import { JsonRepository, HashRepository } from '$lib/repository';
 
-vi.mock('../../../lib/repository');
+vi.mock('$lib/repository');
 
 
 describe("Client", () => {
