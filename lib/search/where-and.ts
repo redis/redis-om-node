@@ -1,6 +1,6 @@
-import Where from "./where";
+import { Where } from "./where";
 
-export default class WhereAnd extends Where {
+export class WhereAnd extends Where {
   private left: Where;
   private right: Where;
 

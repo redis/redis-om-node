@@ -1,6 +1,6 @@
-import Client from '../../../lib/client';
-import Schema from '../../../lib/schema/schema';
-import Repository from '../../../lib/repository/repository';
+import { Client } from '../../../lib/client';
+import { Schema } from '../../../lib/schema/schema';
+import { Repository } from '../../../lib/repository';
 
 import { SampleJsonEntity, loadTestJson, createJsonEntitySchema } from '../helpers/data-helper';
 import { keyExists, removeAll } from '../helpers/redis-helper';

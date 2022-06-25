@@ -1,5 +1,5 @@
 import { client } from '../helpers/mock-client'
-import Client from "../../../lib/client";
+import { Client } from "../../../lib/client";
 import {
   A_NUMBER, ANOTHER_NUMBER, A_THIRD_NUMBER,
   A_NUMBER_STRING, ANOTHER_NUMBER_STRING, A_THIRD_NUMBER_STRING,

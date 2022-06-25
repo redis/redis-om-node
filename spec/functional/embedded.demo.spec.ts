@@ -1,6 +1,6 @@
 // import { createClient } from 'redis';
 
-// import Client from '../../lib/client';
+// import { Client } from '../../lib/client';
 // import Schema from '../../lib/schema/schema';
 // import Entity from '../../lib/entity/entity';
 // import Repository from '../../lib/repository/repository';

@@ -1,4 +1,4 @@
-import Point from "../../lib/entity/point";
+import { Point } from "../../lib/entity/point";
 
 export const A_STRING = 'foo';
 export const ANOTHER_STRING = 'bar';

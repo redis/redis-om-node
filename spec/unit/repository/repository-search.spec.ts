@@ -1,8 +1,8 @@
 import '../helpers/mock-client'
-import Client from '../../../lib/client';
-import { Search, RawSearch } from '../../../lib/search/search';
-import Repository from '../../../lib/repository/repository';
-import { HashRepository } from '../../../lib/repository/repository';
+import { Client } from '../../../lib/client';
+import { Search, RawSearch } from '../../../lib/search';
+import { Repository } from '../../../lib/repository';
+import { HashRepository } from '../../../lib/repository';
 
 import { simpleSchema, SimpleEntity } from '../helpers/test-entity-and-schema';
 

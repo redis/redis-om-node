@@ -1,8 +1,8 @@
-import EntityField from "./entity-field";
-import EntityValue from "../entity-value";
+import { EntityField } from "./entity-field";
+import { EntityValue } from "../entity-value";
 import { RedisHashData } from "../../client";
 
-class EntityBooleanField extends EntityField {
+export class EntityBooleanField extends EntityField {
   toRedisHash(): RedisHashData {
     const data: RedisHashData = {};
     if (this.value !== null) data[this.name] = this.value ? '1' : '0'.toString();
@@ -25,5 +25,3 @@ class EntityBooleanField extends EntityField {
       throw Error(`Expected value with type of 'boolean' but received '${value}'.`);
   }
 }
-
-export default EntityBooleanField;

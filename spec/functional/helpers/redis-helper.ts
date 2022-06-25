@@ -1,4 +1,4 @@
-import Client from "../../../lib/client";
+import { Client } from "../../../lib/client";
 
 export async function removeAll(client: Client, prefix: string) {
   const keys = (await client.execute(['KEYS', prefix + '*'])) as string[];

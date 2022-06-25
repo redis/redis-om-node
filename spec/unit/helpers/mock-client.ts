@@ -21,5 +21,5 @@ export const client = {
 
 
 vi.mock('../../../lib/client', () => ({
-  default: vi.fn(() => client)
+  Client: vi.fn(() => client)
 }))

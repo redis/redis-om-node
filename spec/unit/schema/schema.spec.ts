@@ -1,5 +1,5 @@
-import Schema from '../../../lib/schema/schema';
-import Entity from '../../../lib/entity/entity';
+import { Schema } from '../../../lib/schema/schema';
+import { Entity } from '../../../lib/entity/entity';
 
 const DEFAULT_HASH = "9UJTUMAzgvhnE/cOJXT1D3KPGYg=";
 

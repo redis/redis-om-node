@@ -1,6 +1,6 @@
 import { client } from '../helpers/mock-client'
-import Client from '../../../lib/client';
-import { JsonRepository, HashRepository } from '../../../lib/repository/repository';
+import { Client } from '../../../lib/client';
+import { JsonRepository, HashRepository } from '../../../lib/repository';
 
 import { simpleHashSchema, simpleJsonSchema, SimpleHashEntity, SimpleJsonEntity } from '../helpers/test-entity-and-schema';
 

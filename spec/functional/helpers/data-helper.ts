@@ -1,9 +1,9 @@
 import { saveHash, saveJson } from './redis-helper';
 
-import Client, { SearchDataStructure } from "../../../lib/client";
-import Entity from "../../../lib/entity/entity";
-import EntityConstructor from '../../../lib/entity/entity-constructor';
-import Schema from '../../../lib/schema/schema';
+import { Client, SearchDataStructure } from "../../../lib/client";
+import { Entity } from "../../../lib/entity/entity";
+import { EntityConstructor } from '../../../lib/entity/entity-constructor';
+import { Schema } from '../../../lib/schema/schema';
 import { Point } from '../../../lib';
 
 import { SampleEntityData } from "../../helpers/example-data";

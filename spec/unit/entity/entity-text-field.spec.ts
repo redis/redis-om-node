@@ -1,5 +1,5 @@
 import { FieldDefinition } from "../../../lib";
-import EntityTextField from "../../../lib/entity/fields/entity-text-field";
+import { EntityTextField } from "../../../lib/entity/fields";
 import { A_DATE, A_NUMBER, A_NUMBER_STRING, A_POINT, A_STRING, SOME_STRINGS } from "../../helpers/example-data";
 
 const FIELD_NAME = 'foo';

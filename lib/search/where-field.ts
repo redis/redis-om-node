@@ -1,17 +1,17 @@
-import Entity from "../entity/entity";
+import { Entity } from "../entity/entity";
 import { Search } from "./search";
-import Where from "./where";
+import { Where } from "./where";
 import { CircleFunction } from "./where-point";
 
 /**
  * Interface with all the methods from all the concrete
  * classes under {@link WhereField}.
  */
-interface WhereField<TEntity> extends Where {
+export interface WhereField<TEntity> extends Where {
 
   /**
    * Adds an equals comparison to the query.
-   * 
+   *
    * NOTE: this function is not available for strings where full-text
    * search is enabled. In that scenario, use `.match`.
    * @param value The value to be compared
@@ -21,7 +21,7 @@ interface WhereField<TEntity> extends Where {
 
   /**
    * Adds an equals comparison to the query.
-   * 
+   *
    * NOTE: this function is not available for strings where full-text
    * search is enabled. In that scenario, use `.match`.
    * @param value The value to be compared
@@ -259,7 +259,7 @@ interface WhereField<TEntity> extends Where {
  * with extend. When you call {@link Search.where}, a
  * subclass of this is returned.
  */
-abstract class WhereField<TEntity extends Entity> {
+export abstract class WhereField<TEntity extends Entity> {
   private negated: boolean = false;
 
   /** @internal */
@@ -314,5 +314,3 @@ abstract class WhereField<TEntity extends Entity> {
     return `(${negationPortion}@${fieldPortion}:${valuePortion})`;
   }
 }
-
-export default WhereField;

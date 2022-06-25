@@ -1,18 +1,17 @@
-import EntityData from "./entity-data";
-import EntityValue from "./entity-value";
-import EntityField from "./fields/entity-field";
-import EntityBooleanField from "./fields/entity-boolean-field";
-import EntityDateField from "./fields/entity-date-field";
-import EntityNumberField from "./fields/entity-number-field";
-import EntityPointField from "./fields/entity-point-field";
-import EntityStringArrayField from "./fields/entity-string-array-field";
-import EntityStringField from "./fields/entity-string-field";
-import EntityTextField from "./fields/entity-text-field";
-import EntityFieldConstructor from "./fields/entity-field-constructor";
-import Schema from "../schema/schema";
-import SchemaDefinition from "../schema/definition/schema-definition";
-import FieldDefinition from "../schema/definition/field-definition";
-import SchemaFieldType from "../schema/definition/schema-field-type";
+import { EntityData } from "./entity-data";
+import {
+  EntityField,
+  EntityBooleanField,
+  EntityDateField,
+  EntityNumberField,
+  EntityPointField,
+  EntityStringArrayField,
+  EntityStringField,
+  EntityTextField,
+  EntityFieldConstructor,
+} from "./fields";
+import { Schema } from "../schema/schema";
+import { SchemaDefinition, FieldDefinition, SchemaFieldType } from "../schema/definition";
 import { RedisJsonData, RedisHashData } from "../client";
 
 const ENTITY_FIELD_CONSTRUCTORS: Record<SchemaFieldType, EntityFieldConstructor> = {
@@ -33,7 +32,7 @@ const ENTITY_FIELD_CONSTRUCTORS: Record<SchemaFieldType, EntityFieldConstructor>
  * class Foo extends Entity {}
  * ```
  */
-export default abstract class Entity {
+export abstract class Entity {
   /** The generated entity ID. */
   readonly entityId: string;
 

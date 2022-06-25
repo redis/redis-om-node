@@ -1,7 +1,7 @@
-import EntityField from "./entity-field";
-import EntityValue from "../entity-value";
+import { EntityField } from "./entity-field";
+import { EntityValue } from "../entity-value";
 
-class EntityNumberField extends EntityField {
+export class EntityNumberField extends EntityField {
   fromRedisHash(value: string) {
     const number = Number.parseFloat(value);
     if (Number.isNaN(number)) throw Error(`Non-numeric value of '${value}' read from Redis for number field.`);
@@ -14,5 +14,3 @@ class EntityNumberField extends EntityField {
       throw Error(`Expected value with type of 'number' but received '${value}'.`);
   }
 }
-
-export default EntityNumberField;

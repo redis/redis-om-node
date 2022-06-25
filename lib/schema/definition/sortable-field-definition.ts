@@ -1,7 +1,5 @@
 /** Mixin for adding sortability to a field. */
-interface SortableFieldDefinition {
+export interface SortableFieldDefinition {
   /** Enables sorting by this field. */
   sortable?: boolean;
 }
-
-export default SortableFieldDefinition;

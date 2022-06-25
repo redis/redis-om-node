@@ -1,7 +1,7 @@
-import Entity from '../../../lib/entity/entity';
-import Schema from '../../../lib/schema/schema';
-import SchemaDefinition from '../../../lib/schema/definition/schema-definition';
-import DataStructure from '../../../lib/schema/options/data-structure';
+import { Entity } from '../../../lib/entity/entity';
+import { Schema } from '../../../lib/schema/schema';
+import { SchemaDefinition } from '../../../lib/schema/definition';
+import { DataStructure } from '../../../lib/schema/options';
 
 describe("Schema", () => {
   describe.each([
