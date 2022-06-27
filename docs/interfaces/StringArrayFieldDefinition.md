@@ -10,6 +10,12 @@ A field representing an array of strings.
 
 - [`SeparableFieldDefinition`](SeparableFieldDefinition.md)
 
+- [`SortableFieldDefinition`](SortableFieldDefinition.md)
+
+- [`CaseSensitiveFieldDefinition`](CaseSensitiveFieldDefinition.md)
+
+- [`NormalizedFieldDefinition`](NormalizedFieldDefinition.md)
+
   ↳ **`StringArrayFieldDefinition`**
 
 ## Table of contents
@@ -17,7 +23,11 @@ A field representing an array of strings.
 ### Properties
 
 - [alias](StringArrayFieldDefinition.md#alias)
+- [caseSensitive](StringArrayFieldDefinition.md#casesensitive)
+- [indexed](StringArrayFieldDefinition.md#indexed)
+- [normalized](StringArrayFieldDefinition.md#normalized)
 - [separator](StringArrayFieldDefinition.md#separator)
+- [sortable](StringArrayFieldDefinition.md#sortable)
 - [type](StringArrayFieldDefinition.md#type)
 
 ## Properties
@@ -35,7 +45,58 @@ The default field name in Redis is the key name defined in the
 
 #### Defined in
 
-[lib/schema/definition/base-field-definition.ts:12](https://github.com/redis/redis-om-node/blob/20561ae/lib/schema/definition/base-field-definition.ts#L12)
+[lib/schema/definition/base-field-definition.ts:12](https://github.com/redis/redis-om-node/blob/000c57c/lib/schema/definition/base-field-definition.ts#L12)
+
+___
+
+### caseSensitive
+
+• `Optional` **caseSensitive**: `boolean`
+
+Is the original case of this field indexed with Redis OM. Defaults
+to false.
+
+#### Inherited from
+
+[CaseSensitiveFieldDefinition](CaseSensitiveFieldDefinition.md).[caseSensitive](CaseSensitiveFieldDefinition.md#casesensitive)
+
+#### Defined in
+
+[lib/schema/definition/casesensitive-field-definition.ts:7](https://github.com/redis/redis-om-node/blob/000c57c/lib/schema/definition/casesensitive-field-definition.ts#L7)
+
+___
+
+### indexed
+
+• `Optional` **indexed**: `boolean`
+
+Is this field indexed and thus searchable with Redis OM. Defaults
+to the schema indexedDefault value, currently true.
+
+#### Inherited from
+
+[BaseFieldDefinition](BaseFieldDefinition.md).[indexed](BaseFieldDefinition.md#indexed)
+
+#### Defined in
+
+[lib/schema/definition/base-field-definition.ts:18](https://github.com/redis/redis-om-node/blob/000c57c/lib/schema/definition/base-field-definition.ts#L18)
+
+___
+
+### normalized
+
+• `Optional` **normalized**: `boolean`
+
+Is this (sortable) field normalized when indexed. Defaults
+to true.
+
+#### Inherited from
+
+[NormalizedFieldDefinition](NormalizedFieldDefinition.md).[normalized](NormalizedFieldDefinition.md#normalized)
+
+#### Defined in
+
+[lib/schema/definition/normalized-field-definition.ts:7](https://github.com/redis/redis-om-node/blob/000c57c/lib/schema/definition/normalized-field-definition.ts#L7)
 
 ___
 
@@ -54,7 +115,23 @@ those problems. Defaults to `|`.
 
 #### Defined in
 
-[lib/schema/definition/separable-field-definition.ts:9](https://github.com/redis/redis-om-node/blob/20561ae/lib/schema/definition/separable-field-definition.ts#L9)
+[lib/schema/definition/separable-field-definition.ts:9](https://github.com/redis/redis-om-node/blob/000c57c/lib/schema/definition/separable-field-definition.ts#L9)
+
+___
+
+### sortable
+
+• `Optional` **sortable**: `boolean`
+
+Enables sorting by this field.
+
+#### Inherited from
+
+[SortableFieldDefinition](SortableFieldDefinition.md).[sortable](SortableFieldDefinition.md#sortable)
+
+#### Defined in
+
+[lib/schema/definition/sortable-field-definition.ts:4](https://github.com/redis/redis-om-node/blob/000c57c/lib/schema/definition/sortable-field-definition.ts#L4)
 
 ___
 
@@ -70,4 +147,4 @@ Yep. It's a string array.
 
 #### Defined in
 
-[lib/schema/definition/string-array-field-definition.ts:7](https://github.com/redis/redis-om-node/blob/20561ae/lib/schema/definition/string-array-field-definition.ts#L7)
+[lib/schema/definition/string-array-field-definition.ts:10](https://github.com/redis/redis-om-node/blob/000c57c/lib/schema/definition/string-array-field-definition.ts#L10)

@@ -20,7 +20,7 @@ describe("fetch hash", () => {
     await loadTestHash(client, 'SampleHashEntity:full', AN_ENTITY);
     await loadTestHash(client, 'SampleHashEntity:partial', A_PARTIAL_ENTITY);
     await loadTestHash(client, 'SampleHashEntity:empty', AN_EMPTY_ENTITY);
-    
+
     schema = createHashEntitySchema();
     repository = client.fetchRepository<SampleHashEntity>(schema);
   });
@@ -43,5 +43,14 @@ describe("fetch hash", () => {
     let entity = await repository.fetch('empty');
     expect(entity.entityId).toBe('empty');
     expect(entity).toEqual(expect.objectContaining(AN_EMPTY_ENTITY));
+  });
+
+  it("fetches all the entities from Redis", async () => {
+    let entities = await repository.fetch('full', 'partial', 'empty');
+    expect(entities).toEqual(expect.arrayContaining([
+      expect.objectContaining({ entityId: 'full', ...AN_ENTITY }),
+      expect.objectContaining({ entityId: 'partial', ...A_PARTIAL_ENTITY }),
+      expect.objectContaining({ entityId: 'empty', ...AN_EMPTY_ENTITY })
+    ]));
   });
 });

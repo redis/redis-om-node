@@ -24,10 +24,22 @@ describe("Schema", () => {
       expectedRedisSchema: ['aField', 'TAG', 'SEPARATOR', ';']
     }],
 
-    ["that defines a separated and aliased array for a HASH", {
-      schemaDef: { aField: { type: 'string[]', alias: 'anotherField', separator: ';' } } as SchemaDefinition,
+    ["that defines an indexed array for a HASH", {
+      schemaDef: { aField: { type: 'string[]', indexed: true } } as SchemaDefinition,
       dataStructure: 'HASH',
-      expectedRedisSchema: ['anotherField', 'TAG', 'SEPARATOR', ';']
+      expectedRedisSchema: ['aField', 'TAG', 'SEPARATOR', '|']
+    }],
+
+    ["that defines an unindexed array for a HASH", {
+      schemaDef: { aField: { type: 'string[]', indexed: false } } as SchemaDefinition,
+      dataStructure: 'HASH',
+      expectedRedisSchema: ['aField', 'TAG', 'SEPARATOR', '|', 'NOINDEX']
+    }],
+
+    ["that defines a fully-configured array for a HASH", {
+      schemaDef: { aField: { type: 'string[]', alias: 'anotherField', separator: ';', indexed: false } } as SchemaDefinition,
+      dataStructure: 'HASH',
+      expectedRedisSchema: ['anotherField', 'TAG', 'SEPARATOR', ';', 'NOINDEX']
     }]
 
   ])("%s", (_, data) => {

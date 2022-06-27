@@ -21,7 +21,7 @@ beforeEach(() => {
 });
 
 describe.each([
-  [ "FluentSearch", 
+  [ "FluentSearch",
     new Search<SimpleHashEntity>(simpleHashSchema, new Client()),
     new Search<SimpleJsonEntity>(simpleJsonSchema, new Client()) ],
   [ "RawSearch",
@@ -44,7 +44,7 @@ describe.each([
         it("askes the client for results", () => {
           expect(Client.prototype.search).toHaveBeenCalledTimes(1);
           expect(Client.prototype.search).toHaveBeenCalledWith({
-            indexName, query, limit: { offset: 0, count: 5 } });
+            indexName, query, limit: { offset: 0, count: 5 }, keysOnly: false });
         });
 
         it("returns no results", () => expect(entities).toHaveLength(0));
@@ -59,7 +59,7 @@ describe.each([
         it("askes the client for results", () => {
           expect(Client.prototype.search).toHaveBeenCalledTimes(1);
           expect(Client.prototype.search).toHaveBeenCalledWith({
-            indexName, query, limit: { offset: 0, count: 5 } });
+            indexName, query, limit: { offset: 0, count: 5 }, keysOnly: false });
         });
 
         it("returns the expected single result", () => {
@@ -79,7 +79,7 @@ describe.each([
         it("askes the client for results", () => {
           expect(Client.prototype.search).toHaveBeenCalledTimes(1);
           expect(Client.prototype.search).toHaveBeenCalledWith({
-            indexName, query, limit: { offset: 0, count: 5 } });
+            indexName, query, limit: { offset: 0, count: 5 }, keysOnly: false });
         });
 
         it("returns all the results", async () => {
@@ -106,7 +106,7 @@ describe.each([
         it("askes the client for results", () => {
           expect(Client.prototype.search).toHaveBeenCalledTimes(1);
           expect(Client.prototype.search).toHaveBeenCalledWith({
-            indexName, query, limit: { offset: 0, count: 5 } });
+            indexName, query, limit: { offset: 0, count: 5 }, keysOnly: false });
         });
 
         it("returns no results", async () => expect(entities).toHaveLength(0));
@@ -121,7 +121,7 @@ describe.each([
         it("askes the client for results", () => {
           expect(Client.prototype.search).toHaveBeenCalledTimes(1);
           expect(Client.prototype.search).toHaveBeenCalledWith({
-            indexName, query, limit: { offset: 0, count: 5 } });
+            indexName, query, limit: { offset: 0, count: 5 }, keysOnly: false });
         });
 
         it("returns the expected single result", () => {
@@ -141,7 +141,7 @@ describe.each([
         it("askes the client for results", () => {
           expect(Client.prototype.search).toHaveBeenCalledTimes(1);
           expect(Client.prototype.search).toHaveBeenCalledWith({
-            indexName, query, limit: { offset: 0, count: 5 } });
+            indexName, query, limit: { offset: 0, count: 5 }, keysOnly: false });
         });
 
         it("returns all the expected results", () => {

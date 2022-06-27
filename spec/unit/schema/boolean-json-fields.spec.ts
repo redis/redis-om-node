@@ -38,23 +38,30 @@ describe("Schema", () => {
       expectedWarning: null
     }],
 
-    ["that defines a sorted and aliased boolean for a JSON", {
-      schemaDef: { aField: { type: 'boolean', sortable: true, alias: 'anotherField' } } as SchemaDefinition,
+    ["that defines an indexed boolean for a JSON", {
+      schemaDef: { aField: { type: 'boolean', indexed: true } } as SchemaDefinition,
       dataStructure: 'JSON',
-      expectedRedisSchema: ['$.anotherField', 'AS', 'anotherField', 'TAG'],
-      expectedWarning: "You have marked the boolean field 'aField' as sortable but RediSearch doesn't support the SORTABLE argument on a TAG for JSON. Ignored."
+      expectedRedisSchema: ['$.aField', 'AS', 'aField', 'TAG'],
+      expectedWarning: null
     }],
 
-    ["that defines an unsorted and aliased boolean for a JSON", {
-      schemaDef: { aField: { type: 'boolean', sortable: false, alias: 'anotherField' } } as SchemaDefinition,
+    ["that defines an unidexed boolean for a JSON", {
+      schemaDef: { aField: { type: 'boolean', indexed: false } } as SchemaDefinition,
       dataStructure: 'JSON',
-      expectedRedisSchema: ['$.anotherField', 'AS', 'anotherField', 'TAG'],
+      expectedRedisSchema: ['$.aField', 'AS', 'aField', 'TAG', 'NOINDEX'],
       expectedWarning: null
+    }],
+
+    ["that defines a fully configured  boolean for a JSON", {
+      schemaDef: { aField: { type: 'boolean', alias: 'anotherField', sortable: true, indexed: false } } as SchemaDefinition,
+      dataStructure: 'JSON',
+      expectedRedisSchema: ['$.anotherField', 'AS', 'anotherField', 'TAG', 'NOINDEX'],
+      expectedWarning: "You have marked the boolean field 'aField' as sortable but RediSearch doesn't support the SORTABLE argument on a TAG for JSON. Ignored."
     }]
 
   ])("%s", (_, data) => {
 
-    class TestEntity extends Entity { }
+    class TestEntity extends Entity {}
 
     let redisSchema: Array<string>;
     let schemaDef = data.schemaDef;

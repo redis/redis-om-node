@@ -20,7 +20,7 @@ describe("Client", () => {
         await client.open();
       });
 
-      it("passes a command with neither limit nor sort options to the shim", async () => {
+      it("sends the expect command when given minimal options", async () => {
         await client.search({
           indexName: 'index',
           query: 'query'
@@ -29,7 +29,7 @@ describe("Client", () => {
           'FT.SEARCH', 'index', 'query']);
       });
 
-      it("passes a command without sort options to the shim", async () => {
+      it("sends the expect command when given a limit", async () => {
         await client.search({
           indexName: 'index',
           query: 'query',
@@ -39,7 +39,7 @@ describe("Client", () => {
           'FT.SEARCH', 'index', 'query', 'LIMIT', '0', '5']);
       });
 
-      it("passes a command without limit options to the shim", async () => {
+      it("send the expected command when given a sort", async () => {
         await client.search({
           indexName: 'index',
           query: 'query',
@@ -49,15 +49,37 @@ describe("Client", () => {
           'FT.SEARCH', 'index', 'query', 'SORTBY', 'sortField', 'ASC']);
       });
 
-      it("passes a command with limit and sort options to the shim", async () => {
+      it("send the expected command when keysOnly is set to false", async () => {
+        await client.search({
+          indexName: 'index',
+          query: 'query',
+          keysOnly: false
+        });
+        expect(RedisShim.prototype.execute).toHaveBeenCalledWith([
+          'FT.SEARCH', 'index', 'query']);
+      });
+
+      it("send the expected command when keysOnly is set to true", async () => {
+        await client.search({
+          indexName: 'index',
+          query: 'query',
+          keysOnly: true
+        });
+        expect(RedisShim.prototype.execute).toHaveBeenCalledWith([
+          'FT.SEARCH', 'index', 'query', 'RETURN', '0']);
+      });
+
+      it("sends the expected command with all options", async () => {
         await client.search({
           indexName: 'index',
           query: 'query',
           limit: { offset: 0, count: 5 },
-          sort: { field: 'sortField', order: 'ASC' }
+          sort: { field: 'sortField', order: 'ASC' },
+          keysOnly: true
         });
         expect(RedisShim.prototype.execute).toHaveBeenCalledWith([
-          'FT.SEARCH', 'index', 'query', 'LIMIT', '0', '5', 'SORTBY', 'sortField', 'ASC']);
+          'FT.SEARCH', 'index', 'query', 'LIMIT', '0', '5',
+          'SORTBY', 'sortField', 'ASC', 'RETURN', '0']);
       });
     });
 

@@ -16,7 +16,26 @@ describe("Schema", () => {
       schemaDef: { aField: { type: 'point', alias: 'anotherField' } } as SchemaDefinition,
       dataStructure: 'JSON',
       expectedRedisSchema: ['$.anotherField', 'AS', 'anotherField', 'GEO']
+    }],
+
+    ["that defines an indexed point for a JSON", {
+      schemaDef: { aField: { type: 'point', indexed: true } } as SchemaDefinition,
+      dataStructure: 'JSON',
+      expectedRedisSchema: ['$.aField', 'AS', 'aField', 'GEO']
+    }],
+
+    ["that defines an unindexed point for a JSON", {
+      schemaDef: { aField: { type: 'point', indexed: false } } as SchemaDefinition,
+      dataStructure: 'JSON',
+      expectedRedisSchema: ['$.aField', 'AS', 'aField', 'GEO', 'NOINDEX']
+    }],
+
+    ["that defines a fully-configured point for a JSON", {
+      schemaDef: { aField: { type: 'point', alias: 'anotherField', indexed: false } } as SchemaDefinition,
+      dataStructure: 'JSON',
+      expectedRedisSchema: ['$.anotherField', 'AS', 'anotherField', 'GEO', 'NOINDEX']
     }]
+
 
   ])("%s", (_, data) => {
 

@@ -30,16 +30,46 @@ describe("Schema", () => {
       expectedRedisSchema: ['$.aField', 'AS', 'aField', 'TEXT']
     }],
 
-    ["that defines a sorted and aliased text for a JSON", {
-      schemaDef: { aField: { type: 'text', sortable: true, alias: 'anotherField' } } as SchemaDefinition,
+    ["that defines an indexed text for a JSON", {
+      schemaDef: { aField: { type: 'text', indexed: true } } as SchemaDefinition,
       dataStructure: 'JSON',
-      expectedRedisSchema: ['$.anotherField', 'AS', 'anotherField', 'TEXT', 'SORTABLE']
+      expectedRedisSchema: ['$.aField', 'AS', 'aField', 'TEXT']
     }],
 
-    ["that defines an unsorted and aliased text for a JSON", {
-      schemaDef: { aField: { type: 'text', sortable: false, alias: 'anotherField' } } as SchemaDefinition,
+    ["that defines an unindexed text for a JSON", {
+      schemaDef: { aField: { type: 'text', indexed: false } } as SchemaDefinition,
       dataStructure: 'JSON',
-      expectedRedisSchema: ['$.anotherField', 'AS', 'anotherField', 'TEXT']
+      expectedRedisSchema: ['$.aField', 'AS', 'aField', 'TEXT', 'NOINDEX']
+    }],
+
+    ["that defines a phonetic matcher text for a JSON", {
+      schemaDef: { aField: { type: 'text', matcher: 'dm:en' } } as SchemaDefinition,
+      dataStructure: 'JSON',
+      expectedRedisSchema: ['$.aField', 'AS', 'aField', 'TEXT', 'PHONETIC', 'dm:en']
+    }],
+
+    ["that defines an unstemmed text for a JSON", {
+      schemaDef: { aField: { type: 'text', stemming: false } } as SchemaDefinition,
+      dataStructure: 'JSON',
+      expectedRedisSchema: ['$.aField', 'AS', 'aField', 'TEXT', 'NOSTEM']
+    }],
+
+    ["that defines an unnormalized text for a JSON", {
+      schemaDef: { aField: { type: 'text', normalized: false } } as SchemaDefinition,
+      dataStructure: 'JSON',
+      expectedRedisSchema: ['$.aField', 'AS', 'aField', 'TEXT', 'UNF']
+    }],
+
+    ["that defines a weighted text for a JSON", {
+      schemaDef: { aField: { type: 'text', weight: 2 } } as SchemaDefinition,
+      dataStructure: 'JSON',
+      expectedRedisSchema: ['$.aField', 'AS', 'aField', 'TEXT', 'WEIGHT', '2']
+    }],
+
+    ["that defines a fully configured text for a JSON", {
+      schemaDef: { aField: { type: 'text', alias: 'anotherField', sortable: true, matcher: 'dm:en', stemming: false, normalized: false, weight: 2 } } as SchemaDefinition,
+      dataStructure: 'JSON',
+      expectedRedisSchema: ['$.anotherField', 'AS', 'anotherField', 'TEXT', 'NOSTEM', 'PHONETIC', 'dm:en', 'SORTABLE', 'UNF', 'WEIGHT', '2']
     }]
 
   ])("%s", (_, data) => {

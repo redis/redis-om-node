@@ -1,4 +1,5 @@
 import { mocked } from 'jest-mock';
+import { json } from 'stream/consumers';
 
 import Client from '../../../lib/client';
 import { JsonRepository, HashRepository } from '../../../lib/repository/repository';
@@ -13,24 +14,51 @@ beforeEach(() => mocked(Client).mockReset());
 describe("Repository", () => {
 
   let client: Client;
-  let entityId = 'foo';
 
   describe("#remove", () => {
 
+    let hashRepository: HashRepository<SimpleHashEntity>;
+    let jsonRepository: JsonRepository<SimpleJsonEntity>;
+
     beforeAll(() => client = new Client());
 
-    it("removes a hash", async () => {
-      let repository = new HashRepository<SimpleHashEntity>(simpleHashSchema, client);
-      let expectedKey = `SimpleHashEntity:${entityId}`;
-      await repository.remove(entityId);
-      expect(Client.prototype.unlink).toHaveBeenCalledWith(expectedKey);
+    beforeEach(() => {
+      hashRepository = new HashRepository<SimpleHashEntity>(simpleHashSchema, client);
+      jsonRepository = new JsonRepository<SimpleJsonEntity>(simpleJsonSchema, client);
+    })
+
+    it("removes no hashes", async () => {
+      await hashRepository.remove();
+      expect(Client.prototype.unlink).not.toHaveBeenCalled();
     });
 
-    it("removes JSON", async () => {
-      let repository = new JsonRepository<SimpleJsonEntity>(simpleJsonSchema, client);
-      let expectedKey = `SimpleJsonEntity:${entityId}`;
-      await repository.remove(entityId);
-      expect(Client.prototype.unlink).toHaveBeenCalledWith(expectedKey);
+    it("removes a single hash", async () => {
+      await hashRepository.remove('foo');
+      expect(Client.prototype.unlink).toHaveBeenCalledWith('SimpleHashEntity:foo');
     });
+
+    it("removes multiple hashes", async () => {
+      await hashRepository.remove('foo', 'bar', 'baz');
+      expect(Client.prototype.unlink).toHaveBeenCalledWith(
+        'SimpleHashEntity:foo', 'SimpleHashEntity:bar', 'SimpleHashEntity:baz'
+      );
+    });
+
+    it("removes no JSON", async () => {
+      await jsonRepository.remove();
+      expect(Client.prototype.unlink).not.toHaveBeenCalled();
+    });
+
+    it("removes a single JSON", async () => {
+      await jsonRepository.remove('foo');
+      expect(Client.prototype.unlink).toHaveBeenCalledWith('SimpleJsonEntity:foo');
+    });
+
+    it("removes multiple JSONs", async () => {
+      await jsonRepository.remove('foo', 'bar', 'baz');
+      expect(Client.prototype.unlink).toHaveBeenCalledWith(
+        'SimpleJsonEntity:foo', 'SimpleJsonEntity:bar', 'SimpleJsonEntity:baz'
+      );
+    })
   });
 });

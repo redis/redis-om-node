@@ -30,16 +30,22 @@ describe("Schema", () => {
       expectedRedisSchema: ['$.aField', 'AS', 'aField', 'NUMERIC']
     }],
 
-    ["that defines a sorted and aliased date for a JSON", {
-      schemaDef: { aField: { type: 'date', sortable: true, alias: 'anotherField' } } as SchemaDefinition,
+    ["that defines an indexed date for a JSON", {
+      schemaDef: { aField: { type: 'date', indexed: true } } as SchemaDefinition,
       dataStructure: 'JSON',
-      expectedRedisSchema: ['$.anotherField', 'AS', 'anotherField', 'NUMERIC', 'SORTABLE']
+      expectedRedisSchema: ['$.aField', 'AS', 'aField', 'NUMERIC']
     }],
 
-    ["that defines an unsorted and aliased date for a JSON", {
-      schemaDef: { aField: { type: 'date', sortable: false, alias: 'anotherField' } } as SchemaDefinition,
+    ["that defines an indexed date for a JSON", {
+      schemaDef: { aField: { type: 'date', indexed: false } } as SchemaDefinition,
       dataStructure: 'JSON',
-      expectedRedisSchema: ['$.anotherField', 'AS', 'anotherField', 'NUMERIC']
+      expectedRedisSchema: ['$.aField', 'AS', 'aField', 'NUMERIC', 'NOINDEX']
+    }],
+
+    ["that defines a fully configured date for a JSON", {
+      schemaDef: { aField: { type: 'date', alias: 'anotherField', sortable: true, indexed: false } } as SchemaDefinition,
+      dataStructure: 'JSON',
+      expectedRedisSchema: ['$.anotherField', 'AS', 'anotherField', 'NUMERIC', 'SORTABLE', 'NOINDEX']
     }]
 
   ])("%s", (_, data) => {

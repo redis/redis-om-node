@@ -65,7 +65,8 @@ describe.each([
           indexName: expect.stringMatching('Simple(Hash|Json)Entity:index'),
           query: '*',
           limit: { offset: 0, count: 1 },
-          sort: { field: 'aNumber', order: 'ASC' }
+          sort: { field: 'aNumber', order: 'ASC' },
+          keysOnly: false
         });
       });
     });
@@ -80,7 +81,8 @@ describe.each([
           indexName: expect.stringMatching('Simple(Hash|Json)Entity:index'),
           query: '*',
           limit: { offset: 0, count: 1 },
-          sort: { field: 'aNumber', order: 'ASC' }
+          sort: { field: 'aNumber', order: 'ASC' },
+          keysOnly: false
         });
       });
     });
@@ -95,7 +97,8 @@ describe.each([
           indexName: expect.stringMatching('Simple(Hash|Json)Entity:index'),
           query: '*',
           limit: { offset: 0, count: 1 },
-          sort: { field: 'aNumber', order: 'DESC' }
+          sort: { field: 'aNumber', order: 'DESC' },
+          keysOnly: false
         });
       });
     });
@@ -110,7 +113,8 @@ describe.each([
           indexName: expect.stringMatching('Simple(Hash|Json)Entity:index'),
           query: '*',
           limit: { offset: 0, count: 1 },
-          sort: { field: 'aNumber', order: 'DESC' }
+          sort: { field: 'aNumber', order: 'DESC' },
+          keysOnly: false
         });
       });
     });
@@ -301,7 +305,8 @@ describe.each([
           indexName: expect.stringMatching('Simple(Hash|Json)Entity:index'),
           query: '*',
           limit: { offset: 0, count: 1 },
-          sort: expectedSortOptions
+          sort: expectedSortOptions,
+          keysOnly: false
         });
       });
 

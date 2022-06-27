@@ -27,6 +27,7 @@ Base interface for all fields.
 ### Properties
 
 - [alias](BaseFieldDefinition.md#alias)
+- [indexed](BaseFieldDefinition.md#indexed)
 - [type](BaseFieldDefinition.md#type)
 
 ## Properties
@@ -40,7 +41,20 @@ The default field name in Redis is the key name defined in the
 
 #### Defined in
 
-[lib/schema/definition/base-field-definition.ts:12](https://github.com/redis/redis-om-node/blob/20561ae/lib/schema/definition/base-field-definition.ts#L12)
+[lib/schema/definition/base-field-definition.ts:12](https://github.com/redis/redis-om-node/blob/000c57c/lib/schema/definition/base-field-definition.ts#L12)
+
+___
+
+### indexed
+
+• `Optional` **indexed**: `boolean`
+
+Is this field indexed and thus searchable with Redis OM. Defaults
+to the schema indexedDefault value, currently true.
+
+#### Defined in
+
+[lib/schema/definition/base-field-definition.ts:18](https://github.com/redis/redis-om-node/blob/000c57c/lib/schema/definition/base-field-definition.ts#L18)
 
 ___
 
@@ -52,4 +66,4 @@ The type of the field (i.e. string, number, boolean, etc.)
 
 #### Defined in
 
-[lib/schema/definition/base-field-definition.ts:6](https://github.com/redis/redis-om-node/blob/20561ae/lib/schema/definition/base-field-definition.ts#L6)
+[lib/schema/definition/base-field-definition.ts:6](https://github.com/redis/redis-om-node/blob/000c57c/lib/schema/definition/base-field-definition.ts#L6)

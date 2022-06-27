@@ -140,8 +140,20 @@ export default abstract class Repository<TEntity extends Entity> {
    * @param id The ID of the {@link Entity} you seek.
    * @returns The matching Entity.
    */
-  async fetch(id: string): Promise<TEntity> {
-    return await this.readEntity(id);
+  async fetch(id: string): Promise<TEntity>
+
+  /**
+   * Read and return the {@link Entity | Entities} from Redis with the given IDs. If
+   * a particular {@link Entity} is not found, returns an {@link Entity} with all
+   * properties set to `null`.
+   * @param ids The IDs of the {@link Entity | Entities} you seek.
+   * @returns The matching Entities.
+   */
+  async fetch(...ids: string[]): Promise<TEntity[]>
+
+  async fetch(...id: string[]): Promise<TEntity | TEntity[]> {
+    const entities = await this.readEntities(id)
+    return id.length > 1 ? entities : entities[0];
   }
 
   /**
@@ -149,9 +161,10 @@ export default abstract class Repository<TEntity extends Entity> {
    * not found, does nothing.
    * @param id The ID of the {@link Entity} you with to delete.
    */
-  async remove(id: string): Promise<void> {
-    const key = this.makeKey(id);
-    await this.client.unlink(key);
+  async remove(...ids: string[]): Promise<void> {
+    if (ids.length === 0) return;
+    const keys = this.makeKeys(ids);
+    await this.client.unlink(...keys);
   }
 
   /**
@@ -191,7 +204,12 @@ export default abstract class Repository<TEntity extends Entity> {
   protected abstract writeEntity(entity: TEntity): Promise<void>;
 
   /** @internal */
-  protected abstract readEntity(key: string): Promise<TEntity>;
+  protected abstract readEntities(ids: string[]): Promise<TEntity[]>;
+
+  /** @internal */
+  protected makeKeys(ids: string[]): string[] {
+    return ids.map(id => this.makeKey(id));
+  }
 
   /** @internal */
   protected makeKey(id: string): string {
@@ -210,12 +228,15 @@ export class HashRepository<TEntity extends Entity> extends Repository<TEntity> 
     await this.client.hsetall(entity.keyName, entity.toRedisHash());
   }
 
-  protected async readEntity(id: string): Promise<TEntity> {
-    const key = this.makeKey(id);
-    const hashData = await this.client.hgetall(key);
-    const entity = new this.schema.entityCtor(this.schema, id);
-    entity.fromRedisHash(hashData);
-    return entity;
+  protected async readEntities(ids: string[]): Promise<TEntity[]> {
+    return Promise.all(
+      ids.map(async (id) => {
+        const key = this.makeKey(id);
+        const hashData = await this.client.hgetall(key);
+        const entity = new this.schema.entityCtor(this.schema, id);
+        entity.fromRedisHash(hashData);
+        return entity;
+      }));
   }
 }
 
@@ -225,11 +246,14 @@ export class JsonRepository<TEntity extends Entity> extends Repository<TEntity> 
     await this.client.jsonset(entity.keyName, entity.toRedisJson());
   }
 
-  protected async readEntity(id: string): Promise<TEntity> {
-    const key = this.makeKey(id);
-    const jsonData = await this.client.jsonget(key);
-    const entity = new this.schema.entityCtor(this.schema, id);
-    entity.fromRedisJson(jsonData);
-    return entity;
+  protected async readEntities(ids: string[]): Promise<TEntity[]> {
+    return Promise.all(
+      ids.map(async (id) => {
+        const key = this.makeKey(id);
+        const jsonData = await this.client.jsonget(key);
+        const entity = new this.schema.entityCtor(this.schema, id);
+        entity.fromRedisJson(jsonData);
+        return entity;
+      }));
   }
 }

@@ -1,42 +1,57 @@
 import Entity from "../../entity/entity";
-import SchemaBuilder from "./schema-builder";
 import FieldDefinition from "../definition/field-definition";
-import SeparableFieldDefinition from "../definition/separable-field-definition";
-import SortableFieldDefinition from "../definition/sortable-field-definition";
-import SchemaFieldType from "../definition/schema-field-type";
+import SchemaBuilder from "./schema-builder";
 
 export default class HashSchemaBuilder<TEntity extends Entity> extends SchemaBuilder<TEntity> {
 
   protected buildEntry(field: string): Array<string> {
     const fieldDef: FieldDefinition = this.schema.definition[field];
-    const fieldType: SchemaFieldType = fieldDef.type;
     const fieldAlias = fieldDef.alias ?? field
-    let fieldDetails: Array<string>;
 
-    switch (fieldType) {
+    switch (fieldDef.type) {
       case 'date':
-        fieldDetails = this.buildSortableNumeric(fieldDef as SortableFieldDefinition);
-        break;
+        return [
+          fieldAlias, 'NUMERIC',
+          ...this.buildSortable(fieldDef),
+          ...this.buildIndexed(fieldDef),
+        ]
       case 'boolean':
-        fieldDetails = this.buildSortableTag(fieldDef as SortableFieldDefinition);
-        break;
+        return [
+          fieldAlias, 'TAG',
+          ...this.buildSortable(fieldDef),
+          ...this.buildIndexed(fieldDef),
+        ]
       case 'number':
-        fieldDetails = this.buildSortableNumeric(fieldDef as SortableFieldDefinition);
-        break;
+        return [
+          fieldAlias, 'NUMERIC',
+          ...this.buildSortable(fieldDef),
+          ...this.buildIndexed(fieldDef),
+        ]
       case 'point':
-        fieldDetails = this.buildGeo();
-        break;
+        return [
+          fieldAlias, 'GEO',
+          ...this.buildIndexed(fieldDef),
+        ]
       case 'string[]':
-        fieldDetails = this.buildSeparableTag(fieldDef as SeparableFieldDefinition);
-        break;
       case 'string':
-        fieldDetails = this.buildSeparableAndSortableTag(fieldDef as SortableFieldDefinition & SeparableFieldDefinition);
-        break;
+        return [
+          fieldAlias, 'TAG',
+          ...this.buildCaseInsensitive(fieldDef),
+          ...this.buildSeparable(fieldDef),
+          ...this.buildSortable(fieldDef),
+          ...this.buildNormalized(fieldDef),
+          ...this.buildIndexed(fieldDef),
+        ]
       case 'text':
-        fieldDetails = this.buildSortableText(fieldDef as SortableFieldDefinition);
-        break;
+        return [
+          fieldAlias, 'TEXT',
+          ...this.buildStemming(fieldDef),
+          ...this.buildPhonetic(fieldDef),
+          ...this.buildSortable(fieldDef),
+          ...this.buildNormalized(fieldDef),
+          ...this.buildWeight(fieldDef),
+          ...this.buildIndexed(fieldDef),
+        ]
     };
-
-    return [fieldAlias, ...fieldDetails];
   }
 }

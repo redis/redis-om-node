@@ -1,7 +1,13 @@
 import Entity from "../../entity/entity";
-import Schema from "../schema";
+import BaseFieldDefinition from "../definition/base-field-definition";
+import CaseSensitiveFieldDefinition from "../definition/casesensitive-field-definition";
+import StemmingFieldDefinition from "../definition/stemming-field-definition";
+import PhoneticFieldDefinition from "../definition/phonetic-field-definition";
 import SeparableFieldDefinition from "../definition/separable-field-definition";
 import SortableFieldDefinition from "../definition/sortable-field-definition";
+import NormalizedFieldDefinition from "../definition/normalized-field-definition";
+import WeightFieldDefinition from "../definition/weight-field-definition";
+import Schema from "../schema";
 
 export default abstract class SchemaBuilder<TEntity extends Entity> {
 
@@ -21,49 +27,35 @@ export default abstract class SchemaBuilder<TEntity extends Entity> {
 
   protected abstract buildEntry(field: string): Array<string>;
 
-  protected buildSortableNumeric(fieldDef: SortableFieldDefinition): Array<string> {
-    return this.buildSortableField('NUMERIC', fieldDef.sortable);
+  protected buildCaseInsensitive(field: CaseSensitiveFieldDefinition) {
+    return field.caseSensitive ? ['CASESENSITIVE'] : []
   }
 
-  protected buildTag(): Array<string> {
-    return this.buildField('TAG');
+  protected buildIndexed(field: BaseFieldDefinition) {
+    return field.indexed ?? this.schema.indexedDefault ? [] : ['NOINDEX']
   }
 
-  protected buildSeparableTag(fieldDef: SeparableFieldDefinition): Array<string> {
-    return this.buildSeparableField('TAG', fieldDef.separator);
+  protected buildStemming(field: StemmingFieldDefinition) {
+    return field.stemming ?? true ? [] : ['NOSTEM']
   }
 
-  protected buildSortableTag(fieldDef: SortableFieldDefinition): Array<string> {
-    return this.buildSortableField('TAG', fieldDef.sortable);
+  protected buildPhonetic(field: PhoneticFieldDefinition) {
+    return field.matcher ? ['PHONETIC', field.matcher] : []
   }
 
-  protected buildSeparableAndSortableTag(fieldDef: SeparableFieldDefinition & SortableFieldDefinition): Array<string> {
-    return this.buildSeparableAndSortableField('TAG', fieldDef.separator, fieldDef.sortable);
+  protected buildSeparable(field: SeparableFieldDefinition) {
+    return ['SEPARATOR', field.separator || '|']
   }
 
-  protected buildSortableText(fieldDef: SortableFieldDefinition): Array<string> {
-    return this.buildSortableField('TEXT', fieldDef.sortable);
+  protected buildSortable(field: SortableFieldDefinition) {
+    return field.sortable ? ['SORTABLE'] : []
   }
 
-  protected buildGeo(): Array<string> {
-    return this.buildField('GEO');
+  protected buildNormalized(field: NormalizedFieldDefinition) {
+    return field.normalized ?? true ? [] : ['UNF']
   }
 
-  private buildField(type: 'TEXT' | 'NUMERIC' | 'TAG' | 'GEO'): Array<string> {
-    return [type];
-  }
-
-  private buildSeparableField(type: 'TAG', separator?: string): Array<string> {
-    return [type, 'SEPARATOR', separator ?? '|'];
-  }
-
-  private buildSortableField(type: 'TEXT' | 'NUMERIC' | 'TAG', sortable?: boolean): Array<string> {
-    return sortable ? [type, 'SORTABLE'] : [type];
-  }
-
-  private buildSeparableAndSortableField(type: 'TAG', separator?: string, sortable?: boolean): Array<string> {
-    const result = [type, 'SEPARATOR', separator ?? '|'];
-    if (sortable) result.push('SORTABLE');
-    return result;
+  protected buildWeight(field: WeightFieldDefinition) {
+    return field.weight ? ['WEIGHT', field.weight.toString()] : []
   }
 }

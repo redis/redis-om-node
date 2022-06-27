@@ -19,8 +19,8 @@ class EntityBooleanField extends EntityField {
     }
   }
 
-  protected valdiateValue(value: EntityValue) {
-    super.valdiateValue(value);
+  protected validateValue(value: EntityValue) {
+    super.validateValue(value);
     if (value !== null && !this.isBoolean(value))
       throw Error(`Expected value with type of 'boolean' but received '${value}'.`);
   }
