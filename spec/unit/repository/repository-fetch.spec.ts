@@ -100,8 +100,6 @@ describe("Repository", () => {
         expect(entity).toEqual(expect.objectContaining({ entityId, ...data.expectedData })));
     });
 
-    //#region fetchMany
-    // I just pasted the fetchMany tests in here
     const fullHashMock = { aString: A_STRING, aNumber: A_NUMBER_STRING, aBoolean: '0', someText: SOME_TEXT, aPoint: A_POINT_STRING, aDate: A_DATE_EPOCH.toString(), someStrings: SOME_STRINGS_JOINED };
     const partialHashMock = { aString: A_STRING, aNumber: A_NUMBER_STRING };
     const emptyHashMock = {}
@@ -163,6 +161,5 @@ describe("Repository", () => {
           expect.objectContaining({ entityId: 'baz', ...expectedEmpty })
         ])));
     });
-    //#endregion fetchMany
   });
 });
