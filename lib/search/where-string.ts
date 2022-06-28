@@ -1,9 +1,9 @@
-import Entity from "../entity/entity";
+import { Entity } from "../entity/entity";
 import { Search } from "./search";
-import WhereField from "./where-field";
-import RedisError from "../errors";
+import { WhereField } from "./where-field";
+import { RedisError } from "../errors";
 
-export default class WhereString<TEntity extends Entity> extends WhereField<TEntity> {
+export class WhereString<TEntity extends Entity> extends WhereField<TEntity> {
   private value!: string;
 
   eq(value: string | number | boolean): Search<TEntity> {

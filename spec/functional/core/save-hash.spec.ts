@@ -1,9 +1,9 @@
-import Client from '../../../lib/client';
-import Schema from '../../../lib/schema/schema';
-import Repository from '../../../lib/repository/repository';
+import { Client } from '$lib/client';
+import { Schema } from '$lib/schema/schema';
+import { Repository } from '$lib/repository';
 
-import { SampleHashEntity, createHashEntitySchema} from '../helpers/data-helper';
-import { fetchHashKeys, fetchHashFields, keyExists, flushAll } from '../helpers/redis-helper';
+import { SampleHashEntity, createHashEntitySchema } from '../helpers/data-helper';
+import { fetchHashKeys, fetchHashFields, keyExists, removeAll } from '../helpers/redis-helper';
 
 import {
   AN_ENTITY, A_PARTIAL_ENTITY, AN_EMPTY_ENTITY,
@@ -24,12 +24,16 @@ describe("save hash", () => {
     client = new Client();
     await client.open();
 
-    schema = createHashEntitySchema();
+    schema = createHashEntitySchema('save-hash');
     repository = client.fetchRepository<SampleHashEntity>(schema);
   });
-  
-  beforeEach(async () => await flushAll(client));
-  afterAll(async () => await client.close());
+
+  beforeEach(async () => await removeAll(client, 'save-hash:'));
+  afterAll(async () => {
+    await removeAll(client, 'save-hash:')
+    await repository.dropIndex()
+    await client.close()
+  });
 
   describe("when saving a fully populated entity to redis", () => {
     beforeEach(async () => {
@@ -50,7 +54,7 @@ describe("save hash", () => {
         someOtherStrings: AN_ENTITY.someOtherStrings
       });
       entityId = await repository.save(entity);
-      entityKey = `SampleHashEntity:${entityId}`;
+      entityKey = `save-hash:${entityId}`;
     });
 
     it("creates the expected fields in a hash", async () => {
@@ -104,7 +108,7 @@ describe("save hash", () => {
         someOtherStrings: A_PARTIAL_ENTITY.someOtherStrings
       });
       entityId = await repository.save(entity);
-      entityKey = `SampleHashEntity:${entityId}`;
+      entityKey = `save-hash:${entityId}`;
     });
 
     it("creates the expected fields in a hash", async () => {

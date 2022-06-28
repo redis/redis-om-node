@@ -2,20 +2,19 @@
   "compilerOptions": {
     "target": "ESNext",
     "module": "CommonJS",
-    "rootDir": "lib",
+    "rootDir": ".",
     "outDir": "./dist",
     "declaration": true,
     "strict": true,
     "esModuleInterop": true,
-    "importHelpers": true,
-    "forceConsistentCasingInFileNames": true
+    "forceConsistentCasingInFileNames": true,
+    "types": ["vitest/globals"],
+    "paths": {
+      "$lib/*": ["./lib/*"]
+    }
   },
-  "include": [
-    "lib/**/*.ts"
-  ],
   "exclude": [
     "node_modules",
-    "spec/**/*.spec.ts"
   ],
   "typedocOptions": {
     "entryPoints": [

@@ -1,9 +1,9 @@
 import { saveHash, saveJson } from './redis-helper';
 
-import Client, { SearchDataStructure } from "../../../lib/client";
-import Entity from "../../../lib/entity/entity";
-import EntityConstructor from '../../../lib/entity/entity-constructor';
-import Schema from '../../../lib/schema/schema';
+import { Client, SearchDataStructure } from "$lib/client";
+import { Entity } from "$lib/entity/entity";
+import { EntityConstructor } from '$lib/entity/entity-constructor';
+import { Schema } from '$lib/schema/schema';
 import { Point } from '../../../lib';
 
 import { SampleEntityData } from "../../helpers/example-data";
@@ -32,23 +32,15 @@ class SampleEntity extends Entity { }
 export class SampleHashEntity extends SampleEntity { }
 export class SampleJsonEntity extends SampleEntity { }
 
-export function createHashEntitySchema(): Schema<SampleHashEntity> {
-  return createSchemaOfType<SampleHashEntity>(SampleHashEntity, 'HASH');
+export function createHashEntitySchema(prefix: string): Schema<SampleHashEntity> {
+  return createSchemaOfType<SampleHashEntity>(SampleHashEntity, 'HASH', prefix);
 }
 
-export function createChangedHashEntitySchema(): Schema<SampleHashEntity> {
-  return createSchemaOfType<SampleHashEntity>(SampleHashEntity, 'HASH', 'sample-hash-entity');
+export function createJsonEntitySchema(prefix: string): Schema<SampleJsonEntity> {
+  return createSchemaOfType<SampleJsonEntity>(SampleJsonEntity, 'JSON', prefix);
 }
 
-export function createJsonEntitySchema(): Schema<SampleJsonEntity> {
-  return createSchemaOfType<SampleJsonEntity>(SampleJsonEntity, 'JSON');
-}
-
-export function createChangedJsonEntitySchema(): Schema<SampleJsonEntity> {
-  return createSchemaOfType<SampleJsonEntity>(SampleJsonEntity, 'JSON', 'sample-json-entity');
-}
-
-function createSchemaOfType<TEntity extends Entity>(ctor: EntityConstructor<TEntity>, dataStructure: SearchDataStructure, prefix?: string): Schema<TEntity> {
+function createSchemaOfType<TEntity extends Entity>(ctor: EntityConstructor<TEntity>, dataStructure: SearchDataStructure, prefix: string): Schema<TEntity> {
   return new Schema<TEntity>(
     ctor, {
     aString: { type: 'string' },

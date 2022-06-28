@@ -1,9 +1,9 @@
-import Client from '../../../lib/client';
-import Schema from '../../../lib/schema/schema';
-import Repository from '../../../lib/repository/repository';
+import { Client } from '$lib/client';
+import { Schema } from '$lib/schema/schema';
+import { Repository } from '$lib/repository';
 
-import { SampleHashEntity, createHashEntitySchema, loadTestHash } from '../helpers/data-helper';
-import { flushAll } from '../helpers/redis-helper';
+import { SampleHashEntity, loadTestHash, createHashEntitySchema } from '../helpers/data-helper';
+import { removeAll } from '../helpers/redis-helper';
 
 import { AN_ENTITY, ANOTHER_ENTITY, A_THIRD_ENTITY, AN_ESCAPED_ENTITY, A_POINT, A_DATE } from '../../helpers/example-data';
 
@@ -17,19 +17,23 @@ describe("search for hashes", () => {
   beforeAll(async () => {
     client = new Client();
     await client.open();
-    await flushAll(client);
-    await loadTestHash(client, 'SampleHashEntity:1', AN_ENTITY);
-    await loadTestHash(client, 'SampleHashEntity:2', ANOTHER_ENTITY);
-    await loadTestHash(client, 'SampleHashEntity:3', A_THIRD_ENTITY);
-    await loadTestHash(client, 'SampleHashEntity:4', AN_ESCAPED_ENTITY);
+    await removeAll(client, 'search-hash:');
+    await loadTestHash(client, 'search-hash:1', AN_ENTITY);
+    await loadTestHash(client, 'search-hash:2', ANOTHER_ENTITY);
+    await loadTestHash(client, 'search-hash:3', A_THIRD_ENTITY);
+    await loadTestHash(client, 'search-hash:4', AN_ESCAPED_ENTITY);
 
-    schema = createHashEntitySchema();
+    schema = createHashEntitySchema('search-hash');
     repository = client.fetchRepository<SampleHashEntity>(schema);
 
     await repository.createIndex();
   });
 
-  afterAll(async () => await client.close());
+  afterAll(async () => {
+    await removeAll(client, 'search-hash:');
+    await repository.dropIndex()
+    await client.close()
+  });
 
   it("performs a wildcard search", async () => {
     entities = await repository.search().returnAll();

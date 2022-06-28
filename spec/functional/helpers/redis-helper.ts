@@ -1,7 +1,10 @@
-import Client from "../../../lib/client";
+import { Client } from "$lib/client";
 
-export async function flushAll(client: Client) {
-  await client.execute(['FLUSHALL']);
+export async function removeAll(client: Client, prefix: string) {
+  const keys = (await client.execute(['KEYS', prefix + '*'])) as string[];
+  if (keys.length) {
+    await client.execute(['DEL',...keys]);
+  }
 }
 
 export async function saveHash(client: Client, key: string, fields: Array<string>) {

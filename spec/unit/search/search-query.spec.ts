@@ -1,7 +1,5 @@
-import { mocked } from 'jest-mock';
-
-import Client from "../../../lib/client";
-import { Search } from "../../../lib/search/search";
+import { Client } from "$lib/client";
+import { Search } from "$lib/search";
 
 import { simpleHashSchema, SimpleHashEntity, SimpleJsonEntity, simpleJsonSchema } from "../helpers/test-entity-and-schema";
 
@@ -9,8 +7,6 @@ import {
   A_STRING, ANOTHER_STRING, A_THIRD_STRING,
   A_NUMBER, ANOTHER_NUMBER, A_THIRD_NUMBER,
   A_DATE, A_DATE_EPOCH, A_POINT } from '../../helpers/example-data';
-
-jest.mock('../../../lib/client');
 
 
 const POINT_LONGITUDE = A_POINT.longitude;
@@ -41,14 +37,17 @@ describe("Search", () => {
 
     let client: Client;
 
-    beforeAll(() => client = new Client());
-    beforeEach(() => mocked(Client).mockReset());
+    beforeAll(() => {
+      client = new Client()
+    });
 
     describe("when querying against hashes", () => {
 
       let search: Search<SimpleHashEntity>;
 
-      beforeEach(() => search = new Search<SimpleHashEntity>(simpleHashSchema, client));
+      beforeEach(() => {
+        search = new Search<SimpleHashEntity>(simpleHashSchema, client)
+      });
 
       it("generates a query matching all items", () => {
         expect(search.query).toBe("*");
@@ -106,7 +105,7 @@ describe("Search", () => {
       it("generates a query using .and with a function", () => {
         let query = search
           .where('aString').eq(A_STRING)
-          .and(search => search 
+          .and(search => search
             .where('aString').eq(ANOTHER_STRING)
             .and('aNumber').equals(A_NUMBER)
             .or('aBoolean').true()).query;
@@ -162,9 +161,11 @@ describe("Search", () => {
     describe("when querying against JSON objects", () => {
 
       let search: Search<SimpleJsonEntity>;
-      
-      beforeEach(() => search = new Search<SimpleJsonEntity>(simpleJsonSchema, client));
-      
+
+      beforeEach(() => {
+        search = new Search<SimpleJsonEntity>(simpleJsonSchema, client)
+      });
+
       it("generates a query matching all items", () => {
         expect(search.query).toBe("*");
       });
@@ -221,7 +222,7 @@ describe("Search", () => {
       it("generates a query using .and with a function", () => {
         let query = search
           .where('aString').eq(A_STRING)
-          .and(search => search 
+          .and(search => search
             .where('aString').eq(ANOTHER_STRING)
             .and('aNumber').equals(A_NUMBER)
             .or('aBoolean').true()).query;

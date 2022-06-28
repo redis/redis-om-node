@@ -40,4 +40,4 @@ jobs:
         run: npm ci
 
       - name: Run all tests
-        run: npm run test-all
+        run: npm run test:coverage

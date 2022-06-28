@@ -1,8 +1,6 @@
-import { mocked } from 'jest-mock';
-
-import Client from "../../../lib/client";
-import { Search, RawSearch } from "../../../lib/search/search";
-import * as logger from '../../../lib/shims/logger';
+import '../helpers/mock-client'
+import { Client } from "$lib/client";
+import { Search, RawSearch } from "$lib/search";
 
 import {
   SimpleHashEntity, simpleHashSchema, simpleSortableHashSchema,
@@ -15,33 +13,30 @@ import {
 import { RedisError } from '../../../lib';
 
 
-const warnSpy = jest.spyOn(logger, 'warn').mockImplementation();
-const errorSpy = jest.spyOn(logger, 'error').mockImplementation();
-
-jest.mock('../../../lib/client');
+const warnSpy = vi.spyOn(global.console, 'warn').mockImplementation(() => {})
+const errorSpy = vi.spyOn(global.console, 'error').mockImplementation(() => {})
 
 type HashSearch = Search<SimpleHashEntity> | RawSearch<SimpleHashEntity>;
 type JsonSearch = Search<SimpleJsonEntity> | RawSearch<SimpleJsonEntity>;
 
 
 beforeEach(() => {
-  mocked(Client).mockReset();
-  mocked(Client.prototype.search).mockReset();
-  warnSpy.mockReset();
-  errorSpy.mockReset();
+  vi.mocked(client.search).mockReset();
 });
+
+const client = new Client()
 
 describe.each([
   ["FluentSearch",
-    new Search<SimpleHashEntity>(simpleHashSchema, new Client()),
-    new Search<SimpleHashEntity>(simpleSortableHashSchema, new Client()),
-    new Search<SimpleJsonEntity>(simpleJsonSchema, new Client()),
-    new Search<SimpleJsonEntity>(simpleSortableJsonSchema, new Client())],
+    new Search<SimpleHashEntity>(simpleHashSchema, client),
+    new Search<SimpleHashEntity>(simpleSortableHashSchema, client),
+    new Search<SimpleJsonEntity>(simpleJsonSchema, client),
+    new Search<SimpleJsonEntity>(simpleSortableJsonSchema,client)],
   ["RawSearch",
-    new RawSearch<SimpleHashEntity>(simpleHashSchema, new Client()),
-    new RawSearch<SimpleHashEntity>(simpleSortableHashSchema, new Client()),
-    new RawSearch<SimpleJsonEntity>(simpleJsonSchema, new Client()),
-    new RawSearch<SimpleJsonEntity>(simpleSortableJsonSchema, new Client())]
+    new RawSearch<SimpleHashEntity>(simpleHashSchema, client),
+    new RawSearch<SimpleHashEntity>(simpleSortableHashSchema, client),
+    new RawSearch<SimpleJsonEntity>(simpleJsonSchema, client),
+    new RawSearch<SimpleJsonEntity>(simpleSortableJsonSchema, client)]
 ])("%s", (_,
   hashSearch: HashSearch, sortableHashSearch: HashSearch,
   jsonSearch: JsonSearch, sortableJsonSearch: JsonSearch) => {
@@ -61,7 +56,7 @@ describe.each([
       });
 
       it("asks the client for the results with the expected sort options", () => {
-        expect(Client.prototype.search).toHaveBeenCalledWith({
+        expect(client.search).toHaveBeenCalledWith({
           indexName: expect.stringMatching('Simple(Hash|Json)Entity:index'),
           query: '*',
           limit: { offset: 0, count: 1 },
@@ -77,7 +72,7 @@ describe.each([
       });
 
       it("asks the client for the results with the expected sort options", () => {
-        expect(Client.prototype.search).toHaveBeenCalledWith({
+        expect(client.search).toHaveBeenCalledWith({
           indexName: expect.stringMatching('Simple(Hash|Json)Entity:index'),
           query: '*',
           limit: { offset: 0, count: 1 },
@@ -93,7 +88,7 @@ describe.each([
       });
 
       it("asks the client for the results with the expected sort options", () => {
-        expect(Client.prototype.search).toHaveBeenCalledWith({
+        expect(client.search).toHaveBeenCalledWith({
           indexName: expect.stringMatching('Simple(Hash|Json)Entity:index'),
           query: '*',
           limit: { offset: 0, count: 1 },
@@ -109,7 +104,7 @@ describe.each([
       });
 
       it("asks the client for the results with the expected sort options", () => {
-        expect(Client.prototype.search).toHaveBeenCalledWith({
+        expect(client.search).toHaveBeenCalledWith({
           indexName: expect.stringMatching('Simple(Hash|Json)Entity:index'),
           query: '*',
           limit: { offset: 0, count: 1 },
@@ -289,19 +284,20 @@ describe.each([
 
       if (expectedError) {
         it("logs and throws an error", () => {
-          expect(actualError.message).toBe(expectedError);
+          expect(actualError!.message).toBe(expectedError);
           expect(errorSpy).toHaveBeenCalledWith(expectedError);
         });
         return;
       }
 
       it("does not generate an error", () => {
+        if (actualError) console.log(actualError)
         expect(actualError).toBeUndefined();
         expect(errorSpy).not.toHaveBeenCalled();
       });
 
       it("asks the client for the results with the expected sort options", () => {
-        expect(Client.prototype.search).toHaveBeenCalledWith({
+        expect(client.search).toHaveBeenCalledWith({
           indexName: expect.stringMatching('Simple(Hash|Json)Entity:index'),
           query: '*',
           limit: { offset: 0, count: 1 },

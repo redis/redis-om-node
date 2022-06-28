@@ -1,6 +1,5 @@
-import { mocked } from 'jest-mock';
-
-import Client from "../../../lib/client";
+import { client } from '../helpers/mock-client'
+import { Client } from "$lib/client";
 import {
   A_NUMBER, ANOTHER_NUMBER, A_THIRD_NUMBER,
   A_NUMBER_STRING, ANOTHER_NUMBER_STRING, A_THIRD_NUMBER_STRING,
@@ -63,33 +62,33 @@ export const SIMPLE_ENTITY_5 = {
 }
 
 export function mockClientSearchToReturnNothing() {
-  mocked(Client.prototype.search).mockResolvedValue(['0']);
+  vi.mocked(client.search).mockResolvedValue(['0']);
 }
 
 export function mockClientSearchToReturnCountOf(count: number) {
-  mocked(Client.prototype.search).mockResolvedValue([count.toString()]);
+  vi.mocked(client.search).mockResolvedValue([count.toString()]);
 }
 
 export function mockClientSearchToReturnSingleKey() {
-  mocked(Client.prototype.search)
+  vi.mocked(client.search)
     .mockResolvedValueOnce([ '1', 'SimpleHashEntity:1' ])
     .mockResolvedValue(['1']);
 }
 
 export function mockClientSearchToReturnSingleHash() {
-  mocked(Client.prototype.search)
+  vi.mocked(client.search)
     .mockResolvedValueOnce([ '1', 'SimpleHashEntity:1', HASH_DATA_1 ])
     .mockResolvedValue(['1']);
 }
 
 export function mockClientSearchToReturnSingleJsonString() {
-  mocked(Client.prototype.search)
+  vi.mocked(client.search)
     .mockResolvedValueOnce([ '1', 'SimpleJsonEntity:1', [ '$', JSON_DATA_1 ]])
     .mockResolvedValue(['1']);
 }
 
 export function mockClientSearchToReturnMultipleKeys() {
-  mocked(Client.prototype.search)
+  vi.mocked(client.search)
     .mockResolvedValueOnce([
       '3',
       'SimpleHashEntity:1',
@@ -100,7 +99,7 @@ export function mockClientSearchToReturnMultipleKeys() {
 }
 
 export function mockClientSearchToReturnMultipleHashes() {
-  mocked(Client.prototype.search)
+  vi.mocked(client.search)
     .mockResolvedValueOnce([
       '3',
       'SimpleHashEntity:1', HASH_DATA_1,
@@ -110,8 +109,19 @@ export function mockClientSearchToReturnMultipleHashes() {
     .mockResolvedValue(['3']);
 }
 
+export function mockClientSearchToReturnMultipleJsonStringsX(client: Client) {
+  vi.mocked(client.search)
+    .mockResolvedValueOnce([
+      '3',
+      'SimpleJsonEntity:1', [ '$', JSON_DATA_1 ],
+      'SimpleJsonEntity:2', [ '$', JSON_DATA_2 ],
+      'SimpleJsonEntity:3', [ '$', JSON_DATA_3 ]
+    ])
+    .mockResolvedValue(['3']);
+}
+
 export function mockClientSearchToReturnMultipleJsonStrings() {
-  mocked(Client.prototype.search)
+  vi.mocked(client.search)
     .mockResolvedValueOnce([
       '3',
       'SimpleJsonEntity:1', [ '$', JSON_DATA_1 ],
@@ -122,7 +132,7 @@ export function mockClientSearchToReturnMultipleJsonStrings() {
 }
 
 export function mockClientSearchToReturnPaginatedKeys() {
-  mocked(Client.prototype.search)
+  vi.mocked(client.search)
     .mockResolvedValueOnce([
       '5',
       'SimpleHashEntity:1',
@@ -141,7 +151,7 @@ export function mockClientSearchToReturnPaginatedKeys() {
 }
 
 export function mockClientSearchToReturnPaginatedHashes() {
-  mocked(Client.prototype.search)
+  vi.mocked(client.search)
     .mockResolvedValueOnce([
       '5',
       'SimpleHashEntity:1', HASH_DATA_1,
@@ -160,7 +170,7 @@ export function mockClientSearchToReturnPaginatedHashes() {
 }
 
 export function mockClientSearchToReturnPaginatedJsonStrings() {
-  mocked(Client.prototype.search)
+  vi.mocked(client.search)
     .mockResolvedValueOnce([
       '5',
       'SimpleJsonEntity:1', [ '$', JSON_DATA_1 ],

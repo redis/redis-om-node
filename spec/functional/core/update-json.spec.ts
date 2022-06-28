@@ -1,9 +1,9 @@
-import Client from '../../../lib/client';
-import Schema from '../../../lib/schema/schema';
-import Repository from '../../../lib/repository/repository';
+import { Client } from '$lib/client';
+import { Schema } from '$lib/schema/schema';
+import { Repository } from '$lib/repository';
 
 import { SampleJsonEntity, createJsonEntitySchema, loadTestJson } from '../helpers/data-helper';
-import { fetchJson, flushAll, keyExists } from '../helpers/redis-helper';
+import { fetchJson, removeAll, keyExists } from '../helpers/redis-helper';
 
 import {
   AN_ENTITY, ANOTHER_ENTITY,
@@ -23,16 +23,19 @@ describe("update JSON", () => {
     client = new Client();
     await client.open();
 
-    schema = createJsonEntitySchema();
+    schema = createJsonEntitySchema('update-json');
     repository = client.fetchRepository<SampleJsonEntity>(schema);
   });
 
   beforeEach(async () => {
-    await flushAll(client);
-    await loadTestJson(client, 'JsonEntity:full', AN_ENTITY);
+    await removeAll(client, 'update-json:');
+    await loadTestJson(client, 'update-json:full', AN_ENTITY);
   });
 
-  afterAll(async () => await client.close());
+  afterAll(async () => {
+    await removeAll(client, 'update-json:');
+    await client.close()
+  });
 
   describe("when updating a fully populated entity to redis", () => {
     beforeEach(async () => {
@@ -52,7 +55,7 @@ describe("update JSON", () => {
       entity.someStrings = ANOTHER_ENTITY.someStrings;
       entity.someOtherStrings = ANOTHER_ENTITY.someOtherStrings;
       entityId = await repository.save(entity);
-      entityKey = `SampleJsonEntity:full`;
+      entityKey = `update-json:full`;
     });
 
     it("returns the expected entity id", () => expect(entityId).toBe('full'));
@@ -95,7 +98,7 @@ describe("update JSON", () => {
       entity.someStrings = ANOTHER_ENTITY.someStrings;
       entity.someOtherStrings = null;
       entityId = await repository.save(entity);
-      entityKey = `SampleJsonEntity:full`;
+      entityKey = `update-json:full`;
     });
 
     it("returns the expected entity id", () => expect(entityId).toBe('full'));
@@ -138,7 +141,7 @@ describe("update JSON", () => {
       entity.someStrings = null;
       entity.someOtherStrings = null;
       entityId = await repository.save(entity);
-      entityKey = `SampleJsonEntity:full`;
+      entityKey = `update-json:full`;
     });
 
     it("returns the expected entity id", () => expect(entityId).toBe('full'));

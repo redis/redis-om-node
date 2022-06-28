@@ -1,8 +1,8 @@
-import EntityField from "./entity-field";
-import EntityValue from "../entity-value";
+import { EntityField } from "./entity-field";
+import { EntityValue } from "../entity-value";
 import { RedisHashData, RedisJsonData } from "../../client";
 
-class EntityDateField extends EntityField {
+export class EntityDateField extends EntityField {
   toRedisJson(): RedisJsonData {
     const data: RedisJsonData = {};
     if (this.value !== null) data[this.name] = this.valueAsNumber;
@@ -60,5 +60,3 @@ class EntityDateField extends EntityField {
     return (this.value as Date).getTime() / 1000;
   }
 }
-
-export default EntityDateField;

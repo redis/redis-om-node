@@ -1,6 +1,6 @@
-import Entity from "../entity/entity";
+import { Entity } from "../entity/entity";
 import { Search } from "./search";
-import WhereField from "./where-field";
+import { WhereField } from "./where-field";
 
 export abstract class WhereBoolean<TEntity extends Entity> extends WhereField<TEntity> {
   protected value!: boolean;
