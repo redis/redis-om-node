@@ -49,7 +49,7 @@ describe("fetch JSON", () => {
   });
 
   it("fetches all the entities from Redis", async () => {
-    let entities = await repository.fetchMany('full', 'partial', 'empty');
+    let entities = await repository.fetch('full', 'partial', 'empty');
     expect(entities).toEqual(expect.arrayContaining([
       expect.objectContaining({ entityId: 'full', ...AN_ENTITY }),
       expect.objectContaining({ entityId: 'partial', ...A_PARTIAL_ENTITY }),
