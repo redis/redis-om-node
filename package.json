@@ -22,10 +22,14 @@
     "test:functional": "vitest --dir ./spec/functional"
   },
   "tsup": {
-    "entry": ["lib/index.ts"],
+    "entry": [
+      "lib/index.ts"
+    ],
     "clean": true,
     "dts": true,
-    "noExternal": ["ulid"]
+    "noExternal": [
+      "ulid"
+    ]
   },
   "repository": "github:redis/redis-om-node",
   "homepage": "https://github.com/redis/redis-om-node#readme",
@@ -52,7 +56,6 @@
   },
   "dependencies": {
     "redis": "^4.0.4",
-    "tslib": "^2.4.0",
     "ulid": "^2.3.0"
   }
 }
