@@ -1,5 +1,5 @@
-import Client from "../../../lib/client";
-import { RawSearch } from "../../../lib/search/search";
+import { Client } from "$lib/client";
+import { RawSearch } from "$lib/search";
 
 import { simpleHashSchema, SimpleHashEntity } from "../helpers/test-entity-and-schema";
 

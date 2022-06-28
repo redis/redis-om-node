@@ -1,12 +1,12 @@
-import DataStructure from "./data-structure";
-import IdStrategy from "./id-strategy";
-import StopWordOptions from "./stop-word-options";
+import { DataStructure } from "./data-structure";
+import { IdStrategy } from "./id-strategy";
+import { StopWordOptions } from "./stop-word-options";
 
 
 /**
  * Configuration options for a {@link Schema}.
  */
-type SchemaOptions = {
+export type SchemaOptions = {
 
   /**
    * The string that comes before the ID when creating Redis keys for
@@ -60,5 +60,3 @@ type SchemaOptions = {
    */
   indexedDefault?: boolean
 }
-
-export default SchemaOptions;

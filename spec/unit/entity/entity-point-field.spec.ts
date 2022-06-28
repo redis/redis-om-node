@@ -1,5 +1,5 @@
 import { FieldDefinition } from "../../../lib";
-import EntityPointField from "../../../lib/entity/fields/entity-point-field";
+import { EntityPointField } from "$lib/entity/fields";
 import { AN_INVALID_POINT, AN_INVALID_POINT_STRING, A_DATE, A_NUMBER, A_POINT, A_POINT_STRING, A_STRING, SOME_STRINGS } from "../../helpers/example-data";
 
 const FIELD_NAME = 'foo';

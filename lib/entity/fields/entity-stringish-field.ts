@@ -1,7 +1,7 @@
-import EntityField from "./entity-field";
-import EntityValue from "../entity-value";
+import { EntityField } from "./entity-field";
+import { EntityValue } from "../entity-value";
 
-class EntityStringishField extends EntityField {
+export class EntityStringishField extends EntityField {
   protected convertValue(value: EntityValue): EntityValue {
     if (value !== null && this.isStringable(value)) {
       return value.toString()
@@ -14,5 +14,3 @@ class EntityStringishField extends EntityField {
     return this.isString(value) || this.isNumber(value) || this.isBoolean(value);
   }
 }
-
-export default EntityStringishField;

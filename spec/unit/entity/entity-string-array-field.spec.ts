@@ -1,5 +1,5 @@
 import { FieldDefinition } from "../../../lib";
-import EntityStringArrayField from "../../../lib/entity/fields/entity-string-array-field";
+import { EntityStringArrayField } from "$lib/entity/fields";
 import { A_DATE, A_NUMBER, A_POINT, A_STRING, SOME_STRINGS, SOME_STRINGS_JOINED } from "../../helpers/example-data";
 
 const SOME_STRINGABLES = [42, true, 23, false];

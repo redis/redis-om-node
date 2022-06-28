@@ -1,6 +1,6 @@
 import { RedisHashData, RedisJsonData } from "../client";
-import Entity from "../entity/entity";
-import Schema from "../schema/schema";
+import { Entity } from "../entity/entity";
+import { Schema } from "../schema/schema";
 
 export abstract class SearchResultsConverter<TEntity extends Entity> {
 

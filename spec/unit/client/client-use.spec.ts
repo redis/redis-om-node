@@ -1,5 +1,5 @@
 import { redis, createClient } from '../helpers/mock-redis'
-import Client from '../../../lib/client';
+import { Client } from '$lib/client';
 
 const BOGUS_CONNECTION = { THIS_IS_NOT: 'a real connection' };
 

@@ -1,18 +1,13 @@
 import { createHash } from 'crypto';
 import { ulid } from 'ulid'
 
-import Entity from "../entity/entity";
-import EntityConstructor from "../entity/entity-constructor";
+import { Entity } from "../entity/entity";
+import { EntityConstructor } from "../entity/entity-constructor";
 
-import IdStrategy from './options/id-strategy';
-import DataStructure from './options/data-structure';
-import StopWordOptions from './options/stop-word-options';
-import SchemaOptions from './options/schema-options';
+import { IdStrategy, DataStructure, StopWordOptions, SchemaOptions } from './options';
 
-import SchemaDefinition from './definition/schema-definition';
-import FieldDefinition from './definition/field-definition';
-import JsonSchemaBuilder from './builders/json-schema-builder';
-import HashSchemaBuilder from './builders/hash-schema-builder';
+import { SchemaDefinition, FieldDefinition } from './definition';
+import { JsonSchemaBuilder, HashSchemaBuilder } from './builders';
 
 /**
  * Defines a schema that determines how an {@link Entity} is mapped to Redis
@@ -38,7 +33,7 @@ import HashSchemaBuilder from './builders/hash-schema-builder';
  *
  * @template TEntity The {@link Entity} this Schema defines.
  */
-export default class Schema<TEntity extends Entity> {
+export class Schema<TEntity extends Entity> {
   /**
    * The provided {@link EntityConstructor}.
    * @internal

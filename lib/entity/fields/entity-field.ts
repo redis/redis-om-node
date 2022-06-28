@@ -1,8 +1,8 @@
 import { RedisHashData, RedisJsonData } from "../../client";
-import FieldDefinition from "../../schema/definition/field-definition";
-import EntityValue from "../entity-value";
+import { FieldDefinition } from "../../schema/definition";
+import { EntityValue } from "../entity-value";
 
-abstract class EntityField {
+export abstract class EntityField {
 
   private _name: string;
   private _value: EntityValue = null;
@@ -68,5 +68,3 @@ abstract class EntityField {
     return typeof value === 'boolean';
   }
 }
-
-export default EntityField;

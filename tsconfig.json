@@ -9,7 +9,10 @@
     "esModuleInterop": true,
     "importHelpers": true,
     "forceConsistentCasingInFileNames": true,
-    "types": ["vitest/globals"]
+    "types": ["vitest/globals"],
+    "paths": {
+      "$lib/*": ["./lib/*"]
+    }
   },
   "exclude": [
     "node_modules",

@@ -1,7 +1,7 @@
-import Point from "../entity/point";
-import Entity from "../entity/entity";
+import { Point } from "../entity/point";
+import { Entity } from "../entity/entity";
 import { Search } from "./search";
-import WhereField from "./where-field";
+import { WhereField } from "./where-field";
 
 type Units = 'm' | 'km' | 'ft' | 'mi';
 
@@ -174,7 +174,7 @@ export class Circle {
   }
 }
 
-export default class WherePoint<TEntity extends Entity> extends WhereField<TEntity> {
+export class WherePoint<TEntity extends Entity> extends WhereField<TEntity> {
   private circle: Circle = new Circle();
 
   inRadius(circleFn: CircleFunction): Search<TEntity> {

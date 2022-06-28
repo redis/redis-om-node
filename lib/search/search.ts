@@ -1,23 +1,23 @@
-import Schema from "../schema/schema";
-import Client, { LimitOptions, SearchOptions } from "../client";
-import Entity from '../entity/entity';
+import { Schema } from "../schema/schema";
+import { Client, LimitOptions, SearchOptions } from "../client";
+import { Entity } from '../entity/entity';
 
-import Where from './where';
-import WhereAnd from './where-and';
-import WhereOr from './where-or';
-import WhereField from './where-field';
-import WhereStringArray from './where-string-array';
+import { Where } from './where';
+import { WhereAnd } from './where-and';
+import { WhereOr } from './where-or';
+import { WhereField } from './where-field';
+import { WhereStringArray } from './where-string-array';
 import { WhereHashBoolean, WhereJsonBoolean } from './where-boolean';
-import WhereNumber from './where-number';
-import WherePoint from './where-point';
-import WhereString from './where-string';
-import WhereText from './where-text';
+import { WhereNumber } from './where-number';
+import { WherePoint } from './where-point';
+import { WhereString } from './where-string';
+import { WhereText } from './where-text';
 
 import { HashSearchResultsConverter, JsonSearchResultsConverter } from "./results-converter";
-import { RedisError } from "..";
+import { RedisError } from "../errors";
 import { SortOptions } from "../client";
-import WhereDate from "./where-date";
-import SortableFieldDefinition from "../schema/definition/sortable-field-definition";
+import { WhereDate } from "./where-date";
+import { SortableFieldDefinition } from "../schema/definition";
 
 /**
  * A function that takes a {@link Search} and returns a {@link Search}. Used in nested queries.

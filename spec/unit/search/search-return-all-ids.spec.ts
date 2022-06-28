@@ -1,6 +1,6 @@
 import { client } from '../helpers/mock-client'
-import Client from "../../../lib/client";
-import { Search, RawSearch } from "../../../lib/search/search";
+import { Client } from "$lib/client";
+import { Search, RawSearch } from "$lib/search";
 
 import { simpleHashSchema, SimpleHashEntity } from "../helpers/test-entity-and-schema";
 import { mockClientSearchToReturnNothing, mockClientSearchToReturnSingleKey, mockClientSearchToReturnMultipleKeys,

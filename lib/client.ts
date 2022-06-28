@@ -1,9 +1,9 @@
 import { createClient } from 'redis';
-import Repository from './repository/repository';
-import { JsonRepository, HashRepository } from './repository/repository';
-import Entity from './entity/entity';
-import Schema from './schema/schema';
-import RedisError from './errors';
+import { Repository } from './repository';
+import { JsonRepository, HashRepository } from './repository';
+import { Entity } from './entity/entity';
+import { Schema } from './schema/schema';
+import { RedisError } from './errors';
 
 export type RedisConnection = ReturnType<typeof createClient>;
 
@@ -65,7 +65,7 @@ export type SearchOptions = {
  * A Client is primarily used by a {@link Repository} which requires a client in
  * its constructor.
  */
-export default class Client {
+export class Client {
   /** @internal */
   protected redis?: RedisConnection
 

@@ -1,58 +1,18 @@
-import Client, { SearchDataStructure, RedisHashData, RedisJsonData } from "./client";
+export { Client, SearchDataStructure, RedisHashData, RedisJsonData } from "./client";
 
-import Point from "./entity/point";
-import Entity from "./entity/entity";
-import EntityData from "./entity/entity-data";
-import EntityValue from "./entity/entity-value";
-import EntityConstructor from "./entity/entity-constructor";
+export { Point } from "./entity/point";
+export { Entity } from "./entity/entity";
+export { EntityData } from "./entity/entity-data";
+export { EntityValue } from "./entity/entity-value";
+export { EntityConstructor } from "./entity/entity-constructor";
 
-import Schema from "./schema/schema";
-import SchemaDefinition from "./schema/definition/schema-definition";
-import FieldDefinition from "./schema/definition/field-definition";
-import BaseFieldDefinition from "./schema/definition/base-field-definition";
-import SchemaFieldType from "./schema/definition/schema-field-type";
-import SortableFieldDefinition from "./schema/definition/sortable-field-definition";
-import SeparableFieldDefinition from "./schema/definition/separable-field-definition";
-import StringFieldDefinition from "./schema/definition/string-field-definition";
-import BooleanFieldDefinition from "./schema/definition/boolean-field-definition";
-import CaseSensitiveFieldDefinition from "./schema/definition/casesensitive-field-definition";
-import NormalizedFieldDefinition from "./schema/definition/normalized-field-definition";
-import PhoneticFieldDefinition from "./schema/definition/phonetic-field-definition";
-import StemmingFieldDefinition from "./schema/definition/stemming-field-definition";
-import WeightFieldDefinition from "./schema/definition/weight-field-definition";
-import NumberFieldDefinition from "./schema/definition/number-field-definition";
-import TextFieldDefinition from "./schema/definition/text-field-definition";
-import DateFieldDefinition from "./schema/definition/date-field-definition";
-import PointFieldDefinition from "./schema/definition/point-field-definition";
-import StringArrayFieldDefinition from "./schema/definition/string-array-field-definition";
+export { Schema } from "./schema/schema";
+export * from "./schema/definition";
 
-import SchemaOptions from "./schema/options/schema-options";
-import DataStructure from "./schema/options/data-structure";
-import IdStrategy from "./schema/options/id-strategy";
-import StopWordOptions from "./schema/options/stop-word-options";
+export { SchemaOptions, DataStructure, IdStrategy, StopWordOptions } from "./schema/options";
 
-import Repository from "./repository/repository";
+export { Repository } from "./repository";
 
-import RedisError from "./errors";
-import { AbstractSearch, Search, RawSearch, SubSearchFunction } from "./search/search";
-import Where from "./search/where";
-import WhereField from "./search/where-field";
-import { Circle, CircleFunction } from "./search/where-point";
-
-
-export {
-  Client, SearchDataStructure, RedisHashData, RedisJsonData,
-  Entity, EntityData, EntityValue, EntityConstructor,
-  RedisError, Repository,
-  Schema, SchemaDefinition, Point,
-  FieldDefinition,
-  SchemaOptions, DataStructure, IdStrategy, StopWordOptions,
-  BaseFieldDefinition, SortableFieldDefinition, SeparableFieldDefinition,
-  BooleanFieldDefinition, DateFieldDefinition, NumberFieldDefinition,
-  PointFieldDefinition, StringFieldDefinition, StringArrayFieldDefinition,
-  TextFieldDefinition, CaseSensitiveFieldDefinition, NormalizedFieldDefinition,
-  StemmingFieldDefinition, PhoneticFieldDefinition, WeightFieldDefinition,
-  SchemaFieldType,
-  AbstractSearch, Search, RawSearch, SubSearchFunction,
-  Where, WhereField, Circle, CircleFunction
-};
+export { RedisError } from "./errors";
+export { AbstractSearch, Search, RawSearch, SubSearchFunction, Where, WhereField} from "./search";
+export { Circle, CircleFunction } from "./search/where-point";

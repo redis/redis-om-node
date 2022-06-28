@@ -1,6 +1,5 @@
-import Client from "../../../lib/client";
-import { Search } from "../../../lib/search/search";
-import WhereField from '../../../lib/search/where-field';
+import { Client } from "$lib/client";
+import { Search, WhereField } from "$lib/search";
 
 import { A_DATE, A_DATE_EPOCH, ANOTHER_DATE, ANOTHER_DATE_EPOCH, A_DATE_ISO } from '../../helpers/example-data';
 import { simpleSchema, SimpleEntity } from "../helpers/test-entity-and-schema";
