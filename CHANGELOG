@@ -7,7 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## 0.4.0 - 2022-6-27
 ### Changed
 - Removed `<repository>.fetchMany`
-- `<repository>.fetch` now accepts multiple inputs and will behave like the removed `.fetchMany` (`<repository>.fetch(id1, id2, ...): Array<Entity>`)
+- `<repository>.fetch` now accepts an array input and will behave like the removed `.fetchMany` (`<repository>.fetch([id1, id2, ...]): Array<Entity>`)
 
 ## 0.3.5 - 2022-06-21
 ### Added

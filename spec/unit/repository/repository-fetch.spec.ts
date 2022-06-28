@@ -124,7 +124,7 @@ describe("Repository", () => {
           .mockResolvedValueOnce(fullHashMock)
           .mockResolvedValueOnce(partialHashMock)
           .mockResolvedValue(emptyHashMock);
-        entities = await repository.fetch('foo', 'bar', 'baz');
+        entities = await repository.fetch(['foo', 'bar', 'baz']);
       });
 
       it("returns the expected number of entities", () =>
@@ -150,7 +150,7 @@ describe("Repository", () => {
           .mockResolvedValueOnce(partialJsonMock)
           .mockResolvedValue(emptyJsonMock)
 
-        entities = await repository.fetch('foo', 'bar', 'baz');
+        entities = await repository.fetch(['foo', 'bar', 'baz']);
       });
 
       it("returns the expected entity", () =>
