@@ -149,9 +149,10 @@ export abstract class Repository<TEntity extends Entity> {
    * @param ids The IDs of the {@link Entity | Entities} you seek.
    * @returns The matching Entities.
    */
-  async fetch(...ids: string[]): Promise<TEntity[]>
+  async fetch(ids: string[]): Promise<TEntity[]>
 
-  async fetch(...id: string[]): Promise<TEntity | TEntity[]> {
+  async fetch(id: string | string[]): Promise<TEntity | TEntity[]> {
+    if (typeof id === "string") id = [id]
     const entities = await this.readEntities(id)
     return id.length > 1 ? entities : entities[0];
   }
