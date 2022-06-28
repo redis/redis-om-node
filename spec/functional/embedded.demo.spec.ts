@@ -1,9 +1,9 @@
 // import { createClient } from 'redis';
 
-// import Client from '../../lib/client';
-// import Schema from '../../lib/schema/schema';
-// import Entity from '../../lib/entity/entity';
-// import Repository from '../../lib/repository/repository';
+// import { Client } from '$lib/client';
+// import Schema from '$lib/schema/schema';
+// import Entity from '$lib/entity/entity';
+// import Repository from '$lib/repository/repository';
 
 // import { Point } from '../../lib';
 // import { Address } from 'cluster';
@@ -56,8 +56,6 @@ describe("Embedded Demo", () => {
 
   //     // get a client use an existing Redis connection
   //     let client = await new Client().use(redis);
-  //     await client.execute(['FLUSHALL']);
-  //     await client.execute(['PING']);
 
   //     let addressSchema = new EmbeddedSchema(Address, {
   //       street: { type: 'string' },

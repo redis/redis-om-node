@@ -1,5 +1,5 @@
 /** Mixin for adding phonetic matching for TEXT fields in RediSearch. */
-interface PhoneticFieldDefinition {
+export interface PhoneticFieldDefinition {
   /**
    * Enables setting the phonetic matcher to use, supported matchers are:
    * dm:en - Double Metaphone for English
@@ -9,5 +9,3 @@ interface PhoneticFieldDefinition {
    */
    matcher?: 'dm:en' | 'dm:fr' | 'dm:pt' | 'dm:es';
 }
-
-export default PhoneticFieldDefinition;

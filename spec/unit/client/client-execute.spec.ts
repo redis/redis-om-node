@@ -1,18 +1,14 @@
-import { mocked } from 'jest-mock';
+import { redis } from '../helpers/mock-redis'
+import { Client } from '$lib/client';
 
-import RedisShim from '../../../lib/shims/redis-shim';
-import Client from '../../../lib/client';
-
-jest.mock('../../../lib/shims/redis-shim');
-
-
-beforeEach(() => mocked(RedisShim).mockReset());
 
 describe("Client", () => {
 
   let client: Client;
 
-  beforeEach(async () => client = new Client());
+  beforeEach(() => {
+    client = new Client()
+  });
 
   describe("#execute", () => {
     describe("when called on an open client", () => {
@@ -20,23 +16,23 @@ describe("Client", () => {
         await client.open();
       });
 
-      it("passes the command to the shim", async () => {
+      it("passes the command to redis", async () => {
         await client.execute(['foo', 'bar', 'baz']);
-        expect(RedisShim.prototype.execute).toHaveBeenCalledWith(['foo', 'bar', 'baz']);
+        expect(redis.sendCommand).toHaveBeenCalledWith(['foo', 'bar', 'baz']);
       });
 
-      it("transforms numbers to strings before giving them to the shim", async () => {
+      it("transforms numbers to strings before giving them to redis", async () => {
         await client.execute([1, 2, 3]);
-        expect(RedisShim.prototype.execute).toHaveBeenCalledWith(['1', '2', '3']);
+        expect(redis.sendCommand).toHaveBeenCalledWith(['1', '2', '3']);
       });
 
-      it("transforms booleans to strings before giving them to the shim", async () => {
+      it("transforms booleans to strings before giving them to redis", async () => {
         await client.execute([true, false, true]);
-        expect(RedisShim.prototype.execute).toHaveBeenCalledWith(['1', '0', '1']);
+        expect(redis.sendCommand).toHaveBeenCalledWith(['1', '0', '1']);
       });
 
-      it("returns what the shim returns", async () => {
-        mocked(RedisShim.prototype.execute).mockResolvedValue('foo');
+      it("returns what redis returns", async () => {
+        redis.sendCommand.mockReturnValue('foo')
         let result = <string>await client.execute(['foo', 'bar', 'baz']);
         expect(result).toBe('foo');
       });

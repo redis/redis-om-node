@@ -1,18 +1,14 @@
-import { mocked } from 'jest-mock';
+import { redis } from '../helpers/mock-redis'
+import { Client } from '$lib/client';
 
-import RedisShim from '../../../lib/shims/redis-shim';
-import Client from '../../../lib/client';
-
-jest.mock('../../../lib/shims/redis-shim');
-
-
-beforeEach(() => mocked(RedisShim).mockReset());
 
 describe("Client", () => {
 
   let client: Client;
 
-  beforeEach(async () => client = new Client());
+  beforeEach(() => {
+    client = new Client()
+  });
 
   describe("#dropIndex", () => {
     describe("when called on an open client", () => {
@@ -20,9 +16,9 @@ describe("Client", () => {
         await client.open();
       });
 
-      it("passes the command to the shim", async () => {
+      it("passes the command to redis", async () => {
         await client.dropIndex('index');
-        expect(RedisShim.prototype.execute).toHaveBeenCalledWith(['FT.DROPINDEX', 'index']);
+        expect(redis.sendCommand).toHaveBeenCalledWith(['FT.DROPINDEX', 'index']);
       });
     });
 

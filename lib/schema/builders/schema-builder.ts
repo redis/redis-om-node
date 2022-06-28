@@ -1,15 +1,17 @@
-import Entity from "../../entity/entity";
-import BaseFieldDefinition from "../definition/base-field-definition";
-import CaseSensitiveFieldDefinition from "../definition/casesensitive-field-definition";
-import StemmingFieldDefinition from "../definition/stemming-field-definition";
-import PhoneticFieldDefinition from "../definition/phonetic-field-definition";
-import SeparableFieldDefinition from "../definition/separable-field-definition";
-import SortableFieldDefinition from "../definition/sortable-field-definition";
-import NormalizedFieldDefinition from "../definition/normalized-field-definition";
-import WeightFieldDefinition from "../definition/weight-field-definition";
-import Schema from "../schema";
+import { Entity } from "../../entity/entity";
+import {
+  BaseFieldDefinition,
+  CaseSensitiveFieldDefinition,
+  StemmingFieldDefinition,
+  PhoneticFieldDefinition,
+  SeparableFieldDefinition,
+  SortableFieldDefinition,
+  NormalizedFieldDefinition,
+  WeightFieldDefinition,
+} from "../definition";
+import { Schema } from "../schema";
 
-export default abstract class SchemaBuilder<TEntity extends Entity> {
+export abstract class SchemaBuilder<TEntity extends Entity> {
 
   protected schema: Schema<TEntity>;
 

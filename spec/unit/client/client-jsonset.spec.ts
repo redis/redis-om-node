@@ -1,18 +1,14 @@
-import { mocked } from 'jest-mock';
+import { redis } from '../helpers/mock-redis'
+import { Client } from '$lib/client';
 
-import RedisShim from '../../../lib/shims/redis-shim';
-import Client from '../../../lib/client';
-
-jest.mock('../../../lib/shims/redis-shim');
-
-
-beforeEach(() => mocked(RedisShim).mockReset());
 
 describe("Client", () => {
 
   let client: Client;
 
-  beforeEach(async () => client = new Client());
+  beforeEach(() => {
+    client = new Client()
+  });
 
   describe("#jsonset", () => {
     describe("when called on an open client", () => {
@@ -21,8 +17,8 @@ describe("Client", () => {
         await client.jsonset('foo', { foo: 'bar', bar: 42, baz: true, qux: null });
       });
 
-      it("passes the command to the shim", async () => {
-        expect(RedisShim.prototype.execute).toHaveBeenCalledWith([
+      it("passes the command to redis", async () => {
+        expect(redis.sendCommand).toHaveBeenCalledWith([
           'JSON.SET', 'foo', '.', '{"foo":"bar","bar":42,"baz":true,"qux":null}']);
       });
     });

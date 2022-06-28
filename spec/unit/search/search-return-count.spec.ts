@@ -1,23 +1,15 @@
-import { mocked } from 'jest-mock';
-
-import Client from "../../../lib/client";
-import { Search, RawSearch } from "../../../lib/search/search";
+import { client } from '../helpers/mock-client'
+import { Client } from "$lib/client";
+import { Search, RawSearch } from "$lib/search";
 
 import { simpleHashSchema, SimpleHashEntity, SimpleJsonEntity, simpleJsonSchema } from "../helpers/test-entity-and-schema";
 import { mockClientSearchToReturnCountOf } from "../helpers/search-helpers";
-
-jest.mock('../../../lib/client');
 
 
 type HashSearch = Search<SimpleHashEntity> | RawSearch<SimpleHashEntity>;
 type JsonSearch = Search<SimpleJsonEntity> | RawSearch<SimpleJsonEntity>;
 
 describe("Search", () => {
-
-  beforeEach(() => {
-    mocked(Client).mockReset();
-    mocked(Client.prototype.search).mockReset();
-  });
 
   describe.each([
     [ "FluentSearch",
@@ -41,8 +33,8 @@ describe("Search", () => {
         });
 
         it("askes the client for results", () => {
-          expect(Client.prototype.search).toHaveBeenCalledTimes(1);
-          expect(Client.prototype.search).toHaveBeenCalledWith({
+          expect(client.search).toHaveBeenCalledTimes(1);
+          expect(client.search).toHaveBeenCalledWith({
             indexName: 'SimpleHashEntity:index', query, limit: { offset, count }, keysOnly: false });
         });
 
@@ -56,8 +48,8 @@ describe("Search", () => {
         });
 
         it("askes the client for results", () => {
-          expect(Client.prototype.search).toHaveBeenCalledTimes(1);
-          expect(Client.prototype.search).toHaveBeenCalledWith({
+          expect(client.search).toHaveBeenCalledTimes(1);
+          expect(client.search).toHaveBeenCalledWith({
             indexName: 'SimpleJsonEntity:index', query, limit: { offset, count }, keysOnly: false });
         });
 

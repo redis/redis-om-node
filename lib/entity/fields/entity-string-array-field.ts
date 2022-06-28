@@ -1,9 +1,9 @@
-import EntityField from "./entity-field";
-import EntityValue from "../entity-value";
+import { EntityField } from "./entity-field";
+import { EntityValue } from "../entity-value";
 import { RedisHashData } from "../../client";
-import StringArrayFieldDefinition from "../../schema/definition/string-array-field-definition";
+import { StringArrayFieldDefinition } from "../../schema/definition";
 
-class EntityStringArrayField extends EntityField {
+export class EntityStringArrayField extends EntityField {
   toRedisHash(): RedisHashData {
     const data: RedisHashData = {};
     if (this.value !== null) data[this.name] = (this.value as Array<string>).join(this.separator);
@@ -36,5 +36,3 @@ class EntityStringArrayField extends EntityField {
     return Array.isArray(value);
   }
 }
-
-export default EntityStringArrayField;

@@ -1,11 +1,11 @@
-import Schema from "../schema/schema"
-import Client from "../client";
-import Entity from "../entity/entity";
+import { Schema } from "../schema/schema"
+import { Client } from "../client";
+import { Entity } from "../entity/entity";
 
 import { Search, RawSearch } from '../search/search';
 
 import { CreateIndexOptions } from "../client";
-import EntityData from "../entity/entity-data";
+import { EntityData } from "../entity/entity-data";
 
 /**
  * A repository is the main interaction point for reading, writing, and
@@ -45,7 +45,7 @@ import EntityData from "../entity/entity-data";
  *
  * @template TEntity The type of {@link Entity} that this repository manages.
  */
-export default abstract class Repository<TEntity extends Entity> {
+export abstract class Repository<TEntity extends Entity> {
   protected client: Client;
   protected schema: Schema<TEntity>;
 

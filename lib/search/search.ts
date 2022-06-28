@@ -1,24 +1,23 @@
-import Schema from "../schema/schema";
-import Client, { LimitOptions, SearchOptions } from "../client";
-import Entity from '../entity/entity';
-import * as logger from '../shims/logger'
+import { Schema } from "../schema/schema";
+import { Client, LimitOptions, SearchOptions } from "../client";
+import { Entity } from '../entity/entity';
 
-import Where from './where';
-import WhereAnd from './where-and';
-import WhereOr from './where-or';
-import WhereField from './where-field';
-import WhereStringArray from './where-string-array';
+import { Where } from './where';
+import { WhereAnd } from './where-and';
+import { WhereOr } from './where-or';
+import { WhereField } from './where-field';
+import { WhereStringArray } from './where-string-array';
 import { WhereHashBoolean, WhereJsonBoolean } from './where-boolean';
-import WhereNumber from './where-number';
-import WherePoint from './where-point';
-import WhereString from './where-string';
-import WhereText from './where-text';
+import { WhereNumber } from './where-number';
+import { WherePoint } from './where-point';
+import { WhereString } from './where-string';
+import { WhereText } from './where-text';
 
 import { HashSearchResultsConverter, JsonSearchResultsConverter } from "./results-converter";
-import { RedisError } from "..";
+import { RedisError } from "../errors";
 import { SortOptions } from "../client";
-import WhereDate from "./where-date";
-import SortableFieldDefinition from "../schema/definition/sortable-field-definition";
+import { WhereDate } from "./where-date";
+import { SortableFieldDefinition } from "../schema/definition";
 
 /**
  * A function that takes a {@link Search} and returns a {@link Search}. Used in nested queries.
@@ -97,7 +96,7 @@ export abstract class AbstractSearch<TEntity extends Entity> {
 
     if (fieldDef === undefined) {
       const message = `'sortBy' was called on field '${field}' which is not defined in the Schema.`;
-      logger.error(message);
+      console.error(message);
       throw new RedisError(message)
     }
 
@@ -110,15 +109,15 @@ export abstract class AbstractSearch<TEntity extends Entity> {
 
     if (UNSORTABLE.includes(type)) {
       const message = `'sortBy' was called on '${type}' field '${field}' which cannot be sorted.`;
-      logger.error(message);
+      console.error(message);
       throw new RedisError(message)
     }
 
     if (dataStructure === 'JSON' && JSON_SORTABLE.includes(type) && !markedSortable)
-      logger.warn(`'sortBy' was called on field '${field}' which is not marked as sortable in the Schema. This may result is slower searches. If possible, mark the field as sortable in the Schema.`);
+      console.warn(`'sortBy' was called on field '${field}' which is not marked as sortable in the Schema. This may result is slower searches. If possible, mark the field as sortable in the Schema.`);
 
     if (dataStructure === 'HASH' && HASH_SORTABLE.includes(type) && !markedSortable)
-      logger.warn(`'sortBy' was called on field '${field}' which is not marked as sortable in the Schema. This may result is slower searches. If possible, mark the field as sortable in the Schema.`);
+      console.warn(`'sortBy' was called on field '${field}' which is not marked as sortable in the Schema. This may result is slower searches. If possible, mark the field as sortable in the Schema.`);
 
     this.sort = { field, order };
     return this;

@@ -1,7 +1,7 @@
-import SchemaFieldType from "./schema-field-type";
+import { SchemaFieldType } from "./schema-field-type";
 
 /** Base interface for all fields. */
-interface BaseFieldDefinition {
+export interface BaseFieldDefinition {
   /** The type of the field (i.e. string, number, boolean, etc.) */
   type: SchemaFieldType;
 
@@ -17,5 +17,3 @@ interface BaseFieldDefinition {
    */
   indexed?: boolean;
 }
-
-export default BaseFieldDefinition;

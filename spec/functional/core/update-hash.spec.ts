@@ -1,9 +1,9 @@
-import Client from '../../../lib/client';
-import Schema from '../../../lib/schema/schema';
-import Repository from '../../../lib/repository/repository';
+import { Client } from '$lib/client';
+import { Schema } from '$lib/schema/schema';
+import { Repository } from '$lib/repository';
 
 import { SampleHashEntity, createHashEntitySchema, loadTestHash } from '../helpers/data-helper';
-import { fetchHashKeys, fetchHashFields, flushAll, keyExists } from '../helpers/redis-helper';
+import { fetchHashKeys, fetchHashFields, removeAll, keyExists } from '../helpers/redis-helper';
 
 import {
   AN_ENTITY, ANOTHER_ENTITY,
@@ -24,16 +24,19 @@ describe("update hash", () => {
     client = new Client();
     await client.open();
 
-    schema = createHashEntitySchema();
+    schema = createHashEntitySchema('update-hash');
     repository = client.fetchRepository<SampleHashEntity>(schema);
   });
-  
+
   beforeEach(async () => {
-    await flushAll(client);
-    await loadTestHash(client, 'SampleHashEntity:full', AN_ENTITY);
+    await removeAll(client, 'update-hash:');
+    await loadTestHash(client, 'update-hash:full', AN_ENTITY);
   });
 
-  afterAll(async () => await client.close());
+  afterAll(async () => {
+    await removeAll(client, 'update-hash:');
+    await client.close()
+  });
 
   describe("when updating a fully populated entity to redis", () => {
     beforeEach(async () => {
@@ -53,7 +56,7 @@ describe("update hash", () => {
       entity.someStrings = ANOTHER_ENTITY.someStrings;
       entity.someOtherStrings = ANOTHER_ENTITY.someOtherStrings;
       entityId = await repository.save(entity);
-      entityKey = `SampleHashEntity:full`;
+      entityKey = `update-hash:full`;
     });
 
     it("returns the expected entity id", () =>{
@@ -111,7 +114,7 @@ SOME_MORE_STRINGS_JOINED
       entity.someStrings = ANOTHER_ENTITY.someStrings;
       entity.someOtherStrings = null;
       entityId = await repository.save(entity);
-      entityKey = `SampleHashEntity:full`;
+      entityKey = `update-hash:full`;
     });
 
     it("returns the expected entity id", () =>{
@@ -160,7 +163,7 @@ SOME_MORE_STRINGS_JOINED
       entity.someStrings = null;
       entity.someOtherStrings = null;
       entityId = await repository.save(entity);
-      entityKey = `SampleHashEntity:full`;
+      entityKey = `update-hash:full`;
     });
 
     it("returns the expected entity id", () =>{

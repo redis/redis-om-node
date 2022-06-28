@@ -1,16 +1,15 @@
 import { createClient } from 'redis';
 
-import Client from '../../lib/client';
-import Schema from '../../lib/schema/schema';
-import Entity from '../../lib/entity/entity';
-import Repository from '../../lib/repository/repository';
+import { Client } from '$lib/client';
+import { Schema } from '$lib/schema/schema';
+import { Entity } from '$lib/entity/entity';
+import { Repository } from '$lib/repository';
 
 import { Point } from '../../lib';
 
 describe("Demo", () => {
 
   it("demos", async () => {
-
     // establish an existing connection to Redis
     let redis = createClient();
     redis.on('error', (err) => console.log('Redis Client Error', err));
@@ -43,8 +42,6 @@ describe("Demo", () => {
 
     // get a client use an existing Redis connection
     let client = await new Client().use(redis);
-    await client.execute(['FLUSHALL']);
-    await client.execute(['PING']);
 
     let schema = new Schema<BigfootSighting>(
       BigfootSighting, {
@@ -74,7 +71,7 @@ describe("Demo", () => {
     entity.title = "Bigfoot by the Walmart";
     entity.classification = ['Class A', 'Class B'];
     entity.location = { longitude: 12.34, latitude: 56.78 },
-      entity.highTemp = 53;
+    entity.highTemp = 53;
     entity.fullMoon = false;
 
     let entityId = await repository.save(entity);
@@ -136,7 +133,13 @@ describe("Demo", () => {
     // execute a raw search
     someEntities = repository.searchRaw('@fullMoon:{true} @location:[23.45 67.89 50 mi]').returnAll();
 
+    await repository.dropIndex();
+
+    for (const entity of allEntities) {
+      await repository.remove(entity.entityId)
+    }
+
     // close the client
-    client.close();
+    await client.close()
   });
 });

@@ -1,10 +1,10 @@
-import Entity from "../entity/entity";
+import { Entity } from "../entity/entity";
 import { Search } from "./search";
-import WhereField from "./where-field";
+import { WhereField } from "./where-field";
 
-import RedisError from "../errors";
+import { RedisError } from "../errors";
 
-export default class WhereText<TEntity extends Entity> extends WhereField<TEntity> {
+export class WhereText<TEntity extends Entity> extends WhereField<TEntity> {
   private value!: string;
   private exactValue = false;
 

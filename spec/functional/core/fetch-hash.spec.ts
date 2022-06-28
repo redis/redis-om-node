@@ -1,9 +1,9 @@
-import Client from '../../../lib/client';
-import Schema from '../../../lib/schema/schema';
-import Repository from '../../../lib/repository/repository';
+import { Client } from '$lib/client';
+import { Schema } from '$lib/schema/schema';
+import { Repository } from '$lib/repository';
 
-import { SampleHashEntity, createHashEntitySchema, loadTestHash } from '../helpers/data-helper';
-import { flushAll } from '../helpers/redis-helper';
+import { SampleHashEntity, loadTestHash, createHashEntitySchema } from '../helpers/data-helper';
+import { removeAll } from '../helpers/redis-helper';
 
 import { AN_ENTITY, A_PARTIAL_ENTITY, AN_EMPTY_ENTITY } from '../../helpers/example-data';
 
@@ -16,16 +16,19 @@ describe("fetch hash", () => {
   beforeAll(async () => {
     client = new Client();
     await client.open();
-    await flushAll(client);
-    await loadTestHash(client, 'SampleHashEntity:full', AN_ENTITY);
-    await loadTestHash(client, 'SampleHashEntity:partial', A_PARTIAL_ENTITY);
-    await loadTestHash(client, 'SampleHashEntity:empty', AN_EMPTY_ENTITY);
+    await removeAll(client, 'fetch-hash:')
+    await loadTestHash(client, 'fetch-hash:full', AN_ENTITY);
+    await loadTestHash(client, 'fetch-hash:partial', A_PARTIAL_ENTITY);
+    await loadTestHash(client, 'fetch-hash:empty', AN_EMPTY_ENTITY);
 
-    schema = createHashEntitySchema();
+    schema = createHashEntitySchema('fetch-hash');
     repository = client.fetchRepository<SampleHashEntity>(schema);
   });
 
-  afterAll(async () => await client.close());
+  afterAll(async () => {
+    await removeAll(client, 'fetch-hash:')
+    await client.close()
+  });
 
   it("fetches a fully populated entity from Redis", async () => {
     let entity = await repository.fetch('full');

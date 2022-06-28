@@ -1,8 +1,7 @@
-import { mocked } from 'jest-mock';
-
-import Client from '../../../lib/client';
-import Repository from '../../../lib/repository/repository';
-import { JsonRepository, HashRepository } from '../../../lib/repository/repository';
+import '../helpers/mock-client'
+import { Client } from '$lib/client';
+import { Repository } from '$lib/repository';
+import { JsonRepository, HashRepository } from '$lib/repository';
 
 import {
   A_STRING, A_NUMBER, A_NUMBER_STRING, SOME_TEXT,
@@ -12,10 +11,6 @@ import {
 
 import { simpleHashSchema, SimpleHashEntity, SimpleJsonEntity, simpleJsonSchema } from '../helpers/test-entity-and-schema';
 
-jest.mock('../../../lib/client');
-
-
-beforeEach(() => mocked(Client).mockReset());
 
 describe("Repository", () => {
 
@@ -25,15 +20,20 @@ describe("Repository", () => {
 
   describe("#save", () => {
 
-    beforeAll(() => client = new Client());
+    beforeAll(() => {
+      client = new Client()
+    });
 
     describe("to a hash", () => {
-
       let repository: Repository<SimpleHashEntity>;
       let entity: SimpleHashEntity;
 
-      beforeAll(async () => repository = new HashRepository(simpleHashSchema, client));
-      beforeEach(async () => entity = repository.createEntity());
+      beforeAll(() => {
+        repository = new HashRepository(simpleHashSchema, client)
+      });
+      beforeEach(() => {
+        entity = repository.createEntity()
+      });
 
       describe.each([
 
@@ -66,7 +66,7 @@ describe("Repository", () => {
 
         it("returns the entity id", () => expect(entityId).toBe(entity.entityId));
         it("saves the entity data to the key", () =>
-          expect(Client.prototype.hsetall).toHaveBeenCalledWith(expectedKey, data.expectedData));
+          expect(client.hsetall).toHaveBeenCalledWith(expectedKey, data.expectedData));
       });
 
       describe("when saving an empty entity", () => {
@@ -84,7 +84,7 @@ describe("Repository", () => {
 
         it("returns the entity id", () => expect(entityId).toBe(entity.entityId));
         it("unlinks the key", () =>
-          expect(Client.prototype.unlink).toHaveBeenCalledWith(expectedKey));
+          expect(client.unlink).toHaveBeenCalledWith(expectedKey));
       });
     });
 
@@ -93,8 +93,12 @@ describe("Repository", () => {
       let repository: Repository<SimpleJsonEntity>;
       let entity: SimpleJsonEntity;
 
-      beforeAll(async () => repository = new JsonRepository(simpleJsonSchema, client));
-      beforeEach(async () => entity = repository.createEntity());
+      beforeAll(() => {
+        repository = new JsonRepository(simpleJsonSchema, client)
+      });
+      beforeEach(() => {
+        entity = repository.createEntity()
+      });
 
       describe.each([
 
@@ -127,7 +131,7 @@ describe("Repository", () => {
 
         it("returns the entity id", () => expect(entityId).toBe(entity.entityId));
         it("saves the entity data to the key", () =>
-          expect(Client.prototype.jsonset).toHaveBeenCalledWith(expectedKey, data.expectedData));
+          expect(client.jsonset).toHaveBeenCalledWith(expectedKey, data.expectedData));
       });
 
       describe("when saving an empty entity", () => {
@@ -144,8 +148,9 @@ describe("Repository", () => {
         });
 
         it("returns the entity id", () => expect(entityId).toBe(entity.entityId));
-        it("unlinks the key", () =>
-          expect(Client.prototype.jsonset).toHaveBeenCalledWith(expectedKey, {}));
+        it("unlinks the key", () => {
+          expect(client.jsonset).toHaveBeenCalledWith(expectedKey, {})
+        });
       });
     });
   });

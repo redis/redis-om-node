@@ -1,16 +1,9 @@
-import { mocked } from 'jest-mock';
-
-import Client from "../../../lib/client";
-import { Search } from "../../../lib/search/search";
-import WhereField from '../../../lib/search/where-field';
+import { Client } from "$lib/client";
+import { Search, WhereField } from "$lib/search";
 
 import { A_STRING, ANOTHER_STRING, A_THIRD_STRING } from '../../helpers/example-data';
 import { simpleSchema, SimpleEntity } from "../helpers/test-entity-and-schema";
 
-jest.mock('../../../lib/client');
-
-
-beforeEach(() => mocked(Client).mockReset());
 
 describe("Search", () => {
   describe("#query", () => {
@@ -30,7 +23,9 @@ describe("Search", () => {
     const expectToBeContainsOneQuery: ArrayChecker = search => expect(search.query).toBe(A_CONTAINS_ONE_QUERY);
     const expectToBeNegatedContainsOneQuery: ArrayChecker = search => expect(search.query).toBe(A_NEGATED_CONTAINS_ONE_QUERY);
 
-    beforeAll(() => client = new Client());
+    beforeAll(() => {
+      client = new Client()
+    });
 
     beforeEach(() => {
       search = new Search<SimpleEntity>(simpleSchema, client);

@@ -1,11 +1,11 @@
-import EntityField from "./entity-field";
-import EntityValue from "../entity-value";
-import Point from "../point";
+import { EntityField } from "./entity-field";
+import { EntityValue } from "../entity-value";
+import { Point } from "../point";
 import { RedisHashData, RedisJsonData } from "../../client";
 
 const IS_COORD_PAIR = /^-?\d+(\.\d*)?,-?\d+(\.\d*)?$/;
 
-class EntityPointField extends EntityField {
+export class EntityPointField extends EntityField {
   toRedisJson(): RedisJsonData {
     const data: RedisJsonData = {};
     if (this.value !== null) data[this.name] = this.valueAsString;
@@ -60,5 +60,3 @@ class EntityPointField extends EntityField {
     return `${longitude},${latitude}`;
   }
 }
-
-export default EntityPointField;

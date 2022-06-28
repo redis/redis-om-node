@@ -1,8 +1,8 @@
-import Entity from "../entity/entity";
+import { Entity } from "../entity/entity";
 import { Search } from "./search";
-import WhereField from "./where-field";
+import { WhereField } from "./where-field";
 
-export default class WhereStringArray<TEntity extends Entity> extends WhereField<TEntity> {
+export class WhereStringArray<TEntity extends Entity> extends WhereField<TEntity> {
   private value!: Array<string>;
 
   contain(value: string): Search<TEntity> {
