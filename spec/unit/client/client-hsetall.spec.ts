@@ -1,18 +1,14 @@
-import { mocked } from 'jest-mock';
-
-import RedisShim from '../../../lib/shims/redis-shim';
+import { redis } from '../helpers/mock-redis'
 import Client from '../../../lib/client';
 
-jest.mock('../../../lib/shims/redis-shim');
-
-
-beforeEach(() => mocked(RedisShim).mockReset());
 
 describe("Client", () => {
 
   let client: Client;
 
-  beforeEach(async () => client = new Client());
+  beforeEach(() => {
+    client = new Client()
+  });
 
   describe("#hsetall", () => {
     describe("when called on an open client", () => {
@@ -20,9 +16,11 @@ describe("Client", () => {
         await client.open();
       });
 
-      it("passes the command to the shim", async () => {
+      it("passes the command to redis", async () => {
         await client.hsetall('foo', { foo: 'bar', baz: 'qux' });
-        expect(RedisShim.prototype.hsetall).toHaveBeenCalledWith('foo', { foo: 'bar', baz: 'qux' });
+        expect(redis.executeIsolated).toHaveBeenCalled();
+        // TODO: test full behavior of client calls
+        // expect(redis.executeIsolated).toHaveBeenCalledWith('foo', { foo: 'bar', baz: 'qux' });
       });
     });
 

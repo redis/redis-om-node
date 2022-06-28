@@ -1,18 +1,14 @@
-import { mocked } from 'jest-mock';
-
-import RedisShim from '../../../lib/shims/redis-shim';
+import { redis } from '../helpers/mock-redis'
 import Client from '../../../lib/client';
 
-jest.mock('../../../lib/shims/redis-shim');
-
-
-beforeEach(() => mocked(RedisShim).mockReset());
 
 describe("Client", () => {
 
   let client: Client;
 
-  beforeEach(async () => client = new Client());
+  beforeEach(() => {
+    client = new Client()
+  });
 
   describe("#search", () => {
     describe("when called on an open client", () => {
@@ -25,7 +21,7 @@ describe("Client", () => {
           indexName: 'index',
           query: 'query'
         });
-        expect(RedisShim.prototype.execute).toHaveBeenCalledWith([
+        expect(redis.sendCommand).toHaveBeenCalledWith([
           'FT.SEARCH', 'index', 'query']);
       });
 
@@ -35,37 +31,37 @@ describe("Client", () => {
           query: 'query',
           limit: { offset: 0, count: 5 }
         });
-        expect(RedisShim.prototype.execute).toHaveBeenCalledWith([
+        expect(redis.sendCommand).toHaveBeenCalledWith([
           'FT.SEARCH', 'index', 'query', 'LIMIT', '0', '5']);
       });
 
-      it("send the expected command when given a sort", async () => {
+      it("sends the expected command when given a sort", async () => {
         await client.search({
           indexName: 'index',
           query: 'query',
           sort: { field: 'sortField', order: 'ASC' }
         });
-        expect(RedisShim.prototype.execute).toHaveBeenCalledWith([
+        expect(redis.sendCommand).toHaveBeenCalledWith([
           'FT.SEARCH', 'index', 'query', 'SORTBY', 'sortField', 'ASC']);
       });
 
-      it("send the expected command when keysOnly is set to false", async () => {
+      it("sends the expected command when keysOnly is set to false", async () => {
         await client.search({
           indexName: 'index',
           query: 'query',
           keysOnly: false
         });
-        expect(RedisShim.prototype.execute).toHaveBeenCalledWith([
+        expect(redis.sendCommand).toHaveBeenCalledWith([
           'FT.SEARCH', 'index', 'query']);
       });
 
-      it("send the expected command when keysOnly is set to true", async () => {
+      it("sends the expected command when keysOnly is set to true", async () => {
         await client.search({
           indexName: 'index',
           query: 'query',
           keysOnly: true
         });
-        expect(RedisShim.prototype.execute).toHaveBeenCalledWith([
+        expect(redis.sendCommand).toHaveBeenCalledWith([
           'FT.SEARCH', 'index', 'query', 'RETURN', '0']);
       });
 
@@ -77,7 +73,7 @@ describe("Client", () => {
           sort: { field: 'sortField', order: 'ASC' },
           keysOnly: true
         });
-        expect(RedisShim.prototype.execute).toHaveBeenCalledWith([
+        expect(redis.sendCommand).toHaveBeenCalledWith([
           'FT.SEARCH', 'index', 'query', 'LIMIT', '0', '5',
           'SORTBY', 'sortField', 'ASC', 'RETURN', '0']);
       });

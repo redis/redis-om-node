@@ -3,9 +3,7 @@ import Entity from '../../../lib/entity/entity';
 import SchemaDefinition from '../../../lib/schema/definition/schema-definition';
 import DataStructure from '../../../lib/schema/options/data-structure';
 
-import * as logger from '../../../lib/shims/logger';
-
-const warnSpy = jest.spyOn(logger, 'warn');
+const warnSpy = vi.spyOn(global.console, 'warn').mockImplementation(() => {})
 
 describe("Schema", () => {
   describe.each([

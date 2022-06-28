@@ -15,20 +15,20 @@ describe("drop missing index on hash", () => {
     client = new Client();
     await client.open();
 
-    schema = createHashEntitySchema();
+    schema = createHashEntitySchema('drop-missing');
     repository = client.fetchRepository<SampleHashEntity>(schema);
   });
 
   afterAll(async () => await client.close());
-  
+
   describe("when the index is dropped", () => {
     beforeEach(async () => {
       await repository.dropIndex();
     });
-    
+
     it("the index still doesn't exists", () => {
-      expect(async () => await fetchIndexInfo(client, 'SampleHashEntity:index'))
+      expect(async () => await fetchIndexInfo(client, 'drop-missing:index'))
         .rejects.toThrow("Unknown Index name");
-    });  
+    });
   });
 });

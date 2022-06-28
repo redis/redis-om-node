@@ -22,7 +22,9 @@ describe("EntityStringArrayField", () => {
 
   describe("when created", () => {
 
-    beforeEach(() => field = new EntityStringArrayField(FIELD_NAME, FIELD_DEF));
+    beforeEach(() => {
+      field = new EntityStringArrayField(FIELD_NAME, FIELD_DEF)
+    });
 
     it("has the expected alias", () => expect(field.name).toBe(FIELD_NAME));
     it("has a value of null", () => expect(field.value).toBeNull());
@@ -55,14 +57,18 @@ describe("EntityStringArrayField", () => {
     });
 
     describe("when set to a array", () => {
-      beforeEach(() => field.value = SOME_STRINGS);
+      beforeEach(() => {
+        field.value = SOME_STRINGS
+      });
       it("has the expected value", () => expect(field.value).toEqual(SOME_STRINGS));
       it("converts to the expected Redis JSON data", () => expect(field.toRedisJson()).toEqual(EXPECTED_JSON_DATA));
       it("converts to the expected Redis Hash data", () => expect(field.toRedisHash()).toEqual(EXPECTED_HASH_DATA));
     });
 
     describe("when set to an any[]", () => {
-      beforeEach(() => field.value = SOME_STRINGABLES);
+      beforeEach(() => {
+        field.value = SOME_STRINGABLES
+      });
       it("has the expected value", () => expect(field.value).toEqual(EXPECTED_ANY_ARRAY));
       it("converts to the expected Redis JSON data", () => expect(field.toRedisJson()).toEqual(EXPECTED_JSON_ANY_DATA));
       it("converts to the expected Redis Hash data", () => expect(field.toRedisHash()).toEqual(EXPECTED_HASH_ANY_DATA));
@@ -116,12 +122,16 @@ describe("EntityStringArrayField", () => {
   });
 
   describe("when created with an alias", () => {
-    beforeEach(() => field = new EntityStringArrayField(FIELD_NAME, { type: 'string[]', alias: 'bar' }));
+    beforeEach(() => {
+      field = new EntityStringArrayField(FIELD_NAME, { type: 'string[]', alias: 'bar' })
+    });
     it("has the aliased name", () => expect(field.name).toBe('bar'));
   });
 
   describe("when created with a separator and a array", () => {
-    beforeEach(() => field = new EntityStringArrayField(FIELD_NAME, { type: 'string[]', separator: ';' }, SOME_STRINGS));
+    beforeEach(() => {
+      field = new EntityStringArrayField(FIELD_NAME, { type: 'string[]', separator: ';' }, SOME_STRINGS)
+    });
     it("converts to the expected Redis Hash data", () => expect(field.toRedisHash()).toEqual(EXPECTED_HASH_SEPARATOR_DATA));
 
     describe("and then loaded from Redis Hash data", () => {
@@ -131,26 +141,34 @@ describe("EntityStringArrayField", () => {
   });
 
   describe("when created with a separator and an any[]", () => {
-    beforeEach(() => field = new EntityStringArrayField(FIELD_NAME, { type: 'string[]', separator: ';' }, SOME_STRINGABLES));
+    beforeEach(() => {
+      field = new EntityStringArrayField(FIELD_NAME, { type: 'string[]', separator: ';' }, SOME_STRINGABLES)
+    });
     it("converts to the expected Redis Hash data", () => expect(field.toRedisHash()).toEqual(EXPECTED_HASH_ANY_SEPARATOR_DATA));
   });
 
   describe("when created with a array", () => {
-    beforeEach(() => field = new EntityStringArrayField(FIELD_NAME, FIELD_DEF, SOME_STRINGS));
+    beforeEach(() => {
+      field = new EntityStringArrayField(FIELD_NAME, FIELD_DEF, SOME_STRINGS)
+    });
     it("has the expected value", () => expect(field.value).toEqual(SOME_STRINGS));
     it("converts to the expected Redis JSON data", () => expect(field.toRedisJson()).toEqual(EXPECTED_JSON_DATA));
     it("converts to the expected Redis Hash data", () => expect(field.toRedisHash()).toEqual(EXPECTED_HASH_DATA));
   });
 
   describe("when created with an any[]", () => {
-    beforeEach(() => field = new EntityStringArrayField(FIELD_NAME, FIELD_DEF, SOME_STRINGABLES));
+    beforeEach(() => {
+      field = new EntityStringArrayField(FIELD_NAME, FIELD_DEF, SOME_STRINGABLES)
+    });
     it("has the expected value", () => expect(field.value).toEqual(EXPECTED_ANY_ARRAY));
     it("converts to the expected Redis JSON data", () => expect(field.toRedisJson()).toEqual(EXPECTED_JSON_ANY_DATA));
     it("converts to the expected Redis Hash data", () => expect(field.toRedisHash()).toEqual(EXPECTED_HASH_ANY_DATA));
   });
 
   describe("when created with a null", () => {
-    beforeEach(() => field = new EntityStringArrayField(FIELD_NAME, FIELD_DEF, null));
+    beforeEach(() => {
+      field = new EntityStringArrayField(FIELD_NAME, FIELD_DEF, null)
+    });
     it("has the expected value", () => expect(field.value).toBeNull());
     it("converts to the expected Redis JSON data", () => expect(field.toRedisJson()).toEqual(EXPECTED_NULL_JSON_DATA));
     it("converts to the expected Redis Hash data", () => expect(field.toRedisHash()).toEqual(EXPECTED_NULL_HASH_DATA));

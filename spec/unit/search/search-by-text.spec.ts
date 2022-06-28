@@ -1,5 +1,3 @@
-import { mocked } from 'jest-mock';
-
 import Client from "../../../lib/client";
 import { Search } from "../../../lib/search/search";
 import WhereField from '../../../lib/search/where-field';
@@ -7,10 +5,6 @@ import WhereField from '../../../lib/search/where-field';
 import { A_STRING , A_NUMBER } from '../../helpers/example-data';
 import { simpleSchema, SimpleEntity } from "../helpers/test-entity-and-schema";
 
-jest.mock('../../../lib/client');
-
-
-beforeEach(() => mocked(Client).mockReset());
 
 describe("Search", () => {
   describe("#query", () => {
@@ -50,12 +44,14 @@ describe("Search", () => {
     const expectToBeBooleanExactTextQuery: StringChecker = search => expect(search.query).toBe(A_BOOLEAN_EXACT_TEXT_QUERY);
     const expectToBeNegatedBooleanExactTextQuery: StringChecker = search => expect(search.query).toBe(A_NEGATED_BOOLEAN_EXACT_TEXT_QUERY);
 
-    beforeAll(() => client = new Client());
-  
+    beforeAll(() => {
+      client = new Client()
+    });
+
     beforeEach(() => {
       search = new Search<SimpleEntity>(simpleSchema, client);
       where = search.where('someText');
-    });  
+    });
 
     describe("when generating for a query with a string", () => {
       it("generates a query with .match", () => expectToBeTextQuery(where.match(A_STRING)));
@@ -63,7 +59,7 @@ describe("Search", () => {
       it("generates a query with .matches", () => expectToBeTextQuery(where.matches(A_STRING)));
       it("generates a query with .does.match", () => expectToBeTextQuery(where.does.match(A_STRING)));
       it("generates a query with .does.not.match", () => expectToBeNegatedTextQuery(where.does.not.match(A_STRING)));
-      
+
       it("generates a query with .exact.match", () => expectToBeExactTextQuery(where.exact.match(A_STRING)));
       it("generates a query with .not.exact.match", () => expectToBeNegatedExactTextQuery(where.not.exact.match(A_STRING)));
       it("generates a query with .exactly.matches", () => expectToBeExactTextQuery(where.exactly.matches(A_STRING)));
@@ -83,7 +79,7 @@ describe("Search", () => {
       it("generates a query with .matches", () => expectToBeNumberTextQuery(where.matches(A_NUMBER)));
       it("generates a query with .does.match", () => expectToBeNumberTextQuery(where.does.match(A_NUMBER)));
       it("generates a query with .does.not.match", () => expectToBeNegatedNumberTextQuery(where.does.not.match(A_NUMBER)));
-      
+
       it("generates a query with .exact.match", () => expectToBeNumberExactTextQuery(where.exact.match(A_NUMBER)));
       it("generates a query with .not.exact.match", () => expectToBeNegatedNumberExactTextQuery(where.not.exact.match(A_NUMBER)));
       it("generates a query with .exactly.matches", () => expectToBeNumberExactTextQuery(where.exactly.matches(A_NUMBER)));
@@ -103,7 +99,7 @@ describe("Search", () => {
       it("generates a query with .matches", () => expectToBeBooleanTextQuery(where.matches(true)));
       it("generates a query with .does.match", () => expectToBeBooleanTextQuery(where.does.match(true)));
       it("generates a query with .does.not.match", () => expectToBeNegatedBooleanTextQuery(where.does.not.match(true)));
-      
+
       it("generates a query with .exact.match", () => expectToBeBooleanExactTextQuery(where.exact.match(true)));
       it("generates a query with .not.exact.match", () => expectToBeNegatedBooleanExactTextQuery(where.not.exact.match(true)));
       it("generates a query with .exactly.matches", () => expectToBeBooleanExactTextQuery(where.exactly.matches(true)));
@@ -128,7 +124,7 @@ describe("Search", () => {
         expect(query).toBe('(@someText:"\\,\\.\\<\\>\\{\\}\\[\\]\\"\\\'\\:\\;\\!\\@\\#\\$\\%\\^\\&\\(\\)\\-\\+\\=\\~\\|")');
       });
     });
-    
+
     describe("when trying to perform string equality full-text", () => {
       const EXPECTED_EXCEPTION = "Cannot call .equals on a field of type 'text', either use .match to perform full-text search or change the type to 'string' in the Schema.";
       it("throws an exception telling you what to do", () => {

@@ -1,9 +1,11 @@
-import RedisShim, { RedisConnection } from './shims/redis-shim';
+import { createClient } from 'redis';
 import Repository from './repository/repository';
 import { JsonRepository, HashRepository } from './repository/repository';
 import Entity from './entity/entity';
 import Schema from './schema/schema';
 import RedisError from './errors';
+
+export type RedisConnection = ReturnType<typeof createClient>;
 
 /**
  * Alias for a JavaScript object used by HSET.
@@ -65,7 +67,7 @@ export type SearchOptions = {
  */
 export default class Client {
   /** @internal */
-  protected shim?: RedisShim;
+  protected redis?: RedisConnection
 
   /**
    * Attaches an existing Node Redis connection to this Redis OM client. Closes
@@ -74,8 +76,9 @@ export default class Client {
    * @returns This {@link Client} instance.
    */
   async use(connection: RedisConnection): Promise<Client> {
-    await this.close();
-    this.shim = new RedisShim(connection);
+    // close existing connection
+    await this.close()
+    this.redis = connection
     return this;
   }
 
@@ -86,8 +89,8 @@ export default class Client {
    */
   async open(url: string = 'redis://localhost:6379'): Promise<Client> {
     if (!this.isOpen()) {
-      this.shim = new RedisShim(url);
-      await this.shim.open();
+      this.redis = createClient({ url })
+      await this.redis.connect();
     }
     return this;
   }
@@ -99,8 +102,8 @@ export default class Client {
    * @returns The raw results of calling the Redis command.
    */
   async execute(command: Array<string | number | boolean>): Promise<unknown> {
-    this.validateShimOpen();
-    return await this.shim.execute<any>(command.map(arg => {
+    this.validateRedisOpen();
+    return this.redis.sendCommand<any>(command.map(arg => {
       if (arg === false) return '0';
       if (arg === true) return '1';
       return arg.toString();
@@ -114,7 +117,7 @@ export default class Client {
    * @returns A repository for the provided schema.
    */
   fetchRepository<TEntity extends Entity>(schema: Schema<TEntity>): Repository<TEntity> {
-    this.validateShimOpen();
+    this.validateRedisOpen();
     if (schema.dataStructure === 'JSON') {
       return new JsonRepository(schema, this);
     } else {
@@ -126,13 +129,15 @@ export default class Client {
    * Close the connection to Redis.
    */
   async close() {
-    await this.shim?.close();
-    this.shim = undefined;
+    if (this.redis) {
+      await this.redis.quit()
+    }
+    this.redis = undefined;
   }
 
   /** @internal */
   async createIndex(options: CreateIndexOptions) {
-    this.validateShimOpen();
+    this.validateRedisOpen();
 
     const { indexName, dataStructure, prefix, schema, stopWords } = options;
 
@@ -146,18 +151,18 @@ export default class Client {
 
     command.push('SCHEMA', ...schema);
 
-    await this.shim.execute(command);
+    await this.redis.sendCommand(command);
   }
 
   /** @internal */
   async dropIndex(indexName: string) {
-    this.validateShimOpen();
-    await this.shim.execute(['FT.DROPINDEX', indexName]);
+    this.validateRedisOpen();
+    await this.redis.sendCommand(['FT.DROPINDEX', indexName]);
   }
 
   /** @internal */
   async search(options: SearchOptions) {
-    this.validateShimOpen();
+    this.validateRedisOpen();
     const { indexName, query, limit, sort, keysOnly } = options
     const command = ['FT.SEARCH', indexName, query];
 
@@ -169,67 +174,79 @@ export default class Client {
 
     if (keysOnly) command.push('RETURN', '0');
 
-    return await this.shim.execute<any[]>(command);
+    return this.redis.sendCommand<any[]>(command);
   }
 
   /** @internal */
   async unlink(...keys: string[]) {
-    this.validateShimOpen();
-    if (keys.length > 0) await this.shim.unlink(keys);
+    this.validateRedisOpen();
+    if (keys.length > 0) await this.redis.unlink(keys);
   }
 
   /** @internal */
   async expire(key: string, ttl: number) {
-    this.validateShimOpen();
-    await this.shim?.expire(key, ttl);
+    this.validateRedisOpen();
+    await this.redis.expire(key, ttl);
   }
 
   /** @internal */
   async get(key: string): Promise<string | null> {
-    this.validateShimOpen();
-    return await this.shim.get(key);
+    this.validateRedisOpen();
+    return this.redis.get(key);
   }
 
   /** @internal */
   async set(key: string, value: string) {
-    this.validateShimOpen();
-    await this.shim.set(key, value);
+    this.validateRedisOpen();
+    await this.redis.set(key, value);
   }
 
   /** @internal */
   async hgetall(key: string): Promise<RedisHashData> {
-    this.validateShimOpen();
-    return await this.shim.hgetall(key);
+    this.validateRedisOpen();
+    return this.redis.hGetAll(key);
   }
 
   /** @internal */
   async hsetall(key: string, data: RedisHashData) {
-    this.validateShimOpen();
-    await this.shim.hsetall(key, data)
+    this.validateRedisOpen();
+    try {
+      await this.redis.executeIsolated(async isolatedClient => {
+        await isolatedClient.watch(key);
+        await isolatedClient
+          .multi()
+          .unlink(key)
+          .hSet(key, data)
+          .exec();
+      });
+    } catch (error: any) {
+      if (error.name === 'WatchError') throw new RedisError("Watch error when setting HASH.");
+      throw error;
+    }
   }
 
   /** @internal */
   async jsonget(key: string): Promise<RedisJsonData> {
-    this.validateShimOpen();
-    const json = await this.shim.execute<string>(['JSON.GET', key, '.']);
+    this.validateRedisOpen();
+    const json = await this.redis.sendCommand<string>(['JSON.GET', key, '.']);
     return JSON.parse(json);
   }
 
   /** @internal */
   async jsonset(key: string, data: RedisJsonData) {
-    this.validateShimOpen();
+    this.validateRedisOpen();
     const json = JSON.stringify(data);
-    await this.shim.execute<string>(['JSON.SET', key, '.', json]);
+    await this.redis.sendCommand<string>(['JSON.SET', key, '.', json]);
   }
 
   /**
    * @returns Whether a connection is already open.
    */
   isOpen() {
-    return !!this.shim;
+    return !!this.redis;
   }
 
-  private validateShimOpen(): asserts this is { shim: RedisShim } {
-    if (!this.shim) throw new RedisError("Redis connection needs to be open.");
+  private validateRedisOpen(): asserts this is { redis: RedisConnection } {
+    if (!this.redis) throw new RedisError("Redis connection needs to be open.");
   }
 }

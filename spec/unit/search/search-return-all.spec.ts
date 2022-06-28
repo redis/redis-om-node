@@ -1,5 +1,4 @@
-import { mocked } from 'jest-mock';
-
+import { client } from '../helpers/mock-client'
 import Client from "../../../lib/client";
 import { Search, RawSearch } from "../../../lib/search/search";
 
@@ -10,18 +9,11 @@ import { mockClientSearchToReturnNothing,
   mockClientSearchToReturnPaginatedHashes, mockClientSearchToReturnPaginatedJsonStrings,
   SIMPLE_ENTITY_1, SIMPLE_ENTITY_2, SIMPLE_ENTITY_3, SIMPLE_ENTITY_4, SIMPLE_ENTITY_5 } from '../helpers/search-helpers';
 
-jest.mock('../../../lib/client');
-
 
 type HashSearch = Search<SimpleHashEntity> | RawSearch<SimpleHashEntity>;
 type JsonSearch = Search<SimpleJsonEntity> | RawSearch<SimpleJsonEntity>;
 
 describe("Search", () => {
-
-  beforeEach(() => {
-    mocked(Client).mockReset();
-    mocked(Client.prototype.search).mockReset();
-  });
 
   describe.each([
     [ "FluentSearch",
@@ -44,8 +36,8 @@ describe("Search", () => {
           });
 
           it("askes the client for a single page of results", () => {
-            expect(Client.prototype.search).toHaveBeenCalledTimes(1);
-            expect(Client.prototype.search).toHaveBeenCalledWith({
+            expect(client.search).toHaveBeenCalledTimes(1);
+            expect(client.search).toHaveBeenCalledWith({
               indexName, query, limit: { offset: 0, count: 10 }, keysOnly: false });
           });
 
@@ -59,8 +51,8 @@ describe("Search", () => {
           });
 
           it("askes the client for a a single page of results", () => {
-            expect(Client.prototype.search).toHaveBeenCalledTimes(1);
-            expect(Client.prototype.search).toHaveBeenCalledWith({
+            expect(client.search).toHaveBeenCalledTimes(1);
+            expect(client.search).toHaveBeenCalledWith({
               indexName, query, limit: { offset: 0, count: 10 }, keysOnly: false });
           });
 
@@ -79,8 +71,8 @@ describe("Search", () => {
           });
 
           it("askes the client for a single page of results", () => {
-            expect(Client.prototype.search).toHaveBeenCalledTimes(1);
-            expect(Client.prototype.search).toHaveBeenCalledWith({
+            expect(client.search).toHaveBeenCalledTimes(1);
+            expect(client.search).toHaveBeenCalledWith({
               indexName, query, limit: { offset: 0, count: 10 }, keysOnly: false });
           });
 
@@ -101,8 +93,8 @@ describe("Search", () => {
           });
 
           it("askes the client for multiple pages of results", () => {
-            expect(Client.prototype.search).toHaveBeenCalledTimes(3);
-            expect(Client.prototype.search).toHaveBeenCalledWith({
+            expect(client.search).toHaveBeenCalledTimes(3);
+            expect(client.search).toHaveBeenCalledWith({
               indexName, query, limit: { offset: 0, count: 2 }, keysOnly: false });
           });
 
@@ -130,8 +122,8 @@ describe("Search", () => {
           });
 
           it("askes the client for a single page of results", () => {
-            expect(Client.prototype.search).toHaveBeenCalledTimes(1);
-            expect(Client.prototype.search).toHaveBeenCalledWith({
+            expect(client.search).toHaveBeenCalledTimes(1);
+            expect(client.search).toHaveBeenCalledWith({
               indexName, query, limit: { offset: 0, count: 10 }, keysOnly: false });
           });
 
@@ -145,8 +137,8 @@ describe("Search", () => {
           });
 
           it("askes the client for a single page of results", () => {
-            expect(Client.prototype.search).toHaveBeenCalledTimes(1);
-            expect(Client.prototype.search).toHaveBeenCalledWith({
+            expect(client.search).toHaveBeenCalledTimes(1);
+            expect(client.search).toHaveBeenCalledWith({
               indexName, query, limit: { offset: 0, count: 10 }, keysOnly: false });
           });
 
@@ -165,8 +157,8 @@ describe("Search", () => {
           });
 
           it("askes the client for a single page of results", () => {
-            expect(Client.prototype.search).toHaveBeenCalledTimes(1);
-            expect(Client.prototype.search).toHaveBeenCalledWith({
+            expect(client.search).toHaveBeenCalledTimes(1);
+            expect(client.search).toHaveBeenCalledWith({
               indexName, query, limit: { offset: 0, count: 10 }, keysOnly: false });
           });
 
@@ -187,12 +179,12 @@ describe("Search", () => {
           });
 
           it("askes the client for a multiple pages of results", () => {
-            expect(Client.prototype.search).toHaveBeenCalledTimes(3);
-            expect(Client.prototype.search).toHaveBeenCalledWith({
+            expect(client.search).toHaveBeenCalledTimes(3);
+            expect(client.search).toHaveBeenCalledWith({
               indexName, query, limit: { offset: 0, count: 2 }, keysOnly: false });
-            expect(Client.prototype.search).toHaveBeenCalledWith({
+            expect(client.search).toHaveBeenCalledWith({
               indexName, query, limit: { offset: 2, count: 2 }, keysOnly: false });
-            expect(Client.prototype.search).toHaveBeenCalledWith({
+            expect(client.search).toHaveBeenCalledWith({
               indexName, query, limit: { offset: 4, count: 2 }, keysOnly: false });
           });
 

@@ -1,4 +1,3 @@
-import { mocked } from 'jest-mock';
 import { Point } from '../../../lib';
 
 import Client from "../../../lib/client";
@@ -8,10 +7,6 @@ import WhereField from '../../../lib/search/where-field';
 import { A_POINT } from '../../helpers/example-data';
 import { simpleSchema, SimpleEntity } from "../helpers/test-entity-and-schema";
 
-jest.mock('../../../lib/client');
-
-
-beforeEach(() => mocked(Client).mockReset());
 
 describe("Search", () => {
   describe("#query", () => {
@@ -45,12 +40,14 @@ describe("Search", () => {
     const longitude = 12.34;
     const latitude = 56.78;
 
-    beforeAll(() => client = new Client());
+    beforeAll(() => {
+      client = new Client()
+    });
 
     beforeEach(() => {
       search = new Search<SimpleEntity>(simpleSchema, client);
       where = search.where('aPoint');
-    });  
+    });
 
     describe("when generating a query with a point", () => {
 
@@ -69,21 +66,21 @@ describe("Search", () => {
           () => expectToBeNegatedMetersQuery(where.is.not.inCircle(circle => circle.longitude(longitude).latitude(latitude).radius(42).m)));
 
         it("generates a query with .point(point).radius.kilometers",
-          () => expectToBeKilometersQuery(where.inCircle(circle => circle.origin(point).radius(42).kilometers)));  
+          () => expectToBeKilometersQuery(where.inCircle(circle => circle.origin(point).radius(42).kilometers)));
         it("generates a query with .point(lng, lat).radius.kilometer",
           () => expectToBeKilometersQuery(where.is.inCircle(circle => circle.origin(longitude, latitude).radius(42).kilometer)));
         it("generates a query with .longitude.latitude.radius.km",
           () => expectToBeNegatedKilometersQuery(where.is.not.inCircle(circle => circle.longitude(longitude).latitude(latitude).radius(42).km)));
 
         it("generates a query with .point(point).radius.feet",
-          () => expectToBeFeetQuery(where.inCircle(circle => circle.origin(point).radius(42).feet)));  
+          () => expectToBeFeetQuery(where.inCircle(circle => circle.origin(point).radius(42).feet)));
         it("generates a query with .point(lng, lat).radius.foot",
           () => expectToBeFeetQuery(where.is.inCircle(circle => circle.origin(longitude, latitude).radius(42).foot)));
         it("generates a query with .longitude.latitude.radius.ft",
           () => expectToBeNegatedFeetQuery(where.is.not.inCircle(circle => circle.longitude(longitude).latitude(latitude).radius(42).ft)));
 
         it("generates a query with .point(point).radius.miles",
-          () => expectToBeMilesQuery(where.inCircle(circle => circle.origin(point).radius(42).miles)));  
+          () => expectToBeMilesQuery(where.inCircle(circle => circle.origin(point).radius(42).miles)));
         it("generates a query with .point(lng, lat).radius.mile",
           () => expectToBeMilesQuery(where.is.inCircle(circle => circle.origin(longitude, latitude).radius(42).mile)));
         it("generates a query with .longitude.latitude.radius.mi",

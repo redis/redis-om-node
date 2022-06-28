@@ -1,32 +1,30 @@
-import { mocked } from 'jest-mock';
-
-import RedisShim from '../../../lib/shims/redis-shim';
+import { redis } from '../helpers/mock-redis'
 import Client from '../../../lib/client';
 
-jest.mock('../../../lib/shims/redis-shim');
-
-
-beforeEach(() => mocked(RedisShim).mockReset());
 
 describe("Client", () => {
 
   let client: Client;
   let result: string | null;
 
-  beforeEach(async () => client = new Client());
+  beforeEach(() => {
+    client = new Client()
+  });
 
   describe("#get", () => {
     describe("when called on an open client", () => {
-      beforeEach(async () => await client.open());
+      beforeEach(async () => {
+        await client.open()
+      });
 
       describe("and the result is a string", () => {
         beforeEach(async () => {
-          mocked(RedisShim.prototype.get).mockResolvedValue('bar');
+          redis.get.mockReturnValue('bar')
           result = await client.get('foo');
         });
 
-        it("passes the command to the shim", async () => {
-          expect(RedisShim.prototype.get).toHaveBeenCalledWith('foo');
+        it("passes the command to redis", async () => {
+          expect(redis.get).toHaveBeenCalledWith('foo');
         });
 
         it("returns the result", async () => expect(result).toBe('bar'));
@@ -34,12 +32,12 @@ describe("Client", () => {
 
       describe("and the result is null", () => {
         beforeEach(async () => {
-          mocked(RedisShim.prototype.get).mockResolvedValue(null);
+          redis.get.mockResolvedValue(null);
           result = await client.get('foo');
         });
 
-        it("passes the command to the shim", async () => {
-          expect(RedisShim.prototype.get).toHaveBeenCalledWith('foo');
+        it("passes the command to redis", async () => {
+          expect(redis.get).toHaveBeenCalledWith('foo');
         });
 
         it("returns the result", async () => expect(result).toBeNull());
@@ -69,8 +67,8 @@ describe("Client", () => {
         await client.set('foo', 'bar');
       });
 
-      it("passes the command to the shim", async () => {
-        expect(RedisShim.prototype.set).toHaveBeenCalledWith('foo', 'bar');
+      it("passes the command to redis", async () => {
+        expect(redis.set).toHaveBeenCalledWith('foo', 'bar');
       });
     });
 
