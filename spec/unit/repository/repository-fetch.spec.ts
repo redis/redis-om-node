@@ -114,11 +114,13 @@ describe("Repository", () => {
       let repository: Repository<SimpleHashEntity>;
       let entities: SimpleHashEntity[];
 
-      beforeAll(() => client = new Client());
+      beforeAll(() => {
+        client = new Client()
+      });
 
       beforeEach(async () => {
         repository = new HashRepository(simpleHashSchema, client);
-        mocked(Client.prototype.hgetall)
+        vi.mocked(Client.prototype.hgetall)
           .mockResolvedValueOnce(fullHashMock)
           .mockResolvedValueOnce(partialHashMock)
           .mockResolvedValue(emptyHashMock);
@@ -143,7 +145,7 @@ describe("Repository", () => {
 
       beforeEach(async () => {
         repository = new JsonRepository(simpleJsonSchema, client);
-        mocked(Client.prototype.jsonget)
+        vi.mocked(Client.prototype.jsonget)
           .mockResolvedValueOnce(fullJsonMock)
           .mockResolvedValueOnce(partialJsonMock)
           .mockResolvedValue(emptyJsonMock)
