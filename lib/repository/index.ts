@@ -152,9 +152,10 @@ export abstract class Repository<TEntity extends Entity> {
   async fetch(ids: string[]): Promise<TEntity[]>
 
   async fetch(id: string | string[]): Promise<TEntity | TEntity[]> {
-    if (typeof id === "string") id = [id]
+    const isString = typeof id === "string";
+    if (isString) id = [id];
     const entities = await this.readEntities(id)
-    return id.length > 1 ? entities : entities[0];
+    return isString ? entities : entities[0];
   }
 
   /**
