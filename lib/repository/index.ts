@@ -158,7 +158,7 @@ export abstract class Repository<TEntity extends Entity> {
    * @param ids The IDs of the {@link Entity | Entities} you seek.
    * @returns The matching Entities.
    */
-  async fetch(ids: string[]):Promise<TEntity[]>
+  async fetch(ids: string[]): Promise<TEntity[]>
 
   async fetch(ids: string | string[]): Promise<TEntity | TEntity[]> {
     if (arguments.length > 1) {
@@ -178,9 +178,30 @@ export abstract class Repository<TEntity extends Entity> {
    * not found, does nothing.
    * @param id The ID of the {@link Entity} you with to delete.
    */
-  async remove(...ids: string[]): Promise<void> {
-    if (ids.length === 0) return;
-    const keys = this.makeKeys(ids);
+  async remove(id: string): Promise<void>
+
+  /**
+   * Remove the {@link Entity | Entities} from Redis with the given ids. If a
+   * particular {@link Entity} is not found, does nothing.
+   * @param ids The ID sof the {@link Entity | Entities} you with to delete.
+   */
+  async remove(...ids: string[]): Promise<void>
+
+  /**
+   * Remove the {@link Entity | Entities} from Redis with the given ids. If a
+   * particular {@link Entity} is not found, does nothing.
+   * @param ids The ID sof the {@link Entity | Entities} you with to delete.
+   */
+  async remove(ids: string[]): Promise<void>
+
+  async remove(ids: string | string[]): Promise<void> {
+    const keys = arguments.length > 1
+      ? this.makeKeys([...arguments])
+      : Array.isArray(ids)
+        ? this.makeKeys(ids)
+        : ids ? this.makeKeys([ids]) : []
+
+    if (keys.length === 0) return;
     await this.client.unlink(...keys);
   }
 
