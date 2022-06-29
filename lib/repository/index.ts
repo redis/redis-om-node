@@ -176,21 +176,21 @@ export abstract class Repository<TEntity extends Entity> {
   /**
    * Remove an {@link Entity} from Redis with the given id. If the {@link Entity} is
    * not found, does nothing.
-   * @param id The ID of the {@link Entity} you with to delete.
+   * @param id The ID of the {@link Entity} you wish to delete.
    */
   async remove(id: string): Promise<void>
 
   /**
    * Remove the {@link Entity | Entities} from Redis with the given ids. If a
    * particular {@link Entity} is not found, does nothing.
-   * @param ids The ID sof the {@link Entity | Entities} you with to delete.
+   * @param ids The IDs of the {@link Entity | Entities} you wish to delete.
    */
   async remove(...ids: string[]): Promise<void>
 
   /**
    * Remove the {@link Entity | Entities} from Redis with the given ids. If a
    * particular {@link Entity} is not found, does nothing.
-   * @param ids The ID sof the {@link Entity | Entities} you with to delete.
+   * @param ids The IDs of the {@link Entity | Entities} you wish to delete.
    */
   async remove(ids: string[]): Promise<void>
 
