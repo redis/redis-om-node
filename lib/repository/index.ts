@@ -160,7 +160,6 @@ export abstract class Repository<TEntity extends Entity> {
    */
   async fetch(ids: string[]):Promise<TEntity[]>
 
-  /** @internal */
   async fetch(ids: string | string[]): Promise<TEntity | TEntity[]> {
     if (arguments.length > 1) {
       return this.readEntities([...arguments]);

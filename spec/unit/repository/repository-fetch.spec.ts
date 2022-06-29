@@ -109,7 +109,32 @@ describe("Repository", () => {
     const expectedPartial = { aString: A_STRING, aNumber: A_NUMBER, aBoolean: null, someText: null, aDate: null, aPoint: null, someStrings: null };
     const expectedEmpty = { aString: null, aNumber: null, aBoolean: null, aDate: null, someText: null, aPoint: null, someStrings: null };
 
-    describe("when fetching a Hash", () => {
+    describe("when fetching a single Hash", () => {
+
+      let repository: Repository<SimpleHashEntity>;
+      let enitity: SimpleHashEntity;
+
+      beforeAll(() => {
+        client = new Client()
+      });
+
+      beforeEach(async () => {
+        repository = new HashRepository(simpleHashSchema, client);
+        vi.mocked(client.hgetall)
+          .mockResolvedValue(fullHashMock);
+          enitity = await repository.fetch('foo');
+      });
+
+      it("returns the expected type", () =>
+        expect(enitity).toBeInstanceOf(SimpleHashEntity));
+
+      it("returns the expected entity", () =>
+        expect(enitity).toEqual(
+          expect.objectContaining({ entityId: 'foo', ...expectedFull })
+        ));
+    });
+
+    describe("when fetching multiple Hashes", () => {
 
       let repository: Repository<SimpleHashEntity>;
       let entities: SimpleHashEntity[];
@@ -138,7 +163,61 @@ describe("Repository", () => {
         ])));
     });
 
-    describe("when fetching JSON", () => {
+    describe("when fetching an array of Hashes", () => {
+
+      let repository: Repository<SimpleHashEntity>;
+      let entities: SimpleHashEntity[];
+
+      beforeAll(() => {
+        client = new Client()
+      });
+
+      beforeEach(async () => {
+        repository = new HashRepository(simpleHashSchema, client);
+        vi.mocked(client.hgetall)
+          .mockResolvedValueOnce(fullHashMock)
+          .mockResolvedValueOnce(partialHashMock)
+          .mockResolvedValue(emptyHashMock);
+        entities = await repository.fetch(['foo', 'bar', 'baz']);
+      });
+
+      it("returns the expected number of entities", () =>
+        expect(entities).toHaveLength(3));
+
+      it("returns the expected entities", () =>
+        expect(entities).toEqual(expect.arrayContaining([
+          expect.objectContaining({ entityId: 'foo', ...expectedFull }),
+          expect.objectContaining({ entityId: 'bar', ...expectedPartial }),
+          expect.objectContaining({ entityId: 'baz', ...expectedEmpty })
+        ])));
+    });
+
+    describe("when fetching a single JSON", () => {
+
+      let repository: Repository<SimpleJsonEntity>;
+      let enitity: SimpleJsonEntity;
+
+      beforeAll(() => {
+        client = new Client()
+      });
+
+      beforeEach(async () => {
+        repository = new JsonRepository(simpleJsonSchema, client);
+        vi.mocked(client.jsonget)
+          .mockResolvedValue(fullJsonMock);
+          enitity = await repository.fetch('foo');
+      });
+
+      it("returns the expected type", () =>
+        expect(enitity).toBeInstanceOf(SimpleJsonEntity));
+
+      it("returns the expected entity", () =>
+        expect(enitity).toEqual(
+          expect.objectContaining({ entityId: 'foo', ...expectedFull })
+        ));
+    });
+
+    describe("when fetching multiple JSON", () => {
 
       let repository: Repository<SimpleJsonEntity>;
       let entities: SimpleJsonEntity[];
@@ -151,6 +230,29 @@ describe("Repository", () => {
           .mockResolvedValue(emptyJsonMock)
 
         entities = await repository.fetch('foo', 'bar', 'baz');
+      });
+
+      it("returns the expected entity", () =>
+        expect(entities).toEqual(expect.arrayContaining([
+          expect.objectContaining({ entityId: 'foo', ...expectedFull }),
+          expect.objectContaining({ entityId: 'bar', ...expectedPartial }),
+          expect.objectContaining({ entityId: 'baz', ...expectedEmpty })
+        ])));
+    });
+
+    describe("when fetching an array of JSON", () => {
+
+      let repository: Repository<SimpleJsonEntity>;
+      let entities: SimpleJsonEntity[];
+
+      beforeEach(async () => {
+        repository = new JsonRepository(simpleJsonSchema, client);
+        vi.mocked(client.jsonget)
+          .mockResolvedValueOnce(fullJsonMock)
+          .mockResolvedValueOnce(partialJsonMock)
+          .mockResolvedValue(emptyJsonMock)
+
+        entities = await repository.fetch(['foo', 'bar', 'baz']);
       });
 
       it("returns the expected entity", () =>
