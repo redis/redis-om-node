@@ -44,7 +44,6 @@
   },
   "devDependencies": {
     "@types/node": "^17.0.38",
-    "@types/uuid": "^8.3.4",
     "@vitest/ui": "^0.15.2",
     "c8": "^7.11.3",
     "nodemon": "^2.0.16",
