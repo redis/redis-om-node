@@ -44,7 +44,7 @@ export abstract class EntityField {
     return data;
   }
 
-  fromRedisHash(value: string) {
+  fromRedisHash(value: string | Buffer) {
     this.value = value;
   }
 

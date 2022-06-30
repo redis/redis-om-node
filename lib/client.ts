@@ -11,7 +11,7 @@ export type RedisConnection = ReturnType<typeof createClient>;
  * Alias for a JavaScript object used by HSET.
  * @internal
  */
-export type RedisHashData = { [key: string]: string };
+export type RedisHashData = { [key: string]: string | Buffer };
 
 /**
  * Alias for any old JavaScript object used by JSON.SET.
