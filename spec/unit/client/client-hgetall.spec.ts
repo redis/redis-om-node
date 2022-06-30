@@ -1,11 +1,11 @@
 import { redis } from '../helpers/mock-redis'
-import { Client } from '$lib/client';
+import { Client, RedisHashData } from '$lib/client';
 
 
 describe("Client", () => {
 
   let client: Client;
-  let result: { [key: string]: string };
+  let result: RedisHashData
 
   beforeEach(() => {
     client = new Client()
