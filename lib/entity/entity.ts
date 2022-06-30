@@ -8,6 +8,7 @@ import {
   EntityStringArrayField,
   EntityStringField,
   EntityTextField,
+  EntityVectorField,
   EntityFieldConstructor,
 } from "./fields";
 import { Schema } from "../schema/schema";
@@ -21,7 +22,8 @@ const ENTITY_FIELD_CONSTRUCTORS: Record<SchemaFieldType, EntityFieldConstructor>
   'text': EntityTextField,
   'date': EntityDateField,
   'point': EntityPointField,
-  'string[]': EntityStringArrayField
+  'string[]': EntityStringArrayField,
+  'vector': EntityVectorField,
 }
 
 /**

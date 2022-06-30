@@ -56,6 +56,11 @@ export class JsonSchemaBuilder<TEntity extends Entity> extends SchemaBuilder<TEn
           ...this.buildWeight(fieldDef),
           ...this.buildIndexed(fieldDef),
         ]
+      case 'vector':
+        return [
+          ...fieldInfo,
+          ...this.buildVector(fieldDef),
+        ]
     };
   }
 }
