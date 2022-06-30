@@ -225,7 +225,7 @@ export class HashRepository<TEntity extends Entity> extends Repository<TEntity> 
       await this.client.unlink(entity.keyName);
       return;
     }
-    await this.client.hsetall(entity.keyName, entity.toRedisHash());
+    await this.client.hsetall(entity.keyName, data);
   }
 
   protected async readEntities(ids: string[]): Promise<TEntity[]> {
