@@ -213,13 +213,11 @@ export class Client {
     try {
       await this.redis.executeIsolated(async isolatedClient => {
         await isolatedClient.watch(key);
-        const cmd = isolatedClient
+        await isolatedClient
           .multi()
           .unlink(key)
-        for (const k in data) {
-          cmd.hSet(key, k, data[k])
-        }
-        await cmd.exec();
+          .hSet(key, Object.entries(data))
+          .exec();
       });
     } catch (error: any) {
       if (error.name === 'WatchError') throw new RedisError("Watch error when setting HASH.");
