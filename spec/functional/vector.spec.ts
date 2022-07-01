@@ -4,29 +4,49 @@ import { Client } from '$lib/client';
 import { Schema } from '$lib/schema/schema';
 import { Entity } from '$lib/entity/entity';
 import { Repository } from '$lib/repository';
+import { removeAll } from './helpers/redis-helper';
 
 describe("Vector", () => {
+  let redis: ReturnType<typeof createClient>
+  let client: Client
+  let repository: Repository<Product>
+  let entityIDs: string[]
 
-  it("demo", async () => {
+  // define the interface, just for TypeScript
+  interface Product {
+    name: string;
+    price: number;
+    image: Buffer;
+  }
+
+  // define the entity class and add any business logic to it
+  class Product extends Entity {
+  }
+
+  beforeAll(async () => {
     // establish an existing connection to Redis
-    let redis = createClient();
+    redis = createClient();
     redis.on('error', (err) => console.log('Redis Client Error', err));
     await redis.connect();
 
-    // define the interface, just for TypeScript
-    interface Product {
-      name: string;
-      price: number;
-      image: Buffer;
-    }
-
-    // define the entity class and add any business logic to it
-    class Product extends Entity {
-    }
-
     // get a client use an existing Redis connection
-    let client = await new Client().use(redis);
+    client = await new Client().use(redis);
 
+    await removeAll(client, 'Product:')
+
+    entityIDs = []
+  })
+
+  afterAll(async () => {
+    await removeAll(client, 'Product:')
+
+    await repository.dropIndex();
+
+    // close the client
+    await client.close()
+  })
+
+  it("demo", async () => {
     let schema = new Schema<Product>(
       Product, {
       name: { type: 'text' },
@@ -36,7 +56,7 @@ describe("Vector", () => {
       dataStructure: 'HASH',
     });
 
-    let repository: Repository<Product> = client.fetchRepository<Product>(schema);
+    repository = client.fetchRepository<Product>(schema);
 
     await repository.createIndex();
 
@@ -48,7 +68,6 @@ describe("Vector", () => {
       return await repository.save(entity);
     }
 
-    const entityIDs = []
     for (const product of products) {
       const entityID = await loadProduct(product)
       entityIDs.push(entityID)
@@ -70,15 +89,6 @@ describe("Vector", () => {
       'Product:' + entityIDs[0], [ '__image_score', '-1.19209289551e-07' ],
       'Product:' + entityIDs[1], [ '__image_score', '0.212629973888' ],
     ])
-
-    for (const entityID of entityIDs) {
-      await repository.remove(entityID)
-    }
-
-    await repository.dropIndex();
-
-    // close the client
-    await client.close()
   });
 });
 
