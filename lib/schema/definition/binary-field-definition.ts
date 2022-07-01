@@ -42,11 +42,11 @@ interface HNSWVectorParameters extends VectorParameters {
 
 type VectorAlgorithm = FlatVectorParameters | HNSWVectorParameters
 
-/** A field representing vector similarity. */
-export interface VectorFieldDefinition extends BaseFieldDefinition {
-  /** Yep. It's a vector. */
-  type: 'vector';
+/** A field representing binary data. */
+export interface BinaryFieldDefinition extends BaseFieldDefinition {
+  /** Yep. It's a binary. */
+  type: 'binary';
 
   // vector parameters
-  vector: VectorAlgorithm;
+  vector?: VectorAlgorithm;
 }
