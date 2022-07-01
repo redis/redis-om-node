@@ -8,7 +8,7 @@ import {
   SortableFieldDefinition,
   NormalizedFieldDefinition,
   WeightFieldDefinition,
-  VectorFieldDefinition,
+  BinaryFieldDefinition,
 } from "../definition";
 import { Schema } from "../schema";
 
@@ -62,9 +62,9 @@ export abstract class SchemaBuilder<TEntity extends Entity> {
     return field.weight ? ['WEIGHT', field.weight.toString()] : []
   }
 
-  protected buildVector(field: VectorFieldDefinition) {
+  protected buildVector(field: BinaryFieldDefinition) {
     // assume that indexed: false takes precedence
-    if (!(field.indexed ?? this.schema.indexedDefault)) {
+    if (!(field.indexed ?? this.schema.indexedDefault) || !field.vector) {
       return ['NOINDEX']
     }
 

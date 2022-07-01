@@ -31,7 +31,7 @@ describe("Vector", () => {
       Product, {
       name: { type: 'text' },
       price: { type: 'number' },
-      image: { type: 'vector', vector: { algorithm: 'FLAT', dim: 512, distance_metric: 'COSINE', initial_cap: 5, block_size: 5 }}
+      image: { type: 'binary', vector: { algorithm: 'FLAT', dim: 512, distance_metric: 'COSINE', initial_cap: 5, block_size: 5 }}
     }, {
       dataStructure: 'HASH',
     });
@@ -54,13 +54,28 @@ describe("Vector", () => {
       entityIDs.push(entityID)
     }
 
-    // TODO: execute a raw search for the first product image and we should get the first 2 products back
+    // TODO: figure out rawSearch / where query encoding is happening ...
 
-    await repository.dropIndex();
+    // execute a raw search for the first product image ...
+    const results = await redis.sendCommand([
+      'FT.SEARCH', 'Product:index', '*=>[KNN 2 @image $query_vector]', 'PARAMS', '2',
+      'query_vector', Buffer.from(products[0].image, 'hex'),
+      'RETURN', '3', '__image_score name price',
+      'SORTBY', '__image_score',
+      'DIALECT', '2'
+    ])
+
+    // ... and we should get the first 2 products back in order
+    expect(results).toStrictEqual([ 2,
+      'Product:' + entityIDs[0], [ '__image_score', '-1.19209289551e-07' ],
+      'Product:' + entityIDs[1], [ '__image_score', '0.212629973888' ],
+    ])
 
     for (const entityID of entityIDs) {
       await repository.remove(entityID)
     }
+
+    await repository.dropIndex();
 
     // close the client
     await client.close()

@@ -52,7 +52,7 @@ export class HashSchemaBuilder<TEntity extends Entity> extends SchemaBuilder<TEn
           ...this.buildWeight(fieldDef),
           ...this.buildIndexed(fieldDef),
         ]
-      case 'vector':
+      case 'binary':
         return [
           fieldAlias,
           ...this.buildVector(fieldDef),

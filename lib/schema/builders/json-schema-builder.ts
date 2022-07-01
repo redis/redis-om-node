@@ -56,9 +56,12 @@ export class JsonSchemaBuilder<TEntity extends Entity> extends SchemaBuilder<TEn
           ...this.buildWeight(fieldDef),
           ...this.buildIndexed(fieldDef),
         ]
-      case 'vector':
-        console.warn(`You have marked the '${field}' field as a vector but RediSearch doesn't support the VECTOR attribute for JSON. Ignored.`);
-        return []
+      case 'binary':
+        if (fieldDef.vector)
+          console.warn(`You have marked the ${fieldDef.type} field '${field}' as vector but RediSearch doesn't support the VECTOR argument on a field for JSON. Ignored.`);
+        return [
+          ...fieldInfo, 'NOINDEX',
+        ]
     };
   }
 }

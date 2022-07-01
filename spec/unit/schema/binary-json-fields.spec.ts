@@ -8,10 +8,12 @@ const warnSpy = vi.spyOn(global.console, 'warn').mockImplementation(() => {})
 describe("Schema", () => {
   describe.each([
 
-    ["that defines a vector for a JSON", {
-      schemaDef: { aField: { type: 'vector', vector: { algorithm: 'FLAT', dim: 512, distance_metric: 'COSINE' } } } as SchemaDefinition,
+    ["that defines a binary for a JSON", {
+      schemaDef: { aField: { type: 'binary' } } as SchemaDefinition,
       dataStructure: 'JSON',
-      expectedRedisSchema: [],
+      expectedRedisSchema: [
+        '$.aField', 'AS', 'aField', 'NOINDEX'
+      ],
       expectedWarning: null
     }],
 

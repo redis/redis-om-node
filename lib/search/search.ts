@@ -619,7 +619,8 @@ export class Search<TEntity extends Entity> extends AbstractSearch<TEntity> {
     if (fieldDef.type === 'string') return new WhereString<TEntity>(this, field);
     if (fieldDef.type === 'string[]') return new WhereStringArray<TEntity>(this, field);
 
+    // TODO: use single definition of valid field types as per lib/schema.ts
     // @ts-ignore: This is a trap for JavaScript
-    throw new Error(`The field type of '${fieldDef.type}' is not a valid field type. Valid types include 'boolean', 'date', 'number', 'point', 'string', and 'string[]'.`);
+    throw new Error(`The field type of '${fieldDef.type}' is not a valid field type. Valid types include 'boolean', 'date', 'number', 'point', 'string', 'string[]', 'text', 'binary'.`);
   }
 }
