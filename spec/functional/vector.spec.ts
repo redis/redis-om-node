@@ -82,13 +82,16 @@ describe("Vector", () => {
       'RETURN', '3', '__image_score name price',
       'SORTBY', '__image_score',
       'DIALECT', '2'
-    ])
+    ]) as any[]
 
     // ... and we should get the first 2 products back in order
-    expect(results).toStrictEqual([ 2,
-      'Product:' + entityIDs[0], [ '__image_score', '-1.19209289551e-07' ],
-      'Product:' + entityIDs[1], [ '__image_score', '0.212629973888' ],
-    ])
+    expect(results).toBeDefined()
+    expect(results).toBeInstanceOf(Array)
+    expect(results.length).toBe(5)
+    expect(results[1]).toBe('Product:' + entityIDs[0])
+    expect(parseFloat(results[2][1])).toBeLessThan(1e-4)
+    expect(results[3]).toBe('Product:' + entityIDs[1])
+    expect(parseFloat(results[4][1])).toBeGreaterThan(0.2)
   });
 });
 
