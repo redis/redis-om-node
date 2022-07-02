@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [16, 18]
+        node-version: [14, 16, 18]
     services:
       redis:
         image: redis/redis-stack-server:latest
