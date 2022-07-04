@@ -1,4 +1,4 @@
-import { redis } from '../helpers/mock-redis'
+import { redis, commandOptions } from '../helpers/mock-redis'
 import { Client, RedisHashData } from '$lib/client';
 
 
@@ -20,7 +20,7 @@ describe("Client", () => {
       });
 
       it("passes the command to redis", async () => {
-        expect(redis.hGetAll).toHaveBeenCalledWith('foo');
+        expect(redis.hGetAll).toHaveBeenCalledWith(commandOptions({ returnBuffers: true }), 'foo');
       });
 
       it("returns the value from redis", async () => {
