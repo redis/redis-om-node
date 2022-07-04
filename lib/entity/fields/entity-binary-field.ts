@@ -1,5 +1,6 @@
 import { EntityField } from "./entity-field";
 import { RedisHashData, RedisJsonData } from "../../client";
+import { EntityValue } from "../entity-value";
 
 export class EntityBinaryField extends EntityField {
   toRedisJson(): RedisJsonData {
@@ -9,7 +10,7 @@ export class EntityBinaryField extends EntityField {
   }
 
   fromRedisJson(value: any) {
-    if (value === null) this.value = Buffer.from(value, 'base64');
+    if (value !== null) this.value = Buffer.from(value, 'base64');
   }
 
   toRedisHash(): RedisHashData {
@@ -19,7 +20,16 @@ export class EntityBinaryField extends EntityField {
   }
 
   fromRedisHash(value: string | Buffer) {
-    this.value = Buffer.from(value.toString(), 'binary');
+    if (!this.isBuffer(value)) {
+      throw Error(`Non-binary value of '${value}' read from Redis for binary field.`)
+    }
+    this.value = value as Buffer
+  }
+
+  protected validateValue(value: EntityValue) {
+    super.validateValue(value);
+    if (value !== null && !this.isBuffer(value))
+      throw Error(`Expected value with type of 'binary' but received '${value}'.`);
   }
 
   private get valueAsBuffer(): Buffer {

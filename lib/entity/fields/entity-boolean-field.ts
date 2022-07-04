@@ -9,10 +9,11 @@ export class EntityBooleanField extends EntityField {
     return data;
   };
 
-  fromRedisHash(value: string) {
-    if (value === '0') {
+  fromRedisHash(value: string | Buffer) {
+    const str = value.toString()
+    if (str === '0') {
       this.value = false;
-    } else if (value === '1') {
+    } else if (str === '1') {
       this.value = true;
     } else {
       throw Error(`Non-boolean value of '${value}' read from Redis for boolean field.`);

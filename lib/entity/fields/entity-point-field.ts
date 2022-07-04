@@ -29,9 +29,10 @@ export class EntityPointField extends EntityField {
     return data;
   };
 
-  fromRedisHash(value: string) {
-    if (value.match(IS_COORD_PAIR)) {
-      const [longitude, latitude] = value.split(',').map(Number.parseFloat);
+  fromRedisHash(value: string | Buffer) {
+    const str = value.toString()
+    if (str.match(IS_COORD_PAIR)) {
+      const [longitude, latitude] = str.split(',').map(Number.parseFloat);
       this.value = { longitude, latitude };
     } else {
       throw Error(`Non-point value of '${value}' read from Redis for point field.`);
