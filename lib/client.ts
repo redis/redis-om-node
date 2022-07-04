@@ -1,4 +1,4 @@
-import { createClient } from 'redis';
+import { createClient, commandOptions } from 'redis';
 import { Repository } from './repository';
 import { JsonRepository, HashRepository } from './repository';
 import { Entity } from './entity/entity';
@@ -204,7 +204,7 @@ export class Client {
   /** @internal */
   async hgetall(key: string): Promise<RedisHashData> {
     this.validateRedisOpen();
-    return this.redis.hGetAll(key);
+    return this.redis.hGetAll(commandOptions({ returnBuffers: true }), key);
   }
 
   /** @internal */
