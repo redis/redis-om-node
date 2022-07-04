@@ -59,6 +59,9 @@ export const SOME_MORE_STRINGS: Array<string> = ['charlie', 'delta', 'echo'];
 export const SOME_MORE_STRINGS_JSON: string = JSON.stringify(SOME_MORE_STRINGS);
 export const SOME_MORE_STRINGS_JOINED: string = SOME_MORE_STRINGS.join('|');
 
+export const A_BUFFER = Buffer.from([1, 2, 3, 4, 5, 6])
+export const A_BUFFER_BASE64 = 'AQIDBAUG'
+
 export type SampleEntityData = {
   aString: string | null;
   anotherString: string | null;
