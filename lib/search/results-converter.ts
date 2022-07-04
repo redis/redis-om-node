@@ -18,7 +18,7 @@ export abstract class SearchResultsConverter<TEntity extends Entity> {
   }
 
   get ids(): Array<string> {
-    return this.keys.map(key => (key as string).replace(/^.*:/, ""));
+    return this.keys.map(key => key.toString().replace(/^.*:/, ""));
   }
 
   get keys(): Array<string> {
@@ -42,12 +42,12 @@ export abstract class SearchResultsConverter<TEntity extends Entity> {
 }
 
 export class HashSearchResultsConverter<TEntity extends Entity> extends SearchResultsConverter<TEntity> {
-  protected arrayToEntity(id: string, array: Array<string>): TEntity {
+  protected arrayToEntity(id: string, array: Array<string | Buffer>): TEntity {
     const keys = array.filter((_entry, index) => index % 2 === 0);
     const values = array.filter((_entry, index) => index % 2 !== 0);
 
     const hashData: RedisHashData = keys.reduce((object: any, key, index) => {
-      object[key] = values[index]
+      object[key.toString()] = values[index]
       return object
     }, {});
 
@@ -58,9 +58,10 @@ export class HashSearchResultsConverter<TEntity extends Entity> extends SearchRe
 }
 
 export class JsonSearchResultsConverter<TEntity extends Entity> extends SearchResultsConverter<TEntity> {
-  protected arrayToEntity(id: string, array: Array<string>): TEntity {
-    const index = array.findIndex(value => value === '$') + 1;
-    const jsonString = array[index];
+  protected arrayToEntity(id: string, array: Array<string | Buffer>): TEntity {
+    const items = array.map(item => item.toString())
+    const index = items.findIndex(value => value === '$') + 1;
+    const jsonString = items[index];
     const jsonData: RedisJsonData = JSON.parse(jsonString);
     const entity = new this.schema.entityCtor(this.schema, id);
     entity.fromRedisJson(jsonData);

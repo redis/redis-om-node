@@ -174,7 +174,7 @@ export class Client {
 
     if (keysOnly) command.push('RETURN', '0');
 
-    return this.redis.sendCommand<any[]>(command);
+    return this.redis.sendCommand<any[]>(command, commandOptions({ returnBuffers: true }));
   }
 
   /** @internal */
