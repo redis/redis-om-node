@@ -4,38 +4,43 @@ import { SchemaBuilder } from "./schema-builder";
 
 export class HashSchemaBuilder<TEntity extends Entity> extends SchemaBuilder<TEntity> {
 
-  protected buildEntry(field: string): Array<string> {
+  protected buildEntry(field: string, parentField?: string): Array<string> {
     const fieldDef: FieldDefinition = this.schema.definition[field];
     const fieldAlias = fieldDef.alias ?? field
+    const fieldPath = parentField ? `${parentField}.${fieldAlias}` : fieldAlias
 
     switch (fieldDef.type) {
       case 'date':
         return [
-          fieldAlias, 'NUMERIC',
+          fieldPath, 'NUMERIC',
           ...this.buildSortable(fieldDef),
           ...this.buildIndexed(fieldDef),
         ]
       case 'boolean':
         return [
-          fieldAlias, 'TAG',
+          fieldPath, 'TAG',
           ...this.buildSortable(fieldDef),
           ...this.buildIndexed(fieldDef),
         ]
       case 'number':
         return [
-          fieldAlias, 'NUMERIC',
+          fieldPath, 'NUMERIC',
           ...this.buildSortable(fieldDef),
           ...this.buildIndexed(fieldDef),
         ]
+      case 'object':
+        // TODO: remove this ignore
+        // @ts-ignore
+        return new HashSchemaBuilder(fieldDef.schema).redisSchema
       case 'point':
         return [
-          fieldAlias, 'GEO',
+          fieldPath, 'GEO',
           ...this.buildIndexed(fieldDef),
         ]
       case 'string[]':
       case 'string':
         return [
-          fieldAlias, 'TAG',
+          fieldPath, 'TAG',
           ...this.buildCaseInsensitive(fieldDef),
           ...this.buildSeparable(fieldDef),
           ...this.buildSortable(fieldDef),
@@ -44,7 +49,7 @@ export class HashSchemaBuilder<TEntity extends Entity> extends SchemaBuilder<TEn
         ]
       case 'text':
         return [
-          fieldAlias, 'TEXT',
+          fieldPath, 'TEXT',
           ...this.buildStemming(fieldDef),
           ...this.buildPhonetic(fieldDef),
           ...this.buildSortable(fieldDef),

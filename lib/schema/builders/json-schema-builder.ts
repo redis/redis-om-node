@@ -4,7 +4,7 @@ import { SchemaBuilder } from "./schema-builder";
 
 export class JsonSchemaBuilder<TEntity extends Entity> extends SchemaBuilder<TEntity> {
 
-  protected buildEntry(field: string): Array<string> {
+  protected buildEntry(field: string, parentField: string = ''): Array<string> {
     const fieldDef: FieldDefinition = this.schema.definition[field];
     const fieldAlias = fieldDef.alias ?? field;
     const fieldPath = `\$.${fieldAlias}${fieldDef.type === 'string[]' ? '[*]' : ''}`;
@@ -30,6 +30,10 @@ export class JsonSchemaBuilder<TEntity extends Entity> extends SchemaBuilder<TEn
           ...this.buildSortable(fieldDef),
           ...this.buildIndexed(fieldDef),
         ]
+      case 'object':
+        // TODO: remove this ignore
+        // @ts-ignore
+        return new JsonSchemaBuilder(fieldDef.schema).redisSchema
       case 'point':
         return [
           ...fieldInfo, 'GEO',

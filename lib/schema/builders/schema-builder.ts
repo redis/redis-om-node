@@ -27,7 +27,7 @@ export abstract class SchemaBuilder<TEntity extends Entity> {
     return redisSchema;
   }
 
-  protected abstract buildEntry(field: string): Array<string>;
+  protected abstract buildEntry(field: string, parentField?: string): Array<string>;
 
   protected buildCaseInsensitive(field: CaseSensitiveFieldDefinition) {
     return field.caseSensitive ? ['CASESENSITIVE'] : []
