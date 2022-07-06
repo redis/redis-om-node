@@ -28,7 +28,10 @@ describe("remove hash", () => {
     await loadTestHash(client, 'remove-hash:baz', A_THIRD_ENTITY);
   });
 
-  afterAll(async () => await client.close());
+  afterAll(async () => {
+    await removeAll(client, 'remove-hash:')
+    await client.close()
+  });
 
   it("removes a single entity", async () => {
     exists = await keyExists(client, 'remove-hash:foo');

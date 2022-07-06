@@ -28,7 +28,10 @@ describe("remove JSON", () => {
     await loadTestJson(client, 'remove-json:baz', A_THIRD_ENTITY);
   });
 
-  afterAll(async () => await client.close());
+  afterAll(async () => {
+    await removeAll(client, 'remove-json:')
+    await client.close()
+  });
 
   it("removes a single entity", async () => {
     exists = await keyExists(client, 'remove-json:foo');
