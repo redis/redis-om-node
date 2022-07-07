@@ -100,14 +100,22 @@ export class Schema<TEntity extends Entity> {
   get indexHash(): string {
 
     const data = JSON.stringify({
-      definition: this.definition,  // TODO: this won't work with embedded schemas
+      definition: Object.entries(this.definition)
+        .map(([fieldName, fieldDef]) => {
+          if (fieldDef.type === 'object') {
+            const { schema, ...theRest } = fieldDef;
+            return { fieldName, fieldDef: { schemaHash: schema.indexHash, ...theRest } };
+          } else {
+            return { fieldName, fieldDef };
+          }
+        }),
       prefix: this.prefix,
       indexName: this.indexName,
       indexHashName: this.indexHashName,
       dataStructure: this.dataStructure,
       useStopWords: this.useStopWords,
       stopWords: this.stopWords,
-      // indexedDefault: this.indexedDefault
+      indexedDefault: this.indexedDefault
     });
 
     return createHash('sha1').update(data).digest('base64');
@@ -116,9 +124,6 @@ export class Schema<TEntity extends Entity> {
   /** @internal */
   get redisSchema(): Array<string> {
     return buildRedisSchema(this);
-    // if (this.dataStructure === 'HASH') return new HashSchemaBuilder(this).redisSchema;
-    // if (this.dataStructure === 'JSON') return new JsonSchemaBuilder(this).redisSchema;
-    // throw new Error(`'${this.dataStructure}' in an invalid data structure. Valid data structures are 'HASH' and 'JSON'.`);
   }
 
   /**
@@ -165,7 +170,7 @@ export class Schema<TEntity extends Entity> {
   }
 
   private validateFieldDef(field: string, fieldDef: FieldDefinition) {
-    if (!['boolean', 'date', 'number', 'point', 'string', 'string[]', 'text', 'object'].includes(fieldDef.type))
+    if (!['boolean', 'date', 'number', 'object', 'point', 'string', 'string[]', 'text'].includes(fieldDef.type))
       throw Error(`The field '${field}' is configured with a type of '${fieldDef.type}'. Valid types include 'boolean', 'date', 'number', 'object', 'point', 'string', 'string[]', and 'text'.`);
   }
 }
@@ -218,11 +223,21 @@ export class Schema<TEntity extends Entity> {
     this.defineProperties();
   }
 
-  /**
-   * The configured indexed default setting for fields
-   */
-   get indexedDefault(): boolean { return true; }
+  /** The hash value of this index. Stored in Redis under {@link Schema.indexHashName}. */
+  get indexHash(): string {
+    const data = JSON.stringify({
+      definition: Object.entries(this.definition)
+        .map(([fieldName, fieldDef]) => {
+          if (fieldDef.type === 'object') {
+            return { fieldName, fieldDef: fieldDef.schema.indexHash }
+          } else {
+            return { fieldName, fieldDef }
+          }
+        })
+    });
 
+    return createHash('sha1').update(data).digest('base64');
+  }
 
   private defineProperties() {
     Object.keys(this.definition).forEach(fieldName => {
@@ -245,7 +260,7 @@ export class Schema<TEntity extends Entity> {
   }
 
   private validateFieldDef(field: string, fieldDef: FieldDefinition) {
-    if (!['boolean', 'date', 'number', 'point', 'string', 'string[]', 'text'].includes(fieldDef.type))
+    if (!['boolean', 'date', 'number', 'object', 'point', 'string', 'string[]', 'text'].includes(fieldDef.type))
       throw Error(`The field '${field}' is configured with a type of '${fieldDef.type}'. Valid types include 'boolean', 'date', 'number', 'object', 'point', 'string', 'string[]', and 'text'.`);
   }
 }

@@ -1,13 +1,17 @@
-import { Schema } from '$lib/schema/schema';
+import { EmbeddedSchema, Schema } from '$lib/schema/schema';
 import { Entity } from '$lib/entity/entity';
 
-const DEFAULT_HASH = "9UJTUMAzgvhnE/cOJXT1D3KPGYg=";
+const DEFAULT_HASH = "K0RLeeNkFtDQMdEJZfceSTXBR6Y=";
 
 describe("Schema", () => {
 
-  interface TestEntity { }
-  class TestEntity extends Entity { }
+  class TestEntity extends Entity {}
+  class TestEmbeddedEntity extends Entity {}
+  class TestDeeplyEmbeddedEntity extends Entity {}
   let schema: Schema<TestEntity>;
+  let embeddedSchema: EmbeddedSchema<TestEmbeddedEntity>;
+  let deeplyEmbeddedSchema: EmbeddedSchema<TestDeeplyEmbeddedEntity>;
+
 
   describe("that is empty", () => {
     beforeEach(() => {
@@ -65,7 +69,76 @@ describe("Schema", () => {
       })
     });
 
-    it("generates the index hash", () => expect(schema.indexHash).toBe("F+GgQDhzmXhvTNhQczPZtCIJ0BA="));
+    it("generates the expected Redis schema", () => expect(schema.redisSchema).toEqual([
+      '$.aString', 'AS', 'aString', 'TAG', 'SEPARATOR', '|',
+      '$.anotherString', 'AS', 'anotherString', 'TAG', 'SEPARATOR', '|',
+      '$.someText', 'AS', 'someText', 'TEXT',
+      '$.someOtherText', 'AS', 'someOtherText', 'TEXT',
+      '$.aNumber', 'AS', 'aNumber', 'NUMERIC',
+      '$.anotherNumber', 'AS', 'anotherNumber', 'NUMERIC',
+      '$.aBoolean', 'AS', 'aBoolean', 'TAG',
+      '$.anotherBoolean', 'AS', 'anotherBoolean', 'TAG',
+      '$.aPoint', 'AS', 'aPoint', 'GEO',
+      '$.anotherPoint', 'AS', 'anotherPoint', 'GEO',
+      '$.aDate', 'AS', 'aDate', 'NUMERIC',
+      '$.anotherDate', 'AS', 'anotherDate', 'NUMERIC',
+      '$.someStrings[*]', 'AS', 'someStrings', 'TAG', 'SEPARATOR', '|',
+      '$.someOtherStrings[*]', 'AS', 'someOtherStrings', 'TAG', 'SEPARATOR', '|'
+    ]));
+    it("generates the index hash", () => expect(schema.indexHash).toBe("FCn3hUMMT6KGKK+lLg300S/yJCg="));
+  });
+
+  describe("that is deeply populated", () => {
+
+    beforeEach(() => {
+      deeplyEmbeddedSchema = new EmbeddedSchema<TestDeeplyEmbeddedEntity>(TestDeeplyEmbeddedEntity, {
+        aNumber: { type: 'number' },
+        aString: { type: 'string' },
+        someText: { type: 'text' }
+      })
+
+      embeddedSchema = new EmbeddedSchema<TestEmbeddedEntity>(TestEmbeddedEntity, {
+        aNumber: { type: 'number' },
+        aString: { type: 'string' },
+        someText: { type: 'text' },
+        aDeeperObject: { type: 'object', schema: deeplyEmbeddedSchema }
+      })
+
+      schema = new Schema<TestEntity>(TestEntity, {
+        aString: { type: 'string' }, anotherString: { type: 'string' },
+        someText: { type: 'text' }, someOtherText: { type: 'text' },
+        aNumber: { type: 'number' }, anotherNumber: { type: 'number' },
+        aBoolean: { type: 'boolean' }, anotherBoolean: { type: 'boolean' },
+        aPoint: { type: 'point' }, anotherPoint: { type: 'point' },
+        aDate: { type: 'date' }, anotherDate: { type: 'date' },
+        someStrings: { type: 'string[]' }, someOtherStrings: { type: 'string[]' },
+        anObject: { type: 'object', schema: embeddedSchema }
+      })
+    });
+
+    it("generates the expected Redis schema", () => expect(schema.redisSchema).toEqual([
+      '$.aString', 'AS', 'aString', 'TAG', 'SEPARATOR', '|',
+      '$.anotherString', 'AS', 'anotherString', 'TAG', 'SEPARATOR', '|',
+      '$.someText', 'AS', 'someText', 'TEXT',
+      '$.someOtherText', 'AS', 'someOtherText', 'TEXT',
+      '$.aNumber', 'AS', 'aNumber', 'NUMERIC',
+      '$.anotherNumber', 'AS', 'anotherNumber', 'NUMERIC',
+      '$.aBoolean', 'AS', 'aBoolean', 'TAG',
+      '$.anotherBoolean', 'AS', 'anotherBoolean', 'TAG',
+      '$.aPoint', 'AS', 'aPoint', 'GEO',
+      '$.anotherPoint', 'AS', 'anotherPoint', 'GEO',
+      '$.aDate', 'AS', 'aDate', 'NUMERIC',
+      '$.anotherDate', 'AS', 'anotherDate', 'NUMERIC',
+      '$.someStrings[*]', 'AS', 'someStrings', 'TAG', 'SEPARATOR', '|',
+      '$.someOtherStrings[*]', 'AS', 'someOtherStrings', 'TAG', 'SEPARATOR', '|',
+      '$.anObject.aNumber', 'AS', 'anObject.aNumber', 'NUMERIC',
+      '$.anObject.aString', 'AS', 'anObject.aString', 'TAG', 'SEPARATOR', '|',
+      '$.anObject.someText', 'AS', 'anObject.someText', 'TEXT',
+      '$.anObject.aDeeperObject.aNumber', 'AS', 'anObject.aDeeperObject.aNumber', 'NUMERIC',
+      '$.anObject.aDeeperObject.aString', 'AS', 'anObject.aDeeperObject.aString', 'TAG', 'SEPARATOR', '|',
+      '$.anObject.aDeeperObject.someText', 'AS', 'anObject.aDeeperObject.someText', 'TEXT'
+    ]));
+    it("generates the index hash", () => expect(schema.indexHash).toBe("Ilbpz9vd8dg0xiRKAqUVKnXvd6s="));
   });
 
   describe("that overrides the data structure to be JSON", () => {
@@ -81,7 +154,7 @@ describe("Schema", () => {
       schema = new Schema<TestEntity>(TestEntity, {}, { dataStructure: 'HASH' })
     });
     it("provides a HASH data structure", () => expect(schema.dataStructure).toBe("HASH"));
-    it("generates the index hash", () => expect(schema.indexHash).toBe("nd4P5YFFLxYr/3glJ6Thvlk+0tg="));
+    it("generates the index hash", () => expect(schema.indexHash).toBe("0XK4eP9dOGP2TjBX/+MSVc5homU="));
   });
 
   describe("that overrides the keyspace prefix", () => {
@@ -91,7 +164,7 @@ describe("Schema", () => {
     it("generates the keyspace prefix from the configuration", () => expect(schema.prefix).toBe("test-prefix"));
     it("generates the index name from the configured prefix", () => expect(schema.indexName).toBe("test-prefix:index"));
     it("generates the index hash name from the configured prefix", () => expect(schema.indexHashName).toBe("test-prefix:index:hash"));
-    it("generates the index hash", () => expect(schema.indexHash).toBe("JjmGXw/Whrk1zgxDb1q5Kk76A/g="));
+    it("generates the index hash", () => expect(schema.indexHash).toBe("t6JEOCwFKVYMbkWE5lmnRNt8+WQ="));
   });
 
   describe("that overrides the index name", () => {
@@ -99,7 +172,7 @@ describe("Schema", () => {
       schema = new Schema<TestEntity>(TestEntity, {}, { indexName: 'test-index' })
     });
     it("generates the index name from the configured index name, ignoring the prefix", () => expect(schema.indexName).toBe("test-index"));
-    it("generates the index hash", () => expect(schema.indexHash).toBe("DgFE5XI/doj0oQNTZQ5yqPHtb6M="));
+    it("generates the index hash", () => expect(schema.indexHash).toBe("PZ5pBuwmeXeeCpM9G7GIsTMRMVE="));
   });
 
   describe("that overrides the index hash name", () => {
@@ -107,7 +180,7 @@ describe("Schema", () => {
       schema = new Schema<TestEntity>(TestEntity, {}, { indexHashName: 'test-index-hash' })
     });
     it("generates the index hash name from the configured index hash name, ignoring the prefix", () => expect(schema.indexHashName).toBe("test-index-hash"));
-    it("generates the index hash", () => expect(schema.indexHash).toBe("p1OuQrsovszDdUD5pnbxTT5sbpI="));
+    it("generates the index hash", () => expect(schema.indexHash).toBe("i1XCYozQ08UZuj+P8Tri8OiFBRs="));
   });
 
   describe("that overrides the id generation strategy", () => {
@@ -123,7 +196,7 @@ describe("Schema", () => {
       schema = new Schema<TestEntity>(TestEntity, {}, { useStopWords: 'OFF' })
     });
     it("provides the stop words option", () => expect(schema.useStopWords).toBe('OFF'));
-    it("generates the index hash", () => expect(schema.indexHash).toBe("W7+Ri6W8CIo8GUkRY+uabQgpNVA="));
+    it("generates the index hash", () => expect(schema.indexHash).toBe("flTsd1eJKt/osPUJzKxr97Gi61Y="));
   });
 
   describe("that uses default stop words", () => {
@@ -139,7 +212,7 @@ describe("Schema", () => {
       schema = new Schema<TestEntity>(TestEntity, {}, { useStopWords: 'CUSTOM' })
     });
     it("provides the stop words option", () => expect(schema.useStopWords).toBe('CUSTOM'));
-    it("generates the index hash", () => expect(schema.indexHash).toBe("nEC4s/DEz7EvTApCOKzQlXFTgSA="));
+    it("generates the index hash", () => expect(schema.indexHash).toBe("AJRVRK7f6gjie488EEtscXoEi24="));
   });
 
   describe("that sets custom stop words", () => {
@@ -147,7 +220,7 @@ describe("Schema", () => {
       schema = new Schema<TestEntity>(TestEntity, {}, { stopWords: ['foo', 'bar', 'baz'] })
     });
     it("provides the custom stop words", () => expect(schema.stopWords).toEqual(['foo', 'bar', 'baz']));
-    it("generates the index hash", () => expect(schema.indexHash).toBe("odwqZJal1kQTrLjIqu79U4ZHtDs="));
+    it("generates the index hash", () => expect(schema.indexHash).toBe("B7BDTY/1KcpMPaH84IPLCOzwUMM="));
   });
 
   describe("that is misconfigured", () => {
