@@ -19,7 +19,7 @@ describe("Schema", () => {
       dataStructure: 'HASH',
       expectedRedisSchema: [
         'aField.aNumber', 'NUMERIC',
-        'aField.aString', 'TAG',
+        'aField.aString', 'TAG', 'SEPARATOR', '|',
         'aField.someText', 'TEXT'
       ]
     }],
@@ -29,7 +29,7 @@ describe("Schema", () => {
       dataStructure: 'HASH',
       expectedRedisSchema: [
         'anotherField.aNumber', 'NUMERIC',
-        'anotherField.aString', 'TAG',
+        'anotherField.aString', 'TAG', 'SEPARATOR', '|',
         'anotherField.someText', 'TEXT'
       ]
     }],

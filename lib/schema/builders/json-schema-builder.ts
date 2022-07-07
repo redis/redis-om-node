@@ -7,8 +7,9 @@ export class JsonSchemaBuilder<TEntity extends Entity> extends SchemaBuilder<TEn
   protected buildEntry(field: string, parentField: string = ''): Array<string> {
     const fieldDef: FieldDefinition = this.schema.definition[field];
     const fieldAlias = fieldDef.alias ?? field;
-    const fieldPath = `\$.${fieldAlias}${fieldDef.type === 'string[]' ? '[*]' : ''}`;
-    const fieldInfo = [fieldPath, 'AS', fieldAlias]
+    const fieldAliasPathed = this.parentField ? `${this.parentField}.${fieldAlias}` : fieldAlias
+    const fieldJsonPath = `\$.${fieldAliasPathed}${fieldDef.type === 'string[]' ? '[*]' : ''}`;
+    const fieldInfo = [fieldJsonPath, 'AS', fieldAliasPathed]
 
     switch (fieldDef.type) {
       case 'date':
@@ -33,7 +34,7 @@ export class JsonSchemaBuilder<TEntity extends Entity> extends SchemaBuilder<TEn
       case 'object':
         // TODO: remove this ignore
         // @ts-ignore
-        return new JsonSchemaBuilder(fieldDef.schema).redisSchema
+        return new JsonSchemaBuilder(fieldDef.schema, fieldAliasPathed).redisSchema
       case 'point':
         return [
           ...fieldInfo, 'GEO',

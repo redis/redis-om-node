@@ -9,14 +9,17 @@ import {
   NormalizedFieldDefinition,
   WeightFieldDefinition,
 } from "../definition";
-import { Schema } from "../schema";
+import { EmbeddedSchema, Schema } from "../schema";
 
 export abstract class SchemaBuilder<TEntity extends Entity> {
 
-  protected schema: Schema<TEntity>;
+  protected schema: Schema<TEntity> | EmbeddedSchema<TEntity>;
+  protected parentField?: string;
 
-  constructor(schema: Schema<TEntity>) {
+
+  constructor(schema: Schema<TEntity> | EmbeddedSchema<TEntity>, parentField?: string) {
     this.schema = schema;
+    this.parentField = parentField;
   }
 
   get redisSchema(): Array<string> {

@@ -19,7 +19,7 @@ describe("Schema", () => {
       dataStructure: 'JSON',
       expectedRedisSchema: [
         '$.aField.aNumber', 'AS', 'aField.aNumber', 'NUMERIC',
-        '$.aField.aString', 'AS', 'aField.aString', 'TAG',
+        '$.aField.aString', 'AS', 'aField.aString', 'TAG', 'SEPARATOR', '|',
         '$.aField.someText', 'AS', 'aField.someText', 'TEXT'
       ]
     }],
@@ -29,7 +29,7 @@ describe("Schema", () => {
       dataStructure: 'JSON',
       expectedRedisSchema: [
         '$.anotherField.aNumber', 'AS', 'anotherField.aNumber', 'NUMERIC',
-        '$.anotherField.aString', 'AS', 'anotherField.aString', 'TAG',
+        '$.anotherField.aString', 'AS', 'anotherField.aString', 'TAG', 'SEPARATOR', '|',
         '$.anotherField.someText', 'AS', 'anotherField.someText', 'TEXT'
       ]
     }],

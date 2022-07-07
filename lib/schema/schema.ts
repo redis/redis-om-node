@@ -217,6 +217,12 @@ export class Schema<TEntity extends Entity> {
     this.defineProperties();
   }
 
+  /**
+   * The configured indexed default setting for fields
+   */
+   get indexedDefault(): boolean { return true; }
+
+
   private defineProperties() {
     Object.keys(this.definition).forEach(fieldName => {
 
