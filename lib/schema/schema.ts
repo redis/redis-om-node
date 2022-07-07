@@ -7,7 +7,7 @@ import { EntityConstructor } from "../entity/entity-constructor";
 import { IdStrategy, DataStructure, StopWordOptions, SchemaOptions } from './options';
 
 import { SchemaDefinition, FieldDefinition } from './definition';
-import { JsonSchemaBuilder, HashSchemaBuilder } from './builders';
+import { buildRedisSchema } from './builders';
 
 /**
  * Defines a schema that determines how an {@link Entity} is mapped to Redis
@@ -115,9 +115,10 @@ export class Schema<TEntity extends Entity> {
 
   /** @internal */
   get redisSchema(): Array<string> {
-    if (this.dataStructure === 'HASH') return new HashSchemaBuilder(this).redisSchema;
-    if (this.dataStructure === 'JSON') return new JsonSchemaBuilder(this).redisSchema;
-    throw new Error(`'${this.dataStructure}' in an invalid data structure. Valid data structures are 'HASH' and 'JSON'.`);
+    return buildRedisSchema(this);
+    // if (this.dataStructure === 'HASH') return new HashSchemaBuilder(this).redisSchema;
+    // if (this.dataStructure === 'JSON') return new JsonSchemaBuilder(this).redisSchema;
+    // throw new Error(`'${this.dataStructure}' in an invalid data structure. Valid data structures are 'HASH' and 'JSON'.`);
   }
 
   /**

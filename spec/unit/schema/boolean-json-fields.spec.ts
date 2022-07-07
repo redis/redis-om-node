@@ -26,7 +26,7 @@ describe("Schema", () => {
       schemaDef: { aField: { type: 'boolean', sortable: true } } as SchemaDefinition,
       dataStructure: 'JSON',
       expectedRedisSchema: ['$.aField', 'AS', 'aField', 'TAG'],
-      expectedWarning: "You have marked the boolean field 'aField' as sortable but RediSearch doesn't support the SORTABLE argument on a TAG for JSON. Ignored."
+      expectedWarning: "You have marked a boolean field as sortable but RediSearch doesn't support the SORTABLE argument on a TAG for JSON. Ignored."
     }],
 
     ["that defines an unsorted boolean for a JSON", {
@@ -54,7 +54,7 @@ describe("Schema", () => {
       schemaDef: { aField: { type: 'boolean', alias: 'anotherField', sortable: true, indexed: false } } as SchemaDefinition,
       dataStructure: 'JSON',
       expectedRedisSchema: ['$.anotherField', 'AS', 'anotherField', 'TAG', 'NOINDEX'],
-      expectedWarning: "You have marked the boolean field 'aField' as sortable but RediSearch doesn't support the SORTABLE argument on a TAG for JSON. Ignored."
+      expectedWarning: "You have marked a boolean field as sortable but RediSearch doesn't support the SORTABLE argument on a TAG for JSON. Ignored."
     }]
 
   ])("%s", (_, data) => {
