@@ -236,7 +236,7 @@ const point = { longitude: 12.34, latitude: 56.78 }
 
 A `text` field is a lot like a `string`. If you're just reading and writing objects, they are identical. But if you want to *search* on them, they are very, very different. I'll cover that in detail when I talk about [using RediSearch](#-using-redisearch) but the tl;dr is that `string` fields can only be matched on their whole value—no partial matches—and are best for keys while `text` fields have full-text search enabled on them and are optimized for human-readable text.
 
-A `binary` field is a binary blob of data using a `Buffer` object. For Hash data structures it will be stored as a binary field in Redis, for JSON data structures it will be serialized to a Base64 string. The `binary` field stored in a Hash data structure can be indexed as a [Vector Similarity](https://redis.io/docs/stack/search/reference/vectors/) field. When stored in a JSON data structure it will be automatically unindexed.
+A `binary` field is a binary blob of data using a `Buffer` object. For Hash data structures it will be stored as a binary field in Redis, for JSON data structures it will be serialized to a numeric array. The `binary` field can be indexed as a [Vector Similarity](https://redis.io/docs/stack/search/reference/vectors/) field.
 
 Additional field options can be set depending on the field type. These correspond to the [Field Options](https://redis.io/commands/ft.create/#field-options) avialable when creating a RediSearch full-text index. Other than the `separator` option, these only affect how content is indexed and searched.
 
