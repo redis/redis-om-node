@@ -216,9 +216,7 @@ export class Client {
         await isolatedClient
           .multi()
           .unlink(key)
-          // when redis/node-redis#2139 is released, this can be reverted
-          // .hSet(key, data)
-          .hSet(key, Object.entries(data))
+          .hSet(key, data)
           .exec();
       });
     } catch (error: any) {

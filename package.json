@@ -54,7 +54,7 @@
     "vitest": "^0.20.0"
   },
   "dependencies": {
-    "redis": "^4.0.4",
+    "redis": "^4.2.0",
     "ulid": "^2.3.0"
   }
 }
