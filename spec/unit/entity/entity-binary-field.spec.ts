@@ -1,12 +1,12 @@
 import { FieldDefinition } from "../../../lib";
 import { EntityBinaryField } from "$lib/entity/fields";
-import { A_DATE, A_NUMBER, A_NUMBER_STRING, A_POINT, A_STRING, SOME_STRINGS, A_BUFFER, A_BUFFER_BASE64 } from "../../helpers/example-data";
+import { A_DATE, A_NUMBER, A_NUMBER_STRING, A_POINT, A_STRING, SOME_STRINGS, A_BUFFER_VALUES, A_BUFFER } from "../../helpers/example-data";
 
 const FIELD_NAME = 'foo';
 const FIELD_DEF: FieldDefinition = { type: 'binary' };
 const EXPECTED_NULL_JSON_DATA = {};
 const EXPECTED_NULL_HASH_DATA = {};
-const EXPECTED_JSON_DATA = { foo: A_BUFFER_BASE64 };
+const EXPECTED_JSON_DATA = { foo: A_BUFFER_VALUES };
 const EXPECTED_HASH_DATA = { foo: A_BUFFER };
 
 describe("EntityBinaryField", () => {
@@ -25,18 +25,14 @@ describe("EntityBinaryField", () => {
     it("converts to the expected Redis Hash data", () => expect(field.toRedisHash()).toEqual(EXPECTED_NULL_HASH_DATA));
 
     describe("when loaded from Redis JSON data", () => {
-      beforeEach(() => field.fromRedisJson(A_BUFFER_BASE64));
+      beforeEach(() => field.fromRedisJson(A_BUFFER));
       it("has the expected value", () => expect(field.value).toEqual(A_BUFFER));
     });
 
-    describe("when loaded from Redis JSON data containing a null", () => {
-      beforeEach(() => field.fromRedisJson(null));
-      it("has the expected value", () => expect(field.value).toBeNull());
-    });
-
-    it("when loaded from Redis JSON data containing invalid base64", () => {
-      beforeEach(() => field.fromRedisJson('^~$'));
-      it("has has the null value", () => expect(field.value).toBeNull());
+    it("complains when loaded from invalid Redis Json data", () => {
+      // @ts-ignore: JavaScript trap
+      expect(() => field.fromRedisJson('foo'))
+        .toThrow("Non-binary value of 'foo' read from Redis for binary field.");
     });
 
     describe("when loaded from Redis Hash data", () => {

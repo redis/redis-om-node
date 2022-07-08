@@ -79,7 +79,7 @@ describe("Vector", () => {
     const results = await redis.sendCommand([
       'FT.SEARCH', 'Product:index', '*=>[KNN 2 @image $query_vector]', 'PARAMS', '2',
       'query_vector', Buffer.from(products[0].image, 'hex'),
-      'RETURN', '3', '__image_score name price',
+      'RETURN', '3', '__image_score", "name", "price',
       'SORTBY', '__image_score',
       'DIALECT', '2'
     ]) as any[]

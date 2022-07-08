@@ -55,7 +55,7 @@ describe("Schema", () => {
     }],
 
     // NOTE: it makes little sense to do this, but maybe someone wants to turn off indexing
-    // but keep the schema definition, so we'll assume that NOINDEX shoudl take precendence
+    // but keep the schema definition, so we'll assume that NOINDEX should take precendence
     ["that defines an unindexed FLAT vector for a HASH", {
       schemaDef: { aField: { type: 'binary', indexed: false, vector: { algorithm: 'FLAT', dim: 512, distance_metric: 'COSINE' } } } as SchemaDefinition,
       dataStructure: 'HASH',

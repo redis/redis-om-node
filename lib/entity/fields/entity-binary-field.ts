@@ -5,12 +5,15 @@ import { EntityValue } from "../entity-value";
 export class EntityBinaryField extends EntityField {
   toRedisJson(): RedisJsonData {
     const data: RedisJsonData = {};
-    if (this.value !== null) data[this.name] = this.valueAsBuffer.toString('base64')
+    if (this.value !== null) data[this.name] = [...this.valueAsBuffer]
     return data;
   }
 
   fromRedisJson(value: any) {
-    if (value !== null) this.value = Buffer.from(value, 'base64');
+    if (!this.isBuffer(value)) {
+      throw Error(`Non-binary value of '${value}' read from Redis for binary field.`)
+    }
+    this.value = Buffer.from([...value]);
   }
 
   toRedisHash(): RedisHashData {
