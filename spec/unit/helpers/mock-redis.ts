@@ -13,5 +13,6 @@ export const redis = {
 }
 
 export const createClient = vi.fn(() => redis)
+export const commandOptions = vi.fn()
 
-vi.mock('redis', () => ({ createClient }))
+vi.mock('redis', () => ({ createClient, commandOptions }))

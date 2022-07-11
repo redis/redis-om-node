@@ -44,8 +44,8 @@ export abstract class EntityField {
     return data;
   }
 
-  fromRedisHash(value: string) {
-    this.value = value;
+  fromRedisHash(value: string | Buffer) {
+    this.value = value.toString();
   }
 
   protected validateValue(value: EntityValue) {
@@ -66,5 +66,9 @@ export abstract class EntityField {
 
   protected isBoolean(value: EntityValue) {
     return typeof value === 'boolean';
+  }
+
+  protected isBuffer(value: EntityValue) {
+    return value instanceof Buffer;
   }
 }

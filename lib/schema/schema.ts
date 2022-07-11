@@ -163,7 +163,8 @@ export class Schema<TEntity extends Entity> {
   }
 
   private validateFieldDef(field: string, fieldDef: FieldDefinition) {
-    if (!['boolean', 'date', 'number', 'point', 'string', 'string[]', 'text'].includes(fieldDef.type))
-      throw Error(`The field '${field}' is configured with a type of '${fieldDef.type}'. Valid types include 'boolean', 'date', 'number', 'point', 'string', 'string[]', and 'text'.`);
+    const fieldTypes = ['boolean', 'date', 'number', 'point', 'string', 'string[]', 'text', 'binary']
+    if (!fieldTypes.includes(fieldDef.type))
+      throw Error(`The field '${field}' is configured with a type of '${fieldDef.type}'. Valid types include ${fieldTypes.map(type => `'${type}'`).join(', ')}.`);
   }
 }

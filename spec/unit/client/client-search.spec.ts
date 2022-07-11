@@ -1,4 +1,4 @@
-import { redis } from '../helpers/mock-redis'
+import { redis, commandOptions } from '../helpers/mock-redis'
 import { Client } from '$lib/client';
 
 
@@ -22,7 +22,9 @@ describe("Client", () => {
           query: 'query'
         });
         expect(redis.sendCommand).toHaveBeenCalledWith([
-          'FT.SEARCH', 'index', 'query']);
+          'FT.SEARCH', 'index', 'query'],
+          commandOptions({ returnBuffers: true })
+        );
       });
 
       it("sends the expect command when given a limit", async () => {
@@ -32,7 +34,9 @@ describe("Client", () => {
           limit: { offset: 0, count: 5 }
         });
         expect(redis.sendCommand).toHaveBeenCalledWith([
-          'FT.SEARCH', 'index', 'query', 'LIMIT', '0', '5']);
+          'FT.SEARCH', 'index', 'query', 'LIMIT', '0', '5'],
+          commandOptions({ returnBuffers: true })
+        );
       });
 
       it("sends the expected command when given a sort", async () => {
@@ -42,7 +46,9 @@ describe("Client", () => {
           sort: { field: 'sortField', order: 'ASC' }
         });
         expect(redis.sendCommand).toHaveBeenCalledWith([
-          'FT.SEARCH', 'index', 'query', 'SORTBY', 'sortField', 'ASC']);
+          'FT.SEARCH', 'index', 'query', 'SORTBY', 'sortField', 'ASC'],
+          commandOptions({ returnBuffers: true })
+        );
       });
 
       it("sends the expected command when keysOnly is set to false", async () => {
@@ -52,7 +58,9 @@ describe("Client", () => {
           keysOnly: false
         });
         expect(redis.sendCommand).toHaveBeenCalledWith([
-          'FT.SEARCH', 'index', 'query']);
+          'FT.SEARCH', 'index', 'query'],
+          commandOptions({ returnBuffers: true })
+        );
       });
 
       it("sends the expected command when keysOnly is set to true", async () => {
@@ -62,7 +70,9 @@ describe("Client", () => {
           keysOnly: true
         });
         expect(redis.sendCommand).toHaveBeenCalledWith([
-          'FT.SEARCH', 'index', 'query', 'RETURN', '0']);
+          'FT.SEARCH', 'index', 'query', 'RETURN', '0'],
+          commandOptions({ returnBuffers: true })
+        );
       });
 
       it("sends the expected command with all options", async () => {
@@ -75,7 +85,9 @@ describe("Client", () => {
         });
         expect(redis.sendCommand).toHaveBeenCalledWith([
           'FT.SEARCH', 'index', 'query', 'LIMIT', '0', '5',
-          'SORTBY', 'sortField', 'ASC', 'RETURN', '0']);
+          'SORTBY', 'sortField', 'ASC', 'RETURN', '0'],
+          commandOptions({ returnBuffers: true })
+        );
       });
     });
 
