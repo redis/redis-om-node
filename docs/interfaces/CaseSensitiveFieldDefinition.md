@@ -8,9 +8,9 @@ Mixin for adding caseSensitive to a TAG field.
 
 - **`CaseSensitiveFieldDefinition`**
 
-  ↳ [`StringFieldDefinition`](StringFieldDefinition.md)
-
   ↳ [`StringArrayFieldDefinition`](StringArrayFieldDefinition.md)
+
+  ↳ [`StringFieldDefinition`](StringFieldDefinition.md)
 
 ## Table of contents
 
@@ -29,4 +29,4 @@ to false.
 
 #### Defined in
 
-[lib/schema/definition/casesensitive-field-definition.ts:7](https://github.com/redis/redis-om-node/blob/000c57c/lib/schema/definition/casesensitive-field-definition.ts#L7)
+[lib/schema/definition/casesensitive-field-definition.ts:7](https://github.com/redis/redis-om-node/blob/47d4d36/lib/schema/definition/casesensitive-field-definition.ts#L7)

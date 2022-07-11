@@ -8,9 +8,9 @@ Mixin for adding unf to a field.
 
 - **`NormalizedFieldDefinition`**
 
-  ↳ [`StringFieldDefinition`](StringFieldDefinition.md)
-
   ↳ [`StringArrayFieldDefinition`](StringArrayFieldDefinition.md)
+
+  ↳ [`StringFieldDefinition`](StringFieldDefinition.md)
 
   ↳ [`TextFieldDefinition`](TextFieldDefinition.md)
 
@@ -31,4 +31,4 @@ to true.
 
 #### Defined in
 
-[lib/schema/definition/normalized-field-definition.ts:7](https://github.com/redis/redis-om-node/blob/000c57c/lib/schema/definition/normalized-field-definition.ts#L7)
+[lib/schema/definition/normalized-field-definition.ts:7](https://github.com/redis/redis-om-node/blob/47d4d36/lib/schema/definition/normalized-field-definition.ts#L7)
