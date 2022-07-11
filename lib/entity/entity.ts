@@ -4,6 +4,7 @@ import {
   EntityBooleanField,
   EntityDateField,
   EntityNumberField,
+  EntityObjectField,
   EntityPointField,
   EntityStringArrayField,
   EntityStringField,
@@ -15,13 +16,14 @@ import { SchemaDefinition, FieldDefinition, SchemaFieldType } from "../schema/de
 import { RedisJsonData, RedisHashData } from "../client";
 
 const ENTITY_FIELD_CONSTRUCTORS: Record<SchemaFieldType, EntityFieldConstructor> = {
-  'string': EntityStringField,
-  'number': EntityNumberField,
   'boolean': EntityBooleanField,
-  'text': EntityTextField,
   'date': EntityDateField,
+  'number': EntityNumberField,
+  'object': EntityObjectField,
   'point': EntityPointField,
-  'string[]': EntityStringArrayField
+  'string': EntityStringField,
+  'string[]': EntityStringArrayField,
+  'text': EntityTextField
 }
 
 /**
