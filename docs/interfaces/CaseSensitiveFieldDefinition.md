@@ -29,4 +29,4 @@ to false.
 
 #### Defined in
 
-[lib/schema/definition/casesensitive-field-definition.ts:7](https://github.com/redis/redis-om-node/blob/47d4d36/lib/schema/definition/casesensitive-field-definition.ts#L7)
+[lib/schema/definition/casesensitive-field-definition.ts:7](https://github.com/redis/redis-om-node/blob/f2d3aed/lib/schema/definition/casesensitive-field-definition.ts#L7)

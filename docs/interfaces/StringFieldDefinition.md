@@ -45,7 +45,7 @@ The default field name in Redis is the key name defined in the
 
 #### Defined in
 
-[lib/schema/definition/base-field-definition.ts:12](https://github.com/redis/redis-om-node/blob/47d4d36/lib/schema/definition/base-field-definition.ts#L12)
+[lib/schema/definition/base-field-definition.ts:12](https://github.com/redis/redis-om-node/blob/f2d3aed/lib/schema/definition/base-field-definition.ts#L12)
 
 ___
 
@@ -62,7 +62,7 @@ to false.
 
 #### Defined in
 
-[lib/schema/definition/casesensitive-field-definition.ts:7](https://github.com/redis/redis-om-node/blob/47d4d36/lib/schema/definition/casesensitive-field-definition.ts#L7)
+[lib/schema/definition/casesensitive-field-definition.ts:7](https://github.com/redis/redis-om-node/blob/f2d3aed/lib/schema/definition/casesensitive-field-definition.ts#L7)
 
 ___
 
@@ -79,7 +79,7 @@ to the schema indexedDefault value, currently true.
 
 #### Defined in
 
-[lib/schema/definition/base-field-definition.ts:18](https://github.com/redis/redis-om-node/blob/47d4d36/lib/schema/definition/base-field-definition.ts#L18)
+[lib/schema/definition/base-field-definition.ts:18](https://github.com/redis/redis-om-node/blob/f2d3aed/lib/schema/definition/base-field-definition.ts#L18)
 
 ___
 
@@ -96,7 +96,7 @@ to true.
 
 #### Defined in
 
-[lib/schema/definition/normalized-field-definition.ts:7](https://github.com/redis/redis-om-node/blob/47d4d36/lib/schema/definition/normalized-field-definition.ts#L7)
+[lib/schema/definition/normalized-field-definition.ts:7](https://github.com/redis/redis-om-node/blob/f2d3aed/lib/schema/definition/normalized-field-definition.ts#L7)
 
 ___
 
@@ -115,7 +115,7 @@ those problems. Defaults to `|`.
 
 #### Defined in
 
-[lib/schema/definition/separable-field-definition.ts:9](https://github.com/redis/redis-om-node/blob/47d4d36/lib/schema/definition/separable-field-definition.ts#L9)
+[lib/schema/definition/separable-field-definition.ts:9](https://github.com/redis/redis-om-node/blob/f2d3aed/lib/schema/definition/separable-field-definition.ts#L9)
 
 ___
 
@@ -131,7 +131,7 @@ Enables sorting by this field.
 
 #### Defined in
 
-[lib/schema/definition/sortable-field-definition.ts:4](https://github.com/redis/redis-om-node/blob/47d4d36/lib/schema/definition/sortable-field-definition.ts#L4)
+[lib/schema/definition/sortable-field-definition.ts:4](https://github.com/redis/redis-om-node/blob/f2d3aed/lib/schema/definition/sortable-field-definition.ts#L4)
 
 ___
 
@@ -147,4 +147,4 @@ Yep. It's a string.
 
 #### Defined in
 
-[lib/schema/definition/string-field-definition.ts:10](https://github.com/redis/redis-om-node/blob/47d4d36/lib/schema/definition/string-field-definition.ts#L10)
+[lib/schema/definition/string-field-definition.ts:10](https://github.com/redis/redis-om-node/blob/f2d3aed/lib/schema/definition/string-field-definition.ts#L10)
