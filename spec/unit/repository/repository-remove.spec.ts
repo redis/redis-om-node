@@ -41,6 +41,13 @@ describe("Repository", () => {
       );
     });
 
+    it("removes an array of hashes", async () => {
+      await hashRepository.remove(['foo', 'bar', 'baz']);
+      expect(client.unlink).toHaveBeenCalledWith(
+        'SimpleHashEntity:foo', 'SimpleHashEntity:bar', 'SimpleHashEntity:baz'
+      );
+    });
+
     it("removes no JSON", async () => {
       await jsonRepository.remove();
       expect(client.unlink).not.toHaveBeenCalled();
@@ -53,6 +60,13 @@ describe("Repository", () => {
 
     it("removes multiple JSONs", async () => {
       await jsonRepository.remove('foo', 'bar', 'baz');
+      expect(client.unlink).toHaveBeenCalledWith(
+        'SimpleJsonEntity:foo', 'SimpleJsonEntity:bar', 'SimpleJsonEntity:baz'
+      );
+    })
+
+    it("removes an array of JSONs", async () => {
+      await jsonRepository.remove(['foo', 'bar', 'baz']);
       expect(client.unlink).toHaveBeenCalledWith(
         'SimpleJsonEntity:foo', 'SimpleJsonEntity:bar', 'SimpleJsonEntity:baz'
       );
