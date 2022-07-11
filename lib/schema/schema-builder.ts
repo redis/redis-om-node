@@ -1,4 +1,4 @@
-import { Entity } from "../../entity/entity";
+import { Entity } from "../entity/entity";
 import {
   FieldDefinition,
   DateFieldDefinition,
@@ -16,8 +16,8 @@ import {
   StringFieldDefinition,
   StringArrayFieldDefinition,
   TextFieldDefinition,
-} from "../definition";
-import { EmbeddedSchema, Schema } from "../schema";
+} from "./definition";
+import { EmbeddedSchema, Schema } from "./schema";
 
 export function buildRedisSchema<TEntity extends Entity>(schema: Schema<TEntity>): string[] {
   switch (schema.dataStructure) {
