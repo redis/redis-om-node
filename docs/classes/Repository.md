@@ -182,7 +182,7 @@ found, does nothing.
 | Name | Type | Description |
 | :------ | :------ | :------ |
 | `id` | `string` | The ID of the [Entity](Entity.md) to set and expiration for. |
-| `ttlInSeconds` | `number` | THe time to live in seconds. |
+| `ttlInSeconds` | `number` | The time to live in seconds. |
 
 #### Returns
 

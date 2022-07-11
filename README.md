@@ -189,7 +189,7 @@ If you don't provide a URL, it defaults to `redis://localhost:6379`.
 
 ## 📇 Define an Entity and a Schema
 
-Ok. Let's start doing some object mapping. We'll start by defining an [*entity*](docs/classes/Entity.md) and a [*schema*](docs/classes/Schema.md).
+Let's start doing some object mapping. We'll start by defining an [*entity*](docs/classes/Entity.md) and a [*schema*](docs/classes/Schema.md).
 
 ```javascript
 import { Entity, Schema } from 'redis-om'
@@ -236,7 +236,7 @@ const point = { longitude: 12.34, latitude: 56.78 }
 
 A `text` field is a lot like a `string`. If you're just reading and writing objects, they are identical. But if you want to *search* on them, they are very, very different. I'll cover that in detail when I talk about [using RediSearch](#-using-redisearch) but the tl;dr is that `string` fields can only be matched on their whole value—no partial matches—and are best for keys while `text` fields have full-text search enabled on them and are optimized for human-readable text.
 
-Additional field options can be set depending on the field type. These correspond to the [Field Options](https://redis.io/commands/ft.create/#field-options) avialable when creating a RediSearch full-text index. Other than the `separator` option, these only affect how content is indexed and searched.
+Additional field options can be set depending on the field type. These correspond to the [Field Options](https://redis.io/commands/ft.create/#field-options) available when creating a RediSearch full-text index. Other than the `separator` option, these only affect how content is indexed and searched.
 
 |  schema type   | RediSearch type | `indexed` | `sortable` | `normalized` | `stemming` | `phonetic` | `weight` | `separator` | `caseSensitive` |
 | -------------- | :-------------: | :-------: | :--------: | :----------: | :--------: | :--------: | :------: | :---------: | :-------------: |
