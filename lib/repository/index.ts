@@ -209,7 +209,7 @@ export abstract class Repository<TEntity extends Entity> {
    * Set the time to live of the {@link Entity}. If the {@link Entity} is not
    * found, does nothing.
    * @param id The ID of the {@link Entity} to set and expiration for.
-   * @param ttlInSeconds THe time to live in seconds.
+   * @param ttlInSeconds The time to live in seconds.
    */
   async expire(id: string, ttlInSeconds: number) {
     const key = this.makeKey(id);

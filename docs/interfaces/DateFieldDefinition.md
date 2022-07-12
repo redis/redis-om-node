@@ -36,7 +36,7 @@ The default field name in Redis is the key name defined in the
 
 #### Defined in
 
-[lib/schema/definition/base-field-definition.ts:12](https://github.com/redis/redis-om-node/blob/000c57c/lib/schema/definition/base-field-definition.ts#L12)
+[lib/schema/definition/base-field-definition.ts:12](https://github.com/redis/redis-om-node/blob/f2d3aed/lib/schema/definition/base-field-definition.ts#L12)
 
 ___
 
@@ -53,7 +53,7 @@ to the schema indexedDefault value, currently true.
 
 #### Defined in
 
-[lib/schema/definition/base-field-definition.ts:18](https://github.com/redis/redis-om-node/blob/000c57c/lib/schema/definition/base-field-definition.ts#L18)
+[lib/schema/definition/base-field-definition.ts:18](https://github.com/redis/redis-om-node/blob/f2d3aed/lib/schema/definition/base-field-definition.ts#L18)
 
 ___
 
@@ -69,7 +69,7 @@ Enables sorting by this field.
 
 #### Defined in
 
-[lib/schema/definition/sortable-field-definition.ts:4](https://github.com/redis/redis-om-node/blob/000c57c/lib/schema/definition/sortable-field-definition.ts#L4)
+[lib/schema/definition/sortable-field-definition.ts:4](https://github.com/redis/redis-om-node/blob/f2d3aed/lib/schema/definition/sortable-field-definition.ts#L4)
 
 ___
 
@@ -85,4 +85,4 @@ Yep. It's a date.
 
 #### Defined in
 
-[lib/schema/definition/date-field-definition.ts:7](https://github.com/redis/redis-om-node/blob/000c57c/lib/schema/definition/date-field-definition.ts#L7)
+[lib/schema/definition/date-field-definition.ts:7](https://github.com/redis/redis-om-node/blob/f2d3aed/lib/schema/definition/date-field-definition.ts#L7)
