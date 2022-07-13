@@ -2,6 +2,7 @@ import { Schema } from '$lib/schema/schema';
 import { Entity } from '$lib/entity/entity';
 import { SchemaDefinition } from '$lib/schema/definition';
 import { DataStructure } from '$lib/schema/options';
+import { buildRediSearchIndex } from '$lib/schema/schema-builder';
 
 const warnSpy = vi.spyOn(global.console, 'warn').mockImplementation(() => {})
 
@@ -70,7 +71,7 @@ describe("Schema", () => {
     beforeEach(() => {
       warnSpy.mockReset();
       let schema = new Schema<TestEntity>(TestEntity, schemaDef, { dataStructure });
-      redisSchema = schema.redisSchema
+      redisSchema = buildRediSearchIndex(schema);
     });
 
     it("generates a Redis schema for the field", () => {

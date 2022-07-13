@@ -1,12 +1,15 @@
 import '../helpers/mock-client'
+import '../helpers/mock-index-builder'
 import { Client } from '$lib/client';
 import { Repository } from '$lib/repository';
 import { HashRepository } from '$lib/repository';
+import { buildRediSearchIndex } from '$lib/schema/schema-builder';
 
 import { simpleSchema, SimpleEntity,
   stopWordsOffSchema, StopWordsOffEntity,
   customStopWordsSchema, CustomStopWordsEntity } from '../helpers/test-entity-and-schema';
 
+const bogusSchema = ["bogus", "schema"]
 
 describe("Repository", () => {
   let client: Client;
@@ -25,6 +28,7 @@ describe("Repository", () => {
       describe("and an index that doesn't exist", () => {
         beforeEach(async () => {
           vi.mocked(client.get).mockResolvedValue(null);
+          vi.mocked(buildRediSearchIndex).mockReturnValue(bogusSchema)
           await repository.createIndex();
         });
 
@@ -32,12 +36,16 @@ describe("Repository", () => {
           expect(client.get).toHaveBeenCalledWith(simpleSchema.indexHashName);
         });
 
+        it("asks the index builder to build the index", () => {
+          expect(buildRediSearchIndex).toHaveBeenCalledWith(simpleSchema);
+        });
+
         it("asks the client to create the index with data from the schema", () => {
           expect(client.createIndex).toHaveBeenCalledWith({
             indexName: simpleSchema.indexName,
             dataStructure: simpleSchema.dataStructure,
             prefix: `${simpleSchema.prefix}:`,
-            schema: simpleSchema.redisSchema });
+            schema: ["bogus", "schema"] });
         });
 
         it("asks the client to write the index hash", () => {
@@ -61,6 +69,10 @@ describe("Repository", () => {
 
         it("doesn't ask the client to remove the index hash", async () => {
           expect(client.unlink).not.toHaveBeenCalled();
+        });
+
+        it("doesn't ask the index builder to build the index", () => {
+          expect(buildRediSearchIndex).not.toHaveBeenCalledWith();
         });
 
         it("does not asks the client to create the index with data from the schema", () => {
@@ -90,12 +102,16 @@ describe("Repository", () => {
           expect(client.unlink).toHaveBeenCalledWith(simpleSchema.indexHashName);
         });
 
+        it("asks the index builder to build the index", () => {
+          expect(buildRediSearchIndex).toHaveBeenCalledWith(simpleSchema);
+        });
+
         it("asks the client to create a new index with data from the schema", () => {
           expect(client.createIndex).toHaveBeenCalledWith({
             indexName: simpleSchema.indexName,
             dataStructure: simpleSchema.dataStructure,
             prefix: `${simpleSchema.prefix}:`,
-            schema: simpleSchema.redisSchema });
+            schema: bogusSchema });
         });
 
         it("asks the client to write the index hash", () => {
@@ -112,12 +128,16 @@ describe("Repository", () => {
         await repository.createIndex();
       });
 
-      it("asks the client to create the index with data from the schema", () => {
+      it("asks the index builder to build the index", () => {
+        expect(buildRediSearchIndex).toHaveBeenCalledWith(stopWordsOffSchema);
+      });
+
+    it("asks the client to create the index with data from the schema", () => {
         expect(client.createIndex).toHaveBeenCalledWith({
           indexName: stopWordsOffSchema.indexName,
           dataStructure: stopWordsOffSchema.dataStructure,
           prefix: `${stopWordsOffSchema.prefix}:`,
-          schema: stopWordsOffSchema.redisSchema,
+          schema: bogusSchema,
           stopWords: [] });
       });
     });
@@ -130,12 +150,16 @@ describe("Repository", () => {
         await repository.createIndex();
       });
 
+      it("asks the index builder to build the index", () => {
+        expect(buildRediSearchIndex).toHaveBeenCalledWith(customStopWordsSchema);
+      });
+
       it("asks the client to create the index with data from the schema", () => {
         expect(client.createIndex).toHaveBeenCalledWith({
           indexName: customStopWordsSchema.indexName,
           dataStructure: customStopWordsSchema.dataStructure,
           prefix: `${customStopWordsSchema.prefix}:`,
-          schema: customStopWordsSchema.redisSchema,
+          schema: bogusSchema,
           stopWords: customStopWordsSchema.stopWords });
       });
     });

@@ -2,6 +2,7 @@ import { Schema } from '$lib/schema/schema';
 import { Entity } from '$lib/entity/entity';
 import { SchemaDefinition } from '$lib/schema/definition';
 import { DataStructure } from '$lib/schema/options';
+import { buildRediSearchIndex } from '$lib/schema/schema-builder';
 
 describe("Schema", () => {
   describe.each([
@@ -82,7 +83,8 @@ describe("Schema", () => {
       let expectedRedisSchema = data.expectedRedisSchema;
 
       let schema = new Schema<TestEntity>(TestEntity, schemaDef, { dataStructure });
-      expect(schema.redisSchema).toEqual(expectedRedisSchema);
+      let actual = buildRediSearchIndex(schema);
+      expect(actual).toEqual(expectedRedisSchema);
     });
   });
 });

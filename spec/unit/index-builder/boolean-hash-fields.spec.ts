@@ -2,8 +2,9 @@ import { Entity } from '$lib/entity/entity';
 import { Schema } from '$lib/schema/schema';
 import { SchemaDefinition } from '$lib/schema/definition';
 import { DataStructure } from '$lib/schema/options';
+import { buildRediSearchIndex } from '$lib/schema/schema-builder';
 
-describe("Schema", () => {
+describe("#buildRediSearchIndex", () => {
   describe.each([
 
     ["that defines an unconfigured boolean for a HASH", {
@@ -58,7 +59,8 @@ describe("Schema", () => {
       let expectedRedisSchema = data.expectedRedisSchema;
 
       let schema = new Schema<TestEntity>(TestEntity, schemaDef, { dataStructure });
-      expect(schema.redisSchema).toEqual(expectedRedisSchema);
+      let actual = buildRediSearchIndex(schema);
+      expect(actual).toEqual(expectedRedisSchema);
     });
   });
 });

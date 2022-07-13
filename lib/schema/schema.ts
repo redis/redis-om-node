@@ -7,7 +7,6 @@ import { EntityConstructor } from "../entity/entity-constructor";
 import { IdStrategy, DataStructure, StopWordOptions, SchemaOptions } from './options';
 
 import { SchemaDefinition, FieldDefinition } from './definition';
-import { buildRedisSchema } from './schema-builder';
 
 /**
  * Defines a schema that determines how an {@link Entity} is mapped to Redis
@@ -91,11 +90,6 @@ export class Schema<TEntity extends Entity> {
    */
   get stopWords(): Array<string> { return this.options?.stopWords ?? []; }
 
-  /**
-   * The configured indexed default setting for fields
-   */
-  get indexedDefault(): boolean { return this.options?.indexedDefault ?? true; }
-
   /** The hash value of this index. Stored in Redis under {@link Schema.indexHashName}. */
   get indexHash(): string {
 
@@ -106,16 +100,10 @@ export class Schema<TEntity extends Entity> {
       indexHashName: this.indexHashName,
       dataStructure: this.dataStructure,
       useStopWords: this.useStopWords,
-      stopWords: this.stopWords,
-      indexedDefault: this.indexedDefault
+      stopWords: this.stopWords
     });
 
     return createHash('sha1').update(data).digest('base64');
-  }
-
-  /** @internal */
-  get redisSchema(): Array<string> {
-    return buildRedisSchema(this);
   }
 
   /**

@@ -2,48 +2,49 @@ import { Schema } from '$lib/schema/schema';
 import { Entity } from '$lib/entity/entity';
 import { SchemaDefinition } from '$lib/schema/definition';
 import { DataStructure } from '$lib/schema/options';
+import { buildRediSearchIndex } from '$lib/schema/schema-builder';
 
 describe("Schema", () => {
   describe.each([
 
-    ["that defines an unconfigured number for a JSON", {
-      schemaDef: { aField: { type: 'number' } } as SchemaDefinition,
+    ["that defines an unconfigured date for a JSON", {
+      schemaDef: { aField: { type: 'date' } } as SchemaDefinition,
       dataStructure: 'JSON',
       expectedRedisSchema: ['$.aField', 'AS', 'aField', 'NUMERIC']
     }],
 
-    ["that defines an aliased number for a JSON", {
-      schemaDef: { aField: { type: 'number', alias: 'anotherField' } } as SchemaDefinition,
+    ["that defines an aliased date for a JSON", {
+      schemaDef: { aField: { type: 'date', alias: 'anotherField' } } as SchemaDefinition,
       dataStructure: 'JSON',
       expectedRedisSchema: ['$.anotherField', 'AS', 'anotherField', 'NUMERIC']
     }],
 
-    ["that defines a sorted number for a JSON", {
-      schemaDef: { aField: { type: 'number', sortable: true } } as SchemaDefinition,
+    ["that defines a sorted date for a JSON", {
+      schemaDef: { aField: { type: 'date', sortable: true } } as SchemaDefinition,
       dataStructure: 'JSON',
       expectedRedisSchema: ['$.aField', 'AS', 'aField', 'NUMERIC', 'SORTABLE']
     }],
 
-    ["that defines an unsorted number for a JSON", {
-      schemaDef: { aField: { type: 'number', sortable: false } } as SchemaDefinition,
+    ["that defines an unsorted date for a JSON", {
+      schemaDef: { aField: { type: 'date', sortable: false } } as SchemaDefinition,
       dataStructure: 'JSON',
       expectedRedisSchema: ['$.aField', 'AS', 'aField', 'NUMERIC']
     }],
 
-    ["that defines an indexed number for a JSON", {
-      schemaDef: { aField: { type: 'number', indexed: true } } as SchemaDefinition,
+    ["that defines an indexed date for a JSON", {
+      schemaDef: { aField: { type: 'date', indexed: true } } as SchemaDefinition,
       dataStructure: 'JSON',
       expectedRedisSchema: ['$.aField', 'AS', 'aField', 'NUMERIC']
     }],
 
-    ["that defines an unindexed number for a JSON", {
-      schemaDef: { aField: { type: 'number', indexed: false } } as SchemaDefinition,
+    ["that defines an indexed date for a JSON", {
+      schemaDef: { aField: { type: 'date', indexed: false } } as SchemaDefinition,
       dataStructure: 'JSON',
       expectedRedisSchema: ['$.aField', 'AS', 'aField', 'NUMERIC', 'NOINDEX']
     }],
 
-    ["that defines a fully-configured number for a JSON", {
-      schemaDef: { aField: { type: 'number', alias: 'anotherField', sortable: true, indexed: false } } as SchemaDefinition,
+    ["that defines a fully configured date for a JSON", {
+      schemaDef: { aField: { type: 'date', alias: 'anotherField', sortable: true, indexed: false } } as SchemaDefinition,
       dataStructure: 'JSON',
       expectedRedisSchema: ['$.anotherField', 'AS', 'anotherField', 'NUMERIC', 'SORTABLE', 'NOINDEX']
     }]
@@ -58,7 +59,8 @@ describe("Schema", () => {
       let expectedRedisSchema = data.expectedRedisSchema;
 
       let schema = new Schema<TestEntity>(TestEntity, schemaDef, { dataStructure });
-      expect(schema.redisSchema).toEqual(expectedRedisSchema);
+      let actual = buildRediSearchIndex(schema);
+      expect(actual).toEqual(expectedRedisSchema);
     });
   });
 });

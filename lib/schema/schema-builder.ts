@@ -19,110 +19,110 @@ import {
 } from "./definition";
 import { Schema } from "./schema";
 
-export function buildRedisSchema<TEntity extends Entity>(schema: Schema<TEntity>): string[] {
+export function buildRediSearchIndex<TEntity extends Entity>(schema: Schema<TEntity>): string[] {
   const buildEntry = entryBuilders[schema.dataStructure];
   return Object.entries(schema.definition)
-    .map(([fieldName, fieldDef]) => buildEntry(fieldName, fieldDef, schema.indexedDefault))
+    .map(([fieldName, fieldDef]) => buildEntry(fieldName, fieldDef))
     .flat();
 }
 
 const entryBuilders = {  HASH: buildHashEntry, JSON: buildJsonEntry };
 
-function buildHashEntry(fieldName: string, fieldDef: FieldDefinition, indexedDefault: boolean): string[] {
+function buildHashEntry(fieldName: string, fieldDef: FieldDefinition): string[] {
   const fieldPath = fieldDef.alias ?? fieldName;
 
   switch (fieldDef.type) {
     case 'boolean':
-      return [fieldPath, ...buildHashBoolean(fieldDef, indexedDefault)];
+      return [fieldPath, ...buildHashBoolean(fieldDef)];
     case 'date':
-      return [fieldPath, ...buildDateNumber(fieldDef, indexedDefault)];
+      return [fieldPath, ...buildDateNumber(fieldDef)];
     case 'number':
-      return [fieldPath, ...buildDateNumber(fieldDef, indexedDefault)];
+      return [fieldPath, ...buildDateNumber(fieldDef)];
     case 'point':
-      return [fieldPath, ...buildPoint(fieldDef, indexedDefault)];
+      return [fieldPath, ...buildPoint(fieldDef)];
     case 'string[]':
     case 'string':
-      return [fieldPath, ...buildHashString(fieldDef, indexedDefault)];
+      return [fieldPath, ...buildHashString(fieldDef)];
     case 'text':
-      return [fieldPath, ...buildText(fieldDef, indexedDefault)];
+      return [fieldPath, ...buildText(fieldDef)];
   }
 }
 
-function buildJsonEntry(fieldName: string, fieldDef: FieldDefinition, indexedDefault: boolean): string[] {
+function buildJsonEntry(fieldName: string, fieldDef: FieldDefinition): string[] {
   const fieldPath = fieldDef.alias ?? fieldName;
   const jsonPath = `\$.${fieldPath}${fieldDef.type === 'string[]' ? '[*]' : ''}`;
   const fieldInfo = [jsonPath, 'AS', fieldPath]
 
   switch (fieldDef.type) {
     case 'boolean':
-      return [...fieldInfo, ...buildJsonBoolean(fieldDef, indexedDefault)];
+      return [...fieldInfo, ...buildJsonBoolean(fieldDef)];
     case 'date':
-      return [...fieldInfo, ...buildDateNumber(fieldDef, indexedDefault)];
+      return [...fieldInfo, ...buildDateNumber(fieldDef)];
     case 'number':
-      return [...fieldInfo, ...buildDateNumber(fieldDef, indexedDefault)];
+      return [...fieldInfo, ...buildDateNumber(fieldDef)];
     case 'point':
-      return [...fieldInfo, ...buildPoint(fieldDef, indexedDefault)];
+      return [...fieldInfo, ...buildPoint(fieldDef)];
     case 'string[]':
     case 'string':
-      return [...fieldInfo, ...buildJsonString(fieldDef, indexedDefault)];
+      return [...fieldInfo, ...buildJsonString(fieldDef)];
     case 'text':
-      return [...fieldInfo, ...buildText(fieldDef, indexedDefault)];
+      return [...fieldInfo, ...buildText(fieldDef)];
   }
 }
 
-function buildHashBoolean(fieldDef: BooleanFieldDefinition, indexedDefault: boolean): string[] {
-  return ['TAG', ...buildSortable(fieldDef), ...buildIndexed(fieldDef, indexedDefault)];
+function buildHashBoolean(fieldDef: BooleanFieldDefinition): string[] {
+  return ['TAG', ...buildSortable(fieldDef), ...buildIndexed(fieldDef)];
 }
 
-function buildJsonBoolean(fieldDef: BooleanFieldDefinition, indexedDefault: boolean): string[] {
+function buildJsonBoolean(fieldDef: BooleanFieldDefinition): string[] {
   if (fieldDef.sortable)
     console.warn(`You have marked a boolean field as sortable but RediSearch doesn't support the SORTABLE argument on a TAG for JSON. Ignored.`);
-  return ['TAG', ...buildIndexed(fieldDef, indexedDefault)];
+  return ['TAG', ...buildIndexed(fieldDef)];
 }
 
-function buildDateNumber(fieldDef: DateFieldDefinition | NumberFieldDefinition, indexedDefault: boolean): string[] {
-  return ['NUMERIC', ...buildSortable(fieldDef), ...buildIndexed(fieldDef, indexedDefault)];
+function buildDateNumber(fieldDef: DateFieldDefinition | NumberFieldDefinition): string[] {
+  return ['NUMERIC', ...buildSortable(fieldDef), ...buildIndexed(fieldDef)];
 }
 
-function buildPoint(fieldDef: PointFieldDefinition, indexedDefault: boolean): string[] {
-  return ['GEO', ...buildIndexed(fieldDef, indexedDefault)];
+function buildPoint(fieldDef: PointFieldDefinition): string[] {
+  return ['GEO', ...buildIndexed(fieldDef)];
 }
 
-function buildHashString(fieldDef: StringFieldDefinition | StringArrayFieldDefinition, indexedDefault: boolean): string[] {
+function buildHashString(fieldDef: StringFieldDefinition | StringArrayFieldDefinition): string[] {
   return ['TAG',
     ...buildCaseInsensitive(fieldDef),
     ...buildSeparable(fieldDef),
     ...buildSortable(fieldDef),
     ...buildNormalized(fieldDef),
-    ...buildIndexed(fieldDef, indexedDefault)];
+    ...buildIndexed(fieldDef)];
 }
 
-function buildJsonString(fieldDef: StringFieldDefinition | StringArrayFieldDefinition, indexedDefault: boolean): string[] {
+function buildJsonString(fieldDef: StringFieldDefinition | StringArrayFieldDefinition): string[] {
   if (fieldDef.sortable)
     console.warn(`You have marked a ${fieldDef.type} field as sortable but RediSearch doesn't support the SORTABLE argument on a TAG for JSON. Ignored.`);
   return ['TAG',
     ...buildCaseInsensitive(fieldDef),
     ...buildSeparable(fieldDef),
     ...buildNormalized(fieldDef),
-    ...buildIndexed(fieldDef, indexedDefault)];
+    ...buildIndexed(fieldDef)];
 }
 
-function buildText(fieldDef: TextFieldDefinition, indexedDefault: boolean): string[] {
+function buildText(fieldDef: TextFieldDefinition): string[] {
   return ['TEXT',
     ...buildStemming(fieldDef),
     ...buildPhonetic(fieldDef),
     ...buildSortable(fieldDef),
     ...buildNormalized(fieldDef),
     ...buildWeight(fieldDef),
-    ...buildIndexed(fieldDef, indexedDefault)];
+    ...buildIndexed(fieldDef)];
 }
 
 function buildCaseInsensitive(fieldDef: CaseSensitiveFieldDefinition) {
   return fieldDef.caseSensitive ? ['CASESENSITIVE'] : [];
 }
 
-function buildIndexed(fieldDef: BaseFieldDefinition, indexedDefault: boolean) {
-  return fieldDef.indexed ?? indexedDefault ? [] : ['NOINDEX'];
+function buildIndexed(fieldDef: BaseFieldDefinition) {
+  return fieldDef.indexed ?? true ? [] : ['NOINDEX'];
 }
 
 function buildStemming(fieldDef: StemmingFieldDefinition) {

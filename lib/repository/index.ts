@@ -6,6 +6,7 @@ import { Search, RawSearch } from '../search/search';
 
 import { CreateIndexOptions } from "../client";
 import { EntityData } from "../entity/entity-data";
+import { buildRediSearchIndex } from "../schema/schema-builder";
 
 /**
  * A repository is the main interaction point for reading, writing, and
@@ -71,7 +72,7 @@ export abstract class Repository<TEntity extends Entity> {
         indexName: this.schema.indexName,
         dataStructure: this.schema.dataStructure,
         prefix: `${this.schema.prefix}:`,
-        schema: this.schema.redisSchema
+        schema: buildRediSearchIndex(this.schema)
       };
 
       if (this.schema.useStopWords === 'OFF') options.stopWords = []

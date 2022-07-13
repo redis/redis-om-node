@@ -1,4 +1,4 @@
-import { Schema, EmbeddedSchema } from '$lib/schema/schema';
+import { Schema } from '$lib/schema/schema';
 import { Entity } from '$lib/entity/entity';
 import { EntityData } from '$lib/entity/entity-data';
 import { DataStructure } from '$lib/schema/options';

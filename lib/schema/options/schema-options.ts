@@ -54,9 +54,4 @@ export type SchemaOptions = {
    * anything other than `CUSTOM`, this option is ignored.
    */
   stopWords?: Array<string>
-
-  /**
-   * Whether fields are indexed by default
-   */
-  indexedDefault?: boolean
 }
