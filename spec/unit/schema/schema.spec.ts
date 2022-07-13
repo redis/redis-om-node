@@ -1,16 +1,12 @@
-import { EmbeddedSchema, Schema } from '$lib/schema/schema';
+import { Schema } from '$lib/schema/schema';
 import { Entity } from '$lib/entity/entity';
 
-const DEFAULT_HASH = "K0RLeeNkFtDQMdEJZfceSTXBR6Y=";
+const DEFAULT_HASH = "cbCnnYEz+Ut4vBz8p9AFUk/GLuw=";
 
 describe("Schema", () => {
 
   class TestEntity extends Entity {}
-  class TestEmbeddedEntity extends Entity {}
-  class TestDeeplyEmbeddedEntity extends Entity {}
   let schema: Schema<TestEntity>;
-  let embeddedSchema: EmbeddedSchema<TestEmbeddedEntity>;
-  let deeplyEmbeddedSchema: EmbeddedSchema<TestDeeplyEmbeddedEntity>;
 
 
   describe("that is empty", () => {
@@ -85,60 +81,7 @@ describe("Schema", () => {
       '$.someStrings[*]', 'AS', 'someStrings', 'TAG', 'SEPARATOR', '|',
       '$.someOtherStrings[*]', 'AS', 'someOtherStrings', 'TAG', 'SEPARATOR', '|'
     ]));
-    it("generates the index hash", () => expect(schema.indexHash).toBe("FCn3hUMMT6KGKK+lLg300S/yJCg="));
-  });
-
-  describe("that is deeply populated", () => {
-
-    beforeEach(() => {
-      deeplyEmbeddedSchema = new EmbeddedSchema<TestDeeplyEmbeddedEntity>(TestDeeplyEmbeddedEntity, {
-        aNumber: { type: 'number' },
-        aString: { type: 'string' },
-        someText: { type: 'text' }
-      })
-
-      embeddedSchema = new EmbeddedSchema<TestEmbeddedEntity>(TestEmbeddedEntity, {
-        aNumber: { type: 'number' },
-        aString: { type: 'string' },
-        someText: { type: 'text' },
-        aDeeperObject: { type: 'object', schema: deeplyEmbeddedSchema }
-      })
-
-      schema = new Schema<TestEntity>(TestEntity, {
-        aString: { type: 'string' }, anotherString: { type: 'string' },
-        someText: { type: 'text' }, someOtherText: { type: 'text' },
-        aNumber: { type: 'number' }, anotherNumber: { type: 'number' },
-        aBoolean: { type: 'boolean' }, anotherBoolean: { type: 'boolean' },
-        aPoint: { type: 'point' }, anotherPoint: { type: 'point' },
-        aDate: { type: 'date' }, anotherDate: { type: 'date' },
-        someStrings: { type: 'string[]' }, someOtherStrings: { type: 'string[]' },
-        anObject: { type: 'object', schema: embeddedSchema }
-      })
-    });
-
-    it("generates the expected Redis schema", () => expect(schema.redisSchema).toEqual([
-      '$.aString', 'AS', 'aString', 'TAG', 'SEPARATOR', '|',
-      '$.anotherString', 'AS', 'anotherString', 'TAG', 'SEPARATOR', '|',
-      '$.someText', 'AS', 'someText', 'TEXT',
-      '$.someOtherText', 'AS', 'someOtherText', 'TEXT',
-      '$.aNumber', 'AS', 'aNumber', 'NUMERIC',
-      '$.anotherNumber', 'AS', 'anotherNumber', 'NUMERIC',
-      '$.aBoolean', 'AS', 'aBoolean', 'TAG',
-      '$.anotherBoolean', 'AS', 'anotherBoolean', 'TAG',
-      '$.aPoint', 'AS', 'aPoint', 'GEO',
-      '$.anotherPoint', 'AS', 'anotherPoint', 'GEO',
-      '$.aDate', 'AS', 'aDate', 'NUMERIC',
-      '$.anotherDate', 'AS', 'anotherDate', 'NUMERIC',
-      '$.someStrings[*]', 'AS', 'someStrings', 'TAG', 'SEPARATOR', '|',
-      '$.someOtherStrings[*]', 'AS', 'someOtherStrings', 'TAG', 'SEPARATOR', '|',
-      '$.anObject.aNumber', 'AS', 'anObject.aNumber', 'NUMERIC',
-      '$.anObject.aString', 'AS', 'anObject.aString', 'TAG', 'SEPARATOR', '|',
-      '$.anObject.someText', 'AS', 'anObject.someText', 'TEXT',
-      '$.anObject.aDeeperObject.aNumber', 'AS', 'anObject.aDeeperObject.aNumber', 'NUMERIC',
-      '$.anObject.aDeeperObject.aString', 'AS', 'anObject.aDeeperObject.aString', 'TAG', 'SEPARATOR', '|',
-      '$.anObject.aDeeperObject.someText', 'AS', 'anObject.aDeeperObject.someText', 'TEXT'
-    ]));
-    it("generates the index hash", () => expect(schema.indexHash).toBe("Ilbpz9vd8dg0xiRKAqUVKnXvd6s="));
+    it("generates the index hash", () => expect(schema.indexHash).toBe("gXlDrtz8MNBXrgblF21sp0FPh0s="));
   });
 
   describe("that overrides the data structure to be JSON", () => {
@@ -154,7 +97,7 @@ describe("Schema", () => {
       schema = new Schema<TestEntity>(TestEntity, {}, { dataStructure: 'HASH' })
     });
     it("provides a HASH data structure", () => expect(schema.dataStructure).toBe("HASH"));
-    it("generates the index hash", () => expect(schema.indexHash).toBe("0XK4eP9dOGP2TjBX/+MSVc5homU="));
+    it("generates the index hash", () => expect(schema.indexHash).toBe("GKJo5ur7Rk4fLh6CUqpm4h5DKaA="));
   });
 
   describe("that overrides the keyspace prefix", () => {
@@ -164,7 +107,7 @@ describe("Schema", () => {
     it("generates the keyspace prefix from the configuration", () => expect(schema.prefix).toBe("test-prefix"));
     it("generates the index name from the configured prefix", () => expect(schema.indexName).toBe("test-prefix:index"));
     it("generates the index hash name from the configured prefix", () => expect(schema.indexHashName).toBe("test-prefix:index:hash"));
-    it("generates the index hash", () => expect(schema.indexHash).toBe("t6JEOCwFKVYMbkWE5lmnRNt8+WQ="));
+    it("generates the index hash", () => expect(schema.indexHash).toBe("bLL+ckDRu+Ea714Y78vT/G4zoAQ="));
   });
 
   describe("that overrides the index name", () => {
@@ -172,7 +115,7 @@ describe("Schema", () => {
       schema = new Schema<TestEntity>(TestEntity, {}, { indexName: 'test-index' })
     });
     it("generates the index name from the configured index name, ignoring the prefix", () => expect(schema.indexName).toBe("test-index"));
-    it("generates the index hash", () => expect(schema.indexHash).toBe("PZ5pBuwmeXeeCpM9G7GIsTMRMVE="));
+    it("generates the index hash", () => expect(schema.indexHash).toBe("m7fS+qIRwm/bVE0cVHZ582vozxM="));
   });
 
   describe("that overrides the index hash name", () => {
@@ -180,7 +123,7 @@ describe("Schema", () => {
       schema = new Schema<TestEntity>(TestEntity, {}, { indexHashName: 'test-index-hash' })
     });
     it("generates the index hash name from the configured index hash name, ignoring the prefix", () => expect(schema.indexHashName).toBe("test-index-hash"));
-    it("generates the index hash", () => expect(schema.indexHash).toBe("i1XCYozQ08UZuj+P8Tri8OiFBRs="));
+    it("generates the index hash", () => expect(schema.indexHash).toBe("VlW8uRGnc4zqJjQSeTWp0AlOl9A="));
   });
 
   describe("that overrides the id generation strategy", () => {
@@ -196,7 +139,7 @@ describe("Schema", () => {
       schema = new Schema<TestEntity>(TestEntity, {}, { useStopWords: 'OFF' })
     });
     it("provides the stop words option", () => expect(schema.useStopWords).toBe('OFF'));
-    it("generates the index hash", () => expect(schema.indexHash).toBe("flTsd1eJKt/osPUJzKxr97Gi61Y="));
+    it("generates the index hash", () => expect(schema.indexHash).toBe("TLNiv/WC5WSNnxQbzzWGyFz9XPk="));
   });
 
   describe("that uses default stop words", () => {
@@ -212,7 +155,7 @@ describe("Schema", () => {
       schema = new Schema<TestEntity>(TestEntity, {}, { useStopWords: 'CUSTOM' })
     });
     it("provides the stop words option", () => expect(schema.useStopWords).toBe('CUSTOM'));
-    it("generates the index hash", () => expect(schema.indexHash).toBe("AJRVRK7f6gjie488EEtscXoEi24="));
+    it("generates the index hash", () => expect(schema.indexHash).toBe("Sl6JmIT2bYu2i9NMxFpUHq34jsQ="));
   });
 
   describe("that sets custom stop words", () => {
@@ -220,19 +163,19 @@ describe("Schema", () => {
       schema = new Schema<TestEntity>(TestEntity, {}, { stopWords: ['foo', 'bar', 'baz'] })
     });
     it("provides the custom stop words", () => expect(schema.stopWords).toEqual(['foo', 'bar', 'baz']));
-    it("generates the index hash", () => expect(schema.indexHash).toBe("B7BDTY/1KcpMPaH84IPLCOzwUMM="));
+    it("generates the index hash", () => expect(schema.indexHash).toBe("vTcSUbRCpQbwOCyEHuTRFFQQaVA="));
   });
 
   describe("that is misconfigured", () => {
     it("throws an exception when the type is missing on a field definition", () =>
       // @ts-ignore: JavaScript test
       expect(() => new Schema<TestEntity>(TestEntity, { aField: {} }))
-        .toThrow("The field 'aField' is configured with a type of 'undefined'. Valid types include 'boolean', 'date', 'number', 'object', 'point', 'string', 'string[]', and 'text'."));
+        .toThrow("The field 'aField' is configured with a type of 'undefined'. Valid types include 'boolean', 'date', 'number', 'point', 'string', 'string[]', and 'text'."));
 
     it("throws an exception when the type is invalid on a field definition", () =>
       // @ts-ignore: JavaScript test
       expect(() => new Schema<TestEntity>(TestEntity, { aField: { type: 'foo' } }))
-        .toThrow("The field 'aField' is configured with a type of 'foo'. Valid types include 'boolean', 'date', 'number', 'object', 'point', 'string', 'string[]', and 'text'."));
+        .toThrow("The field 'aField' is configured with a type of 'foo'. Valid types include 'boolean', 'date', 'number', 'point', 'string', 'string[]', and 'text'."));
 
     it("throws an exception when the data structure is invalid", () => {
       // @ts-ignore: JavaScript test

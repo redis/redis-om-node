@@ -22,29 +22,11 @@ describe("Schema", () => {
     aPoint: Point;
     aDate: Date;
     someStrings: Array<string>;
-    anObject: TestEmbeddedEntity;
-  }
-
-  interface TestEmbeddedEntity {
-    aNumber: number;
-    aString: string;
-    someText: string;
-    aDeeperObject: TestDeeplyEmbeddedEntity;
-  }
-
-  interface TestDeeplyEmbeddedEntity {
-    aNumber: number;
-    aString: string;
-    someText: string;
   }
 
   class TestEntity extends Entity {}
-  class TestEmbeddedEntity extends Entity {}
-  class TestDeeplyEmbeddedEntity extends Entity {}
 
   let schema: Schema<TestEntity>;
-  let embeddedSchema: EmbeddedSchema<TestEmbeddedEntity>;
-  let deeplyEmbeddedSchema: EmbeddedSchema<TestDeeplyEmbeddedEntity>;
 
   let entity: TestEntity;
 
@@ -55,19 +37,6 @@ describe("Schema", () => {
 
     beforeAll(() => {
 
-      deeplyEmbeddedSchema = new EmbeddedSchema<TestDeeplyEmbeddedEntity>(TestDeeplyEmbeddedEntity, {
-        aNumber: { type: 'number' },
-        aString: { type: 'string' },
-        someText: { type: 'text' }
-      })
-
-      embeddedSchema = new EmbeddedSchema<TestEmbeddedEntity>(TestEmbeddedEntity, {
-        aNumber: { type: 'number' },
-        aString: { type: 'string' },
-        someText: { type: 'text' },
-        aDeeperObject: { type: 'object', schema: deeplyEmbeddedSchema }
-      })
-
       schema = new Schema<TestEntity>(TestEntity, {
         aBoolean: { type: 'boolean' },
         aNumber: { type: 'number' },
@@ -75,8 +44,7 @@ describe("Schema", () => {
         someText: { type: 'string' },
         aPoint: { type: 'point' },
         aDate: { type: 'date' },
-        someStrings: { type: 'string[]' },
-        anObject: { type: 'object', schema: embeddedSchema }
+        someStrings: { type: 'string[]' }
       }, { dataStructure: dataStructure as DataStructure });
     });
 
@@ -143,47 +111,6 @@ describe("Schema", () => {
       expect(entity).toHaveProperty('someStrings', SOME_STRINGS);
       entity.someStrings = SOME_OTHER_STRINGS;
       expect(entity.someStrings).toEqual(SOME_OTHER_STRINGS);
-    });
-
-    it("adds an object getter and setter", () => {
-      expect(entity).toHaveProperty('anObject', expect.any(TestEmbeddedEntity));
-    });
-
-    describe("embedded object", () => {
-
-      it("adds embedded getters and setters", () => {
-        expect(entity.anObject).toHaveProperty('aNumber', ANOTHER_NUMBER);
-        expect(entity.anObject).toHaveProperty('aString', A_STRING);
-        expect(entity.anObject).toHaveProperty('someText', SOME_TEXT);
-
-        entity.anObject.aNumber = A_THIRD_NUMBER;
-        entity.anObject.aString = A_THIRD_STRING;
-        entity.anObject.someText = SOME_MORE_TEXT;
-
-        expect(entity.anObject.aNumber).toBe(A_THIRD_NUMBER);
-        expect(entity.anObject.aString).toBe(A_THIRD_STRING);
-        expect(entity.anObject.someText).toBe(SOME_MORE_TEXT);
-      });
-
-      it("adds a deeper object getter and setter", () => {
-        expect(entity.anObject).toHaveProperty('aDeeperObject', expect.any(TestDeeplyEmbeddedEntity));
-      });
-
-      describe("deeply embedded object", () => {
-        it("adds deeply embedded getters and setters", () => {
-          expect(entity.anObject).toHaveProperty('aNumber', A_THIRD_NUMBER);
-          expect(entity.anObject).toHaveProperty('aString', A_THIRD_STRING);
-          expect(entity.anObject).toHaveProperty('someText', SOME_MORE_TEXT);
-
-          entity.anObject.aNumber = A_NUMBER;
-          entity.anObject.aString = A_STRING
-          entity.anObject.someText = SOME_TEXT;
-
-          expect(entity.anObject.aNumber).toBe(A_NUMBER);
-          expect(entity.anObject.aString).toBe(A_STRING);
-          expect(entity.anObject.someText).toBe(SOME_TEXT);
-        });
-      });
     });
   });
 });

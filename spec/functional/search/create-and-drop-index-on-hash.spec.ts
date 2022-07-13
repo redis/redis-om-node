@@ -51,7 +51,7 @@ describe("create and drop index on hash", () => {
     });
 
     it("has the expected hash", () => {
-      expect(indexHash).toBe("HAwk8TdJ3JUeStobEYaTiy0l6p4=");
+      expect(indexHash).toBe("T2QJfJj1xMJ2Z3OxvjdsX5lnelw=");
     });
 
     it("has the expected fields", () => {
@@ -105,7 +105,7 @@ describe("create and drop index on hash", () => {
         expect(indexName).toBe('create-drop-hash:index');
         expect(keyType).toBe('HASH');
         expect(prefixes).toEqual(['create-drop-hash:']);
-        expect(indexHash).toBe("HAwk8TdJ3JUeStobEYaTiy0l6p4=");
+        expect(indexHash).toBe("T2QJfJj1xMJ2Z3OxvjdsX5lnelw=");
 
         expect(fields).toHaveLength(14);
         expect(fields).toEqual([
@@ -145,7 +145,7 @@ describe("create and drop index on hash", () => {
         expect(indexName).toBe('create-drop-hash-changed:index');
         expect(keyType).toBe('HASH');
         expect(prefixes).toEqual(['create-drop-hash-changed:']);
-        expect(indexHash).toBe("O30nRoS2Qz1/QErJV/FKEmOp+C4=");
+        expect(indexHash).toBe("g0ssY2zVs1qf6EyUFPCvsSvPsW8=");
       });
     });
   });

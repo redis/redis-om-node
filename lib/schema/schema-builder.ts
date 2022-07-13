@@ -17,7 +17,7 @@ import {
   StringArrayFieldDefinition,
   TextFieldDefinition,
 } from "./definition";
-import { EmbeddedSchema, Schema } from "./schema";
+import { Schema } from "./schema";
 
 export function buildRedisSchema<TEntity extends Entity>(schema: Schema<TEntity>): string[] {
   switch (schema.dataStructure) {
@@ -34,19 +34,8 @@ function buildRootHashSchema<TEntity extends Entity>(schema: Schema<TEntity>): s
     .flat();
 }
 
-function buildEmbeddedHashSchema<TEntity extends Entity>(pathName: string, schema: EmbeddedSchema<TEntity>, indexedDefault: boolean): string[] {
-  return Object.entries(schema.definition)
-    .map(([fieldName, fieldDef]) => buildEmbeddedHashEntry(pathName, fieldName, fieldDef, indexedDefault))
-    .flat();
-}
-
 function buildRootHashEntry(fieldName: string, fieldDef: FieldDefinition, indexedDefault: boolean): string[] {
   const fieldPath = fieldDef.alias ?? fieldName;
-  return buildHashEntryCommon(fieldPath, fieldDef, indexedDefault);
-}
-
-function buildEmbeddedHashEntry(pathName: string, fieldName: string, fieldDef: FieldDefinition, indexedDefault: boolean): string[] {
-  const fieldPath = `${pathName}.${fieldDef.alias ?? fieldName}`;
   return buildHashEntryCommon(fieldPath, fieldDef, indexedDefault);
 }
 
@@ -58,8 +47,6 @@ function buildHashEntryCommon(fieldPath: string, fieldDef: FieldDefinition, inde
       return [fieldPath, ...buildDateNumber(fieldDef, indexedDefault)];
     case 'number':
       return [fieldPath, ...buildDateNumber(fieldDef, indexedDefault)];
-    case 'object':
-      return buildEmbeddedHashSchema(fieldPath, fieldDef.schema, indexedDefault);
     case 'point':
       return [fieldPath, ...buildPoint(fieldDef, indexedDefault)];
     case 'string[]':
@@ -76,19 +63,8 @@ function buildRootJsonSchema<TEntity extends Entity>(schema: Schema<TEntity>): s
     .flat();
 }
 
-function buildEmbeddedJsonSchema<TEntity extends Entity>(pathName: string, schema: EmbeddedSchema<TEntity>, indexedDefault: boolean): string[] {
-  return Object.entries(schema.definition)
-    .map(([fieldName, fieldDef]) => buildEmbeddedJsonEntry(pathName, fieldName, fieldDef, indexedDefault))
-    .flat();
-}
-
 function buildRootJsonEntry(fieldName: string, fieldDef: FieldDefinition, indexedDefault: boolean): string[] {
   const fieldPath = fieldDef.alias ?? fieldName;
-  return buildJsonEntryCommon(fieldPath, fieldDef, indexedDefault);
-}
-
-function buildEmbeddedJsonEntry(pathName: string, fieldName: string, fieldDef: FieldDefinition, indexedDefault: boolean): string[] {
-  const fieldPath = `${pathName}.${fieldDef.alias ?? fieldName}`;
   return buildJsonEntryCommon(fieldPath, fieldDef, indexedDefault);
 }
 
@@ -103,8 +79,6 @@ function buildJsonEntryCommon(fieldPath: string, fieldDef: FieldDefinition, inde
       return [...fieldInfo, ...buildDateNumber(fieldDef, indexedDefault)];
     case 'number':
       return [...fieldInfo, ...buildDateNumber(fieldDef, indexedDefault)];
-    case 'object':
-      return buildEmbeddedJsonSchema(fieldPath, fieldDef.schema, indexedDefault);
     case 'point':
       return [...fieldInfo, ...buildPoint(fieldDef, indexedDefault)];
     case 'string[]':
