@@ -6,7 +6,7 @@ import { Search, RawSearch } from '../search/search';
 
 import { CreateIndexOptions } from "../client";
 import { EntityData } from "../entity/entity-data";
-import { buildRediSearchIndex } from "../schema/schema-builder";
+import { buildRediSearchIndex } from "../index-builder/index-builder";
 
 /**
  * A repository is the main interaction point for reading, writing, and

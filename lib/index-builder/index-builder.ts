@@ -16,8 +16,8 @@ import {
   StringFieldDefinition,
   StringArrayFieldDefinition,
   TextFieldDefinition,
-} from "./definition";
-import { Schema } from "./schema";
+} from "../schema/definition";
+import { Schema } from "../schema/schema";
 
 export function buildRediSearchIndex<TEntity extends Entity>(schema: Schema<TEntity>): string[] {
   const buildEntry = entryBuilders[schema.dataStructure];

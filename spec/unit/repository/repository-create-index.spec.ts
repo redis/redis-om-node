@@ -3,7 +3,7 @@ import '../helpers/mock-index-builder'
 import { Client } from '$lib/client';
 import { Repository } from '$lib/repository';
 import { HashRepository } from '$lib/repository';
-import { buildRediSearchIndex } from '$lib/schema/schema-builder';
+import { buildRediSearchIndex } from '$lib/index-builder/index-builder';
 
 import { simpleSchema, SimpleEntity,
   stopWordsOffSchema, StopWordsOffEntity,
