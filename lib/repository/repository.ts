@@ -1,4 +1,4 @@
-import { Schema } from "../schema/schema"
+import { Schema } from "../schema"
 import { Client } from "../client";
 import { Entity } from "../entity/entity";
 
@@ -6,7 +6,7 @@ import { Search, RawSearch } from '../search/search';
 
 import { CreateIndexOptions } from "../client";
 import { EntityData } from "../entity/entity-data";
-import { buildRediSearchIndex } from "../index-builder/index-builder";
+import { buildRediSearchIndex, generateIndexHash } from "../indexer";
 
 /**
  * A repository is the main interaction point for reading, writing, and
@@ -63,8 +63,9 @@ export abstract class Repository<TEntity extends Entity> {
   async createIndex() {
 
     const currentIndexHash = await this.client.get(this.schema.indexHashName)
+    const incomingIndexHash = generateIndexHash(this.schema);
 
-    if (currentIndexHash !== this.schema.indexHash) {
+    if (currentIndexHash !== incomingIndexHash) {
 
       await this.dropIndex();
 
@@ -79,7 +80,7 @@ export abstract class Repository<TEntity extends Entity> {
       if (this.schema.useStopWords === 'CUSTOM') options.stopWords = this.schema.stopWords
 
       await this.client.createIndex(options);
-      await this.client.set(this.schema.indexHashName, this.schema.indexHash);
+      await this.client.set(this.schema.indexHashName, incomingIndexHash);
     }
   }
 

@@ -90,22 +90,6 @@ export class Schema<TEntity extends Entity> {
    */
   get stopWords(): Array<string> { return this.options?.stopWords ?? []; }
 
-  /** The hash value of this index. Stored in Redis under {@link Schema.indexHashName}. */
-  get indexHash(): string {
-
-    const data = JSON.stringify({
-      definition: this.definition,
-      prefix: this.prefix,
-      indexName: this.indexName,
-      indexHashName: this.indexHashName,
-      dataStructure: this.dataStructure,
-      useStopWords: this.useStopWords,
-      stopWords: this.stopWords
-    });
-
-    return createHash('sha1').update(data).digest('base64');
-  }
-
   /**
    * Generates a unique string using the configured {@link IdStrategy}.
    * @returns

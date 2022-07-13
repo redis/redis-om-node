@@ -2,7 +2,7 @@ import { Schema } from '$lib/schema/schema';
 import { Entity } from '$lib/entity/entity';
 import { SchemaDefinition } from '$lib/schema/definition';
 import { DataStructure } from '$lib/schema/options';
-import { buildRediSearchIndex } from '$lib/index-builder/index-builder';
+import { buildRediSearchIndex } from '$lib/indexer/index-builder';
 
 describe("Schema", () => {
   describe.each([

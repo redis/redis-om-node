@@ -2,40 +2,41 @@ import { Schema } from '$lib/schema/schema';
 import { Entity } from '$lib/entity/entity';
 import { SchemaDefinition } from '$lib/schema/definition';
 import { DataStructure } from '$lib/schema/options';
-import { buildRediSearchIndex } from '$lib/index-builder/index-builder';
+import { buildRediSearchIndex } from '$lib/indexer/index-builder';
 
 describe("Schema", () => {
   describe.each([
 
-    ["that defines an unconfigured point for a HASH", {
+    ["that defines an unconfigured point for a JSON", {
       schemaDef: { aField: { type: 'point' } } as SchemaDefinition,
-      dataStructure: 'HASH',
-      expectedRedisSchema: ['aField', 'GEO']
+      dataStructure: 'JSON',
+      expectedRedisSchema: ['$.aField', 'AS', 'aField', 'GEO']
     }],
 
-    ["that defines an aliased point for a HASH", {
+    ["that defines an aliased point for a JSON", {
       schemaDef: { aField: { type: 'point', alias: 'anotherField' } } as SchemaDefinition,
-      dataStructure: 'HASH',
-      expectedRedisSchema: ['anotherField', 'GEO']
+      dataStructure: 'JSON',
+      expectedRedisSchema: ['$.anotherField', 'AS', 'anotherField', 'GEO']
     }],
 
-    ["that defines an indexed point for a HASH", {
+    ["that defines an indexed point for a JSON", {
       schemaDef: { aField: { type: 'point', indexed: true } } as SchemaDefinition,
-      dataStructure: 'HASH',
-      expectedRedisSchema: ['aField', 'GEO']
+      dataStructure: 'JSON',
+      expectedRedisSchema: ['$.aField', 'AS', 'aField', 'GEO']
     }],
 
-    ["that defines an unindexed point for a HASH", {
+    ["that defines an unindexed point for a JSON", {
       schemaDef: { aField: { type: 'point', indexed: false } } as SchemaDefinition,
-      dataStructure: 'HASH',
-      expectedRedisSchema: ['aField', 'GEO', 'NOINDEX']
+      dataStructure: 'JSON',
+      expectedRedisSchema: ['$.aField', 'AS', 'aField', 'GEO', 'NOINDEX']
     }],
 
-    ["that defines a fully-configured point for a HASH", {
+    ["that defines a fully-configured point for a JSON", {
       schemaDef: { aField: { type: 'point', alias: 'anotherField', indexed: false } } as SchemaDefinition,
-      dataStructure: 'HASH',
-      expectedRedisSchema: ['anotherField', 'GEO', 'NOINDEX']
+      dataStructure: 'JSON',
+      expectedRedisSchema: ['$.anotherField', 'AS', 'anotherField', 'GEO', 'NOINDEX']
     }]
+
 
   ])("%s", (_, data) => {
 

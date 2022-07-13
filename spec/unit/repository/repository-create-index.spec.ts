@@ -1,15 +1,16 @@
 import '../helpers/mock-client'
-import '../helpers/mock-index-builder'
+import '../helpers/mock-indexer'
 import { Client } from '$lib/client';
 import { Repository } from '$lib/repository';
 import { HashRepository } from '$lib/repository';
-import { buildRediSearchIndex } from '$lib/index-builder/index-builder';
+import { buildRediSearchIndex, generateIndexHash } from '$lib/indexer';
 
 import { simpleSchema, SimpleEntity,
   stopWordsOffSchema, StopWordsOffEntity,
   customStopWordsSchema, CustomStopWordsEntity } from '../helpers/test-entity-and-schema';
 
 const bogusSchema = ["bogus", "schema"]
+const bogusHash = "bogus hash"
 
 describe("Repository", () => {
   let client: Client;
@@ -28,6 +29,7 @@ describe("Repository", () => {
       describe("and an index that doesn't exist", () => {
         beforeEach(async () => {
           vi.mocked(client.get).mockResolvedValue(null);
+          vi.mocked(generateIndexHash).mockReturnValue(bogusHash)
           vi.mocked(buildRediSearchIndex).mockReturnValue(bogusSchema)
           await repository.createIndex();
         });
@@ -40,6 +42,10 @@ describe("Repository", () => {
           expect(buildRediSearchIndex).toHaveBeenCalledWith(simpleSchema);
         });
 
+        it("asks the index hasher to generate a hash", () => {
+          expect(generateIndexHash).toHaveBeenCalledWith(simpleSchema);
+        });
+
         it("asks the client to create the index with data from the schema", () => {
           expect(client.createIndex).toHaveBeenCalledWith({
             indexName: simpleSchema.indexName,
@@ -49,13 +55,14 @@ describe("Repository", () => {
         });
 
         it("asks the client to write the index hash", () => {
-          expect(client.set).toHaveBeenCalledWith(simpleSchema.indexHashName, simpleSchema.indexHash);
+          expect(client.set).toHaveBeenCalledWith(simpleSchema.indexHashName, bogusHash);
         });
       });
 
       describe("and an index that exists and is the same", () => {
         beforeEach(async () => {
-          vi.mocked(client.get).mockResolvedValue(simpleSchema.indexHash);
+          vi.mocked(client.get).mockResolvedValue(bogusHash);
+          vi.mocked(generateIndexHash).mockReturnValue(bogusHash);
           await repository.createIndex();
         });
 
@@ -75,6 +82,10 @@ describe("Repository", () => {
           expect(buildRediSearchIndex).not.toHaveBeenCalledWith();
         });
 
+        it("ask the index hasher to generate a hash", () => {
+          expect(generateIndexHash).toHaveBeenCalledWith(simpleSchema);
+        });
+
         it("does not asks the client to create the index with data from the schema", () => {
           expect(client.createIndex).not.toHaveBeenCalled();
         });
@@ -87,6 +98,7 @@ describe("Repository", () => {
       describe("and an index that exists and is different", () => {
         beforeEach(async () => {
           vi.mocked(client.get).mockResolvedValue('A_MISMATCHED_INDEX_HASH');
+          vi.mocked(generateIndexHash).mockReturnValue(bogusHash);
           await repository.createIndex();
         });
 
@@ -106,6 +118,10 @@ describe("Repository", () => {
           expect(buildRediSearchIndex).toHaveBeenCalledWith(simpleSchema);
         });
 
+        it("asks the index hasher to generate a hash", () => {
+          expect(generateIndexHash).toHaveBeenCalledWith(simpleSchema);
+        });
+
         it("asks the client to create a new index with data from the schema", () => {
           expect(client.createIndex).toHaveBeenCalledWith({
             indexName: simpleSchema.indexName,
@@ -115,7 +131,7 @@ describe("Repository", () => {
         });
 
         it("asks the client to write the index hash", () => {
-          expect(client.set).toHaveBeenCalledWith(simpleSchema.indexHashName, simpleSchema.indexHash);
+          expect(client.set).toHaveBeenCalledWith(simpleSchema.indexHashName, bogusHash);
         });
       });
     });
@@ -128,11 +144,7 @@ describe("Repository", () => {
         await repository.createIndex();
       });
 
-      it("asks the index builder to build the index", () => {
-        expect(buildRediSearchIndex).toHaveBeenCalledWith(stopWordsOffSchema);
-      });
-
-    it("asks the client to create the index with data from the schema", () => {
+      it("asks the client to create the index with data from the schema", () => {
         expect(client.createIndex).toHaveBeenCalledWith({
           indexName: stopWordsOffSchema.indexName,
           dataStructure: stopWordsOffSchema.dataStructure,
@@ -148,10 +160,6 @@ describe("Repository", () => {
       beforeEach(async () => {
         repository = new HashRepository(customStopWordsSchema, client);
         await repository.createIndex();
-      });
-
-      it("asks the index builder to build the index", () => {
-        expect(buildRediSearchIndex).toHaveBeenCalledWith(customStopWordsSchema);
       });
 
       it("asks the client to create the index with data from the schema", () => {
