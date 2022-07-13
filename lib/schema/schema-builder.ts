@@ -20,26 +20,17 @@ import {
 import { Schema } from "./schema";
 
 export function buildRedisSchema<TEntity extends Entity>(schema: Schema<TEntity>): string[] {
-  switch (schema.dataStructure) {
-    case 'HASH':
-      return buildRootHashSchema(schema);
-    case 'JSON':
-      return buildRootJsonSchema(schema);
-  }
-}
-
-function buildRootHashSchema<TEntity extends Entity>(schema: Schema<TEntity>): string[] {
+  const buildEntry = entryBuilders[schema.dataStructure];
   return Object.entries(schema.definition)
-    .map(([fieldName, fieldDef]) => buildRootHashEntry(fieldName, fieldDef, schema.indexedDefault))
+    .map(([fieldName, fieldDef]) => buildEntry(fieldName, fieldDef, schema.indexedDefault))
     .flat();
 }
 
-function buildRootHashEntry(fieldName: string, fieldDef: FieldDefinition, indexedDefault: boolean): string[] {
-  const fieldPath = fieldDef.alias ?? fieldName;
-  return buildHashEntryCommon(fieldPath, fieldDef, indexedDefault);
-}
+const entryBuilders = {  HASH: buildHashEntry, JSON: buildJsonEntry };
 
-function buildHashEntryCommon(fieldPath: string, fieldDef: FieldDefinition, indexedDefault: boolean) {
+function buildHashEntry(fieldName: string, fieldDef: FieldDefinition, indexedDefault: boolean): string[] {
+  const fieldPath = fieldDef.alias ?? fieldName;
+
   switch (fieldDef.type) {
     case 'boolean':
       return [fieldPath, ...buildHashBoolean(fieldDef, indexedDefault)];
@@ -57,18 +48,8 @@ function buildHashEntryCommon(fieldPath: string, fieldDef: FieldDefinition, inde
   }
 }
 
-function buildRootJsonSchema<TEntity extends Entity>(schema: Schema<TEntity>): string[] {
-  return Object.entries(schema.definition)
-    .map(([fieldName, fieldDef]) => buildRootJsonEntry(fieldName, fieldDef, schema.indexedDefault))
-    .flat();
-}
-
-function buildRootJsonEntry(fieldName: string, fieldDef: FieldDefinition, indexedDefault: boolean): string[] {
+function buildJsonEntry(fieldName: string, fieldDef: FieldDefinition, indexedDefault: boolean): string[] {
   const fieldPath = fieldDef.alias ?? fieldName;
-  return buildJsonEntryCommon(fieldPath, fieldDef, indexedDefault);
-}
-
-function buildJsonEntryCommon(fieldPath: string, fieldDef: FieldDefinition, indexedDefault: boolean): string[] {
   const jsonPath = `\$.${fieldPath}${fieldDef.type === 'string[]' ? '[*]' : ''}`;
   const fieldInfo = [jsonPath, 'AS', fieldPath]
 
