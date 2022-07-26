@@ -870,7 +870,7 @@ studios = await studioRepository.search().where('location').inRadius(
   circle => circle.origin(-81.7758995, 41.4976393).radius(50).miles).return.all()
 ```
 
-Note that coordinates are specified with the longitude *first*, and then the latitude. This might be the opposite of what you expect but is consistent with how Redis implements coordinates in [RediSearch](https://oss.redis.com/redisearch/Query_Syntax/) and with [GeoSets](https://redis.io/commands#geo).
+Note that coordinates are specified with the longitude *first*, and then the latitude. This might be the opposite of what you expect but is consistent with how Redis implements coordinates in [RediSearch](https://redis.io/docs/stack/search/reference/query_syntax) and with [GeoSets](https://redis.io/commands#geo).
 
 If you don't want to rely on argument order, you can also specify longitude and latitude more explicitly:
 
@@ -1002,7 +1002,7 @@ This query finds all Mushroomhead albums after 1990 or albums that have "butterf
 
 #### Running Raw Searches
 
-The fluent search interface is nice, but sometimes you need to do something just a bit more. If you want, you can execute a search against your entities using the native RediSearch query syntax. I'm not going to explain the syntax here as it's a bit involved, but you can [read it for yourself](https://oss.redis.com/redisearch/Query_Syntax/) in the RediSearch documentation.
+The fluent search interface is nice, but sometimes you need to do something just a bit more. If you want, you can execute a search against your entities using the native RediSearch query syntax. I'm not going to explain the syntax here as it's a bit involved, but you can [read it for yourself](https://redis.io/docs/stack/search/reference/query_syntax) in the RediSearch documentation.
 
 To execute a raw search, just call `.searchRaw` on the repository with your query:
 
