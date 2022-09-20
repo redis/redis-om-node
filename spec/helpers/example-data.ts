@@ -35,6 +35,7 @@ export const A_THIRD_DATE_EPOCH_STRING: string = A_THIRD_DATE_EPOCH.toString();
 export const A_POINT: Point = { longitude: 12.34, latitude: 56.78 };
 export const A_POINT_JSON: string = JSON.stringify(A_POINT);
 export const A_POINT_STRING: string = `${A_POINT.longitude},${A_POINT.latitude}`;
+export const A_POINT_PRETTY_JSON: string = JSON.stringify(A_POINT, null, 1);
 
 export const ANOTHER_POINT: Point = { longitude: -23.45, latitude: 67.89 };
 export const ANOTHER_POINT_JSON: string = JSON.stringify(ANOTHER_POINT);
@@ -46,6 +47,8 @@ export const A_THIRD_POINT_STRING: string = `${A_THIRD_POINT.longitude},${A_THIR
 
 export const AN_INVALID_POINT: Point = { longitude: 123.4, latitude: 85.05112879 };
 export const AN_INVALID_POINT_STRING: string = `${AN_INVALID_POINT.longitude},${AN_INVALID_POINT.latitude}`;
+
+export const A_PARITAL_POINT = { latitude: 85.05112879 };
 
 export const SOME_STRINGS: Array<string> = ['alfa', 'bravo', 'charlie'];
 export const SOME_STRINGS_JSON: string = JSON.stringify(SOME_STRINGS);
