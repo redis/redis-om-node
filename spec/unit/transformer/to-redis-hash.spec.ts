@@ -131,6 +131,7 @@ describe("#toRedisHash", () => {
 
     ])('%s', (_, data, expected) => {
       const actual = toRedisHash(schema, data)
+      expect(actual).not.toBe(data)
       expect(actual).toEqual(expected)
     })
 
