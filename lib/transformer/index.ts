@@ -5,7 +5,7 @@ import { Point } from "../entity/point";
 export function toRedisHash(schema: Schema<any>, data: object): RedisHashData {
   const hashData: RedisHashData = {}
   Object.entries(data).forEach(([key, value]) => {
-    if (!isNullish(value)) {
+    if (isNotNullish(value)) {
       const fieldDef = schema.definition[key]
       const alias = fieldDef?.alias ?? key
       hashData[alias] = fieldDef ? convertKnownValueToString(fieldDef, value) : convertUnknownValueToString(value)
@@ -19,13 +19,17 @@ export function fromRedisHash(schema: Schema<any>, hashData: RedisHashData): obj
   Object.entries(schema.definition).forEach(([fieldName, fieldDef]) => {
     if (fieldDef.alias) delete data[fieldDef.alias]
     const value = hashData[fieldDef.alias ?? fieldName]
-    if (!isNullish(value)) data[fieldName] = convertKnownValueFromString(fieldDef, value)
+    if (isNotNullish(value)) data[fieldName] = convertKnownValueFromString(fieldDef, value)
   })
   return data
 }
 
 export function toRedisJson(schema: Schema<any>, data: object): RedisJsonData {
-  return {}
+  const jsonData: RedisJsonData = {}
+  Object.entries(data).forEach(([key, value]) => {
+    if (isDefined(value)) jsonData[key] = convertValueToJson(schema, value)
+  })
+  return jsonData
 }
 
 export function fromRedisJson(schema: Schema<any>, redisData: RedisJsonData): object {
@@ -70,6 +74,12 @@ function convertUnknownValueToString(value: any): string {
   return value.toString()
 }
 
+function convertValueToJson(schema: Schema<any>, value: any): any {
+  if (isObject(value)) return toRedisJson(schema, value)
+  if (isDate(value)) return convertDateToEpoch(value)
+  return value
+}
+
 function convertKnownValueFromString(fieldDef: FieldDefinition, value: string): any {
   switch (fieldDef.type) {
     case 'boolean':
@@ -79,7 +89,7 @@ function convertKnownValueFromString(fieldDef: FieldDefinition, value: string): 
       if (isNumberString(value)) return convertStringToNumber(value)
       throw Error(`Expected a string containing a number from Redis but received: ${stringifyError(value)}`)
     case 'date':
-      if (isNumberString(value)) return convertStringToDate(value)
+      if (isNumberString(value)) return convertEpochStringToDate(value)
       throw Error(`Expected an string containing a epoch date from Redis but received: ${stringifyError(value)}`)
     case 'point':
       if (isPointString(value)) return convertStringToPoint(value)
@@ -93,12 +103,15 @@ function convertKnownValueFromString(fieldDef: FieldDefinition, value: string): 
 }
 
 const isNullish = (value: any): boolean => value === undefined || value === null
+const isNotNullish = (value: any): boolean => !isNullish(value)
+const isDefined = (value: any): boolean => !isUndefined(value)
+const isUndefined = (value: any): boolean => value === undefined
 const isBoolean = (value: any): boolean => typeof value === 'boolean'
 const isNumber = (value: any): boolean => typeof value === 'number'
 const isString = (value: any): boolean => typeof value === 'string'
 const isDate = (value: any): boolean => value instanceof Date
 const isArray = (value: any): boolean => Array.isArray(value)
-const isObject = (value: any): boolean => typeof value === 'object'
+const isObject = (value: any): boolean => value !== null && typeof value === 'object' && !isArray(value) && !isDate(value)
 
 const isPoint = (value: any): boolean =>
   isObject(value) &&
@@ -121,7 +134,8 @@ const convertBooleanToString = (value: boolean) => value ? '1' : '0'
 const convertNumberToString = (value: number) => value.toString()
 const convertStringToNumber = (value: string): number => Number.parseFloat(value)
 
-const convertDateToString = (value: Date) => (value.getTime() / 1000).toString()
+const convertDateToEpoch = (value: Date) => (value.getTime() / 1000)
+const convertDateToString = (value: Date) => convertDateToEpoch(value).toString()
 const convertEpochDateToString = (value: number) => convertNumberToString(value)
 const convertIsoDateToString = (value: string) => {
   const date = new Date(value)
@@ -129,7 +143,8 @@ const convertIsoDateToString = (value: string) => {
   return convertDateToString(date)
 }
 
-const convertStringToDate = (value: string): Date => new Date(convertStringToNumber(value) * 1000)
+const convertEpochToDate = (value: number): Date => new Date(value * 1000)
+const convertEpochStringToDate = (value: string): Date => new Date(convertEpochToDate(convertStringToNumber(value)))
 
 const convertPointToString = (value: Point) => {
   if (isValidPoint(value)) return `${value.longitude},${value.latitude}`
