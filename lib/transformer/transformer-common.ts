@@ -35,10 +35,13 @@ export const convertStringToNumber = (value: string): number => Number.parseFloa
 export const convertDateToEpoch = (value: Date) => (value.getTime() / 1000)
 export const convertDateToString = (value: Date) => convertDateToEpoch(value).toString()
 export const convertEpochDateToString = (value: number) => convertNumberToString(value)
-export const convertIsoDateToString = (value: string) => {
+
+export const convertIsoDateToEpoch = (value: string) => convertDateToEpoch(convertIsoDateToDate(value))
+export const convertIsoDateToString = (value: string) => convertDateToString(convertIsoDateToDate(value))
+const convertIsoDateToDate = (value: string): Date => {
   const date = new Date(value)
   if (isNaN(date.getTime())) throw Error(`Expected a date but received: ${stringifyError(value)}`)
-  return convertDateToString(date)
+  return date
 }
 
 export const convertEpochStringToDate = (value: string): Date => new Date(convertEpochToDate(convertStringToNumber(value)))

@@ -4,7 +4,7 @@ import clone from 'just-clone'
 import { FieldDefinition, Schema, SchemaDefinition } from "../schema";
 import { RedisJsonData } from "../client";
 
-import { convertDateToEpoch, isBoolean, isDate, isDefined, isNull, isNumber, isObject, isUndefined, stringifyError } from "./transformer-common"
+import { convertDateToEpoch, convertIsoDateToEpoch, convertPointToString, isArray, isBoolean, isDate, isDefined, isNull, isNumber, isObject, isPoint, isString, isUndefined, stringifyError } from "./transformer-common"
 
 
 export function toRedisJson(schema: Schema<any>, data: object): RedisJsonData {
@@ -55,8 +55,23 @@ function convertKnownValueToJson(fieldDef: FieldDefinition, value: any): any {
     case 'number':
       if (isNumber(value)) return value
       throw Error(`Expected a number but received: ${stringifyError(value)}`)
-    default:
-      return value
+    case 'date':
+      if (isDate(value)) return convertDateToEpoch(value)
+      if (isString(value)) return convertIsoDateToEpoch(value)
+      if (isNumber(value)) return value
+      throw Error(`Expected a date but received: ${stringifyError(value)}`)
+    case 'point':
+      if (isPoint(value)) return convertPointToString(value)
+      throw Error(`Expected a point but received: ${stringifyError(value)}`)
+    case 'string':
+    case 'text':
+      if (isBoolean(value)) return value.toString()
+      if (isNumber(value)) return value.toString()
+      if (isString(value)) return value
+      throw Error(`Expected a string but received: ${stringifyError(value)}`)
+    case 'string[]':
+      if (isArray(value)) return convertArrayToStringArray(value)
+      throw Error(`Expected a string[] but received: ${stringifyError(value)}`)
   }
 }
 
@@ -65,3 +80,5 @@ function convertUnknownValueToJson(value: any): any {
   if (isDate(value)) return convertDateToEpoch(value)
   return value
 }
+
+const convertArrayToStringArray = (array: any[]): string[] => array.map(value => value.toString())
