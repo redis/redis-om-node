@@ -1,4 +1,7 @@
-import { FieldDefinition, Schema } from "../schema";
+import { JSONPath } from 'jsonpath-plus'
+import clone from 'just-clone'
+
+import { FieldDefinition, Schema, SchemaDefinition } from "../schema";
 import { RedisHashData, RedisJsonData } from "../client";
 import { Point } from "../entity/point";
 
@@ -7,8 +10,8 @@ export function toRedisHash(schema: Schema<any>, data: object): RedisHashData {
   Object.entries(data).forEach(([key, value]) => {
     if (isNotNullish(value)) {
       const fieldDef = schema.definition[key]
-      const alias = fieldDef?.alias ?? key
-      hashData[alias] = fieldDef ? convertKnownValueToString(fieldDef, value) : convertUnknownValueToString(value)
+      const hashField = fieldDef?.field ?? key
+      hashData[hashField] = fieldDef ? convertKnownValueToString(fieldDef, value) : convertUnknownValueToString(value)
     }
   })
   return hashData
@@ -17,23 +20,48 @@ export function toRedisHash(schema: Schema<any>, data: object): RedisHashData {
 export function fromRedisHash(schema: Schema<any>, hashData: RedisHashData): object {
   const data: { [key: string]: any } = { ...hashData }
   Object.entries(schema.definition).forEach(([fieldName, fieldDef]) => {
-    if (fieldDef.alias) delete data[fieldDef.alias]
-    const value = hashData[fieldDef.alias ?? fieldName]
+    if (fieldDef.field) delete data[fieldDef.field]
+    const value = hashData[fieldDef.field ?? fieldName]
     if (isNotNullish(value)) data[fieldName] = convertKnownValueFromString(fieldDef, value)
   })
   return data
 }
 
 export function toRedisJson(schema: Schema<any>, data: object): RedisJsonData {
-  const jsonData: RedisJsonData = {}
-  Object.entries(data).forEach(([key, value]) => {
-    if (isDefined(value)) jsonData[key] = convertValueToJson(schema, value)
-  })
-  return jsonData
+  const json: RedisJsonData = clone(data)
+  convertRedisJsonKnown(schema.definition, json)
+  return convertRedisJsonUnknown(json)
 }
 
 export function fromRedisJson(schema: Schema<any>, redisData: RedisJsonData): object {
   return {}
+}
+
+function convertRedisJsonKnown(schemaDef: SchemaDefinition, json: RedisJsonData) {
+  Object.entries(schemaDef).forEach(([fieldName, fieldDef]) => {
+
+    const path = fieldDef.path ?? `$.${fieldName}`
+    const result = JSONPath({ resultType: 'all', path, json })
+
+    if (result.length === 1) {
+      const [ { value, parent, parentProperty } ] = result
+      parent[parentProperty] = convertKnownValueToJson(fieldDef, value)
+    }
+  })
+
+  return json
+}
+
+function convertRedisJsonUnknown(json: RedisJsonData) {
+  Object.entries(json).forEach(([key, value]) => {
+    if (isDefined(value)) {
+      json[key] = convertUnknownValueToJson(value)
+    } else {
+      delete json[key]
+    }
+  })
+
+  return json
 }
 
 function convertKnownValueToString(fieldDef: FieldDefinition, value: any): string {
@@ -54,7 +82,7 @@ function convertKnownValueToString(fieldDef: FieldDefinition, value: any): strin
       throw Error(`Expected a point but received: ${stringifyError(value)}`)
     case 'string':
     case 'text':
-      if (isBoolean(value)) return value ? 'true' : 'false'
+      if (isBoolean(value)) return value.toString()
       if (isNumber(value)) return value.toString()
       if (isString(value)) return value
       throw Error(`Expected a string but received: ${stringifyError(value)}`)
@@ -74,8 +102,24 @@ function convertUnknownValueToString(value: any): string {
   return value.toString()
 }
 
-function convertValueToJson(schema: Schema<any>, value: any): any {
-  if (isObject(value)) return toRedisJson(schema, value)
+function convertKnownValueToJson(fieldDef: FieldDefinition, value: any): any {
+
+  if (isNullish(value)) return value
+
+  switch (fieldDef.type) {
+    case 'boolean':
+      if (isBoolean(value)) return value
+      throw Error(`Expected a boolean but received: ${stringifyError(value)}`)
+    case 'number':
+      if (isNumber(value)) return value
+      throw Error(`Expected a number but received: ${stringifyError(value)}`)
+    default:
+      return value
+  }
+}
+
+function convertUnknownValueToJson(value: any): any {
+  if (isObject(value)) return convertRedisJsonUnknown(value)
   if (isDate(value)) return convertDateToEpoch(value)
   return value
 }
@@ -83,7 +127,8 @@ function convertValueToJson(schema: Schema<any>, value: any): any {
 function convertKnownValueFromString(fieldDef: FieldDefinition, value: string): any {
   switch (fieldDef.type) {
     case 'boolean':
-      if (isBooleanString(value)) return value === '1'
+      if (value === '1') return true;
+      if (value === '0') return false;
       throw Error(`Expected a value of '1' or '0' from Redis for a boolean but received: ${stringifyError(value)}`)
     case 'number':
       if (isNumberString(value)) return convertStringToNumber(value)
@@ -119,9 +164,8 @@ const isPoint = (value: any): boolean =>
   typeof value.latitude === 'number' &&
   typeof value.longitude === 'number'
 
-const isBooleanString = (value: string): boolean => value === '1' || value === '0'
-const isNumberString = (value: string): boolean => !Number.isNaN(Number(value))
-const isPointString = (value: string): boolean => !!value.match(/^-?\d+(\.\d*)?,-?\d+(\.\d*)?$/)
+const isNumberString = (value: string): boolean => !isNaN(Number(value))
+const isPointString = (value: string): boolean => /^-?\d+(\.\d*)?,-?\d+(\.\d*)?$/.test(value)
 
 // As per https://redis.io/commands/geoadd/ and local testing
 // Valid latitudes are from -85.05112878 to 85.05112878 degrees (*NOT* -90 to +90)

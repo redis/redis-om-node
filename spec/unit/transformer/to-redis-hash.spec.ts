@@ -55,20 +55,20 @@ describe("#toRedisHash", () => {
     beforeEach(() => {
       schema = new Schema(TestEntity, {
         aBoolean: { type: 'boolean' },
-        anotherBoolean: { type: 'boolean', alias: 'anAliasedBoolean' },
+        anotherBoolean: { type: 'boolean', field: 'aRenamedBoolean' },
         aNumber: { type: 'number' },
-        anotherNumber: { type: 'number', alias: 'anAliasedNumber' },
+        anotherNumber: { type: 'number', field: 'aRenamedNumber' },
         aDate: { type: 'date' },
-        anotherDate: { type: 'date', alias: 'anAliasedDate' },
+        anotherDate: { type: 'date', field: 'aRenamedDate' },
         aPoint: { type: 'point' },
-        anotherPoint: { type: 'point', alias: 'anAliasedPoint' },
+        anotherPoint: { type: 'point', field: 'aRenamedPoint' },
         aString: { type: 'string' },
-        anotherString: { type: 'string', alias: 'anAliasedString' },
+        anotherString: { type: 'string', field: 'aRenamedString' },
         aStringArray: { type: 'string[]' },
         aSeparatedStringArray: { type: 'string[]', separator: ',' },
-        anotherStringArray: { type: 'string[]', alias: 'anAliasedStringArray' },
+        anotherStringArray: { type: 'string[]', field: 'aRenamedStringArray' },
         someText: { type: 'text' },
-        someOtherText: { type: 'text', alias: 'someAliasedText' }
+        someOtherText: { type: 'text', field: 'someRenamedText' }
       })
     })
 
@@ -82,13 +82,13 @@ describe("#toRedisHash", () => {
       // boolean
       ["converts a true boolean to a string", { aBoolean: true }, { aBoolean: '1' }],
       ["converts a false boolean to a string", { aBoolean: false }, { aBoolean: '0' }],
-      ["converts an aliased boolean to a string", { anotherBoolean: true }, { anAliasedBoolean: '1' }],
+      ["converts a renamed boolean to a string", { anotherBoolean: true }, { aRenamedBoolean: '1' }],
       ["removes an explicitly undefined boolean", { aBoolean: undefined }, {}],
       ["removes a null boolean", { aBoolean: null }, {}],
 
       // number
       ["converts a number to a string", { aNumber: A_NUMBER }, { aNumber: A_NUMBER_STRING }],
-      ["converts an aliased number to a string", { anotherNumber: A_NUMBER }, { anAliasedNumber: A_NUMBER_STRING }],
+      ["converts a renamed number to a string", { anotherNumber: A_NUMBER }, { aRenamedNumber: A_NUMBER_STRING }],
       ["removes an explicitly undefined number", { aNumber: undefined }, {}],
       ["removes a null number", { aNumber: null }, {}],
 
@@ -96,13 +96,13 @@ describe("#toRedisHash", () => {
       ["converts a date to an epoch string", { aDate: A_DATE }, { aDate: A_DATE_EPOCH_STRING }],
       ["converts an ISO date to an epoch string", { aDate: A_DATE_ISO }, { aDate: A_DATE_EPOCH_STRING }],
       ["converts an UNIX epoch date to an epoch string", { aDate: A_DATE_EPOCH }, { aDate: A_DATE_EPOCH_STRING }],
-      ["converts an aliased date to an epoch string", { anotherDate: A_DATE }, { anAliasedDate: A_DATE_EPOCH_STRING }],
+      ["converts a renamed date to an epoch string", { anotherDate: A_DATE }, { aRenamedDate: A_DATE_EPOCH_STRING }],
       ["removes an explicitly undefined date", { aDate: undefined }, {}],
       ["removes a null date", { aDate: null }, {}],
 
       // point
       ["converts a point to a string", { aPoint: A_POINT }, { aPoint: A_POINT_STRING }],
-      ["converts an aliased point to a string", { anotherPoint: A_POINT }, { anAliasedPoint: A_POINT_STRING }],
+      ["converts a renamed point to a string", { anotherPoint: A_POINT }, { aRenamedPoint: A_POINT_STRING }],
       ["removes an explicitly undefined point", { aPoint: undefined }, {}],
       ["removes a null point", { aPoint: null }, {}],
 
@@ -110,7 +110,7 @@ describe("#toRedisHash", () => {
       ["leaves a string as a string", { aString: A_STRING }, { aString: A_STRING }],
       ["coerces a number to a string", { aString: A_NUMBER }, { aString: A_NUMBER_STRING }],
       ["coerces a boolean to a string", { aString: true }, { aString: 'true' }],
-      ["leaves an aliased string as a string", { anotherString: A_STRING }, { anAliasedString: A_STRING }],
+      ["leaves a renamed string as a string", { anotherString: A_STRING }, { aRenamedString: A_STRING }],
       ["removes an explicitly undefined string", { aString: undefined }, {}],
       ["removes a null string", { aString: null }, {}],
 
@@ -118,13 +118,13 @@ describe("#toRedisHash", () => {
       ["converts a string in a text to a string", { someText: SOME_TEXT }, { someText: SOME_TEXT }],
       ["coerces a number in a text to a string", { someText: A_NUMBER }, { someText: A_NUMBER_STRING }],
       ["coerces a boolean in a text to a string", { someText: true }, { someText: 'true' }],
-      ["converts an aliased string in a text to a string", { someOtherText: SOME_TEXT }, { someAliasedText: SOME_TEXT }],
+      ["converts a renamed string in a text to a string", { someOtherText: SOME_TEXT }, { someRenamedText: SOME_TEXT }],
       ["removes an explicitly undefined text", { someText: undefined }, {}],
       ["removes a null text", { someText: null }, {}],
 
       // string[]
       ["converts a string[] to a delimited string", { aStringArray: SOME_STRINGS }, { aStringArray: SOME_STRINGS_JOINED }],
-      ["converts an aliased string[] to a delimited string", { anotherStringArray: SOME_STRINGS }, { anAliasedStringArray: SOME_STRINGS_JOINED }],
+      ["converts a renamed string[] to a delimited string", { anotherStringArray: SOME_STRINGS }, { aRenamedStringArray: SOME_STRINGS_JOINED }],
       ["coerces numbers and booleans in a string[] to strings", { aStringArray: [ A_STRING, A_NUMBER, true] }, { aStringArray: [A_STRING, A_NUMBER_STRING, 'true'].join('|') }],
       ["converts a string[] to a delimited string with a custom delimiter", { aSeparatedStringArray: SOME_STRINGS }, { aSeparatedStringArray: SOME_STRINGS.join(',') }],
       ["coerces numbers and booleans in a string[] to string with a custom delimiter", { aSeparatedStringArray: [ A_STRING, A_NUMBER, true] }, { aSeparatedStringArray: [A_STRING, A_NUMBER_STRING, 'true'].join(',') }],

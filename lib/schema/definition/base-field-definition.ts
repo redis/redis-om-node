@@ -16,4 +16,17 @@ export interface BaseFieldDefinition {
    * to the schema indexedDefault value, currently true.
    */
   indexed?: boolean;
+
+  /**
+   * The field name used to store this in a Redis Hash. Defaults to the
+   * name used in the {@link SchemaDefinition}.
+   */
+  field?: string
+
+  /**
+   * The JSONPath expression this field references. Used only by search
+   * and only for JSON documents. Defaults to the name used in the
+   * {@link SchemaDefinition} prefixed with `$.`.
+   */
+  path?: string
 }
