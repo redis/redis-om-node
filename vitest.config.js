@@ -7,6 +7,7 @@ export default defineConfig({
     clearMocks: true,
     isolate: false,
     coverage: {
+      provider: 'istanbul',
       exclude: [
         'spec/*'
       ]
