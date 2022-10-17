@@ -26,6 +26,8 @@ function convertRedisJsonKnown(schemaDef: SchemaDefinition, json: RedisJsonData)
     if (result.length === 1) {
       const [ { value, parent, parentProperty } ] = result
       if (isDefined(value)) parent[parentProperty] = convertKnownValueToJson(fieldDef, value)
+    } else if (result.length > 1) {
+      throw new Error(`Expected path to point to a single value but found many: "${path}"`)
     }
   })
 
