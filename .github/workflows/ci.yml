@@ -2,7 +2,9 @@ name: CI
 
 on:
   push:
+    branches: ["main"]
   pull_request:
+    branches: ["main"]
   workflow_dispatch:
 
 jobs:
@@ -41,3 +43,6 @@ jobs:
 
       - name: Run all tests
         run: npm run test:coverage
+        
+      - name: Upload to Codecov
+        uses: codecov/codecov-action@v3

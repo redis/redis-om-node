@@ -4,6 +4,12 @@
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and Redis OM adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 0.3.6 - 2022-07-12
+### Changed
+- *Breaking Change* Removed .fetchMany and replaced it with a variadic version of .fetch.
+- Assorted internal cleanup.
+- Changed test suite to use vitest.
+
 ## 0.3.5 - 2022-06-21
 ### Added
 - Added additional field attributes to control RediSearch indexing behavior.

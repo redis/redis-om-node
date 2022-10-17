@@ -33,7 +33,7 @@ The default field name in Redis is the key name defined in the
 
 #### Defined in
 
-[lib/schema/definition/base-field-definition.ts:12](https://github.com/redis/redis-om-node/blob/000c57c/lib/schema/definition/base-field-definition.ts#L12)
+[lib/schema/definition/base-field-definition.ts:12](https://github.com/redis/redis-om-node/blob/f2d3aed/lib/schema/definition/base-field-definition.ts#L12)
 
 ___
 
@@ -50,7 +50,7 @@ to the schema indexedDefault value, currently true.
 
 #### Defined in
 
-[lib/schema/definition/base-field-definition.ts:18](https://github.com/redis/redis-om-node/blob/000c57c/lib/schema/definition/base-field-definition.ts#L18)
+[lib/schema/definition/base-field-definition.ts:18](https://github.com/redis/redis-om-node/blob/f2d3aed/lib/schema/definition/base-field-definition.ts#L18)
 
 ___
 
@@ -66,4 +66,4 @@ Yep. It's a point.
 
 #### Defined in
 
-[lib/schema/definition/point-field-definition.ts:6](https://github.com/redis/redis-om-node/blob/000c57c/lib/schema/definition/point-field-definition.ts#L6)
+[lib/schema/definition/point-field-definition.ts:6](https://github.com/redis/redis-om-node/blob/f2d3aed/lib/schema/definition/point-field-definition.ts#L6)

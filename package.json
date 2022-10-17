@@ -1,6 +1,6 @@
 {
   "name": "redis-om",
-  "version": "0.3.5",
+  "version": "0.3.6",
   "description": "Object mapping, and more, for Redis and Node.js. Written in TypeScript.",
   "main": "dist/index.js",
   "types": "./dist/index.d.ts",
@@ -16,7 +16,7 @@
     "build": "tsup",
     "docs": "rm -rf ./docs && typedoc",
     "test": "vitest",
-    "test:coverage": "vitest --coverage",
+    "test:coverage": "vitest run --coverage",
     "test:ui": "vitest --ui",
     "test:unit": "vitest --dir ./spec/unit",
     "test:functional": "vitest --dir ./spec/functional"
@@ -44,13 +44,13 @@
   },
   "devDependencies": {
     "@types/node": "^18.0.0",
-    "@vitest/ui": "^0.17.0",
+    "@vitest/ui": "^0.17.1",
     "c8": "^7.11.3",
     "tsup": "^6.1.2",
     "typedoc": "^0.23.2",
     "typedoc-plugin-markdown": "^3.13.1",
     "typescript": "^4.7.2",
-    "vitest": "^0.17.0"
+    "vitest": "^0.20.0"
   },
   "dependencies": {
     "jsonpath-plus": "^7.2.0",

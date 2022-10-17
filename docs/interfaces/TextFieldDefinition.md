@@ -48,7 +48,7 @@ The default field name in Redis is the key name defined in the
 
 #### Defined in
 
-[lib/schema/definition/base-field-definition.ts:12](https://github.com/redis/redis-om-node/blob/000c57c/lib/schema/definition/base-field-definition.ts#L12)
+[lib/schema/definition/base-field-definition.ts:12](https://github.com/redis/redis-om-node/blob/f2d3aed/lib/schema/definition/base-field-definition.ts#L12)
 
 ___
 
@@ -65,7 +65,7 @@ to the schema indexedDefault value, currently true.
 
 #### Defined in
 
-[lib/schema/definition/base-field-definition.ts:18](https://github.com/redis/redis-om-node/blob/000c57c/lib/schema/definition/base-field-definition.ts#L18)
+[lib/schema/definition/base-field-definition.ts:18](https://github.com/redis/redis-om-node/blob/f2d3aed/lib/schema/definition/base-field-definition.ts#L18)
 
 ___
 
@@ -85,7 +85,7 @@ dm:es - Double Metaphone for Spanish
 
 #### Defined in
 
-[lib/schema/definition/phonetic-field-definition.ts:10](https://github.com/redis/redis-om-node/blob/000c57c/lib/schema/definition/phonetic-field-definition.ts#L10)
+[lib/schema/definition/phonetic-field-definition.ts:10](https://github.com/redis/redis-om-node/blob/f2d3aed/lib/schema/definition/phonetic-field-definition.ts#L10)
 
 ___
 
@@ -102,7 +102,7 @@ to true.
 
 #### Defined in
 
-[lib/schema/definition/normalized-field-definition.ts:7](https://github.com/redis/redis-om-node/blob/000c57c/lib/schema/definition/normalized-field-definition.ts#L7)
+[lib/schema/definition/normalized-field-definition.ts:7](https://github.com/redis/redis-om-node/blob/f2d3aed/lib/schema/definition/normalized-field-definition.ts#L7)
 
 ___
 
@@ -118,7 +118,7 @@ Enables sorting by this field.
 
 #### Defined in
 
-[lib/schema/definition/sortable-field-definition.ts:4](https://github.com/redis/redis-om-node/blob/000c57c/lib/schema/definition/sortable-field-definition.ts#L4)
+[lib/schema/definition/sortable-field-definition.ts:4](https://github.com/redis/redis-om-node/blob/f2d3aed/lib/schema/definition/sortable-field-definition.ts#L4)
 
 ___
 
@@ -135,7 +135,7 @@ to true.
 
 #### Defined in
 
-[lib/schema/definition/stemming-field-definition.ts:7](https://github.com/redis/redis-om-node/blob/000c57c/lib/schema/definition/stemming-field-definition.ts#L7)
+[lib/schema/definition/stemming-field-definition.ts:7](https://github.com/redis/redis-om-node/blob/f2d3aed/lib/schema/definition/stemming-field-definition.ts#L7)
 
 ___
 
@@ -151,7 +151,7 @@ Yep. It's searchable text.
 
 #### Defined in
 
-[lib/schema/definition/text-field-definition.ts:11](https://github.com/redis/redis-om-node/blob/000c57c/lib/schema/definition/text-field-definition.ts#L11)
+[lib/schema/definition/text-field-definition.ts:11](https://github.com/redis/redis-om-node/blob/f2d3aed/lib/schema/definition/text-field-definition.ts#L11)
 
 ___
 
@@ -167,4 +167,4 @@ Enables setting the weight to apply to a text field
 
 #### Defined in
 
-[lib/schema/definition/weight-field-definition.ts:4](https://github.com/redis/redis-om-node/blob/000c57c/lib/schema/definition/weight-field-definition.ts#L4)
+[lib/schema/definition/weight-field-definition.ts:4](https://github.com/redis/redis-om-node/blob/f2d3aed/lib/schema/definition/weight-field-definition.ts#L4)
