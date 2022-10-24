@@ -8,6 +8,10 @@ export class HashSchemaBuilder<TEntity extends Entity> extends SchemaBuilder<TEn
     const fieldDef: FieldDefinition = this.schema.definition[field];
     const fieldAlias = fieldDef.alias ?? field
 
+    return this.buildField(field, fieldDef, fieldAlias);
+  }
+
+  buildField(field: string,fieldDef: FieldDefinition, fieldAlias: string) {
     switch (fieldDef.type) {
       case 'date':
         return [
@@ -52,6 +56,23 @@ export class HashSchemaBuilder<TEntity extends Entity> extends SchemaBuilder<TEn
           ...this.buildWeight(fieldDef),
           ...this.buildIndexed(fieldDef),
         ]
+        case "object":
+          const subSchema: string[] = [];
+        //@ts-ignore
+        const subFieldsDefinition = this.schema.definition[field].fields;
+        Object.keys(subFieldsDefinition).forEach((subField) => {
+          //@ts-ignore
+          const subFieldDef: FieldDefinition = this.schema.definition[field].fields[subField];
+          const subFieldKey = `${field}.${subField}`; 
+          subSchema.push(
+            ...this.buildField(
+              subFieldKey,
+              subFieldDef,
+              subField
+            )
+          );
+        });
+        return subSchema;
     };
   }
 }

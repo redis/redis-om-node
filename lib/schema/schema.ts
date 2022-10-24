@@ -1,13 +1,18 @@
-import { createHash } from 'crypto';
-import { ulid } from 'ulid'
+import { createHash } from "crypto";
+import { ulid } from "ulid";
 
 import { Entity } from "../entity/entity";
 import { EntityConstructor } from "../entity/entity-constructor";
 
-import { IdStrategy, DataStructure, StopWordOptions, SchemaOptions } from './options';
+import {
+  IdStrategy,
+  DataStructure,
+  StopWordOptions,
+  SchemaOptions,
+} from "./options";
 
-import { SchemaDefinition, FieldDefinition } from './definition';
-import { JsonSchemaBuilder, HashSchemaBuilder } from './builders';
+import { SchemaDefinition, FieldDefinition } from "./definition";
+import { JsonSchemaBuilder, HashSchemaBuilder } from "./builders";
 
 /**
  * Defines a schema that determines how an {@link Entity} is mapped to Redis
@@ -54,7 +59,11 @@ export class Schema<TEntity extends Entity> {
    * @param schemaDef Defines all of the fields for the Schema and how they are mapped to Redis.
    * @param options Additional options for this Schema.
    */
-  constructor(ctor: EntityConstructor<TEntity>, schemaDef: SchemaDefinition, options?: SchemaOptions) {
+  constructor(
+    ctor: EntityConstructor<TEntity>,
+    schemaDef: SchemaDefinition,
+    options?: SchemaOptions
+  ) {
     this.entityCtor = ctor;
     this.definition = schemaDef;
     this.options = options;
@@ -64,41 +73,54 @@ export class Schema<TEntity extends Entity> {
   }
 
   /** The configured keyspace prefix in Redis for this Schema. */
-  get prefix(): string { return this.options?.prefix ?? this.entityCtor.name; }
+  get prefix(): string {
+    return this.options?.prefix ?? this.entityCtor.name;
+  }
 
   /** The configured name for the RediSearch index for this Schema. */
-  get indexName(): string { return this.options?.indexName ?? `${this.prefix}:index`; }
+  get indexName(): string {
+    return this.options?.indexName ?? `${this.prefix}:index`;
+  }
 
   /** The configured name for the RediSearch index hash for this Schema. */
-  get indexHashName(): string { return this.options?.indexHashName ?? `${this.prefix}:index:hash`; }
+  get indexHashName(): string {
+    return this.options?.indexHashName ?? `${this.prefix}:index:hash`;
+  }
 
   /**
    * The configured data structure, a string with the value of either `HASH` or `JSON`,
    * that this Schema uses to store {@link Entity | Entities} in Redis.
    * */
-  get dataStructure(): DataStructure { return this.options?.dataStructure ?? 'JSON'; }
+  get dataStructure(): DataStructure {
+    return this.options?.dataStructure ?? "JSON";
+  }
 
   /**
    * The configured usage of stop words, a string with the value of either `OFF`, `DEFAULT`,
    * or `CUSTOM`. See {@link SchemaOptions.useStopWords} and {@link SchemaOptions.stopWords}
    * for more details.
    */
-  get useStopWords(): StopWordOptions { return this.options?.useStopWords ?? 'DEFAULT'; }
+  get useStopWords(): StopWordOptions {
+    return this.options?.useStopWords ?? "DEFAULT";
+  }
 
   /**
    * The configured stop words. Ignored if {@link Schema.useStopWords} is anything other
    * than `CUSTOM`.
    */
-  get stopWords(): Array<string> { return this.options?.stopWords ?? []; }
+  get stopWords(): Array<string> {
+    return this.options?.stopWords ?? [];
+  }
 
   /**
    * The configured indexed default setting for fields
    */
-  get indexedDefault(): boolean { return this.options?.indexedDefault ?? true; }
+  get indexedDefault(): boolean {
+    return this.options?.indexedDefault ?? true;
+  }
 
   /** The hash value of this index. Stored in Redis under {@link Schema.indexHashName}. */
   get indexHash(): string {
-
     const data = JSON.stringify({
       definition: this.definition,
       prefix: this.prefix,
@@ -109,14 +131,18 @@ export class Schema<TEntity extends Entity> {
       stopWords: this.stopWords,
     });
 
-    return createHash('sha1').update(data).digest('base64');
+    return createHash("sha1").update(data).digest("base64");
   }
 
   /** @internal */
   get redisSchema(): Array<string> {
-    if (this.dataStructure === 'HASH') return new HashSchemaBuilder(this).redisSchema;
-    if (this.dataStructure === 'JSON') return new JsonSchemaBuilder(this).redisSchema;
-    throw new Error(`'${this.dataStructure}' in an invalid data structure. Valid data structures are 'HASH' and 'JSON'.`);
+    if (this.dataStructure === "HASH")
+      return new HashSchemaBuilder(this).redisSchema;
+    if (this.dataStructure === "JSON")
+      return new JsonSchemaBuilder(this).redisSchema;
+    throw new Error(
+      `'${this.dataStructure}' in an invalid data structure. Valid data structures are 'HASH' and 'JSON'.`
+    );
   }
 
   /**
@@ -129,41 +155,85 @@ export class Schema<TEntity extends Entity> {
   }
 
   private defineProperties() {
-    Object.keys(this.definition).forEach(fieldName => {
-
+    Object.keys(this.definition).forEach((fieldName) => {
       const fieldDef: FieldDefinition = this.definition[fieldName];
       const fieldAlias = fieldDef.alias ?? fieldName;
 
-      this.validateFieldDef(fieldName, fieldDef);
+      const fieldType = fieldDef.type;
+      if(fieldType === 'object') {
+        Object.keys(fieldDef.fields).forEach((subFieldName) => {
+          const subFieldDef: FieldDefinition = fieldDef.fields[subFieldName];
+          this.validateFieldDef(subFieldName, subFieldDef);
+          const subFieldAlias = `${fieldAlias}.${subFieldDef.alias ?? subFieldName}`;
 
-      Object.defineProperty(this.entityCtor.prototype, fieldName, {
-        configurable: true,
-        get: function (): any {
-          return this.entityFields[fieldAlias].value;
-        },
-        set: function (value: any): void {
-          this.entityFields[fieldAlias].value = value;
-        }
-      });
-    })
+        Object.defineProperty(this.entityCtor.prototype, fieldName, {
+          configurable: true,
+          get: function (): any {
+            return this.entityFields[subFieldAlias].value;
+          },
+          set: function (value: any): void {
+            this.entityFields[subFieldAlias].value = value;
+          },
+        });
+        })
+        
+      } else {
+        this.validateFieldDef(fieldName, fieldDef);
+
+        Object.defineProperty(this.entityCtor.prototype, fieldName, {
+          configurable: true,
+          get: function (): any {
+            return this.entityFields[fieldAlias].value;
+          },
+          set: function (value: any): void {
+            this.entityFields[fieldAlias].value = value;
+          },
+        });
+      }
+
+   
+    });
   }
 
   private validateOptions() {
-    if (!['HASH', 'JSON'].includes(this.dataStructure))
-      throw Error(`'${this.dataStructure}' in an invalid data structure. Valid data structures are 'HASH' and 'JSON'.`);
+    if (!["HASH", "JSON"].includes(this.dataStructure))
+      throw Error(
+        `'${this.dataStructure}' in an invalid data structure. Valid data structures are 'HASH' and 'JSON'.`
+      );
 
-    if (!['OFF', 'DEFAULT', 'CUSTOM'].includes(this.useStopWords))
-      throw Error(`'${this.useStopWords}' in an invalid value for stop words. Valid values are 'OFF', 'DEFAULT', and 'CUSTOM'.`);
+    if (!["OFF", "DEFAULT", "CUSTOM"].includes(this.useStopWords))
+      throw Error(
+        `'${this.useStopWords}' in an invalid value for stop words. Valid values are 'OFF', 'DEFAULT', and 'CUSTOM'.`
+      );
 
-    if (this.options?.idStrategy && !(this.options.idStrategy instanceof Function))
-      throw Error("ID strategy must be a function that takes no arguments and returns a string.");
+    if (
+      this.options?.idStrategy &&
+      !(this.options.idStrategy instanceof Function)
+    )
+      throw Error(
+        "ID strategy must be a function that takes no arguments and returns a string."
+      );
 
-    if (this.prefix === '') throw Error(`Prefix must be a non-empty string.`);
-    if (this.indexName === '') throw Error(`Index name must be a non-empty string.`);
+    if (this.prefix === "") throw Error(`Prefix must be a non-empty string.`);
+    if (this.indexName === "")
+      throw Error(`Index name must be a non-empty string.`);
   }
 
   private validateFieldDef(field: string, fieldDef: FieldDefinition) {
-    if (!['boolean', 'date', 'number', 'point', 'string', 'string[]', 'text'].includes(fieldDef.type))
-      throw Error(`The field '${field}' is configured with a type of '${fieldDef.type}'. Valid types include 'boolean', 'date', 'number', 'point', 'string', 'string[]', and 'text'.`);
+    if (
+      ![
+        "boolean",
+        "date",
+        "number",
+        "point",
+        "string",
+        "string[]",
+        "text",
+        "object",
+      ].includes(fieldDef.type)
+    )
+      throw Error(
+        `The field '${field}' is configured with a type of '${fieldDef.type}'. Valid types include 'boolean', 'date', 'number', 'point', 'string', 'string[]', and 'text'.`
+      );
   }
 }

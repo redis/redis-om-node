@@ -30,8 +30,16 @@ export abstract class EntityField {
 
   toRedisJson(): RedisJsonData {
     const data: RedisJsonData = {};
-    if (this.value !== null) data[this.name] = this.value;
-    return data;
+    const isSubField = this.name.split('.').length > 1;
+    if(isSubField) {
+      const [parent, child] = this.name.split('.');
+      data[parent] = { [child]: this.value };
+      return data
+    } else {
+      if (this.value !== null) data[this.name] = this.value;
+      return data;
+    }
+
   }
 
   fromRedisJson(value: any) {
