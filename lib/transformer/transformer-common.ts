@@ -45,7 +45,7 @@ const convertIsoDateToDate = (value: string): Date => {
 }
 
 export const convertEpochStringToDate = (value: string): Date => new Date(convertEpochToDate(convertStringToNumber(value)))
-const convertEpochToDate = (value: number): Date => new Date(value * 1000)
+export const convertEpochToDate = (value: number): Date => new Date(value * 1000)
 
 export const convertPointToString = (value: Point) => {
   if (isValidPoint(value)) return `${value.longitude},${value.latitude}`

@@ -4,20 +4,31 @@ import clone from 'just-clone'
 import { FieldDefinition, Schema, SchemaDefinition } from "../schema";
 import { RedisJsonData } from "../client";
 
-import { convertDateToEpoch, convertIsoDateToEpoch, convertPointToString, isArray, isBoolean, isDate, isDefined, isNull, isNullish, isNumber, isObject, isPoint, isString, isUndefined, stringifyError } from "./transformer-common"
+import { convertDateToEpoch, convertEpochToDate, convertIsoDateToEpoch, convertPointToString, convertStringToPoint, isArray, isBoolean, isDate, isDefined, isNull, isNullish, isNumber, isObject, isPoint, isPointString, isString, isUndefined, stringifyError } from "./transformer-common"
 
 
 export function toRedisJson(schema: Schema<any>, data: object): RedisJsonData {
   const json: RedisJsonData = clone(data)
-  convertRedisJsonKnown(schema.definition, json)
-  return convertRedisJsonUnknown(json)
+  convertToRedisJsonKnown(schema.definition, json)
+  return convertToRedisJsonUnknown(json)
 }
 
-export function fromRedisJson(schema: Schema<any>, redisData: RedisJsonData): object {
-  return {}
+export function fromRedisJson(schema: Schema<any>, json: RedisJsonData): object {
+  const data: RedisJsonData = clone(json)
+  Object.entries(schema.definition).forEach(([fieldName, fieldDef]) => {
+
+    const path = fieldDef.path ?? `$.${fieldName}`
+    const results = JSONPath({ resultType: 'all', path, json: data })
+
+    results.forEach((result: any) => {
+      const { value, parent, parentProperty } = result
+      parent[parentProperty] = convertKnownValueFromJson(fieldDef, value)
+    })
+  })
+  return data
 }
 
-function convertRedisJsonKnown(schemaDef: SchemaDefinition, json: RedisJsonData) {
+function convertToRedisJsonKnown(schemaDef: SchemaDefinition, json: RedisJsonData) {
   Object.entries(schemaDef).forEach(([fieldName, fieldDef]) => {
 
     const path = fieldDef.path ?? `$.${fieldName}`
@@ -43,7 +54,7 @@ function convertRedisJsonKnown(schemaDef: SchemaDefinition, json: RedisJsonData)
   return json
 }
 
-function convertRedisJsonUnknown(json: RedisJsonData) {
+function convertToRedisJsonUnknown(json: RedisJsonData) {
   Object.entries(json).forEach(([key, value]) => {
     if (isUndefined(value)) {
       delete json[key]
@@ -83,8 +94,33 @@ function convertKnownValueToJson(fieldDef: FieldDefinition, value: any): any {
   }
 }
 
+function convertKnownValueFromJson(fieldDef: FieldDefinition, value: any): any {
+  if (isNull(value)) return value
+
+  switch (fieldDef.type) {
+    case 'boolean':
+      if (isBoolean(value)) return value
+      throw Error(`Expected a value of true, false, or null from RedisJSON for a boolean but received: ${stringifyError(value)}`)
+    case 'number':
+      if (isNumber(value)) return value
+      throw Error(`Expected a number from RedisJSON but received: ${stringifyError(value)}`)
+    case 'date':
+      if (isNumber(value)) return convertEpochToDate(value)
+      throw Error(`Expected a number containing a epoch date from RedisJSON but received: ${stringifyError(value)}`)
+    case 'point':
+      if (isPointString(value)) return convertStringToPoint(value)
+      throw Error(`Expected a point string from RedisJSON but received: ${stringifyError(value)}`)
+    case 'string':
+    case 'text':
+      if (isString(value)) return value
+      if (isBoolean(value)) return value.toString()
+      if (isNumber(value)) return value.toString()
+      throw Error(`Expected a string from RedisJSON but received: ${stringifyError(value)}`)
+  }
+}
+
 function convertUnknownValueToJson(value: any): any {
-  if (isObject(value)) return convertRedisJsonUnknown(value)
+  if (isObject(value)) return convertToRedisJsonUnknown(value)
   if (isDate(value)) return convertDateToEpoch(value)
   return value
 }
