@@ -2,7 +2,7 @@ import { toRedisJson } from "$lib/transformer";
 import { Schema } from "$lib/schema";
 import { Entity } from "$lib/entity/entity";
 import { RedisJsonData } from "$lib/client";
-import { AN_INVALID_POINT, A_DATE, A_DATE_EPOCH, A_DATE_ISO, A_NUMBER, A_NUMBER_STRING, A_PARITAL_POINT, A_POINT, A_POINT_STRING, A_STRING, SOME_STRINGS, SOME_TEXT } from "../../helpers/example-data";
+import { ANOTHER_STRING, AN_INVALID_POINT, A_DATE, A_DATE_EPOCH, A_DATE_ISO, A_NUMBER, A_NUMBER_STRING, A_PARITAL_POINT, A_POINT, A_POINT_STRING, A_STRING, A_THIRD_STRING, SOME_STRINGS, SOME_TEXT } from "../../helpers/example-data";
 
 
 describe("#toRedisJson", () => {
@@ -76,9 +76,9 @@ describe("#toRedisJson", () => {
         arrayOfText: { type: 'text', path: '$.arrayOfText[*]' },
         aStringArray: { type: 'string[]' },
         anotherStringArray: { type: 'string[]', path: '$.aPathedStringArray' },
-        aNestedStringArray: { type: 'string[]', path: '$.aNestedStringArray.aStringArray' }
-
-        // TODO: what about string arrays that span objects, i.e. $.addresses[*].state
+        aNestedStringArray: { type: 'string[]', path: '$.aNestedStringArray.aStringArray' },
+        someStringsAsAnArray: { type: 'string[]', path: '$.someOtherStrings[*]' },
+        someOtherStringsAsAnArray: { type: 'string[]', path: '$.someObjects[*].aString' }
       })
     })
 
@@ -166,7 +166,24 @@ describe("#toRedisJson", () => {
       ["leaves a pathed string[] as a string[]", { aPathedStringArray: SOME_STRINGS }, { aPathedStringArray: SOME_STRINGS }],
       ["leaves a nested string[] as a string[]", { aNestedStringArray: { aStringArray: SOME_STRINGS } }, { aNestedStringArray: { aStringArray: SOME_STRINGS } }],
       ["removes an explicitly undefined string[]", { aStringArray: undefined }, {}],
-      ["removes an explicitly undefined pathed string[]", { aPathedStringArray: undefined }, {}]
+      ["removes an explicitly undefined pathed string[]", { aPathedStringArray: undefined }, {}],
+
+      // dispersed string[]
+      ["leaves dispersed string[] as strings", { someOtherStrings: SOME_STRINGS }, { someOtherStrings: SOME_STRINGS }],
+      ["coerces numbers and booleans in a dispersed string[] to strings",
+        { someOtherStrings: [ A_STRING, A_NUMBER, true ] },
+        { someOtherStrings: [ A_STRING, A_NUMBER_STRING, 'true' ] }],
+
+      // widely dispersed string[]
+      ["leaves widely dispersed string[] as strings",
+        { someObjects: [ { aString: A_STRING }, { aString: ANOTHER_STRING }, { aString: A_THIRD_STRING } ] },
+        { someObjects: [ { aString: A_STRING }, { aString: ANOTHER_STRING }, { aString: A_THIRD_STRING } ] }],
+      ["coerces numbers and booleans in a widely dispersed string[] to strings",
+        { someObjects: [ { aString: A_STRING }, { aString: A_NUMBER }, { aString: true } ] },
+        { someObjects: [ { aString: A_STRING }, { aString: A_NUMBER_STRING }, { aString: 'true' } ] }],
+      ["removes explicity undefined values in a widely dispersed string[]",
+        { someObjects: [ { aString: A_STRING }, { aString: undefined }, { aString: ANOTHER_STRING } ] },
+        { someObjects: [ { aString: A_STRING }, {}, { aString: ANOTHER_STRING }, ] }]
 
     ])('%s', (_, data, expected) => {
       const actual = toRedisJson(schema, data)
@@ -217,7 +234,7 @@ describe("#toRedisJson", () => {
       ["complains when a nested string is not a string", { aNestedString: { aString: A_DATE } }, `Expected a string but received: "${A_DATE.toISOString()}"`],
       ["complains when a pathed string points to multiple results", { someStrings: SOME_STRINGS }, `Expected path to point to a single value but found many: "$.someStrings[*]"`],
 
-      // string
+      // text
       ["complains when text is not a string", { someText: A_DATE }, `Expected a string but received: "${A_DATE.toISOString()}"`],
       ["complains when pathed text is not a string", { somePathedText: A_DATE }, `Expected a string but received: "${A_DATE.toISOString()}"`],
       ["complains when nested text is not a string", { someNestedText: { someText: A_DATE } }, `Expected a string but received: "${A_DATE.toISOString()}"`],
@@ -226,7 +243,12 @@ describe("#toRedisJson", () => {
       // string[]
       ["complains when a string[] is not an array", { aStringArray: 'NOT_AN_ARRAY' }, `Expected a string[] but received: "NOT_AN_ARRAY"`],
       ["complains when a pathed string[] is not an array", { aPathedStringArray: 'NOT_AN_ARRAY' }, `Expected a string[] but received: "NOT_AN_ARRAY"`],
-      ["complains when a nested string[] is not an array", { aNestedStringArray: { aStringArray: 'NOT_AN_ARRAY' } }, `Expected a string[] but received: "NOT_AN_ARRAY"`]
+      ["complains when a nested string[] is not an array", { aNestedStringArray: { aStringArray: 'NOT_AN_ARRAY' } }, `Expected a string[] but received: "NOT_AN_ARRAY"`],
+      ["complains when a string[] contains null", { aStringArray: [ A_STRING, null, ANOTHER_STRING ] }, `Expected a string[] but received an array containing null: ["foo",null,"bar"]`],
+      ["complains when a string[] contains undefined", { aStringArray: [ A_STRING, undefined, ANOTHER_STRING] }, `Expected a string[] but received an array containing undefined: ["foo",null,"bar"]`],
+      ["complains when a dispersed string[] contains null", { someOtherStrings:  [ A_STRING, null, ANOTHER_STRING] }, `Expected a string[] but received an array or object containing null: ["foo",null,"bar"]`],
+      ["complains when a dispersed string[] contains undefined", { someOtherStrings:  [ A_STRING, undefined, ANOTHER_STRING] }, `Expected a string[] but received an array containing undefined: ["foo",null,"bar"]`],
+      ["complains when a widely dispersed string[] contains null", { someObjects: [ { aString: A_STRING }, { aString: null }, { aString: ANOTHER_STRING } ] }, `Expected a string[] but received an array or object containing null: {"aString":null}`]
 
     ])('%s', (_, data, expectedException) => {
       expect(() => toRedisJson(schema, data)).toThrow(expectedException)

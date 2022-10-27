@@ -4,7 +4,7 @@ import clone from 'just-clone'
 import { FieldDefinition, Schema, SchemaDefinition } from "../schema";
 import { RedisJsonData } from "../client";
 
-import { convertDateToEpoch, convertIsoDateToEpoch, convertPointToString, isArray, isBoolean, isDate, isDefined, isNull, isNumber, isObject, isPoint, isString, isUndefined, stringifyError } from "./transformer-common"
+import { convertDateToEpoch, convertIsoDateToEpoch, convertPointToString, isArray, isBoolean, isDate, isDefined, isNull, isNullish, isNumber, isObject, isPoint, isString, isUndefined, stringifyError } from "./transformer-common"
 
 
 export function toRedisJson(schema: Schema<any>, data: object): RedisJsonData {
@@ -21,13 +21,22 @@ function convertRedisJsonKnown(schemaDef: SchemaDefinition, json: RedisJsonData)
   Object.entries(schemaDef).forEach(([fieldName, fieldDef]) => {
 
     const path = fieldDef.path ?? `$.${fieldName}`
-    const result = JSONPath({ resultType: 'all', path, json })
+    const results = JSONPath({ resultType: 'all', path, json })
 
-    if (result.length === 1) {
-      const [ { value, parent, parentProperty } ] = result
+    if (results.length === 1) {
+      const [ { value, parent, parentProperty } ] = results
       if (isDefined(value)) parent[parentProperty] = convertKnownValueToJson(fieldDef, value)
-    } else if (result.length > 1) {
-      throw new Error(`Expected path to point to a single value but found many: "${path}"`)
+    } else if (results.length > 1) {
+      if (fieldDef.type === 'string[]') {
+        results.forEach((result: any) => {
+          const { value, parent, parentProperty } = result
+          if (isNull(value)) throw `Expected a string[] but received an array or object containing null: ${JSON.stringify(parent)}`
+          if (isUndefined(value) && isArray(parent)) throw `Expected a string[] but received an array containing undefined: ${JSON.stringify(parent)}`
+          if (isDefined(value)) parent[parentProperty] = convertKnownValueToString(value)
+        })
+      } else {
+        throw new Error(`Expected path to point to a single value but found many: "${path}"`)
+      }
     }
   })
 
@@ -67,10 +76,7 @@ function convertKnownValueToJson(fieldDef: FieldDefinition, value: any): any {
       throw Error(`Expected a point but received: ${stringifyError(value)}`)
     case 'string':
     case 'text':
-      if (isBoolean(value)) return value.toString()
-      if (isNumber(value)) return value.toString()
-      if (isString(value)) return value
-      throw Error(`Expected a string but received: ${stringifyError(value)}`)
+      return convertKnownValueToString(value)
     case 'string[]':
       if (isArray(value)) return convertArrayToStringArray(value)
       throw Error(`Expected a string[] but received: ${stringifyError(value)}`)
@@ -83,4 +89,15 @@ function convertUnknownValueToJson(value: any): any {
   return value
 }
 
-const convertArrayToStringArray = (array: any[]): string[] => array.map(value => value.toString())
+function convertKnownValueToString(value: any) {
+  if (isBoolean(value)) return value.toString()
+  if (isNumber(value)) return value.toString()
+  if (isString(value)) return value
+  throw Error(`Expected a string but received: ${stringifyError(value)}`)
+}
+
+const convertArrayToStringArray = (array: any[]): string[] => array.map(value => {
+  if (isNull(value)) throw `Expected a string[] but received an array containing null: ${JSON.stringify(array)}`
+  if (isUndefined(value)) throw `Expected a string[] but received an array containing undefined: ${JSON.stringify(array)}`
+  return value.toString()
+})
