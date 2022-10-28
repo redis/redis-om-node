@@ -20,10 +20,18 @@ export function fromRedisJson(schema: Schema<any>, json: RedisJsonData): object 
     const path = fieldDef.path ?? `$.${fieldName}`
     const results = JSONPath({ resultType: 'all', path, json: data })
 
-    results.forEach((result: any) => {
-      const { value, parent, parentProperty } = result
+    if (results.length === 1) {
+      const [ { value, parent, parentProperty } ] = results
       parent[parentProperty] = convertKnownValueFromJson(fieldDef, value)
-    })
+    } else if (results.length > 1) {
+      if (fieldDef.type === 'string[]') {
+        results.forEach((result: any) => {
+          const { value, parent, parentProperty } = result
+          if (isNull(value)) throw `Expected a string[] from RedisJSON but received an array or object containing null: ${stringifyError(parent)}`
+          parent[parentProperty] = convertKnownValueToString(value)
+        })
+      }
+    }
   })
   return data
 }
@@ -41,8 +49,8 @@ function convertToRedisJsonKnown(schemaDef: SchemaDefinition, json: RedisJsonDat
       if (fieldDef.type === 'string[]') {
         results.forEach((result: any) => {
           const { value, parent, parentProperty } = result
-          if (isNull(value)) throw `Expected a string[] but received an array or object containing null: ${JSON.stringify(parent)}`
-          if (isUndefined(value) && isArray(parent)) throw `Expected a string[] but received an array containing undefined: ${JSON.stringify(parent)}`
+          if (isNull(value)) throw `Expected a string[] but received an array or object containing null: ${stringifyError(parent)}`
+          if (isUndefined(value) && isArray(parent)) throw `Expected a string[] but received an array containing undefined: ${stringifyError(parent)}`
           if (isDefined(value)) parent[parentProperty] = convertKnownValueToString(value)
         })
       } else {
@@ -116,6 +124,9 @@ function convertKnownValueFromJson(fieldDef: FieldDefinition, value: any): any {
       if (isBoolean(value)) return value.toString()
       if (isNumber(value)) return value.toString()
       throw Error(`Expected a string from RedisJSON but received: ${stringifyError(value)}`)
+    case 'string[]':
+      if (isArray(value)) return convertFromJsonArrayToStringArray(value)
+      throw Error(`Expected a string[] from RedisJSON but received: ${stringifyError(value)}`)
   }
 }
 
@@ -132,8 +143,13 @@ function convertKnownValueToString(value: any) {
   throw Error(`Expected a string but received: ${stringifyError(value)}`)
 }
 
+const convertFromJsonArrayToStringArray = (array: any[]): string[] => array.map(value => {
+  if (isNull(value)) throw `Expected a string[] from RedisJSON but received an array containing null: ${stringifyError(array)}`
+  return value.toString()
+})
+
 const convertArrayToStringArray = (array: any[]): string[] => array.map(value => {
-  if (isNull(value)) throw `Expected a string[] but received an array containing null: ${JSON.stringify(array)}`
-  if (isUndefined(value)) throw `Expected a string[] but received an array containing undefined: ${JSON.stringify(array)}`
+  if (isNull(value)) throw `Expected a string[] but received an array containing null: ${stringifyError(array)}`
+  if (isUndefined(value)) throw `Expected a string[] but received an array containing undefined: ${stringifyError(array)}`
   return value.toString()
 })

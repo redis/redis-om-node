@@ -244,11 +244,11 @@ describe("#toRedisJson", () => {
       ["complains when a string[] is not an array", { aStringArray: 'NOT_AN_ARRAY' }, `Expected a string[] but received: "NOT_AN_ARRAY"`],
       ["complains when a pathed string[] is not an array", { aPathedStringArray: 'NOT_AN_ARRAY' }, `Expected a string[] but received: "NOT_AN_ARRAY"`],
       ["complains when a nested string[] is not an array", { aNestedStringArray: { aStringArray: 'NOT_AN_ARRAY' } }, `Expected a string[] but received: "NOT_AN_ARRAY"`],
-      ["complains when a string[] contains null", { aStringArray: [ A_STRING, null, ANOTHER_STRING ] }, `Expected a string[] but received an array containing null: ["foo",null,"bar"]`],
-      ["complains when a string[] contains undefined", { aStringArray: [ A_STRING, undefined, ANOTHER_STRING] }, `Expected a string[] but received an array containing undefined: ["foo",null,"bar"]`],
-      ["complains when a dispersed string[] contains null", { someOtherStrings:  [ A_STRING, null, ANOTHER_STRING] }, `Expected a string[] but received an array or object containing null: ["foo",null,"bar"]`],
-      ["complains when a dispersed string[] contains undefined", { someOtherStrings:  [ A_STRING, undefined, ANOTHER_STRING] }, `Expected a string[] but received an array containing undefined: ["foo",null,"bar"]`],
-      ["complains when a widely dispersed string[] contains null", { someObjects: [ { aString: A_STRING }, { aString: null }, { aString: ANOTHER_STRING } ] }, `Expected a string[] but received an array or object containing null: {"aString":null}`]
+      ["complains when a string[] contains null", { aStringArray: [ A_STRING, null, ANOTHER_STRING ] }, `Expected a string[] but received an array containing null: [\n "foo",\n null,\n "bar"\n]`],
+      ["complains when a string[] contains undefined", { aStringArray: [ A_STRING, undefined, ANOTHER_STRING] }, `Expected a string[] but received an array containing undefined: [\n "foo",\n null,\n "bar"\n]`],
+      ["complains when a dispersed string[] contains null", { someOtherStrings:  [ A_STRING, null, ANOTHER_STRING] }, `Expected a string[] but received an array or object containing null: [\n "foo",\n null,\n "bar"\n]`],
+      ["complains when a dispersed string[] contains undefined", { someOtherStrings:  [ A_STRING, undefined, ANOTHER_STRING] }, `Expected a string[] but received an array containing undefined: [\n "foo",\n null,\n "bar"\n]`],
+      ["complains when a widely dispersed string[] contains null", { someObjects: [ { aString: A_STRING }, { aString: null }, { aString: ANOTHER_STRING } ] }, `Expected a string[] but received an array or object containing null: {\n "aString": null\n}`]
 
     ])('%s', (_, data, expectedException) => {
       expect(() => toRedisJson(schema, data)).toThrow(expectedException)
