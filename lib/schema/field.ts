@@ -1,4 +1,4 @@
-import { FieldDefinition } from "./definition";
+import { FieldDefinition, SeparableFieldDefinition } from "./definition";
 
 export class Field {
 
@@ -23,7 +23,6 @@ export class Field {
   }
 
   get separator(): string {
-    return this.definition.separator ?? '|'
+    return (this.definition as SeparableFieldDefinition).separator ?? '|'
   }
-
 }

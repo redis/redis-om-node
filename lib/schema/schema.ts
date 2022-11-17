@@ -7,7 +7,6 @@ import { IdStrategy, DataStructure, StopWordOptions, SchemaOptions } from './opt
 
 import { SchemaDefinition, FieldDefinition } from './definition';
 import { Field } from './field';
-import { toRedisHash } from '$lib/transformer';
 
 /**
  * Defines a schema that determines how an {@link Entity} is mapped to Redis
