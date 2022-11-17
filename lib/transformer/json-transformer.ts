@@ -8,77 +8,62 @@ import { convertDateToEpoch, convertEpochToDate, convertIsoDateToEpoch, convertP
 
 
 export function toRedisJson(schema: Schema<any>, data: object): RedisJsonData {
-  const json: RedisJsonData = clone(data)
+  let json: RedisJsonData = clone(data)
   convertToRedisJsonKnown(schema.definition, json)
   return convertToRedisJsonUnknown(json)
-}
-
-export function fromRedisJson(schema: Schema<any>, json: RedisJsonData): object {
-  const data: RedisJsonData = clone(json)
-  Object.entries(schema.definition).forEach(([fieldName, fieldDef]) => {
-
-    const path = fieldDef.path ?? `$.${fieldName}`
-    const results = JSONPath({ resultType: 'all', path, json: data })
-
-    if (results.length === 1) {
-      const [ { value, parent, parentProperty } ] = results
-      parent[parentProperty] = convertKnownValueFromJson(fieldDef, value)
-    } else if (results.length > 1) {
-      if (fieldDef.type === 'string[]') {
-        results.forEach((result: any) => {
-          const { value, parent, parentProperty } = result
-          if (isNull(value)) throw `Expected a string[] from RedisJSON but received an array or object containing null: ${stringifyError(parent)}`
-          parent[parentProperty] = convertKnownValueToString(value)
-        })
-      }
-    }
-  })
-  return data
 }
 
 function convertToRedisJsonKnown(schemaDef: SchemaDefinition, json: RedisJsonData) {
   Object.entries(schemaDef).forEach(([fieldName, fieldDef]) => {
 
+    const type = fieldDef.type
     const path = fieldDef.path ?? `$.${fieldName}`
     const results = JSONPath({ resultType: 'all', path, json })
 
     if (results.length === 1) {
-      const [ { value, parent, parentProperty } ] = results
-      if (isDefined(value)) parent[parentProperty] = convertKnownValueToJson(fieldDef, value)
+      convertKnownResultToJson(type, results[0])
     } else if (results.length > 1) {
-      if (fieldDef.type === 'string[]') {
-        results.forEach((result: any) => {
-          const { value, parent, parentProperty } = result
-          if (isNull(value)) throw `Expected a string[] but received an array or object containing null: ${stringifyError(parent)}`
-          if (isUndefined(value) && isArray(parent)) throw `Expected a string[] but received an array containing undefined: ${stringifyError(parent)}`
-          if (isDefined(value)) parent[parentProperty] = convertKnownValueToString(value)
-        })
-      } else {
-        throw new Error(`Expected path to point to a single value but found many: "${path}"`)
-      }
+      convertKnownResultsToJson(type, path, results)
     }
   })
-
-  return json
 }
 
 function convertToRedisJsonUnknown(json: RedisJsonData) {
   Object.entries(json).forEach(([key, value]) => {
     if (isUndefined(value)) {
       delete json[key]
+    } else if (isObject(value)) {
+      json[key] = convertToRedisJsonUnknown(value)
     } else {
       json[key] = convertUnknownValueToJson(value)
     }
   })
-
   return json
 }
 
-function convertKnownValueToJson(fieldDef: FieldDefinition, value: any): any {
+function convertKnownResultToJson(fieldType: string, result: any): any {
+  const { value, parent, parentProperty } = result
+  if (isDefined(value)) parent[parentProperty] = convertKnownValueToJson(fieldType, value)
+}
+
+function convertKnownResultsToJson(fieldType: string, path: string, results: any[]): any {
+  if (fieldType === 'string[]') {
+    results.forEach((result: any) => {
+      const { value, parent, parentProperty } = result
+      if (isNull(value)) throw `Expected a string[] but received an array or object containing null: ${stringifyError(parent)}`
+      if (isUndefined(value) && isArray(parent)) throw `Expected a string[] but received an array containing undefined: ${stringifyError(parent)}`
+      if (isDefined(value)) parent[parentProperty] = convertKnownValueToString(value)
+    })
+  } else {
+    throw new Error(`Expected path to point to a single value but found many: "${path}"`)
+  }
+}
+
+function convertKnownValueToJson(fieldType: string, value: any): any {
 
   if (isNull(value)) return value
 
-  switch (fieldDef.type) {
+  switch (fieldType) {
     case 'boolean':
       if (isBoolean(value)) return value
       throw Error(`Expected a boolean but received: ${stringifyError(value)}`)
@@ -100,6 +85,38 @@ function convertKnownValueToJson(fieldDef: FieldDefinition, value: any): any {
       if (isArray(value)) return convertArrayToStringArray(value)
       throw Error(`Expected a string[] but received: ${stringifyError(value)}`)
   }
+}
+
+function convertUnknownValueToJson(value: any): any {
+  if (isDate(value)) return convertDateToEpoch(value)
+  return value
+}
+
+export function fromRedisJson(schema: Schema<any>, json: RedisJsonData): object {
+  const data: object = clone(json)
+  convertFromRedisJsonKnown(schema.definition, data)
+  return data
+}
+
+function convertFromRedisJsonKnown(schemaDef: SchemaDefinition, data: object) {
+  Object.entries(schemaDef).forEach(([fieldName, fieldDef]) => {
+
+    const path = fieldDef.path ?? `$.${fieldName}`
+    const results = JSONPath({ resultType: 'all', path, json: data })
+
+    if (results.length === 1) {
+      const [ { value, parent, parentProperty } ] = results
+      parent[parentProperty] = convertKnownValueFromJson(fieldDef, value)
+    } else if (results.length > 1) {
+      if (fieldDef.type === 'string[]') {
+        results.forEach((result: any) => {
+          const { value, parent, parentProperty } = result
+          if (isNull(value)) throw `Expected a string[] from RedisJSON but received an array or object containing null: ${stringifyError(parent)}`
+          parent[parentProperty] = convertKnownValueToString(value)
+        })
+      }
+    }
+  })
 }
 
 function convertKnownValueFromJson(fieldDef: FieldDefinition, value: any): any {
@@ -128,12 +145,6 @@ function convertKnownValueFromJson(fieldDef: FieldDefinition, value: any): any {
       if (isArray(value)) return convertFromJsonArrayToStringArray(value)
       throw Error(`Expected a string[] from RedisJSON but received: ${stringifyError(value)}`)
   }
-}
-
-function convertUnknownValueToJson(value: any): any {
-  if (isObject(value)) return convertToRedisJsonUnknown(value)
-  if (isDate(value)) return convertDateToEpoch(value)
-  return value
 }
 
 function convertKnownValueToString(value: any) {
