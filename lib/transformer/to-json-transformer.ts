@@ -1,22 +1,23 @@
 import { JSONPath } from 'jsonpath-plus'
 import clone from 'just-clone'
 
-import { Schema, SchemaDefinition } from "../schema";
+import { Schema } from "../schema";
 import { RedisJsonData } from "../client";
 
 import { convertDateToEpoch, convertIsoDateToEpoch, convertKnownValueToString, convertPointToString, isArray, isBoolean, isDate, isDefined, isNull, isNumber, isObject, isPoint, isString, isUndefined, stringifyError } from "./transformer-common"
+import { Field } from '../schema/field';
 
 export function toRedisJson(schema: Schema<any>, data: object): RedisJsonData {
   let json: RedisJsonData = clone(data)
-  convertToRedisJsonKnown(schema.definition, json)
+  convertToRedisJsonKnown(schema, json)
   return convertToRedisJsonUnknown(json)
 }
 
-function convertToRedisJsonKnown(schemaDef: SchemaDefinition, json: RedisJsonData) {
-  Object.entries(schemaDef).forEach(([fieldName, fieldDef]) => {
+function convertToRedisJsonKnown(schema: Schema<any>, json: RedisJsonData) {
+  Object.entries(schema.fields).forEach(([_name, field]) => {
 
-    const type = fieldDef.type
-    const path = fieldDef.path ?? `$.${fieldName}`
+    const type = field.type
+    const path = field.jsonPath
     const results = JSONPath({ resultType: 'all', path, json })
 
     if (results.length === 1) {

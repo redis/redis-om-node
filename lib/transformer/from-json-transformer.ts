@@ -1,29 +1,30 @@
 import { JSONPath } from 'jsonpath-plus'
 import clone from 'just-clone'
 
-import { FieldDefinition, Schema, SchemaDefinition } from "../schema";
+import { Schema } from "../schema";
 import { RedisJsonData } from "../client";
 
 import { convertEpochToDate, convertKnownValueToString, convertStringToPoint, isArray, isBoolean, isNull, isNumber, isPointString, isString, stringifyError } from "./transformer-common"
+import { Field } from '../schema/field';
 
 
 export function fromRedisJson(schema: Schema<any>, json: RedisJsonData): object {
   const data: object = clone(json)
-  convertFromRedisJsonKnown(schema.definition, data)
+  convertFromRedisJsonKnown(schema, data)
   return data
 }
 
-function convertFromRedisJsonKnown(schemaDef: SchemaDefinition, data: object) {
-  Object.entries(schemaDef).forEach(([fieldName, fieldDef]) => {
+function convertFromRedisJsonKnown(schema: Schema<any>, data: object) {
+  Object.entries(schema.fields).forEach(([_name, field]) => {
 
-    const path = fieldDef.path ?? `$.${fieldName}`
+    const path = field.jsonPath
     const results = JSONPath({ resultType: 'all', path, json: data })
 
     if (results.length === 1) {
       const [ { value, parent, parentProperty } ] = results
-      parent[parentProperty] = convertKnownValueFromJson(fieldDef, value)
+      parent[parentProperty] = convertKnownValueFromJson(field, value)
     } else if (results.length > 1) {
-      if (fieldDef.type === 'string[]') {
+      if (field.type === 'string[]') {
         results.forEach((result: any) => {
           const { value, parent, parentProperty } = result
           if (isNull(value)) throw `Expected a string[] from RedisJSON but received an array or object containing null: ${stringifyError(parent)}`
@@ -34,10 +35,10 @@ function convertFromRedisJsonKnown(schemaDef: SchemaDefinition, data: object) {
   })
 }
 
-function convertKnownValueFromJson(fieldDef: FieldDefinition, value: any): any {
+function convertKnownValueFromJson(field: Field, value: any): any {
   if (isNull(value)) return value
 
-  switch (fieldDef.type) {
+  switch (field.type) {
     case 'boolean':
       if (isBoolean(value)) return value
       throw Error(`Expected a value of true, false, or null from RedisJSON for a boolean but received: ${stringifyError(value)}`)

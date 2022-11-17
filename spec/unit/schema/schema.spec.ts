@@ -24,7 +24,7 @@ describe("Schema", () => {
       expect(schema.stopWords).toEqual([])
     });
 
-    it("has no fields", () => expect(schema.fields).toHaveLength(0))
+    it("has no fields", () => expect(schema.fields).toEqual({}))
   });
 
   describe("that defines fields", () => {
@@ -36,18 +36,16 @@ describe("Schema", () => {
       })
     })
 
-    it("has the expected number of fields", () => expect(schema.fields).toHaveLength(3))
-
     it("each field has the expect name", () => {
-      expect(schema.fields[0].name).toBe('aBoolean')
-      expect(schema.fields[1].name).toBe('aNumber')
-      expect(schema.fields[2].name).toBe('aString')
+      expect(schema.fields['aBoolean'].name).toBe('aBoolean')
+      expect(schema.fields['aNumber'].name).toBe('aNumber')
+      expect(schema.fields['aString'].name).toBe('aString')
     })
 
     it("each field has the expect definition", () => {
-      expect(schema.fields[0].definition).toEqual({ type: 'boolean' })
-      expect(schema.fields[1].definition).toEqual({ type: 'number' })
-      expect(schema.fields[2].definition).toEqual({ type: 'string' })
+      expect(schema.fields['aBoolean'].definition).toEqual({ type: 'boolean' })
+      expect(schema.fields['aNumber'].definition).toEqual({ type: 'number' })
+      expect(schema.fields['aString'].definition).toEqual({ type: 'string' })
     })
   })
 

@@ -22,4 +22,8 @@ export class Field {
     return this.definition.path ?? `$.${this.definition.alias ?? this.name}`
   }
 
+  get separator(): string {
+    return this.definition.separator ?? '|'
+  }
+
 }

@@ -49,7 +49,7 @@ export class Schema<TEntity extends Entity> {
   /**
    * The {@link Field | Fields} defined by this Schema.
    */
-  readonly fields: Field[] = []
+  readonly fields: Record<string, Field> = {}
 
   private options?: SchemaOptions;
 
@@ -65,9 +65,7 @@ export class Schema<TEntity extends Entity> {
     this.options = options;
 
     this.validateOptions();
-
-    this.fields = this.createFields();
-
+    this.createFields();
     this.defineProperties();
   }
 
@@ -109,8 +107,8 @@ export class Schema<TEntity extends Entity> {
   }
 
   private createFields() {
-    return Object.entries(this.definition).map(([fieldName, fieldDef]) => {
-      return new Field(fieldName, fieldDef)
+    return Object.entries(this.definition).forEach(([fieldName, fieldDef]) => {
+      this.fields[fieldName] = new Field(fieldName, fieldDef)
     })
   }
 

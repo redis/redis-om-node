@@ -1,19 +1,20 @@
-import { FieldDefinition, Schema } from "../schema"
+import { Schema } from "../schema"
 import { RedisHashData } from "../client"
 import { convertEpochStringToDate, convertStringToNumber, convertStringToPoint, isNotNullish, isNumberString, isPointString, stringifyError } from "./transformer-common"
+import { Field } from "../schema/field"
 
 export function fromRedisHash(schema: Schema<any>, hashData: RedisHashData): object {
   const data: { [key: string]: any } = { ...hashData }
-  Object.entries(schema.definition).forEach(([fieldName, fieldDef]) => {
-    if (fieldDef.field) delete data[fieldDef.field]
-    const value = hashData[fieldDef.field ?? fieldName]
-    if (isNotNullish(value)) data[fieldName] = convertKnownValueFromString(fieldDef, value)
+  Object.entries(schema.fields).forEach(([_name, field]) => {
+    if (field.hashField) delete data[field.hashField]
+    const value = hashData[field.hashField]
+    if (isNotNullish(value)) data[field.name] = convertKnownValueFromString(field, value)
   })
   return data
 }
 
-function convertKnownValueFromString(fieldDef: FieldDefinition, value: string): any {
-  switch (fieldDef.type) {
+function convertKnownValueFromString(field: Field, value: string): any {
+  switch (field.type) {
     case 'boolean':
       if (value === '1') return true;
       if (value === '0') return false;
@@ -31,8 +32,8 @@ function convertKnownValueFromString(fieldDef: FieldDefinition, value: string): 
     case 'text':
       return value
     case 'string[]':
-      return convertStringToStringArray(value, fieldDef.separator)
+      return convertStringToStringArray(value, field.separator)
   }
 }
 
-const convertStringToStringArray = (value: string, separator?: string): string[] => value.split(separator ?? '|')
+const convertStringToStringArray = (value: string, separator: string): string[] => value.split(separator)
