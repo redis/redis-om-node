@@ -6,6 +6,8 @@ import { EntityConstructor } from "../entity/entity-constructor";
 import { IdStrategy, DataStructure, StopWordOptions, SchemaOptions } from './options';
 
 import { SchemaDefinition, FieldDefinition } from './definition';
+import { Field } from './field';
+import { toRedisHash } from '$lib/transformer';
 
 /**
  * Defines a schema that determines how an {@link Entity} is mapped to Redis
@@ -44,6 +46,11 @@ export class Schema<TEntity extends Entity> {
    */
   readonly definition: SchemaDefinition;
 
+  /**
+   * The {@link Field | Fields} defined by this Schema.
+   */
+  readonly fields: Field[] = []
+
   private options?: SchemaOptions;
 
   /**
@@ -58,6 +65,9 @@ export class Schema<TEntity extends Entity> {
     this.options = options;
 
     this.validateOptions();
+
+    this.fields = this.createFields();
+
     this.defineProperties();
   }
 
@@ -96,6 +106,12 @@ export class Schema<TEntity extends Entity> {
   generateId(): string {
     const ulidStrategy: IdStrategy = () => ulid();
     return (this.options?.idStrategy ?? ulidStrategy)();
+  }
+
+  private createFields() {
+    return Object.entries(this.definition).map(([fieldName, fieldDef]) => {
+      return new Field(fieldName, fieldDef)
+    })
   }
 
   private defineProperties() {

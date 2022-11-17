@@ -9,7 +9,7 @@ describe("Schema", () => {
 
   describe("that is empty", () => {
     beforeEach(() => {
-      schema = new Schema<TestEntity>(TestEntity, {})
+      schema = new Schema(TestEntity, {})
     });
 
     it("has the constructor for the entity", () => expect(schema.entityCtor).toBe(TestEntity));
@@ -23,7 +23,33 @@ describe("Schema", () => {
       expect(schema.useStopWords).toBe('DEFAULT')
       expect(schema.stopWords).toEqual([])
     });
+
+    it("has no fields", () => expect(schema.fields).toHaveLength(0))
   });
+
+  describe("that defines fields", () => {
+    beforeEach(() => {
+      schema = new Schema(TestEntity, {
+        aBoolean: { type: 'boolean' },
+        aNumber: { type: 'number' },
+        aString: { type: 'string' }
+      })
+    })
+
+    it("has the expected number of fields", () => expect(schema.fields).toHaveLength(3))
+
+    it("each field has the expect name", () => {
+      expect(schema.fields[0].name).toBe('aBoolean')
+      expect(schema.fields[1].name).toBe('aNumber')
+      expect(schema.fields[2].name).toBe('aString')
+    })
+
+    it("each field has the expect definition", () => {
+      expect(schema.fields[0].definition).toEqual({ type: 'boolean' })
+      expect(schema.fields[1].definition).toEqual({ type: 'number' })
+      expect(schema.fields[2].definition).toEqual({ type: 'string' })
+    })
+  })
 
   describe("that overrides the data structure to be JSON", () => {
     beforeEach(() => {

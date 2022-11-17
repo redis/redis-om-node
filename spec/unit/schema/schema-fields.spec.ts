@@ -36,7 +36,6 @@ describe("Schema", () => {
   ])("%s", (_, dataStructure) => {
 
     beforeAll(() => {
-
       schema = new Schema<TestEntity>(TestEntity, {
         aBoolean: { type: 'boolean' },
         aNumber: { type: 'number' },
