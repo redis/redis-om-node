@@ -57,4 +57,11 @@ export const convertStringToPoint = (value: string): Point => {
   return { longitude, latitude }
 }
 
+export function convertKnownValueToString(value: any) {
+  if (isBoolean(value)) return value.toString()
+  if (isNumber(value)) return value.toString()
+  if (isString(value)) return value
+  throw Error(`Expected a string but received: ${stringifyError(value)}`)
+}
+
 export const stringifyError = (value: any) => JSON.stringify(value, null, 1)

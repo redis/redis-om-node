@@ -1,6 +1,6 @@
-import { FieldDefinition, Schema } from "../schema";
-import { RedisHashData } from "../client";
-import { convertBooleanToString, convertDateToString, convertEpochDateToString, convertEpochStringToDate, convertIsoDateToString, convertNumberToString, convertPointToString, convertStringToNumber, convertStringToPoint, isArray, isBoolean, isDate, isNotNullish, isNumber, isNumberString, isObject, isPoint, isPointString, isString, stringifyError } from "./transformer-common"
+import { FieldDefinition, Schema } from "../schema"
+import { RedisHashData } from "../client"
+import { convertBooleanToString, convertDateToString, convertEpochDateToString, convertIsoDateToString, convertNumberToString, convertPointToString, isArray, isBoolean, isDate, isNotNullish, isNumber, isObject, isPoint, isString, stringifyError } from "./transformer-common"
 
 export function toRedisHash(schema: Schema<any>, data: object): RedisHashData {
   const hashData: RedisHashData = {}
@@ -12,16 +12,6 @@ export function toRedisHash(schema: Schema<any>, data: object): RedisHashData {
     }
   })
   return hashData
-}
-
-export function fromRedisHash(schema: Schema<any>, hashData: RedisHashData): object {
-  const data: { [key: string]: any } = { ...hashData }
-  Object.entries(schema.definition).forEach(([fieldName, fieldDef]) => {
-    if (fieldDef.field) delete data[fieldDef.field]
-    const value = hashData[fieldDef.field ?? fieldName]
-    if (isNotNullish(value)) data[fieldName] = convertKnownValueFromString(fieldDef, value)
-  })
-  return data
 }
 
 function convertKnownValueToString(fieldDef: FieldDefinition, value: any): string {
@@ -62,28 +52,4 @@ function convertUnknownValueToString(value: any): string {
   return value.toString()
 }
 
-function convertKnownValueFromString(fieldDef: FieldDefinition, value: string): any {
-  switch (fieldDef.type) {
-    case 'boolean':
-      if (value === '1') return true;
-      if (value === '0') return false;
-      throw Error(`Expected a value of '1' or '0' from Redis for a boolean but received: ${stringifyError(value)}`)
-    case 'number':
-      if (isNumberString(value)) return convertStringToNumber(value)
-      throw Error(`Expected a string containing a number from Redis but received: ${stringifyError(value)}`)
-    case 'date':
-      if (isNumberString(value)) return convertEpochStringToDate(value)
-      throw Error(`Expected an string containing a epoch date from Redis but received: ${stringifyError(value)}`)
-    case 'point':
-      if (isPointString(value)) return convertStringToPoint(value)
-      throw Error(`Expected a point string from Redis but received: ${stringifyError(value)}`)
-    case 'string':
-    case 'text':
-      return value
-    case 'string[]':
-      return convertStringToStringArray(value, fieldDef.separator)
-  }
-}
-
 const convertStringArrayToString = (value: string[], separator?: string): string => value.join(separator ?? '|')
-const convertStringToStringArray = (value: string, separator?: string): string[] => value.split(separator ?? '|')

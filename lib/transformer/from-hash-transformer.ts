@@ -1,0 +1,38 @@
+import { FieldDefinition, Schema } from "../schema"
+import { RedisHashData } from "../client"
+import { convertEpochStringToDate, convertStringToNumber, convertStringToPoint, isNotNullish, isNumberString, isPointString, stringifyError } from "./transformer-common"
+
+export function fromRedisHash(schema: Schema<any>, hashData: RedisHashData): object {
+  const data: { [key: string]: any } = { ...hashData }
+  Object.entries(schema.definition).forEach(([fieldName, fieldDef]) => {
+    if (fieldDef.field) delete data[fieldDef.field]
+    const value = hashData[fieldDef.field ?? fieldName]
+    if (isNotNullish(value)) data[fieldName] = convertKnownValueFromString(fieldDef, value)
+  })
+  return data
+}
+
+function convertKnownValueFromString(fieldDef: FieldDefinition, value: string): any {
+  switch (fieldDef.type) {
+    case 'boolean':
+      if (value === '1') return true;
+      if (value === '0') return false;
+      throw Error(`Expected a value of '1' or '0' from Redis for a boolean but received: ${stringifyError(value)}`)
+    case 'number':
+      if (isNumberString(value)) return convertStringToNumber(value)
+      throw Error(`Expected a string containing a number from Redis but received: ${stringifyError(value)}`)
+    case 'date':
+      if (isNumberString(value)) return convertEpochStringToDate(value)
+      throw Error(`Expected an string containing a epoch date from Redis but received: ${stringifyError(value)}`)
+    case 'point':
+      if (isPointString(value)) return convertStringToPoint(value)
+      throw Error(`Expected a point string from Redis but received: ${stringifyError(value)}`)
+    case 'string':
+    case 'text':
+      return value
+    case 'string[]':
+      return convertStringToStringArray(value, fieldDef.separator)
+  }
+}
+
+const convertStringToStringArray = (value: string, separator?: string): string[] => value.split(separator ?? '|')
