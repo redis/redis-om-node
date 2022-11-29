@@ -13,12 +13,6 @@ describe("Schema", () => {
       expectedRedisSchema: ['$.aField', 'AS', 'aField', 'NUMERIC']
     }],
 
-    ["that defines an aliased number for a JSON", {
-      schemaDef: { aField: { type: 'number', alias: 'anotherField' } } as SchemaDefinition,
-      dataStructure: 'JSON',
-      expectedRedisSchema: ['$.anotherField', 'AS', 'anotherField', 'NUMERIC']
-    }],
-
     ["that defines a sorted number for a JSON", {
       schemaDef: { aField: { type: 'number', sortable: true } } as SchemaDefinition,
       dataStructure: 'JSON',
@@ -44,9 +38,9 @@ describe("Schema", () => {
     }],
 
     ["that defines a fully-configured number for a JSON", {
-      schemaDef: { aField: { type: 'number', alias: 'anotherField', sortable: true, indexed: false } } as SchemaDefinition,
+      schemaDef: { aField: { type: 'number', sortable: true, indexed: false } } as SchemaDefinition,
       dataStructure: 'JSON',
-      expectedRedisSchema: ['$.anotherField', 'AS', 'anotherField', 'NUMERIC', 'SORTABLE', 'NOINDEX']
+      expectedRedisSchema: ['$.aField', 'AS', 'aField', 'NUMERIC', 'SORTABLE', 'NOINDEX']
     }]
 
   ])("%s", (_, data) => {
@@ -58,7 +52,7 @@ describe("Schema", () => {
       let dataStructure = data.dataStructure as DataStructure;
       let expectedRedisSchema = data.expectedRedisSchema;
 
-      let schema = new Schema<TestEntity>(TestEntity, schemaDef, { dataStructure });
+      let schema = new Schema('TestEntity', schemaDef, { dataStructure });
       let actual = buildRediSearchIndex(schema);
       expect(actual).toEqual(expectedRedisSchema);
     });

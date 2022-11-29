@@ -2,15 +2,15 @@ import { Client } from "$lib/client";
 import { Search, WhereField } from "$lib/search";
 
 import { A_DATE, A_DATE_EPOCH, ANOTHER_DATE, ANOTHER_DATE_EPOCH, A_DATE_ISO } from '../../helpers/example-data';
-import { simpleSchema, SimpleEntity } from "../helpers/test-entity-and-schema";
+import { simpleSchema } from "../helpers/test-entity-and-schema";
 
 
 describe("Search", () => {
   describe("#query", () => {
 
     let client: Client;
-    let search: Search<SimpleEntity>;
-    let where: WhereField<SimpleEntity>;
+    let search: Search;
+    let where: WhereField;
 
     const AN_EQUAL_QUERY = `(@aDate:[${A_DATE_EPOCH} ${A_DATE_EPOCH}])`;
     const A_NEGATED_EQUAL_QUERY = `(-@aDate:[${A_DATE_EPOCH} ${A_DATE_EPOCH}])`;
@@ -25,7 +25,7 @@ describe("Search", () => {
     const A_BETWEEN_QUERY = `(@aDate:[${ANOTHER_DATE_EPOCH} ${A_DATE_EPOCH}])`;
     const A_NEGATED_BETWEEN_QUERY = `(-@aDate:[${ANOTHER_DATE_EPOCH} ${A_DATE_EPOCH}])`;
 
-    type RangeChecker = (search: Search<SimpleEntity>) => void;
+    type RangeChecker = (search: Search) => void;
     const expectToBeEqualQuery: RangeChecker = search => expect(search.query).toBe(AN_EQUAL_QUERY);
     const expectToBeNegatedEqualQuery: RangeChecker = search => expect(search.query).toBe(A_NEGATED_EQUAL_QUERY);
     const expectToBeGTQuery: RangeChecker = search => expect(search.query).toBe(A_GT_QUERY);
@@ -44,7 +44,7 @@ describe("Search", () => {
     });
 
     beforeEach(() => {
-      search = new Search<SimpleEntity>(simpleSchema, client);
+      search = new Search(simpleSchema, client);
       where = search.where('aDate');
     });
 

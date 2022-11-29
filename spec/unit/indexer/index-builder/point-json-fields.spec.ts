@@ -13,12 +13,6 @@ describe("Schema", () => {
       expectedRedisSchema: ['$.aField', 'AS', 'aField', 'GEO']
     }],
 
-    ["that defines an aliased point for a JSON", {
-      schemaDef: { aField: { type: 'point', alias: 'anotherField' } } as SchemaDefinition,
-      dataStructure: 'JSON',
-      expectedRedisSchema: ['$.anotherField', 'AS', 'anotherField', 'GEO']
-    }],
-
     ["that defines an indexed point for a JSON", {
       schemaDef: { aField: { type: 'point', indexed: true } } as SchemaDefinition,
       dataStructure: 'JSON',
@@ -32,9 +26,9 @@ describe("Schema", () => {
     }],
 
     ["that defines a fully-configured point for a JSON", {
-      schemaDef: { aField: { type: 'point', alias: 'anotherField', indexed: false } } as SchemaDefinition,
+      schemaDef: { aField: { type: 'point', indexed: false } } as SchemaDefinition,
       dataStructure: 'JSON',
-      expectedRedisSchema: ['$.anotherField', 'AS', 'anotherField', 'GEO', 'NOINDEX']
+      expectedRedisSchema: ['$.aField', 'AS', 'aField', 'GEO', 'NOINDEX']
     }]
 
 
@@ -47,7 +41,7 @@ describe("Schema", () => {
       let dataStructure = data.dataStructure as DataStructure;
       let expectedRedisSchema = data.expectedRedisSchema;
 
-      let schema = new Schema<TestEntity>(TestEntity, schemaDef, { dataStructure });
+      let schema = new Schema('TestEntity', schemaDef, { dataStructure });
       let actual = buildRediSearchIndex(schema);
       expect(actual).toEqual(expectedRedisSchema);
     });

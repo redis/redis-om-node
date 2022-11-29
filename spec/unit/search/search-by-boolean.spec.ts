@@ -1,7 +1,7 @@
 import { Client } from "$lib/client";
 import { Search, WhereField } from "$lib/search";
 
-import { simpleHashSchema, SimpleHashEntity, SimpleJsonEntity, simpleJsonSchema } from "../helpers/test-entity-and-schema";
+import { simpleHashSchema, simpleJsonSchema } from "../helpers/test-entity-and-schema";
 
 
 describe("Search", () => {
@@ -25,15 +25,15 @@ describe("Search", () => {
 
     describe("when generating a query with a boolean for a hash", () => {
 
-      let search: Search<SimpleHashEntity>;
-      let where: WhereField<SimpleHashEntity>;
+      let search: Search;
+      let where: WhereField;
 
       beforeEach(() => {
-        search = new Search<SimpleHashEntity>(simpleHashSchema, client);
+        search = new Search(simpleHashSchema, client);
         where = search.where('aBoolean');
       });
 
-      type BooleanChecker = (search: Search<SimpleHashEntity>) => void;
+      type BooleanChecker = (search: Search) => void;
       const expectToBeTrueQuery: BooleanChecker = search => expect(search.query).toBe(A_TRUE_HASH_QUERY);
       const expectToBeFalseQuery: BooleanChecker = search => expect(search.query).toBe(A_FALSE_HASH_QUERY);
       const expectToBeNegatedTrueQuery: BooleanChecker = search => expect(search.query).toBe(A_NEGATED_TRUE_HASH_QUERY);
@@ -58,15 +58,15 @@ describe("Search", () => {
 
     describe("when generating a query with a boolean for JSON", () => {
 
-      let search: Search<SimpleJsonEntity>;
-      let where: WhereField<SimpleJsonEntity>;
+      let search: Search;
+      let where: WhereField;
 
       beforeEach(() => {
-        search = new Search<SimpleJsonEntity>(simpleJsonSchema, client);
+        search = new Search(simpleJsonSchema, client);
         where = search.where('aBoolean');
       });
 
-      type BooleanChecker = (search: Search<SimpleJsonEntity>) => void;
+      type BooleanChecker = (search: Search) => void;
       const expectToBeTrueQuery: BooleanChecker = search => expect(search.query).toBe(A_TRUE_JSON_QUERY);
       const expectToBeFalseQuery: BooleanChecker = search => expect(search.query).toBe(A_FALSE_JSON_QUERY);
       const expectToBeNegatedTrueQuery: BooleanChecker = search => expect(search.query).toBe(A_NEGATED_TRUE_JSON_QUERY);

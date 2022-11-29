@@ -1,14 +1,14 @@
 import { Client } from "$lib/client";
 import { RawSearch } from "$lib/search";
 
-import { simpleHashSchema, SimpleHashEntity } from "../helpers/test-entity-and-schema";
+import { simpleHashSchema } from "../helpers/test-entity-and-schema";
 
 
 describe("RawSearch", () => {
   describe("#query", () => {
 
     let client: Client;
-    let search: RawSearch<SimpleHashEntity>;
+    let search: RawSearch;
 
     beforeAll(() => {
       client = new Client()
@@ -16,7 +16,7 @@ describe("RawSearch", () => {
 
     describe("when constructed with the default query", () => {
       beforeEach(() => {
-        search = new RawSearch<SimpleHashEntity>(simpleHashSchema, client)
+        search = new RawSearch(simpleHashSchema, client)
       });
 
       it("generates the default query", () => {
@@ -26,7 +26,7 @@ describe("RawSearch", () => {
 
     describe("when constructed with a specified query", () => {
       beforeEach(() => {
-        search = new RawSearch<SimpleHashEntity>(simpleHashSchema, client, "SOME BOGUS QUERY")
+        search = new RawSearch(simpleHashSchema, client, "SOME BOGUS QUERY")
       });
 
       it("generates the specific query", () => {

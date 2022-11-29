@@ -2,22 +2,22 @@ import { Client } from "$lib/client";
 import { Search, WhereField } from "$lib/search";
 
 import { A_STRING, ANOTHER_STRING, A_THIRD_STRING } from '../../helpers/example-data';
-import { simpleSchema, SimpleEntity } from "../helpers/test-entity-and-schema";
+import { simpleSchema } from "../helpers/test-entity-and-schema";
 
 
 describe("Search", () => {
   describe("#query", () => {
 
     let client: Client;
-    let search: Search<SimpleEntity>;
-    let where: WhereField<SimpleEntity>;
+    let search: Search;
+    let where: WhereField;
 
     const A_CONTAINS_QUERY = `(@someStrings:{${A_STRING}})`;
     const A_NEGATED_CONTAINS_QUERY = `(-@someStrings:{${A_STRING}})`;
     const A_CONTAINS_ONE_QUERY = `(@someStrings:{${A_STRING}|${ANOTHER_STRING}|${A_THIRD_STRING}})`;
     const A_NEGATED_CONTAINS_ONE_QUERY = `(-@someStrings:{${A_STRING}|${ANOTHER_STRING}|${A_THIRD_STRING}})`;
 
-    type ArrayChecker = (search: Search<SimpleEntity>) => void;
+    type ArrayChecker = (search: Search) => void;
     const expectToBeContainsQuery: ArrayChecker = search => expect(search.query).toBe(A_CONTAINS_QUERY);
     const expectToBeNegatedContainsQuery: ArrayChecker = search => expect(search.query).toBe(A_NEGATED_CONTAINS_QUERY);
     const expectToBeContainsOneQuery: ArrayChecker = search => expect(search.query).toBe(A_CONTAINS_ONE_QUERY);
@@ -28,7 +28,7 @@ describe("Search", () => {
     });
 
     beforeEach(() => {
-      search = new Search<SimpleEntity>(simpleSchema, client);
+      search = new Search(simpleSchema, client);
       where = search.where('someStrings');
     });
 

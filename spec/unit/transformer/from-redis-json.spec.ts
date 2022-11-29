@@ -1,17 +1,15 @@
 import { fromRedisJson } from "$lib/transformer";
 import { Schema } from "$lib/schema";
-import { Entity } from "$lib/entity/entity";
 import { ANOTHER_STRING, A_DATE, A_DATE_EPOCH, A_DATE_EPOCH_STRING, A_NUMBER, A_NUMBER_STRING, A_POINT, A_POINT_STRING, A_STRING, A_THIRD_STRING, SOME_STRINGS, SOME_STRINGS_JOINED, SOME_TEXT } from "../../helpers/example-data";
 import { RedisJsonData } from "../../../dist";
 
 describe("#fromRedisJson", () => {
 
-  class TestEntity extends Entity {}
-  let schema: Schema<TestEntity>;
+  let schema: Schema;
   let actual: object;
 
   beforeEach(() => {
-    schema = new Schema(TestEntity, {
+    schema = new Schema('TestPrefix', {
       aBoolean: { type: 'boolean' },
       anotherBoolean: { type: 'boolean', path: '$.aPathedBoolean' },
       aNestedBoolean: { type: 'boolean', path: '$.aNestedBoolean.aBoolean' },
@@ -37,8 +35,6 @@ describe("#fromRedisJson", () => {
       someNestedText: { type: 'text', path: '$.someNestedText.someText' },
       arrayOfText: { type: 'text', path: '$.arrayOfText[*]' },
       aStringArray: { type: 'string[]' },
-      anotherStringArray: { type: 'string[]', path: '$.aPathedStringArray' },
-      aNestedStringArray: { type: 'string[]', path: '$.aNestedStringArray.aStringArray' },
       someStringsAsAnArray: { type: 'string[]', path: '$.someOtherStrings[*]' },
       someOtherStringsAsAnArray: { type: 'string[]', path: '$.someObjects[*].aString' }
     })
@@ -127,15 +123,8 @@ describe("#fromRedisJson", () => {
       // string[]
       ["leaves a string[] as a string[]", { aStringArray: SOME_STRINGS }, { aStringArray: SOME_STRINGS }],
       ["leaves a null string[] as null", { aStringArray: null }, { aStringArray: null }],
+      ["leaves a string[] that doesn't contain a string[] as is", { aStringArray: 'NOT_AN_ARRAY' }, { aStringArray: 'NOT_AN_ARRAY' }],
       ["coerces numbers and booleans in a string[] to strings", { aStringArray: [ A_STRING, A_NUMBER, true] }, { aStringArray: [A_STRING, A_NUMBER_STRING, 'true'] }],
-
-      ["leaves a pathed string[] as a string[]", { aPathedStringArray: SOME_STRINGS }, { aPathedStringArray: SOME_STRINGS }],
-      ["leaves a pathed null string[] as null", { aPathedStringArray: null }, { aPathedStringArray: null }],
-      ["coerces numbers and booleans in a pathed string[] to strings", { aPathedStringArray: [ A_STRING, A_NUMBER, true] }, { aPathedStringArray: [A_STRING, A_NUMBER_STRING, 'true'] }],
-
-      ["leaves a nested string[] as a string[]", { aNestedStringArray: { aStringArray: SOME_STRINGS } }, { aNestedStringArray: { aStringArray: SOME_STRINGS } }],
-      ["leaves a nested null string[] as null", { aNestedStringArray: { aStringArray: null } }, { aNestedStringArray: { aStringArray: null } }],
-      ["coerces numbers and booleans in a nested string[] to strings", { aNestedStringArray: { aStringArray: [ A_STRING, A_NUMBER, true] } }, { aNestedStringArray: { aStringArray: [A_STRING, A_NUMBER_STRING, 'true'] } }],
 
       // dispersed string[]
       ["leaves dispersed string[] as strings", { someOtherStrings: SOME_STRINGS }, { someOtherStrings: SOME_STRINGS }],
@@ -182,13 +171,7 @@ describe("#fromRedisJson", () => {
       ["complains when pathed text is invalid", { somePathedText: SOME_STRINGS }, `Expected a string from RedisJSON but received: [\n "alfa",\n "bravo",\n "charlie"\n]`],
       ["complains when nested text is invalid", { someNestedText: { someText: SOME_STRINGS } }, `Expected a string from RedisJSON but received: [\n "alfa",\n "bravo",\n "charlie"\n]`],
 
-      ["complains when a string[] is invalid", { aStringArray: 'NOT_AN_ARRAY' }, `Expected a string[] from RedisJSON but received: "NOT_AN_ARRAY"`],
-      ["complains when a string[] is invalid", { aPathedStringArray: 'NOT_AN_ARRAY' }, `Expected a string[] from RedisJSON but received: "NOT_AN_ARRAY"`],
-      ["complains when a string[] is invalid", { aNestedStringArray: { aStringArray: 'NOT_AN_ARRAY' } }, `Expected a string[] from RedisJSON but received: "NOT_AN_ARRAY"`],
-
-      ["complains when a string[] contains a null", { aStringArray: [ A_STRING, null, ANOTHER_STRING ] }, `Expected a string[] from RedisJSON but received an array containing null: [\n "foo",\n null,\n "bar"\n]`],
-      ["complains when a pathed string[] contains a null", { aPathedStringArray: [ A_STRING, null, ANOTHER_STRING ] }, `Expected a string[] from RedisJSON but received an array containing null: [\n "foo",\n null,\n "bar"\n]`],
-      ["complains when a nested string[] contains a null", { aNestedStringArray: { aStringArray: [ A_STRING, null, ANOTHER_STRING ] } }, `Expected a string[] from RedisJSON but received an array containing null: [\n "foo",\n null,\n "bar"\n]`],
+      ["complains when a string[] contains a null", { aStringArray: [ A_STRING, null, ANOTHER_STRING ] }, `Expected a string[] from RedisJSON but received an array or object containing null: [\n "foo",\n null,\n "bar"\n]`],
       ["complains when a dispersed string[] contains null", { someOtherStrings:  [ A_STRING, null, ANOTHER_STRING] }, `Expected a string[] from RedisJSON but received an array or object containing null: [\n "foo",\n null,\n "bar"\n]`],
       ["complains when a widely dispersed string[] contains null", { someObjects: [ { aString: A_STRING }, { aString: null }, { aString: ANOTHER_STRING } ] }, `Expected a string[] from RedisJSON but received an array or object containing null: {\n "aString": null\n}`]
 

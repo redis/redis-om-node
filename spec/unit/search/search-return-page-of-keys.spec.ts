@@ -8,13 +8,13 @@ import { mockClientSearchToReturnNothing,
   SIMPLE_ENTITY_1, SIMPLE_ENTITY_2, SIMPLE_ENTITY_3 } from '../helpers/search-helpers';
 
 
-type HashSearch = Search<SimpleHashEntity> | RawSearch<SimpleHashEntity>;
+type HashSearch = Search | RawSearch;
 
 describe.each([
   [ "FluentSearch",
-    new Search<SimpleHashEntity>(simpleHashSchema, new Client()) ],
+    new Search(simpleHashSchema, new Client()) ],
   [ "RawSearch",
-    new RawSearch<SimpleHashEntity>(simpleHashSchema, new Client()) ]
+    new RawSearch(simpleHashSchema, new Client()) ]
 ])("%s", (_, search: HashSearch) => {
 
   describe("#returnPageOfKeys", () => {

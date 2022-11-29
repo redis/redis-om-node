@@ -2,27 +2,27 @@ import { client } from '../helpers/mock-client'
 import { Client } from "$lib/client";
 import { Search, RawSearch } from "$lib/search";
 
-import { simpleHashSchema, SimpleHashEntity, SimpleJsonEntity, simpleJsonSchema } from "../helpers/test-entity-and-schema";
+import { simpleHashSchema, simpleJsonSchema } from "../helpers/test-entity-and-schema";
 import { mockClientSearchToReturnNothing, mockClientSearchToReturnSingleHash,
   mockClientSearchToReturnSingleJsonString, SIMPLE_ENTITY_1 } from '../helpers/search-helpers';
 
 
-type HashSearch = Search<SimpleHashEntity> | RawSearch<SimpleHashEntity>;
-type JsonSearch = Search<SimpleJsonEntity> | RawSearch<SimpleJsonEntity>;
+type HashSearch = Search | RawSearch;
+type JsonSearch = Search | RawSearch;
 
 
 describe.each([
   [ "FluentSearch",
-    new Search<SimpleHashEntity>(simpleHashSchema, new Client()),
-    new Search<SimpleJsonEntity>(simpleJsonSchema, new Client()) ],
+    new Search(simpleHashSchema, new Client()),
+    new Search(simpleJsonSchema, new Client()) ],
   [ "RawSearch",
-    new RawSearch<SimpleHashEntity>(simpleHashSchema, new Client()),
-    new RawSearch<SimpleJsonEntity>(simpleJsonSchema, new Client()) ]
+    new RawSearch(simpleHashSchema, new Client()),
+    new RawSearch(simpleJsonSchema, new Client()) ]
 ])("%s", (_, hashSearch: HashSearch, jsonSearch: JsonSearch) => {
 
   describe("#returnFirst", () => {
     describe("when running against hashes", () => {
-      let entity: SimpleHashEntity | null;
+      let entity: object | null;
       let indexName = 'SimpleHashEntity:index', query = '*';
 
       describe("when querying no results", () => {
@@ -62,7 +62,7 @@ describe.each([
     });
 
     describe("when running against JSON Objects", () => {
-      let entity: SimpleJsonEntity | null;
+      let entity: object | null;
       let indexName = 'SimpleJsonEntity:index', query = '*';
 
       describe("when querying no results", () => {

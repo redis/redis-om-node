@@ -2,15 +2,15 @@ import { Client } from "$lib/client";
 import { Search, WhereField } from "$lib/search";
 
 import { A_STRING , A_NUMBER } from '../../helpers/example-data';
-import { simpleSchema, SimpleEntity } from "../helpers/test-entity-and-schema";
+import { simpleSchema } from "../helpers/test-entity-and-schema";
 
 
 describe("Search", () => {
   describe("#query", () => {
 
     let client: Client;
-    let search: Search<SimpleEntity>;
-    let where: WhereField<SimpleEntity>;
+    let search: Search;
+    let where: WhereField;
 
     const A_TEXT_QUERY = `(@someText:'${A_STRING}')`;
     const A_NEGATED_TEXT_QUERY = `(-@someText:'${A_STRING}')`;
@@ -27,7 +27,7 @@ describe("Search", () => {
     const A_BOOLEAN_EXACT_TEXT_QUERY = `(@someText:"true")`;
     const A_NEGATED_BOOLEAN_EXACT_TEXT_QUERY = `(-@someText:"true")`;
 
-    type StringChecker = (search: Search<SimpleEntity>) => void;
+    type StringChecker = (search: Search) => void;
     const expectToBeTextQuery: StringChecker = search => expect(search.query).toBe(A_TEXT_QUERY);
     const expectToBeNegatedTextQuery: StringChecker = search => expect(search.query).toBe(A_NEGATED_TEXT_QUERY);
     const expectToBeExactTextQuery: StringChecker = search => expect(search.query).toBe(AN_EXACT_TEXT_QUERY);
@@ -48,7 +48,7 @@ describe("Search", () => {
     });
 
     beforeEach(() => {
-      search = new Search<SimpleEntity>(simpleSchema, client);
+      search = new Search(simpleSchema, client);
       where = search.where('someText');
     });
 

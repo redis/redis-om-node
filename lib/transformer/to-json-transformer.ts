@@ -2,29 +2,35 @@ import { JSONPath } from 'jsonpath-plus'
 import clone from 'just-clone'
 
 import { Schema } from "../schema";
+import { Field } from '../schema/field';
 import { RedisJsonData } from "../client";
 
 import { convertDateToEpoch, convertIsoDateToEpoch, convertKnownValueToString, convertPointToString, isArray, isBoolean, isDate, isDefined, isNull, isNumber, isObject, isPoint, isString, isUndefined, stringifyError } from "./transformer-common"
-import { Field } from '../schema/field';
 
-export function toRedisJson(schema: Schema<any>, data: object): RedisJsonData {
+export function toRedisJson(schema: Schema, data: object): RedisJsonData {
   let json: RedisJsonData = clone(data)
   convertToRedisJsonKnown(schema, json)
   return convertToRedisJsonUnknown(json)
 }
 
-function convertToRedisJsonKnown(schema: Schema<any>, json: RedisJsonData) {
-  Object.entries(schema.fields).forEach(([_name, field]) => {
+function convertToRedisJsonKnown(schema: Schema, json: RedisJsonData) {
+  schema.fields.forEach(field => {
 
-    const type = field.type
-    const path = field.jsonPath
-    const results = JSONPath({ resultType: 'all', path, json })
+    const results = JSONPath({ resultType: 'all', path: field.jsonPath, json })
+
+    if (field.type === 'string[]') {
+      convertKnownResultsToJson(field, results)
+      return
+    }
+
+    if (results.length === 0) return
 
     if (results.length === 1) {
-      convertKnownResultToJson(type, results[0])
-    } else if (results.length > 1) {
-      convertKnownResultsToJson(type, path, results)
+      convertKnownResultToJson(field, results[0])
+      return
     }
+
+    throw new Error(`Expected path to point to a single value but found many: "${field.jsonPath}"`)
   })
 }
 
@@ -41,29 +47,25 @@ function convertToRedisJsonUnknown(json: RedisJsonData) {
   return json
 }
 
-function convertKnownResultToJson(fieldType: string, result: any): any {
+function convertKnownResultToJson(field: Field, result: any): any {
   const { value, parent, parentProperty } = result
-  if (isDefined(value)) parent[parentProperty] = convertKnownValueToJson(fieldType, value)
+  if (isDefined(value)) parent[parentProperty] = convertKnownValueToJson(field, value)
 }
 
-function convertKnownResultsToJson(fieldType: string, path: string, results: any[]): any {
-  if (fieldType === 'string[]') {
-    results.forEach((result: any) => {
-      const { value, parent, parentProperty } = result
-      if (isNull(value)) throw `Expected a string[] but received an array or object containing null: ${stringifyError(parent)}`
-      if (isUndefined(value) && isArray(parent)) throw `Expected a string[] but received an array containing undefined: ${stringifyError(parent)}`
-      if (isDefined(value)) parent[parentProperty] = convertKnownValueToString(value)
-    })
-  } else {
-    throw new Error(`Expected path to point to a single value but found many: "${path}"`)
-  }
+function convertKnownResultsToJson(field: Field, results: any[]): any {
+  results.forEach((result: any) => {
+    const { value, parent, parentProperty } = result
+    if (isNull(value)) throw `Expected a string[] but received an array or object containing null: ${stringifyError(parent)}`
+    if (isUndefined(value) && isArray(parent)) throw `Expected a string[] but received an array containing undefined: ${stringifyError(parent)}`
+    if (isDefined(value)) parent[parentProperty] = convertKnownValueToString(value)
+  })
 }
 
-function convertKnownValueToJson(fieldType: string, value: any): any {
+function convertKnownValueToJson(field: Field, value: any): any {
 
   if (isNull(value)) return value
 
-  switch (fieldType) {
+  switch (field.type) {
     case 'boolean':
       if (isBoolean(value)) return value
       throw Error(`Expected a boolean but received: ${stringifyError(value)}`)
@@ -81,9 +83,6 @@ function convertKnownValueToJson(fieldType: string, value: any): any {
     case 'string':
     case 'text':
       return convertKnownValueToString(value)
-    case 'string[]':
-      if (isArray(value)) return convertArrayToStringArray(value)
-      throw Error(`Expected a string[] but received: ${stringifyError(value)}`)
   }
 }
 

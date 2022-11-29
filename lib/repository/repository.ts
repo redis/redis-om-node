@@ -1,12 +1,12 @@
 import { Schema } from "../schema"
-import { Client } from "../client";
-import { Entity } from "../entity/entity";
+import { Client, RedisHashData, RedisJsonData } from "../client"
 
 import { Search, RawSearch } from '../search/search';
 
 import { CreateIndexOptions } from "../client";
 import { EntityData } from "../entity/entity-data";
-import { buildRediSearchIndex, generateIndexHash } from "../indexer";
+import { buildRediSearchIndex } from "../indexer";
+import { fromRedisHash, fromRedisJson, toRedisHash, toRedisJson } from "../transformer";
 
 /**
  * A repository is the main interaction point for reading, writing, and
@@ -43,15 +43,13 @@ import { buildRediSearchIndex, generateIndexHash } from "../indexer";
  *   .where('aString').eq('bar')
  *   .and('aBoolean').is.false().returnAll();
  * ```
- *
- * @template TEntity The type of {@link Entity} that this repository manages.
  */
-export abstract class Repository<TEntity extends Entity> {
+export abstract class Repository {
   protected client: Client;
-  protected schema: Schema<TEntity>;
+  protected schema: Schema;
 
   /** @internal */
-  constructor(schema: Schema<TEntity>, client: Client) {
+  constructor(schema: Schema, client: Client) {
     this.schema = schema;
     this.client = client
   }
@@ -63,7 +61,7 @@ export abstract class Repository<TEntity extends Entity> {
   async createIndex() {
 
     const currentIndexHash = await this.client.get(this.schema.indexHashName)
-    const incomingIndexHash = generateIndexHash(this.schema);
+    const incomingIndexHash = this.schema.indexHash
 
     if (currentIndexHash !== incomingIndexHash) {
 
@@ -142,7 +140,7 @@ export abstract class Repository<TEntity extends Entity> {
    * @param id The ID of the {@link Entity} you seek.
    * @returns The matching Entity.
    */
-  async fetch(id: string): Promise<TEntity>
+  async fetch(id: string): Promise<object>
 
   /**
    * Read and return the {@link Entity | Entities} from Redis with the given IDs. If
@@ -151,7 +149,7 @@ export abstract class Repository<TEntity extends Entity> {
    * @param ids The IDs of the {@link Entity | Entities} you seek.
    * @returns The matching Entities.
    */
-  async fetch(...ids: string[]): Promise<TEntity[]>
+  async fetch(...ids: string[]): Promise<object[]>
 
   /**
    * Read and return the {@link Entity | Entities} from Redis with the given IDs. If
@@ -160,9 +158,9 @@ export abstract class Repository<TEntity extends Entity> {
    * @param ids The IDs of the {@link Entity | Entities} you seek.
    * @returns The matching Entities.
    */
-  async fetch(ids: string[]): Promise<TEntity[]>
+  async fetch(ids: string[]): Promise<object[]>
 
-  async fetch(ids: string | string[]): Promise<TEntity | TEntity[]> {
+  async fetch(ids: string | string[]): Promise<object | object[]> {
     if (arguments.length > 1) {
       return this.readEntities([...arguments]);
     }
@@ -224,8 +222,8 @@ export abstract class Repository<TEntity extends Entity> {
    * @template TEntity The type of {@link Entity} sought.
    * @returns A {@link Search} object.
    */
-  search(): Search<TEntity> {
-    return new Search<TEntity>(this.schema, this.client);
+  search(): Search {
+    return new Search(this.schema, this.client);
   }
 
   /**
@@ -236,8 +234,8 @@ export abstract class Repository<TEntity extends Entity> {
    * @query The raw RediSearch query you want to rune.
    * @returns A {@link RawSearch} object.
    */
-  searchRaw(query: string): RawSearch<TEntity> {
-    return new RawSearch<TEntity>(this.schema, this.client, query);
+  searchRaw(query: string): RawSearch {
+    return new RawSearch(this.schema, this.client, query);
   }
 
   /** @internal */
@@ -258,9 +256,9 @@ export abstract class Repository<TEntity extends Entity> {
 }
 
 /** @internal */
-export class HashRepository<TEntity extends Entity> extends Repository<TEntity> {
-  protected async writeEntity(entity: TEntity): Promise<void> {
-    const data = entity.toRedisHash();
+export class HashRepository extends Repository {
+  protected async writeEntity(entity: object): Promise<void> {
+    const data: RedisHashData = toRedisHash(this.schema, entity)
     if (Object.keys(data).length === 0) {
       await this.client.unlink(entity.keyName);
       return;
@@ -268,31 +266,30 @@ export class HashRepository<TEntity extends Entity> extends Repository<TEntity> 
     await this.client.hsetall(entity.keyName, data);
   }
 
-  protected async readEntities(ids: string[]): Promise<TEntity[]> {
+  protected async readEntities(ids: string[]): Promise<object[]> {
     return Promise.all(
       ids.map(async (id) => {
         const key = this.makeKey(id);
         const hashData = await this.client.hgetall(key);
-        const entity = new this.schema.entityCtor(this.schema, id);
-        entity.fromRedisHash(hashData);
+        const entity = fromRedisHash(this.schema, hashData)
         return entity;
       }));
   }
 }
 
 /** @internal */
-export class JsonRepository<TEntity extends Entity> extends Repository<TEntity> {
-  protected async writeEntity(entity: TEntity): Promise<void> {
-    await this.client.jsonset(entity.keyName, entity.toRedisJson());
+export class JsonRepository extends Repository {
+  protected async writeEntity(entity: object): Promise<void> {
+    const jsonData: RedisJsonData = toRedisJson(this.schema, entity)
+    await this.client.jsonset(entity.keyName, jsonData);
   }
 
-  protected async readEntities(ids: string[]): Promise<TEntity[]> {
+  protected async readEntities(ids: string[]): Promise<object[]> {
     return Promise.all(
       ids.map(async (id) => {
         const key = this.makeKey(id);
         const jsonData = await this.client.jsonget(key);
-        const entity = new this.schema.entityCtor(this.schema, id);
-        entity.fromRedisJson(jsonData);
+        const entity = fromRedisJson(this.schema, jsonData);
         return entity;
       }));
   }

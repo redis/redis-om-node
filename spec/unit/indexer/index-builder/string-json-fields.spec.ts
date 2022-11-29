@@ -16,13 +16,6 @@ describe("Schema", () => {
       expectedWarning: null
     }],
 
-    ["that defines an aliased string for a JSON", {
-      schemaDef: { aField: { type: 'string', alias: 'anotherField' } } as SchemaDefinition,
-      dataStructure: 'JSON',
-      expectedRedisSchema: ['$.anotherField', 'AS', 'anotherField', 'TAG', 'SEPARATOR', '|'],
-      expectedWarning: null
-    }],
-
     ["that defines an unsorted string for a JSON", {
       schemaDef: { aField: { type: 'string', sortable: false } } as SchemaDefinition,
       dataStructure: 'JSON',
@@ -66,9 +59,9 @@ describe("Schema", () => {
     }],
 
     ["that defines a fully configured string for a JSON", {
-      schemaDef: { aField: { type: 'string', alias: 'anotherField', sortable: true, separator: ';', indexed: false } } as SchemaDefinition,
+      schemaDef: { aField: { type: 'string', sortable: true, separator: ';', indexed: false } } as SchemaDefinition,
       dataStructure: 'JSON',
-      expectedRedisSchema: ['$.anotherField', 'AS', 'anotherField', 'TAG', 'SEPARATOR', ';', 'NOINDEX'],
+      expectedRedisSchema: ['$.aField', 'AS', 'aField', 'TAG', 'SEPARATOR', ';', 'NOINDEX'],
       expectedWarning: "You have marked a string field as sortable but RediSearch doesn't support the SORTABLE argument on a TAG for JSON. Ignored."
     }]
 
@@ -84,7 +77,7 @@ describe("Schema", () => {
 
     beforeEach(() => {
       warnSpy.mockReset();
-      let schema = new Schema<TestEntity>(TestEntity, schemaDef, { dataStructure });
+      let schema = new Schema('TestEntity', schemaDef, { dataStructure });
       redisSchema = buildRediSearchIndex(schema);
     });
 

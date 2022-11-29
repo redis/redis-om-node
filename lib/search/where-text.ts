@@ -1,26 +1,25 @@
-import { Entity } from "../entity/entity";
 import { Search } from "./search";
 import { WhereField } from "./where-field";
 
 import { RedisError } from "../errors";
 
-export class WhereText<TEntity extends Entity> extends WhereField<TEntity> {
+export class WhereText extends WhereField {
   private value!: string;
   private exactValue = false;
 
-  match(value: string | number | boolean): Search<TEntity> {
+  match(value: string | number | boolean): Search {
     this.value = value.toString();
     return this.search;
   }
 
-  matchExact(value: string | number | boolean): Search<TEntity> {
+  matchExact(value: string | number | boolean): Search {
     this.exact.value = value.toString()
     return this.search;
   }
 
-  matches(value: string | number | boolean): Search<TEntity> { return this.match(value); }
-  matchExactly(value: string | number | boolean): Search<TEntity> { return this.matchExact(value); }
-  matchesExactly(value: string | number | boolean): Search<TEntity> { return this.matchExact(value); }
+  matches(value: string | number | boolean): Search { return this.match(value); }
+  matchExactly(value: string | number | boolean): Search { return this.matchExact(value); }
+  matchesExactly(value: string | number | boolean): Search { return this.matchExact(value); }
 
   get exact() {
     this.exactValue = true
@@ -31,10 +30,10 @@ export class WhereText<TEntity extends Entity> extends WhereField<TEntity> {
     return this.exact;
   }
 
-  eq(_: string | number | boolean): Search<TEntity> { return this.throwEqualsExcpetion(); }
-  equal(_: string | number | boolean): Search<TEntity> { return this.throwEqualsExcpetion(); }
-  equals(_: string | number | boolean): Search<TEntity> { return this.throwEqualsExcpetion(); }
-  equalTo(_: string | number | boolean): Search<TEntity> { return this.throwEqualsExcpetion(); }
+  eq(_: string | number | boolean): Search { return this.throwEqualsExcpetion(); }
+  equal(_: string | number | boolean): Search { return this.throwEqualsExcpetion(); }
+  equals(_: string | number | boolean): Search { return this.throwEqualsExcpetion(); }
+  equalTo(_: string | number | boolean): Search { return this.throwEqualsExcpetion(); }
 
   toString(): string {
     const matchPunctuation = /[,.<>{}[\]"':;!@#$%^&()\-+=~|]/g;
@@ -47,7 +46,7 @@ export class WhereText<TEntity extends Entity> extends WhereField<TEntity> {
     }
   }
 
-  private throwEqualsExcpetion(): Search<TEntity> {
+  private throwEqualsExcpetion(): Search {
     throw new RedisError("Cannot call .equals on a field of type 'text', either use .match to perform full-text search or change the type to 'string' in the Schema.");
   }
 }

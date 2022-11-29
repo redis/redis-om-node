@@ -8,3 +8,5 @@ import { TextFieldDefinition } from "./text-field-definition";
 
 /** Contains instructions telling how to map a property on an {@link Entity} to Redis. */
 export type FieldDefinition = StringFieldDefinition | TextFieldDefinition | NumberFieldDefinition | BooleanFieldDefinition | PointFieldDefinition | DateFieldDefinition | StringArrayFieldDefinition;
+
+export type FieldType = 'boolean' | 'date' | 'number' | 'point' | 'string' | 'string[]' | 'text'

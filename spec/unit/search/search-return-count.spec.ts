@@ -2,22 +2,22 @@ import { client } from '../helpers/mock-client'
 import { Client } from "$lib/client";
 import { Search, RawSearch } from "$lib/search";
 
-import { simpleHashSchema, SimpleHashEntity, SimpleJsonEntity, simpleJsonSchema } from "../helpers/test-entity-and-schema";
+import { simpleHashSchema, simpleJsonSchema } from "../helpers/test-entity-and-schema";
 import { mockClientSearchToReturnCountOf } from "../helpers/search-helpers";
 
 
-type HashSearch = Search<SimpleHashEntity> | RawSearch<SimpleHashEntity>;
-type JsonSearch = Search<SimpleJsonEntity> | RawSearch<SimpleJsonEntity>;
+type HashSearch = Search | RawSearch;
+type JsonSearch = Search | RawSearch;
 
 describe("Search", () => {
 
   describe.each([
     [ "FluentSearch",
-      new Search<SimpleHashEntity>(simpleHashSchema, new Client()),
-      new Search<SimpleJsonEntity>(simpleJsonSchema, new Client()) ],
+      new Search(simpleHashSchema, new Client()),
+      new Search(simpleJsonSchema, new Client()) ],
     [ "RawSearch",
-      new RawSearch<SimpleHashEntity>(simpleHashSchema, new Client()),
-      new RawSearch<SimpleJsonEntity>(simpleJsonSchema, new Client()) ]
+      new RawSearch(simpleHashSchema, new Client()),
+      new RawSearch(simpleJsonSchema, new Client()) ]
   ])("%s", (_, hashSearch: HashSearch, jsonSearch: JsonSearch) => {
 
     let actualCount: number;

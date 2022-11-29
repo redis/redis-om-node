@@ -2,15 +2,15 @@ import { Client } from "$lib/client";
 import { Search, WhereField } from "$lib/search";
 
 import { A_STRING, A_NUMBER } from '../../helpers/example-data';
-import { simpleSchema, SimpleEntity } from "../helpers/test-entity-and-schema";
+import { simpleSchema } from "../helpers/test-entity-and-schema";
 
 
 describe("Search", () => {
   describe("#query", () => {
 
     let client: Client;
-    let search: Search<SimpleEntity>;
-    let where: WhereField<SimpleEntity>;
+    let search: Search;
+    let where: WhereField;
 
     const A_STRING_QUERY = `(@aString:{${A_STRING}})`;
     const A_NEGATED_STRING_QUERY = `(-@aString:{${A_STRING}})`;
@@ -19,7 +19,7 @@ describe("Search", () => {
     const A_BOOLEAN_STRING_QUERY = `(@aString:{true})`;
     const A_NEGATED_BOOLEAN_STRING_QUERY = `(-@aString:{true})`;
 
-    type StringChecker = (search: Search<SimpleEntity>) => void;
+    type StringChecker = (search: Search) => void;
     const expectToBeStringQuery: StringChecker = search => expect(search.query).toBe(A_STRING_QUERY);
     const expectToBeNegatedStringQuery: StringChecker = search => expect(search.query).toBe(A_NEGATED_STRING_QUERY);
     const expectToBeNumberStringQuery: StringChecker = search => expect(search.query).toBe(A_NUMBER_STRING_QUERY);
@@ -32,7 +32,7 @@ describe("Search", () => {
     });
 
     beforeEach(() => {
-      search = new Search<SimpleEntity>(simpleSchema, client);
+      search = new Search(simpleSchema, client);
       where = search.where('aString');
     });
 

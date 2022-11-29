@@ -2,21 +2,21 @@ import { client } from '../helpers/mock-client'
 import { Client } from "$lib/client";
 import { Search, RawSearch } from "$lib/search";
 
-import { simpleHashSchema, SimpleHashEntity } from "../helpers/test-entity-and-schema";
+import { simpleHashSchema } from "../helpers/test-entity-and-schema";
 import { mockClientSearchToReturnNothing, mockClientSearchToReturnSingleKey, mockClientSearchToReturnMultipleKeys,
   mockClientSearchToReturnPaginatedKeys,
   SIMPLE_ENTITY_1, SIMPLE_ENTITY_2, SIMPLE_ENTITY_3, SIMPLE_ENTITY_4, SIMPLE_ENTITY_5 } from '../helpers/search-helpers';
 
 
-type HashSearch = Search<SimpleHashEntity> | RawSearch<SimpleHashEntity>;
+type HashSearch = Search | RawSearch;
 
 describe("Search", () => {
 
   describe.each([
     [ "FluentSearch",
-      new Search<SimpleHashEntity>(simpleHashSchema, new Client()) ],
+      new Search(simpleHashSchema, new Client()) ],
     [ "RawSearch",
-      new RawSearch<SimpleHashEntity>(simpleHashSchema, new Client()) ]
+      new RawSearch(simpleHashSchema, new Client()) ]
   ])("%s", (_, search: HashSearch) => {
 
     describe("#returnAllKeys", () => {

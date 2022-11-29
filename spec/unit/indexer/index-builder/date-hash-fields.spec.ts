@@ -58,7 +58,7 @@ describe("#buildRediSearchIndex", () => {
       let dataStructure = data.dataStructure as DataStructure;
       let expectedRedisSchema = data.expectedRedisSchema;
 
-      let schema = new Schema<TestEntity>(TestEntity, schemaDef, { dataStructure });
+      let schema = new Schema('TestEntity', schemaDef, { dataStructure });
       let actual = buildRediSearchIndex(schema);
       expect(actual).toEqual(expectedRedisSchema);
     });

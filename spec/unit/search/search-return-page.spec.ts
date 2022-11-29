@@ -2,29 +2,29 @@ import { client } from '../helpers/mock-client'
 import { Client } from "$lib/client";
 import { Search, RawSearch } from "$lib/search";
 
-import { simpleHashSchema, SimpleHashEntity, SimpleJsonEntity, simpleJsonSchema } from "../helpers/test-entity-and-schema";
+import { simpleHashSchema, simpleJsonSchema } from "../helpers/test-entity-and-schema";
 import { mockClientSearchToReturnNothing,
   mockClientSearchToReturnSingleHash, mockClientSearchToReturnSingleJsonString,
   mockClientSearchToReturnMultipleHashes, mockClientSearchToReturnMultipleJsonStrings,
   SIMPLE_ENTITY_1, SIMPLE_ENTITY_2, SIMPLE_ENTITY_3 } from '../helpers/search-helpers';
 
 
-type HashSearch = Search<SimpleHashEntity> | RawSearch<SimpleHashEntity>;
-type JsonSearch = Search<SimpleJsonEntity> | RawSearch<SimpleJsonEntity>;
+type HashSearch = Search | RawSearch;
+type JsonSearch = Search | RawSearch;
 
 describe.each([
   [ "FluentSearch",
-    new Search<SimpleHashEntity>(simpleHashSchema, new Client()),
-    new Search<SimpleJsonEntity>(simpleJsonSchema, new Client()) ],
+    new Search(simpleHashSchema, new Client()),
+    new Search(simpleJsonSchema, new Client()) ],
   [ "RawSearch",
-    new RawSearch<SimpleHashEntity>(simpleHashSchema, new Client()),
-    new RawSearch<SimpleJsonEntity>(simpleJsonSchema, new Client()) ]
+    new RawSearch(simpleHashSchema, new Client()),
+    new RawSearch(simpleJsonSchema, new Client()) ]
 ])("%s", (_, hashSearch: HashSearch, jsonSearch: JsonSearch) => {
 
   describe("#returnPage", () => {
 
     describe("when running against hashes", () => {
-      let entities: SimpleHashEntity[];
+      let entities: object[];
       let indexName = 'SimpleHashEntity:index', query = '*';
 
       describe("when querying no results", () => {
@@ -86,7 +86,7 @@ describe.each([
     });
 
     describe("when running against JSON objects", () => {
-      let entities: SimpleJsonEntity[];
+      let entities: object[];
       let indexName = 'SimpleJsonEntity:index', query = '*';
 
       describe("when querying no results", () => {

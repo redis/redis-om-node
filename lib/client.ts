@@ -116,7 +116,7 @@ export class Client {
    * @param schema The schema.
    * @returns A repository for the provided schema.
    */
-  fetchRepository<TEntity extends Entity>(schema: Schema<TEntity>): Repository<TEntity> {
+  fetchRepository<TEntity extends Entity>(schema: Schema): Repository {
     this.validateRedisOpen();
     if (schema.dataStructure === 'JSON') {
       return new JsonRepository(schema, this);

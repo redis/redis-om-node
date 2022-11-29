@@ -3,9 +3,9 @@ import { RedisHashData } from "../client"
 import { convertEpochStringToDate, convertStringToNumber, convertStringToPoint, isNotNullish, isNumberString, isPointString, stringifyError } from "./transformer-common"
 import { Field } from "../schema/field"
 
-export function fromRedisHash(schema: Schema<any>, hashData: RedisHashData): object {
+export function fromRedisHash(schema: Schema, hashData: RedisHashData): object {
   const data: { [key: string]: any } = { ...hashData }
-  Object.entries(schema.fields).forEach(([_name, field]) => {
+  schema.fields.forEach(field => {
     if (field.hashField) delete data[field.hashField]
     const value = hashData[field.hashField]
     if (isNotNullish(value)) data[field.name] = convertKnownValueFromString(field, value)

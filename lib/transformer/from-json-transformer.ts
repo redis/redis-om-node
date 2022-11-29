@@ -8,14 +8,14 @@ import { convertEpochToDate, convertKnownValueToString, convertStringToPoint, is
 import { Field } from '../schema/field';
 
 
-export function fromRedisJson(schema: Schema<any>, json: RedisJsonData): object {
+export function fromRedisJson(schema: Schema, json: RedisJsonData): object {
   const data: object = clone(json)
   convertFromRedisJsonKnown(schema, data)
   return data
 }
 
-function convertFromRedisJsonKnown(schema: Schema<any>, data: object) {
-  Object.entries(schema.fields).forEach(([_name, field]) => {
+function convertFromRedisJsonKnown(schema: Schema, data: object) {
+  schema.fields.forEach(field => {
 
     const path = field.jsonPath
     const results = JSONPath({ resultType: 'all', path, json: data })

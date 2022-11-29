@@ -1,5 +1,4 @@
 import { Point } from "../entity/point";
-import { Entity } from "../entity/entity";
 import { Search } from "./search";
 import { WhereField } from "./where-field";
 
@@ -174,14 +173,14 @@ export class Circle {
   }
 }
 
-export class WherePoint<TEntity extends Entity> extends WhereField<TEntity> {
+export class WherePoint extends WhereField {
   private circle: Circle = new Circle();
 
-  inRadius(circleFn: CircleFunction): Search<TEntity> {
+  inRadius(circleFn: CircleFunction): Search {
     return this.inCircle(circleFn);
   }
 
-  inCircle(circleFn: CircleFunction): Search<TEntity> {
+  inCircle(circleFn: CircleFunction): Search {
     this.circle = circleFn(this.circle);
     return this.search;
   }

@@ -1,7 +1,7 @@
 import { Client } from "$lib/client";
 import { Search } from "$lib/search";
 
-import { simpleHashSchema, SimpleHashEntity, SimpleJsonEntity, simpleJsonSchema } from "../helpers/test-entity-and-schema";
+import { simpleHashSchema, simpleJsonSchema } from "../helpers/test-entity-and-schema";
 
 import {
   A_STRING, ANOTHER_STRING, A_THIRD_STRING,
@@ -43,10 +43,10 @@ describe("Search", () => {
 
     describe("when querying against hashes", () => {
 
-      let search: Search<SimpleHashEntity>;
+      let search: Search;
 
       beforeEach(() => {
-        search = new Search<SimpleHashEntity>(simpleHashSchema, client)
+        search = new Search(simpleHashSchema, client)
       });
 
       it("generates a query matching all items", () => {
@@ -160,10 +160,10 @@ describe("Search", () => {
 
     describe("when querying against JSON objects", () => {
 
-      let search: Search<SimpleJsonEntity>;
+      let search: Search;
 
       beforeEach(() => {
-        search = new Search<SimpleJsonEntity>(simpleJsonSchema, client)
+        search = new Search(simpleJsonSchema, client)
       });
 
       it("generates a query matching all items", () => {

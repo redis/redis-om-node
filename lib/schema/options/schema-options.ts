@@ -9,14 +9,6 @@ import { StopWordOptions } from "./stop-word-options";
 export type SchemaOptions = {
 
   /**
-   * The string that comes before the ID when creating Redis keys for
-   * {@link Entity | Entities}. Defaults to the class name of the {@link Entity}.
-   * Combined with the results of idStrategy to generate a key. If prefix is `Foo`
-   * and idStrategy returns `12345` then the generated key would be `Foo:12345`.
-   * */
-  prefix?: string;
-
-  /**
    * The name used by RediSearch to store the index for this {@link Schema}. Defaults
    * to prefix followed by `:index`. So, for a prefix of `Foo`, it would use `Foo:index`.
    */

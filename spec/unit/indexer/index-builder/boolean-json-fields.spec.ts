@@ -16,13 +16,6 @@ describe("Schema", () => {
       expectedWarning: null
     }],
 
-    ["that defines an aliased boolean for a JSON", {
-      schemaDef: { aField: { type: 'boolean', alias: 'anotherField' } } as SchemaDefinition,
-      dataStructure: 'JSON',
-      expectedRedisSchema: ['$.anotherField', 'AS', 'anotherField', 'TAG'],
-      expectedWarning: null
-    }],
-
     ["that defines a sorted boolean for a JSON", {
       schemaDef: { aField: { type: 'boolean', sortable: true } } as SchemaDefinition,
       dataStructure: 'JSON',
@@ -51,10 +44,10 @@ describe("Schema", () => {
       expectedWarning: null
     }],
 
-    ["that defines a fully configured  boolean for a JSON", {
-      schemaDef: { aField: { type: 'boolean', alias: 'anotherField', sortable: true, indexed: false } } as SchemaDefinition,
+    ["that defines a fully configured boolean for a JSON", {
+      schemaDef: { aField: { type: 'boolean', sortable: true, indexed: false } } as SchemaDefinition,
       dataStructure: 'JSON',
-      expectedRedisSchema: ['$.anotherField', 'AS', 'anotherField', 'TAG', 'NOINDEX'],
+      expectedRedisSchema: ['$.aField', 'AS', 'aField', 'TAG', 'NOINDEX'],
       expectedWarning: "You have marked a boolean field as sortable but RediSearch doesn't support the SORTABLE argument on a TAG for JSON. Ignored."
     }]
 
@@ -70,7 +63,7 @@ describe("Schema", () => {
 
     beforeEach(() => {
       warnSpy.mockReset();
-      let schema = new Schema<TestEntity>(TestEntity, schemaDef, { dataStructure });
+      let schema = new Schema('TestEntity', schemaDef, { dataStructure });
       redisSchema = buildRediSearchIndex(schema);
     });
 

@@ -1,17 +1,15 @@
 import { fromRedisHash } from "$lib/transformer";
 import { Schema } from "$lib/schema";
-import { Entity } from "$lib/entity/entity";
 import { A_DATE, A_DATE_EPOCH_STRING, A_NUMBER, A_NUMBER_STRING, A_POINT, A_POINT_STRING, A_STRING, SOME_STRINGS, SOME_STRINGS_JOINED, SOME_TEXT } from "../../helpers/example-data";
 import { RedisHashData } from "$lib/client";
 
 describe("#fromRedisHash", () => {
 
-  class TestEntity extends Entity {}
-  let schema: Schema<TestEntity>;
+  let schema: Schema;
   let actual: object;
 
   beforeEach(() => {
-    schema = new Schema(TestEntity, {
+    schema = new Schema('TestPrefix', {
       aBoolean: { type: 'boolean' },
       anotherBoolean: { type: 'boolean', field: 'aRenamedBoolean' },
       aNumber: { type: 'number' },

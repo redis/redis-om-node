@@ -1,25 +1,24 @@
-import { Entity } from "../entity/entity";
 import { Search } from "./search";
 import { WhereField } from "./where-field";
 import { RedisError } from "../errors";
 
-export class WhereString<TEntity extends Entity> extends WhereField<TEntity> {
+export class WhereString extends WhereField {
   private value!: string;
 
-  eq(value: string | number | boolean): Search<TEntity> {
+  eq(value: string | number | boolean): Search {
     this.value = value.toString();
     return this.search;
   }
 
-  equal(value: string | number | boolean): Search<TEntity> { return this.eq(value); }
-  equals(value: string | number | boolean): Search<TEntity> { return this.eq(value); }
-  equalTo(value: string | number | boolean): Search<TEntity> { return this.eq(value); }
+  equal(value: string | number | boolean): Search { return this.eq(value); }
+  equals(value: string | number | boolean): Search { return this.eq(value); }
+  equalTo(value: string | number | boolean): Search { return this.eq(value); }
 
-  match(_: string | number | boolean): Search<TEntity> { return this.throwMatchExcpetion(); }
-  matches(_: string | number | boolean): Search<TEntity> { return this.throwMatchExcpetion(); }
-  matchExact(_: string | number | boolean): Search<TEntity> { return this.throwMatchExcpetion(); }
-  matchExactly(_: string | number | boolean): Search<TEntity> { return this.throwMatchExcpetion(); }
-  matchesExactly(_: string | number | boolean): Search<TEntity> { return this.throwMatchExcpetion(); }
+  match(_: string | number | boolean): Search { return this.throwMatchExcpetion(); }
+  matches(_: string | number | boolean): Search { return this.throwMatchExcpetion(); }
+  matchExact(_: string | number | boolean): Search { return this.throwMatchExcpetion(); }
+  matchExactly(_: string | number | boolean): Search { return this.throwMatchExcpetion(); }
+  matchesExactly(_: string | number | boolean): Search { return this.throwMatchExcpetion(); }
 
   get exact() { return this.throwMatchExcpetionReturningThis(); }
   get exactly() { return this.throwMatchExcpetionReturningThis(); }
@@ -30,11 +29,11 @@ export class WhereString<TEntity extends Entity> extends WhereField<TEntity> {
     return this.buildQuery(`{${escapedValue}}`);
   }
 
-  private throwMatchExcpetion(): Search<TEntity> {
+  private throwMatchExcpetion(): Search {
     throw new RedisError("Cannot perform full-text search operations like .match on field of type 'string'. If full-text search is needed on this field, change the type to 'text' in the Schema.");
   }
 
-  private throwMatchExcpetionReturningThis(): WhereString<TEntity> {
+  private throwMatchExcpetionReturningThis(): WhereString {
     throw new RedisError("Cannot perform full-text search operations like .match on field of type 'string'. If full-text search is needed on this field, change the type to 'text' in the Schema.");
   }
 }

@@ -1,19 +1,17 @@
 import { toRedisHash } from "$lib/transformer";
 import { Schema } from "$lib/schema";
-import { Entity } from "$lib/entity/entity";
 import { RedisHashData } from "$lib/client";
 import { AN_INVALID_POINT, A_DATE, A_DATE_EPOCH, A_DATE_EPOCH_STRING, A_DATE_ISO, A_NUMBER, A_NUMBER_STRING, A_PARITAL_POINT, A_POINT, A_POINT_PRETTY_JSON, A_POINT_STRING, A_STRING, SOME_STRINGS, SOME_STRINGS_JOINED, SOME_TEXT } from "../../helpers/example-data";
 
 
 describe("#toRedisHash", () => {
 
-  class TestEntity extends Entity {}
-  let schema: Schema<TestEntity>;
+  let schema: Schema;
   let actual: RedisHashData;
 
   describe("when converting data not described in the schema", () => {
     beforeEach(() => {
-      schema = new Schema(TestEntity, {})
+      schema = new Schema('TestPrefix', {})
       actual = toRedisHash(schema, {
         aTrueBoolean: true, aFalseBoolean: false,
         aNumber: A_NUMBER, aDate: A_DATE, aPoint: A_POINT,
@@ -53,7 +51,7 @@ describe("#toRedisHash", () => {
 
   describe("when converting data that *is* described in the schema", () => {
     beforeEach(() => {
-      schema = new Schema(TestEntity, {
+      schema = new Schema('TestPrefix', {
         aBoolean: { type: 'boolean' },
         anotherBoolean: { type: 'boolean', field: 'aRenamedBoolean' },
         aNumber: { type: 'number' },

@@ -3,8 +3,8 @@ import { Client } from "$lib/client";
 import { Search, RawSearch } from "$lib/search";
 
 import {
-  SimpleHashEntity, simpleHashSchema, simpleSortableHashSchema,
-  SimpleJsonEntity, simpleJsonSchema, simpleSortableJsonSchema
+  simpleHashSchema, simpleSortableHashSchema,
+  simpleJsonSchema, simpleSortableJsonSchema
 } from "../helpers/test-entity-and-schema";
 import {
   mockClientSearchToReturnMultipleHashes as hashMocker,
@@ -16,8 +16,8 @@ import { RedisError } from '../../../lib';
 const warnSpy = vi.spyOn(global.console, 'warn').mockImplementation(() => {})
 const errorSpy = vi.spyOn(global.console, 'error').mockImplementation(() => {})
 
-type HashSearch = Search<SimpleHashEntity> | RawSearch<SimpleHashEntity>;
-type JsonSearch = Search<SimpleJsonEntity> | RawSearch<SimpleJsonEntity>;
+type HashSearch = Search | RawSearch;
+type JsonSearch = Search | RawSearch;
 
 
 beforeEach(() => {
@@ -28,15 +28,15 @@ const client = new Client()
 
 describe.each([
   ["FluentSearch",
-    new Search<SimpleHashEntity>(simpleHashSchema, client),
-    new Search<SimpleHashEntity>(simpleSortableHashSchema, client),
-    new Search<SimpleJsonEntity>(simpleJsonSchema, client),
-    new Search<SimpleJsonEntity>(simpleSortableJsonSchema,client)],
+    new Search(simpleHashSchema, client),
+    new Search(simpleSortableHashSchema, client),
+    new Search(simpleJsonSchema, client),
+    new Search(simpleSortableJsonSchema,client)],
   ["RawSearch",
-    new RawSearch<SimpleHashEntity>(simpleHashSchema, client),
-    new RawSearch<SimpleHashEntity>(simpleSortableHashSchema, client),
-    new RawSearch<SimpleJsonEntity>(simpleJsonSchema, client),
-    new RawSearch<SimpleJsonEntity>(simpleSortableJsonSchema, client)]
+    new RawSearch(simpleHashSchema, client),
+    new RawSearch(simpleSortableHashSchema, client),
+    new RawSearch(simpleJsonSchema, client),
+    new RawSearch(simpleSortableJsonSchema, client)]
 ])("%s", (_,
   hashSearch: HashSearch, sortableHashSearch: HashSearch,
   jsonSearch: JsonSearch, sortableJsonSearch: JsonSearch) => {
