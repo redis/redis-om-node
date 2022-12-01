@@ -1,4 +1,3 @@
-import { Entity } from '$lib/entity/entity';
 import { Schema } from '$lib/schema/schema';
 import { SchemaDefinition } from '$lib/schema/definition';
 import { DataStructure } from '$lib/schema/options';
@@ -78,9 +77,6 @@ describe("#buildRediSearchIndex", () => {
     }]
 
   ])("%s", (_, data) => {
-
-    class TestEntity extends Entity {}
-
     it("generates a Redis schema for the field", () => {
       let schemaDef = data.schemaDef;
       let dataStructure = data.dataStructure as DataStructure;

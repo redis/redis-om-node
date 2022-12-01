@@ -2,8 +2,9 @@ import { Schema } from "../schema"
 import { RedisHashData } from "../client"
 import { convertEpochStringToDate, convertStringToNumber, convertStringToPoint, isNotNullish, isNumberString, isPointString, stringifyError } from "./transformer-common"
 import { Field } from "../schema/field"
+import { EntityData } from "../entity"
 
-export function fromRedisHash(schema: Schema, hashData: RedisHashData): object {
+export function fromRedisHash(schema: Schema, hashData: RedisHashData): EntityData {
   const data: { [key: string]: any } = { ...hashData }
   schema.fields.forEach(field => {
     if (field.hashField) delete data[field.hashField]

@@ -1,132 +1,178 @@
 import '../helpers/mock-client'
-import { Client } from '$lib/client';
-import { Repository } from '$lib/repository';
-import { JsonRepository, HashRepository } from '$lib/repository';
 
-import {
-  A_NUMBER, A_NUMBER_STRING,
-  A_STRING,
-  SOME_TEXT,
-  SOME_STRINGS, SOME_STRINGS_JOINED,
-  A_DATE, A_DATE_EPOCH, A_DATE_EPOCH_STRING,
-  A_POINT, A_POINT_STRING } from '../../helpers/example-data';
+import { Client } from '$lib/client'
+import { Entity } from '$lib/entity'
+import { HashRepository, JsonRepository, Repository } from '$lib/repository'
+import { Schema } from '$lib/schema'
 
-import { simpleHashSchema, SimpleHashEntity, SimpleJsonEntity, simpleJsonSchema } from '../helpers/test-entity-and-schema';
+import { A_STRING, A_NUMBER, A_NUMBER_STRING } from '../../helpers/example-data'
+
+
+const simpleHashSchema = new Schema("SimpleEntity", {}, { dataStructure: 'HASH' })
+const simpleJsonSchema = new Schema("SimpleEntity", {}, { dataStructure: 'JSON' })
+
+const EMPTY_ENTITY = {}
+const EMPTY_ENTITY_WITH_ID = { entityId: 'foo' }
+const ENTITY_DATA = { aString: A_STRING, aNumber: A_NUMBER, aBoolean: true }
+const ENTITY_DATA_WITH_ID = { entityId: 'bar', keyName: 'key:bar', aString: A_STRING, aNumber: A_NUMBER, aBoolean: true }
+
+const ENTITY_HASH_DATA = { aString: A_STRING, aNumber: A_NUMBER_STRING, aBoolean: '1' }
+const ENTITY_JSON_DATA = { aString: A_STRING, aNumber: A_NUMBER, aBoolean: true }
+const ULID_REGEX = /^[0-9ABCDEFGHJKMNPQRSTVWXYZ]{26}$/
+const KEYNAME_REGEX = /^SimpleEntity:[0-9ABCDEFGHJKMNPQRSTVWXYZ]{26}$/
 
 
 describe("Repository", () => {
-
-  let client: Client;
-
   describe("#createAndSave", () => {
 
-    beforeAll(async () => {
-      client = new Client()
-    });
+    let client: Client;
+    let entity: Entity;
 
-    describe("to a hash", () => {
+    beforeAll(() => { client = new Client() })
 
-      let repository: Repository<SimpleHashEntity>;
-      let entity: SimpleHashEntity;
+    describe("to a Hash", () => {
+      let repository: Repository
 
-      beforeAll(() => {
-        repository = new HashRepository(simpleHashSchema, client)
-      });
+      beforeAll(() => { repository = new HashRepository(simpleHashSchema, client) })
 
-      describe("when creating and saving a fully populated entity", () => {
-        beforeEach(async () => {
-          entity = await repository.createAndSave({ aString: A_STRING, aNumber: A_NUMBER, aBoolean: false,
-            someText: SOME_TEXT, aPoint: A_POINT, aDate: A_DATE, someStrings: SOME_STRINGS });
-        });
+      describe.each([
+        [ "with entity data", ENTITY_DATA, false ],
+        [ "with entity data that mistakenly has and entityId and keyName defined", ENTITY_DATA_WITH_ID, false ],
+        [ "with empty entity data", EMPTY_ENTITY, true ],
+        [ "with empty entity data that mistakenly has and entityId and keyName defined", EMPTY_ENTITY_WITH_ID, true ]
+      ])('%s', (_, entityData, isEmpty) => {
 
-        it("returns the populated entity", () => {
-          expect(entity.aString).toBe(A_STRING);
-          expect(entity.aNumber).toBe(A_NUMBER);
-          expect(entity.aBoolean).toBe(false);
-          expect(entity.someText).toBe(SOME_TEXT);
-          expect(entity.aPoint).toEqual(A_POINT);
-          expect(entity.aDate).toEqual(A_DATE);
-          expect(entity.someStrings).toEqual(SOME_STRINGS);
-        });
+        beforeEach(async () => { entity = await repository.createAndSave(entityData) })
 
-        it("saves the entity data to the key", () =>
+        if (!isEmpty) it("saves the entity data to a generated key", () =>
           expect(client.hsetall).toHaveBeenCalledWith(
-            expect.stringMatching(/^SimpleHashEntity:/), {
-              aString: A_STRING, aNumber: A_NUMBER_STRING, aBoolean: '0', someText: SOME_TEXT,
-              aPoint: A_POINT_STRING, aDate: A_DATE_EPOCH_STRING, someStrings: SOME_STRINGS_JOINED }));
-      });
+            expect.stringMatching(KEYNAME_REGEX),
+            expect.objectContaining(ENTITY_HASH_DATA)))
 
-      describe("when saving an empty entity", () => {
-        beforeEach(async () => {
-          entity = await repository.createAndSave({})
-        });
+        if (isEmpty) it("unlinks the generated key", () =>
+          expect(client.unlink).toHaveBeenCalledWith(expect.stringMatching(KEYNAME_REGEX)))
 
-        it("returns the empty entity", () => {
-          expect(entity.aString).toBeNull();
-          expect(entity.aNumber).toBeNull();
-          expect(entity.aBoolean).toBeNull();
-          expect(entity.someText).toBeNull();
-          expect(entity.aPoint).toBeNull();
-          expect(entity.aDate).toBeNull();
-          expect(entity.someStrings).toBeNull();
-        });
 
-        it("unlinks the key", () =>
-          expect(client.unlink).toHaveBeenCalledWith(expect.stringMatching(/^SimpleHashEntity:/)));
-      });
-    });
+        it("returns an entity with the expected number of properties", () =>
+          expect(Object.keys(entity)).toHaveLength(isEmpty ? 2 : 5))
+
+        it("returns an entity with a generated id and key", () => {
+          expect(entity.entityId).toMatch(ULID_REGEX)
+          expect(entity.keyName).toMatch(KEYNAME_REGEX)
+        })
+
+        if (!isEmpty) it("returns an entity with the expected properties", () => {
+          expect(entity.aString).toBe(A_STRING)
+          expect(entity.aNumber).toBe(A_NUMBER)
+          expect(entity.aBoolean).toBe(true)
+        })
+      })
+
+      describe.each([
+        [ "with entity data *and* an entity id", ENTITY_DATA, false ],
+        [ "with entity data that mistakenly has and entityId and keyName defined *and* an entity id", ENTITY_DATA_WITH_ID, false ],
+        [ "with empty entity data *and* an entity id", EMPTY_ENTITY, true ],
+        [ "with empty entity data that mistakenly has and entityId and keyName defined *and* an entity id", EMPTY_ENTITY_WITH_ID, true ]
+      ])('%s', (_, entityData, isEmpty) => {
+
+        beforeEach(async () => { entity = await repository.createAndSave('foo', entityData) })
+
+        if (!isEmpty) it("saves the entity data to the provide key", () =>
+          expect(client.hsetall).toHaveBeenCalledWith(
+            'SimpleEntity:foo',
+            expect.objectContaining(ENTITY_HASH_DATA)))
+
+        if (isEmpty) it("unlinks the provided key", () =>
+          expect(client.unlink).toHaveBeenCalledWith('SimpleEntity:foo'))
+
+        it("returns an entity with the expected number of properties", () =>
+          expect(Object.keys(entity)).toHaveLength(isEmpty ? 2 : 5))
+
+        it("returns an entity with the provided id and key", () => {
+          expect(entity.entityId).toBe('foo')
+          expect(entity.keyName).toBe('SimpleEntity:foo')
+        })
+
+        if (!isEmpty) it("returns an entity with the expected properties", () => {
+          expect(entity.aString).toBe(A_STRING)
+          expect(entity.aNumber).toBe(A_NUMBER)
+          expect(entity.aBoolean).toBe(true)
+        })
+      })
+    })
 
     describe("to JSON", () => {
+      let repository: Repository
 
-      let repository: Repository<SimpleJsonEntity>;
-      let entity: SimpleJsonEntity;
+      beforeAll(() => { repository = new JsonRepository(simpleJsonSchema, client) })
 
-      beforeAll(() => {
-        repository = new JsonRepository(simpleJsonSchema, client)
-      });
+      describe.each([
+        [ "with entity data", ENTITY_DATA, false ],
+        [ "with entity data that mistakenly has and entityId and keyName defined", ENTITY_DATA_WITH_ID, false ],
+        [ "with empty entity data", EMPTY_ENTITY, true ],
+        [ "with empty entity data that mistakenly has and entityId and keyName defined", EMPTY_ENTITY_WITH_ID, true ]
+      ])('%s', (_, entityData, isEmpty) => {
 
-      describe("when creating and saving a fully populated entity", () => {
-        beforeEach(async () => {
-          entity = await repository.createAndSave({ aString: A_STRING, aNumber: A_NUMBER, aBoolean: false,
-            someText: SOME_TEXT, aPoint: A_POINT, aDate: A_DATE, someStrings: SOME_STRINGS });
-        });
+        beforeEach(async () => { entity = await repository.createAndSave(entityData) })
 
-        it("returns the populated entity", () => {
-          expect(entity.aString).toBe(A_STRING);
-          expect(entity.aNumber).toBe(A_NUMBER);
-          expect(entity.aBoolean).toBe(false);
-          expect(entity.someText).toBe(SOME_TEXT);
-          expect(entity.aPoint).toEqual(A_POINT);
-          expect(entity.aDate).toEqual(A_DATE);
-          expect(entity.someStrings).toEqual(SOME_STRINGS);
-        });
-
-        it("saves the entity data to the key", () =>
+        if (!isEmpty) it("saves the entity data to a generated key", () =>
           expect(client.jsonset).toHaveBeenCalledWith(
-            expect.stringMatching(/^SimpleJsonEntity:/), {
-              aString: A_STRING, aNumber: A_NUMBER, aBoolean: false, someText: SOME_TEXT,
-              aPoint: A_POINT_STRING, aDate: A_DATE_EPOCH, someStrings: SOME_STRINGS }));
-      });
+            expect.stringMatching(KEYNAME_REGEX),
+            expect.objectContaining(ENTITY_JSON_DATA)))
 
-      describe("when saving an empty entity", () => {
-        beforeEach(async () => {
-          entity = await repository.createAndSave({})
-        });
-
-        it("returns the empty entity", () => {
-          expect(entity.aString).toBeNull();
-          expect(entity.aNumber).toBeNull();
-          expect(entity.aBoolean).toBeNull();
-          expect(entity.someText).toBeNull();
-          expect(entity.aPoint).toBeNull();
-          expect(entity.aDate).toBeNull();
-          expect(entity.someStrings).toBeNull();
-        });
-
-        it("unlinks the key", () =>
+        if (isEmpty) it("saves the empty data to a generated key", () =>
           expect(client.jsonset).toHaveBeenCalledWith(
-            expect.stringMatching(/^SimpleJsonEntity:/), {}));
-      });
-    });
-  });
-});
+            expect.stringMatching(KEYNAME_REGEX),
+            expect.objectContaining({})))
+
+        it("returns an entity with the expected number of properties", () =>
+          expect(Object.keys(entity)).toHaveLength(isEmpty ? 2 : 5))
+
+        it("returns an entity with a generated id and key", () => {
+          expect(entity.entityId).toMatch(ULID_REGEX)
+          expect(entity.keyName).toMatch(KEYNAME_REGEX)
+        })
+
+        if (!isEmpty) it("returns an entity with the expected properties", () => {
+          expect(entity.aString).toBe(A_STRING)
+          expect(entity.aNumber).toBe(A_NUMBER)
+          expect(entity.aBoolean).toBe(true)
+        })
+      })
+
+      describe.each([
+        [ "with entity data *and* an entity id", ENTITY_DATA, false ],
+        [ "with entity data that mistakenly has and entityId and keyName defined *and* an entity id", ENTITY_DATA_WITH_ID, false ],
+        [ "with empty entity data *and* an entity id", EMPTY_ENTITY, true ],
+        [ "with empty entity data that mistakenly has and entityId and keyName defined *and* an entity id", EMPTY_ENTITY_WITH_ID, true ]
+      ])('%s', (_, entityData, isEmpty) => {
+
+        beforeEach(async () => { entity = await repository.createAndSave('foo', entityData) })
+
+        if (!isEmpty) it("saves the entity data to the provide key", () =>
+          expect(client.jsonset).toHaveBeenCalledWith(
+            'SimpleEntity:foo',
+            expect.objectContaining(ENTITY_JSON_DATA)))
+
+        if (isEmpty) it("saves the empty data to the provided key", () =>
+          expect(client.jsonset).toHaveBeenCalledWith(
+            expect.stringMatching('SimpleEntity:foo'),
+            expect.objectContaining({})))
+
+        it("returns an entity with the expected number of properties", () =>
+          expect(Object.keys(entity)).toHaveLength(isEmpty ? 2 : 5))
+
+        it("returns an entity with the provided id and key", () => {
+          expect(entity.entityId).toBe('foo')
+          expect(entity.keyName).toBe('SimpleEntity:foo')
+        })
+
+        if (!isEmpty) it("returns an entity with the expected properties", () => {
+          expect(entity.aString).toBe(A_STRING)
+          expect(entity.aNumber).toBe(A_NUMBER)
+          expect(entity.aBoolean).toBe(true)
+        })
+      })
+    })
+  })
+})

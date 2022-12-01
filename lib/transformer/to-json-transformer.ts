@@ -6,8 +6,9 @@ import { Field } from '../schema/field';
 import { RedisJsonData } from "../client";
 
 import { convertDateToEpoch, convertIsoDateToEpoch, convertKnownValueToString, convertPointToString, isArray, isBoolean, isDate, isDefined, isNull, isNumber, isObject, isPoint, isString, isUndefined, stringifyError } from "./transformer-common"
+import { EntityData } from '../entity';
 
-export function toRedisJson(schema: Schema, data: object): RedisJsonData {
+export function toRedisJson(schema: Schema, data: EntityData): RedisJsonData {
   let json: RedisJsonData = clone(data)
   convertToRedisJsonKnown(schema, json)
   return convertToRedisJsonUnknown(json)

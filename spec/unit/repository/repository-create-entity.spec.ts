@@ -1,22 +1,19 @@
 import '../helpers/mock-client'
 import { Client } from '$lib/client';
-import { Repository } from '$lib/repository';
-import { HashRepository } from '$lib/repository';
+import { HashRepository, Repository } from '$lib/repository';
 
-import { simpleSchema, SimpleEntity } from '../helpers/test-entity-and-schema';
-import {
-  A_NUMBER, A_STRING, SOME_STRINGS, SOME_TEXT, A_DATE, A_POINT,
-  SOME_OTHER_STRINGS, SOME_OTHER_TEXT, ANOTHER_DATE, ANOTHER_POINT } from '../../helpers/example-data';
-
+import { simpleSchema } from '../helpers/test-entity-and-schema';
+import { A_NUMBER, A_STRING, SOME_STRINGS, SOME_TEXT, A_DATE, A_POINT } from '../../helpers/example-data';
+import { Entity } from '$lib/entity/entity';
 
 const ULID_REGEX = /^[0-9ABCDEFGHJKMNPQRSTVWXYZ]{26}$/
-
+const KEYNAME_REGEX = /^SimpleEntity:[0-9ABCDEFGHJKMNPQRSTVWXYZ]{26}$/
 
 describe("Repository", () => {
 
   let client: Client;
-  let repository: Repository<SimpleEntity>;
-  let entity: SimpleEntity;
+  let repository: Repository;
+  let entity: Entity;
 
   describe('#createEntity', () => {
 
@@ -28,20 +25,50 @@ describe("Repository", () => {
     });
 
     describe("when creating an entity", () => {
+      beforeEach(() => { entity = repository.createEntity() });
+
+      it("has a generated entity id", () => expect(entity.entityId).toMatch(ULID_REGEX));
+      it("has a keyname based on the entity id", () => expect(entity.keyName).toMatch(KEYNAME_REGEX));
+      it("is otherwise empty", () => {
+        expect(Object.keys(entity)).toHaveLength(2)
+        expect(Object.keys(entity)).toEqual(expect.arrayContaining(['entityId', 'keyName']))
+      });
+    });
+
+    describe("when creating an entity with a provided id", () => {
+      beforeEach(() => { entity = repository.createEntity('foo') });
+
+      it("has the provided entity id", () => expect(entity.entityId).toBe('foo'));
+      it("has a keyname based on the entity id", () => expect(entity.keyName).toBe(`SimpleEntity:foo`));
+      it("is otherwise empty", () => {
+        expect(Object.keys(entity)).toHaveLength(2)
+        expect(Object.keys(entity)).toEqual(expect.arrayContaining(['entityId', 'keyName']))
+      });
+    });
+
+    describe("when mistakenly creating an entity with an explicitly defined entityId and keyName", () => {
       beforeEach(() => {
-        entity = repository.createEntity()
+        entity = repository.createEntity({ entityId: 'foo', keyName: 'bar' })
       });
 
-      it("is of the expected type", () => expect(entity).toBeInstanceOf(SimpleEntity));
       it("has a generated entity id", () => expect(entity.entityId).toMatch(ULID_REGEX));
-      it("has empty properties", () => {
-        expect(entity.aBoolean).toBe(null);
-        expect(entity.aNumber).toBe(null);
-        expect(entity.aString).toBe(null);
-        expect(entity.someText).toBe(null);
-        expect(entity.aPoint).toBe(null);
-        expect(entity.aDate).toBe(null);
-        expect(entity.someStrings).toBe(null);
+      it("has a keyname based on the entity id", () => expect(entity.keyName).toMatch(KEYNAME_REGEX));
+      it("is otherwise empty", () => {
+        expect(Object.keys(entity)).toHaveLength(2)
+        expect(Object.keys(entity)).toEqual(expect.arrayContaining(['entityId', 'keyName']))
+      });
+    });
+
+    describe("when mistakenly creating an entity with an explicitly defined entityId and keyName and a provided id", () => {
+      beforeEach(() => {
+        entity = repository.createEntity('foo', { entityId: 'foo', keyName: 'bar' })
+      });
+
+      it("has the provided entity id", () => expect(entity.entityId).toBe('foo'));
+      it("has a keyname based on the entity id", () => expect(entity.keyName).toBe(`SimpleEntity:foo`));
+      it("is otherwise empty", () => {
+        expect(Object.keys(entity)).toHaveLength(2)
+        expect(Object.keys(entity)).toEqual(expect.arrayContaining(['entityId', 'keyName']))
       });
     });
 
@@ -53,8 +80,8 @@ describe("Repository", () => {
         })
       });
 
-      it("is of the expected type", () => expect(entity).toBeInstanceOf(SimpleEntity));
       it("has a generated entity id", () => expect(entity.entityId).toMatch(ULID_REGEX));
+      it("has a keyname based on the entity id", () => expect(entity.keyName).toMatch(KEYNAME_REGEX));
       it("has populated properties", () => {
         expect(entity.aBoolean).toBe(true);
         expect(entity.aNumber).toBe(A_NUMBER);
@@ -66,36 +93,16 @@ describe("Repository", () => {
       });
     });
 
-    describe("when creating an entity with missing data", () => {
+    describe("when creating an entity with data and a provided id", () => {
       beforeEach(() => {
-        entity = repository.createEntity({ aString: A_STRING, someStrings: SOME_STRINGS })
-      });
-      it("is of the expected type", () => expect(entity).toBeInstanceOf(SimpleEntity));
-      it("has a generated entity id", () => expect(entity.entityId).toMatch(ULID_REGEX));
-      it("has populated properties", () => {
-        expect(entity.aBoolean).toBe(null);
-        expect(entity.aNumber).toBe(null);
-        expect(entity.aString).toBe(A_STRING);
-        expect(entity.someText).toBe(null);
-        expect(entity.aPoint).toBe(null);
-        expect(entity.aDate).toBe(null);
-        expect(entity.someStrings).toEqual(SOME_STRINGS);
-      });
-    });
-
-    describe("when creating an entity with extra data", () => {
-      beforeEach(() => {
-        entity = repository.createEntity({
-          aBoolean: true, aNumber: A_NUMBER, aString: A_STRING,
-          anotherBoolean: false, anotherNumber: 23, anotherString: 'bar',
-          someText: SOME_TEXT, someOtherText: SOME_OTHER_TEXT,
-          aPoint: A_POINT, aDate: A_DATE, someStrings: SOME_STRINGS,
-          anotherPoint: ANOTHER_POINT, anotherDate: ANOTHER_DATE, someOtherStrings: SOME_OTHER_STRINGS
+        entity = repository.createEntity('foo', {
+          aBoolean: true, aNumber: A_NUMBER, aString: A_STRING, someText: SOME_TEXT,
+          aPoint: A_POINT, aDate: A_DATE, someStrings: SOME_STRINGS
         })
       });
 
-      it("is of the expected type", () => expect(entity).toBeInstanceOf(SimpleEntity));
-      it("has a generated entity id", () => expect(entity.entityId).toMatch(ULID_REGEX));
+      it("has a generated entity id", () => expect(entity.entityId).toBe('foo'));
+      it("has a keyname based on the entity id", () => expect(entity.keyName).toBe(`SimpleEntity:foo`));
       it("has populated properties", () => {
         expect(entity.aBoolean).toBe(true);
         expect(entity.aNumber).toBe(A_NUMBER);
@@ -104,19 +111,6 @@ describe("Repository", () => {
         expect(entity.aPoint).toEqual(A_POINT);
         expect(entity.aDate).toEqual(A_DATE);
         expect(entity.someStrings).toEqual(SOME_STRINGS);
-      });
-      ;
-
-    it("complains when creating an entity with mismatched data", () => {
-      expect(() => entity = repository.createEntity({
-          aBoolean: A_NUMBER,
-          aNumber: A_STRING,
-          aString: A_POINT,
-          someText: A_DATE,
-          aPoint: SOME_STRINGS,
-          aDate: SOME_OTHER_STRINGS,
-          someStrings: A_NUMBER
-        })).toThrowError();
       });
     });
   });

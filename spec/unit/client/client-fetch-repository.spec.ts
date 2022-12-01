@@ -1,6 +1,5 @@
 import { Client } from '$lib/client';
 import { Repository } from '$lib/repository';
-import { Entity } from '$lib/entity/entity';
 import { Schema } from '$lib/schema/schema';
 
 import { JsonRepository, HashRepository } from '$lib/repository';
@@ -24,14 +23,12 @@ describe("Client", () => {
 
   describe("#fetchRepository", () => {
 
-    class TestEntity extends Entity { };
-
-    let repository: Repository<TestEntity>;
-    let schema: Schema<TestEntity>;
+    let repository: Repository;
+    let schema: Schema;
 
     describe("when fetching a HashRepository", () => {
       beforeAll(() => {
-        schema = new Schema(TestEntity, {}, { dataStructure: 'HASH' })
+        schema = new Schema("TestEntity", {}, { dataStructure: 'HASH' })
       });
 
       describe("when called on an open client", () => {
@@ -68,7 +65,7 @@ describe("Client", () => {
 
     describe("when fetching a JsonRepository", () => {
       beforeAll(() => {
-        schema = new Schema(TestEntity, {}, { dataStructure: 'JSON' })
+        schema = new Schema("TestEntity", {}, { dataStructure: 'JSON' })
       });
 
       describe("when called on an open client", () => {

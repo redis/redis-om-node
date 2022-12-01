@@ -4,9 +4,9 @@ import { Client, RedisHashData, RedisJsonData } from "../client"
 import { Search, RawSearch } from '../search/search';
 
 import { CreateIndexOptions } from "../client";
-import { EntityData } from "../entity/entity-data";
 import { buildRediSearchIndex } from "../indexer";
 import { fromRedisHash, fromRedisJson, toRedisHash, toRedisJson } from "../transformer";
+import { Entity, EntityData } from "../entity";
 
 /**
  * A repository is the main interaction point for reading, writing, and
@@ -55,7 +55,7 @@ export abstract class Repository {
   }
 
   /**
-   * Creates an index in Redis for use by the {@link Repository.search} method. Requires
+   * Creates an index in Redis for use by the {@link Repository#search} method. Requires
    * that RediSearch or RedisJSON is installed on your instance of Redis.
    */
   async createIndex() {
@@ -101,35 +101,94 @@ export abstract class Repository {
   }
 
   /**
-   * Creates an {@link Entity} with a populated {@link Entity.entityId} property.
-   * @param data Optional values with which to initialize the entity.
+   * Creates an empty {@link Entity} with a generated {@link Entity#entityId} property.
+   *
    * @returns A newly created Entity.
    */
-  createEntity(data: EntityData = {}): TEntity {
-    const id = this.schema.generateId();
-    return new this.schema.entityCtor(this.schema, id, data);
+  createEntity(): Entity
+
+  /**
+   * Creates an empty {@link Entity} with a provided {@link Entity#entityId} property.
+   *
+   * @param id The provided entityId.
+   * @returns A newly created Entity.
+   */
+  createEntity(id: string): Entity
+
+  /**
+   * Creates an {@link Entity} populated with provided data and a generated {@link Entity#entityId} property.
+   *
+   * @param entityData The provided entity data.
+   * @returns A newly created Entity.
+   */
+  createEntity(entityData: EntityData): Entity
+
+  /**
+   * Creates an {@link Entity} populated with provided data and a provided {@link Entity#entityId} property.
+   *
+   * @param id The provided entityId.
+   * @param entityData The provided entity data.
+   * @returns A newly created Entity.
+   */
+  createEntity(id: string, entityData: EntityData): Entity
+
+  createEntity(entityDataOrId?: EntityData | string, maybeEntityData?: EntityData): Entity {
+    const entityId = typeof(entityDataOrId) === 'string' ? entityDataOrId : this.schema.generateId()
+    const keyName = `${this.schema.prefix}:${entityId}`
+    const entityData = typeof(entityDataOrId) === 'object' ? entityDataOrId : maybeEntityData ?? {}
+    return { ...entityData, entityId, keyName }
   }
 
   /**
-   * Save the {@link Entity} to Redis. If it already exists, it will be updated. If it doesn't
-   * exist, it will be created.
+   * Insert or update the {@link Entity} to Redis using its {@link Entity#entityId} property
+   * if present. If it's not, it generates one.
+   *
    * @param entity The Entity to save.
-   * @returns The ID of the Entity just saved.
+   * @returns The provided or generated entityId.
    */
-  async save(entity: TEntity): Promise<string> {
-    await this.writeEntity(entity);
-    return entity.entityId;
+  async save(entity: Entity): Promise<string>
+
+  /**
+   * Insert or update the {@link Entity} to Redis using the provided {@link Entity#entityId}.
+   *
+   * @param id The Entity to save.
+   * @param entity The Entity to save.
+   * @returns The provided or generated entityId.
+   */
+  async save(id: string, entity: Entity): Promise<string>
+
+  async save(entityOrId: Entity | string, maybeEntity?: Entity): Promise<string> {
+    const entityId = typeof(entityOrId) === 'string' ? entityOrId : entityOrId.entityId ?? this.schema.generateId()
+    const keyName = `${this.schema.prefix}:${entityId}`
+    const entity = typeof(entityOrId) === 'object' ? entityOrId : maybeEntity ?? {}
+    await this.writeEntity({ ...entity, entityId, keyName })
+    return entityId
   }
 
   /**
    * Creates and saves an {@link Entity}. Equivalent of calling
    * {@link Repository.createEntity} followed by {@link Repository.save}.
-   * @param data Optional values with which to initialize the entity.
+   *
+   * @param entityData The data to be saved.
    * @returns The newly created and saved Entity.
    */
-  async createAndSave(data: EntityData = {}): Promise<TEntity> {
-    const entity = this.createEntity(data);
-    await this.save(entity)
+  async createAndSave(entityData: EntityData): Promise<Entity>
+
+  /**
+   * Creates and saves an {@link Entity} to the provided {@link Entity#entityId}. Equivalent
+   * of calling {@link Repository.createEntity} followed by {@link Repository.save}.
+   *
+   * @param entityData The data to be saved.
+   * @returns The newly created and saved Entity.
+   */
+  async createAndSave(id: string, entityData: EntityData): Promise<Entity>
+
+  async createAndSave(entityDataOrId: EntityData | string, maybeEntityData?: EntityData): Promise<Entity> {
+    const entityId = typeof(entityDataOrId) === 'string' ? entityDataOrId : this.schema.generateId()
+    const keyName = `${this.schema.prefix}:${entityId}`
+    const entityData = typeof(entityDataOrId) === 'object' ? entityDataOrId : maybeEntityData ?? {}
+    const entity = { ...entityData, entityId, keyName }
+    await this.writeEntity(entity)
     return entity
   }
 
@@ -239,10 +298,10 @@ export abstract class Repository {
   }
 
   /** @internal */
-  protected abstract writeEntity(entity: TEntity): Promise<void>;
+  protected abstract writeEntity(entity: Entity): Promise<void>;
 
   /** @internal */
-  protected abstract readEntities(ids: string[]): Promise<TEntity[]>;
+  protected abstract readEntities(ids: string[]): Promise<Entity[]>;
 
   /** @internal */
   protected makeKeys(ids: string[]): string[] {
@@ -257,16 +316,17 @@ export abstract class Repository {
 
 /** @internal */
 export class HashRepository extends Repository {
-  protected async writeEntity(entity: object): Promise<void> {
-    const data: RedisHashData = toRedisHash(this.schema, entity)
-    if (Object.keys(data).length === 0) {
-      await this.client.unlink(entity.keyName);
-      return;
+  protected async writeEntity(entity: Entity): Promise<void> {
+    const { entityId, keyName, ...entityData } = entity
+    const hashData: RedisHashData = toRedisHash(this.schema, entityData)
+    if (Object.keys(hashData).length === 0) {
+      await this.client.unlink(keyName ?? '');
+    } else {
+      await this.client.hsetall(keyName ?? '', hashData);
     }
-    await this.client.hsetall(entity.keyName, data);
   }
 
-  protected async readEntities(ids: string[]): Promise<object[]> {
+  protected async readEntities(ids: string[]): Promise<Entity[]> {
     return Promise.all(
       ids.map(async (id) => {
         const key = this.makeKey(id);
@@ -279,12 +339,13 @@ export class HashRepository extends Repository {
 
 /** @internal */
 export class JsonRepository extends Repository {
-  protected async writeEntity(entity: object): Promise<void> {
-    const jsonData: RedisJsonData = toRedisJson(this.schema, entity)
-    await this.client.jsonset(entity.keyName, jsonData);
+  protected async writeEntity(entity: Entity): Promise<void> {
+    const { entityId, keyName, ...entityData } = entity
+    const jsonData: RedisJsonData = toRedisJson(this.schema, entityData)
+    await this.client.jsonset(keyName ?? '', jsonData);
   }
 
-  protected async readEntities(ids: string[]): Promise<object[]> {
+  protected async readEntities(ids: string[]): Promise<Entity[]> {
     return Promise.all(
       ids.map(async (id) => {
         const key = this.makeKey(id);

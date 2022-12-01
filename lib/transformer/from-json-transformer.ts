@@ -6,15 +6,16 @@ import { RedisJsonData } from "../client";
 
 import { convertEpochToDate, convertKnownValueToString, convertStringToPoint, isArray, isBoolean, isNull, isNumber, isPointString, isString, stringifyError } from "./transformer-common"
 import { Field } from '../schema/field';
+import { EntityData } from '../entity';
 
 
-export function fromRedisJson(schema: Schema, json: RedisJsonData): object {
-  const data: object = clone(json)
+export function fromRedisJson(schema: Schema, json: RedisJsonData): EntityData {
+  const data: EntityData = clone(json)
   convertFromRedisJsonKnown(schema, data)
   return data
 }
 
-function convertFromRedisJsonKnown(schema: Schema, data: object) {
+function convertFromRedisJsonKnown(schema: Schema, data: EntityData) {
   schema.fields.forEach(field => {
 
     const path = field.jsonPath
