@@ -196,30 +196,33 @@ export abstract class Repository {
    * Read and return an {@link Entity} from Redis with the given id. If
    * the {@link Entity} is not found, returns an {@link Entity} with all
    * properties set to `null`.
+   *
    * @param id The ID of the {@link Entity} you seek.
    * @returns The matching Entity.
    */
-  async fetch(id: string): Promise<object>
+  async fetch(id: string): Promise<Entity>
 
   /**
    * Read and return the {@link Entity | Entities} from Redis with the given IDs. If
    * a particular {@link Entity} is not found, returns an {@link Entity} with all
    * properties set to `null`.
+   *
    * @param ids The IDs of the {@link Entity | Entities} you seek.
    * @returns The matching Entities.
    */
-  async fetch(...ids: string[]): Promise<object[]>
+  async fetch(...ids: string[]): Promise<Entity[]>
 
   /**
    * Read and return the {@link Entity | Entities} from Redis with the given IDs. If
    * a particular {@link Entity} is not found, returns an {@link Entity} with all
    * properties set to `null`.
+   *
    * @param ids The IDs of the {@link Entity | Entities} you seek.
    * @returns The matching Entities.
    */
-  async fetch(ids: string[]): Promise<object[]>
+  async fetch(ids: string[]): Promise<Entity[]>
 
-  async fetch(ids: string | string[]): Promise<object | object[]> {
+  async fetch(ids: string | string[]): Promise<Entity | Entity[]> {
     if (arguments.length > 1) {
       return this.readEntities([...arguments]);
     }
@@ -235,6 +238,7 @@ export abstract class Repository {
   /**
    * Remove an {@link Entity} from Redis with the given id. If the {@link Entity} is
    * not found, does nothing.
+   *
    * @param id The ID of the {@link Entity} you wish to delete.
    */
   async remove(id: string): Promise<void>
@@ -242,6 +246,7 @@ export abstract class Repository {
   /**
    * Remove the {@link Entity | Entities} from Redis with the given ids. If a
    * particular {@link Entity} is not found, does nothing.
+   *
    * @param ids The IDs of the {@link Entity | Entities} you wish to delete.
    */
   async remove(...ids: string[]): Promise<void>
@@ -249,6 +254,7 @@ export abstract class Repository {
   /**
    * Remove the {@link Entity | Entities} from Redis with the given ids. If a
    * particular {@link Entity} is not found, does nothing.
+   *
    * @param ids The IDs of the {@link Entity | Entities} you wish to delete.
    */
   async remove(ids: string[]): Promise<void>
@@ -261,18 +267,31 @@ export abstract class Repository {
         : ids ? this.makeKeys([ids]) : []
 
     if (keys.length === 0) return;
-    await this.client.unlink(...keys);
+    await this.client.unlink(...keys)
   }
 
   /**
    * Set the time to live of the {@link Entity}. If the {@link Entity} is not
    * found, does nothing.
+   *
    * @param id The ID of the {@link Entity} to set and expiration for.
-   * @param ttlInSeconds THe time to live in seconds.
+   * @param ttlInSeconds The time to live in seconds.
    */
-  async expire(id: string, ttlInSeconds: number) {
-    const key = this.makeKey(id);
-    await this.client.expire(key, ttlInSeconds);
+  async expire(id: string, ttlInSeconds: number): Promise<void>
+
+  /**
+   * Set the time to live of the {@link Entity | Entities} in Redis with the given
+   * ids. If a particular {@link Entity} is not found, does nothing.
+   *
+   * @param ids The IDs of the {@link Entity | Entities} you wish to delete.
+   */
+  async expire(ids: string[], ttlInSeconds: number): Promise<void>
+
+  async expire(idOrIds: string | string[], ttlInSeconds: number): Promise<void> {
+    const ids = typeof(idOrIds) === 'string' ? [ idOrIds ] : idOrIds
+    await Promise.all(ids
+      .map(id => this.makeKey(id))
+      .map( key => this.client.expire(key, ttlInSeconds)))
   }
 
   /**
@@ -320,19 +339,20 @@ export class HashRepository extends Repository {
     const { entityId, keyName, ...entityData } = entity
     const hashData: RedisHashData = toRedisHash(this.schema, entityData)
     if (Object.keys(hashData).length === 0) {
-      await this.client.unlink(keyName ?? '');
+      await this.client.unlink(keyName ?? '')
     } else {
-      await this.client.hsetall(keyName ?? '', hashData);
+      await this.client.hsetall(keyName ?? '', hashData)
     }
   }
 
   protected async readEntities(ids: string[]): Promise<Entity[]> {
     return Promise.all(
-      ids.map(async (id) => {
-        const key = this.makeKey(id);
-        const hashData = await this.client.hgetall(key);
-        const entity = fromRedisHash(this.schema, hashData)
-        return entity;
+      ids.map(async (entityId) => {
+        const keyName = this.makeKey(entityId);
+        const hashData = await this.client.hgetall(keyName)
+        const entityData = fromRedisHash(this.schema, hashData)
+        const entity = { ...entityData, entityId, keyName}
+        return entity
       }));
   }
 }
@@ -342,16 +362,17 @@ export class JsonRepository extends Repository {
   protected async writeEntity(entity: Entity): Promise<void> {
     const { entityId, keyName, ...entityData } = entity
     const jsonData: RedisJsonData = toRedisJson(this.schema, entityData)
-    await this.client.jsonset(keyName ?? '', jsonData);
+    await this.client.jsonset(keyName ?? '', jsonData)
   }
 
   protected async readEntities(ids: string[]): Promise<Entity[]> {
     return Promise.all(
-      ids.map(async (id) => {
-        const key = this.makeKey(id);
-        const jsonData = await this.client.jsonget(key);
-        const entity = fromRedisJson(this.schema, jsonData);
-        return entity;
-      }));
+      ids.map(async (entityId) => {
+        const keyName = this.makeKey(entityId)
+        const jsonData = await this.client.jsonget(keyName)
+        const entityData = fromRedisJson(this.schema, jsonData)
+        const entity = { ...entityData, entityId, keyName}
+        return entity
+      }))
   }
 }

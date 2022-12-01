@@ -2,19 +2,23 @@ import '../helpers/mock-client'
 
 import { Client } from '$lib/client'
 import { HashRepository, JsonRepository, Repository } from '$lib/repository'
-import { Schema } from '$lib/schema'
-import {  } from '$lib/repository'
+import { Schema, SchemaDefinition } from '$lib/schema'
 
 import { A_STRING, A_NUMBER, A_NUMBER_STRING } from '../../helpers/example-data'
 
+const aSimpleSchemaDef: SchemaDefinition = {
+  aString: { type: 'string' },
+  aNumber: { type: 'number' },
+  aBoolean: { type: 'boolean' }
+}
 
-const simpleHashSchema = new Schema("SimpleEntity", {}, { dataStructure: 'HASH' })
-const simpleJsonSchema = new Schema("SimpleEntity", {}, { dataStructure: 'JSON' })
+const simpleHashSchema = new Schema("SimpleEntity", aSimpleSchemaDef, { dataStructure: 'HASH' })
+const simpleJsonSchema = new Schema("SimpleEntity", aSimpleSchemaDef, { dataStructure: 'JSON' })
 
 const EMPTY_ENTITY = {}
-const EMPTY_ENTITY_WITH_ID = { entityId: 'foo' }
+const EMPTY_ENTITY_WITH_ID = { entityId: 'foo', keyName: 'key:foo' }
 const ENTITY = { aString: A_STRING, aNumber: A_NUMBER, aBoolean: true }
-const ENTITY_WITH_ID = { entityId: 'foo', aString: A_STRING, aNumber: A_NUMBER, aBoolean: true }
+const ENTITY_WITH_ID = { entityId: 'foo', keyName: 'key:foo', aString: A_STRING, aNumber: A_NUMBER, aBoolean: true }
 
 const ENTITY_HASH_DATA = { aString: A_STRING, aNumber: A_NUMBER_STRING, aBoolean: '1' }
 const ENTITY_JSON_DATA = { aString: A_STRING, aNumber: A_NUMBER, aBoolean: true }
@@ -25,8 +29,8 @@ const KEYNAME_REGEX = /^SimpleEntity:[0-9ABCDEFGHJKMNPQRSTVWXYZ]{26}$/
 describe("Repository", () => {
   describe("#save", () => {
 
-    let client: Client;
-    let entityId: string;
+    let client: Client
+    let entityId: string
 
     beforeAll(() => { client = new Client() })
 
@@ -79,7 +83,7 @@ describe("Repository", () => {
 
     describe("to JSON", () => {
 
-      let repository: Repository;
+      let repository: Repository
 
       beforeAll(() => { repository = new JsonRepository(simpleJsonSchema, client) })
 

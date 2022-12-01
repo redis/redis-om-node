@@ -1,25 +1,20 @@
 import '../helpers/mock-client'
+
 import { Client } from '$lib/client';
-import { Repository } from '$lib/repository';
-import { HashRepository } from '$lib/repository';
+import { Repository, HashRepository } from '$lib/repository';
+import { Schema } from '$lib/schema';
 
-import { simpleSchema, SimpleEntity } from '../helpers/test-entity-and-schema';
-
+const simpleSchema = new Schema("SimpleEntity", {}, { dataStructure: 'HASH' })
 
 describe("Repository", () => {
 
-  let client: Client;
-  let repository: Repository<SimpleEntity>;
+  let client: Client
+  let repository: Repository
 
   describe("#dropIndex", () => {
 
-    beforeAll(() => {
-      client = new Client()
-    });
-
-    beforeEach(() => {
-      repository = new HashRepository(simpleSchema, client)
-    });
+    beforeAll(() => { client = new Client() })
+    beforeEach(() => { repository = new HashRepository(simpleSchema, client) })
 
     describe("when the index exists", () => {
       beforeEach(async () => await repository.dropIndex());

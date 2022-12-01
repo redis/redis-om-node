@@ -3,16 +3,21 @@ import '../helpers/mock-client'
 import { Client } from '$lib/client'
 import { Entity } from '$lib/entity'
 import { HashRepository, JsonRepository, Repository } from '$lib/repository'
-import { Schema } from '$lib/schema'
+import { Schema, SchemaDefinition } from '$lib/schema'
 
 import { A_STRING, A_NUMBER, A_NUMBER_STRING } from '../../helpers/example-data'
 
+const aSimpleSchemaDef: SchemaDefinition = {
+  aString: { type: 'string' },
+  aNumber: { type: 'number' },
+  aBoolean: { type: 'boolean' }
+}
 
-const simpleHashSchema = new Schema("SimpleEntity", {}, { dataStructure: 'HASH' })
-const simpleJsonSchema = new Schema("SimpleEntity", {}, { dataStructure: 'JSON' })
+const simpleHashSchema = new Schema("SimpleEntity", aSimpleSchemaDef, { dataStructure: 'HASH' })
+const simpleJsonSchema = new Schema("SimpleEntity", aSimpleSchemaDef, { dataStructure: 'JSON' })
 
-const EMPTY_ENTITY = {}
-const EMPTY_ENTITY_WITH_ID = { entityId: 'foo' }
+const EMPTY_ENTITY_DATA = {}
+const EMPTY_ENTITY_DATA_WITH_ID = { entityId: 'foo', keyName: 'key:bar' }
 const ENTITY_DATA = { aString: A_STRING, aNumber: A_NUMBER, aBoolean: true }
 const ENTITY_DATA_WITH_ID = { entityId: 'bar', keyName: 'key:bar', aString: A_STRING, aNumber: A_NUMBER, aBoolean: true }
 
@@ -25,8 +30,8 @@ const KEYNAME_REGEX = /^SimpleEntity:[0-9ABCDEFGHJKMNPQRSTVWXYZ]{26}$/
 describe("Repository", () => {
   describe("#createAndSave", () => {
 
-    let client: Client;
-    let entity: Entity;
+    let client: Client
+    let entity: Entity
 
     beforeAll(() => { client = new Client() })
 
@@ -38,8 +43,8 @@ describe("Repository", () => {
       describe.each([
         [ "with entity data", ENTITY_DATA, false ],
         [ "with entity data that mistakenly has and entityId and keyName defined", ENTITY_DATA_WITH_ID, false ],
-        [ "with empty entity data", EMPTY_ENTITY, true ],
-        [ "with empty entity data that mistakenly has and entityId and keyName defined", EMPTY_ENTITY_WITH_ID, true ]
+        [ "with empty entity data", EMPTY_ENTITY_DATA, true ],
+        [ "with empty entity data that mistakenly has and entityId and keyName defined", EMPTY_ENTITY_DATA_WITH_ID, true ]
       ])('%s', (_, entityData, isEmpty) => {
 
         beforeEach(async () => { entity = await repository.createAndSave(entityData) })
@@ -71,8 +76,8 @@ describe("Repository", () => {
       describe.each([
         [ "with entity data *and* an entity id", ENTITY_DATA, false ],
         [ "with entity data that mistakenly has and entityId and keyName defined *and* an entity id", ENTITY_DATA_WITH_ID, false ],
-        [ "with empty entity data *and* an entity id", EMPTY_ENTITY, true ],
-        [ "with empty entity data that mistakenly has and entityId and keyName defined *and* an entity id", EMPTY_ENTITY_WITH_ID, true ]
+        [ "with empty entity data *and* an entity id", EMPTY_ENTITY_DATA, true ],
+        [ "with empty entity data that mistakenly has and entityId and keyName defined *and* an entity id", EMPTY_ENTITY_DATA_WITH_ID, true ]
       ])('%s', (_, entityData, isEmpty) => {
 
         beforeEach(async () => { entity = await repository.createAndSave('foo', entityData) })
@@ -109,8 +114,8 @@ describe("Repository", () => {
       describe.each([
         [ "with entity data", ENTITY_DATA, false ],
         [ "with entity data that mistakenly has and entityId and keyName defined", ENTITY_DATA_WITH_ID, false ],
-        [ "with empty entity data", EMPTY_ENTITY, true ],
-        [ "with empty entity data that mistakenly has and entityId and keyName defined", EMPTY_ENTITY_WITH_ID, true ]
+        [ "with empty entity data", EMPTY_ENTITY_DATA, true ],
+        [ "with empty entity data that mistakenly has and entityId and keyName defined", EMPTY_ENTITY_DATA_WITH_ID, true ]
       ])('%s', (_, entityData, isEmpty) => {
 
         beforeEach(async () => { entity = await repository.createAndSave(entityData) })
@@ -143,8 +148,8 @@ describe("Repository", () => {
       describe.each([
         [ "with entity data *and* an entity id", ENTITY_DATA, false ],
         [ "with entity data that mistakenly has and entityId and keyName defined *and* an entity id", ENTITY_DATA_WITH_ID, false ],
-        [ "with empty entity data *and* an entity id", EMPTY_ENTITY, true ],
-        [ "with empty entity data that mistakenly has and entityId and keyName defined *and* an entity id", EMPTY_ENTITY_WITH_ID, true ]
+        [ "with empty entity data *and* an entity id", EMPTY_ENTITY_DATA, true ],
+        [ "with empty entity data that mistakenly has and entityId and keyName defined *and* an entity id", EMPTY_ENTITY_DATA_WITH_ID, true ]
       ])('%s', (_, entityData, isEmpty) => {
 
         beforeEach(async () => { entity = await repository.createAndSave('foo', entityData) })
