@@ -1,6 +1,8 @@
 import { client } from '../helpers/mock-client'
-import { Client } from "$lib/client";
-import { Search, RawSearch } from "$lib/search";
+
+import { Client } from "$lib/client"
+import { Entity } from '$lib/entity'
+import { Search, RawSearch } from "$lib/search"
 
 import { simpleHashSchema, simpleJsonSchema } from "../helpers/test-entity-and-schema";
 import { mockClientSearchToReturnNothing, mockClientSearchToReturnSingleHash,
@@ -22,8 +24,10 @@ describe.each([
 ])("%s", (_, hashSearch: HashSearch, jsonSearch: JsonSearch) => {
 
   describe("#returnMin", () => {
+
+    let entity: Entity | null;
+
     describe("when running against hashes", () => {
-      let entity: object | null;
       let indexName = 'SimpleHashEntity:index', query = '*';
 
       describe("when querying no results", () => {
@@ -73,7 +77,6 @@ describe.each([
     });
 
     describe("when running against JSON Objects", () => {
-      let entity: object | null;
       let indexName = 'SimpleJsonEntity:index', query = '*';
 
       describe("when querying no results", () => {

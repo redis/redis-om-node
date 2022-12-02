@@ -1,6 +1,6 @@
-import { Schema } from "../schema/schema";
 import { Client, LimitOptions, SearchOptions } from "../client";
-import { Entity } from '../entity/entity';
+import { Entity } from '../entity';
+import { Schema } from "../schema";
 
 import { Where } from './where';
 import { WhereAnd } from './where-and';
@@ -127,7 +127,7 @@ export abstract class AbstractSearch {
    * @param field The field with the minimal value.
    * @returns The {@link Entity} with the minimal value
    */
-  async min(field: string): Promise<object | null> {
+  async min(field: string): Promise<Entity | null> {
     return await this.sortBy(field, 'ASC').first();
   }
 
@@ -195,7 +195,7 @@ export abstract class AbstractSearch {
    * @param count The number of {@link Entity | Entities} to return.
    * @returns An array of {@link Entity | Entities} matching the query.
    */
-  async page(offset: number, count: number): Promise<object[]> {
+  async page(offset: number, count: number): Promise<Entity[]> {
     const searchResults = await this.callSearch({ offset, count });
     return this.schema.dataStructure === 'JSON'
       ? new JsonSearchResultsConverter(this.schema, searchResults).entities
@@ -227,7 +227,7 @@ export abstract class AbstractSearch {
   /**
    * Returns the first {@link Entity} that matches this query.
    */
-  async first(): Promise<object | null> {
+  async first(): Promise<Entity | null> {
     const foundEntity = await this.page(0, 1);
     return foundEntity[0] ?? null;
   }
@@ -336,7 +336,7 @@ export abstract class AbstractSearch {
   /**
    * Alias for {@link Search.min}.
    */
-  async returnMin(field: string): Promise<object | null> {
+  async returnMin(field: string): Promise<Entity | null> {
     return await this.min(field);
   }
 
@@ -607,7 +607,7 @@ export class Search extends AbstractSearch {
   private createWhere(fieldName: string): WhereField {
     const field = this.schema.fieldByName(fieldName);
 
-    if (field === undefined) throw new Error(`The field '${fieldName}' is not part of the schema.`);
+    if (field === null) throw new Error(`The field '${fieldName}' is not part of the schema.`);
 
     if (field.type === 'boolean' && this.schema.dataStructure === 'HASH') return new WhereHashBoolean(this, field);
     if (field.type === 'boolean' && this.schema.dataStructure === 'JSON') return new WhereJsonBoolean(this, field);
