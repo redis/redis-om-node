@@ -13,7 +13,7 @@ import { WherePoint } from './where-point';
 import { WhereString } from './where-string';
 import { WhereText } from './where-text';
 
-import { HashSearchResultsConverter, JsonSearchResultsConverter } from "./results-converter";
+import { extractCountFromSearchResults, extractEntitiesFromSearchResults, extractEntityIdsFromSearchResults, extractKeyNamesFromSearchResults } from "./results-converter";
 import { RedisError } from "../errors";
 import { SortOptions } from "../client";
 import { WhereDate } from "./where-date";
@@ -137,8 +137,7 @@ export abstract class AbstractSearch {
    * @returns The entity ID with the minimal value
    */
   async minId(field: string): Promise<string | null> {
-    const key = await this.minKey(field);
-    return this.keyToEntityId(key);
+    return await this.sortBy(field, 'ASC').firstId();
   }
 
   /**
@@ -155,7 +154,7 @@ export abstract class AbstractSearch {
    * @param field The field with the maximal value.
    * @returns The entity ID {@link Entity} with the maximal value
    */
-  async max(field: string): Promise<object | null> {
+  async max(field: string): Promise<Entity | null> {
     return await this.sortBy(field, 'DESC').first();
   }
 
@@ -165,8 +164,7 @@ export abstract class AbstractSearch {
    * @returns The entity ID with the maximal value
    */
   async maxId(field: string): Promise<string | null>{
-    const key = await this.maxKey(field);
-    return this.keyToEntityId(key);
+    return await this.sortBy(field, 'DESC').firstId();
   }
 
   /**
@@ -184,9 +182,7 @@ export abstract class AbstractSearch {
    */
   async count(): Promise<number> {
     const searchResults = await this.callSearch()
-    return this.schema.dataStructure === 'JSON'
-      ? new JsonSearchResultsConverter(this.schema, searchResults).count
-      : new HashSearchResultsConverter(this.schema, searchResults).count;
+    return extractCountFromSearchResults(searchResults)
   }
 
   /**
@@ -197,9 +193,7 @@ export abstract class AbstractSearch {
    */
   async page(offset: number, count: number): Promise<Entity[]> {
     const searchResults = await this.callSearch({ offset, count });
-    return this.schema.dataStructure === 'JSON'
-      ? new JsonSearchResultsConverter(this.schema, searchResults).entities
-      : new HashSearchResultsConverter(this.schema, searchResults).entities;
+    return extractEntitiesFromSearchResults(this.schema, searchResults)
   }
 
   /**
@@ -209,8 +203,8 @@ export abstract class AbstractSearch {
    * @returns An array of strings matching the query.
    */
    async pageOfIds(offset: number, count: number): Promise<string[]> {
-    const keys = await this.pageOfKeys(offset, count);
-    return this.keysToEntityIds(keys);
+    const searchResults = await this.callSearch({ offset, count }, true)
+    return extractEntityIdsFromSearchResults(this.schema, searchResults)
   }
 
   /**
@@ -220,8 +214,8 @@ export abstract class AbstractSearch {
    * @returns An array of strings matching the query.
    */
   async pageOfKeys(offset: number, count: number): Promise<string[]> {
-    const [ _count, ...keys] = await this.callSearch({ offset, count }, true);
-    return keys;
+    const searchResults = await this.callSearch({ offset, count }, true)
+    return extractKeyNamesFromSearchResults(searchResults)
   }
 
   /**
@@ -236,16 +230,16 @@ export abstract class AbstractSearch {
    * Returns the first entity ID that matches this query.
    */
    async firstId(): Promise<string | null> {
-    const key = await this.firstKey()
-    return this.keyToEntityId(key)
+    const foundIds = await this.pageOfIds(0, 1);
+    return foundIds[0] ?? null;
   }
 
   /**
    * Returns the first key name that matches this query.
    */
    async firstKey(): Promise<string | null> {
-    const foundIds = await this.pageOfKeys(0, 1);
-    return foundIds[0] ?? null;
+    const foundKeys = await this.pageOfKeys(0, 1);
+    return foundKeys[0] ?? null;
   }
 
   /**
@@ -262,19 +256,8 @@ export abstract class AbstractSearch {
    * @param options.pageSize Number of {@link Entity | Entities} returned per batch.
    * @returns An array of {@link Entity | Entities} matching the query.
    */
-  async all(options = { pageSize: 10 }): Promise<object[]> {
-    const entities: object[] = [];
-    let offset = 0;
-    const pageSize = options.pageSize;
-
-    while (true) {
-      const foundEntities = await this.page(offset, pageSize);
-      entities.push(...foundEntities);
-      if (foundEntities.length < pageSize) break;
-      offset += pageSize;
-    }
-
-    return entities;
+  async all(options = { pageSize: 10 }): Promise<Entity[]> {
+    return this.allThings(this.page, options) as Promise<Entity[]>
   }
 
   /**
@@ -292,8 +275,7 @@ export abstract class AbstractSearch {
    * @returns An array of entity IDs matching the query.
    */
   async allIds(options = { pageSize: 10 }): Promise<string[]> {
-    const keys = await this.allKeys(options)
-    return this.keysToEntityIds(keys);
+    return this.allThings(this.pageOfIds, options) as Promise<string[]>
   }
 
   /**
@@ -311,18 +293,7 @@ export abstract class AbstractSearch {
    * @returns An array of key names matching the query.
    */
   async allKeys(options = { pageSize: 10 }): Promise<string[]> {
-    const keys: string[] = [];
-    let offset = 0;
-    const pageSize = options.pageSize;
-
-    while (true) {
-      const foundKeys = await this.pageOfKeys(offset, pageSize);
-      keys.push(...foundKeys);
-      if (foundKeys.length < pageSize) break;
-      offset += pageSize;
-    }
-
-    return keys;
+    return this.allThings(this.pageOfKeys, options) as Promise<string[]>
   }
 
   /**
@@ -357,7 +328,7 @@ export abstract class AbstractSearch {
   /**
    * Alias for {@link Search.max}.
    */
-  async returnMax(field: string): Promise<object | null> {
+  async returnMax(field: string): Promise<Entity | null> {
     return await this.max(field);
   }
 
@@ -385,7 +356,7 @@ export abstract class AbstractSearch {
   /**
    * Alias for {@link Search.page}.
    */
-  async returnPage(offset: number, count: number): Promise<object[]> {
+  async returnPage(offset: number, count: number): Promise<Entity[]> {
     return await this.page(offset, count);
   }
 
@@ -406,7 +377,7 @@ export abstract class AbstractSearch {
   /**
    * Alias for {@link Search.first}.
    */
-  async returnFirst(): Promise<object | null> {
+  async returnFirst(): Promise<Entity | null> {
     return await this.first();
   }
 
@@ -427,7 +398,7 @@ export abstract class AbstractSearch {
   /**
    * Alias for {@link Search.all}.
    */
-   async returnAll(options = { pageSize: 10 }): Promise<object[]> {
+   async returnAll(options = { pageSize: 10 }): Promise<Entity[]> {
     return await this.all(options)
   }
 
@@ -443,6 +414,21 @@ export abstract class AbstractSearch {
    */
   async returnAllKeys(options = { pageSize: 10 }): Promise<string[]> {
     return await this.allKeys(options)
+  }
+
+  private async allThings(pageFn: Function, options = { pageSize: 10 }): Promise<Entity[] | string[]> {
+    const things = [];
+    let offset = 0;
+    const pageSize = options.pageSize;
+
+    while (true) {
+      const foundThings = await pageFn.call(this, offset, pageSize);
+      things.push(...foundThings);
+      if (foundThings.length < pageSize) break;
+      offset += pageSize;
+    }
+
+    return things;
   }
 
   private async callSearch(limit: LimitOptions = { offset: 0, count: 0 }, keysOnly = false) {
@@ -467,16 +453,7 @@ export abstract class AbstractSearch {
     }
     return searchResults
   }
-
-  private keysToEntityIds(keys: string[]): string[] {
-    return keys.map(key => this.keyToEntityId(key) ?? '');
-  }
-
-  private keyToEntityId(key: string | null): string | null {
-    return key ? key.replace(`${this.schema.prefix}:`, '') : null;
-  }
 }
-
 
 /**
  * Entry point to raw search which allows using raw RediSearch queries

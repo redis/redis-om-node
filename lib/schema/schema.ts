@@ -2,7 +2,6 @@ import { createHash } from 'crypto';
 import { ulid } from 'ulid'
 
 import { Entity } from "../entity/entity";
-import { EntityConstructor } from "../entity/entity-constructor";
 
 import { IdStrategy, DataStructure, StopWordOptions, SchemaOptions } from './options';
 
