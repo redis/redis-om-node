@@ -1,7 +1,6 @@
-import { Schema } from '$lib/schema/schema'
-import { SchemaDefinition } from '$lib/schema/definition'
-import { DataStructure } from '$lib/schema/options'
-import { buildRediSearchIndex } from '$lib/indexer/index-builder'
+import { Schema, SchemaDefinition, DataStructure } from '$lib/schema'
+import { buildRediSearchIndex } from '$lib/indexer'
+
 
 const warnSpy = vi.spyOn(global.console, 'warn').mockImplementation(() => {})
 
