@@ -1,6 +1,11 @@
-export { Client } from "./client";
-export * from "./entity"
-export * from "./errors"
-export * from "./schema"
-export { AbstractSearch, CircleFunction, Circle, Search, RawSearch, SubSearchFunction, Where, WhereField } from "./search"
-export * from "./repository"
+export { Client, RedisConnection } from './client'
+export { Entity, EntityData, EntityId, EntityValue, Point } from './entity'
+export { RedisError } from './errors'
+export { Field } from './schema/field'
+export { Schema } from './schema/schema'
+export { DataStructure, IdStrategy, SchemaOptions, StopWordOptions } from './schema/options'
+export { AllFieldDefinition, BooleanFieldDefinition, CommonFieldDefinition, DateFieldDefinition, FieldDefinition,
+  FieldType, NumberFieldDefinition, PointFieldDefinition, SchemaDefinition, StringArrayFieldDefinition,
+  StringFieldDefinition, TextFieldDefinition } from './schema/definitions'
+export { AbstractSearch, Circle, CircleFunction, RawSearch, Search, SubSearchFunction, Where, WhereField } from "./search"
+export { Repository } from "./repository"
