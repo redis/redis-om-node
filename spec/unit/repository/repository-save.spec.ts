@@ -1,7 +1,7 @@
 import '../helpers/mock-client'
 
 import { Client } from '$lib/client'
-import { HashRepository, JsonRepository, Repository } from '$lib/repository'
+import { Repository } from '$lib/repository'
 import { Schema, SchemaDefinition } from '$lib/schema'
 
 import { A_STRING, A_NUMBER, A_NUMBER_STRING } from '../../helpers/example-data'
@@ -37,7 +37,7 @@ describe("Repository", () => {
     describe("to a Hash", () => {
       let repository: Repository
 
-      beforeAll(() => { repository = new HashRepository(simpleHashSchema, client) })
+      beforeAll(() => { repository = new Repository(simpleHashSchema, client) })
 
       describe.each([
         [ "when saving an entity without an entityId", ENTITY, ULID_REGEX, KEYNAME_REGEX, false ],
@@ -85,7 +85,7 @@ describe("Repository", () => {
 
       let repository: Repository
 
-      beforeAll(() => { repository = new JsonRepository(simpleJsonSchema, client) })
+      beforeAll(() => { repository = new Repository(simpleJsonSchema, client) })
 
       describe.each([
         [ "when saving an entity without an entityId", ENTITY, ULID_REGEX, KEYNAME_REGEX, false ],

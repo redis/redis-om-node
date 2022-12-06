@@ -3,7 +3,7 @@ import '../helpers/mock-indexer'
 
 import { Client } from '$lib/client'
 import { buildRediSearchIndex } from '$lib/indexer'
-import { HashRepository, Repository } from '$lib/repository'
+import { Repository } from '$lib/repository'
 
 import { simpleSchema, stopWordsOffSchema, customStopWordsSchema } from '../helpers/test-entity-and-schema'
 
@@ -19,7 +19,7 @@ describe("Repository", () => {
   describe("#createIndex", () => {
     describe("with a simple schema", () => {
 
-      beforeEach(() => { repository = new HashRepository(simpleSchema, client) })
+      beforeEach(() => { repository = new Repository(simpleSchema, client) })
 
       describe("and an index that doesn't exist", () => {
         beforeEach(async () => {
@@ -108,7 +108,7 @@ describe("Repository", () => {
     describe("with stop words turned off", () => {
 
       beforeEach(async () => {
-        repository = new HashRepository(stopWordsOffSchema, client)
+        repository = new Repository(stopWordsOffSchema, client)
         await repository.createIndex()
       })
 
@@ -126,7 +126,7 @@ describe("Repository", () => {
     describe("with custom stop words", () => {
 
       beforeEach(async () => {
-        repository = new HashRepository(customStopWordsSchema, client)
+        repository = new Repository(customStopWordsSchema, client)
         await repository.createIndex();
       })
 

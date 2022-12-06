@@ -2,7 +2,7 @@ import '../helpers/mock-client'
 
 import { Client } from '$lib/client'
 import { Entity } from '$lib/entity'
-import { HashRepository, Repository } from '$lib/repository'
+import { Repository } from '$lib/repository'
 import { Schema, SchemaDefinition } from '$lib/schema'
 
 import { A_NUMBER, A_STRING } from '../../helpers/example-data'
@@ -30,7 +30,7 @@ describe("Repository", () => {
   describe('#createEntity', () => {
 
     beforeAll(() => { client = new Client() })
-    beforeEach(() => { repository = new HashRepository(simpleSchema, client) })
+    beforeEach(() => { repository = new Repository(simpleSchema, client) })
 
     describe("when creating an entity", () => {
       beforeEach(() => { entity = repository.createEntity() })

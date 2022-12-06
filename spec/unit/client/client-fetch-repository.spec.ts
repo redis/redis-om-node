@@ -2,8 +2,6 @@ import { Client } from '$lib/client';
 import { Repository } from '$lib/repository';
 import { Schema } from '$lib/schema/schema';
 
-import { JsonRepository, HashRepository } from '$lib/repository';
-
 vi.mock('$lib/repository');
 
 
@@ -26,9 +24,9 @@ describe("Client", () => {
     let repository: Repository;
     let schema: Schema;
 
-    describe("when fetching a HashRepository", () => {
+    describe("when fetching a Repository", () => {
       beforeAll(() => {
-        schema = new Schema("TestEntity", {}, { dataStructure: 'HASH' })
+        schema = new Schema("TestEntity", {})
       });
 
       describe("when called on an open client", () => {
@@ -39,48 +37,11 @@ describe("Client", () => {
         });
 
         it("creates a repository with the schema and client", () => {
-          expect(HashRepository).toHaveBeenCalledWith(schema, client);
+          expect(Repository).toHaveBeenCalledWith(schema, client);
         });
 
         it("returns a repository", async () => {
-          expect(repository).toBeInstanceOf(HashRepository);
-        });
-      });
-
-      describe("when called on a closed client", () => {
-        beforeEach(async () => {
-          await client.open();
-          await client.close();
-        });
-
-        it("errors when called on a closed client", () =>
-          expect(() => client.fetchRepository(schema))
-            .toThrow("Redis connection needs to be open."));
-      });
-
-      it("errors when called on a new client", () =>
-        expect(() => client.fetchRepository(schema))
-          .toThrow("Redis connection needs to be open."));
-    });
-
-    describe("when fetching a JsonRepository", () => {
-      beforeAll(() => {
-        schema = new Schema("TestEntity", {}, { dataStructure: 'JSON' })
-      });
-
-      describe("when called on an open client", () => {
-
-        beforeEach(async () => {
-          await client.open();
-          repository = client.fetchRepository(schema);
-        });
-
-        it("creates a repository with the schema and client", () => {
-          expect(JsonRepository).toHaveBeenCalledWith(schema, client);
-        });
-
-        it("returns a repository", async () => {
-          expect(repository).toBeInstanceOf(JsonRepository);
+          expect(repository).toBeInstanceOf(Repository);
         });
       });
 

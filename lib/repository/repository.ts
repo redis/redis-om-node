@@ -1,62 +1,70 @@
 import { Schema } from "../schema"
 import { Client, RedisHashData, RedisJsonData } from "../client"
 
-import { Search, RawSearch } from '../search/search';
+import { Search, RawSearch } from '../search/search'
 
-import { CreateIndexOptions } from "../client";
-import { buildRediSearchIndex } from "../indexer";
-import { fromRedisHash, fromRedisJson, toRedisHash, toRedisJson } from "../transformer";
-import { Entity, EntityData } from "../entity";
+import { CreateIndexOptions } from "../client"
+import { buildRediSearchIndex } from "../indexer"
+import { fromRedisHash, fromRedisJson, toRedisHash, toRedisJson } from "../transformer"
+import { Entity, EntityData } from "../entity"
 
 /**
  * A repository is the main interaction point for reading, writing, and
  * removing {@link Entity | Entities} from Redis. Create one by calling
  * {@link Client.fetchRepository} and passing in a {@link Schema}. Then
- * use the {@link Repository.fetch}, {@link Repository.save}, and
- * {@link Repository.remove} methods to manage your data:
+ * use the {@link Repository#fetch}, {@link Repository#save}, and
+ * {@link Repository#remove} methods to manage your data:
  *
  * ```typescript
- * const repository = client.fetchRepository<Foo>(schema);
+ * const repository = client.fetchRepository(schema)
  *
- * const foo = await repository.fetch('01FK6TCJBDK41RJ766A4SBWDJ9');
- * foo.aString = 'bar';
- * foo.aBoolean = false;
- * await repository.save(foo);
+ * const foo = await repository.fetch('01FK6TCJBDK41RJ766A4SBWDJ9')
+ * foo.aString = 'bar'
+ * foo.aBoolean = false
+ * await repository.save(foo)
  * ```
  *
- * Be sure to use the repository to create a new instance of an
- * {@link Entity} you want to create before you save it:
-
+ * Use the repository to create a new instance of an {@link Entity}
+ * before you save it:
+ *
  * ```typescript
- * const foo = await repository.createEntity();
- * foo.aString = 'bar';
- * foo.aBoolean = false;
- * await repository.save(foo);
+ * const foo = await repository.createEntity()
+ * foo.aString = 'bar'
+ * foo.aBoolean = false
+ * await repository.save(foo)
  * ```
  *
- * If you want to the {@link Repository.search} method, you need to create an index
+ * If you want to use the {@link Repository#search} method, you need to create an index
  * first, and you need RediSearch or RedisJSON installed on your instance of Redis:
  *
  * ```typescript
- * await repository.createIndex();
+ * await repository.createIndex()
  * const entities = await repository.search()
  *   .where('aString').eq('bar')
- *   .and('aBoolean').is.false().returnAll();
+ *   .and('aBoolean').is.false().returnAll()
  * ```
  */
-export abstract class Repository {
-  protected client: Client;
-  protected schema: Schema;
+export class Repository {
 
-  /** @internal */
+  private client: Client
+  private schema: Schema
+
+  /**
+   * Creates a new {@link Repository}. Equivalent to calling
+   * {@link Client#fetchRepository}.
+   *
+   * @param schema The schema defining that data in the repository.
+   * @param client A client to talk to Redis.
+   */
   constructor(schema: Schema, client: Client) {
-    this.schema = schema;
+    this.schema = schema
     this.client = client
   }
 
   /**
-   * Creates an index in Redis for use by the {@link Repository#search} method. Requires
-   * that RediSearch or RedisJSON is installed on your instance of Redis.
+   * Creates an index in Redis for use by the {@link Repository#search} method.
+   * Does not create a new index if the index hasn't changed. Requires that
+   * RediSearch and RedisJSON are installed on your instance of Redis.
    */
   async createIndex() {
 
@@ -65,32 +73,32 @@ export abstract class Repository {
 
     if (currentIndexHash !== incomingIndexHash) {
 
-      await this.dropIndex();
+      await this.dropIndex()
 
       const options: CreateIndexOptions = {
         indexName: this.schema.indexName,
         dataStructure: this.schema.dataStructure,
         prefix: `${this.schema.prefix}:`,
         schema: buildRediSearchIndex(this.schema)
-      };
+      }
 
       if (this.schema.useStopWords === 'OFF') options.stopWords = []
       if (this.schema.useStopWords === 'CUSTOM') options.stopWords = this.schema.stopWords
 
-      await this.client.createIndex(options);
-      await this.client.set(this.schema.indexHashName, incomingIndexHash);
+      await this.client.createIndex(options)
+      await this.client.set(this.schema.indexHashName, incomingIndexHash)
     }
   }
 
   /**
    * Removes an existing index from Redis. Use this method if you want to swap out your index
-   * because your {@link Entity} has changed. Requires that RediSearch or RedisJSON is installed
+   * because your {@link Entity} has changed. Requires that RediSearch and RedisJSON are installed
    * on your instance of Redis.
    */
   async dropIndex() {
     try {
-      await this.client.unlink(this.schema.indexHashName);
-      await this.client.dropIndex(this.schema.indexName);
+      await this.client.unlink(this.schema.indexHashName)
+      await this.client.dropIndex(this.schema.indexName)
     } catch (e) {
       if (e instanceof Error && e.message === "Unknown Index name") {
         // no-op: the thing we are dropping doesn't exist
@@ -140,7 +148,7 @@ export abstract class Repository {
   }
 
   /**
-   * Insert or update the {@link Entity} to Redis using its {@link Entity#entityId} property
+   * Insert or update an {@link Entity} to Redis using its {@link Entity#entityId} property
    * if present. If it's not, it generates one.
    *
    * @param entity The Entity to save.
@@ -167,7 +175,7 @@ export abstract class Repository {
 
   /**
    * Creates and saves an {@link Entity}. Equivalent of calling
-   * {@link Repository.createEntity} followed by {@link Repository.save}.
+   * {@link Repository#createEntity} followed by {@link Repository#save}.
    *
    * @param entityData The data to be saved.
    * @returns The newly created and saved Entity.
@@ -176,7 +184,7 @@ export abstract class Repository {
 
   /**
    * Creates and saves an {@link Entity} to the provided {@link Entity#entityId}. Equivalent
-   * of calling {@link Repository.createEntity} followed by {@link Repository.save}.
+   * of calling {@link Repository#createEntity} followed by {@link Repository#save}.
    *
    * @param entityData The data to be saved.
    * @returns The newly created and saved Entity.
@@ -193,9 +201,8 @@ export abstract class Repository {
   }
 
   /**
-   * Read and return an {@link Entity} from Redis with the given id. If
-   * the {@link Entity} is not found, returns an {@link Entity} with all
-   * properties set to `null`.
+   * Read and return an {@link Entity} from Redis for the given id. If
+   * the {@link Entity} is not found, returns an empty {@link Entity}.
    *
    * @param id The ID of the {@link Entity} you seek.
    * @returns The matching Entity.
@@ -204,8 +211,7 @@ export abstract class Repository {
 
   /**
    * Read and return the {@link Entity | Entities} from Redis with the given IDs. If
-   * a particular {@link Entity} is not found, returns an {@link Entity} with all
-   * properties set to `null`.
+   * a particular {@link Entity} is not found, returns that {@link Entity} as empty.
    *
    * @param ids The IDs of the {@link Entity | Entities} you seek.
    * @returns The matching Entities.
@@ -214,8 +220,7 @@ export abstract class Repository {
 
   /**
    * Read and return the {@link Entity | Entities} from Redis with the given IDs. If
-   * a particular {@link Entity} is not found, returns an {@link Entity} with all
-   * properties set to `null`.
+   * a particular {@link Entity} is not found, returns that {@link Entity} as empty.
    *
    * @param ids The IDs of the {@link Entity | Entities} you seek.
    * @returns The matching Entities.
@@ -223,20 +228,15 @@ export abstract class Repository {
   async fetch(ids: string[]): Promise<Entity[]>
 
   async fetch(ids: string | string[]): Promise<Entity | Entity[]> {
-    if (arguments.length > 1) {
-      return this.readEntities([...arguments]);
-    }
-
-    if (Array.isArray(ids)) {
-      return this.readEntities(ids)
-    }
+    if (arguments.length > 1)  return this.readEntities([...arguments])
+    if (Array.isArray(ids)) return this.readEntities(ids)
 
     const entities = await this.readEntities([ids])
     return entities[0]
   }
 
   /**
-   * Remove an {@link Entity} from Redis with the given id. If the {@link Entity} is
+   * Remove an {@link Entity} from Redis for the given id. If the {@link Entity} is
    * not found, does nothing.
    *
    * @param id The ID of the {@link Entity} you wish to delete.
@@ -244,7 +244,7 @@ export abstract class Repository {
   async remove(id: string): Promise<void>
 
   /**
-   * Remove the {@link Entity | Entities} from Redis with the given ids. If a
+   * Remove the {@link Entity | Entities} from Redis for the given ids. If a
    * particular {@link Entity} is not found, does nothing.
    *
    * @param ids The IDs of the {@link Entity | Entities} you wish to delete.
@@ -252,7 +252,7 @@ export abstract class Repository {
   async remove(...ids: string[]): Promise<void>
 
   /**
-   * Remove the {@link Entity | Entities} from Redis with the given ids. If a
+   * Remove the {@link Entity | Entities} from Redis for the given ids. If a
    * particular {@link Entity} is not found, does nothing.
    *
    * @param ids The IDs of the {@link Entity | Entities} you wish to delete.
@@ -266,7 +266,7 @@ export abstract class Repository {
         ? this.makeKeys(ids)
         : ids ? this.makeKeys([ids]) : []
 
-    if (keys.length === 0) return;
+    if (keys.length === 0) return
     await this.client.unlink(...keys)
   }
 
@@ -296,46 +296,38 @@ export abstract class Repository {
 
   /**
    * Kicks off the process of building a query. Requires that RediSearch (and optionally
-   * RedisJSON) be is installed on your instance of Redis.
-   * @template TEntity The type of {@link Entity} sought.
+   * RedisJSON) be installed on your instance of Redis.
+   *
    * @returns A {@link Search} object.
    */
   search(): Search {
-    return new Search(this.schema, this.client);
+    return new Search(this.schema, this.client)
   }
 
   /**
-   * Creates a search that bypassed Redis OM and instead allows you to execute a raw
+   * Creates a search that bypasses Redis OM and instead allows you to execute a raw
    * RediSearch query. Requires that RediSearch (and optionally RedisJSON) be installed
    * on your instance of Redis.
-   * @template TEntity The type of {@link Entity} sought.
+   *
+   * Refer to https://redis.io/docs/stack/search/reference/query_syntax/ for details on
+   * RediSearch query syntax.
+   *
    * @query The raw RediSearch query you want to rune.
    * @returns A {@link RawSearch} object.
    */
   searchRaw(query: string): RawSearch {
-    return new RawSearch(this.schema, this.client, query);
+    return new RawSearch(this.schema, this.client, query)
   }
 
-  /** @internal */
-  protected abstract writeEntity(entity: Entity): Promise<void>;
-
-  /** @internal */
-  protected abstract readEntities(ids: string[]): Promise<Entity[]>;
-
-  /** @internal */
-  protected makeKeys(ids: string[]): string[] {
-    return ids.map(id => this.makeKey(id));
+  private async writeEntity(entity: Entity): Promise<void> {
+    return this.schema.dataStructure === 'HASH' ? this.writeEntityToHash(entity) : this.writeEntityToJson(entity)
   }
 
-  /** @internal */
-  protected makeKey(id: string): string {
-    return `${this.schema.prefix}:${id}`;
+  private async readEntities(ids: string[]): Promise<Entity[]> {
+    return this.schema.dataStructure === 'HASH' ? this.readEntitiesFromHash(ids) : this.readEntitiesFromJson(ids)
   }
-}
 
-/** @internal */
-export class HashRepository extends Repository {
-  protected async writeEntity(entity: Entity): Promise<void> {
+  private async writeEntityToHash(entity: Entity): Promise<void> {
     const { entityId, keyName, ...entityData } = entity
     const hashData: RedisHashData = toRedisHash(this.schema, entityData)
     if (Object.keys(hashData).length === 0) {
@@ -345,27 +337,24 @@ export class HashRepository extends Repository {
     }
   }
 
-  protected async readEntities(ids: string[]): Promise<Entity[]> {
+  private async readEntitiesFromHash(ids: string[]): Promise<Entity[]> {
     return Promise.all(
       ids.map(async (entityId) => {
-        const keyName = this.makeKey(entityId);
+        const keyName = this.makeKey(entityId)
         const hashData = await this.client.hgetall(keyName)
         const entityData = fromRedisHash(this.schema, hashData)
         const entity = { ...entityData, entityId, keyName}
         return entity
-      }));
+      }))
   }
-}
 
-/** @internal */
-export class JsonRepository extends Repository {
-  protected async writeEntity(entity: Entity): Promise<void> {
+  private async writeEntityToJson(entity: Entity): Promise<void> {
     const { entityId, keyName, ...entityData } = entity
     const jsonData: RedisJsonData = toRedisJson(this.schema, entityData)
     await this.client.jsonset(keyName ?? '', jsonData)
   }
 
-  protected async readEntities(ids: string[]): Promise<Entity[]> {
+  private async readEntitiesFromJson(ids: string[]): Promise<Entity[]> {
     return Promise.all(
       ids.map(async (entityId) => {
         const keyName = this.makeKey(entityId)
@@ -374,5 +363,13 @@ export class JsonRepository extends Repository {
         const entity = { ...entityData, entityId, keyName}
         return entity
       }))
+  }
+
+  private makeKeys(ids: string[]): string[] {
+    return ids.map(id => this.makeKey(id))
+  }
+
+  private makeKey(id: string): string {
+    return `${this.schema.prefix}:${id}`
   }
 }

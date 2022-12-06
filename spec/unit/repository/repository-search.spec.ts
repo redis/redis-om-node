@@ -1,52 +1,67 @@
 import '../helpers/mock-client'
-import { Client } from '$lib/client';
-import { Search, RawSearch } from '$lib/search';
-import { Repository } from '$lib/repository';
-import { HashRepository } from '$lib/repository';
 
-import { simpleSchema, SimpleEntity } from '../helpers/test-entity-and-schema';
+import { Client } from '$lib/client'
+import { AbstractSearch, Search, RawSearch } from '$lib/search'
+import { Repository } from '$lib/repository'
 
+import { simpleSchema } from '../helpers/test-entity-and-schema'
 
 describe("Repository", () => {
 
-  let repository: Repository<SimpleEntity>;
-  let client: Client;
+  let client: Client
+  let repository: Repository
+  let search: AbstractSearch
 
-  beforeAll(() => {
+  beforeEach(() => {
     client = new Client()
-  });
+    repository = new Repository(simpleSchema, client)
+  })
 
   describe("#searchRaw", () => {
-    let search: RawSearch<SimpleEntity>;
 
     beforeEach(async () => {
-      repository = new HashRepository(simpleSchema, client);
-      search = repository.searchRaw("NOT A VALID QUERY BUT HEY WHATEVER");
-    });
+      search = repository.searchRaw("NOT A VALID QUERY BUT HEY WHATEVER")
+    })
 
-    it("creates a new Search with the schema and client", () => {
-      // expect(search).toHaveBeenCalledWith(simpleSchema, client, "NOT A VALID QUERY BUT HEY WHATEVER");
-    });
+    it("returns a RawSearch instance", () => expect(search).toBeInstanceOf(RawSearch))
 
-    it("returns the search", () => {
-      expect(search).toBeInstanceOf(RawSearch);
-    });
-  });
+    describe("the RawSearch instance", () => {
+      it("has the provided schema", () => {
+        // @ts-ignore: peek inside since I can't mock the constructor
+        expect(search.schema).toBe(simpleSchema)
+      })
+
+      it("has the provided client", () => {
+        // @ts-ignore: peek inside since I can't mock the constructor
+        expect(search.client).toBe(client)
+      })
+
+      it("has the provided query", () => {
+        // @ts-ignore: peek inside since I can't mock the constructor
+        expect(search.rawQuery).toBe("NOT A VALID QUERY BUT HEY WHATEVER")
+      })
+    })
+  })
 
   describe("#search", () => {
-    let search: Search<SimpleEntity>;
 
     beforeEach(async () => {
-      repository = new HashRepository(simpleSchema, client);
+      repository = new Repository(simpleSchema, client);
       search = repository.search();
-    });
+    })
 
-    it("creates a new Search with the schema and client", () => {
-      // expect(search).toHaveBeenCalledWith(simpleSchema, client);
-    });
+    it("returns a Search instance", () => expect(search).toBeInstanceOf(Search))
 
-    it("returns the search", () => {
-      expect(search).toBeInstanceOf(Search);
-    });
-  });
-});
+    describe("the Search instance", () => {
+      it("has the provided schema", () => {
+        // @ts-ignore: peek inside since I can't mock the constructor
+        expect(search.schema).toBe(simpleSchema)
+      })
+
+      it("has the provided client", () => {
+        // @ts-ignore: peek inside since I can't mock the constructor
+        expect(search.client).toBe(client)
+      })
+    })
+  })
+})

@@ -2,7 +2,7 @@ import '../helpers/mock-client'
 
 import { Client } from '$lib/client'
 import { Entity } from '$lib/entity'
-import { HashRepository, JsonRepository, Repository } from '$lib/repository'
+import { Repository } from '$lib/repository'
 import { Schema, SchemaDefinition } from '$lib/schema'
 
 import { A_NUMBER, A_NUMBER_STRING, A_STRING, ANOTHER_STRING, A_THIRD_STRING, ANOTHER_NUMBER_STRING, A_THIRD_NUMBER_STRING, ANOTHER_NUMBER, A_THIRD_NUMBER } from '../../helpers/example-data'
@@ -40,7 +40,7 @@ describe("Repository", () => {
 
     describe("when fetching a single entity from a hash", () => {
       beforeEach(async () => {
-        repository = new HashRepository(simpleHashSchema, client)
+        repository = new Repository(simpleHashSchema, client)
         vi.mocked(client.hgetall).mockResolvedValue(SOME_ENTITY_HASH_DATA)
         entity = await repository.fetch('foo')
       })
@@ -50,7 +50,7 @@ describe("Repository", () => {
 
     describe("when fetching multiple entities from a hash", () => {
       beforeEach(async () => {
-        repository = new HashRepository(simpleHashSchema, client)
+        repository = new Repository(simpleHashSchema, client)
         vi.mocked(client.hgetall)
           .mockResolvedValueOnce(SOME_ENTITY_HASH_DATA)
           .mockResolvedValueOnce(SOME_OTHER_ENTITY_HASH_DATA)
@@ -65,7 +65,7 @@ describe("Repository", () => {
 
     describe("when fetching multiple entities from a hash discretely", () => {
       beforeEach(async () => {
-        repository = new HashRepository(simpleHashSchema, client)
+        repository = new Repository(simpleHashSchema, client)
         vi.mocked(client.hgetall)
           .mockResolvedValueOnce(SOME_ENTITY_HASH_DATA)
           .mockResolvedValueOnce(SOME_OTHER_ENTITY_HASH_DATA)
@@ -80,7 +80,7 @@ describe("Repository", () => {
 
     describe("when fetching a single entity from JSON", () => {
       beforeEach(async () => {
-        repository = new JsonRepository(simpleJsonSchema, client)
+        repository = new Repository(simpleJsonSchema, client)
         vi.mocked(client.jsonget).mockResolvedValue(SOME_ENTITY_JSON_DATA)
         entity = await repository.fetch('foo')
       })
@@ -90,7 +90,7 @@ describe("Repository", () => {
 
     describe("when fetching multiple entities from JSON", () => {
       beforeEach(async () => {
-        repository = new JsonRepository(simpleJsonSchema, client)
+        repository = new Repository(simpleJsonSchema, client)
         vi.mocked(client.jsonget)
           .mockResolvedValueOnce(SOME_ENTITY_JSON_DATA)
           .mockResolvedValueOnce(SOME_OTHER_ENTITY_JSON_DATA)
@@ -105,7 +105,7 @@ describe("Repository", () => {
 
     describe("when fetching multiple entities from JSON discretely", () => {
       beforeEach(async () => {
-        repository = new JsonRepository(simpleJsonSchema, client)
+        repository = new Repository(simpleJsonSchema, client)
         vi.mocked(client.jsonget)
           .mockResolvedValueOnce(SOME_ENTITY_JSON_DATA)
           .mockResolvedValueOnce(SOME_OTHER_ENTITY_JSON_DATA)

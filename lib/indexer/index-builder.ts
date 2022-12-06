@@ -7,7 +7,7 @@ export function buildRediSearchIndex(schema: Schema): string[] {
   return schema.fields.map(buildEntry).flat()
 }
 
-const entryBuilders = {  HASH: buildHashEntry, JSON: buildJsonEntry };
+const entryBuilders = {  HASH: buildHashEntry, JSON: buildJsonEntry }
 
 function buildHashEntry(field: Field): string[] {
   const hashField = field.hashField

@@ -1,7 +1,7 @@
-import { Schema } from '$lib/schema/schema';
-import { SchemaDefinition } from '$lib/schema/definition';
-import { DataStructure } from '$lib/schema/options';
-import { buildRediSearchIndex } from '$lib/indexer/index-builder';
+import { Schema } from '$lib/schema/schema'
+import { SchemaDefinition } from '$lib/schema/definition'
+import { DataStructure } from '$lib/schema/options'
+import { buildRediSearchIndex } from '$lib/indexer/index-builder'
 
 describe("Schema", () => {
   describe.each([
@@ -31,9 +31,9 @@ describe("Schema", () => {
     }],
 
     ["that defines a separated string for a HASH", {
-      schemaDef: { aField: { type: 'string', separator: ';' } } as SchemaDefinition,
+      schemaDef: { aField: { type: 'string', separator: '' } } as SchemaDefinition,
       dataStructure: 'HASH',
-      expectedRedisSchema: ['aField', 'TAG', 'SEPARATOR', ';']
+      expectedRedisSchema: ['aField', 'TAG', 'SEPARATOR', '']
     }],
 
     ["that defines an indexed string for a HASH", {
@@ -55,20 +55,20 @@ describe("Schema", () => {
     }],
 
     ["that defines a fully configured string for a HASH", {
-      schemaDef: { aField: { type: 'string', alias: 'anotherField', sortable: true, separator: ';', indexed: false } } as SchemaDefinition,
+      schemaDef: { aField: { type: 'string', alias: 'anotherField', sortable: true, separator: '', indexed: false } } as SchemaDefinition,
       dataStructure: 'HASH',
-      expectedRedisSchema: ['anotherField', 'TAG', 'SEPARATOR', ';', 'SORTABLE', 'NOINDEX']
+      expectedRedisSchema: ['anotherField', 'TAG', 'SEPARATOR', '', 'SORTABLE', 'NOINDEX']
     }]
 
   ])("%s", (_, data) => {
     it("generates a Redis schema for the field", () => {
-      let schemaDef = data.schemaDef;
-      let dataStructure = data.dataStructure as DataStructure;
-      let expectedRedisSchema = data.expectedRedisSchema;
+      let schemaDef = data.schemaDef
+      let dataStructure = data.dataStructure as DataStructure
+      let expectedRedisSchema = data.expectedRedisSchema
 
-      let schema = new Schema('TestEntity', schemaDef, { dataStructure });
-      let actual = buildRediSearchIndex(schema);
-      expect(actual).toEqual(expectedRedisSchema);
-    });
-  });
-});
+      let schema = new Schema('TestEntity', schemaDef, { dataStructure })
+      let actual = buildRediSearchIndex(schema)
+      expect(actual).toEqual(expectedRedisSchema)
+    })
+  })
+})

@@ -1,7 +1,7 @@
 import '../helpers/mock-client'
 
 import { Client } from '$lib/client';
-import { HashRepository, Repository } from '$lib/repository';
+import { Repository } from '$lib/repository';
 import { Schema } from '$lib/schema';
 
 const simpleSchema = new Schema("SimpleEntity", {}, { dataStructure: 'HASH' })
@@ -13,7 +13,7 @@ describe("Repository", () => {
     let repository: Repository
 
     beforeAll(() => { client = new Client() })
-    beforeEach(() => { repository = new HashRepository(simpleSchema, client) })
+    beforeEach(() => { repository = new Repository(simpleSchema, client) })
 
     it("expires a single entity", async () => {
       await repository.expire('foo', 60);

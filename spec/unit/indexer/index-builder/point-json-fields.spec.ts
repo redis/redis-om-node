@@ -1,7 +1,7 @@
-import { Schema } from '$lib/schema/schema';
-import { SchemaDefinition } from '$lib/schema/definition';
-import { DataStructure } from '$lib/schema/options';
-import { buildRediSearchIndex } from '$lib/indexer/index-builder';
+import { Schema } from '$lib/schema/schema'
+import { SchemaDefinition } from '$lib/schema/definition'
+import { DataStructure } from '$lib/schema/options'
+import { buildRediSearchIndex } from '$lib/indexer/index-builder'
 
 describe("Schema", () => {
   describe.each([
@@ -33,13 +33,13 @@ describe("Schema", () => {
 
   ])("%s", (_, data) => {
     it("generates a Redis schema for the field", () => {
-      let schemaDef = data.schemaDef;
-      let dataStructure = data.dataStructure as DataStructure;
-      let expectedRedisSchema = data.expectedRedisSchema;
+      let schemaDef = data.schemaDef
+      let dataStructure = data.dataStructure as DataStructure
+      let expectedRedisSchema = data.expectedRedisSchema
 
-      let schema = new Schema('TestEntity', schemaDef, { dataStructure });
-      let actual = buildRediSearchIndex(schema);
-      expect(actual).toEqual(expectedRedisSchema);
-    });
-  });
-});
+      let schema = new Schema('TestEntity', schemaDef, { dataStructure })
+      let actual = buildRediSearchIndex(schema)
+      expect(actual).toEqual(expectedRedisSchema)
+    })
+  })
+})

@@ -1,7 +1,7 @@
-import { Schema } from '$lib/schema/schema';
-import { SchemaDefinition } from '$lib/schema/definition';
-import { DataStructure } from '$lib/schema/options';
-import { buildRediSearchIndex } from '$lib/indexer/index-builder';
+import { Schema } from '$lib/schema/schema'
+import { SchemaDefinition } from '$lib/schema/definition'
+import { DataStructure } from '$lib/schema/options'
+import { buildRediSearchIndex } from '$lib/indexer/index-builder'
 
 const warnSpy = vi.spyOn(global.console, 'warn').mockImplementation(() => {})
 
@@ -52,31 +52,31 @@ describe("Schema", () => {
 
   ])("%s", (_, data) => {
 
-    let redisSchema: Array<string>;
-    let schemaDef = data.schemaDef;
-    let dataStructure = data.dataStructure as DataStructure;
-    let expectedRedisSchema = data.expectedRedisSchema;
-    let expectedWarning = data.expectedWarning;
+    let redisSchema: Array<string>
+    let schemaDef = data.schemaDef
+    let dataStructure = data.dataStructure as DataStructure
+    let expectedRedisSchema = data.expectedRedisSchema
+    let expectedWarning = data.expectedWarning
 
     beforeEach(() => {
-      warnSpy.mockReset();
-      let schema = new Schema('TestEntity', schemaDef, { dataStructure });
-      redisSchema = buildRediSearchIndex(schema);
-    });
+      warnSpy.mockReset()
+      let schema = new Schema('TestEntity', schemaDef, { dataStructure })
+      redisSchema = buildRediSearchIndex(schema)
+    })
 
     it("generates a Redis schema for the field", () => {
-      expect(redisSchema).toEqual(expectedRedisSchema);
-    });
+      expect(redisSchema).toEqual(expectedRedisSchema)
+    })
 
     if (expectedWarning) {
       it("generates the expected warning", () => {
-        expect(warnSpy).toHaveBeenCalledWith(expectedWarning);
-      });
+        expect(warnSpy).toHaveBeenCalledWith(expectedWarning)
+      })
     } else {
       it("does not generate a warning", () => {
-        expect(warnSpy).not.toHaveBeenCalled();
-      });
+        expect(warnSpy).not.toHaveBeenCalled()
+      })
     }
 
-  });
-});
+  })
+})
