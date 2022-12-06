@@ -217,6 +217,22 @@ export abstract class Repository<TEntity extends Entity> {
   }
 
   /**
+   * Set the time to live of the {@link Entity} using a Date object. If the {@link Entity} is not found, does nothing.
+   * @param id The ID of the {@link Entity} to set and expiration for.
+   * @param expirationDate The moment up until the data is supposed to live.
+   */
+
+  async expireAt(id: string, expirationDate: Date) {
+    const key = this.makeKey(id);
+    const timeNow: number = Date.now();
+    if (timeNow >= expirationDate.getTime()) {
+      throw new Error(`Expiration date must be set in the future. expirationDate ${expirationDate.toString()} comes before ${new Date(timeNow).toString()}`);
+    }
+    const ttlInSeconds: number = Math.round((expirationDate.getTime() - timeNow) / 1000);
+    await this.client.expire(key, ttlInSeconds);
+  }
+
+  /**
    * Kicks off the process of building a query. Requires that RediSearch (and optionally
    * RedisJSON) be is installed on your instance of Redis.
    * @template TEntity The type of {@link Entity} sought.
