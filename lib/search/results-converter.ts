@@ -1,7 +1,7 @@
-import { RedisHashData, RedisJsonData } from "../client";
-import { Entity, EntityData } from "../entity";
-import { Schema } from "../schema";
-import { fromRedisHash, fromRedisJson } from "../transformer";
+import { RedisHashData, RedisJsonData } from "../client"
+import { Entity, EntityData } from "../entity"
+import { Schema } from "../schema"
+import { fromRedisHash, fromRedisJson } from "../transformer"
 
 export function extractCountFromSearchResults(results: any[]): number {
   const [count] = results
@@ -25,25 +25,25 @@ export function extractEntitiesFromSearchResults(schema: Schema, results: any[])
   const entityArrays = keysAndEntityArrays.filter((_entry, index) => index % 2 !== 0)
 
   if (schema.dataStructure === 'JSON') {
-    return entityArrays.map((entityArray, index) => jsonArrayToEntity(schema, keyNames[index], entityArray));
+    return entityArrays.map((entityArray, index) => jsonArrayToEntity(schema, keyNames[index], entityArray))
   } else {
-    return entityArrays.map((entityArray, index) => hashArrayToEntity(schema, keyNames[index], entityArray));
+    return entityArrays.map((entityArray, index) => hashArrayToEntity(schema, keyNames[index], entityArray))
   }
 }
 
 function hashArrayToEntity(schema: Schema, keyName: string, array: Array<string>): Entity {
-  const keys = array.filter((_entry, index) => index % 2 === 0);
-  const values = array.filter((_entry, index) => index % 2 !== 0);
+  const keys = array.filter((_entry, index) => index % 2 === 0)
+  const values = array.filter((_entry, index) => index % 2 !== 0)
 
   const hashData: RedisHashData = keys.reduce((object: any, key, index) => {
     object[key] = values[index]
     return object
-  }, {});
+  }, {})
 
   const entityData = fromRedisHash(schema, hashData)
 
   const entity = enrichEntityData(schema.prefix, keyName, entityData)
-  return entity;
+  return entity
 }
 
 function jsonArrayToEntity(schema: Schema, keyName: string, array: Array<string>): Entity {

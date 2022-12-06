@@ -1,7 +1,6 @@
-import { Schema } from "../schema"
+import { Field, Schema } from "../schema"
 import { RedisHashData } from "../client"
 import { convertBooleanToString, convertDateToString, convertEpochDateToString, convertIsoDateToString, convertNumberToString, convertPointToString, isArray, isBoolean, isDate, isNotNullish, isNumber, isObject, isPoint, isString, stringifyError } from "./transformer-common"
-import { Field } from "../schema/field"
 import { EntityData } from "../entity"
 
 export function toRedisHash(schema: Schema, data: EntityData): RedisHashData {

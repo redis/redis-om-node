@@ -1,4 +1,4 @@
-import { CaseSensitiveFieldDefinition, FieldDefinition, FieldType, NormalizedFieldDefinition, PhoneticFieldDefinition, SeparableFieldDefinition, SortableFieldDefinition, StemmingFieldDefinition, WeightFieldDefinition } from "./definition"
+import { AllFieldDefinition, FieldDefinition, FieldType } from "./definitions"
 
 /**
  * Describes a field in a {@link Schema).
@@ -6,7 +6,7 @@ import { CaseSensitiveFieldDefinition, FieldDefinition, FieldType, NormalizedFie
 export class Field {
 
   private _name: string
-  private _definition: FieldDefinition
+  private _definition: AllFieldDefinition
 
   /**
    * Creates a Field.
@@ -43,17 +43,17 @@ export class Field {
 
   /** The separator for string[] fields when stored in Hashes. */
   get separator(): string {
-    return (this._definition as SeparableFieldDefinition).separator ?? '|'
+    return this._definition.separator ?? '|'
   }
 
   /** Indicates that the field as sortable. */
   get sortable(): boolean {
-    return (this._definition as SortableFieldDefinition).sortable ?? false
+    return this._definition.sortable ?? false
   }
 
   /** The case-sensitivity of the field. */
   get caseSensitive(): boolean {
-    return (this._definition as CaseSensitiveFieldDefinition).caseSensitive ?? false
+    return this._definition.caseSensitive ?? false
   }
 
   /** Indicates the field as being indexed—and thus queryable—by RediSearch. */
@@ -63,21 +63,21 @@ export class Field {
 
   /** Indicates that the field as indexed with stemming support. */
   get stemming(): boolean {
-    return (this._definition as StemmingFieldDefinition).stemming ?? true
+    return this._definition.stemming ?? true
   }
 
   /** Inidicates that the field is normalized. */
   get normalized(): boolean {
-    return (this._definition as NormalizedFieldDefinition).normalized ?? true
+    return this._definition.normalized ?? true
   }
 
   /** The search weight of the field. */
   get weight(): number | null {
-    return (this._definition as WeightFieldDefinition).weight ?? null
+    return this._definition.weight ?? null
   }
 
   /** The phonetic matcher for the field. */
   get matcher(): string | null {
-    return (this._definition as PhoneticFieldDefinition).matcher ?? null
+    return this._definition.matcher ?? null
   }
 }

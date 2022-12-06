@@ -1,4 +1,4 @@
-import { Point } from "../entity/point";
+import { Point } from "../entity"
 
 export const isNull = (value: any): boolean => value === null
 export const isDefined = (value: any): boolean => value !== undefined

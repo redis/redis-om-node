@@ -5,7 +5,7 @@ import { Entity } from "../entity"
 
 import { IdStrategy, DataStructure, StopWordOptions, SchemaOptions } from './options'
 
-import { SchemaDefinition } from './definition'
+import { SchemaDefinition } from './definitions'
 import { Field } from './field'
 
 /**

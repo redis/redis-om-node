@@ -1,11 +1,9 @@
 import { createClient } from 'redis';
 
 import { Client } from '$lib/client';
-import { Schema } from '$lib/schema/schema';
-import { Entity } from '$lib/entity/entity';
+import { Schema } from '$lib/schema';
 import { Repository } from '$lib/repository';
 
-import { Point } from '../../lib';
 
 describe("Demo", () => {
 
@@ -15,57 +13,32 @@ describe("Demo", () => {
     redis.on('error', (err) => console.log('Redis Client Error', err));
     await redis.connect();
 
-    // define the interface, just for TypeScript
-    interface BigfootSighting {
-      id: string;
-      date: Date;
-      title: string;
-      observed: string;
-      classification: Array<string>;
-      county: string;
-      state: string;
-      location: Point;
-      highTemp: number;
-      lowTemp: number;
-      fullMoon: boolean;
-    }
-
-    // define the entity class and add any business logic to it
-    class BigfootSighting extends Entity {
-      get highTempF() { return this.highTemp; }
-      get highTempC() { return this.f2c(this.highTemp); }
-      get lowTempF() { return this.lowTemp }
-      get lowTempC() { return this.f2c(this.lowTemp); }
-
-      private f2c(f: number): number { return (f - 32) * 5 / 9; }
-    }
-
-    // get a client use an existing Redis connection
+    // get a client to use an existing Redis connection
     let client = await new Client().use(redis);
 
-    let schema = new Schema<BigfootSighting>(
-      BigfootSighting, {
-      id: { type: 'string' },
-      date: { type: 'date' },
-      title: { type: 'text' },
-      observed: { type: 'text' },
-      classification: { type: 'string[]' },
-      county: { type: 'string' },
-      state: { type: 'string' },
-      location: { type: 'point' },
-      highTemp: { type: 'number' },
-      lowTemp: { type: 'number' },
-      fullMoon: { type: 'boolean' }
-    }, {
-      useStopWords: 'OFF'
-    });
+    let schema = new Schema(
+      'BigfootSighting', {
+        id: { type: 'string' },
+        date: { type: 'date' },
+        title: { type: 'text' },
+        observed: { type: 'text' },
+        classification: { type: 'string[]' },
+        county: { type: 'string' },
+        state: { type: 'string' },
+        location: { type: 'point' },
+        highTemp: { type: 'number' },
+        lowTemp: { type: 'number' },
+        fullMoon: { type: 'boolean' }
+      }, {
+        useStopWords: 'OFF'
+      });
 
-    let repository: Repository<BigfootSighting> = client.fetchRepository<BigfootSighting>(schema);
+    let repository: Repository = client.fetchRepository(schema);
 
     await repository.createIndex();
 
     // create an entity
-    let entity = await repository.createEntity();
+    let entity = repository.createEntity();
     entity.id = '8086';
     entity.date = new Date('1978-10-09T00:00:00.000Z');
     entity.title = "Bigfoot by the Walmart";
@@ -78,7 +51,7 @@ describe("Demo", () => {
     await repository.expire(entityId, 60);
 
     // create an entity (#2)
-    entity = await repository.createEntity({
+    entity = repository.createEntity({
       id: '8086',
       date: new Date('1978-10-09T00:00:00.000Z'),
       title: "Bigfoot by the Walmart",
@@ -109,8 +82,9 @@ describe("Demo", () => {
     entity.lowTemp = 29;
     entity.county = "Athens";
     entity.state = "Ohio";
-    entity.location = { longitude: 23.45, latitude: 67.89 },
-      await repository.save(entity);
+    entity.location = { longitude: 23.45, latitude: 67.89 };
+
+    await repository.save(entity);
 
     // remove an entity
     await repository.remove(entityId);
@@ -136,7 +110,8 @@ describe("Demo", () => {
     await repository.dropIndex();
 
     for (const entity of allEntities) {
-      await repository.remove(entity.entityId)
+      const id = entity.entityId
+      if (id) await repository.remove(id)
     }
 
     // close the client

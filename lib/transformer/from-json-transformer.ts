@@ -1,12 +1,11 @@
 import { JSONPath } from 'jsonpath-plus'
 import clone from 'just-clone'
 
-import { Schema } from "../schema";
-import { RedisJsonData } from "../client";
+import { Field, Schema } from "../schema"
+import { RedisJsonData } from "../client"
 
 import { convertEpochToDate, convertKnownValueToString, convertStringToPoint, isArray, isBoolean, isNull, isNumber, isPointString, isString, stringifyError } from "./transformer-common"
-import { Field } from '../schema/field';
-import { EntityData } from '../entity';
+import { EntityData } from '../entity'
 
 
 export function fromRedisJson(schema: Schema, json: RedisJsonData): EntityData {

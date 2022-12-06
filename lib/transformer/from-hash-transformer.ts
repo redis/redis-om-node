@@ -1,7 +1,6 @@
-import { Schema } from "../schema"
+import { Field, Schema } from "../schema"
 import { RedisHashData } from "../client"
 import { convertEpochStringToDate, convertStringToNumber, convertStringToPoint, isNotNullish, isNumberString, isPointString, stringifyError } from "./transformer-common"
-import { Field } from "../schema/field"
 import { EntityData } from "../entity"
 
 export function fromRedisHash(schema: Schema, hashData: RedisHashData): EntityData {
@@ -17,8 +16,8 @@ export function fromRedisHash(schema: Schema, hashData: RedisHashData): EntityDa
 function convertKnownValueFromString(field: Field, value: string): any {
   switch (field.type) {
     case 'boolean':
-      if (value === '1') return true;
-      if (value === '0') return false;
+      if (value === '1') return true
+      if (value === '0') return false
       throw Error(`Expected a value of '1' or '0' from Redis for a boolean but received: ${stringifyError(value)}`)
     case 'number':
       if (isNumberString(value)) return convertStringToNumber(value)

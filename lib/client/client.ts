@@ -1,8 +1,10 @@
 import { createClient } from 'redis'
+
 import { Repository } from '../repository'
 import { Schema } from '../schema'
 import { RedisError } from '../errors'
 
+/** A Redis connection. */
 export type RedisConnection = ReturnType<typeof createClient>
 
 /** @internal */
@@ -11,7 +13,7 @@ export type RedisHashData = { [key: string]: string }
 /** @internal */
 export type RedisJsonData = { [key: string]: any }
 
-/** The type of data structure in Redis to map objects to. */
+/** @internal */
 export type SearchDataStructure = 'HASH' | 'JSON'
 
 /** @internal */

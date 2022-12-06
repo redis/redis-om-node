@@ -5,5 +5,5 @@ export abstract class Where {
   /**
    * Converts this {@link Where} into a portion of a RediSearch query.
    */
-  abstract toString(): string;
+  abstract toString(): string
 }
