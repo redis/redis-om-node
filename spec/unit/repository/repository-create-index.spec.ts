@@ -25,8 +25,8 @@ describe("Repository", () => {
         beforeEach(async () => {
           vi.mocked(client.get).mockResolvedValue(null)
           vi.mocked(buildRediSearchIndex).mockReturnValue(bogusSchema)
-          await repository.createIndex();
-        });
+          await repository.createIndex()
+        })
 
         it("asks the client for the index hash", () =>
           expect(client.get).toHaveBeenCalledWith(simpleSchema.indexHashName))
@@ -77,7 +77,7 @@ describe("Repository", () => {
           vi.mocked(client.get).mockResolvedValue('A_MISMATCHED_INDEX_HASH')
           vi.mocked(buildRediSearchIndex).mockReturnValue(bogusSchema)
           await repository.createIndex()
-        });
+        })
 
         it("asks the client for the index hash", () =>
           expect(client.get).toHaveBeenCalledWith(simpleSchema.indexHashName))
@@ -127,7 +127,7 @@ describe("Repository", () => {
 
       beforeEach(async () => {
         repository = new Repository(customStopWordsSchema, client)
-        await repository.createIndex();
+        await repository.createIndex()
       })
 
       it("asks the client to create the index with data from the schema", () => {

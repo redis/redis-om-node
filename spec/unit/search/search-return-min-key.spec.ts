@@ -1,15 +1,15 @@
 import { client } from '../helpers/mock-client'
-import { Client } from "$lib/client";
-import { Search, RawSearch } from "$lib/search";
+import { Client } from "$lib/client"
+import { Search, RawSearch } from "$lib/search"
 
-import { simpleHashSchema } from "../helpers/test-entity-and-schema";
+import { simpleHashSchema } from "../helpers/test-entity-and-schema"
 import { mockClientSearchToReturnNothing, mockClientSearchToReturnSingleKey,
-  SIMPLE_ENTITY_1 } from '../helpers/search-helpers';
+  SIMPLE_ENTITY_1 } from '../helpers/search-helpers'
 
-console.warn = vi.fn();
+console.warn = vi.fn()
 
 
-type HashSearch = Search | RawSearch;
+type HashSearch = Search | RawSearch
 
 describe.each([
   [ "FluentSearch",
@@ -19,34 +19,14 @@ describe.each([
 ])("%s", (_, search: HashSearch) => {
 
   describe("#returnMinKey", () => {
-    let key: string | null;
-    let indexName = 'SimpleHashEntity:index', query = '*';
+    let key: string | null
+    let indexName = 'SimpleHashEntity:index', query = '*'
 
     describe("when querying no results", () => {
       beforeEach( async () => {
-        mockClientSearchToReturnNothing();
-        key = await search.return.minKey('aNumber');
-      });
-
-      it("asks the client for the first result of a given repository", () => {
-        expect(client.search).toHaveBeenCalledTimes(1);
-        expect(client.search).toHaveBeenCalledWith({
-          indexName,
-          query,
-          limit: { offset: 0, count: 1 },
-          sort: { field: 'aNumber', order: 'ASC' },
-          keysOnly: true
-        });
-      });
-
-      it("return no result", () => expect(key).toBe(null));
-    });
-
-    describe("when getting a result", () => {
-      beforeEach(async () => {
-        mockClientSearchToReturnSingleKey();
-        key = await search.return.minKey('aNumber');
-      });
+        mockClientSearchToReturnNothing()
+        key = await search.return.minKey('aNumber')
+      })
 
       it("asks the client for the first result of a given repository", () => {
         expect(client.search).toHaveBeenCalledTimes(1)
@@ -56,12 +36,32 @@ describe.each([
           limit: { offset: 0, count: 1 },
           sort: { field: 'aNumber', order: 'ASC' },
           keysOnly: true
-        });
-      });
+        })
+      })
+
+      it("return no result", () => expect(key).toBe(null))
+    })
+
+    describe("when getting a result", () => {
+      beforeEach(async () => {
+        mockClientSearchToReturnSingleKey()
+        key = await search.return.minKey('aNumber')
+      })
+
+      it("asks the client for the first result of a given repository", () => {
+        expect(client.search).toHaveBeenCalledTimes(1)
+        expect(client.search).toHaveBeenCalledWith({
+          indexName,
+          query,
+          limit: { offset: 0, count: 1 },
+          sort: { field: 'aNumber', order: 'ASC' },
+          keysOnly: true
+        })
+      })
 
       it("returns the first result of a given repository", () => {
-        expect(key).toEqual(`SimpleHashEntity:${SIMPLE_ENTITY_1.entityId}`);
-      });
-    });
-  });
-});
+        expect(key).toEqual(`SimpleHashEntity:${SIMPLE_ENTITY_1.entityId}`)
+      })
+    })
+  })
+})

@@ -1,13 +1,14 @@
-import { toRedisJson } from "$lib/transformer";
-import { Schema } from "$lib/schema";
-import { RedisJsonData } from "$lib/client";
-import { ANOTHER_STRING, AN_INVALID_POINT, A_DATE, A_DATE_EPOCH, A_DATE_ISO, A_NUMBER, A_NUMBER_STRING, A_PARITAL_POINT, A_POINT, A_POINT_STRING, A_STRING, A_THIRD_STRING, SOME_STRINGS, SOME_TEXT } from "../../helpers/example-data";
+import { RedisJsonData } from "$lib/client"
+import { Schema } from "$lib/schema"
+import { toRedisJson } from "$lib/transformer"
+
+import { ANOTHER_STRING, AN_INVALID_POINT, A_DATE, A_DATE_EPOCH, A_DATE_ISO, A_NUMBER, A_NUMBER_STRING, A_PARITAL_POINT, A_POINT, A_POINT_STRING, A_STRING, A_THIRD_STRING, SOME_STRINGS, SOME_TEXT } from "../../helpers/example-data"
 
 
 describe("#toRedisJson", () => {
 
-  let schema: Schema;
-  let actual: RedisJsonData;
+  let schema: Schema
+  let actual: RedisJsonData
 
   describe("when converting data not described in the schema", () => {
     beforeEach(() => {

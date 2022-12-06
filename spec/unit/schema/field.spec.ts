@@ -1,5 +1,4 @@
-import { FieldDefinition } from '$lib/schema'
-import { Field } from '$lib/schema/field'
+import { Field } from '$lib/schema'
 
 describe("Field", () => {
 

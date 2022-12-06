@@ -1,28 +1,28 @@
 import '../helpers/mock-client'
-import { Client } from "$lib/client";
-import { Search, RawSearch } from "$lib/search";
+import { Client } from "$lib/client"
+import { Search, RawSearch } from "$lib/search"
 
 import {
   simpleHashSchema, simpleSortableHashSchema,
   simpleJsonSchema, simpleSortableJsonSchema
-} from "../helpers/test-entity-and-schema";
+} from "../helpers/test-entity-and-schema"
 import {
   mockClientSearchToReturnMultipleHashes as hashMocker,
   mockClientSearchToReturnMultipleJsonStrings as jsonMocker
-} from '../helpers/search-helpers';
-import { RedisError } from '../../../lib';
+} from '../helpers/search-helpers'
+import { RedisError } from '../../../lib'
 
 
 const warnSpy = vi.spyOn(global.console, 'warn').mockImplementation(() => {})
 const errorSpy = vi.spyOn(global.console, 'error').mockImplementation(() => {})
 
-type HashSearch = Search | RawSearch;
-type JsonSearch = Search | RawSearch;
+type HashSearch = Search | RawSearch
+type JsonSearch = Search | RawSearch
 
 
 beforeEach(() => {
-  vi.mocked(client.search).mockReset();
-});
+  vi.mocked(client.search).mockReset()
+})
 
 const client = new Client()
 
@@ -47,13 +47,13 @@ describe.each([
   ])("%s", (_, search: HashSearch | JsonSearch, clientMocker) => {
 
     beforeEach(async () => {
-      clientMocker();
-    });
+      clientMocker()
+    })
 
     describe("#sortAscending", () => {
       beforeEach(async () => {
-        await search.sortAscending('aNumber').return.first();
-      });
+        await search.sortAscending('aNumber').return.first()
+      })
 
       it("asks the client for the results with the expected sort options", () => {
         expect(client.search).toHaveBeenCalledWith({
@@ -62,14 +62,14 @@ describe.each([
           limit: { offset: 0, count: 1 },
           sort: { field: 'aNumber', order: 'ASC' },
           keysOnly: false
-        });
-      });
-    });
+        })
+      })
+    })
 
     describe("#sortAsc", () => {
       beforeEach(async () => {
-        await search.sortAsc('aNumber').return.first();
-      });
+        await search.sortAsc('aNumber').return.first()
+      })
 
       it("asks the client for the results with the expected sort options", () => {
         expect(client.search).toHaveBeenCalledWith({
@@ -78,14 +78,14 @@ describe.each([
           limit: { offset: 0, count: 1 },
           sort: { field: 'aNumber', order: 'ASC' },
           keysOnly: false
-        });
-      });
-    });
+        })
+      })
+    })
 
     describe("#sortDescending", () => {
       beforeEach(async () => {
-        await search.sortDescending('aNumber').return.first();
-      });
+        await search.sortDescending('aNumber').return.first()
+      })
 
       it("asks the client for the results with the expected sort options", () => {
         expect(client.search).toHaveBeenCalledWith({
@@ -94,14 +94,14 @@ describe.each([
           limit: { offset: 0, count: 1 },
           sort: { field: 'aNumber', order: 'DESC' },
           keysOnly: false
-        });
-      });
-    });
+        })
+      })
+    })
 
     describe("#sortDesc", () => {
       beforeEach(async () => {
-        await search.sortDesc('aNumber').return.first();
-      });
+        await search.sortDesc('aNumber').return.first()
+      })
 
       it("asks the client for the results with the expected sort options", () => {
         expect(client.search).toHaveBeenCalledWith({
@@ -110,10 +110,10 @@ describe.each([
           limit: { offset: 0, count: 1 },
           sort: { field: 'aNumber', order: 'DESC' },
           keysOnly: false
-        });
-      });
-    });
-  });
+        })
+      })
+    })
+  })
 
   describe("#sortBy", () => {
     describe.each([
@@ -266,35 +266,35 @@ describe.each([
 
     ])("%s", (_, search: HashSearch | JsonSearch, clientMocker, data: any) => {
 
-      let field = data.field;
-      let order = data.sortOrder;
-      let expectedSortOptions = data.expectedSortOptions;
-      let expectedWarning = data.expectedWarning;
-      let expectedError = data.expectedError;
-      let actualError: RedisError;
+      let field = data.field
+      let order = data.sortOrder
+      let expectedSortOptions = data.expectedSortOptions
+      let expectedWarning = data.expectedWarning
+      let expectedError = data.expectedError
+      let actualError: RedisError
 
       beforeEach(async () => {
-        clientMocker();
+        clientMocker()
         try {
-          await search.sortBy(field, order).return.first();
+          await search.sortBy(field, order).return.first()
         } catch (error) {
-          actualError = error as RedisError;
+          actualError = error as RedisError
         }
-      });
+      })
 
       if (expectedError) {
         it("logs and throws an error", () => {
-          expect(actualError!.message).toBe(expectedError);
-          expect(errorSpy).toHaveBeenCalledWith(expectedError);
-        });
-        return;
+          expect(actualError!.message).toBe(expectedError)
+          expect(errorSpy).toHaveBeenCalledWith(expectedError)
+        })
+        return
       }
 
       it("does not generate an error", () => {
         if (actualError) console.log(actualError)
-        expect(actualError).toBeUndefined();
-        expect(errorSpy).not.toHaveBeenCalled();
-      });
+        expect(actualError).toBeUndefined()
+        expect(errorSpy).not.toHaveBeenCalled()
+      })
 
       it("asks the client for the results with the expected sort options", () => {
         expect(client.search).toHaveBeenCalledWith({
@@ -303,18 +303,18 @@ describe.each([
           limit: { offset: 0, count: 1 },
           sort: expectedSortOptions,
           keysOnly: false
-        });
-      });
+        })
+      })
 
       if (expectedWarning) {
         it("generates the expected warning", () => {
-          expect(warnSpy).toHaveBeenCalledWith(expectedWarning);
-        });
+          expect(warnSpy).toHaveBeenCalledWith(expectedWarning)
+        })
       } else {
         it("does not generate a warning", () => {
-          expect(warnSpy).not.toHaveBeenCalled();
-        });
+          expect(warnSpy).not.toHaveBeenCalled()
+        })
       }
-    });
-  });
-});
+    })
+  })
+})

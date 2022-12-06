@@ -1,13 +1,14 @@
-import { fromRedisJson } from "$lib/transformer";
-import { Schema } from "$lib/schema";
-import { ANOTHER_STRING, A_DATE, A_DATE_EPOCH, A_DATE_EPOCH_STRING, A_NUMBER, A_NUMBER_STRING, A_POINT, A_POINT_STRING, A_STRING, A_THIRD_STRING, SOME_STRINGS, SOME_STRINGS_JOINED, SOME_TEXT } from "../../helpers/example-data";
-import { RedisJsonData } from "../../../dist";
-import { EntityData } from "$lib/entity";
+import { RedisJsonData } from "$lib/client"
+import { EntityData } from "$lib/entity"
+import { Schema } from "$lib/schema"
+import { fromRedisJson } from "$lib/transformer"
+
+import { ANOTHER_STRING, A_DATE, A_DATE_EPOCH, A_DATE_EPOCH_STRING, A_NUMBER, A_NUMBER_STRING, A_POINT, A_POINT_STRING, A_STRING, A_THIRD_STRING, SOME_STRINGS, SOME_STRINGS_JOINED, SOME_TEXT } from "../../helpers/example-data"
 
 describe("#fromRedisJson", () => {
 
-  let schema: Schema;
-  let actual: EntityData;
+  let schema: Schema
+  let actual: EntityData
 
   beforeEach(() => {
     schema = new Schema('TestPrefix', {

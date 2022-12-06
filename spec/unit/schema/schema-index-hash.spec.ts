@@ -1,4 +1,4 @@
-import { Schema, SchemaDefinition, SchemaOptions } from '$lib/schema';
+import { Schema, SchemaDefinition, SchemaOptions } from '$lib/schema'
 
 const EMPTY_SCHEMA_DEF: SchemaDefinition = {}
 const WELL_POPULATED_SCHEMA_DEF: SchemaDefinition = {
@@ -76,7 +76,7 @@ describe("Schema", () => {
     ])("%s", (_, data) => {
       it("generates the expected hash", () => {
         const schema = new Schema('TestEntity', data.schemaDef, data.options)
-        expect(schema.indexHash).toBe(data.expectedHash);
+        expect(schema.indexHash).toBe(data.expectedHash)
       })
     })
   })

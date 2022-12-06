@@ -1,8 +1,8 @@
 import '../helpers/mock-client'
 
-import { Client } from '$lib/client';
-import { Repository } from '$lib/repository';
-import { Schema } from '$lib/schema';
+import { Client } from '$lib/client'
+import { Repository } from '$lib/repository'
+import { Schema } from '$lib/schema'
 
 const simpleSchema = new Schema("SimpleEntity", {}, { dataStructure: 'HASH' })
 
@@ -16,7 +16,7 @@ describe("Repository", () => {
     beforeEach(() => { repository = new Repository(simpleSchema, client) })
 
     it("expires a single entity", async () => {
-      await repository.expire('foo', 60);
+      await repository.expire('foo', 60)
       expect(client.expire).toHaveBeenCalledWith('SimpleEntity:foo', 60)
     })
 
