@@ -368,7 +368,7 @@ export abstract class AbstractSearch {
   }
 
   /**
-   * Alias for {@link Search.pageOrKeys}.
+   * Alias for {@link Search.pageOfKeys}.
    */
   async returnPageOfKeys(offset: number, count: number): Promise<string[]> {
     return await this.pageOfKeys(offset, count)

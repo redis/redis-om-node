@@ -1,7 +1,7 @@
 /** The type of data structure in Redis to map objects to. */
 export type DataStructure = 'HASH' | 'JSON';
 
-/** A function that generates random {@link Entity.entityId | Entity IDs}. */
+/** A function that generates random entityIds. */
 export type IdStrategy = () => string;
 
 /** Valid values for how to use stop words for a given {@link Schema}. */
@@ -29,10 +29,10 @@ export type SchemaOptions = {
   dataStructure?: DataStructure
 
   /**
-   * A function that generates a random {@link Entity.entityId | Entity ID}. Defaults
-   * to a function that generates [ULIDs](https://github.com/ulid/spec). Combined with
-   * prefix to generate a Redis key. If prefix is `Foo` and idStratgey returns `12345`
-   * then the generated key would be `Foo:12345`.
+   * A function that generates a random entityId. Defaults to a function that generates
+   * [ULIDs](https://github.com/ulid/spec). Combined with prefix to generate a Redis key.
+   * If prefix is `Foo` and idStratgey returns `12345` then the generated key would be
+   * `Foo:12345`.
    */
   idStrategy?: IdStrategy
 

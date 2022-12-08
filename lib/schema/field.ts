@@ -1,7 +1,7 @@
 import { AllFieldDefinition, FieldDefinition, FieldType } from "./definitions"
 
 /**
- * Describes a field in a {@link Schema).
+ * Describes a field in a {@link Schema}.
  */
 export class Field {
 

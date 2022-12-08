@@ -91,8 +91,7 @@ export class Schema {
 
   /**
    * The configured usage of stop words, a string with the value of either `OFF`, `DEFAULT`,
-   * or `CUSTOM`. See {@link SchemaOptions.useStopWords} and {@link SchemaOptions.stopWords}
-   * for more details.
+   * or `CUSTOM`. See {@link SchemaOptions} for more details.
    */
   get useStopWords(): StopWordOptions { return this._options?.useStopWords ?? 'DEFAULT' }
 

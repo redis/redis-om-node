@@ -1,12 +1,9 @@
-import { Schema } from "../schema"
-import { Client, RedisHashData, RedisJsonData } from "../client"
-
-import { Search, RawSearch } from '../search/search'
-
-import { CreateIndexOptions } from "../client"
-import { buildRediSearchIndex } from "../indexer"
-import { fromRedisHash, fromRedisJson, toRedisHash, toRedisJson } from "../transformer"
+import { Client, CreateIndexOptions, RedisHashData, RedisJsonData } from "../client"
 import { Entity, EntityData } from "../entity"
+import { buildRediSearchIndex } from "../indexer"
+import { Schema } from "../schema"
+import { Search, RawSearch } from '../search'
+import { fromRedisHash, fromRedisJson, toRedisHash, toRedisJson } from "../transformer"
 
 /**
  * A repository is the main interaction point for reading, writing, and
@@ -109,14 +106,14 @@ export class Repository {
   }
 
   /**
-   * Creates an empty {@link Entity} with a generated {@link Entity#entityId} property.
+   * Creates an empty {@link Entity} with a generated entityId property.
    *
    * @returns A newly created Entity.
    */
   createEntity(): Entity
 
   /**
-   * Creates an empty {@link Entity} with a provided {@link Entity#entityId} property.
+   * Creates an empty {@link Entity} with a provided entityId.
    *
    * @param id The provided entityId.
    * @returns A newly created Entity.
@@ -124,7 +121,7 @@ export class Repository {
   createEntity(id: string): Entity
 
   /**
-   * Creates an {@link Entity} populated with provided data and a generated {@link Entity#entityId} property.
+   * Creates an {@link Entity} populated with provided data and a generated entityId property.
    *
    * @param entityData The provided entity data.
    * @returns A newly created Entity.
@@ -132,7 +129,7 @@ export class Repository {
   createEntity(entityData: EntityData): Entity
 
   /**
-   * Creates an {@link Entity} populated with provided data and a provided {@link Entity#entityId} property.
+   * Creates an {@link Entity} populated with provided data and a provided entityId.
    *
    * @param id The provided entityId.
    * @param entityData The provided entity data.
@@ -148,8 +145,8 @@ export class Repository {
   }
 
   /**
-   * Insert or update an {@link Entity} to Redis using its {@link Entity#entityId} property
-   * if present. If it's not, it generates one.
+   * Insert or update an {@link Entity} to Redis using its entityId property
+   * if present. If it's not, one is generated.
    *
    * @param entity The Entity to save.
    * @returns The provided or generated entityId.
@@ -157,7 +154,7 @@ export class Repository {
   async save(entity: Entity): Promise<string>
 
   /**
-   * Insert or update the {@link Entity} to Redis using the provided {@link Entity#entityId}.
+   * Insert or update the {@link Entity} to Redis using the provided entityId.
    *
    * @param id The Entity to save.
    * @param entity The Entity to save.
@@ -183,9 +180,10 @@ export class Repository {
   async createAndSave(entityData: EntityData): Promise<Entity>
 
   /**
-   * Creates and saves an {@link Entity} to the provided {@link Entity#entityId}. Equivalent
+   * Creates and saves an {@link Entity} to using the provided entityId. Equivalent
    * of calling {@link Repository#createEntity} followed by {@link Repository#save}.
    *
+   * @param id The entityId to save to.
    * @param entityData The data to be saved.
    * @returns The newly created and saved Entity.
    */
