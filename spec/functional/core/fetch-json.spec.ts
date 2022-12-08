@@ -1,59 +1,52 @@
-import { Client } from '$lib/client';
-import { Schema } from '$lib/schema/schema';
-import { Repository } from '$lib/repository';
+import { Client, Repository, Schema } from '$lib/index'
 
-import { SampleJsonEntity, loadTestJson, createJsonEntitySchema } from '../helpers/data-helper';
-import { removeAll } from '../helpers/redis-helper';
+import { createJsonEntitySchema, loadJson } from '../helpers/data-helper'
+import { removeAll } from '../helpers/redis-helper'
 
-import { AN_ENTITY, A_PARTIAL_ENTITY, AN_EMPTY_ENTITY } from '../../helpers/example-data';
+import { ANOTHER_ENTITY, ANOTHER_JSON, AN_EMPTY_ENTITY, AN_ENTITY, A_JSON, A_THIRD_ENTITY, A_THIRD_JSON } from '../helpers/json-example-data'
 
 describe("fetch JSON", () => {
 
-  let client: Client;
-  let repository: Repository<SampleJsonEntity>;
-  let schema: Schema<SampleJsonEntity>;
+  let client: Client
+  let repository: Repository
+  let schema: Schema
 
   beforeAll(async () => {
-    client = new Client();
-    await client.open();
+    client = new Client()
+    await client.open()
     await removeAll(client, 'fetch-json:')
-    await loadTestJson(client, 'fetch-json:full', AN_ENTITY);
-    await loadTestJson(client, 'fetch-json:partial', A_PARTIAL_ENTITY);
-    await loadTestJson(client, 'fetch-json:empty', AN_EMPTY_ENTITY);
+    await loadJson(client, 'fetch-json:1', A_JSON)
+    await loadJson(client, 'fetch-json:2', ANOTHER_JSON)
+    await loadJson(client, 'fetch-json:3', A_THIRD_JSON)
 
-    schema = createJsonEntitySchema('fetch-json');
-    repository = client.fetchRepository<SampleJsonEntity>(schema);
-  });
+    schema = createJsonEntitySchema('fetch-json')
+    repository = client.fetchRepository(schema)
+  })
 
   afterAll(async () => {
     await removeAll(client, 'fetch-json:')
     await client.close()
-  });
+  })
 
-  it("fetches a fully populated entity from Redis", async () => {
-    let entity = await repository.fetch('full');
-    expect(entity.entityId).toBe('full');
-    expect(entity).toEqual(expect.objectContaining(AN_ENTITY));
-  });
-
-  it("fetches a partially populated entity from Redis", async () => {
-    let entity = await repository.fetch('partial');
-    expect(entity.entityId).toBe('partial');
-    expect(entity).toEqual(expect.objectContaining(A_PARTIAL_ENTITY));
-  });
+  it("fetches a single entity from Redis", async () =>
+    expect(repository.fetch('1')).resolves.toEqual({ keyName: 'fetch-json:1', ...AN_ENTITY }))
 
   it("fetches an empty entity from Redis", async () => {
-    let entity = await repository.fetch('empty');
-    expect(entity.entityId).toBe('empty');
-    expect(entity).toEqual(expect.objectContaining(AN_EMPTY_ENTITY));
-  });
+    const entity = await repository.fetch('empty')
+    expect(entity).toEqual({ keyName: 'fetch-json:empty', ...AN_EMPTY_ENTITY })
+  })
 
-  it("fetches all the entities from Redis", async () => {
-    let entities = await repository.fetch('full', 'partial', 'empty');
+  it("fetches a missing entity from Redis", async () => {
+    const entity = await repository.fetch('missing')
+    expect(entity).toEqual({ entityId: 'missing', keyName: 'fetch-json:missing' })
+  })
+
+  it("fetches all the entities from Redis with discrete arguments", async () => {
+    let entities = await repository.fetch('1', '2', '3')
     expect(entities).toEqual(expect.arrayContaining([
-      expect.objectContaining({ entityId: 'full', ...AN_ENTITY }),
-      expect.objectContaining({ entityId: 'partial', ...A_PARTIAL_ENTITY }),
-      expect.objectContaining({ entityId: 'empty', ...AN_EMPTY_ENTITY })
-    ]));
-  });
-});
+      { keyName: 'fetch-json:1', ...AN_ENTITY },
+      { keyName: 'fetch-json:2', ...ANOTHER_ENTITY },
+      { keyName: 'fetch-json:3', ...A_THIRD_ENTITY }
+    ]))
+  })
+})

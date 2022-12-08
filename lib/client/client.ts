@@ -218,7 +218,7 @@ export class Client {
   }
 
   /** @internal */
-  async jsonget(key: string): Promise<RedisJsonData> {
+  async jsonget(key: string): Promise<RedisJsonData | null> {
     this.validateRedisOpen()
     const json = await this.redis.sendCommand<string>(['JSON.GET', key, '.'])
     return JSON.parse(json)

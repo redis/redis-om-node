@@ -19,6 +19,7 @@ const simpleJsonSchema = new Schema("SimpleEntity", aSimpleSchemaDef, { dataStru
 const AN_ENTITY = { entityId: 'foo', keyName: 'SimpleEntity:foo', aString: A_STRING, aNumber: A_NUMBER, aBoolean: true }
 const ANOTHER_ENTITY = { entityId: 'bar', keyName: 'SimpleEntity:bar', aString: ANOTHER_STRING, aNumber: ANOTHER_NUMBER, aBoolean: false }
 const A_THIRD_ENTITY = { entityId: 'baz', keyName: 'SimpleEntity:baz', aString: A_THIRD_STRING, aNumber: A_THIRD_NUMBER, aBoolean: true }
+const AN_EMPTY_ENTITY = { entityId: 'empty', keyName: 'SimpleEntity:empty' }
 
 const SOME_ENTITY_HASH_DATA = { aString: A_STRING, aNumber: A_NUMBER_STRING, aBoolean: '1' }
 const SOME_OTHER_ENTITY_HASH_DATA = { aString: ANOTHER_STRING, aNumber: ANOTHER_NUMBER_STRING, aBoolean: '0' }
@@ -46,6 +47,16 @@ describe("Repository", () => {
       })
 
       it("returns the expected entity", () => expect(entity).toEqual(AN_ENTITY))
+    })
+
+    describe("when fetching a empty entity from a hash", () => {
+      beforeEach(async () => {
+        repository = new Repository(simpleHashSchema, client)
+        vi.mocked(client.hgetall).mockResolvedValue({})
+        entity = await repository.fetch('empty')
+      })
+
+      it("returns the expected entity", () => expect(entity).toEqual(AN_EMPTY_ENTITY))
     })
 
     describe("when fetching multiple entities from a hash", () => {
@@ -86,6 +97,16 @@ describe("Repository", () => {
       })
 
       it("returns the expected entity", () => expect(entity).toEqual(AN_ENTITY))
+    })
+
+    describe("when fetching a empty entity from JSON", () => {
+      beforeEach(async () => {
+        repository = new Repository(simpleJsonSchema, client)
+        vi.mocked(client.jsonget).mockResolvedValue(null)
+        entity = await repository.fetch('empty')
+      })
+
+      it("returns the expected entity", () => expect(entity).toEqual(AN_EMPTY_ENTITY))
     })
 
     describe("when fetching multiple entities from JSON", () => {

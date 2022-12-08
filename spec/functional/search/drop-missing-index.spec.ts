@@ -1,34 +1,32 @@
-import { Client } from '$lib/client';
-import { Schema } from '$lib/schema/schema';
-import { Repository } from '$lib/repository';
+import { Client, Repository, Schema } from '$lib/index'
 
-import { createHashEntitySchema, SampleHashEntity } from '../helpers/data-helper';
-import { fetchIndexInfo  } from '../helpers/redis-helper';
+import { createHashEntitySchema } from '../helpers/data-helper'
+import { fetchIndexInfo  } from '../helpers/redis-helper'
 
 describe("drop missing index on hash", () => {
 
-  let client: Client;
-  let repository: Repository<SampleHashEntity>;
-  let schema: Schema<SampleHashEntity>;
+  let client: Client
+  let repository: Repository
+  let schema: Schema
 
   beforeAll(async () => {
-    client = new Client();
-    await client.open();
+    client = new Client()
+    await client.open()
 
-    schema = createHashEntitySchema('drop-missing');
-    repository = client.fetchRepository<SampleHashEntity>(schema);
-  });
+    schema = createHashEntitySchema('drop-missing')
+    repository = client.fetchRepository(schema)
+  })
 
-  afterAll(async () => await client.close());
+  afterAll(async () => await client.close())
 
   describe("when the index is dropped", () => {
     beforeEach(async () => {
-      await repository.dropIndex();
-    });
+      await repository.dropIndex()
+    })
 
     it("the index still doesn't exists", () => {
       expect(async () => await fetchIndexInfo(client, 'drop-missing:index'))
-        .rejects.toThrow("Unknown Index name");
-    });
-  });
-});
+        .rejects.toThrow("Unknown Index name")
+    })
+  })
+})

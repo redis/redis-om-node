@@ -358,7 +358,7 @@ export class Repository {
     return Promise.all(
       ids.map(async (entityId) => {
         const keyName = this.makeKey(entityId)
-        const jsonData = await this.client.jsonget(keyName)
+        const jsonData = await this.client.jsonget(keyName) ?? {}
         const entityData = fromRedisJson(this.schema, jsonData)
         const entity = { ...entityData, entityId, keyName}
         return entity
