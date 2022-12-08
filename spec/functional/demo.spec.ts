@@ -1,120 +1,146 @@
 import { createClient } from 'redis'
 
-import { Client } from '$lib/client'
-import { Schema } from '$lib/schema'
-import { Repository } from '$lib/repository'
-
+import { Client, Entity, EntityData, Repository, Schema } from '$lib/index'
 
 describe("Demo", () => {
 
   it("demos", async () => {
 
+    let entity: Entity
+    let entityId: string
+
     // establish an existing connection to Redis
-    let redis = createClient()
+    const redis = createClient()
     redis.on('error', (err) => console.log('Redis Client Error', err))
     await redis.connect()
 
     // get a client to use an existing Redis connection
-    let client = await new Client().use(redis)
+    const client: Client = await new Client().use(redis)
 
     // define a schema
-    let schema = new Schema(
+    const schema: Schema = new Schema(
       'BigfootSighting', {
-        id: { type: 'string' },
         date: { type: 'date' },
         title: { type: 'text' },
-        observed: { type: 'text' },
         classification: { type: 'string[]' },
-        county: { type: 'string' },
-        state: { type: 'string' },
-        location: { type: 'point' },
-        highTemp: { type: 'number' },
-        lowTemp: { type: 'number' },
+        county: { type: 'string', path: '$.location.county' },
+        state: { type: 'string', path: '$.location.state' },
+        latlng: { type: 'point', path: '$.location.latlng'  },
+        highTemp: { type: 'number', path: '$.temperature.high' },
+        lowTemp: { type: 'number', path: '$.temperature.low' },
         fullMoon: { type: 'boolean' }
       }, {
         useStopWords: 'OFF'
       })
 
+    /* NOTE: Just because a field is on the Schema doesn't mean it's
+       required. And just because it's *not* in the Schema, doesn't
+       mean you can't provide it. The Schema defines what is indexed
+       and how fields are mapped to and from Redis. */
+
     // create a repository & create the index for it
-    let repository: Repository = client.fetchRepository(schema)
+    const repository: Repository = client.fetchRepository(schema)
     await repository.createIndex()
 
-    // create an entity
-    let entity = repository.createEntity()
-    entity.id = '8086'
-    entity.date = new Date('1978-10-09T00:00:00.000Z')
-    entity.title = "Bigfoot by the Walmart"
-    entity.classification = ['Class A', 'Class B']
-    entity.location = { longitude: 12.34, latitude: 56.78 },
-    entity.highTemp = 53
-    entity.fullMoon = false
-
-    let entityId = await repository.save(entity)
-    await repository.expire(entityId, 60)
-
-    // create an entity (#2)
-    entity = repository.createEntity({
-      id: '8086',
+    // write and entity and generate an entityId that is a ULID
+    entity = {
       date: new Date('1978-10-09T00:00:00.000Z'),
       title: "Bigfoot by the Walmart",
-      classification: ['Class A', 'Class B'],
-      location: { longitude: 12.34, latitude: 56.78 },
-      highTemp: 53,
-      fullMoon: false
-    })
+      observed: " I saw Bigfoot at Walmary buying flip flops. He wears a size 17.",
+      classification: [ 'Class A', 'Class B' ],
+      location: {
+        latlong: { longitude: 12.34, latitude: 56.78 },
+      },
+      temperature: {
+        high: 53,
+        average: 47,
+        low: 42
+      },
+      fullMoon: false,
+    }
 
     entityId = await repository.save(entity)
+    expect(entityId).toMatch(/^[0-9ABCDEFGHJKMNPQRSTVWXYZ]{26}$/)
 
-    // create an entity (#3)
-    entity = await repository.createAndSave({
-      id: '8086',
+    // write an entity that already has an entityId
+    entity = {
+      entityId: '8086', // the provided id
       date: new Date('1978-10-09T00:00:00.000Z'),
       title: "Bigfoot by the Walmart",
-      classification: ['Class A', 'Class B'],
-      location: { longitude: 12.34, latitude: 56.78 },
-      highTemp: 53,
-      fullMoon: false
-    })
+      observed: " I saw Bigfoot at Walmary buying flip flops. He wears a size 17.",
+      classification: [ 'Class A', 'Class B' ],
+      location: {
+        latlong: { longitude: 12.34, latitude: 56.78 },
+      },
+      temperature: {
+        high: 53,
+        average: 47,
+        low: 42
+      },
+      fullMoon: false,
+    }
+
+    entityId = await repository.save(entity)
+    expect(entityId).toBe('8086')
+
+    // write an entity with a provided entityId
+    entity = {
+      date: new Date('1978-10-09T00:00:00.000Z'),
+      title: "Bigfoot by the Walmart",
+      observed: " I saw Bigfoot at Walmary buying flip flops. He wears a size 17.",
+      classification: [ 'Class A', 'Class B' ],
+      location: {
+        latlong: { longitude: 12.34, latitude: 56.78 },
+      },
+      temperature: {
+        high: 53,
+        average: 47,
+        low: 42
+      },
+      fullMoon: false,
+    }
+
+    entityId = await repository.save('8087', entity)
+    expect(entityId).toBe('8087')
 
     // fetch an entity
-    entity = await repository.fetch(entityId)
+    entity = await repository.fetch('8086')
 
     // update an entity
     entity.date = new Date('1978-10-09T00:00:00.000Z')
-    entity.lowTemp = 29
-    entity.county = "Athens"
-    entity.state = "Ohio"
-    entity.location = { longitude: 23.45, latitude: 67.89 }
+    entity.temperature.low = 29
+    entity.location.county = "Athens"
+    entity.location.state = "Ohio"
+    entity.location.latlng = { longitude: 23.45, latitude: 67.89 }
 
     await repository.save(entity)
 
-    // remove an entity
-    await repository.remove(entityId)
+    // remove a couple of entities
+    await repository.remove('8086', '8087')
 
     // search for all entities
-    let allEntities = await repository.search().all()
+    const allEntities = await repository.search().all()
 
     // search for some entities
-    let someEntities = repository.search()
+    const someEntities = await repository.search()
       .where(s => s
         .where('state').equals('OH')
         .or('state').equals('KY')
       )
       .and('classification').contains('Class A')
-      .and('location').inCircle(circle => circle.origin(23.45, 67.89).radius(50).miles)
+      .and('latlng').inCircle(circle => circle.origin(23.45, 67.89).radius(50).miles)
       .and('date').before(new Date('2000-01-01T00:00:00.000Z'))
       .and('title').matchesExactly('the walmart')
       .and('fullMoon').is.true().returnAll()
 
+
     // execute a raw search
-    someEntities = repository.searchRaw('@fullMoon:{true} @location:[23.45 67.89 50 mi]').returnAll()
+    const someOtherEntities = await repository.searchRaw('@fullMoon:{true} @latlng:[23.45 67.89 50 mi]').returnAll()
 
     // clean up
     await repository.dropIndex()
-    for (const entity of allEntities) {
-      const id = entity.entityId
-      if (id) await repository.remove(id)
-    }
+    const allIds: string[] = allEntities.map(entity => entity.entityId ?? '')
+    await repository.remove(allIds)
 
     // close the client
     await client.close()

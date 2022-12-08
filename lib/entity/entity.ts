@@ -11,11 +11,8 @@ export type EntityId = {
 
 /** The free-form data associated with an {@link Entity}. */
 export type EntityData = {
-  [key: string] : EntityValue
+  [key: string] : any
 }
-
-/** Valid values that {@link EntityData} might conitain. */
-export type EntityValue = string | number | boolean | Point | Date | any[] | EntityData | null | undefined
 
 /** Defines a point on the globe using longitude and latitude. */
 export type Point = {
