@@ -74,7 +74,6 @@ describe("create and drop index on JSON", () => {
     it("has the expected fields", () => {
       let fields = indexInfo[7];
       expect(fields).toHaveLength(14);
-      console.log(fields)
       expect(fields).toEqual(expected);
     });
 
