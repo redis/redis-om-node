@@ -8,7 +8,7 @@ export default defineConfig({
 		isolate: true,
 		threads: true,
 		coverage: {
-			provider: 'istanbul',
+			provider: 'c8',
 			exclude: ['spec/*'],
 		},
 		exclude: ['./node_modules/**'],
