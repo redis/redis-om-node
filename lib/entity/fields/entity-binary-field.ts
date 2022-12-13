@@ -5,7 +5,11 @@ import { EntityValue } from "../entity-value";
 export class EntityBinaryField extends EntityField {
   toRedisJson(): RedisJsonData {
     const data: RedisJsonData = {};
-    if (this.value !== null) data[this.name] = [...this.valueAsBuffer]
+    if (this.value !== null) {
+      const bytes = this.valueAsBuffer
+      const arr = new Float32Array(bytes.buffer, bytes.byteOffset, bytes.length / Float32Array.BYTES_PER_ELEMENT)
+      data[this.name] = [...arr]
+    }
     return data;
   }
 
@@ -13,7 +17,7 @@ export class EntityBinaryField extends EntityField {
     if (!this.isBuffer(value)) {
       throw Error(`Non-binary value of '${value}' read from Redis for binary field.`)
     }
-    this.value = Buffer.from([...value]);
+    this.value = value
   }
 
   toRedisHash(): RedisHashData {
