@@ -22,7 +22,7 @@
 [![Build][build-shield]][build-url]
 [![License][license-shield]][license-url]
 
-**Redis OM Node.js** makes it easy to model Redis data in your Node.js applications.
+**Redis OM for Node.js** makes it easy to model Redis data in your Node.js applications.
 
 [Redis OM .NET][redis-om-dotnet] | **Redis OM Node.js** | [Redis OM Python][redis-om-python] | [Redis OM Spring][redis-om-spring]
 
@@ -33,11 +33,9 @@
   - 🏁 [Getting Started](#-getting-started)
   - 🔌 [Connect to Redis with a Client](#-connect-to-redis-with-a-client)
     - [Redis Connection Strings](#redis-connection-strings)
-  - 📇 [Define an Entity and a Schema](#-define-an-entity-and-a-schema)
+  - 📇 [Entities and Schemas](#-entities-and-schemas)
   - 🖋 [Reading, Writing, and Removing with Repository](#-reading-writing-and-removing-with-repository)
     - [Missing Entities and Null Values](#missing-entities-and-null-values)
-    - [A Note for TypeScript Users](#a-note-for-typescript-users)
-  - 🧮 [Embedding Your Own Logic into Entities](#-embedding-your-own-logic-into-entities)
   - 📄 [Using Hashes](#-using-hashes)
   - 🔎 [Using RediSearch](#-using-redisearch)
     - [Build the Index](#build-the-index)
@@ -63,28 +61,28 @@
 
 ## 💡 Redis OM for Node.js
 
-Redis OM (pronounced _REDiss OHM_) makes it easy to add Redis to your Node.js application by mapping the Redis data structures you know and love to classes that you define. No more pesky, low-level commands, just pure code with a fluent interface.
+Redis OM (pronounced _REDiss OHM_) makes it easy to add Redis to your Node.js application by mapping the Redis data structures you know and love to simple JavaScript objects. No more pesky, low-level commands, just pure code with a fluent interface.
 
-Define an entity:
+Define a schema:
 
 ```javascript
-class Album extends Entity {}
-
-const schema = new Schema(Album, {
+const schema = new Schema('album', {
   artist: { type: 'string' },
   title: { type: 'text' },
   year: { type: 'number' }
-});
+})
 ```
 
 Create a new entity and save it:
 
 ```javascript
-const album = repository.createEntity()
-album.artist = "Mushroomhead"
-album.title = "The Righteous & The Butterfly"
-album.year = 2014
-await repository.save(album)
+const album = {
+  artist: "Mushroomhead",
+  title: "The Righteous & The Butterfly",
+  year: 2014
+}
+
+const id = await repository.save(album)
 ```
 
 Search for matching entities:
@@ -93,7 +91,8 @@ Search for matching entities:
 const albums = await repository.search()
   .where('artist').equals('Mushroomhead')
   .and('title').matches('butterfly')
-  .and('year').is.greaterThan(2000).return.all()
+  .and('year').is.greaterThan(2000)
+    .return.all()
 ```
 
 Pretty cool, right? Read on for details.
@@ -121,43 +120,14 @@ You connect to Redis using a [*client*](docs/classes/Client.md). The `Client` cl
 ```javascript
 import { Client } from 'redis-om'
 
-const client = new Client()
-await client.open('redis://localhost:6379')
+const client = await new Client().open('redis://localhost:6379')
 
-const aString = await client.execute(['PING'])
-// 'PONG'
-
-const aNumber = await client.execute(['HSET', 'foo', 'bar', 'baz', 'qux', 42])
-// 2
-
-const anArray = await client.execute(['HGETALL', 'foo'])
-// [ 'bar', 'baz', 'qux', '42' ]
+const aString = await client.execute(['PING']) // 'PONG'
+const aNumber = await client.execute(['HSET', 'foo', 'alfa', '42', 'bravo', '23']) // 2
+const anArray = await client.execute(['HGETALL', 'foo']) // [ 'alfa', '42', 'bravo', '23' ]
 
 await client.close()
 ```
-
-<details>
-<summary>Or, in TypeScript:</summary>
-
-In Typescript you should type cast the returning type.
-Typecasts can be done in 2 ways, casting it before the returning value `client.execute(["PING"])` or after using the `as` keyword `client.execute(["PING"]) as string`.
-
-```typescript
-import { Client } from 'redis-om';
-
-let client = await new Client().open('redis://localhost:6379');
-
-let aString = await <string>client.execute(['PING']);
-// 'PONG'
-
-let aNumber = await <number>client.execute(['HSET', 'foo', 'bar', 'baz', 'qux', 42]);
-// 2
-
-let anArray = await <Array<string>>client.execute(['HGETALL', 'foo']);
-// [ 'bar', 'baz', 'qux', '42' ]
-await client.close();
-```
-</details>
 
 Mostly you'll use `.open`, `.close`, and `.fetchRepository` (which we'll talk about soon enough). But, on occasion, you might need to talk to Redis directly. The `.execute` method allows you to do that.
 
@@ -187,25 +157,18 @@ This is the bulk of what you will need, but if you want more, the full specifica
 
 If you don't provide a URL, it defaults to `redis://localhost:6379`.
 
-## 📇 Define an Entity and a Schema
+## 📇 Entities and Schemas
 
-Ok. Let's start doing some object mapping. We'll start by defining an [*entity*](docs/classes/Entity.md) and a [*schema*](docs/classes/Schema.md).
+Redis OM is all about creating, reading, updating, and deleting *entities*. An [Entity](docs/README.md#entity) is just the data you want to save to and retrieve from Redis. Almost any JavaScript object is a valid `Entity`.
 
-```javascript
-import { Entity, Schema } from 'redis-om'
-```
+[Schemas](docs/classes/Schema.md) define fields that might be on an `Entity`. It includes a field's type, how it is stored internally in Redis, and how to search on them if you are using RediSearch. By default, they are mapped to JSON documents using RedisJSON, but you can change it to use Hashes if want (more on that later).
 
-[Entities](docs/classes/Entity.md) are the classes that you work with. The things being created, read, updated, and deleted. Any class that extends `Entity` is an entity. Usually, you'll define an entity with a single line of code:
+Ok. Let's start doing some object mapping and create a `Schema`:
 
 ```javascript
-class Album extends Entity {}
-class Studio extends Entity {}
-```
+import { Schema } from 'redis-om'
 
-[Schemas](docs/classes/Schema.md) define the fields on your entity, their types, and how they are mapped internally to Redis. By default, entities map to JSON documents using RedisJSON, but you can change it to use Hashes if want (more on that later):
-
-```javascript
-const albumSchema = new Schema(Album, {
+const albumSchema = new Schema('album', {
   artist: { type: 'string' },
   title: { type: 'text' },
   year: { type: 'number' },
@@ -213,7 +176,7 @@ const albumSchema = new Schema(Album, {
   outOfPublication: { type: 'boolean' }
 })
 
-const studioSchema = new Schema(Studio, {
+const studioSchema = new Schema('studio', {
   name: { type: 'string' },
   city: { type: 'string' },
   state: { type: 'string' },
@@ -222,19 +185,29 @@ const studioSchema = new Schema(Studio, {
 })
 ```
 
-When you create a `Schema`, it modifies the entity you handed it, adding getters and setters for the properties you define. The type those getters and setters accept and return are defined with the type parameter above. Valid values are: `string`, `number`, `boolean`, `string[]`, `date`, `point`, or `text`.
+The *first argument* defines the keyname prefix that entities stored in Redis will have. It should be unique for your particualr instance of Redis.
 
-The first three do exactly what you think—they define a property that is a [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String), a [Number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number), or a [Boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean). `string[]` does what you'd think as well, specifically defining an [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array) of Strings.
+The *second argument* defines fields that might be stored in that key. The name is, well, the name of the field. The Type is what sort of data is in the field. Valid types are: `string`, `number`, `boolean`, `string[]`, `date`, `point`, and `text`.
 
-`date` is a little different, but still more or less what you'd expect. It defines a property that returns a [Date](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date) and can be set using not only a Date but also a String containing an [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) date or a number with the [UNIX epoch time](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date#the_ecmascript_epoch_and_timestamps) in *seconds* (NOTE: the JavaScript Date object is specified in *milliseconds*).
+The first three types do exactly what you think—they define a field that is a [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String), a [Number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number), or a [Boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean). `string[]` does what you'd think as well, specifically describing an [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array) of Strings.
 
-A `point` defines a point somewhere on the globe as a longitude and a latitude. It defines a property that returns and accepts a simple object with `longitude` and `latitude` properties. Like this:
+`date` is a little different, but still more or less what you'd expect. It describes a property that returns a [Date](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date) and can be set using not only a Date but also a String containing an [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) date or a number with the [UNIX epoch time](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date#the_ecmascript_epoch_and_timestamps) in *seconds* (NOTE: the JavaScript Date object is specified in *milliseconds*).
+
+A `point` defines a point somewhere on the globe as a longitude and a latitude. It is expressed as a simple object with `longitude` and `latitude` properties. Like this:
 
 ```javascript
 const point = { longitude: 12.34, latitude: 56.78 }
 ```
 
 A `text` field is a lot like a `string`. If you're just reading and writing objects, they are identical. But if you want to *search* on them, they are very, very different. I'll cover that in detail when I talk about [using RediSearch](#-using-redisearch) but the tl;dr is that `string` fields can only be matched on their whole value—no partial matches—and are best for keys while `text` fields have full-text search enabled on them and are optimized for human-readable text.
+
+### Hashes vs. JSON
+
+dataStructure
+.path
+.field
+
+### Additional Search Options
 
 Additional field options can be set depending on the field type. These correspond to the [Field Options](https://redis.io/commands/ft.create/#field-options) available when creating a RediSearch full-text index. Other than the `separator` option, these only affect how content is indexed and searched.
 
@@ -251,7 +224,7 @@ Additional field options can be set depending on the field type. These correspon
 * `indexed`: true | false, whether this field is indexed by RediSearch (default true)
 * `sortable`: true | false, whether to create an additional index to optmize sorting (default false)
 * `normalized`: true | false, whether to apply normalization for sorting (default true)
-* `matcher`: string defining phonetic matcher which can be one of 'dm:en' for English | 'dm:fr' for French | 'dm:pt' for Portugese)| 'dm:es' for Spanish (default none)
+* `matcher`: string defining phonetic matcher which can be one of: 'dm:en' for English, 'dm:fr' for French, 'dm:pt' for Portugese, 'dm:es' for Spanish (default none)
 * `stemming`: true | false, whether word stemming is applied to text fields (default true)
 * `weight`: number, the importance weighting to use when ranking results (default 1)
 * `separator`: string, the character to delimit multiple tags (default '|')
@@ -285,6 +258,15 @@ const albumRepository = client.fetchRepository(albumSchema)
 const studioRepository = client.fetchRepository(studioSchema)
 ```
 
+You can also construct one directly yourself:
+
+```javascript
+import { Repository } from 'redis-om'
+
+const albumRepository = new Repository(albumSchema, client)
+const studioRepository = new Repositroy(studioSchema, client)
+```
+
 Once we have a repository, we can use it to create entities:
 
 ```javascript
@@ -292,7 +274,14 @@ const album = albumRepository.createEntity()
 album.entityId // '01FJYWEYRHYFT8YTEGQBABJ43J'
 ```
 
-Note that entities created by `.createEntity` are not saved to Redis (at least not yet). They've only been instantiated and populated with an entity ID. This ID is a [ULID](https://github.com/ulid/spec) and is a unique id representing that object. To create a new entity *and* save it to Redis, we need to set all the properties on the entity that we care about, and call `.save`:
+This creates an `Entity` and populates it with an entity ID. This ID is a [ULID](https://github.com/ulid/spec) and is a unique id representing that object. If you don't like ULIDs for some reason and instead want to provide your own IDs, you can totally do that:
+
+```javascript
+const album = albumRepository.createEntity('BWOMP')
+album.entityId // 'BWOMP'
+```
+
+Note that entities created by `.createEntity` are not saved to Redis (at least not yet). They've only been instantiated and populated with an entity ID. To create a new entity *and* save it to Redis, we need to set all the properties on the entity that we care about, and call `.save`:
 
 ```javascript
 const album = albumRepository.createEntity()
@@ -319,6 +308,20 @@ const studio = studioRepository.createEntity({
 const id = await studioRepository.save(studio) // '01FVDN241NGTPHSAV0DFDBXC90'
 ```
 
+This works with provided IDs as well:
+
+```javascript
+const studio = studioRepository.createEntity('BWOMP', {
+  name: "Bad Racket Recording Studio",
+  city: "Cleveland",
+  state: "Ohio",
+  location: { longitude: -81.6764187, latitude: 41.5080462 },
+  established: new Date('2010-12-27')
+})
+
+const id = await studioRepository.save(studio) // 'BWOMP'
+```
+
 And for even *more* convenience, you can create and save in a single call:
 
 ```javascript
@@ -331,13 +334,25 @@ const studio = studioRepository.createAndSave({
 })
 ```
 
-You also use `.save` to update an existing entity:
+And even provide your own IDs that way too:
+
+```javascript
+const studio = studioRepository.createAndSave('BWOMP', {
+  name: "Bad Racket Recording Studio",
+  city: "Cleveland",
+  state: "Ohio",
+  location: { longitude: -81.6764187, latitude: 41.5080462 },
+  established: new Date('2010-12-27')
+})
+```
+
+Use `.save` to update an existing entity:
 
 ```javascript
 album.genres = [ 'metal', 'nu metal', 'avantgarde' ]
 album.outOfPublication = false
 
-const id = await albumRepository.save(album) // '01FJYWEYRHYFT8YTEGQBABJ43J'
+const id = await albumRepository.save(album) // '01FJYWEYRHYFT8YTEGQBABJ43J' or 'BWOMP'
 ```
 
 If you know an object's entity ID you can `.fetch` it:
@@ -366,96 +381,34 @@ await studioRepository.expire('01FVDN241NGTPHSAV0DFDBXC90', ttlInSeconds)
 
 ### Missing Entities and Null Values
 
-Redis, and by extension Redis OM, doesn't differentiate between missing and null. Missing fields in Redis are returned as `null`, and missing keys return `null`. So, if you fetch an entity that doesn't exist, it will happily return you an entity full of nulls:
+Redis, and by extension Redis OM, doesn't differentiate between missing and null—particulary for Hashes. Missing fields in Redis Hashes are returned as `null`. Missing keys also return `null`. So, if you fetch an entity that doesn't exist, it will happily return you an empty entity, complete with the provided entiyId:
 
 ```javascript
 const album = await albumRepository.fetch('DOES_NOT_EXIST')
-album.artist // null
-album.title // null
-album.year // null
-album.genres // null
-album.outOfPublication // null
+album.entityId // 'DOES_NOT_EXIST'
+album.artist // undefined
+album.title // undefined
+album.year // undefined
+album.genres // undefined
+album.outOfPublication // undefined
 ```
 
-Conversely, if you set all the properties on an entity to `null` and then save it, it will remove the entity from Redis:
+Conversely, if you remove all the properties on an entity and then save it, it will remove the entity from Redis:
 
 ```javascript
 const album = await albumRepository.fetch('01FJYWEYRHYFT8YTEGQBABJ43J')
-album.artist = null
-album.title = null
-album.year = null
-album.genres = null
-album.outOfPublication = null
+delete album.artist
+delete album.title
+delete album.year
+delete album.genres
+delete album.outOfPublication
 
 const id = await albumRepository.save(album)
 
 const exists = await client.execute(['EXISTS', 'Album:01FJYWEYRHYFT8YTEGQBABJ43J']) // 0
 ```
 
-It does this because Redis—particularly Redis Hashes—doesn't distinguish between missing and null. You could have an entity that is all nulls. Or you could not. Redis doesn't know which is your intention, and so always returns *something* when you call `.fetch`.
-
-### A Note for TypeScript Users
-
-When you define an entity and schema in TypeScript, all is well. But when you go to *use* that entity, you might have a problem. You'll get an error accessing the properties that the schema added to the entity. This code won't work:
-
-```typescript
-const album = albumRepository.createEntity()
-album.artist = "Mushroomhead"                 // Property 'artist' does not exist on type 'Album'
-album.title = "The Righteous & The Butterfly" // Property 'title' does not exist on type 'Album'
-album.year = 2014                             // Property 'year' does not exist on type 'Album'
-album.genres = [ 'metal' ]                    // Property 'genres' does not exist on type 'Album'
-album.outOfPublication = true                 // Property 'outOfPublication' does not exist on type 'Album'
-```
-
-To fix this—without resorting to `// @ts-ignore`—add an interface with the same name as your entity. On that interface, add all the properties you provided to the schema:
-
-```typescript
-interface Album {
-  artist: string;
-  title: string;
-  year: number;
-  genres: string[];
-  outOfPublication: boolean;
-}
-
-class Album extends Entity {}
-
-const albumSchema = new Schema(Album, {
-  artist: { type: 'string' },
-  title: { type: 'string' },
-  year: { type: 'number' },
-  genres: { type: 'string[]' },
-  outOfPublication: { type: 'boolean' }
-})
-```
-
-## 🧮 Embedding Your Own Logic into Entities
-
-You might be looking at how you define an entity and think it's a bit odd. Just an empty class? Really? Well, this class can contain additional logic that works with the data it retrieves from Redis. Which can be pretty useful.
-
-You can use this to create computed fields and add domain logic:
-
-```javascript
-class Album extends Entity {
-  get is70sRock() {
-    return this.year >= 1970 && this.year < 1980 && this.genres.includes('rock')
-  }
-
-  makeItRock() {
-    this.genres.push('rock');
-  }
-}
-```
-
-Or even use more Redis OM to find related entities:
-
-```javascript
-class Album extends Entity {
-  async recordedAt() {
-    return await studioRepository.fetch(this.studioId)
-  }
-}
-```
+It does this because doesn't distinguish between missing and null. You could have an entity that empty. Or you could not have an entity at all. Redis doesn't know which is your intention, and so always returns *something* when you call `.fetch`.
 
 ## 📄 Using Hashes
 
