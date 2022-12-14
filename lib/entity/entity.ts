@@ -1,8 +1,8 @@
 /** The Symbol used to access the entity ID of an {@link Entity}. */
-export const EntityId = Symbol.for('entityId')
+export const EntityId = Symbol('entityId')
 
 /** The Symbol used to access the keyname of an {@link Entity}. */
-export const EntityKeyName = Symbol.for('entityKeyName')
+export const EntityKeyName = Symbol('entityKeyName')
 
 /** Defines the objects returned from calls to {@link Repository | repositories }. */
 export type Entity = EntityMetaData & EntityData

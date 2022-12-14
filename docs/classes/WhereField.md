@@ -71,7 +71,7 @@ this multiple times will have no effect.
 
 #### Defined in
 
-[lib/search/where-field.ts:92](https://github.com/redis/redis-om-node/blob/1be2c3d/lib/search/where-field.ts#L92)
+[lib/search/where-field.ts:92](https://github.com/redis/redis-om-node/blob/bc05320/lib/search/where-field.ts#L92)
 
 ___
 
@@ -84,7 +84,7 @@ this multiple times will have no effect.
 
 #### Defined in
 
-[lib/search/where-field.ts:99](https://github.com/redis/redis-om-node/blob/1be2c3d/lib/search/where-field.ts#L99)
+[lib/search/where-field.ts:99](https://github.com/redis/redis-om-node/blob/bc05320/lib/search/where-field.ts#L99)
 
 ## Accessors
 
