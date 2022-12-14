@@ -1,5 +1,6 @@
 import { client } from '../helpers/mock-client'
 import { Client } from "$lib/client"
+import { EntityId } from '$lib/entity'
 import { Search, RawSearch } from "$lib/search"
 
 import { simpleHashSchema } from "../helpers/test-entity-and-schema"
@@ -52,7 +53,7 @@ describe.each([
       it("returns the expected single result", () => {
         expect(keys).toHaveLength(1)
         expect(keys).toEqual(expect.arrayContaining([
-          `SimpleHashEntity:${SIMPLE_ENTITY_1.entityId}`
+          `SimpleHashEntity:${SIMPLE_ENTITY_1[EntityId]}`
         ]))
       })
     })
@@ -72,9 +73,9 @@ describe.each([
       it("returns all the results", async () => {
         expect(keys).toHaveLength(3)
         expect(keys).toEqual(expect.arrayContaining([
-          `SimpleHashEntity:${SIMPLE_ENTITY_1.entityId}`,
-          `SimpleHashEntity:${SIMPLE_ENTITY_2.entityId}`,
-          `SimpleHashEntity:${SIMPLE_ENTITY_3.entityId}`
+          `SimpleHashEntity:${SIMPLE_ENTITY_1[EntityId]}`,
+          `SimpleHashEntity:${SIMPLE_ENTITY_2[EntityId]}`,
+          `SimpleHashEntity:${SIMPLE_ENTITY_3[EntityId]}`
         ]))
       })
     })

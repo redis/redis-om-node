@@ -5,6 +5,7 @@ import { Repository } from '$lib/repository'
 import { Schema, SchemaDefinition } from '$lib/schema'
 
 import { A_STRING, A_NUMBER, A_NUMBER_STRING } from '../../helpers/example-data'
+import { EntityId, EntityKeyName } from '$lib/entity'
 
 const aSimpleSchemaDef: SchemaDefinition = {
   aString: { type: 'string' },
@@ -16,9 +17,9 @@ const simpleHashSchema = new Schema("SimpleEntity", aSimpleSchemaDef, { dataStru
 const simpleJsonSchema = new Schema("SimpleEntity", aSimpleSchemaDef, { dataStructure: 'JSON' })
 
 const EMPTY_ENTITY = {}
-const EMPTY_ENTITY_WITH_ID = { entityId: 'foo', keyName: 'key:foo' }
+const EMPTY_ENTITY_WITH_ID = { [EntityId]: 'foo', [EntityKeyName]: 'key:foo' }
 const ENTITY = { aString: A_STRING, aNumber: A_NUMBER, aBoolean: true }
-const ENTITY_WITH_ID = { entityId: 'foo', keyName: 'key:foo', aString: A_STRING, aNumber: A_NUMBER, aBoolean: true }
+const ENTITY_WITH_ID = { [EntityId]: 'foo', [EntityKeyName]: 'key:foo', aString: A_STRING, aNumber: A_NUMBER, aBoolean: true }
 
 const ENTITY_HASH_DATA = { aString: A_STRING, aNumber: A_NUMBER_STRING, aBoolean: '1' }
 const ENTITY_JSON_DATA = { aString: A_STRING, aNumber: A_NUMBER, aBoolean: true }

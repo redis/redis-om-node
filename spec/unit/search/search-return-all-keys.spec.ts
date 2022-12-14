@@ -1,5 +1,6 @@
 import { client } from '../helpers/mock-client'
 import { Client } from "$lib/client"
+import { EntityId } from '$lib/entity'
 import { Search, RawSearch } from "$lib/search"
 
 import { simpleHashSchema } from "../helpers/test-entity-and-schema"
@@ -53,7 +54,7 @@ describe("Search", () => {
         it("returns the expected single result", () => {
           expect(keys).toHaveLength(1)
           expect(keys).toEqual(expect.arrayContaining([
-            `SimpleHashEntity:${SIMPLE_ENTITY_1.entityId}`
+            `SimpleHashEntity:${SIMPLE_ENTITY_1[EntityId]}`
           ]))
         })
       })
@@ -73,9 +74,9 @@ describe("Search", () => {
         it("returns all the results", async () => {
           expect(keys).toHaveLength(3)
           expect(keys).toEqual(expect.arrayContaining([
-            `SimpleHashEntity:${SIMPLE_ENTITY_1.entityId}`,
-            `SimpleHashEntity:${SIMPLE_ENTITY_2.entityId}`,
-            `SimpleHashEntity:${SIMPLE_ENTITY_3.entityId}`
+            `SimpleHashEntity:${SIMPLE_ENTITY_1[EntityId]}`,
+            `SimpleHashEntity:${SIMPLE_ENTITY_2[EntityId]}`,
+            `SimpleHashEntity:${SIMPLE_ENTITY_3[EntityId]}`
           ]))
         })
       })
@@ -95,11 +96,11 @@ describe("Search", () => {
         it("returns all the results", async () => {
           expect(keys).toHaveLength(5)
           expect(keys).toEqual(expect.arrayContaining([
-            `SimpleHashEntity:${SIMPLE_ENTITY_1.entityId}`,
-            `SimpleHashEntity:${SIMPLE_ENTITY_2.entityId}`,
-            `SimpleHashEntity:${SIMPLE_ENTITY_3.entityId}`,
-            `SimpleHashEntity:${SIMPLE_ENTITY_4.entityId}`,
-            `SimpleHashEntity:${SIMPLE_ENTITY_5.entityId}`
+            `SimpleHashEntity:${SIMPLE_ENTITY_1[EntityId]}`,
+            `SimpleHashEntity:${SIMPLE_ENTITY_2[EntityId]}`,
+            `SimpleHashEntity:${SIMPLE_ENTITY_3[EntityId]}`,
+            `SimpleHashEntity:${SIMPLE_ENTITY_4[EntityId]}`,
+            `SimpleHashEntity:${SIMPLE_ENTITY_5[EntityId]}`
           ]))
         })
       })

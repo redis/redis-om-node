@@ -1,4 +1,4 @@
-import { Client, Repository, Schema } from '$lib/index'
+import { Client, EntityKeyName, Repository, Schema } from '$lib/index'
 
 import { createHashEntitySchema, loadHash } from '../helpers/data-helper'
 import { removeAll } from '../helpers/redis-helper'
@@ -29,26 +29,26 @@ describe("fetch hash", () => {
   })
 
   it("fetches a single entity from Redis", async () =>
-    expect(repository.fetch('1')).resolves.toEqual({ keyName: 'fetch-hash:1', ...AN_ENTITY }))
+    expect(repository.fetch('1')).resolves.toEqual({ [EntityKeyName]: 'fetch-hash:1', ...AN_ENTITY }))
 
   it("fetches an empty entity from Redis", async () =>
-    expect(repository.fetch('empty')).resolves.toEqual({ keyName: 'fetch-hash:empty', ...AN_EMPTY_ENTITY }))
+    expect(repository.fetch('empty')).resolves.toEqual({ [EntityKeyName]: 'fetch-hash:empty', ...AN_EMPTY_ENTITY }))
 
   it("fetches multiple entities from Redis with discrete arguments", async () => {
     let entities = await repository.fetch('1', '2', '3')
     expect(entities).toEqual(expect.arrayContaining([
-      { keyName: 'fetch-hash:1', ...AN_ENTITY },
-      { keyName: 'fetch-hash:2', ...ANOTHER_ENTITY },
-      { keyName: 'fetch-hash:3', ...A_THIRD_ENTITY }
+      { [EntityKeyName]: 'fetch-hash:1', ...AN_ENTITY },
+      { [EntityKeyName]: 'fetch-hash:2', ...ANOTHER_ENTITY },
+      { [EntityKeyName]: 'fetch-hash:3', ...A_THIRD_ENTITY }
     ]))
   })
 
   it("fetches multiple entities from Redis with an array", async () => {
     let entities = await repository.fetch(['1', '2', '3'])
     expect(entities).toEqual(expect.arrayContaining([
-      { keyName: 'fetch-hash:1', ...AN_ENTITY },
-      { keyName: 'fetch-hash:2', ...ANOTHER_ENTITY },
-      { keyName: 'fetch-hash:3', ...A_THIRD_ENTITY }
+      { [EntityKeyName]: 'fetch-hash:1', ...AN_ENTITY },
+      { [EntityKeyName]: 'fetch-hash:2', ...ANOTHER_ENTITY },
+      { [EntityKeyName]: 'fetch-hash:3', ...A_THIRD_ENTITY }
     ]))
   })
 })

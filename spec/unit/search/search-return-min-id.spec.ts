@@ -1,5 +1,6 @@
 import { client } from '../helpers/mock-client'
 import { Client } from "$lib/client"
+import { EntityId } from '$lib/entity'
 import { Search, RawSearch } from "$lib/search"
 
 import { simpleHashSchema } from "../helpers/test-entity-and-schema"
@@ -60,7 +61,7 @@ describe.each([
       })
 
       it("returns the first result of a given repository", () => {
-        expect(id).toEqual(SIMPLE_ENTITY_1.entityId)
+        expect(id).toEqual(SIMPLE_ENTITY_1[EntityId])
       })
     })
   })

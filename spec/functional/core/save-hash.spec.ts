@@ -1,4 +1,4 @@
-import { Client, Repository, Schema } from '$lib/index'
+import { Client, EntityId, Repository, Schema } from '$lib/index'
 
 import { createHashEntitySchema, fetchHash } from '../helpers/data-helper'
 import { keyExists, removeAll } from '../helpers/redis-helper'
@@ -29,14 +29,14 @@ describe("save hash", () => {
   describe("when saving an entity to redis", () => {
     beforeEach(async () => { entityId = await repository.save(AN_ENTITY) })
 
-    it('returns the expected entityId', () => expect(entityId).toBe(AN_ENTITY.entityId))
+    it('returns the expected entityId', () => expect(entityId).toBe(AN_ENTITY[EntityId]))
     it('saves the expected Hash in Redis', async () => expect(fetchHash(client, 'save-hash:1')).resolves.toEqual(A_HASH))
   })
 
   describe("when saving an empty entity to redis", () => {
     beforeEach(async () => { entityId = await repository.save(AN_EMPTY_ENTITY) })
 
-    it('returns the expected entityId', () => expect(entityId).toBe(AN_EMPTY_ENTITY.entityId))
+    it('returns the expected entityId', () => expect(entityId).toBe(AN_EMPTY_ENTITY[EntityId]))
     it('saves an empty Hash in Redis', async () => expect(fetchHash(client, 'save-hash:empty')).resolves.toEqual(AN_EMPTY_HASH))
 
     it("stores no Hash at all", async () => expect(keyExists(client, 'save-hash:empty')).resolves.toBe(false))

@@ -1,6 +1,6 @@
 import { client } from '../helpers/mock-client'
 import { Client } from "$lib/client"
-import { Entity } from '$lib/entity'
+import { Entity, EntityId } from '$lib/entity'
 import { Search, RawSearch } from "$lib/search"
 
 import { simpleHashSchema, simpleJsonSchema } from "../helpers/test-entity-and-schema"
@@ -57,7 +57,7 @@ describe.each([
           expect(entity?.aBoolean).toEqual(SIMPLE_ENTITY_1.aBoolean)
           expect(entity?.aNumber).toEqual(SIMPLE_ENTITY_1.aNumber)
           expect(entity?.aString).toEqual(SIMPLE_ENTITY_1.aString)
-          expect(entity?.entityId).toEqual(SIMPLE_ENTITY_1.entityId)
+          expect(entity ? entity[EntityId] : null).toEqual(SIMPLE_ENTITY_1[EntityId])
         })
       })
     })
@@ -94,10 +94,11 @@ describe.each([
         })
 
         it("returns the first result of a given repository", () => {
+          expect(entity).toBeDefined()
           expect(entity?.aBoolean).toEqual(SIMPLE_ENTITY_1.aBoolean)
           expect(entity?.aNumber).toEqual(SIMPLE_ENTITY_1.aNumber)
           expect(entity?.aString).toEqual(SIMPLE_ENTITY_1.aString)
-          expect(entity?.entityId).toEqual(SIMPLE_ENTITY_1.entityId)
+          expect(entity ? entity[EntityId] : null).toEqual(SIMPLE_ENTITY_1[EntityId])
         })
       })
     })

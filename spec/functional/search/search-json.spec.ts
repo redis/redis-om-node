@@ -1,4 +1,4 @@
-import { Client, Entity, Schema, Repository } from '$lib/index'
+import { Client, Entity, Schema, Repository, EntityKeyName } from '$lib/index'
 
 import { createJsonEntitySchema, loadJson } from '../helpers/data-helper'
 import { removeAll } from '../helpers/redis-helper'
@@ -39,10 +39,10 @@ describe("search for JSON documents", () => {
 
     expect(entities).toHaveLength(4)
     expect(entities).toEqual(expect.arrayContaining([
-      { keyName: 'search-json:1', ...AN_ENTITY },
-      { keyName: 'search-json:2', ...ANOTHER_ENTITY },
-      { keyName: 'search-json:3', ...A_THIRD_ENTITY },
-      { keyName: 'search-json:escaped', ...AN_ESCAPED_ENTITY }
+      { [EntityKeyName]: 'search-json:1', ...AN_ENTITY },
+      { [EntityKeyName]: 'search-json:2', ...ANOTHER_ENTITY },
+      { [EntityKeyName]: 'search-json:3', ...A_THIRD_ENTITY },
+      { [EntityKeyName]: 'search-json:escaped', ...AN_ESCAPED_ENTITY }
     ]))
   })
 
@@ -51,10 +51,10 @@ describe("search for JSON documents", () => {
 
     expect(entities).toHaveLength(4)
     expect(entities).toEqual([
-      { keyName: 'search-json:3', ...A_THIRD_ENTITY },
-      { keyName: 'search-json:2', ...ANOTHER_ENTITY },
-      { keyName: 'search-json:1', ...AN_ENTITY },
-      { keyName: 'search-json:escaped', ...AN_ESCAPED_ENTITY }
+      { [EntityKeyName]: 'search-json:3', ...A_THIRD_ENTITY },
+      { [EntityKeyName]: 'search-json:2', ...ANOTHER_ENTITY },
+      { [EntityKeyName]: 'search-json:1', ...AN_ENTITY },
+      { [EntityKeyName]: 'search-json:escaped', ...AN_ESCAPED_ENTITY }
     ])
   })
 
@@ -63,10 +63,10 @@ describe("search for JSON documents", () => {
 
     expect(entities).toHaveLength(4)
     expect(entities).toEqual(expect.arrayContaining([
-      { keyName: 'search-json:1', ...AN_ENTITY },
-      { keyName: 'search-json:2', ...ANOTHER_ENTITY },
-      { keyName: 'search-json:3', ...A_THIRD_ENTITY },
-      { keyName: 'search-json:escaped', ...AN_ESCAPED_ENTITY }
+      { [EntityKeyName]: 'search-json:1', ...AN_ENTITY },
+      { [EntityKeyName]: 'search-json:2', ...ANOTHER_ENTITY },
+      { [EntityKeyName]: 'search-json:3', ...A_THIRD_ENTITY },
+      { [EntityKeyName]: 'search-json:escaped', ...AN_ESCAPED_ENTITY }
     ]))
   })
 
@@ -74,35 +74,35 @@ describe("search for JSON documents", () => {
     entities = await repository.searchRaw('@aString:{foo} @aNumber:[42 42]').returnAll()
 
     expect(entities).toHaveLength(1)
-    expect(entities).toEqual([ { keyName: 'search-json:1', ...AN_ENTITY } ])
+    expect(entities).toEqual([ { [EntityKeyName]: 'search-json:1', ...AN_ENTITY } ])
   })
 
   it("searches a string", async () => {
     entities = await repository.search().where('aString').eq('foo').returnAll()
 
     expect(entities).toHaveLength(1)
-    expect(entities).toEqual([ { keyName: 'search-json:1', ...AN_ENTITY } ])
+    expect(entities).toEqual([ { [EntityKeyName]: 'search-json:1', ...AN_ENTITY } ])
   })
 
   it("searches a string with full text", async () => {
     entities = await repository.search().where('someText').matches('brown quick').returnAll()
 
     expect(entities).toHaveLength(1)
-    expect(entities).toEqual([ { keyName: 'search-json:1', ...AN_ENTITY } ])
+    expect(entities).toEqual([ { [EntityKeyName]: 'search-json:1', ...AN_ENTITY } ])
   })
 
   it("searches a string with full text and an exact match", async () => {
     entities = await repository.search().where('someText').exactly.matches('quick brown').returnAll()
 
     expect(entities).toHaveLength(1)
-    expect(entities).toEqual([ { keyName: 'search-json:1', ...AN_ENTITY } ])
+    expect(entities).toEqual([ { [EntityKeyName]: 'search-json:1', ...AN_ENTITY } ])
   })
 
   it("searches a string with full text and stop words", async () => {
     entities = await repository.search().where('someText').matches('brown quick the').returnAll()
 
     expect(entities).toHaveLength(1)
-    expect(entities).toEqual([ { keyName: 'search-json:1', ...AN_ENTITY } ])
+    expect(entities).toEqual([ { [EntityKeyName]: 'search-json:1', ...AN_ENTITY } ])
   })
 
   it("throws an error when searching a string with full text, an exact match, and stop words", async () => {
@@ -116,8 +116,8 @@ describe("search for JSON documents", () => {
 
     expect(entities).toHaveLength(2)
     expect(entities).toEqual(expect.arrayContaining([
-      { keyName: 'search-json:2', ...ANOTHER_ENTITY },
-      { keyName: 'search-json:3', ...A_THIRD_ENTITY }
+      { [EntityKeyName]: 'search-json:2', ...ANOTHER_ENTITY },
+      { [EntityKeyName]: 'search-json:3', ...A_THIRD_ENTITY }
     ]))
   })
 
@@ -126,8 +126,8 @@ describe("search for JSON documents", () => {
 
     expect(entities).toHaveLength(2)
     expect(entities).toEqual(expect.arrayContaining([
-      { keyName: 'search-json:1', ...AN_ENTITY },
-      { keyName: 'search-json:2', ...ANOTHER_ENTITY }
+      { [EntityKeyName]: 'search-json:1', ...AN_ENTITY },
+      { [EntityKeyName]: 'search-json:2', ...ANOTHER_ENTITY }
     ]))
   })
 
@@ -137,14 +137,14 @@ describe("search for JSON documents", () => {
       .returnAll()
 
     expect(entities).toHaveLength(1)
-    expect(entities).toEqual([ { keyName: 'search-json:1', ...AN_ENTITY } ])
+    expect(entities).toEqual([ { [EntityKeyName]: 'search-json:1', ...AN_ENTITY } ])
   })
 
   it("searches a date", async () => {
     entities = await repository.search().where('aDate').after(A_DATE).returnAll()
 
     expect(entities).toHaveLength(1)
-    expect(entities).toEqual([ { keyName: 'search-json:3', ...A_THIRD_ENTITY } ])
+    expect(entities).toEqual([ { [EntityKeyName]: 'search-json:3', ...A_THIRD_ENTITY } ])
   })
 
   it("searches a array", async () => {
@@ -152,9 +152,9 @@ describe("search for JSON documents", () => {
 
     expect(entities).toHaveLength(3)
     expect(entities).toEqual(expect.arrayContaining([
-      { keyName: 'search-json:1', ...AN_ENTITY },
-      { keyName: 'search-json:2', ...ANOTHER_ENTITY },
-      { keyName: 'search-json:3', ...A_THIRD_ENTITY }
+      { [EntityKeyName]: 'search-json:1', ...AN_ENTITY },
+      { [EntityKeyName]: 'search-json:2', ...ANOTHER_ENTITY },
+      { [EntityKeyName]: 'search-json:3', ...A_THIRD_ENTITY }
     ]))
   })
 
@@ -169,27 +169,27 @@ describe("search for JSON documents", () => {
       .returnAll()
 
     expect(entities).toHaveLength(1)
-    expect(entities).toEqual([ { keyName: 'search-json:1', ...AN_ENTITY } ])
+    expect(entities).toEqual([ { [EntityKeyName]: 'search-json:1', ...AN_ENTITY } ])
   })
 
   it("searches a string with escaped punctuation", async () => {
     entities = await repository.search().where('aString').equals('foo ,.<>{}[]"\':;!@#$%^*()-+=~& bar').returnAll()
 
     expect(entities).toHaveLength(1)
-    expect(entities).toEqual([ { keyName: 'search-json:escaped', ...AN_ESCAPED_ENTITY } ])
+    expect(entities).toEqual([ { [EntityKeyName]: 'search-json:escaped', ...AN_ESCAPED_ENTITY } ])
   })
 
   it("searches a string with full text with escaped punctuation", async () => {
     entities = await repository.search().where('someText').matches('zany').returnAll()
 
     expect(entities).toHaveLength(1)
-    expect(entities).toEqual([ { keyName: 'search-json:escaped', ...AN_ESCAPED_ENTITY } ])
+    expect(entities).toEqual([ { [EntityKeyName]: 'search-json:escaped', ...AN_ESCAPED_ENTITY } ])
   })
 
   it("searches a array with escaped punctuation", async () => {
     entities = await repository.search().where('someStrings').contains('alfa ,.<>{}[]"\':;!@#$%^&*()-+=~ bravo').returnAll()
 
     expect(entities).toHaveLength(1)
-    expect(entities).toEqual([ { keyName: 'search-json:escaped', ...AN_ESCAPED_ENTITY } ])
+    expect(entities).toEqual([ { [EntityKeyName]: 'search-json:escaped', ...AN_ESCAPED_ENTITY } ])
   })
 })

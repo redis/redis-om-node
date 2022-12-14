@@ -1,7 +1,7 @@
 import '../helpers/mock-client'
 
 import { Client } from '$lib/client'
-import { Entity } from '$lib/entity'
+import { Entity, EntityId, EntityKeyName } from '$lib/entity'
 import { Repository } from '$lib/repository'
 import { Schema, SchemaDefinition } from '$lib/schema'
 
@@ -16,10 +16,10 @@ const aSimpleSchemaDef: SchemaDefinition = {
 const simpleHashSchema = new Schema("SimpleEntity", aSimpleSchemaDef, { dataStructure: 'HASH' })
 const simpleJsonSchema = new Schema("SimpleEntity", aSimpleSchemaDef, { dataStructure: 'JSON' })
 
-const AN_ENTITY = { entityId: 'foo', keyName: 'SimpleEntity:foo', aString: A_STRING, aNumber: A_NUMBER, aBoolean: true }
-const ANOTHER_ENTITY = { entityId: 'bar', keyName: 'SimpleEntity:bar', aString: ANOTHER_STRING, aNumber: ANOTHER_NUMBER, aBoolean: false }
-const A_THIRD_ENTITY = { entityId: 'baz', keyName: 'SimpleEntity:baz', aString: A_THIRD_STRING, aNumber: A_THIRD_NUMBER, aBoolean: true }
-const AN_EMPTY_ENTITY = { entityId: 'empty', keyName: 'SimpleEntity:empty' }
+const AN_ENTITY = { [EntityId]: 'foo', [EntityKeyName]: 'SimpleEntity:foo', aString: A_STRING, aNumber: A_NUMBER, aBoolean: true }
+const ANOTHER_ENTITY = { [EntityId]: 'bar', [EntityKeyName]: 'SimpleEntity:bar', aString: ANOTHER_STRING, aNumber: ANOTHER_NUMBER, aBoolean: false }
+const A_THIRD_ENTITY = { [EntityId]: 'baz', [EntityKeyName]: 'SimpleEntity:baz', aString: A_THIRD_STRING, aNumber: A_THIRD_NUMBER, aBoolean: true }
+const AN_EMPTY_ENTITY = { [EntityId]: 'empty', [EntityKeyName]: 'SimpleEntity:empty' }
 
 const SOME_ENTITY_HASH_DATA = { aString: A_STRING, aNumber: A_NUMBER_STRING, aBoolean: '1' }
 const SOME_OTHER_ENTITY_HASH_DATA = { aString: ANOTHER_STRING, aNumber: ANOTHER_NUMBER_STRING, aBoolean: '0' }

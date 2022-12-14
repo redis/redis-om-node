@@ -1,11 +1,11 @@
-import { Entity } from "$lib/index"
+import { Entity, EntityId } from "$lib/index"
 
 import { RedisHashData } from "$lib/client"
 
 import { ANOTHER_DATE, ANOTHER_DATE_EPOCH_STRING, ANOTHER_NUMBER, ANOTHER_NUMBER_STRING, ANOTHER_POINT, ANOTHER_POINT_STRING, ANOTHER_STRING, A_DATE, A_DATE_EPOCH_STRING, A_NUMBER, A_NUMBER_STRING, A_POINT, A_POINT_STRING, A_STRING, A_THIRD_DATE, A_THIRD_DATE_EPOCH_STRING, A_THIRD_NUMBER, A_THIRD_NUMBER_STRING, A_THIRD_POINT, A_THIRD_POINT_STRING, A_THIRD_STRING, SOME_MORE_STRINGS, SOME_MORE_STRINGS_JOINED, SOME_MORE_TEXT, SOME_OTHER_STRINGS, SOME_OTHER_STRINGS_JOINED, SOME_OTHER_TEXT, SOME_STRINGS, SOME_STRINGS_JOINED, SOME_TEXT } from "../../helpers/example-data"
 
 export const AN_ENTITY: Entity = {
-  entityId: '1',
+  [EntityId]: '1',
   // in schema
   aString: A_STRING,
   someText: SOME_TEXT,
@@ -44,7 +44,7 @@ export const A_HASH: RedisHashData = {
 }
 
 export const ANOTHER_ENTITY: Entity = {
-  entityId: '2',
+  [EntityId]: '2',
   // in schema
   aString: ANOTHER_STRING,
   someText: SOME_OTHER_TEXT,
@@ -83,7 +83,7 @@ export const ANOTHER_HASH: RedisHashData = {
 }
 
 export const A_THIRD_ENTITY: Entity = {
-  entityId: '3',
+  [EntityId]: '3',
   // in schema
   aString: A_THIRD_STRING,
   someText: SOME_MORE_TEXT,
@@ -122,13 +122,13 @@ export const A_THIRD_HASH: RedisHashData = {
 }
 
 export const AN_EMPTY_ENTITY: Entity = {
-  entityId: 'empty'
+  [EntityId]: 'empty'
 }
 
 export const AN_EMPTY_HASH: RedisHashData = {}
 
 export const AN_ESCAPED_ENTITY: Entity = {
-  entityId: 'escaped',
+  [EntityId]: 'escaped',
   aString: "foo ,.<>{}[]\"':;!@#$%^*()-+=~& bar",
   someText: "zany ,.<>{}[]\"':;!@#$%^&*()-+=~| fox",
   someStrings: ['alfa ,.<>{}[]"\':;!@#$%^&*()-+=~ bravo', 'charlie delta']

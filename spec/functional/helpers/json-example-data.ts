@@ -1,11 +1,11 @@
-import { Entity } from "$lib/index"
+import { Entity, EntityId } from "$lib/index"
 
 import { RedisJsonData } from "$lib/client"
 
 import { ANOTHER_DATE, ANOTHER_DATE_EPOCH, ANOTHER_NUMBER, ANOTHER_POINT, ANOTHER_POINT_STRING, ANOTHER_STRING, A_DATE, A_DATE_EPOCH, A_NUMBER, A_POINT, A_POINT_STRING, A_STRING, A_THIRD_DATE, A_THIRD_DATE_EPOCH, A_THIRD_NUMBER, A_THIRD_POINT, A_THIRD_POINT_STRING, A_THIRD_STRING, SOME_MORE_STRINGS, SOME_MORE_TEXT, SOME_OTHER_STRINGS, SOME_OTHER_TEXT, SOME_STRINGS, SOME_TEXT } from "../../helpers/example-data"
 
 export const AN_ENTITY: Entity = {
-  entityId: '1',
+  [EntityId]: '1',
   // in schema
   root: {
     aString: A_STRING,
@@ -48,7 +48,7 @@ export const A_JSON: RedisJsonData = {
 }
 
 export const ANOTHER_ENTITY: Entity = {
-  entityId: '2',
+  [EntityId]: '2',
   // in schema
   root: {
     aString: ANOTHER_STRING,
@@ -91,7 +91,7 @@ export const ANOTHER_JSON: RedisJsonData = {
 }
 
 export const A_THIRD_ENTITY: Entity = {
-  entityId: '3',
+  [EntityId]: '3',
   // in schema
   root: {
     aString: A_THIRD_STRING,
@@ -134,13 +134,13 @@ export const A_THIRD_JSON: RedisJsonData = {
 }
 
 export const AN_EMPTY_ENTITY: Entity = {
-  entityId: 'empty'
+  [EntityId]: 'empty'
 }
 
 export const AN_EMPTY_JSON: RedisJsonData = {}
 
 export const AN_ESCAPED_ENTITY: Entity = {
-  entityId: 'escaped',
+  [EntityId]: 'escaped',
   root: {
     aString: "foo ,.<>{}[]\"':;!@#$%^*()-+=~& bar",
     someText: "zany ,.<>{}[]\"':;!@#$%^&*()-+=~| fox",

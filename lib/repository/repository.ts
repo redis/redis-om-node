@@ -1,5 +1,5 @@
 import { Client, CreateIndexOptions, RedisHashData, RedisJsonData } from "../client"
-import { Entity, EntityData } from "../entity"
+import { Entity, EntityData, EntityId, EntityKeyName } from "../entity"
 import { buildRediSearchIndex } from "../indexer"
 import { Schema } from "../schema"
 import { Search, RawSearch } from '../search'
@@ -141,7 +141,7 @@ export class Repository {
     const entityId = typeof(entityDataOrId) === 'string' ? entityDataOrId : this.schema.generateId()
     const keyName = `${this.schema.prefix}:${entityId}`
     const entityData = typeof(entityDataOrId) === 'object' ? entityDataOrId : maybeEntityData ?? {}
-    return { ...entityData, entityId, keyName }
+    return { ...entityData, [EntityId]: entityId, [EntityKeyName]: keyName }
   }
 
   /**
@@ -163,10 +163,10 @@ export class Repository {
   async save(id: string, entity: Entity): Promise<string>
 
   async save(entityOrId: Entity | string, maybeEntity?: Entity): Promise<string> {
-    const entityId = typeof(entityOrId) === 'string' ? entityOrId : entityOrId.entityId ?? this.schema.generateId()
+    const entityId = typeof(entityOrId) === 'string' ? entityOrId : entityOrId[EntityId] ?? this.schema.generateId()
     const keyName = `${this.schema.prefix}:${entityId}`
     const entity = typeof(entityOrId) === 'object' ? entityOrId : maybeEntity ?? {}
-    await this.writeEntity({ ...entity, entityId, keyName })
+    await this.writeEntity({ ...entity, [EntityId]: entityId, [EntityKeyName]: keyName })
     return entityId
   }
 
@@ -193,7 +193,7 @@ export class Repository {
     const entityId = typeof(entityDataOrId) === 'string' ? entityDataOrId : this.schema.generateId()
     const keyName = `${this.schema.prefix}:${entityId}`
     const entityData = typeof(entityDataOrId) === 'object' ? entityDataOrId : maybeEntityData ?? {}
-    const entity = { ...entityData, entityId, keyName }
+    const entity = { ...entityData, [EntityId]: entityId, [EntityKeyName]: keyName }
     await this.writeEntity(entity)
     return entity
   }
@@ -326,7 +326,8 @@ export class Repository {
   }
 
   private async writeEntityToHash(entity: Entity): Promise<void> {
-    const { entityId, keyName, ...entityData } = entity
+    const keyName = entity[EntityKeyName]
+    const { ...entityData } = entity
     const hashData: RedisHashData = toRedisHash(this.schema, entityData)
     if (Object.keys(hashData).length === 0) {
       await this.client.unlink(keyName ?? '')
@@ -341,13 +342,14 @@ export class Repository {
         const keyName = this.makeKey(entityId)
         const hashData = await this.client.hgetall(keyName)
         const entityData = fromRedisHash(this.schema, hashData)
-        const entity = { ...entityData, entityId, keyName}
+        const entity = { ...entityData, [EntityId]: entityId, [EntityKeyName]: keyName }
         return entity
       }))
   }
 
   private async writeEntityToJson(entity: Entity): Promise<void> {
-    const { entityId, keyName, ...entityData } = entity
+    const keyName = entity[EntityKeyName]
+    const { ...entityData } = entity
     const jsonData: RedisJsonData = toRedisJson(this.schema, entityData)
     await this.client.jsonset(keyName ?? '', jsonData)
   }
@@ -358,7 +360,7 @@ export class Repository {
         const keyName = this.makeKey(entityId)
         const jsonData = await this.client.jsonget(keyName) ?? {}
         const entityData = fromRedisJson(this.schema, jsonData)
-        const entity = { ...entityData, entityId, keyName}
+        const entity = { ...entityData, [EntityId]: entityId, [EntityKeyName]: keyName }
         return entity
       }))
   }

@@ -1,5 +1,6 @@
 import { client } from '../helpers/mock-client'
 import { Client } from "$lib/client"
+import { EntityId } from '$lib/entity'
 import { Search, RawSearch } from "$lib/search"
 
 import { simpleHashSchema } from "../helpers/test-entity-and-schema"
@@ -53,7 +54,7 @@ describe("Search", () => {
         it("returns the expected single result", () => {
           expect(ids).toHaveLength(1)
           expect(ids).toEqual(expect.arrayContaining([
-            SIMPLE_ENTITY_1.entityId
+            SIMPLE_ENTITY_1[EntityId]
           ]))
         })
       })
@@ -73,9 +74,9 @@ describe("Search", () => {
         it("returns all the results", async () => {
           expect(ids).toHaveLength(3)
           expect(ids).toEqual(expect.arrayContaining([
-            SIMPLE_ENTITY_1.entityId,
-            SIMPLE_ENTITY_2.entityId,
-            SIMPLE_ENTITY_3.entityId
+            SIMPLE_ENTITY_1[EntityId],
+            SIMPLE_ENTITY_2[EntityId],
+            SIMPLE_ENTITY_3[EntityId]
           ]))
         })
       })
@@ -95,11 +96,11 @@ describe("Search", () => {
         it("returns all the results", async () => {
           expect(ids).toHaveLength(5)
           expect(ids).toEqual(expect.arrayContaining([
-            SIMPLE_ENTITY_1.entityId,
-            SIMPLE_ENTITY_2.entityId,
-            SIMPLE_ENTITY_3.entityId,
-            SIMPLE_ENTITY_4.entityId,
-            SIMPLE_ENTITY_5.entityId
+            SIMPLE_ENTITY_1[EntityId],
+            SIMPLE_ENTITY_2[EntityId],
+            SIMPLE_ENTITY_3[EntityId],
+            SIMPLE_ENTITY_4[EntityId],
+            SIMPLE_ENTITY_5[EntityId]
           ]))
         })
       })

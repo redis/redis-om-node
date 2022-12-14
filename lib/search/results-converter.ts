@@ -1,5 +1,5 @@
 import { RedisHashData, RedisJsonData } from "../client"
-import { Entity, EntityData } from "../entity"
+import { Entity, EntityData, EntityId, EntityKeyName } from "../entity"
 import { Schema } from "../schema"
 import { fromRedisHash, fromRedisJson } from "../transformer"
 
@@ -59,7 +59,7 @@ function jsonArrayToEntity(schema: Schema, keyName: string, array: Array<string>
 
 function enrichEntityData(keyPrefix: string, keyName: string, entityData: EntityData) {
   const entityId = keyNameToEntityId(keyPrefix, keyName)
-  const entity = { ...entityData, entityId, keyName}
+  const entity = { ...entityData, [EntityId]: entityId, [EntityKeyName]: keyName}
   return entity
 }
 

@@ -1,7 +1,7 @@
 import '../helpers/mock-client'
 
 import { Client } from '$lib/client'
-import { Entity } from '$lib/entity'
+import { Entity, EntityId, EntityKeyName } from '$lib/entity'
 import { Repository } from '$lib/repository'
 import { Schema, SchemaDefinition } from '$lib/schema'
 
@@ -15,7 +15,7 @@ const aSimpleSchemaDef: SchemaDefinition = {
 
 const simpleSchema = new Schema("SimpleEntity", aSimpleSchemaDef, { dataStructure: 'HASH' })
 
-const EMPTY_ENTITY_DATA_WITH_ID = { entityId: 'foo', keyName: 'key:bar' }
+const EMPTY_ENTITY_DATA_WITH_ID = { [EntityId]: 'foo', [EntityKeyName]: 'key:bar' }
 const ENTITY_DATA = { aString: A_STRING, aNumber: A_NUMBER, aBoolean: true }
 
 const ULID_REGEX = /^[0-9ABCDEFGHJKMNPQRSTVWXYZ]{26}$/
@@ -35,23 +35,17 @@ describe("Repository", () => {
     describe("when creating an entity", () => {
       beforeEach(() => { entity = repository.createEntity() })
 
-      it("has a generated entity id", () => expect(entity.entityId).toMatch(ULID_REGEX))
-      it("has a keyname based on the entity id", () => expect(entity.keyName).toMatch(KEYNAME_REGEX))
-      it("is otherwise empty", () => {
-        expect(Object.keys(entity)).toHaveLength(2)
-        expect(Object.keys(entity)).toEqual(expect.arrayContaining(['entityId', 'keyName']))
-      })
+      it("has a generated entity id", () => expect(entity[EntityId]).toMatch(ULID_REGEX))
+      it("has a keyname based on the entity id", () => expect(entity[EntityKeyName]).toMatch(KEYNAME_REGEX))
+      it("is otherwise empty", () => expect(Object.keys(entity)).toHaveLength(0))
     })
 
     describe("when creating an entity with a provided id", () => {
       beforeEach(() => { entity = repository.createEntity('foo') })
 
-      it("has the provided entity id", () => expect(entity.entityId).toBe('foo'))
-      it("has a keyname based on the entity id", () => expect(entity.keyName).toBe(`SimpleEntity:foo`))
-      it("is otherwise empty", () => {
-        expect(Object.keys(entity)).toHaveLength(2)
-        expect(Object.keys(entity)).toEqual(expect.arrayContaining(['entityId', 'keyName']))
-      })
+      it("has the provided entity id", () => expect(entity[EntityId]).toBe('foo'))
+      it("has a keyname based on the entity id", () => expect(entity[EntityKeyName]).toBe(`SimpleEntity:foo`))
+      it("is otherwise empty", () => expect(Object.keys(entity)).toHaveLength(0))
     })
 
     describe("when mistakenly creating an entity with an explicitly defined entityId and keyName", () => {
@@ -59,12 +53,9 @@ describe("Repository", () => {
         entity = repository.createEntity(EMPTY_ENTITY_DATA_WITH_ID)
       })
 
-      it("has a generated entity id", () => expect(entity.entityId).toMatch(ULID_REGEX))
-      it("has a keyname based on the entity id", () => expect(entity.keyName).toMatch(KEYNAME_REGEX))
-      it("is otherwise empty", () => {
-        expect(Object.keys(entity)).toHaveLength(2)
-        expect(Object.keys(entity)).toEqual(expect.arrayContaining(['entityId', 'keyName']))
-      })
+      it("has a generated entity id", () => expect(entity[EntityId]).toMatch(ULID_REGEX))
+      it("has a keyname based on the entity id", () => expect(entity[EntityKeyName]).toMatch(KEYNAME_REGEX))
+      it("is otherwise empty", () => expect(Object.keys(entity)).toHaveLength(0))
     })
 
     describe("when mistakenly creating an entity with an explicitly defined entityId and keyName and a provided id", () => {
@@ -72,12 +63,9 @@ describe("Repository", () => {
         entity = repository.createEntity('foo', EMPTY_ENTITY_DATA_WITH_ID)
       })
 
-      it("has the provided entity id", () => expect(entity.entityId).toBe('foo'))
-      it("has a keyname based on the entity id", () => expect(entity.keyName).toBe(`SimpleEntity:foo`))
-      it("is otherwise empty", () => {
-        expect(Object.keys(entity)).toHaveLength(2)
-        expect(Object.keys(entity)).toEqual(expect.arrayContaining(['entityId', 'keyName']))
-      })
+      it("has the provided entity id", () => expect(entity[EntityId]).toBe('foo'))
+      it("has a keyname based on the entity id", () => expect(entity[EntityKeyName]).toBe(`SimpleEntity:foo`))
+      it("is otherwise empty", () => expect(Object.keys(entity)).toHaveLength(0))
     })
 
     describe("when creating an entity with data", () => {
@@ -85,8 +73,8 @@ describe("Repository", () => {
         entity = repository.createEntity(ENTITY_DATA)
       })
 
-      it("has a generated entity id", () => expect(entity.entityId).toMatch(ULID_REGEX))
-      it("has a keyname based on the entity id", () => expect(entity.keyName).toMatch(KEYNAME_REGEX))
+      it("has a generated entity id", () => expect(entity[EntityId]).toMatch(ULID_REGEX))
+      it("has a keyname based on the entity id", () => expect(entity[EntityKeyName]).toMatch(KEYNAME_REGEX))
       it("has populated properties", () => {
         expect(entity.aString).toBe(A_STRING)
         expect(entity.aNumber).toBe(A_NUMBER)
@@ -99,8 +87,8 @@ describe("Repository", () => {
         entity = repository.createEntity('foo', ENTITY_DATA)
       })
 
-      it("has a generated entity id", () => expect(entity.entityId).toBe('foo'))
-      it("has a keyname based on the entity id", () => expect(entity.keyName).toBe(`SimpleEntity:foo`))
+      it("has a generated entity id", () => expect(entity[EntityId]).toBe('foo'))
+      it("has a keyname based on the entity id", () => expect(entity[EntityKeyName]).toBe(`SimpleEntity:foo`))
       it("has populated properties", () => {
         expect(entity.aString).toBe(A_STRING)
         expect(entity.aNumber).toBe(A_NUMBER)

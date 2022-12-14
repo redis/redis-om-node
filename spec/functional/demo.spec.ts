@@ -1,6 +1,6 @@
 import { createClient } from 'redis'
 
-import { Client, Entity, EntityData, Repository, Schema } from '$lib/index'
+import { Client, Entity, EntityId, Repository, Schema } from '$lib/index'
 
 describe("Demo", () => {
 
@@ -64,7 +64,7 @@ describe("Demo", () => {
 
     // write an entity that already has an entityId
     entity = {
-      entityId: '8086', // the provided id
+      [EntityId]: '8086', // the provided id
       date: new Date('1978-10-09T00:00:00.000Z'),
       title: "Bigfoot by the Walmart",
       observed: " I saw Bigfoot at Walmary buying flip flops. He wears a size 17.",

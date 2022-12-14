@@ -10,9 +10,10 @@ import {
   SOME_STRINGS_JOINED, SOME_OTHER_STRINGS_JOINED, SOME_MORE_STRINGS_JOINED,
   SOME_STRINGS_JSON, SOME_OTHER_STRINGS_JSON, SOME_MORE_STRINGS_JSON,
   SOME_TEXT, SOME_OTHER_TEXT, SOME_MORE_TEXT } from '../../helpers/example-data';
+import { EntityId } from '$lib/entity';
 
 export const SIMPLE_ENTITY_1 = {
-  entityId: '1',
+  [EntityId]: '1',
   aString: A_STRING,
   someText: SOME_TEXT,
   aNumber: A_NUMBER,
@@ -22,7 +23,7 @@ export const SIMPLE_ENTITY_1 = {
 }
 
 export const SIMPLE_ENTITY_2 = {
-  entityId: '2',
+  [EntityId]: '2',
   aString: ANOTHER_STRING,
   someText: SOME_OTHER_TEXT,
   aNumber: ANOTHER_NUMBER,
@@ -32,7 +33,7 @@ export const SIMPLE_ENTITY_2 = {
 }
 
 export const SIMPLE_ENTITY_3 = {
-  entityId: '3',
+  [EntityId]: '3',
   aString: A_THIRD_STRING,
   someText: SOME_MORE_TEXT,
   aNumber: A_THIRD_NUMBER,
@@ -42,7 +43,7 @@ export const SIMPLE_ENTITY_3 = {
 }
 
 export const SIMPLE_ENTITY_4 = {
-  entityId: '4',
+  [EntityId]: '4',
   aString: A_STRING,
   someText: SOME_OTHER_TEXT,
   aNumber: A_THIRD_NUMBER,
@@ -52,7 +53,7 @@ export const SIMPLE_ENTITY_4 = {
 }
 
 export const SIMPLE_ENTITY_5 = {
-  entityId: '5',
+  [EntityId]: '5',
   aString: A_THIRD_STRING,
   someText: SOME_TEXT,
   aNumber: ANOTHER_NUMBER,

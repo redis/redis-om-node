@@ -1,5 +1,5 @@
 export { Client, RedisConnection } from './client'
-export { Entity, EntityData, EntityId, Point } from './entity'
+export { Entity, EntityData, EntityId, EntityKeyName, EntityMetaData, Point } from './entity'
 export { RedisError } from './errors'
 export { Field } from './schema/field'
 export { Schema } from './schema/schema'

@@ -1,7 +1,7 @@
 import '../helpers/mock-client'
 
 import { Client } from '$lib/client'
-import { Entity } from '$lib/entity'
+import { Entity, EntityId, EntityKeyName } from '$lib/entity'
 import { Repository } from '$lib/repository'
 import { Schema, SchemaDefinition } from '$lib/schema'
 
@@ -17,9 +17,9 @@ const simpleHashSchema = new Schema("SimpleEntity", aSimpleSchemaDef, { dataStru
 const simpleJsonSchema = new Schema("SimpleEntity", aSimpleSchemaDef, { dataStructure: 'JSON' })
 
 const EMPTY_ENTITY_DATA = {}
-const EMPTY_ENTITY_DATA_WITH_ID = { entityId: 'foo', keyName: 'key:bar' }
+const EMPTY_ENTITY_DATA_WITH_ID = { [EntityId]: 'foo', [EntityKeyName]: 'key:bar' }
 const ENTITY_DATA = { aString: A_STRING, aNumber: A_NUMBER, aBoolean: true }
-const ENTITY_DATA_WITH_ID = { entityId: 'bar', keyName: 'key:bar', aString: A_STRING, aNumber: A_NUMBER, aBoolean: true }
+const ENTITY_DATA_WITH_ID = { [EntityId]: 'bar', [EntityKeyName]: 'key:bar', aString: A_STRING, aNumber: A_NUMBER, aBoolean: true }
 
 const ENTITY_HASH_DATA = { aString: A_STRING, aNumber: A_NUMBER_STRING, aBoolean: '1' }
 const ENTITY_JSON_DATA = { aString: A_STRING, aNumber: A_NUMBER, aBoolean: true }
@@ -57,13 +57,12 @@ describe("Repository", () => {
         if (isEmpty) it("unlinks the generated key", () =>
           expect(client.unlink).toHaveBeenCalledWith(expect.stringMatching(KEYNAME_REGEX)))
 
-
         it("returns an entity with the expected number of properties", () =>
-          expect(Object.keys(entity)).toHaveLength(isEmpty ? 2 : 5))
+          expect(Object.keys(entity)).toHaveLength(isEmpty ? 0 : 3))
 
         it("returns an entity with a generated id and key", () => {
-          expect(entity.entityId).toMatch(ULID_REGEX)
-          expect(entity.keyName).toMatch(KEYNAME_REGEX)
+          expect(entity[EntityId]).toMatch(ULID_REGEX)
+          expect(entity[EntityKeyName]).toMatch(KEYNAME_REGEX)
         })
 
         if (!isEmpty) it("returns an entity with the expected properties", () => {
@@ -91,11 +90,11 @@ describe("Repository", () => {
           expect(client.unlink).toHaveBeenCalledWith('SimpleEntity:foo'))
 
         it("returns an entity with the expected number of properties", () =>
-          expect(Object.keys(entity)).toHaveLength(isEmpty ? 2 : 5))
+          expect(Object.keys(entity)).toHaveLength(isEmpty ? 0 : 3))
 
         it("returns an entity with the provided id and key", () => {
-          expect(entity.entityId).toBe('foo')
-          expect(entity.keyName).toBe('SimpleEntity:foo')
+          expect(entity[EntityId]).toBe('foo')
+          expect(entity[EntityKeyName]).toBe('SimpleEntity:foo')
         })
 
         if (!isEmpty) it("returns an entity with the expected properties", () => {
@@ -131,11 +130,11 @@ describe("Repository", () => {
             expect.objectContaining({})))
 
         it("returns an entity with the expected number of properties", () =>
-          expect(Object.keys(entity)).toHaveLength(isEmpty ? 2 : 5))
+          expect(Object.keys(entity)).toHaveLength(isEmpty ? 0 : 3))
 
         it("returns an entity with a generated id and key", () => {
-          expect(entity.entityId).toMatch(ULID_REGEX)
-          expect(entity.keyName).toMatch(KEYNAME_REGEX)
+          expect(entity[EntityId]).toMatch(ULID_REGEX)
+          expect(entity[EntityKeyName]).toMatch(KEYNAME_REGEX)
         })
 
         if (!isEmpty) it("returns an entity with the expected properties", () => {
@@ -165,11 +164,11 @@ describe("Repository", () => {
             expect.objectContaining({})))
 
         it("returns an entity with the expected number of properties", () =>
-          expect(Object.keys(entity)).toHaveLength(isEmpty ? 2 : 5))
+          expect(Object.keys(entity)).toHaveLength(isEmpty ? 0 : 3))
 
         it("returns an entity with the provided id and key", () => {
-          expect(entity.entityId).toBe('foo')
-          expect(entity.keyName).toBe('SimpleEntity:foo')
+          expect(entity[EntityId]).toBe('foo')
+          expect(entity[EntityKeyName]).toBe('SimpleEntity:foo')
         })
 
         if (!isEmpty) it("returns an entity with the expected properties", () => {

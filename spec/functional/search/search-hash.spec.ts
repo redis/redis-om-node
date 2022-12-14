@@ -1,4 +1,4 @@
-import { Client, Entity, Schema, Repository } from '$lib/index'
+import { Client, Entity, Schema, Repository, EntityKeyName } from '$lib/index'
 
 import { createHashEntitySchema, loadHash } from '../helpers/data-helper'
 import { removeAll } from '../helpers/redis-helper'
@@ -39,10 +39,10 @@ describe("search for hashes", () => {
 
     expect(entities).toHaveLength(4)
     expect(entities).toEqual(expect.arrayContaining([
-      { keyName: 'search-hash:1', ...AN_ENTITY },
-      { keyName: 'search-hash:2', ...ANOTHER_ENTITY },
-      { keyName: 'search-hash:3', ...A_THIRD_ENTITY },
-      { keyName: 'search-hash:escaped', ...AN_ESCAPED_ENTITY },
+      { [EntityKeyName]: 'search-hash:1', ...AN_ENTITY },
+      { [EntityKeyName]: 'search-hash:2', ...ANOTHER_ENTITY },
+      { [EntityKeyName]: 'search-hash:3', ...A_THIRD_ENTITY },
+      { [EntityKeyName]: 'search-hash:escaped', ...AN_ESCAPED_ENTITY },
     ]))
   })
 
@@ -51,10 +51,10 @@ describe("search for hashes", () => {
 
     expect(entities).toHaveLength(4)
     expect(entities).toEqual([
-      { keyName: 'search-hash:3', ...A_THIRD_ENTITY },
-      { keyName: 'search-hash:2', ...ANOTHER_ENTITY },
-      { keyName: 'search-hash:1', ...AN_ENTITY },
-      { keyName: 'search-hash:escaped', ...AN_ESCAPED_ENTITY }
+      { [EntityKeyName]: 'search-hash:3', ...A_THIRD_ENTITY },
+      { [EntityKeyName]: 'search-hash:2', ...ANOTHER_ENTITY },
+      { [EntityKeyName]: 'search-hash:1', ...AN_ENTITY },
+      { [EntityKeyName]: 'search-hash:escaped', ...AN_ESCAPED_ENTITY }
     ])
   })
 
@@ -63,10 +63,10 @@ describe("search for hashes", () => {
 
     expect(entities).toHaveLength(4)
     expect(entities).toEqual(expect.arrayContaining([
-      { keyName: 'search-hash:1', ...AN_ENTITY },
-      { keyName: 'search-hash:2', ...ANOTHER_ENTITY },
-      { keyName: 'search-hash:3', ...A_THIRD_ENTITY },
-      { keyName: 'search-hash:escaped', ...AN_ESCAPED_ENTITY }
+      { [EntityKeyName]: 'search-hash:1', ...AN_ENTITY },
+      { [EntityKeyName]: 'search-hash:2', ...ANOTHER_ENTITY },
+      { [EntityKeyName]: 'search-hash:3', ...A_THIRD_ENTITY },
+      { [EntityKeyName]: 'search-hash:escaped', ...AN_ESCAPED_ENTITY }
     ]))
   })
 
@@ -75,7 +75,7 @@ describe("search for hashes", () => {
 
     expect(entities).toHaveLength(1)
     expect(entities).toEqual(expect.arrayContaining([
-      { keyName: 'search-hash:1', ...AN_ENTITY }
+      { [EntityKeyName]: 'search-hash:1', ...AN_ENTITY }
     ]))
   })
 
@@ -84,7 +84,7 @@ describe("search for hashes", () => {
 
     expect(entities).toHaveLength(1)
     expect(entities).toEqual(expect.arrayContaining([
-      { keyName: 'search-hash:1', ...AN_ENTITY }
+      { [EntityKeyName]: 'search-hash:1', ...AN_ENTITY }
     ]))
   })
 
@@ -93,7 +93,7 @@ describe("search for hashes", () => {
 
     expect(entities).toHaveLength(1)
     expect(entities).toEqual(expect.arrayContaining([
-      { keyName: 'search-hash:1', ...AN_ENTITY }
+      { [EntityKeyName]: 'search-hash:1', ...AN_ENTITY }
     ]))
   })
 
@@ -101,21 +101,21 @@ describe("search for hashes", () => {
     entities = await repository.search().where('someText').matches('br*').returnAll()
 
     expect(entities).toHaveLength(1)
-    expect(entities).toEqual([ { keyName: 'search-hash:1', ...AN_ENTITY } ])
+    expect(entities).toEqual([ { [EntityKeyName]: 'search-hash:1', ...AN_ENTITY } ])
   })
 
   it("searches a string with full text and an exact match", async () => {
     entities = await repository.search().where('someText').exactly.matches('quick brown').returnAll()
 
     expect(entities).toHaveLength(1)
-    expect(entities).toEqual([ { keyName: 'search-hash:1', ...AN_ENTITY } ])
+    expect(entities).toEqual([ { [EntityKeyName]: 'search-hash:1', ...AN_ENTITY } ])
   })
 
   it("searches a string with full text and stop words", async () => {
     entities = await repository.search().where('someText').matches('brown quick the').returnAll()
 
     expect(entities).toHaveLength(1)
-    expect(entities).toEqual([ { keyName: 'search-hash:1', ...AN_ENTITY } ])
+    expect(entities).toEqual([ { [EntityKeyName]: 'search-hash:1', ...AN_ENTITY } ])
   })
 
   it("throw an error when searching a string with full text, an exact match, and stop words", async () => {
@@ -129,8 +129,8 @@ describe("search for hashes", () => {
 
     expect(entities).toHaveLength(2)
     expect(entities).toEqual(expect.arrayContaining([
-      { keyName: 'search-hash:2', ...ANOTHER_ENTITY },
-      { keyName: 'search-hash:3', ...A_THIRD_ENTITY }
+      { [EntityKeyName]: 'search-hash:2', ...ANOTHER_ENTITY },
+      { [EntityKeyName]: 'search-hash:3', ...A_THIRD_ENTITY }
     ]))
   })
 
@@ -139,8 +139,8 @@ describe("search for hashes", () => {
 
     expect(entities).toHaveLength(2)
     expect(entities).toEqual(expect.arrayContaining([
-      { keyName: 'search-hash:1', ...AN_ENTITY },
-      { keyName: 'search-hash:2', ...ANOTHER_ENTITY }
+      { [EntityKeyName]: 'search-hash:1', ...AN_ENTITY },
+      { [EntityKeyName]: 'search-hash:2', ...ANOTHER_ENTITY }
     ]))
   })
 
@@ -150,14 +150,14 @@ describe("search for hashes", () => {
       .returnAll()
 
     expect(entities).toHaveLength(1)
-    expect(entities).toEqual([ { keyName: 'search-hash:1', ...AN_ENTITY } ])
+    expect(entities).toEqual([ { [EntityKeyName]: 'search-hash:1', ...AN_ENTITY } ])
   })
 
   it("searches a date", async () => {
     entities = await repository.search().where('aDate').after(A_DATE).returnAll()
 
     expect(entities).toHaveLength(1)
-    expect(entities).toEqual([ { keyName: 'search-hash:3', ...A_THIRD_ENTITY } ])
+    expect(entities).toEqual([ { [EntityKeyName]: 'search-hash:3', ...A_THIRD_ENTITY } ])
   })
 
   it("searches a array", async () => {
@@ -165,9 +165,9 @@ describe("search for hashes", () => {
 
     expect(entities).toHaveLength(3)
     expect(entities).toEqual(expect.arrayContaining([
-      { keyName: 'search-hash:1', ...AN_ENTITY },
-      { keyName: 'search-hash:2', ...ANOTHER_ENTITY },
-      { keyName: 'search-hash:3', ...A_THIRD_ENTITY }
+      { [EntityKeyName]: 'search-hash:1', ...AN_ENTITY },
+      { [EntityKeyName]: 'search-hash:2', ...ANOTHER_ENTITY },
+      { [EntityKeyName]: 'search-hash:3', ...A_THIRD_ENTITY }
     ]))
   })
 
@@ -182,27 +182,27 @@ describe("search for hashes", () => {
       .returnAll()
 
     expect(entities).toHaveLength(1)
-    expect(entities).toEqual([ { keyName: 'search-hash:1', ...AN_ENTITY } ])
+    expect(entities).toEqual([ { [EntityKeyName]: 'search-hash:1', ...AN_ENTITY } ])
   })
 
   it("searches a string with escaped punctuation", async () => {
     entities = await repository.search().where('aString').equals('foo ,.<>{}[]"\':;!@#$%^*()-+=~& bar').returnAll()
 
     expect(entities).toHaveLength(1)
-    expect(entities).toEqual([ { keyName: 'search-hash:escaped', ...AN_ESCAPED_ENTITY } ])
+    expect(entities).toEqual([ { [EntityKeyName]: 'search-hash:escaped', ...AN_ESCAPED_ENTITY } ])
   })
 
   it("searches a string with full text with escaped punctuation", async () => {
     entities = await repository.search().where('someText').matches('zany').returnAll()
 
     expect(entities).toHaveLength(1)
-    expect(entities).toEqual([ { keyName: 'search-hash:escaped', ...AN_ESCAPED_ENTITY } ])
+    expect(entities).toEqual([ { [EntityKeyName]: 'search-hash:escaped', ...AN_ESCAPED_ENTITY } ])
   })
 
   it("searches an array with escaped punctuation", async () => {
     entities = await repository.search().where('someStrings').contains('alfa ,.<>{}[]"\':;!@#$%^&*()-+=~ bravo').returnAll()
 
     expect(entities).toHaveLength(1)
-    expect(entities).toEqual([ { keyName: 'search-hash:escaped', ...AN_ESCAPED_ENTITY } ])
+    expect(entities).toEqual([ { [EntityKeyName]: 'search-hash:escaped', ...AN_ESCAPED_ENTITY } ])
   })
 })
