@@ -3,6 +3,16 @@ import { Client, Repository, Schema } from '$lib/index'
 import { createJsonEntitySchema } from '../helpers/data-helper'
 import { fetchIndexHash, fetchIndexInfo, removeAll } from '../helpers/redis-helper'
 
+const expected = [
+  ['identifier', '$.root.aString', 'attribute', 'aString', 'type', 'TAG', 'SEPARATOR', '|'],
+  ['identifier', '$.root.someText', 'attribute', 'someText', 'type', 'TEXT', 'WEIGHT', '1', 'SORTABLE', 'UNF'],
+  ['identifier', '$.root.aNumber', 'attribute', 'aNumber', 'type', 'NUMERIC', 'SORTABLE', 'UNF'],
+  ['identifier', '$.root.aBoolean', 'attribute', 'aBoolean', 'type', 'TAG', 'SEPARATOR', ''],
+  ['identifier', '$.root.aPoint', 'attribute', 'aPoint', 'type', 'GEO'],
+  ['identifier', '$.root.aDate', 'attribute', 'aDate', 'type', 'NUMERIC', 'SORTABLE', 'UNF'],
+  ['identifier', '$.root.someStrings[*]', 'attribute', 'someStrings', 'type', 'TAG', 'SEPARATOR', '|']
+]
+
 describe("create and drop index on JSON", () => {
 
   let client: Client
@@ -53,15 +63,7 @@ describe("create and drop index on JSON", () => {
     it("has the expected fields", () => {
       let fields = indexInfo[7]
       expect(fields).toHaveLength(7)
-      expect(fields).toEqual([
-        ['identifier', '$.root.aString', 'attribute', 'aString', 'type', 'TAG', 'SEPARATOR', '|'],
-        ['identifier', '$.root.someText', 'attribute', 'someText', 'type', 'TEXT', 'WEIGHT', '1', 'SORTABLE'],
-        ['identifier', '$.root.aNumber', 'attribute', 'aNumber', 'type', 'NUMERIC', 'SORTABLE'],
-        ['identifier', '$.root.aBoolean', 'attribute', 'aBoolean', 'type', 'TAG', 'SEPARATOR', ''],
-        ['identifier', '$.root.aPoint', 'attribute', 'aPoint', 'type', 'GEO'],
-        ['identifier', '$.root.aDate', 'attribute', 'aDate', 'type', 'NUMERIC', 'SORTABLE'],
-        ['identifier', '$.root.someStrings[*]', 'attribute', 'someStrings', 'type', 'TAG', 'SEPARATOR', '|']
-      ])
+      expect(fields).toEqual(expected)
     })
 
     describe("when the index is dropped", () => {
@@ -97,15 +99,7 @@ describe("create and drop index on JSON", () => {
         expect(indexHash).toBe("o74BCR4MFyeWwukz8UvLjyIx/mQ=")
 
         expect(fields).toHaveLength(7)
-        expect(fields).toEqual([
-          ['identifier', '$.root.aString', 'attribute', 'aString', 'type', 'TAG', 'SEPARATOR', '|'],
-          ['identifier', '$.root.someText', 'attribute', 'someText', 'type', 'TEXT', 'WEIGHT', '1', 'SORTABLE'],
-          ['identifier', '$.root.aNumber', 'attribute', 'aNumber', 'type', 'NUMERIC', 'SORTABLE'],
-          ['identifier', '$.root.aBoolean', 'attribute', 'aBoolean', 'type', 'TAG', 'SEPARATOR', ''],
-          ['identifier', '$.root.aPoint', 'attribute', 'aPoint', 'type', 'GEO'],
-          ['identifier', '$.root.aDate', 'attribute', 'aDate', 'type', 'NUMERIC', 'SORTABLE'],
-          ['identifier', '$.root.someStrings[*]', 'attribute', 'someStrings', 'type', 'TAG', 'SEPARATOR', '|']
-        ])
+        expect(fields).toEqual(expected);
       })
     })
 

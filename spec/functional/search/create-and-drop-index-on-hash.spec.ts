@@ -3,6 +3,16 @@ import { Client, Repository, Schema } from '$lib/index'
 import { createHashEntitySchema } from '../helpers/data-helper'
 import { fetchIndexHash, fetchIndexInfo, removeAll } from '../helpers/redis-helper'
 
+const expected = [
+  ['identifier', 'aString', 'attribute', 'aString', 'type', 'TAG', 'SEPARATOR', '|'],
+  ['identifier', 'someText', 'attribute', 'someText', 'type', 'TEXT', 'WEIGHT', '1', 'SORTABLE'],
+  ['identifier', 'aNumber', 'attribute', 'aNumber', 'type', 'NUMERIC', 'SORTABLE'],
+  ['identifier', 'aBoolean', 'attribute', 'aBoolean', 'type', 'TAG', 'SEPARATOR', ','],
+  ['identifier', 'aPoint', 'attribute', 'aPoint', 'type', 'GEO'],
+  ['identifier', 'aDate', 'attribute', 'aDate', 'type', 'NUMERIC', 'SORTABLE'],
+  ['identifier', 'someStrings', 'attribute', 'someStrings', 'type', 'TAG', 'SEPARATOR', '|']
+]
+
 describe("create and drop index on hash", () => {
 
   let client: Client
@@ -54,15 +64,7 @@ describe("create and drop index on hash", () => {
     it("has the expected fields", () => {
       let fields = indexInfo[7]
       expect(fields).toHaveLength(7)
-      expect(fields).toEqual([
-        ['identifier', 'aString', 'attribute', 'aString', 'type', 'TAG', 'SEPARATOR', '|'],
-        ['identifier', 'someText', 'attribute', 'someText', 'type', 'TEXT', 'WEIGHT', '1', 'SORTABLE'],
-        ['identifier', 'aNumber', 'attribute', 'aNumber', 'type', 'NUMERIC', 'SORTABLE'],
-        ['identifier', 'aBoolean', 'attribute', 'aBoolean', 'type', 'TAG', 'SEPARATOR', ','],
-        ['identifier', 'aPoint', 'attribute', 'aPoint', 'type', 'GEO'],
-        ['identifier', 'aDate', 'attribute', 'aDate', 'type', 'NUMERIC', 'SORTABLE'],
-        ['identifier', 'someStrings', 'attribute', 'someStrings', 'type', 'TAG', 'SEPARATOR', '|']
-      ])
+      expect(fields).toEqual(expected)
     })
 
     describe("and then the index is dropped", () => {
@@ -98,15 +100,7 @@ describe("create and drop index on hash", () => {
         expect(indexHash).toBe("T0ZYwbhTRHwtWlrwpoxcwKqxpAg=")
 
         expect(fields).toHaveLength(7)
-        expect(fields).toEqual([
-          ['identifier', 'aString', 'attribute', 'aString', 'type', 'TAG', 'SEPARATOR', '|'],
-          ['identifier', 'someText', 'attribute', 'someText', 'type', 'TEXT', 'WEIGHT', '1', 'SORTABLE'],
-          ['identifier', 'aNumber', 'attribute', 'aNumber', 'type', 'NUMERIC', 'SORTABLE'],
-          ['identifier', 'aBoolean', 'attribute', 'aBoolean', 'type', 'TAG', 'SEPARATOR', ','],
-          ['identifier', 'aPoint', 'attribute', 'aPoint', 'type', 'GEO'],
-          ['identifier', 'aDate', 'attribute', 'aDate', 'type', 'NUMERIC', 'SORTABLE'],
-          ['identifier', 'someStrings', 'attribute', 'someStrings', 'type', 'TAG', 'SEPARATOR', '|']
-        ])
+        expect(fields).toEqual(expected)
       })
     })
 
