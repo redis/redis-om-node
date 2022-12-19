@@ -5,6 +5,23 @@ import { Repository } from '$lib/repository';
 import { SampleJsonEntity, createJsonEntitySchema } from '../helpers/data-helper';
 import { fetchIndexHash, fetchIndexInfo, removeAll } from '../helpers/redis-helper';
 
+const expected = [
+  ['identifier', '$.aString', 'attribute', 'aString', 'type', 'TAG', 'SEPARATOR', '|'],
+  ['identifier', '$.anotherString', 'attribute', 'anotherString', 'type', 'TAG', 'SEPARATOR', '|'],
+  ['identifier', '$.someText', 'attribute', 'someText', 'type', 'TEXT', 'WEIGHT', '1', 'SORTABLE', 'UNF'],
+  ['identifier', '$.someOtherText', 'attribute', 'someOtherText', 'type', 'TEXT', 'WEIGHT', '1', 'SORTABLE', 'UNF'],
+  ['identifier', '$.aNumber', 'attribute', 'aNumber', 'type', 'NUMERIC', 'SORTABLE', 'UNF'],
+  ['identifier', '$.anotherNumber', 'attribute', 'anotherNumber', 'type', 'NUMERIC', 'SORTABLE', 'UNF'],
+  ['identifier', '$.aBoolean', 'attribute', 'aBoolean', 'type', 'TAG', 'SEPARATOR', ''],
+  ['identifier', '$.anotherBoolean', 'attribute', 'anotherBoolean', 'type', 'TAG', 'SEPARATOR', ''],
+  ['identifier', '$.aPoint', 'attribute', 'aPoint', 'type', 'GEO'],
+  ['identifier', '$.anotherPoint', 'attribute', 'anotherPoint', 'type', 'GEO'],
+  ['identifier', '$.aDate', 'attribute', 'aDate', 'type', 'NUMERIC', 'SORTABLE', 'UNF'],
+  ['identifier', '$.anotherDate', 'attribute', 'anotherDate', 'type', 'NUMERIC', 'SORTABLE', 'UNF'],
+  ['identifier', '$.someStrings[*]', 'attribute', 'someStrings', 'type', 'TAG', 'SEPARATOR', '|'],
+  ['identifier', '$.someOtherStrings[*]', 'attribute', 'someOtherStrings', 'type', 'TAG', 'SEPARATOR', '|']
+]
+
 describe("create and drop index on JSON", () => {
 
   let client: Client;
@@ -57,22 +74,7 @@ describe("create and drop index on JSON", () => {
     it("has the expected fields", () => {
       let fields = indexInfo[7];
       expect(fields).toHaveLength(14);
-      expect(fields).toEqual([
-        ['identifier', '$.aString', 'attribute', 'aString', 'type', 'TAG', 'SEPARATOR', '|'],
-        ['identifier', '$.anotherString', 'attribute', 'anotherString', 'type', 'TAG', 'SEPARATOR', '|'],
-        ['identifier', '$.someText', 'attribute', 'someText', 'type', 'TEXT', 'WEIGHT', '1', 'SORTABLE'],
-        ['identifier', '$.someOtherText', 'attribute', 'someOtherText', 'type', 'TEXT', 'WEIGHT', '1', 'SORTABLE'],
-        ['identifier', '$.aNumber', 'attribute', 'aNumber', 'type', 'NUMERIC', 'SORTABLE'],
-        ['identifier', '$.anotherNumber', 'attribute', 'anotherNumber', 'type', 'NUMERIC', 'SORTABLE'],
-        ['identifier', '$.aBoolean', 'attribute', 'aBoolean', 'type', 'TAG', 'SEPARATOR', ''],
-        ['identifier', '$.anotherBoolean', 'attribute', 'anotherBoolean', 'type', 'TAG', 'SEPARATOR', ''],
-        ['identifier', '$.aPoint', 'attribute', 'aPoint', 'type', 'GEO'],
-        ['identifier', '$.anotherPoint', 'attribute', 'anotherPoint', 'type', 'GEO'],
-        ['identifier', '$.aDate', 'attribute', 'aDate', 'type', 'NUMERIC', 'SORTABLE'],
-        ['identifier', '$.anotherDate', 'attribute', 'anotherDate', 'type', 'NUMERIC', 'SORTABLE'],
-        ['identifier', '$.someStrings[*]', 'attribute', 'someStrings', 'type', 'TAG', 'SEPARATOR', '|'],
-        ['identifier', '$.someOtherStrings[*]', 'attribute', 'someOtherStrings', 'type', 'TAG', 'SEPARATOR', '|']
-      ]);
+      expect(fields).toEqual(expected);
     });
 
     describe("when the index is dropped", () => {
@@ -108,22 +110,7 @@ describe("create and drop index on JSON", () => {
         expect(indexHash).toBe("p2zV8lqN3AUmui41o3PSkvLZ/XQ=");
 
         expect(fields).toHaveLength(14);
-        expect(fields).toEqual([
-          ['identifier', '$.aString', 'attribute', 'aString', 'type', 'TAG', 'SEPARATOR', '|'],
-          ['identifier', '$.anotherString', 'attribute', 'anotherString', 'type', 'TAG', 'SEPARATOR', '|'],
-          ['identifier', '$.someText', 'attribute', 'someText', 'type', 'TEXT', 'WEIGHT', '1', 'SORTABLE'],
-          ['identifier', '$.someOtherText', 'attribute', 'someOtherText', 'type', 'TEXT', 'WEIGHT', '1', 'SORTABLE'],
-          ['identifier', '$.aNumber', 'attribute', 'aNumber', 'type', 'NUMERIC', 'SORTABLE'],
-          ['identifier', '$.anotherNumber', 'attribute', 'anotherNumber', 'type', 'NUMERIC', 'SORTABLE'],
-          ['identifier', '$.aBoolean', 'attribute', 'aBoolean', 'type', 'TAG', 'SEPARATOR', ''],
-          ['identifier', '$.anotherBoolean', 'attribute', 'anotherBoolean', 'type', 'TAG', 'SEPARATOR', ''],
-          ['identifier', '$.aPoint', 'attribute', 'aPoint', 'type', 'GEO'],
-          ['identifier', '$.anotherPoint', 'attribute', 'anotherPoint', 'type', 'GEO'],
-          ['identifier', '$.aDate', 'attribute', 'aDate', 'type', 'NUMERIC', 'SORTABLE'],
-          ['identifier', '$.anotherDate', 'attribute', 'anotherDate', 'type', 'NUMERIC', 'SORTABLE'],
-          ['identifier', '$.someStrings[*]', 'attribute', 'someStrings', 'type', 'TAG', 'SEPARATOR', '|'],
-          ['identifier', '$.someOtherStrings[*]', 'attribute', 'someOtherStrings', 'type', 'TAG', 'SEPARATOR', '|']
-        ]);
+        expect(fields).toEqual(expected);
       });
     });
 
