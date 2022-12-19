@@ -14,6 +14,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - *Schema* now supports specifying the field for a Hash via the `field` option.
 - *Repository* now allows adding Entities with properties that are not in the *Schema*. These can even be nested if you are using JSON.
 - *Repository* can be now be constructed directly with `new` in addition to being created from a *Client* via `.fetchRepository`.
+- *Repository* can now directly be handed an open Node Redis connection. No need to create a *Client* instance.
 
 ### Removed
 - As *Entity* is no longer a class, custom methods on an *Entity* are no longer supported.

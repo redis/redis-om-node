@@ -1,4 +1,4 @@
-import { Client, CreateIndexOptions, RedisHashData, RedisJsonData } from "../client"
+import { Client, CreateIndexOptions, RedisConnection, RedisHashData, RedisJsonData } from "../client"
 import { Entity, EntityData, EntityId, EntityKeyName } from "../entity"
 import { buildRediSearchIndex } from "../indexer"
 import { Schema } from "../schema"
@@ -53,9 +53,14 @@ export class Repository {
    * @param schema The schema defining that data in the repository.
    * @param client A client to talk to Redis.
    */
-  constructor(schema: Schema, client: Client) {
+  constructor(schema: Schema, clientOrConnection: Client | RedisConnection) {
     this.schema = schema
-    this.client = client
+    if (clientOrConnection instanceof Client) {
+      this.client = clientOrConnection
+    } else {
+      this.client = new Client()
+      this.client.useNoClose(clientOrConnection)
+    }
   }
 
   /**

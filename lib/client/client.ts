@@ -71,8 +71,18 @@ export class Client {
    * @returns This {@link Client} instance.
    */
   async use(connection: RedisConnection): Promise<Client> {
-    // close existing connection
     await this.close()
+    return this.useNoClose(connection)
+  }
+
+  /**
+   * Attaches an existing Node Redis connection to this Redis OM client. Does
+   * not close any existing connection.
+   *
+   * @param connection An existing Node Redis client.
+   * @returns This {@link Client} instance.
+   */
+  useNoClose(connection: RedisConnection): Client {
     this.redis = connection
     return this
   }

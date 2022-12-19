@@ -1,6 +1,6 @@
 import { createClient } from 'redis'
 
-import { Client, Entity, EntityId, Repository, Schema } from '$lib/index'
+import { Entity, EntityId, Repository, Schema } from '$lib/index'
 
 describe("Demo", () => {
 
@@ -9,13 +9,10 @@ describe("Demo", () => {
     let entity: Entity
     let entityId: string
 
-    // establish an existing connection to Redis
+    // establish a connection to Redis
     const redis = createClient()
     redis.on('error', (err) => console.log('Redis Client Error', err))
     await redis.connect()
-
-    // get a client to use an existing Redis connection
-    const client: Client = await new Client().use(redis)
 
     // define a schema
     const schema: Schema = new Schema(
@@ -39,7 +36,7 @@ describe("Demo", () => {
        and how fields are mapped to and from Redis. */
 
     // create a repository & create the index for it
-    const repository: Repository = client.fetchRepository(schema)
+    const repository = new Repository(schema, redis)
     await repository.createIndex()
 
     // write and entity and generate an entityId that is a ULID
@@ -142,7 +139,7 @@ describe("Demo", () => {
     const allIds: string[] = allEntities.map(entity => entity.entityId ?? '')
     await repository.remove(allIds)
 
-    // close the client
-    await client.close()
+    // close Redis
+    await redis.quit()
   })
 })
