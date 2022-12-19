@@ -59,6 +59,9 @@ export const SOME_MORE_STRINGS: Array<string> = ['charlie', 'delta', 'echo'];
 export const SOME_MORE_STRINGS_JSON: string = JSON.stringify(SOME_MORE_STRINGS);
 export const SOME_MORE_STRINGS_JOINED: string = SOME_MORE_STRINGS.join('|');
 
+export const A_BUFFER = Buffer.from(`52b85e3f9a9919becdcc0c3f8fc2f53c333333bf5c8f02bfae47613f295c0f3ecdcc4cbf9a9919bec3f5a83e0ad723bc`, 'hex')
+export const A_BUFFER_VALUES = [0.8700000047683716, -0.15000000596046448, 0.550000011920929, 0.029999999329447746, -0.699999988079071, -0.5099999904632568, 0.8799999952316284, 0.14000000059604645, -0.800000011920929, -0.15000000596046448, 0.33000001311302185, -0.009999999776482582]
+
 export type SampleEntityData = {
   aString: string | null;
   anotherString: string | null;

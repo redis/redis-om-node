@@ -1,3 +1,4 @@
+export * from './entity-binary-field'
 export * from './entity-boolean-field'
 export * from './entity-date-field'
 export * from './entity-field-constructor'

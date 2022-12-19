@@ -1,4 +1,4 @@
-import { createClient } from 'redis';
+import { createClient, commandOptions } from 'redis';
 import { Repository } from './repository';
 import { JsonRepository, HashRepository } from './repository';
 import { Entity } from './entity/entity';
@@ -11,7 +11,7 @@ export type RedisConnection = ReturnType<typeof createClient>;
  * Alias for a JavaScript object used by HSET.
  * @internal
  */
-export type RedisHashData = { [key: string]: string };
+export type RedisHashData = { [key: string]: string | Buffer };
 
 /**
  * Alias for any old JavaScript object used by JSON.SET.
@@ -174,7 +174,7 @@ export class Client {
 
     if (keysOnly) command.push('RETURN', '0');
 
-    return this.redis.sendCommand<any[]>(command);
+    return this.redis.sendCommand<any[]>(command, commandOptions({ returnBuffers: true }));
   }
 
   /** @internal */
@@ -204,7 +204,7 @@ export class Client {
   /** @internal */
   async hgetall(key: string): Promise<RedisHashData> {
     this.validateRedisOpen();
-    return this.redis.hGetAll(key);
+    return this.redis.hGetAll(commandOptions({ returnBuffers: true }), key);
   }
 
   /** @internal */

@@ -1,11 +1,11 @@
-import { redis } from '../helpers/mock-redis'
-import { Client } from '$lib/client';
+import { redis, commandOptions } from '../helpers/mock-redis'
+import { Client, RedisHashData } from '$lib/client';
 
 
 describe("Client", () => {
 
   let client: Client;
-  let result: { [key: string]: string };
+  let result: RedisHashData
 
   beforeEach(() => {
     client = new Client()
@@ -20,7 +20,7 @@ describe("Client", () => {
       });
 
       it("passes the command to redis", async () => {
-        expect(redis.hGetAll).toHaveBeenCalledWith('foo');
+        expect(redis.hGetAll).toHaveBeenCalledWith(commandOptions({ returnBuffers: true }), 'foo');
       });
 
       it("returns the value from redis", async () => {

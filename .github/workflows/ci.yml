@@ -26,17 +26,13 @@ jobs:
           --health-retries 5
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v2.3.0
+        uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
-      - name: Cache dependencies
-        uses: c-hive/gha-npm-cache@v1
-
-      - name: Update npm
-        run: npm install --global npm
+          cache: 'npm'
 
       - name: Install packages
         run: npm ci

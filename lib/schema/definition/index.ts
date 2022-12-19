@@ -1,4 +1,5 @@
 export * from './base-field-definition'
+export * from './binary-field-definition'
 export * from './boolean-field-definition'
 export * from './casesensitive-field-definition'
 export * from './date-field-definition'

@@ -10,8 +10,8 @@ export class EntityStringArrayField extends EntityField {
     return data;
   }
 
-  fromRedisHash(value: string) {
-    this.value = value.split(this.separator);
+  fromRedisHash(value: string | Buffer) {
+    this.value = value.toString().split(this.separator);
   }
 
   protected validateValue(value: EntityValue) {
