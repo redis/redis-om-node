@@ -1,9 +1,9 @@
-import { fetchHashData, fetchJsonData, saveHash, saveJson } from './redis-helper'
+import { saveJson } from './redis-helper'
 
-import { Client, EntityData, Schema } from "$lib/index"
-import { RedisHashData, RedisJsonData } from '$lib/client'
+import { EntityData, RedisConnection, Schema } from "$lib/index"
 
 export function createHashEntitySchema(prefix: string): Schema {
+  // TODO: make this have some custom fields
   return new Schema(prefix, {
     aString: { type: 'string' },
     someText: { type: 'text', sortable: true },
@@ -31,39 +31,7 @@ export function createJsonEntitySchema(prefix: string): Schema {
   })
 }
 
-export async function loadHash(client: Client, key: string, data: RedisHashData) {
-  const command: Array<string> = []
-
-  Object.keys(data).forEach(field => {
-    const value = data[field]
-    command.push(field, value)
-  })
-
-  if (command.length > 0) await saveHash(client, key, command)
-}
-
-export async function loadJson(client: Client, key: string, data: RedisJsonData) {
-  const json = JSON.stringify(data)
-  await saveJson(client, key, json)
-}
-
-export async function fetchHash(client: Client, key: string): Promise<RedisHashData> {
-  const data = await fetchHashData(client, key)
-
-  const fields = data.filter((_value, index) => index % 2 === 0)
-  const values = data.filter((_value, index) => index % 2 !== 0)
-
-  const hashData: RedisHashData = {}
-  fields.forEach((field, index) =>  hashData[field] = values[index])
-  return hashData
-}
-
-export async function fetchJson(client: Client, key: string): Promise<RedisJsonData> {
-  const data = await fetchJsonData(client, key)
-  return JSON.parse(data)
-}
-
-export async function loadTestJson(client: Client, key: string, data: EntityData) {
+export async function loadTestJson(redis: RedisConnection, key: string, data: EntityData) {
 
   const json: any = {}
 
@@ -76,5 +44,5 @@ export async function loadTestJson(client: Client, key: string, data: EntityData
     }
   })
 
-  await saveJson(client, key, JSON.stringify(json))
+  await saveJson(redis, key, json)
 }

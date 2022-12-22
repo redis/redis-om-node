@@ -1,4 +1,4 @@
-import { redis } from '../helpers/mock-redis'
+import { ft } from '../helpers/mock-redis'
 import { Client } from '$lib/client'
 
 
@@ -16,7 +16,7 @@ describe("Client", () => {
 
       it("passes the command to redis", async () => {
         await client.dropIndex('index')
-        expect(redis.sendCommand).toHaveBeenCalledWith(['FT.DROPINDEX', 'index'])
+        expect(ft.dropIndex).toHaveBeenCalledWith('index')
       })
     })
 

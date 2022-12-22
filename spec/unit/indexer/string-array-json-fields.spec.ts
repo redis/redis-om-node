@@ -1,32 +1,44 @@
 import { Schema, SchemaDefinition, DataStructure } from '$lib/schema'
-import { buildRediSearchIndex } from '$lib/indexer'
+import { buildRediSearchSchema } from '$lib/indexer'
 
 
-describe("Schema", () => {
+describe("#buildRediSearchSchema", () => {
   describe.each([
 
     ["that defines an unconfigured array for a JSON", {
       schemaDef: { aField: { type: 'string[]' } } as SchemaDefinition,
       dataStructure: 'JSON',
-      expectedRedisSchema: ['$.aField[*]', 'AS', 'aField', 'TAG', 'SEPARATOR', '|']
+      expectedRedisSchema: { '$.aField[*]': { AS: 'aField', type: 'TAG', SEPARATOR: '|' } }
+    }],
+
+    ["that defines an aliased array for a JSON", {
+      schemaDef: { aField: { type: 'string[]', alias: 'anotherField' } } as SchemaDefinition,
+      dataStructure: 'JSON',
+      expectedRedisSchema: { '$.anotherField[*]': { AS: 'aField', type: 'TAG', SEPARATOR: '|' } }
+    }],
+
+    ["that defines a pathed array for a JSON", {
+      schemaDef: { aField: { type: 'string[]', path: '$.anotherField[*]' } } as SchemaDefinition,
+      dataStructure: 'JSON',
+      expectedRedisSchema: { '$.anotherField[*]': { AS: 'aField', type: 'TAG', SEPARATOR: '|' } }
     }],
 
     ["that defines an indexed array for a JSON", {
       schemaDef: { aField: { type: 'string[]', indexed: true } } as SchemaDefinition,
       dataStructure: 'JSON',
-      expectedRedisSchema: ['$.aField[*]', 'AS', 'aField', 'TAG', 'SEPARATOR', '|']
+      expectedRedisSchema: { '$.aField[*]': { AS: 'aField', type: 'TAG', SEPARATOR: '|' } }
     }],
 
     ["that defines an unindexed array for a JSON", {
       schemaDef: { aField: { type: 'string[]', indexed: false } } as SchemaDefinition,
       dataStructure: 'JSON',
-      expectedRedisSchema: ['$.aField[*]', 'AS', 'aField', 'TAG', 'SEPARATOR', '|', 'NOINDEX']
+      expectedRedisSchema: { '$.aField[*]': { AS: 'aField', type: 'TAG', SEPARATOR: '|', NOINDEX: true } }
     }],
 
     ["that defines a fully-configured array for a JSON", {
-      schemaDef: { aField: { type: 'string[]', indexed: false } } as SchemaDefinition,
+      schemaDef: { aField: { type: 'string[]', alias: 'ignoredField', path: '$.anotherField[*]', indexed: false } } as SchemaDefinition,
       dataStructure: 'JSON',
-      expectedRedisSchema: ['$.aField[*]', 'AS', 'aField', 'TAG', 'SEPARATOR', '|', 'NOINDEX']
+      expectedRedisSchema: { '$.anotherField[*]': { AS: 'aField', type: 'TAG', SEPARATOR: '|', NOINDEX: true } }
     }]
 
   ])("%s", (_, data) => {
@@ -36,7 +48,7 @@ describe("Schema", () => {
       let expectedRedisSchema = data.expectedRedisSchema
 
       let schema = new Schema('TestEntity', schemaDef, { dataStructure })
-      let actual = buildRediSearchIndex(schema)
+      let actual = buildRediSearchSchema(schema)
       expect(actual).toEqual(expectedRedisSchema)
     })
   })

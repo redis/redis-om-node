@@ -1,6 +1,8 @@
+import { RediSearchSchema } from "redis"
+
 import { Client, CreateIndexOptions, RedisConnection, RedisHashData, RedisJsonData } from "../client"
 import { Entity, EntityData, EntityId, EntityKeyName } from "../entity"
-import { buildRediSearchIndex } from "../indexer"
+import { buildRediSearchSchema } from "../indexer"
 import { Schema } from "../schema"
 import { Search, RawSearch } from '../search'
 import { fromRedisHash, fromRedisJson, toRedisHash, toRedisJson } from "../transformer"
@@ -77,18 +79,20 @@ export class Repository {
 
       await this.dropIndex()
 
+      const indexName: string = this.schema.indexName
+      const indexHashName = this.schema.indexHashName
+
+      const schema: RediSearchSchema = buildRediSearchSchema(this.schema)
       const options: CreateIndexOptions = {
-        indexName: this.schema.indexName,
-        dataStructure: this.schema.dataStructure,
-        prefix: `${this.schema.prefix}:`,
-        schema: buildRediSearchIndex(this.schema)
+        ON: this.schema.dataStructure,
+        PREFIX: `${this.schema.prefix}:`
       }
 
-      if (this.schema.useStopWords === 'OFF') options.stopWords = []
-      if (this.schema.useStopWords === 'CUSTOM') options.stopWords = this.schema.stopWords
+      if (this.schema.useStopWords === 'OFF') options.STOPWORDS = []
+      if (this.schema.useStopWords === 'CUSTOM') options.STOPWORDS = this.schema.stopWords
 
-      await this.client.createIndex(options)
-      await this.client.set(this.schema.indexHashName, incomingIndexHash)
+      await this.client.createIndex(indexName, schema, options)
+      await this.client.set(indexHashName, incomingIndexHash)
     }
   }
 

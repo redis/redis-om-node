@@ -1,32 +1,44 @@
 import { Schema, SchemaDefinition, DataStructure } from '$lib/schema'
-import { buildRediSearchIndex } from '$lib/indexer'
+import { buildRediSearchSchema } from '$lib/indexer'
 
 
-describe("Schema", () => {
+describe("#buildRediSearchSchema", () => {
   describe.each([
 
     ["that defines an unconfigured point for a JSON", {
       schemaDef: { aField: { type: 'point' } } as SchemaDefinition,
       dataStructure: 'JSON',
-      expectedRedisSchema: ['$.aField', 'AS', 'aField', 'GEO']
+      expectedRedisSchema: { '$.aField': { AS: 'aField', type: 'GEO' } }
+    }],
+
+    ["that defines an aliased point for a JSON", {
+      schemaDef: { aField: { type: 'point', alias: 'anotherField' } } as SchemaDefinition,
+      dataStructure: 'JSON',
+      expectedRedisSchema: { '$.anotherField': { AS: 'aField', type: 'GEO' } }
+    }],
+
+    ["that defines a pathed point for a JSON", {
+      schemaDef: { aField: { type: 'point', path: '$.anotherField' } } as SchemaDefinition,
+      dataStructure: 'JSON',
+      expectedRedisSchema: { '$.anotherField': { AS: 'aField', type: 'GEO' } }
     }],
 
     ["that defines an indexed point for a JSON", {
       schemaDef: { aField: { type: 'point', indexed: true } } as SchemaDefinition,
       dataStructure: 'JSON',
-      expectedRedisSchema: ['$.aField', 'AS', 'aField', 'GEO']
+      expectedRedisSchema: { '$.aField': { AS: 'aField', type: 'GEO' } }
     }],
 
     ["that defines an unindexed point for a JSON", {
       schemaDef: { aField: { type: 'point', indexed: false } } as SchemaDefinition,
       dataStructure: 'JSON',
-      expectedRedisSchema: ['$.aField', 'AS', 'aField', 'GEO', 'NOINDEX']
+      expectedRedisSchema: { '$.aField': { AS: 'aField', type: 'GEO', NOINDEX: true } }
     }],
 
     ["that defines a fully-configured point for a JSON", {
-      schemaDef: { aField: { type: 'point', indexed: false } } as SchemaDefinition,
+      schemaDef: { aField: { type: 'point', alias: 'ignoredField', path: '$.anotherField', indexed: false } } as SchemaDefinition,
       dataStructure: 'JSON',
-      expectedRedisSchema: ['$.aField', 'AS', 'aField', 'GEO', 'NOINDEX']
+      expectedRedisSchema: { '$.anotherField': { AS: 'aField', type: 'GEO', NOINDEX: true } }
     }]
 
 
@@ -37,7 +49,7 @@ describe("Schema", () => {
       let expectedRedisSchema = data.expectedRedisSchema
 
       let schema = new Schema('TestEntity', schemaDef, { dataStructure })
-      let actual = buildRediSearchIndex(schema)
+      let actual = buildRediSearchSchema(schema)
       expect(actual).toEqual(expectedRedisSchema)
     })
   })

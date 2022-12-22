@@ -1,31 +1,33 @@
-import { Client, EntityKeyName, Repository, Schema } from '$lib/index'
+import { createClient } from 'redis'
 
-import { createHashEntitySchema, loadHash } from '../helpers/data-helper'
-import { removeAll } from '../helpers/redis-helper'
+import { EntityKeyName, RedisConnection, Repository, Schema } from '$lib/index'
+
+import { createHashEntitySchema } from '../helpers/data-helper'
+import { removeKeys, saveHash } from '../helpers/redis-helper'
 
 import { ANOTHER_ENTITY, ANOTHER_HASH, AN_EMPTY_ENTITY, AN_ENTITY, A_HASH, A_THIRD_ENTITY, A_THIRD_HASH } from '../helpers/hash-example-data'
 
 describe("fetch hash", () => {
 
-  let client: Client
+  let redis: RedisConnection
   let repository: Repository
   let schema: Schema
 
   beforeAll(async () => {
-    client = new Client()
-    await client.open()
-    await removeAll(client, 'fetch-hash:')
-    await loadHash(client, 'fetch-hash:1', A_HASH)
-    await loadHash(client, 'fetch-hash:2', ANOTHER_HASH)
-    await loadHash(client, 'fetch-hash:3', A_THIRD_HASH)
+    redis = createClient()
+    await redis.connect()
+    await removeKeys(redis, 'fetch-hash:1', 'fetch-hash:2', 'fetch-hash:3')
+    await saveHash(redis, 'fetch-hash:1', A_HASH)
+    await saveHash(redis, 'fetch-hash:2', ANOTHER_HASH)
+    await saveHash(redis, 'fetch-hash:3', A_THIRD_HASH)
 
     schema = createHashEntitySchema('fetch-hash')
-    repository = client.fetchRepository(schema)
+    repository = new Repository(schema, redis)
   })
 
   afterAll(async () => {
-    await removeAll(client, 'fetch-hash:')
-    await client.close()
+    await removeKeys(redis, 'fetch-hash:1', 'fetch-hash:2', 'fetch-hash:3')
+    await redis.quit()
   })
 
   it("fetches a single entity from Redis", async () =>

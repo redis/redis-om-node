@@ -1,34 +1,36 @@
-import { Client, Entity, Repository, Schema } from '$lib/index'
+import { createClient } from 'redis'
 
-import { createHashEntitySchema, fetchHash, loadHash } from '../helpers/data-helper'
-import { removeAll, keyExists } from '../helpers/redis-helper'
+import { Entity, RedisConnection, Repository, Schema } from '$lib/index'
+
+import { createHashEntitySchema } from '../helpers/data-helper'
+import { keyExists, removeKeys, saveHash, fetchHashData } from '../helpers/redis-helper'
 
 import { ANOTHER_ENTITY, ANOTHER_HASH, AN_EMPTY_HASH, A_HASH } from '../helpers/hash-example-data'
 
 describe("update hash", () => {
 
-  let client: Client
+  let redis: RedisConnection
   let repository: Repository
   let schema: Schema
   let entity: Entity
   let entityId: string
 
   beforeAll(async () => {
-    client = new Client()
-    await client.open()
+    redis = createClient()
+    await redis.connect()
 
     schema = createHashEntitySchema('update-hash')
-    repository = client.fetchRepository(schema)
+    repository = new Repository(schema, redis)
   })
 
   beforeEach(async () => {
-    await removeAll(client, 'update-hash:')
-    await loadHash(client, 'update-hash:1', A_HASH)
+    await removeKeys(redis, 'update-hash:1')
+    await saveHash(redis, 'update-hash:1', A_HASH)
   })
 
   afterAll(async () => {
-    await removeAll(client, 'update-hash:')
-    await client.close()
+    await removeKeys(redis, 'update-hash:1')
+    await redis.quit()
   })
 
   describe("when updating an Entity to Redis", () => {
@@ -52,7 +54,7 @@ describe("update hash", () => {
     })
 
     it("returns the expected entity id", () => expect(entityId).toBe('1'))
-    it('saves the expected Hash in Redis', async () => expect(fetchHash(client, 'update-hash:1')).resolves.toEqual(ANOTHER_HASH))
+    it('saves the expected Hash in Redis', async () => expect(fetchHashData(redis, 'update-hash:1')).resolves.toEqual(ANOTHER_HASH))
   })
 
   describe("when updating an entity to be completely empty", () => {
@@ -76,7 +78,7 @@ describe("update hash", () => {
     })
 
     it("returns the expected entity id", () => expect(entityId).toBe('1'))
-    it('saves an empty Hash in Redis', async () => expect(fetchHash(client, 'update-hash:1')).resolves.toEqual(AN_EMPTY_HASH))
-    it("removes the Hash from Redis", async () => expect(keyExists(client, 'update-hash:1')).resolves.toBe(false))
+    it('saves an empty Hash in Redis', async () => expect(fetchHashData(redis, 'update-hash:1')).resolves.toEqual(AN_EMPTY_HASH))
+    it("removes the Hash from Redis", async () => expect(keyExists(redis, 'update-hash:1')).resolves.toBe(false))
   })
 })

@@ -1,6 +1,18 @@
-import { redis } from '../helpers/mock-redis'
-import { Client } from '$lib/client'
+import { RediSearchSchema, SchemaFieldTypes } from 'redis'
 
+import { redis } from '../helpers/mock-redis'
+import { Client, CreateIndexOptions } from '$lib/client'
+
+const schema: RediSearchSchema = {
+  foo: { type: SchemaFieldTypes.TAG },
+  bar: { type: SchemaFieldTypes.TEXT }
+}
+
+const options: CreateIndexOptions = {
+  ON: 'HASH',
+  PREFIX: 'prefix',
+  STOPWORDS: ['bar', 'baz', 'qux']
+}
 
 describe("Client", () => {
 
@@ -15,44 +27,8 @@ describe("Client", () => {
       })
 
       it("passes a command to redis", async () => {
-        await client.createIndex({
-          indexName: 'index', dataStructure: 'HASH', prefix: 'prefix',
-          schema: ['foo', 'bar', 'baz']
-        })
-        expect(redis.sendCommand).toHaveBeenCalledWith([
-          'FT.CREATE', 'index',
-          'ON', 'HASH',
-          'PREFIX', '1', 'prefix',
-          'SCHEMA', 'foo', 'bar', 'baz'
-        ])
-      })
-
-      it("passes a command with stop words to redis", async () => {
-        await client.createIndex({
-          indexName: 'index', dataStructure: 'HASH', prefix: 'prefix',
-          schema: ['foo', 'bar', 'baz'], stopWords: ['bar', 'baz', 'qux']
-        })
-        expect(redis.sendCommand).toHaveBeenCalledWith([
-          'FT.CREATE', 'index',
-          'ON', 'HASH',
-          'PREFIX', '1', 'prefix',
-          'STOPWORDS', '3', 'bar', 'baz', 'qux',
-          'SCHEMA', 'foo', 'bar', 'baz'
-        ])
-      })
-
-      it("passes a command with zero stop words to redis", async () => {
-        await client.createIndex({
-          indexName: 'index', dataStructure: 'HASH', prefix: 'prefix',
-          schema: ['foo', 'bar', 'baz'], stopWords: []
-        })
-        expect(redis.sendCommand).toHaveBeenCalledWith([
-          'FT.CREATE', 'index',
-          'ON', 'HASH',
-          'PREFIX', '1', 'prefix',
-          'STOPWORDS', '0',
-          'SCHEMA', 'foo', 'bar', 'baz'
-        ])
+        await client.createIndex('index', schema, options)
+        expect(redis.ft.create).toHaveBeenCalledWith('index', schema, options)
       })
     })
 
@@ -63,18 +39,12 @@ describe("Client", () => {
       })
 
       it("errors when called on a closed client", () =>
-        expect(async () => await client.createIndex({
-          indexName: 'index', dataStructure: 'HASH', prefix: 'prefix',
-          schema: ['foo', 'bar', 'baz']
-        }))
+        expect(async () => await client.createIndex('index', schema, options))
           .rejects.toThrow("Redis connection needs to be open."))
     })
 
     it("errors when called on a new client", async () =>
-      expect(async () => await client.createIndex({
-        indexName: 'index', dataStructure: 'HASH', prefix: 'prefix',
-        schema: ['foo', 'bar', 'baz']
-      }))
+      expect(async () => await client.createIndex('index', schema, options))
         .rejects.toThrow("Redis connection needs to be open."))
   })
 })

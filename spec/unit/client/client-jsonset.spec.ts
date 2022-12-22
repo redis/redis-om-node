@@ -1,4 +1,4 @@
-import { redis } from '../helpers/mock-redis'
+import { json } from '../helpers/mock-redis'
 import { Client } from '$lib/client'
 
 
@@ -16,8 +16,7 @@ describe("Client", () => {
       })
 
       it("passes the command to redis", async () => {
-        expect(redis.sendCommand).toHaveBeenCalledWith([
-          'JSON.SET', 'foo', '.', '{"foo":"bar","bar":42,"baz":true,"qux":null}'])
+        expect(json.set).toHaveBeenCalledWith('foo', '$', { foo: 'bar', bar: 42, baz: true, qux: null } )
       })
     })
 

@@ -11,14 +11,12 @@ describe("Client", () => {
   describe("#close", () => {
     describe("when called on an open client", () => {
       beforeEach(async () => {
-        client.open()
-        client.close()
+        await client.open()
+        await client.close()
       })
 
-      it("closes the connection", async () => {
-        expect(redis.quit).toHaveBeenCalled()
-        expect(client.isOpen()).toBe(false)
-      })
+      it("closes the Redis connection", async () => expect(redis.quit).toHaveBeenCalled())
+      it("is no longer open", async () => expect(client.isOpen()).toBe(false))
     })
 
     describe("when called on an already closed client", () => {

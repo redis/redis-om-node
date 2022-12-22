@@ -1,4 +1,4 @@
-import { redis } from '../helpers/mock-redis'
+import { redis, multi } from '../helpers/mock-redis'
 import { Client } from '$lib/client'
 
 
@@ -15,10 +15,12 @@ describe("Client", () => {
       })
 
       it("passes the command to redis", async () => {
+        // it's a bit of an ugly mirror but will do
         await client.hsetall('foo', { foo: 'bar', baz: 'qux' })
-        expect(redis.executeIsolated).toHaveBeenCalled()
-        // TODO: test full behavior of client calls
-        // expect(redis.executeIsolated).toHaveBeenCalledWith('foo', { foo: 'bar', baz: 'qux' })
+        expect(redis.multi).toHaveBeenCalled()
+        expect(multi.unlink).toHaveBeenCalledWith('foo')
+        expect(multi.hSet).toHaveBeenCalledWith('foo', { foo: 'bar', baz: 'qux' })
+        expect(multi.exec).toHaveBeenCalled()
       })
     })
 

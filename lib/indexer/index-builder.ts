@@ -1,130 +1,156 @@
+import { RediSearchSchema, SchemaFieldTypes } from 'redis'
+
 import { Schema } from "../schema/schema"
 import { Field } from "../schema/field"
 
+const entryBuilders = { HASH: addHashEntry, JSON: addJsonEntry }
 
-export function buildRediSearchIndex(schema: Schema): string[] {
-  const buildEntry = entryBuilders[schema.dataStructure]
-  return schema.fields.map(buildEntry).flat()
+export function buildRediSearchSchema(schema: Schema): RediSearchSchema {
+  const addEntry = entryBuilders[schema.dataStructure]
+  return schema.fields.reduce(addEntry, {})
 }
 
-const entryBuilders = {  HASH: buildHashEntry, JSON: buildJsonEntry }
-
-function buildHashEntry(field: Field): string[] {
+function addHashEntry(schema: RediSearchSchema, field: Field): RediSearchSchema {
   const hashField = field.hashField
 
   switch (field.type) {
     case 'boolean':
-      return [hashField, ...buildHashBoolean(field)]
+      schema[hashField] = buildHashBoolean(field)
+      break
     case 'date':
-      return [hashField, ...buildDateNumber(field)]
+      schema[hashField] = buildDateNumber(field)
+      break
     case 'number':
-      return [hashField, ...buildDateNumber(field)]
+      schema[hashField] = buildDateNumber(field)
+      break
     case 'point':
-      return [hashField, ...buildPoint(field)]
+      schema[hashField] = buildPoint(field)
+      break
     case 'string[]':
     case 'string':
-      return [hashField, ...buildHashString(field)]
+      schema[hashField] = buildHashString(field)
+      break
     case 'text':
-      return [hashField, ...buildText(field)]
+      schema[hashField] = buildText(field)
+      break
   }
+
+  return schema
 }
 
-function buildJsonEntry(field: Field): string[] {
+function addJsonEntry(schema: RediSearchSchema, field: Field): RediSearchSchema {
   const jsonPath = field.jsonPath
-  const fieldInfo = [jsonPath, 'AS', field.name]
 
   switch (field.type) {
     case 'boolean':
-      return [...fieldInfo, ...buildJsonBoolean(field)]
+      schema[jsonPath] = buildJsonBoolean(field)
+      break
     case 'date':
-      return [...fieldInfo, ...buildDateNumber(field)]
+      schema[jsonPath] = buildDateNumber(field)
+      break
     case 'number':
-      return [...fieldInfo, ...buildDateNumber(field)]
+      schema[jsonPath] = buildDateNumber(field)
+      break
     case 'point':
-      return [...fieldInfo, ...buildPoint(field)]
+      schema[jsonPath] = buildPoint(field)
+      break
     case 'string[]':
     case 'string':
-      return [...fieldInfo, ...buildJsonString(field)]
+      schema[jsonPath] = buildJsonString(field)
+      break
     case 'text':
-      return [...fieldInfo, ...buildText(field)]
+      schema[jsonPath] = buildText(field)
+      break
+  }
+
+  return schema
+}
+
+function buildHashBoolean(field: Field): any {
+  const schemaField = { type: SchemaFieldTypes.TAG, AS: field.name }
+  addSortable(schemaField, field)
+  addIndexed(schemaField, field)
+  return schemaField
+}
+
+function buildJsonBoolean(field: Field): any {
+  if (field.sortable)
+    console.warn(`You have marked a boolean field as sortable but RediSearch doesn't support the SORTABLE argument on a TAG for JSON. Ignored.`)
+  const schemaField = { type: SchemaFieldTypes.TAG, AS: field.name }
+  addIndexed(schemaField, field)
+  return schemaField
+}
+
+function buildDateNumber(field: Field): any {
+  const schemaField = { type: SchemaFieldTypes.NUMERIC, AS: field.name }
+  addSortable(schemaField, field)
+  addIndexed(schemaField, field)
+  return schemaField
+}
+
+function buildPoint(field: Field): any {
+  const schemaField = { type: SchemaFieldTypes.GEO, AS: field.name }
+  addIndexed(schemaField, field)
+  return schemaField
+}
+
+function buildHashString(field: Field): any {
+  const schemaField = { type: SchemaFieldTypes.TAG, AS: field.name }
+  addCaseInsensitive(schemaField, field),
+  addSeparable(schemaField, field),
+  addSortable(schemaField, field)
+  addIndexed(schemaField, field)
+  return schemaField
+}
+
+function buildJsonString(field: Field): any {
+  if (field.sortable)
+    console.warn(`You have marked a ${field.type} field as sortable but RediSearch doesn't support the SORTABLE argument on a TAG for JSON. Ignored.`)
+  const schemaField = { type: SchemaFieldTypes.TAG, AS: field.name }
+  addCaseInsensitive(schemaField, field),
+  addSeparable(schemaField, field),
+  addIndexed(schemaField, field)
+  return schemaField
+}
+
+function buildText(field: Field): any {
+  const schemaField = { type: SchemaFieldTypes.TEXT, AS: field.name }
+  addSortable(schemaField, field)
+  addStemming(schemaField, field)
+  addIndexed(schemaField, field)
+  addPhonetic(schemaField, field)
+  addWeight(schemaField, field)
+  return schemaField
+}
+
+function addCaseInsensitive(schemaField: any, field: Field) {
+  if (field.caseSensitive) schemaField.CASESENSITIVE = true
+}
+
+function addIndexed(schemaField: any, field: Field) {
+  if (!field.indexed) schemaField.NOINDEX = true
+}
+
+function addStemming(schemaField: any, field: Field) {
+  if (!field.stemming) schemaField.NOSTEM = true
+}
+
+function addPhonetic(schemaField: any, field: Field) {
+  if (field.matcher) schemaField.PHONETIC = field.matcher
+}
+
+function addSeparable(schemaField: any, field: Field) {
+  schemaField.SEPARATOR = field.separator
+}
+
+function addSortable(schemaField: any, field: Field) {
+  if (field.normalized) {
+    if (field.sortable) schemaField.SORTABLE = true
+  } else {
+    schemaField.SORTABLE = 'UNF'
   }
 }
 
-function buildHashBoolean(field: Field): string[] {
-  return ['TAG', ...buildSortable(field), ...buildIndexed(field)]
-}
-
-function buildJsonBoolean(field: Field): string[] {
-  if (field.sortable)
-    console.warn(`You have marked a boolean field as sortable but RediSearch doesn't support the SORTABLE argument on a TAG for JSON. Ignored.`)
-  return ['TAG', ...buildIndexed(field)]
-}
-
-function buildDateNumber(field: Field): string[] {
-  return ['NUMERIC', ...buildSortable(field), ...buildIndexed(field)]
-}
-
-function buildPoint(field: Field): string[] {
-  return ['GEO', ...buildIndexed(field)]
-}
-
-function buildHashString(field: Field): string[] {
-  return ['TAG',
-    ...buildCaseInsensitive(field),
-    ...buildSeparable(field),
-    ...buildSortable(field),
-    ...buildNormalized(field),
-    ...buildIndexed(field)]
-}
-
-function buildJsonString(field: Field): string[] {
-  if (field.sortable)
-    console.warn(`You have marked a ${field.type} field as sortable but RediSearch doesn't support the SORTABLE argument on a TAG for JSON. Ignored.`)
-  return ['TAG',
-    ...buildCaseInsensitive(field),
-    ...buildSeparable(field),
-    ...buildNormalized(field),
-    ...buildIndexed(field)]
-}
-
-function buildText(field: Field): string[] {
-  return ['TEXT',
-    ...buildStemming(field),
-    ...buildPhonetic(field),
-    ...buildSortable(field),
-    ...buildNormalized(field),
-    ...buildWeight(field),
-    ...buildIndexed(field)]
-}
-
-function buildCaseInsensitive(field: Field) {
-  return field.caseSensitive ? ['CASESENSITIVE'] : []
-}
-
-function buildIndexed(field: Field) {
-  return field.indexed ? [] : ['NOINDEX']
-}
-
-function buildStemming(field: Field) {
-  return field.stemming ? [] : ['NOSTEM']
-}
-
-function buildPhonetic(field: Field) {
-  return field.matcher ? ['PHONETIC', field.matcher] : []
-}
-
-function buildSeparable(field: Field) {
-  return ['SEPARATOR', field.separator]
-}
-
-function buildSortable(field: Field) {
-  return field.sortable ? ['SORTABLE'] : []
-}
-
-function buildNormalized(field: Field) {
-  return field.normalized ? [] : ['UNF']
-}
-
-function buildWeight(field: Field) {
-  return field.weight ? ['WEIGHT', field.weight.toString()] : []
+function addWeight(schemaField: any, field: Field) {
+  if (field.weight) schemaField.WEIGHT = field.weight
 }

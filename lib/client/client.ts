@@ -1,11 +1,17 @@
-import { createClient } from 'redis'
+import { createClient, createCluster, RediSearchSchema } from 'redis'
 
 import { Repository } from '../repository'
 import { Schema } from '../schema'
 import { RedisError } from '../errors'
 
-/** A Redis connection. */
-export type RedisConnection = ReturnType<typeof createClient>
+/** A conventional Redis connection. */
+export type RedisClientConnection = ReturnType<typeof createClient>
+
+/** A clustered Redis connection. */
+export type RedisClusterConnection = ReturnType<typeof createCluster>
+
+/** A Redis connection, clustered or conventional. */
+export type RedisConnection = RedisClientConnection | RedisClusterConnection
 
 /** @internal */
 export type RedisHashData = { [key: string]: string }
@@ -18,11 +24,9 @@ export type SearchDataStructure = 'HASH' | 'JSON'
 
 /** @internal */
 export type CreateIndexOptions = {
-  indexName: string,
-  dataStructure: SearchDataStructure,
-  schema: Array<string>,
-  prefix: string,
-  stopWords?: Array<string>
+  ON: SearchDataStructure,
+  PREFIX: string,
+  STOPWORDS?: string[]
 }
 
 /** @internal */
@@ -61,7 +65,12 @@ export type SearchOptions = {
  */
 export class Client {
   /** @internal */
-  protected redis?: RedisConnection
+  private _redis?: RedisConnection
+
+  /** Returns the underlying Node Redis connection being used. */
+  get redis() {
+    return this._redis
+  }
 
   /**
    * Attaches an existing Node Redis connection to this Redis OM client. Closes
@@ -83,7 +92,7 @@ export class Client {
    * @returns This {@link Client} instance.
    */
   useNoClose(connection: RedisConnection): Client {
-    this.redis = connection
+    this._redis = connection
     return this
   }
 
@@ -95,25 +104,11 @@ export class Client {
    */
   async open(url: string = 'redis://localhost:6379'): Promise<Client> {
     if (!this.isOpen()) {
-      this.redis = createClient({ url })
-      await this.redis.connect()
+      const redis = createClient({ url })
+      await redis.connect()
+      this._redis = redis
     }
     return this
-  }
-
-  /**
-   * Execute an arbitrary Redis command.
-   *
-   * @param command The command to execute.
-   * @returns The raw results of calling the Redis command.
-   */
-  async execute(command: Array<string | number | boolean>): Promise<unknown> {
-    this.validateRedisOpen()
-    return this.redis.sendCommand<any>(command.map(arg => {
-      if (arg === false) return '0'
-      if (arg === true) return '1'
-      return arg.toString()
-    }))
   }
 
   /**
@@ -131,35 +126,20 @@ export class Client {
    * Close the connection to Redis.
    */
   async close() {
-    if (this.redis) {
-      await this.redis.quit()
-    }
-    this.redis = undefined
+    if (this.redis) await this.redis.quit()
+    this._redis = undefined
   }
 
   /** @internal */
-  async createIndex(options: CreateIndexOptions) {
+  async createIndex(indexName: string, schema: RediSearchSchema, options: CreateIndexOptions) {
     this.validateRedisOpen()
-
-    const { indexName, dataStructure, prefix, schema, stopWords } = options
-
-    const command = [
-      'FT.CREATE', indexName,
-      'ON', dataStructure,
-      'PREFIX', '1', `${prefix}`]
-
-    if (stopWords !== undefined)
-      command.push('STOPWORDS', `${stopWords.length}`, ...stopWords)
-
-    command.push('SCHEMA', ...schema)
-
-    await this.redis.sendCommand(command)
+    await this.redis.ft.create(indexName, schema, options)
   }
 
   /** @internal */
   async dropIndex(indexName: string) {
     this.validateRedisOpen()
-    await this.redis.sendCommand(['FT.DROPINDEX', indexName])
+    await this.redis.ft.dropIndex(indexName)
   }
 
   /** @internal */
@@ -212,33 +192,24 @@ export class Client {
   /** @internal */
   async hsetall(key: string, data: RedisHashData) {
     this.validateRedisOpen()
-    try {
-      await this.redis.executeIsolated(async isolatedClient => {
-        await isolatedClient.watch(key)
-        await isolatedClient
-          .multi()
-          .unlink(key)
-          .hSet(key, data)
-          .exec()
-      })
-    } catch (error: any) {
-      if (error.name === 'WatchError') throw new RedisError("Watch error when setting HASH.")
-      throw error
-    }
+    await this.redis
+      .multi()
+        .unlink(key)
+        .hSet(key, data)
+      .exec()
   }
 
   /** @internal */
   async jsonget(key: string): Promise<RedisJsonData | null> {
     this.validateRedisOpen()
-    const json = await this.redis.sendCommand<string>(['JSON.GET', key, '.'])
-    return JSON.parse(json)
+    const json = await this.redis.json.get(key, { path: '$' })
+    return json === null ? null : (json as RedisJsonData)[0]
   }
 
   /** @internal */
   async jsonset(key: string, data: RedisJsonData) {
     this.validateRedisOpen()
-    const json = JSON.stringify(data)
-    await this.redis.sendCommand<string>(['JSON.SET', key, '.', json])
+    await this.redis.json.set(key, '$', data)
   }
 
   /**

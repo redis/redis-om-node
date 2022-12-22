@@ -1,34 +1,36 @@
-import { Client, Entity, Repository, Schema } from '$lib/index'
+import { createClient } from 'redis'
 
-import { createJsonEntitySchema, fetchJson, loadJson } from '../helpers/data-helper'
-import { keyExists, removeAll } from '../helpers/redis-helper'
+import { Entity, RedisConnection, Repository, Schema } from '$lib/index'
 
-import { ANOTHER_ENTITY, ANOTHER_JSON, AN_EMPTY_JSON, AN_ENTITY, A_JSON } from '../helpers/json-example-data'
+import { createJsonEntitySchema } from '../helpers/data-helper'
+import { fetchJsonData, keyExists, removeKeys, saveJson } from '../helpers/redis-helper'
+
+import { ANOTHER_ENTITY, ANOTHER_JSON, AN_EMPTY_JSON, A_JSON } from '../helpers/json-example-data'
 
 describe("update JSON", () => {
 
-  let client: Client
+  let redis: RedisConnection
   let repository: Repository
   let schema: Schema
   let entity: Entity
   let entityId: string
 
   beforeAll(async () => {
-    client = new Client()
-    await client.open()
+    redis = createClient()
+    await redis.connect()
 
     schema = createJsonEntitySchema('update-json')
-    repository = client.fetchRepository(schema)
+    repository = new Repository(schema, redis)
   })
 
   beforeEach(async () => {
-    await removeAll(client, 'update-json:')
-    await loadJson(client, 'update-json:1', A_JSON)
+    await removeKeys(redis, 'update-json:1')
+    await saveJson(redis, 'update-json:1', A_JSON)
   })
 
   afterAll(async () => {
-    await removeAll(client, 'update-json:')
-    await client.close()
+    await removeKeys(redis, 'update-json:1')
+    await redis.quit()
   })
 
   describe("when updating an Entity to Redis", () => {
@@ -46,7 +48,7 @@ describe("update JSON", () => {
     })
 
     it("returns the expected entity id", () => expect(entityId).toBe('1'))
-    it('create the expected JSON in Redis', async () => expect(fetchJson(client, 'update-json:1')).resolves.toEqual(ANOTHER_JSON))
+    it('create the expected JSON in Redis', async () => expect(fetchJsonData(redis, 'update-json:1')).resolves.toEqual(ANOTHER_JSON))
   })
 
   describe("when updating an empty entity to Redis", () => {
@@ -64,7 +66,7 @@ describe("update JSON", () => {
     })
 
     it("returns the expected entity id", () => expect(entityId).toBe('1'))
-    it("creates the expected JSON", async () => expect(fetchJson(client, 'update-json:1')).resolves.toEqual(AN_EMPTY_JSON))
-    it("stores an empty key", async () => expect(keyExists(client, 'update-json:1')).resolves.toBe(true))
+    it("creates the expected JSON", async () => expect(fetchJsonData(redis, 'update-json:1')).resolves.toEqual(AN_EMPTY_JSON))
+    it("stores an empty key", async () => expect(keyExists(redis, 'update-json:1')).resolves.toBe(true))
   })
 })

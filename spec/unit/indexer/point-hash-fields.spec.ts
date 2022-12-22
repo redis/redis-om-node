@@ -1,38 +1,44 @@
 import { Schema, SchemaDefinition, DataStructure } from '$lib/schema'
-import { buildRediSearchIndex } from '$lib/indexer'
+import { buildRediSearchSchema } from '$lib/indexer'
 
 
-describe("Schema", () => {
+describe("#buildRediSearchSchema", () => {
   describe.each([
 
     ["that defines an unconfigured point for a HASH", {
       schemaDef: { aField: { type: 'point' } } as SchemaDefinition,
       dataStructure: 'HASH',
-      expectedRedisSchema: ['aField', 'GEO']
+      expectedRedisSchema: { aField: { type: 'GEO', AS: 'aField' } }
     }],
 
     ["that defines an aliased point for a HASH", {
       schemaDef: { aField: { type: 'point', alias: 'anotherField' } } as SchemaDefinition,
       dataStructure: 'HASH',
-      expectedRedisSchema: ['anotherField', 'GEO']
+      expectedRedisSchema: { anotherField: { type: 'GEO', AS: 'aField' } }
+    }],
+
+    ["that defines a fielded point for a HASH", {
+      schemaDef: { aField: { type: 'point', field: 'anotherField' } } as SchemaDefinition,
+      dataStructure: 'HASH',
+      expectedRedisSchema: { anotherField: { type: 'GEO', AS: 'aField' } }
     }],
 
     ["that defines an indexed point for a HASH", {
       schemaDef: { aField: { type: 'point', indexed: true } } as SchemaDefinition,
       dataStructure: 'HASH',
-      expectedRedisSchema: ['aField', 'GEO']
+      expectedRedisSchema: { aField: { type: 'GEO', AS: 'aField' } }
     }],
 
     ["that defines an unindexed point for a HASH", {
       schemaDef: { aField: { type: 'point', indexed: false } } as SchemaDefinition,
       dataStructure: 'HASH',
-      expectedRedisSchema: ['aField', 'GEO', 'NOINDEX']
+      expectedRedisSchema: { aField: { type: 'GEO', AS: 'aField', NOINDEX: true } }
     }],
 
     ["that defines a fully-configured point for a HASH", {
-      schemaDef: { aField: { type: 'point', alias: 'anotherField', indexed: false } } as SchemaDefinition,
+      schemaDef: { aField: { type: 'point', alias: 'ignoredField', field: 'anotherField', indexed: false } } as SchemaDefinition,
       dataStructure: 'HASH',
-      expectedRedisSchema: ['anotherField', 'GEO', 'NOINDEX']
+      expectedRedisSchema: { anotherField: { type: 'GEO', AS: 'aField', NOINDEX: true } }
     }]
 
   ])("%s", (_, data) => {
@@ -42,7 +48,7 @@ describe("Schema", () => {
       let expectedRedisSchema = data.expectedRedisSchema
 
       let schema = new Schema('TestEntity', schemaDef, { dataStructure })
-      let actual = buildRediSearchIndex(schema)
+      let actual = buildRediSearchSchema(schema)
       expect(actual).toEqual(expectedRedisSchema)
     })
   })

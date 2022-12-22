@@ -1,50 +1,56 @@
 import { Schema, SchemaDefinition, DataStructure } from '$lib/schema'
-import { buildRediSearchIndex } from '$lib/indexer'
+import { buildRediSearchSchema } from '$lib/indexer'
 
 
-describe("Schema", () => {
+describe("#buildRediSearchSchema", () => {
   describe.each([
 
     ["that defines an unconfigured number for a HASH", {
       schemaDef: { aField: { type: 'number' } } as SchemaDefinition,
       dataStructure: 'HASH',
-      expectedRedisSchema: ['aField', 'NUMERIC']
+      expectedRedisSchema: { aField: { type: 'NUMERIC', AS: 'aField' } }
     }],
 
     ["that defines an aliased number for a HASH", {
       schemaDef: { aField: { type: 'number', alias: 'anotherField' } } as SchemaDefinition,
       dataStructure: 'HASH',
-      expectedRedisSchema: ['anotherField', 'NUMERIC']
+      expectedRedisSchema: { anotherField: { type: 'NUMERIC', AS: 'aField' } }
+    }],
+
+    ["that defines a fielded number for a HASH", {
+      schemaDef: { aField: { type: 'number', field: 'anotherField' } } as SchemaDefinition,
+      dataStructure: 'HASH',
+      expectedRedisSchema: { anotherField: { type: 'NUMERIC', AS: 'aField' } }
     }],
 
     ["that defines a sorted number for a HASH", {
       schemaDef: { aField: { type: 'number', sortable: true } } as SchemaDefinition,
       dataStructure: 'HASH',
-      expectedRedisSchema: ['aField', 'NUMERIC', 'SORTABLE']
+      expectedRedisSchema: { aField: { type: 'NUMERIC', AS: 'aField', SORTABLE: true } }
     }],
 
     ["that defines an unsorted number for a HASH", {
       schemaDef: { aField: { type: 'number', sortable: false } } as SchemaDefinition,
       dataStructure: 'HASH',
-      expectedRedisSchema: ['aField', 'NUMERIC']
+      expectedRedisSchema: { aField: { type: 'NUMERIC', AS: 'aField' } }
     }],
 
     ["that defines an indexed number for a HASH", {
       schemaDef: { aField: { type: 'number', indexed: true } } as SchemaDefinition,
       dataStructure: 'HASH',
-      expectedRedisSchema: ['aField', 'NUMERIC']
+      expectedRedisSchema: { aField: { type: 'NUMERIC', AS: 'aField' } }
     }],
 
     ["that defines an unindexed number for a HASH", {
       schemaDef: { aField: { type: 'number', indexed: false } } as SchemaDefinition,
       dataStructure: 'HASH',
-      expectedRedisSchema: ['aField', 'NUMERIC', 'NOINDEX']
+      expectedRedisSchema: { aField: { type: 'NUMERIC', AS: 'aField', NOINDEX: true } }
     }],
 
     ["that defines a fully-configured number for a HASH", {
-      schemaDef: { aField: { type: 'number', alias: 'anotherField', sortable: true, indexed: false } } as SchemaDefinition,
+      schemaDef: { aField: { type: 'number', alias: 'ignoredField', field: 'anotherField', sortable: true, indexed: false } } as SchemaDefinition,
       dataStructure: 'HASH',
-      expectedRedisSchema: ['anotherField', 'NUMERIC', 'SORTABLE', 'NOINDEX']
+      expectedRedisSchema: { anotherField: { type: 'NUMERIC', AS: 'aField', SORTABLE: true, NOINDEX: true } }
     }]
 
   ])("%s", (_, data) => {
@@ -54,7 +60,7 @@ describe("Schema", () => {
       let expectedRedisSchema = data.expectedRedisSchema
 
       let schema = new Schema('TestEntity', schemaDef, { dataStructure })
-      let actual = buildRediSearchIndex(schema)
+      let actual = buildRediSearchSchema(schema)
       expect(actual).toEqual(expectedRedisSchema)
     })
   })

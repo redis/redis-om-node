@@ -1,31 +1,33 @@
-import { Client, EntityId, EntityKeyName, Repository, Schema } from '$lib/index'
+import { createClient } from 'redis'
 
-import { createJsonEntitySchema, loadJson } from '../helpers/data-helper'
-import { removeAll } from '../helpers/redis-helper'
+import { EntityId, EntityKeyName, RedisConnection, Repository, Schema } from '$lib/index'
+
+import { createJsonEntitySchema } from '../helpers/data-helper'
+import { removeKeys, saveJson } from '../helpers/redis-helper'
 
 import { ANOTHER_ENTITY, ANOTHER_JSON, AN_EMPTY_ENTITY, AN_ENTITY, A_JSON, A_THIRD_ENTITY, A_THIRD_JSON } from '../helpers/json-example-data'
 
 describe("fetch JSON", () => {
 
-  let client: Client
+  let redis: RedisConnection
   let repository: Repository
   let schema: Schema
 
   beforeAll(async () => {
-    client = new Client()
-    await client.open()
-    await removeAll(client, 'fetch-json:')
-    await loadJson(client, 'fetch-json:1', A_JSON)
-    await loadJson(client, 'fetch-json:2', ANOTHER_JSON)
-    await loadJson(client, 'fetch-json:3', A_THIRD_JSON)
+    redis = createClient()
+    await redis.connect()
+    await removeKeys(redis, 'fetch-json:1', 'fetch-json:2', 'fetch-json:3')
+    await saveJson(redis, 'fetch-json:1', A_JSON)
+    await saveJson(redis, 'fetch-json:2', ANOTHER_JSON)
+    await saveJson(redis, 'fetch-json:3', A_THIRD_JSON)
 
     schema = createJsonEntitySchema('fetch-json')
-    repository = client.fetchRepository(schema)
+    repository = new Repository(schema, redis)
   })
 
   afterAll(async () => {
-    await removeAll(client, 'fetch-json:')
-    await client.close()
+    await removeKeys(redis, 'fetch-json:1', 'fetch-json:2', 'fetch-json:3')
+    await redis.quit()
   })
 
   it("fetches a single entity from Redis", async () =>

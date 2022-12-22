@@ -1,4 +1,4 @@
-import { redis } from '../helpers/mock-redis'
+import { json } from '../helpers/mock-redis'
 import { Client, RedisJsonData } from '$lib/client'
 
 
@@ -13,12 +13,12 @@ describe("Client", () => {
     describe("when called on an open client", () => {
       beforeEach(async () => {
         await client.open()
-        redis.sendCommand.mockResolvedValue('{ "foo": "bar", "bar": 42, "baz": true, "qux": null }')
+        json.get.mockResolvedValue([ { "foo": "bar", "bar": 42, "baz": true, "qux": null } ])
         result = await client.jsonget('foo')
       })
 
       it("passes the command to redis", async () => {
-        expect(redis.sendCommand).toHaveBeenCalledWith(['JSON.GET', 'foo', '.'])
+        expect(json.get).toHaveBeenCalledWith('foo', { path: '$' })
       })
 
       it("returns the JSON", async () => {

@@ -105,57 +105,62 @@ First things first, get yourself a Node.js project. There are lots of ways to do
 
 Once you have that sweet, sweet `package.json`, let's add our newest favorite package to it:
 
-    $ npm install redis-om --save
+    $ npm install redis-om
 
-Of course, you'll need some Redis, preferably [Redis Stack][redis-stack-url] as it comes with [RediSearch][redisearch-url] and [RedisJSON][redis-json-url] ready to go. The easiest way to do this is to set up a free [Redis Cloud][redis-cloud-url] instance. But, you can also use Docker:
+Redis OM for Node.js uses [Node Redis](https://github.com/redis/node-redis). So you'll need to install that too:
+
+    $ npm install redis
+
+And, of course, you'll need some Redis, preferably [Redis Stack][redis-stack-url] as it comes with [RediSearch][redisearch-url] and [RedisJSON][redis-json-url] ready to go. The easiest way to do this is to set up a free [Redis Cloud][redis-cloud-url] instance. But, you can also use Docker:
 
     $ docker run -d --name redis-stack -p 6379:6379 -p 8001:8001 redis/redis-stack:latest
 
 Excellent. Setup done. Let's write some code!
 
-## 🔌 Connect to Redis with a Client
+## 🔌 Connect to Redis with Node Redis
 
-You connect to Redis using a [*client*](docs/classes/Client.md). The `Client` class has methods to open, close, and execute raw commands against Redis.
-
-```javascript
-import { Client } from 'redis-om'
-
-const client = await new Client().open('redis://localhost:6379')
-
-const aString = await client.execute(['PING']) // 'PONG'
-const aNumber = await client.execute(['HSET', 'foo', 'alfa', '42', 'bravo', '23']) // 2
-const anArray = await client.execute(['HGETALL', 'foo']) // [ 'alfa', '42', 'bravo', '23' ]
-
-await client.close()
-```
-
-Mostly you'll use `.open`, `.close`, and `.fetchRepository` (which we'll talk about soon enough). But, on occasion, you might need to talk to Redis directly. The `.execute` method allows you to do that.
-
-If you find you need to talk to Redis directly a *lot* or you need more than just a basic connection to Redis, you'll want to take a look at the `.use` method on `Client`. It will allow you to bind an existing [Node Redis](https://github.com/redis/node-redis) connection to your Redis OM Client:
+Before you can use Redis OM, you need to connect to Redis with Node Redis. Here's how you do that, stolen straight from the top of the Node Redis [README](https://github.com/redis/node-redis):
 
 ```javascript
 import { createClient } from 'redis'
-import { Client } from 'redis-om'
 
-const redis = createClient('redis://localhost:6379')
+const redis = createClient()
+redis.on('error', (err) => console.log('Redis Client Error', err));
 await redis.connect()
-const client = await new Client().use(redis)
-
-await redis.set('foo', 'bar')
-const value = await client.execute(['GET', 'foo'])
 ```
 
-Use `.use` to take advantage of things like [clustering](https://github.com/redis/node-redis#clustering). Details on all that stuff are way beyond the scope of this README. You can read about it in the Node Redis [documentation](https://github.com/redis/node-redis).
+Node Redis is a powerful piece of software with lots and lots of capabilities. Its details are *way* beyond the scope of this README. But, if your curious—or if you need that power—you can find what all the info in the Node Redis [documentation](https://github.com/redis/node-redis).
+
+Regardless, once you have a connection to Redis you can use it to execute raw Redis commands:
+
+```javascript
+
+const aString = await redis.ping() // 'PONG'
+const aNumber = await redis.hSet('foo', 'alfa', '42', 'bravo', '23') // 2
+const aHash = await redis.hGetAll('foo') // { alfa: '42', bravo: '23' }
+```
+
+You might not need to do this, but it's always handy to have the option. When you're done with a Redis connection, you can tell the server by calling `.quit`:
+
+```javascript
+await redis.quit()
+```
 
 ### Redis Connection Strings
 
-When you open a Redis client, you hand it a URL. The basic format for this URL is:
+By default, Node Redis connect to `localhost` on port `6379`. This is, of course, configurable. Just pass in a *url* with the hostname and port that you want to use:
+
+```javascript
+const redis = createClient({ url: 'redis://alice:foobared@awesome.redis.server:6380' })
+```
+
+The basic format for this URL is:
 
     redis://username:password@host:port
 
-This is the bulk of what you will need, but if you want more, the full specification for the URL is [defined with the IANA](https://www.iana.org/assignments/uri-schemes/prov/redis). And yes, there is a [TLS version](https://www.iana.org/assignments/uri-schemes/prov/rediss) as well.
+This'll probably cover most scenarios, but if you want something more, the full specification for the URL is [defined with the IANA](https://www.iana.org/assignments/uri-schemes/prov/redis). And yes, there is a [TLS version](https://www.iana.org/assignments/uri-schemes/prov/rediss) as well.
 
-If you don't provide a URL, it defaults to `redis://localhost:6379`.
+Node Redis has lots of other ways you can create a connection. You can use discrete parameters, UNIX sockets, and all sorts of cool things. Details can be found in the [client configuration guide](https://github.com/redis/node-redis/blob/master/docs/client-configuration.md) for Node Redis and the [clusterting guide](https://github.com/redis/node-redis/blob/master/docs/clustering.md).
 
 ## 📇 Entities and Schemas
 

@@ -1,37 +1,40 @@
-import { Client, Entity, Schema, Repository, EntityKeyName } from '$lib/index'
+import { createClient } from 'redis'
 
-import { createJsonEntitySchema, loadJson } from '../helpers/data-helper'
-import { removeAll } from '../helpers/redis-helper'
+import { Entity, EntityKeyName, RedisConnection, Repository, Schema } from '$lib/index'
+
+import { createJsonEntitySchema } from '../helpers/data-helper'
+import { removeKeys, saveJson } from '../helpers/redis-helper'
 
 import { A_POINT, A_DATE } from '../../helpers/example-data'
 import { ANOTHER_ENTITY, ANOTHER_JSON, AN_ENTITY, AN_ESCAPED_ENTITY, AN_ESCAPED_JSON, A_JSON, A_THIRD_ENTITY, A_THIRD_JSON } from '../helpers/json-example-data'
 
 describe("search for JSON documents", () => {
 
-  let client: Client
+  let redis: RedisConnection
   let repository: Repository
   let schema: Schema
   let entities: Entity[]
 
   beforeAll(async () => {
-    client = new Client()
-    await client.open()
-    await removeAll(client, 'search-json:')
-    await loadJson(client, 'search-json:1', A_JSON)
-    await loadJson(client, 'search-json:2', ANOTHER_JSON)
-    await loadJson(client, 'search-json:3', A_THIRD_JSON)
-    await loadJson(client, 'search-json:escaped', AN_ESCAPED_JSON)
+    redis = createClient()
+    await redis.connect()
+
+    await removeKeys(redis, 'search-json:1', 'search-json:2', 'search-json:3', 'search-json:escaped')
+    await saveJson(redis, 'search-json:1', A_JSON)
+    await saveJson(redis, 'search-json:2', ANOTHER_JSON)
+    await saveJson(redis, 'search-json:3', A_THIRD_JSON)
+    await saveJson(redis, 'search-json:escaped', AN_ESCAPED_JSON)
 
     schema = createJsonEntitySchema('search-json')
-    repository = client.fetchRepository(schema)
+    repository = new Repository(schema, redis)
 
     await repository.createIndex()
   })
 
   afterAll(async () => {
-    await removeAll(client, 'search-json:')
+    await removeKeys(redis, 'search-json:1', 'search-json:2', 'search-json:3', 'search-json:escaped')
     await repository.dropIndex()
-    await client.close()
+    await redis.quit()
   })
 
   it("performs a wildcard search", async () => {

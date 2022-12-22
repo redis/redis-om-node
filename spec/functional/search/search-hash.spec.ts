@@ -1,37 +1,40 @@
-import { Client, Entity, Schema, Repository, EntityKeyName } from '$lib/index'
+import { createClient } from 'redis'
 
-import { createHashEntitySchema, loadHash } from '../helpers/data-helper'
-import { removeAll } from '../helpers/redis-helper'
+import { Entity, EntityKeyName, Repository, RedisConnection, Schema } from '$lib/index'
+
+import { createHashEntitySchema } from '../helpers/data-helper'
+import { removeKeys, saveHash } from '../helpers/redis-helper'
 
 import { ANOTHER_ENTITY, ANOTHER_HASH, AN_ENTITY, AN_ESCAPED_ENTITY, AN_ESCAPED_HASH, A_HASH, A_THIRD_ENTITY, A_THIRD_HASH } from '../helpers/hash-example-data'
 import { A_DATE, A_POINT } from '../../helpers/example-data'
 
 describe("search for hashes", () => {
 
-  let client: Client
+  let redis: RedisConnection
   let repository: Repository
   let schema: Schema
   let entities: Entity[]
 
   beforeAll(async () => {
-    client = new Client()
-    await client.open()
-    await removeAll(client, 'search-hash:')
-    await loadHash(client, 'search-hash:1', A_HASH)
-    await loadHash(client, 'search-hash:2', ANOTHER_HASH)
-    await loadHash(client, 'search-hash:3', A_THIRD_HASH)
-    await loadHash(client, 'search-hash:escaped', AN_ESCAPED_HASH)
+    redis = createClient()
+    await redis.connect()
+
+    await removeKeys(redis, 'search-hash:1', 'search-hash:2', 'search-hash:3', 'search-hash:escaped')
+    await saveHash(redis, 'search-hash:1', A_HASH)
+    await saveHash(redis, 'search-hash:2', ANOTHER_HASH)
+    await saveHash(redis, 'search-hash:3', A_THIRD_HASH)
+    await saveHash(redis, 'search-hash:escaped', AN_ESCAPED_HASH)
 
     schema = createHashEntitySchema('search-hash')
-    repository = client.fetchRepository(schema)
+    repository = new Repository(schema, redis)
 
     await repository.createIndex()
   })
 
   afterAll(async () => {
-    await removeAll(client, 'search-hash:')
+    await removeKeys(redis, 'search-hash:1', 'search-hash:2', 'search-hash:3', 'search-hash:escaped')
     await repository.dropIndex()
-    await client.close()
+    await redis.quit()
   })
 
   it("performs a wildcard search", async () => {
