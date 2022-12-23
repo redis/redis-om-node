@@ -189,7 +189,7 @@ If you don't provide a URL, it defaults to `redis://localhost:6379`.
 
 ## 📇 Define an Entity and a Schema
 
-Ok. Let's start doing some object mapping. We'll start by defining an [*entity*](docs/classes/Entity.md) and a [*schema*](docs/classes/Schema.md).
+Let's start doing some object mapping. We'll start by defining an [*entity*](docs/classes/Entity.md) and a [*schema*](docs/classes/Schema.md).
 
 ```javascript
 import { Entity, Schema } from 'redis-om'
