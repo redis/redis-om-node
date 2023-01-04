@@ -4,8 +4,7 @@ import { EntityId } from '$lib/entity'
 import { Search, RawSearch } from "$lib/search"
 
 import { simpleHashSchema } from "../helpers/test-entity-and-schema"
-import { mockClientSearchToReturnNothing, mockClientSearchToReturnSingleKey,
-  SIMPLE_ENTITY_1 } from '../helpers/search-helpers'
+import { mockClientSearchToReturnNothing, mockClientSearchToReturnSingleKey, SIMPLE_ENTITY_1 } from '../helpers/search-helpers'
 
 console.warn = vi.fn()
 
@@ -32,13 +31,9 @@ describe.each([
 
       it("asks the client for the first result of a given repository", () => {
         expect(client.search).toHaveBeenCalledTimes(1)
-        expect(client.search).toHaveBeenCalledWith({
-          indexName,
-          query,
-          limit: { offset: 0, count: 1 },
-          sort: { field: 'aNumber', order: 'DESC' },
-          keysOnly: true
-        })
+        expect(client.search).toHaveBeenCalledWith(indexName, query, {
+          LIMIT: { from: 0, size: 1 },
+          SORTBY: { BY: 'aNumber', DIRECTION: 'DESC' } })
       })
 
       it("return no result", () => expect(id).toBe(null))
@@ -52,13 +47,9 @@ describe.each([
 
       it("asks the client for the first result of a given repository", () => {
         expect(client.search).toHaveBeenCalledTimes(1)
-        expect(client.search).toHaveBeenCalledWith({
-          indexName,
-          query,
-          limit: { offset: 0, count: 1 },
-          sort: { field: 'aNumber', order: 'DESC' },
-          keysOnly: true
-        })
+        expect(client.search).toHaveBeenCalledWith(indexName, query, {
+          LIMIT: { from: 0, size: 1 },
+          SORTBY: { BY: 'aNumber', DIRECTION: 'DESC' } })
       })
 
       it("returns the first result of a given repository", () => {

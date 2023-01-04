@@ -1,4 +1,6 @@
-import { Client, LimitOptions, SearchOptions } from "../client"
+import { SearchOptions } from "redis"
+
+import { Client } from "../client"
 import { Entity } from '../entity'
 import { Schema } from "../schema"
 
@@ -15,7 +17,6 @@ import { WhereText } from './where-text'
 
 import { extractCountFromSearchResults, extractEntitiesFromSearchResults, extractEntityIdsFromSearchResults, extractKeyNamesFromSearchResults } from "./results-converter"
 import { RedisError } from "../errors"
-import { SortOptions } from "../client"
 import { WhereDate } from "./where-date"
 
 /**
@@ -25,6 +26,9 @@ import { WhereDate } from "./where-date"
 export type SubSearchFunction = (search: Search) => Search
 
 type AndOrConstructor = new (left: Where, right: Where) => Where
+
+// This is a simplified redefintion of the SortByProperty type that is not exported by Node Redis
+type SortOptions = { BY: string, DIRECTION: 'ASC' | 'DESC' }
 
 /**
  * Abstract base class for {@link Search} and {@link RawSearch} that
@@ -40,7 +44,7 @@ export abstract class AbstractSearch {
   protected client: Client
 
   /** @internal */
-  protected sort?: SortOptions
+  protected sortOptions?: SortOptions
 
   /** @internal */
   constructor(schema: Schema, client: Client) {
@@ -118,7 +122,8 @@ export abstract class AbstractSearch {
     if (dataStructure === 'HASH' && HASH_SORTABLE.includes(type) && !markedSortable)
       console.warn(`'sortBy' was called on field '${field.name}' which is not marked as sortable in the Schema. This may result is slower searches. If possible, mark the field as sortable in the Schema.`)
 
-    this.sort = { field: field.name, order }
+    this.sortOptions = { BY: field.name, DIRECTION: order }
+
     return this
   }
 
@@ -192,7 +197,7 @@ export abstract class AbstractSearch {
    * @returns An array of {@link Entity | Entities} matching the query.
    */
   async page(offset: number, count: number): Promise<Entity[]> {
-    const searchResults = await this.callSearch({ offset, count })
+    const searchResults = await this.callSearch(offset, count)
     return extractEntitiesFromSearchResults(this.schema, searchResults)
   }
 
@@ -203,7 +208,7 @@ export abstract class AbstractSearch {
    * @returns An array of strings matching the query.
    */
    async pageOfIds(offset: number, count: number): Promise<string[]> {
-    const searchResults = await this.callSearch({ offset, count }, true)
+    const searchResults = await this.callSearch(offset, count, true)
     return extractEntityIdsFromSearchResults(this.schema, searchResults)
   }
 
@@ -214,7 +219,7 @@ export abstract class AbstractSearch {
    * @returns An array of strings matching the query.
    */
   async pageOfKeys(offset: number, count: number): Promise<string[]> {
-    const searchResults = await this.callSearch({ offset, count }, true)
+    const searchResults = await this.callSearch(offset, count, true)
     return extractKeyNamesFromSearchResults(searchResults)
   }
 
@@ -431,19 +436,23 @@ export abstract class AbstractSearch {
     return things
   }
 
-  private async callSearch(limit: LimitOptions = { offset: 0, count: 0 }, keysOnly = false) {
+  private async callSearch(offset = 0, count = 0, keysOnly = false) {
+
+    const indexName = this.schema.indexName
+    const query = this.query
     const options: SearchOptions = {
-      indexName: this.schema.indexName,
-      query: this.query,
-      limit,
-      keysOnly
+      LIMIT: { from: offset, size: count }
     }
 
-    if (this.sort !== undefined) options.sort = this.sort
+    // @ts-ignore: Node Redis claims that SortByProperty needs to start with @ but it doesn't
+    if (this.sortOptions !== undefined) options.SORTBY = this.sortOptions
+
+    // TODO: Uncomment this line upon resolution of https://github.com/redis/node-redis/issues/2364.
+    // if (keysOnly) options.RETURN = []
 
     let searchResults
     try {
-      searchResults = await this.client.search(options)
+      searchResults = await this.client.search(indexName, query, options)
     } catch (error) {
       const message = (error as Error).message
       if (message.startsWith("Syntax error")) {

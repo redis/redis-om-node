@@ -1,56 +1,43 @@
-import { RedisHashData, RedisJsonData } from "../client"
+import { RedisHashData, RedisJsonData, SearchDocument, SearchResults } from "../client"
 import { Entity, EntityData, EntityId, EntityKeyName } from "../entity"
 import { Schema } from "../schema"
 import { fromRedisHash, fromRedisJson } from "../transformer"
 
-export function extractCountFromSearchResults(results: any[]): number {
-  const [count] = results
-  return Number.parseInt(count)
+export function extractCountFromSearchResults(results: SearchResults): number {
+  return results.total
 }
 
-export function extractKeyNamesFromSearchResults(results: any[]): string[] {
-  const [_count, ...keyNames] = results
-  return keyNames
+export function extractKeyNamesFromSearchResults(results: SearchResults): string[] {
+  return results.documents.map(document => document.id)
 }
 
-export function extractEntityIdsFromSearchResults(schema: Schema, results: any[]): string[] {
+export function extractEntityIdsFromSearchResults(schema: Schema, results: SearchResults): string[] {
   const keyNames = extractKeyNamesFromSearchResults(results)
   const entityIds = keyNamesToEntityIds(schema.prefix, keyNames)
   return entityIds
 }
 
-export function extractEntitiesFromSearchResults(schema: Schema, results: any[]): Entity[] {
-  const [_count, ...keysAndEntityArrays] = results
-  const keyNames = keysAndEntityArrays.filter((_entry, index) => index % 2 === 0)
-  const entityArrays = keysAndEntityArrays.filter((_entry, index) => index % 2 !== 0)
-
-  if (schema.dataStructure === 'JSON') {
-    return entityArrays.map((entityArray, index) => jsonArrayToEntity(schema, keyNames[index], entityArray))
+export function extractEntitiesFromSearchResults(schema: Schema, results: SearchResults): Entity[] {
+  if (schema.dataStructure === 'HASH') {
+    return results.documents.map(document => hashDocumentToEntity(schema, document))
   } else {
-    return entityArrays.map((entityArray, index) => hashArrayToEntity(schema, keyNames[index], entityArray))
+    return results.documents.map(document => jsonDocumentToEntity(schema, document))
   }
 }
 
-function hashArrayToEntity(schema: Schema, keyName: string, array: Array<string>): Entity {
-  const keys = array.filter((_entry, index) => index % 2 === 0)
-  const values = array.filter((_entry, index) => index % 2 !== 0)
-
-  const hashData: RedisHashData = keys.reduce((object: any, key, index) => {
-    object[key] = values[index]
-    return object
-  }, {})
+function hashDocumentToEntity(schema: Schema, document: SearchDocument): Entity {
+  const keyName: string = document.id
+  const hashData: RedisHashData = document.value
 
   const entityData = fromRedisHash(schema, hashData)
-
   const entity = enrichEntityData(schema.prefix, keyName, entityData)
   return entity
 }
 
-function jsonArrayToEntity(schema: Schema, keyName: string, array: Array<string>): Entity {
-  const index = array.findIndex(value => value === '$') + 1
-  const jsonString = array[index]
-
-  const jsonData: RedisJsonData = JSON.parse(jsonString)
+function jsonDocumentToEntity(schema: Schema, document: SearchDocument): Entity {
+  const keyName: string = document.id
+  // TODO: need to test this scenario
+  const jsonData: RedisJsonData = document.value['$'] === undefined ? document.value : JSON.parse(document.value['$'])
 
   const entityData = fromRedisJson(schema, jsonData)
   const entity = enrichEntityData(schema.prefix, keyName, entityData)

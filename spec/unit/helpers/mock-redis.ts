@@ -2,6 +2,7 @@ import { vi } from 'vitest'
 
 export const ft = {
   create: vi.fn(),
+  search: vi.fn(),
   dropIndex: vi.fn()
 }
 

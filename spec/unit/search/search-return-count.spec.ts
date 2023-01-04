@@ -34,8 +34,8 @@ describe("Search", () => {
 
         it("askes the client for results", () => {
           expect(client.search).toHaveBeenCalledTimes(1)
-          expect(client.search).toHaveBeenCalledWith({
-            indexName: 'SimpleHashEntity:index', query, limit: { offset, count }, keysOnly: false })
+          expect(client.search).toHaveBeenCalledWith('SimpleHashEntity:index', query, {
+            LIMIT: { from: offset, size: count } })
         })
 
         it("returns the expected count", () => expect(actualCount).toBe(3))
@@ -49,8 +49,8 @@ describe("Search", () => {
 
         it("askes the client for results", () => {
           expect(client.search).toHaveBeenCalledTimes(1)
-          expect(client.search).toHaveBeenCalledWith({
-            indexName: 'SimpleJsonEntity:index', query, limit: { offset, count }, keysOnly: false })
+          expect(client.search).toHaveBeenCalledWith('SimpleJsonEntity:index', query, {
+            LIMIT: { from: offset, size: count } })
         })
 
         it("returns the expected count", () => expect(actualCount).toBe(3))

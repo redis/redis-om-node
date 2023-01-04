@@ -34,8 +34,8 @@ describe.each([
 
         it("asks the client for the first result of a given repository", () => {
           expect(client.search).toHaveBeenCalledTimes(1)
-          expect(client.search).toHaveBeenCalledWith({
-            indexName, query, limit: { offset: 0, count: 1 }, keysOnly: false })
+          expect(client.search).toHaveBeenCalledWith(indexName, query, {
+            LIMIT: { from: 0, size: 1 } })
         })
 
         it("return no result", () => expect(entity).toBe(null))
@@ -49,8 +49,8 @@ describe.each([
 
         it("asks the client for the first result of a given repository", () => {
           expect(client.search).toHaveBeenCalledTimes(1)
-          expect(client.search).toHaveBeenCalledWith({
-            indexName, query, limit: { offset: 0, count: 1 }, keysOnly: false })
+          expect(client.search).toHaveBeenCalledWith(indexName, query, {
+            LIMIT: { from: 0, size: 1 } })
         })
 
         it("returns the first result of a given repository", () => {
@@ -74,8 +74,8 @@ describe.each([
 
         it("asks the client for the first result of a given repository", () => {
           expect(client.search).toHaveBeenCalledTimes(1)
-          expect(client.search).toHaveBeenCalledWith({
-              indexName, query, limit: { offset: 0, count: 1 }, keysOnly: false })
+          expect(client.search).toHaveBeenCalledWith(indexName, query, {
+            LIMIT: { from: 0, size: 1 } })
         })
 
         it("return no result", () => expect(entity).toBe(null))
@@ -89,8 +89,8 @@ describe.each([
 
         it("asks the client for the first result of a given repository", () => {
           expect(client.search).toHaveBeenCalledTimes(1)
-          expect(client.search).toHaveBeenCalledWith({
-            indexName, query, limit: { offset: 0, count: 1 }, keysOnly: false })
+          expect(client.search).toHaveBeenCalledWith(indexName, query, {
+            LIMIT: { from: 0, size: 1 } })
         })
 
         it("returns the first result of a given repository", () => {

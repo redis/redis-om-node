@@ -1,4 +1,4 @@
-import { createClient, createCluster, RediSearchSchema } from 'redis'
+import { createClient, createCluster, RediSearchSchema, SearchOptions } from 'redis'
 
 import { Repository } from '../repository'
 import { Schema } from '../schema'
@@ -13,6 +13,20 @@ export type RedisClusterConnection = ReturnType<typeof createCluster>
 /** A Redis connection, clustered or conventional. */
 export type RedisConnection = RedisClientConnection | RedisClusterConnection
 
+/** @internal This is a defintion for the type that calls to ft.search in Node Redis return.  */
+export type SearchResults = {
+  total: number
+  documents: SearchDocument[]
+}
+
+/** @internal This is a defintion for the return type of calls to ft.search in Node Redis.  */
+export type SearchDocument = {
+  id: string,
+  value: {
+    [key: string]: any
+  }
+}
+
 /** @internal */
 export type RedisHashData = { [key: string]: string }
 
@@ -22,32 +36,11 @@ export type RedisJsonData = { [key: string]: any }
 /** @internal */
 export type SearchDataStructure = 'HASH' | 'JSON'
 
-/** @internal */
-export type CreateIndexOptions = {
+/** @internal This is a simplified redefintion of the CreateOptions type that is not exported by Node Redis. */
+export type CreateOptions = {
   ON: SearchDataStructure,
   PREFIX: string,
   STOPWORDS?: string[]
-}
-
-/** @internal */
-export type LimitOptions = {
-  offset: number
-  count: number
-}
-
-/** @internal */
-export type SortOptions = {
-  field: string
-  order: 'ASC' | 'DESC'
-}
-
-/** @internal */
-export type SearchOptions = {
-  indexName: string,
-  query: string,
-  limit?: LimitOptions,
-  sort?: SortOptions,
-  keysOnly?: boolean
 }
 
 /**
@@ -131,7 +124,7 @@ export class Client {
   }
 
   /** @internal */
-  async createIndex(indexName: string, schema: RediSearchSchema, options: CreateIndexOptions) {
+  async createIndex(indexName: string, schema: RediSearchSchema, options: CreateOptions) {
     this.validateRedisOpen()
     await this.redis.ft.create(indexName, schema, options)
   }
@@ -143,20 +136,10 @@ export class Client {
   }
 
   /** @internal */
-  async search(options: SearchOptions) {
+  async search(indexName: string, query: string, options?: SearchOptions): Promise<SearchResults> {
     this.validateRedisOpen()
-    const { indexName, query, limit, sort, keysOnly } = options
-    const command = ['FT.SEARCH', indexName, query]
-
-    if (limit !== undefined)
-      command.push('LIMIT', limit.offset.toString(), limit.count.toString())
-
-    if (sort !== undefined)
-      command.push('SORTBY', sort.field, sort.order)
-
-    if (keysOnly) command.push('RETURN', '0')
-
-    return this.redis.sendCommand<any[]>(command)
+    if (options) return await this.redis.ft.search(indexName, query, options)
+    return await this.redis.ft.search(indexName, query)
   }
 
   /** @internal */
