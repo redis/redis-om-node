@@ -59,7 +59,7 @@
   - ❤️ [Contributing](#%EF%B8%8F-contributing)
 </details>
 
-## 💡 Redis OM for Node.js
+## Redis OM for Node.js
 
 Redis OM (pronounced _REDiss OHM_) makes it easy to add Redis to your Node.js application by mapping the Redis data structures you know and love to simple JavaScript objects. No more pesky, low-level commands, just pure code with a fluent interface.
 
@@ -73,7 +73,7 @@ const schema = new Schema('album', {
 })
 ```
 
-Create a new entity and save it:
+Create a JavaScript object and save it:
 
 ```javascript
 const album = {
@@ -97,7 +97,7 @@ const albums = await repository.search()
 
 Pretty cool, right? Read on for details.
 
-## 🏁 Getting Started
+## Getting Started
 
 First things first, get yourself a Node.js project. There are lots of ways to do this, but I'm gonna go with a classic:
 
@@ -117,7 +117,7 @@ And, of course, you'll need some Redis, preferably [Redis Stack][redis-stack-url
 
 Excellent. Setup done. Let's write some code!
 
-## 🔌 Connect to Redis with Node Redis
+## Connect to Redis with Node Redis
 
 Before you can use Redis OM, you need to connect to Redis with Node Redis. Here's how you do that, stolen straight from the top of the Node Redis [README](https://github.com/redis/node-redis):
 
@@ -129,9 +129,9 @@ redis.on('error', (err) => console.log('Redis Client Error', err));
 await redis.connect()
 ```
 
-Node Redis is a powerful piece of software with lots and lots of capabilities. Its details are *way* beyond the scope of this README. But, if your curious—or if you need that power—you can find what all the info in the Node Redis [documentation](https://github.com/redis/node-redis).
+Node Redis is a powerful piece of software with lots and lots of capabilities. Its details are *way* beyond the scope of this README. But, if your curious—or if you need that power—you can find all the info in the Node Redis [documentation](https://github.com/redis/node-redis).
 
-Regardless, once you have a connection to Redis you can use it to execute raw Redis commands:
+Regardless, once you have a connection to Redis you can use it to execute Redis commands:
 
 ```javascript
 
@@ -140,7 +140,7 @@ const aNumber = await redis.hSet('foo', 'alfa', '42', 'bravo', '23') // 2
 const aHash = await redis.hGetAll('foo') // { alfa: '42', bravo: '23' }
 ```
 
-You might not need to do this, but it's always handy to have the option. When you're done with a Redis connection, you can tell the server by calling `.quit`:
+You might not need to do this, but it's always handy to have the option. When you're done with a Redis connection, you can let the server know by calling `.quit`:
 
 ```javascript
 await redis.quit()
@@ -162,9 +162,9 @@ This'll probably cover most scenarios, but if you want something more, the full 
 
 Node Redis has lots of other ways you can create a connection. You can use discrete parameters, UNIX sockets, and all sorts of cool things. Details can be found in the [client configuration guide](https://github.com/redis/node-redis/blob/master/docs/client-configuration.md) for Node Redis and the [clusterting guide](https://github.com/redis/node-redis/blob/master/docs/clustering.md).
 
-## 📇 Entities and Schemas
+## Entities and Schemas
 
-Redis OM is all about creating, reading, updating, and deleting *entities*. An [Entity](docs/README.md#entity) is just the data you want to save to and retrieve from Redis. Almost any JavaScript object is a valid `Entity`.
+Redis OM is all about creating, reading, updating, and deleting *entities*. An [Entity](docs/README.md#entity) is just data in a JavaScript object that you want to save or retrieve from Redis. Almost any JavaScript object is a valid `Entity`.
 
 [Schemas](docs/classes/Schema.md) define fields that might be on an `Entity`. It includes a field's type, how it is stored internally in Redis, and how to search on them if you are using RediSearch. By default, they are mapped to JSON documents using RedisJSON, but you can change it to use Hashes if want (more on that later).
 
@@ -190,13 +190,13 @@ const studioSchema = new Schema('studio', {
 })
 ```
 
-The *first argument* defines the keyname prefix that entities stored in Redis will have. It should be unique for your particualr instance of Redis.
+The *first argument* defines the keyname prefix that entities stored in Redis will have. It should be unique for your particualr instance of Redis and probably meaningful to what your doing. Here we have selected `album` for our album data and `studio` for data on recording studios. Imaginative, I know.
 
-The *second argument* defines fields that might be stored in that key. The name is, well, the name of the field. The Type is what sort of data is in the field. Valid types are: `string`, `number`, `boolean`, `string[]`, `date`, `point`, and `text`.
+The *second argument* defines fields that might be stored in that key. The name is, well, the name of the field. The type property tells Redis OM what sort of data is in the field. Valid types are: `string`, `number`, `boolean`, `string[]`, `date`, `point`, and `text`.
 
 The first three types do exactly what you think—they define a field that is a [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String), a [Number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number), or a [Boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean). `string[]` does what you'd think as well, specifically describing an [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array) of Strings.
 
-`date` is a little different, but still more or less what you'd expect. It describes a property that returns a [Date](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date) and can be set using not only a Date but also a String containing an [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) date or a number with the [UNIX epoch time](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date#the_ecmascript_epoch_and_timestamps) in *seconds* (NOTE: the JavaScript Date object is specified in *milliseconds*).
+`date` is a little different, but still more or less what you'd expect. It describes a property that contains a [Date](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date) and can be set using not only a Date but also a String containing an [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) date or a number with the [UNIX epoch time](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date#the_ecmascript_epoch_and_timestamps) in *seconds* (NOTE: the JavaScript Date object is specified in *milliseconds*).
 
 A `point` defines a point somewhere on the globe as a longitude and a latitude. It is expressed as a simple object with `longitude` and `latitude` properties. Like this:
 
@@ -204,15 +204,152 @@ A `point` defines a point somewhere on the globe as a longitude and a latitude. 
 const point = { longitude: 12.34, latitude: 56.78 }
 ```
 
-A `text` field is a lot like a `string`. If you're just reading and writing objects, they are identical. But if you want to *search* on them, they are very, very different. I'll cover that in detail when I talk about [using RediSearch](#-using-redisearch) but the tl;dr is that `string` fields can only be matched on their whole value—no partial matches—and are best for keys while `text` fields have full-text search enabled on them and are optimized for human-readable text.
+A `text` field is a lot like a `string`. If you're just reading and writing objects, they are identical. But if you want to *search* on them, **they are very, very different**. I'll cover that in detail when I talk about [using RediSearch](#-using-redisearch) but the tl;dr is that `string` fields can only be matched on their exact value and are best for keys and discrete data—like postal codes or status indicators—while `text` fields have full-text search enabled on them, are optimized for human-readable text, and can take advantage of [stemming](https://redis.io/docs/stack/search/reference/stemming/) and [stop words](https://redis.io/docs/stack/search/reference/stopwords/).
 
-### Hashes vs. JSON
+### JSON and Hashes
 
-dataStructure
-.path
-.field
+As I mentioned earlier, by default Redis OM stores your entities in JSON documents using RedisJSON. You can make this explicit in code if you like:
 
-### Additional Search Options
+```javascript
+const albumSchema = new Schema('album', {
+  artist: { type: 'string' },
+  title: { type: 'string' },
+  year: { type: 'number' },
+  genres: { type: 'string[]' },
+  outOfPublication: { type: 'boolean' }
+}, {
+  dataStructure: 'JSON'
+})
+```
+
+But you can also store your entiteis as Hashes instead. Just change the `dataStructure` property to reflect it:
+
+```javascript
+const albumSchema = new Schema('album', {
+  artist: { type: 'string' },
+  title: { type: 'string' },
+  year: { type: 'number' },
+  genres: { type: 'string[]' },
+  outOfPublication: { type: 'boolean' }
+}, {
+  dataStructure: 'HASH'
+})
+```
+
+And that's it.
+
+Of course, Hashes and JSON are somewhat different data structures. Hashes are flat data structures with fields containing values. A JSON documents, however, are trees and can have depth and—most excitingly—can be nested. This difference is reflected in how Redis OM maps data to entites and how you configure your Schema.
+
+#### Configuring JSON
+
+When you store your entities as JSON, the path to the properties in your JSON document and your JavaScript object default to the name of your field in the schema. In the above example, this would result in a document that looks like this:
+
+```json
+{
+  "artist": "Mushroomhead",
+  "title": "The Righteous & The Butterfly",
+  "year": 2014,
+  "genres": [ "metal" ],
+  "outOfPublication": true
+}
+```
+
+However, you might not want your JavaScript object and your JSON to map this way. So, you can provide a `path` option in your schema that contains a [JSONPath](https://redis.io/docs/stack/json/path/#jsonpath-syntax) pointing to where that field actually exists in the JSON and your entity. For example, we might want store some of the album's data inside of an album property like this:
+
+```json
+{
+  "album": {
+    "artist": "Mushroomhead",
+    "title": "The Righteous & The Butterfly",
+    "year": 2014,
+    "genres": [ "metal" ]
+  },
+  "outOfPublication": true
+}
+```
+
+To do this, we'll need to specify the `path` property for the nested fields in the schema:
+
+```javascript
+const albumSchema = new Schema('album', {
+  artist: { type: 'string', path: '$.album.artist' },
+  title: { type: 'string', path: '$.album.title' },
+  year: { type: 'number', path: '$.album.year' },
+  genres: { type: 'string[]', path: '$.album.genres[*]' },
+  outOfPublication: { type: 'boolean' }
+})
+```
+
+There are two things to note here:
+
+  1. We haven't specified a path for `outOfPublication` as it's still in the root of the document. It defaults to `$.outOfPublication`.
+  2. Our `genres` field points to a `string[]`. When using a `string[]`, the JSONPath must return an array. If it doesn't, an error will be generated.
+
+#### Configuring Hashes
+
+When you store your entities as Hashes there is no nesting—all the entities are flat. In Redis, the properties on your entity are stored in fields inside a Hash. The default name for each field is the name of the property in your schema and this is the name that will be used in your entiteis. So, for the following schema:
+
+```javascript
+const albumSchema = new Schema('album', {
+  artist: { type: 'string' },
+  title: { type: 'string' },
+  year: { type: 'number' },
+  genres: { type: 'string[]' },
+  outOfPublication: { type: 'boolean' }
+}, {
+  dataStructure: 'HASH'
+})
+```
+
+In your code, your entities would look like this:
+
+```javascript
+{
+  artist: 'Mushroomhead',
+  title: 'The Righteous & The Butterfly',
+  year: 2014,
+  genres: [ 'metal' ],
+  outOfPublication: true
+}
+```
+
+Inside of Redis, your Hash would be stored like this:
+
+| Field            | Value                                   |
+|------------------|:----------------------------------------|
+| artist           | Mushroomhead                            |
+| title            | The Righteous & The Butterfly           |
+| year             | 2014                                    |
+| genres           | metal                                   |
+| outOfPublication | 1                                       |
+
+However, you might not want the names of your fields and the names of the properties on your entity to be exactly the same. Maybe you've got some existing data with existing names or something.
+
+Fear not! You can change the name of the field used by Redis with the `field` property:
+
+```javascript
+const albumSchema = new Schema('album', {
+  artist: { type: 'string', field: 'album_artist' },
+  title: { type: 'string', field: 'album_title' },
+  year: { type: 'number', field: 'album_year' },
+  genres: { type: 'string[]' },
+  outOfPublication: { type: 'boolean' }
+}, {
+  dataStructure: 'HASH'
+})
+```
+
+With this configuration, your entities will remanin unchanged and will still have properties for `artist`, `title`, `year`, `genres`, and `outOfPublication`. But inside of Redis, the field will have changed:
+
+| Field            | Value                                   |
+|------------------|:----------------------------------------|
+| album_artist     | Mushroomhead                            |
+| album_title      | The Righteous & The Butterfly           |
+| album_year       | 2014                                    |
+| genres           | metal                                   |
+| outOfPublication | 1                                       |
+
+### Advanced Schema Options
 
 Additional field options can be set depending on the field type. These correspond to the [Field Options](https://redis.io/commands/ft.create/#field-options) available when creating a RediSearch full-text index. Other than the `separator` option, these only affect how content is indexed and searched.
 
