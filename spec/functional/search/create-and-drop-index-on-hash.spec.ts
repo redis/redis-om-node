@@ -6,13 +6,13 @@ import { createHashEntitySchema } from '../helpers/data-helper'
 import { fetchIndexHash, fetchIndexInfo, removeKeys } from '../helpers/redis-helper'
 
 const expected = [
-  { identifier: 'aString', attribute: 'aString', type: 'TAG', SEPARATOR: '|' },
-  { identifier: 'someText', attribute: 'someText', type: 'TEXT', WEIGHT: '1', SORTABLE: undefined },
-  { identifier: 'aNumber', attribute: 'aNumber', type: 'NUMERIC', SORTABLE: undefined },
-  { identifier: 'aBoolean', attribute: 'aBoolean', type: 'TAG', SEPARATOR: ',' },
-  { identifier: 'aPoint', attribute: 'aPoint', type: 'GEO' },
-  { identifier: 'aDate', attribute: 'aDate', type: 'NUMERIC', SORTABLE: undefined },
-  { identifier: 'someStrings', attribute: 'someStrings', type: 'TAG', SEPARATOR: '|' },
+  { identifier: 'root_aString', attribute: 'aString', type: 'TAG', SEPARATOR: '|' },
+  { identifier: 'root_someText', attribute: 'someText', type: 'TEXT', WEIGHT: '1', SORTABLE: undefined },
+  { identifier: 'root_aNumber', attribute: 'aNumber', type: 'NUMERIC', SORTABLE: undefined },
+  { identifier: 'root_aBoolean', attribute: 'aBoolean', type: 'TAG', SEPARATOR: ',' },
+  { identifier: 'root_aPoint', attribute: 'aPoint', type: 'GEO' },
+  { identifier: 'root_aDate', attribute: 'aDate', type: 'NUMERIC', SORTABLE: undefined },
+  { identifier: 'root_someStrings', attribute: 'someStrings', type: 'TAG', SEPARATOR: '|' },
 ]
 
 describe("create and drop index on hash", () => {
@@ -58,7 +58,7 @@ describe("create and drop index on hash", () => {
     })
 
     it("has the expected hash", () => {
-      expect(indexHash).toBe("T0ZYwbhTRHwtWlrwpoxcwKqxpAg=")
+      expect(indexHash).toBe("Kw31lMY+/x+l+GB0RLuUpptoFCY=")
     })
 
     it("has the expected fields", () => {
@@ -91,7 +91,7 @@ describe("create and drop index on hash", () => {
         expect(indexInfo.indexName).toBe('create-drop-hash:index')
         expect(indexInfo.indexDefinition.key_type).toBe('HASH')
         expect(indexInfo.indexDefinition.prefixes).toEqual(['create-drop-hash:'])
-        expect(indexHash).toBe("T0ZYwbhTRHwtWlrwpoxcwKqxpAg=")
+        expect(indexHash).toBe("Kw31lMY+/x+l+GB0RLuUpptoFCY=")
         expect(indexInfo.attributes).toHaveLength(7)
         expect(indexInfo.attributes).toEqual(expected)
       })
@@ -111,7 +111,7 @@ describe("create and drop index on hash", () => {
         expect(indexInfo.indexName).toBe('create-drop-hash-changed:index')
         expect(indexInfo.indexDefinition.key_type).toBe('HASH')
         expect(indexInfo.indexDefinition.prefixes).toEqual(['create-drop-hash-changed:'])
-        expect(indexHash).toBe("paAjF/mZrqgEI4CAQHwNm+hO8Ow=")
+        expect(indexHash).toBe("Sbpbl+ZRM8GhzNbfqpJXgOlwYfo=")
       })
     })
   })

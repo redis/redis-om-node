@@ -36,8 +36,7 @@ function hashDocumentToEntity(schema: Schema, document: SearchDocument): Entity 
 
 function jsonDocumentToEntity(schema: Schema, document: SearchDocument): Entity {
   const keyName: string = document.id
-  // TODO: need to test this scenario
-  const jsonData: RedisJsonData = document.value['$'] === undefined ? document.value : JSON.parse(document.value['$'])
+  const jsonData: RedisJsonData = document.value['$'] ?? false ? JSON.parse(document.value['$']) : document.value
 
   const entityData = fromRedisJson(schema, jsonData)
   const entity = enrichEntityData(schema.prefix, keyName, entityData)

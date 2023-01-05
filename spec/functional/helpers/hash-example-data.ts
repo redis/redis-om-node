@@ -26,13 +26,13 @@ export const AN_ENTITY: Entity = {
 
 export const A_HASH: RedisHashData = {
   // in schema
-  aString: A_STRING,
-  someText: SOME_TEXT,
-  aNumber: A_NUMBER_STRING,
-  aBoolean: '1',
-  aPoint: A_POINT_STRING,
-  aDate: A_DATE_EPOCH_STRING,
-  someStrings: SOME_STRINGS_JOINED,
+  root_aString: A_STRING,
+  root_someText: SOME_TEXT,
+  root_aNumber: A_NUMBER_STRING,
+  root_aBoolean: '1',
+  root_aPoint: A_POINT_STRING,
+  root_aDate: A_DATE_EPOCH_STRING,
+  root_someStrings: SOME_STRINGS_JOINED,
   // not in schema
   anotherString: ANOTHER_STRING,
   someOtherText: SOME_OTHER_TEXT,
@@ -65,13 +65,13 @@ export const ANOTHER_ENTITY: Entity = {
 
 export const ANOTHER_HASH: RedisHashData = {
   // in schema
-  aString: ANOTHER_STRING,
-  someText: SOME_OTHER_TEXT,
-  aNumber: ANOTHER_NUMBER_STRING,
-  aBoolean: '1',
-  aPoint: ANOTHER_POINT_STRING,
-  aDate: ANOTHER_DATE_EPOCH_STRING,
-  someStrings: SOME_OTHER_STRINGS_JOINED,
+  root_aString: ANOTHER_STRING,
+  root_someText: SOME_OTHER_TEXT,
+  root_aNumber: ANOTHER_NUMBER_STRING,
+  root_aBoolean: '1',
+  root_aPoint: ANOTHER_POINT_STRING,
+  root_aDate: ANOTHER_DATE_EPOCH_STRING,
+  root_someStrings: SOME_OTHER_STRINGS_JOINED,
   // not in schema
   anotherString: A_THIRD_STRING,
   someOtherText: SOME_MORE_TEXT,
@@ -104,13 +104,13 @@ export const A_THIRD_ENTITY: Entity = {
 
 export const A_THIRD_HASH: RedisHashData = {
   // in schema
-  aString: A_THIRD_STRING,
-  someText: SOME_MORE_TEXT,
-  aNumber: A_THIRD_NUMBER_STRING,
-  aBoolean: '0',
-  aPoint: A_THIRD_POINT_STRING,
-  aDate: A_THIRD_DATE_EPOCH_STRING,
-  someStrings: SOME_MORE_STRINGS_JOINED,
+  root_aString: A_THIRD_STRING,
+  root_someText: SOME_MORE_TEXT,
+  root_aNumber: A_THIRD_NUMBER_STRING,
+  root_aBoolean: '0',
+  root_aPoint: A_THIRD_POINT_STRING,
+  root_aDate: A_THIRD_DATE_EPOCH_STRING,
+  root_someStrings: SOME_MORE_STRINGS_JOINED,
   // not in schema
   anotherString: A_STRING,
   someOtherText: SOME_TEXT,
@@ -135,7 +135,7 @@ export const AN_ESCAPED_ENTITY: Entity = {
 }
 
 export const AN_ESCAPED_HASH: RedisHashData = {
-  aString: "foo ,.<>{}[]\"':;!@#$%^*()-+=~& bar",
-  someText: "zany ,.<>{}[]\"':;!@#$%^&*()-+=~| fox",
-  someStrings: ['alfa ,.<>{}[]"\':;!@#$%^&*()-+=~ bravo', 'charlie delta'].join('|')
+  root_aString: "foo ,.<>{}[]\"':;!@#$%^*()-+=~& bar",
+  root_someText: "zany ,.<>{}[]\"':;!@#$%^&*()-+=~| fox",
+  root_someStrings: ['alfa ,.<>{}[]"\':;!@#$%^&*()-+=~ bravo', 'charlie delta'].join('|')
 }

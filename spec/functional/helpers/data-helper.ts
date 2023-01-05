@@ -3,15 +3,14 @@ import { saveJson } from './redis-helper'
 import { EntityData, RedisConnection, Schema } from "$lib/index"
 
 export function createHashEntitySchema(prefix: string): Schema {
-  // TODO: make this have some custom fields
   return new Schema(prefix, {
-    aString: { type: 'string' },
-    someText: { type: 'text', sortable: true },
-    aNumber: { type: 'number', sortable: true },
-    aBoolean: { type: 'boolean' },
-    aPoint: { type: 'point' },
-    aDate: { type: 'date', sortable: true },
-    someStrings: { type: 'string[]' }
+    aString: { type: 'string', field: 'root_aString' },
+    someText: { type: 'text', field: 'root_someText', sortable: true },
+    aNumber: { type: 'number', field: 'root_aNumber', sortable: true },
+    aBoolean: { type: 'boolean', field: 'root_aBoolean' },
+    aPoint: { type: 'point', field: 'root_aPoint' },
+    aDate: { type: 'date', field: 'root_aDate', sortable: true },
+    someStrings: { type: 'string[]', field: 'root_someStrings', }
   }, {
     dataStructure: 'HASH'
   })
