@@ -1,14 +1,14 @@
 import { RediSearchSchema, SchemaFieldTypes } from 'redis'
 
 import { redis } from '../helpers/mock-redis'
-import { Client, CreateIndexOptions } from '$lib/client'
+import { Client, CreateOptions } from '$lib/client'
 
 const schema: RediSearchSchema = {
   foo: { type: SchemaFieldTypes.TAG },
   bar: { type: SchemaFieldTypes.TEXT }
 }
 
-const options: CreateIndexOptions = {
+const options: CreateOptions = {
   ON: 'HASH',
   PREFIX: 'prefix',
   STOPWORDS: ['bar', 'baz', 'qux']

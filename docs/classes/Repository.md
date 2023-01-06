@@ -60,7 +60,7 @@ const entities = await repository.search()
 
 ### constructor
 
-• **new Repository**(`schema`, `client`)
+• **new Repository**(`schema`, `clientOrConnection`)
 
 Creates a new [Repository](Repository.md). Equivalent to calling
 [fetchRepository](Client.md#fetchrepository).
@@ -70,7 +70,7 @@ Creates a new [Repository](Repository.md). Equivalent to calling
 | Name | Type | Description |
 | :------ | :------ | :------ |
 | `schema` | [`Schema`](Schema.md) | The schema defining that data in the repository. |
-| `client` | [`Client`](Client.md) | A client to talk to Redis. |
+| `clientOrConnection` | [`Client`](Client.md) \| [`RedisConnection`](../README.md#redisconnection) | - |
 
 ## Methods
 
