@@ -1,6 +1,6 @@
 import { RediSearchSchema } from "redis"
 
-import { Client, CreateIndexOptions, RedisConnection, RedisHashData, RedisJsonData } from "../client"
+import { Client, CreateOptions, RedisConnection, RedisHashData, RedisJsonData } from "../client"
 import { Entity, EntityData, EntityId, EntityKeyName } from "../entity"
 import { buildRediSearchSchema } from "../indexer"
 import { Schema } from "../schema"
@@ -83,7 +83,7 @@ export class Repository {
       const indexHashName = this.schema.indexHashName
 
       const schema: RediSearchSchema = buildRediSearchSchema(this.schema)
-      const options: CreateIndexOptions = {
+      const options: CreateOptions = {
         ON: this.schema.dataStructure,
         PREFIX: `${this.schema.prefix}:`
       }
