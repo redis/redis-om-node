@@ -1,7 +1,7 @@
 import { RediSearchSchema, SchemaFieldTypes } from 'redis'
 
-import { Schema } from "../schema/schema"
-import { Field } from "../schema/field"
+import { Schema } from '../schema/schema'
+import { Field } from '../schema/field'
 
 const entryBuilders = { HASH: addHashEntry, JSON: addJsonEntry }
 

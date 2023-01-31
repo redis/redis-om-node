@@ -55,7 +55,7 @@
   "dependencies": {
     "jsonpath-plus": "^7.2.0",
     "just-clone": "^6.1.1",
-    "redis": "^4.0.4",
+    "redis": "^4.6.4",
     "ulid": "^2.3.0"
   }
 }

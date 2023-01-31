@@ -1,11 +1,11 @@
-import { RediSearchSchema } from "redis"
+import { RediSearchSchema } from 'redis'
 
-import { Client, CreateOptions, RedisConnection, RedisHashData, RedisJsonData } from "../client"
-import { Entity, EntityData, EntityId, EntityKeyName } from "../entity"
-import { buildRediSearchSchema } from "../indexer"
-import { Schema } from "../schema"
+import { Client, CreateOptions, RedisConnection, RedisHashData, RedisJsonData } from '../client'
+import { Entity, EntityData, EntityId, EntityKeyName } from '../entity'
+import { buildRediSearchSchema } from '../indexer'
+import { Schema } from '../schema'
 import { Search, RawSearch } from '../search'
-import { fromRedisHash, fromRedisJson, toRedisHash, toRedisJson } from "../transformer"
+import { fromRedisHash, fromRedisJson, toRedisHash, toRedisJson } from '../transformer'
 
 /**
  * A repository is the main interaction point for reading, writing, and
@@ -45,18 +45,18 @@ import { fromRedisHash, fromRedisJson, toRedisHash, toRedisJson } from "../trans
  */
 export class Repository {
 
+  // NOTE: Not using "#" private as the spec needs to check calls on this class. Will be resolved when Client class is removed.
   private client: Client
-  private schema: Schema
+  #schema: Schema
 
   /**
-   * Creates a new {@link Repository}. Equivalent to calling
-   * {@link Client#fetchRepository}.
+   * Creates a new {@link Repository}.
    *
    * @param schema The schema defining that data in the repository.
    * @param client A client to talk to Redis.
    */
   constructor(schema: Schema, clientOrConnection: Client | RedisConnection) {
-    this.schema = schema
+    this.#schema = schema
     if (clientOrConnection instanceof Client) {
       this.client = clientOrConnection
     } else {
@@ -72,27 +72,34 @@ export class Repository {
    */
   async createIndex() {
 
-    const currentIndexHash = await this.client.get(this.schema.indexHashName)
-    const incomingIndexHash = this.schema.indexHash
+    const currentIndexHash = await this.client.get(this.#schema.indexHashName)
+    const incomingIndexHash = this.#schema.indexHash
 
     if (currentIndexHash !== incomingIndexHash) {
 
       await this.dropIndex()
 
-      const indexName: string = this.schema.indexName
-      const indexHashName = this.schema.indexHashName
+      const {
+        indexName, indexHashName, dataStructure,
+        prefix, useStopWords, stopWords
+      } = this.#schema
 
-      const schema: RediSearchSchema = buildRediSearchSchema(this.schema)
+      const schema = buildRediSearchSchema(this.#schema)
       const options: CreateOptions = {
-        ON: this.schema.dataStructure,
-        PREFIX: `${this.schema.prefix}:`
+        ON: dataStructure,
+        PREFIX: `${prefix}:`
       }
 
-      if (this.schema.useStopWords === 'OFF') options.STOPWORDS = []
-      if (this.schema.useStopWords === 'CUSTOM') options.STOPWORDS = this.schema.stopWords
+      if (useStopWords === 'OFF') {
+        options.STOPWORDS = []
+      } else if (useStopWords === 'CUSTOM') {
+        options.STOPWORDS = stopWords
+      }
 
-      await this.client.createIndex(indexName, schema, options)
-      await this.client.set(indexHashName, incomingIndexHash)
+      await Promise.all([
+        this.client.createIndex(indexName, schema, options),
+        this.client.set(indexHashName, incomingIndexHash)
+      ])
     }
   }
 
@@ -103,9 +110,12 @@ export class Repository {
    */
   async dropIndex() {
     try {
-      await this.client.unlink(this.schema.indexHashName)
-      await this.client.dropIndex(this.schema.indexName)
+      await Promise.all([
+        this.client.unlink(this.#schema.indexHashName),
+        this.client.dropIndex(this.#schema.indexName)
+      ])
     } catch (e) {
+      // TODO: This error handler should only be attached to `dropIndex`.
       if (e instanceof Error && e.message === "Unknown Index name") {
         // no-op: the thing we are dropping doesn't exist
       } else {
@@ -147,9 +157,18 @@ export class Repository {
   createEntity(id: string, entityData: EntityData): Entity
 
   createEntity(entityDataOrId?: EntityData | string, maybeEntityData?: EntityData): Entity {
-    const entityId = typeof(entityDataOrId) === 'string' ? entityDataOrId : this.schema.generateId()
-    const keyName = `${this.schema.prefix}:${entityId}`
-    const entityData = typeof(entityDataOrId) === 'object' ? entityDataOrId : maybeEntityData ?? {}
+    let entityId: string | undefined
+    let entityData: EntityData | undefined
+
+    if (entityDataOrId && typeof(entityDataOrId) !== 'string') {
+      entityData = entityDataOrId
+    } else {
+      entityId = entityDataOrId
+      entityData = maybeEntityData
+    }
+
+    entityId ??= this.#schema.generateId()
+    const keyName = `${this.#schema.prefix}:${entityId}`
     return { ...entityData, [EntityId]: entityId, [EntityKeyName]: keyName }
   }
 
@@ -172,8 +191,8 @@ export class Repository {
   async save(id: string, entity: Entity): Promise<string>
 
   async save(entityOrId: Entity | string, maybeEntity?: Entity): Promise<string> {
-    const entityId = typeof(entityOrId) === 'string' ? entityOrId : entityOrId[EntityId] ?? this.schema.generateId()
-    const keyName = `${this.schema.prefix}:${entityId}`
+    const entityId = typeof(entityOrId) === 'string' ? entityOrId : entityOrId[EntityId] ?? this.#schema.generateId()
+    const keyName = `${this.#schema.prefix}:${entityId}`
     const entity = typeof(entityOrId) === 'object' ? entityOrId : maybeEntity ?? {}
     await this.writeEntity({ ...entity, [EntityId]: entityId, [EntityKeyName]: keyName })
     return entityId
@@ -199,8 +218,8 @@ export class Repository {
   async createAndSave(id: string, entityData: EntityData): Promise<Entity>
 
   async createAndSave(entityDataOrId: EntityData | string, maybeEntityData?: EntityData): Promise<Entity> {
-    const entityId = typeof(entityDataOrId) === 'string' ? entityDataOrId : this.schema.generateId()
-    const keyName = `${this.schema.prefix}:${entityId}`
+    const entityId = typeof(entityDataOrId) === 'string' ? entityDataOrId : this.#schema.generateId()
+    const keyName = `${this.#schema.prefix}:${entityId}`
     const entityData = typeof(entityDataOrId) === 'object' ? entityDataOrId : maybeEntityData ?? {}
     const entity = { ...entityData, [EntityId]: entityId, [EntityKeyName]: keyName }
     await this.writeEntity(entity)
@@ -308,7 +327,7 @@ export class Repository {
    * @returns A {@link Search} object.
    */
   search(): Search {
-    return new Search(this.schema, this.client)
+    return new Search(this.#schema, this.client)
   }
 
   /**
@@ -323,21 +342,21 @@ export class Repository {
    * @returns A {@link RawSearch} object.
    */
   searchRaw(query: string): RawSearch {
-    return new RawSearch(this.schema, this.client, query)
+    return new RawSearch(this.#schema, this.client, query)
   }
 
   private async writeEntity(entity: Entity): Promise<void> {
-    return this.schema.dataStructure === 'HASH' ? this.writeEntityToHash(entity) : this.writeEntityToJson(entity)
+    return this.#schema.dataStructure === 'HASH' ? this.writeEntityToHash(entity) : this.writeEntityToJson(entity)
   }
 
   private async readEntities(ids: string[]): Promise<Entity[]> {
-    return this.schema.dataStructure === 'HASH' ? this.readEntitiesFromHash(ids) : this.readEntitiesFromJson(ids)
+    return this.#schema.dataStructure === 'HASH' ? this.readEntitiesFromHash(ids) : this.readEntitiesFromJson(ids)
   }
 
   private async writeEntityToHash(entity: Entity): Promise<void> {
     const keyName = entity[EntityKeyName]
     const { ...entityData } = entity
-    const hashData: RedisHashData = toRedisHash(this.schema, entityData)
+    const hashData: RedisHashData = toRedisHash(this.#schema, entityData)
     if (Object.keys(hashData).length === 0) {
       await this.client.unlink(keyName ?? '')
     } else {
@@ -350,7 +369,7 @@ export class Repository {
       ids.map(async (entityId) => {
         const keyName = this.makeKey(entityId)
         const hashData = await this.client.hgetall(keyName)
-        const entityData = fromRedisHash(this.schema, hashData)
+        const entityData = fromRedisHash(this.#schema, hashData)
         const entity = { ...entityData, [EntityId]: entityId, [EntityKeyName]: keyName }
         return entity
       }))
@@ -359,7 +378,7 @@ export class Repository {
   private async writeEntityToJson(entity: Entity): Promise<void> {
     const keyName = entity[EntityKeyName]
     const { ...entityData } = entity
-    const jsonData: RedisJsonData = toRedisJson(this.schema, entityData)
+    const jsonData: RedisJsonData = toRedisJson(this.#schema, entityData)
     await this.client.jsonset(keyName ?? '', jsonData)
   }
 
@@ -368,7 +387,7 @@ export class Repository {
       ids.map(async (entityId) => {
         const keyName = this.makeKey(entityId)
         const jsonData = await this.client.jsonget(keyName) ?? {}
-        const entityData = fromRedisJson(this.schema, jsonData)
+        const entityData = fromRedisJson(this.#schema, jsonData)
         const entity = { ...entityData, [EntityId]: entityId, [EntityKeyName]: keyName }
         return entity
       }))
@@ -379,6 +398,6 @@ export class Repository {
   }
 
   private makeKey(id: string): string {
-    return `${this.schema.prefix}:${id}`
+    return `${this.#schema.prefix}:${id}`
   }
 }

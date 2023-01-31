@@ -32,7 +32,9 @@ describe.each([
       it("askes the client for results", () => {
         expect(client.search).toHaveBeenCalledTimes(1)
         expect(client.search).toHaveBeenCalledWith(indexName, query, {
-          LIMIT: { from: 0, size: 5 } })
+          LIMIT: { from: 0, size: 5 },
+          RETURN: []
+        })
       })
 
       it("returns no results", () => expect(keys).toHaveLength(0))
@@ -47,7 +49,9 @@ describe.each([
       it("askes the client for results", () => {
         expect(client.search).toHaveBeenCalledTimes(1)
         expect(client.search).toHaveBeenCalledWith(indexName, query, {
-          LIMIT: { from: 0, size: 5 } })
+          LIMIT: { from: 0, size: 5 },
+          RETURN: []
+        })
       })
 
       it("returns the expected single result", () => {
@@ -67,7 +71,9 @@ describe.each([
       it("askes the client for results", () => {
         expect(client.search).toHaveBeenCalledTimes(1)
         expect(client.search).toHaveBeenCalledWith(indexName, query, {
-          LIMIT: { from: 0, size: 5 } })
+          LIMIT: { from: 0, size: 5 },
+          RETURN: []
+        })
       })
 
       it("returns all the results", async () => {

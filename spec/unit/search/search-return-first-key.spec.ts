@@ -30,7 +30,9 @@ describe.each([
       it("asks the client for the first result of a given repository", () => {
         expect(client.search).toHaveBeenCalledTimes(1)
         expect(client.search).toHaveBeenCalledWith(indexName, query, {
-          LIMIT: { from: 0, size: 1 } })
+          LIMIT: { from: 0, size: 1 },
+          RETURN: []
+        })
       })
 
       it("return no result", () => expect(id).toBe(null))
@@ -45,7 +47,9 @@ describe.each([
       it("asks the client for the first result of a given repository", () => {
         expect(client.search).toHaveBeenCalledTimes(1)
         expect(client.search).toHaveBeenCalledWith(indexName, query, {
-          LIMIT: { from: 0, size: 1 } })
+          LIMIT: { from: 0, size: 1 },
+          RETURN: []
+        })
       })
 
       it("returns the first result of a given repository", () => {

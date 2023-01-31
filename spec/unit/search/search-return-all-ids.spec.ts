@@ -33,7 +33,9 @@ describe("Search", () => {
         it("askes the client for a single page of results", () => {
           expect(client.search).toHaveBeenCalledTimes(1)
           expect(client.search).toHaveBeenCalledWith(indexName, query, {
-            LIMIT: { from: 0, size: 10 } })
+            LIMIT: { from: 0, size: 10 },
+            RETURN: []
+          })
         })
 
         it("returns no results", () => expect(ids).toHaveLength(0))
@@ -48,7 +50,9 @@ describe("Search", () => {
         it("askes the client for a a single page of results", () => {
           expect(client.search).toHaveBeenCalledTimes(1)
           expect(client.search).toHaveBeenCalledWith(indexName, query, {
-            LIMIT: { from: 0, size: 10 } })
+            LIMIT: { from: 0, size: 10 },
+            RETURN: []
+          })
         })
 
         it("returns the expected single result", () => {
@@ -68,7 +72,9 @@ describe("Search", () => {
         it("askes the client for a single page of results", () => {
           expect(client.search).toHaveBeenCalledTimes(1)
           expect(client.search).toHaveBeenCalledWith(indexName, query, {
-            LIMIT: { from: 0, size: 10 } })
+            LIMIT: { from: 0, size: 10 },
+            RETURN: []
+          })
         })
 
         it("returns all the results", async () => {
@@ -90,7 +96,9 @@ describe("Search", () => {
         it("askes the client for multiple pages of results", () => {
           expect(client.search).toHaveBeenCalledTimes(3)
           expect(client.search).toHaveBeenCalledWith(indexName, query, {
-            LIMIT: { from: 0, size: 2 } })
+            LIMIT: { from: 0, size: 2 },
+            RETURN: []
+          })
         })
 
         it("returns all the results", async () => {

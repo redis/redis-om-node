@@ -21,7 +21,7 @@ export type SearchResults = {
 
 /** @internal This is a defintion for the return type of calls to ft.search in Node Redis.  */
 export type SearchDocument = {
-  id: string,
+  id: string
   value: {
     [key: string]: any
   }
@@ -36,10 +36,14 @@ export type RedisJsonData = { [key: string]: any }
 /** @internal */
 export type SearchDataStructure = 'HASH' | 'JSON'
 
-/** @internal This is a simplified redefintion of the CreateOptions type that is not exported by Node Redis. */
+/**
+ * @internal This is a simplified redefintion of the CreateOptions type that is not exported by Node Redis.
+ * TODO: Remove this type once CreateOptions is exported by Node Redis.
+ * https://github.com/redis/node-redis/blob/master/packages/search/lib/commands/CREATE.ts#L4
+ */
 export type CreateOptions = {
-  ON: SearchDataStructure,
-  PREFIX: string,
+  ON: SearchDataStructure
+  PREFIX: string
   STOPWORDS?: string[]
 }
 
@@ -55,14 +59,16 @@ export type CreateOptions = {
  *
  * A Client is primarily used by a {@link Repository} which requires a client in
  * its constructor.
+ *
+ * @deprecated Just used Node Redis client directly and pass it to the Repository.
  */
 export class Client {
   /** @internal */
-  private _redis?: RedisConnection
+  #redis?: RedisConnection
 
   /** Returns the underlying Node Redis connection being used. */
   get redis() {
-    return this._redis
+    return this.#redis
   }
 
   /**
@@ -85,7 +91,7 @@ export class Client {
    * @returns This {@link Client} instance.
    */
   useNoClose(connection: RedisConnection): Client {
-    this._redis = connection
+    this.#redis = connection
     return this
   }
 
@@ -99,7 +105,7 @@ export class Client {
     if (!this.isOpen()) {
       const redis = createClient({ url })
       await redis.connect()
-      this._redis = redis
+      this.#redis = redis
     }
     return this
   }
@@ -111,7 +117,7 @@ export class Client {
    * @returns A repository for the provided schema.
    */
   fetchRepository(schema: Schema): Repository {
-    this.validateRedisOpen()
+    this.#validateRedisOpen()
     return new Repository(schema, this)
   }
 
@@ -119,62 +125,62 @@ export class Client {
    * Close the connection to Redis.
    */
   async close() {
-    if (this.redis) await this.redis.quit()
-    this._redis = undefined
+    if (this.#redis) await this.#redis.quit()
+    this.#redis = undefined
   }
 
   /** @internal */
   async createIndex(indexName: string, schema: RediSearchSchema, options: CreateOptions) {
-    this.validateRedisOpen()
+    this.#validateRedisOpen()
     await this.redis.ft.create(indexName, schema, options)
   }
 
   /** @internal */
   async dropIndex(indexName: string) {
-    this.validateRedisOpen()
+    this.#validateRedisOpen()
     await this.redis.ft.dropIndex(indexName)
   }
 
   /** @internal */
   async search(indexName: string, query: string, options?: SearchOptions): Promise<SearchResults> {
-    this.validateRedisOpen()
+    this.#validateRedisOpen()
     if (options) return await this.redis.ft.search(indexName, query, options)
     return await this.redis.ft.search(indexName, query)
   }
 
   /** @internal */
   async unlink(...keys: string[]) {
-    this.validateRedisOpen()
+    this.#validateRedisOpen()
     if (keys.length > 0) await this.redis.unlink(keys)
   }
 
   /** @internal */
   async expire(key: string, ttl: number) {
-    this.validateRedisOpen()
+    this.#validateRedisOpen()
     await this.redis.expire(key, ttl)
   }
 
   /** @internal */
   async get(key: string): Promise<string | null> {
-    this.validateRedisOpen()
+    this.#validateRedisOpen()
     return this.redis.get(key)
   }
 
   /** @internal */
   async set(key: string, value: string) {
-    this.validateRedisOpen()
+    this.#validateRedisOpen()
     await this.redis.set(key, value)
   }
 
   /** @internal */
   async hgetall(key: string): Promise<RedisHashData> {
-    this.validateRedisOpen()
+    this.#validateRedisOpen()
     return this.redis.hGetAll(key)
   }
 
   /** @internal */
   async hsetall(key: string, data: RedisHashData) {
-    this.validateRedisOpen()
+    this.#validateRedisOpen()
     await this.redis
       .multi()
         .unlink(key)
@@ -184,14 +190,14 @@ export class Client {
 
   /** @internal */
   async jsonget(key: string): Promise<RedisJsonData | null> {
-    this.validateRedisOpen()
+    this.#validateRedisOpen()
     const json = await this.redis.json.get(key, { path: '$' })
     return json === null ? null : (json as RedisJsonData)[0]
   }
 
   /** @internal */
   async jsonset(key: string, data: RedisJsonData) {
-    this.validateRedisOpen()
+    this.#validateRedisOpen()
     await this.redis.json.set(key, '$', data)
   }
 
@@ -199,10 +205,10 @@ export class Client {
    * @returns Whether a connection is already open.
    */
   isOpen() {
-    return !!this.redis
+    return !!this.#redis
   }
 
-  private validateRedisOpen(): asserts this is { redis: RedisConnection } {
+  #validateRedisOpen(): asserts this is { redis: RedisConnection } {
     if (!this.redis) throw new RedisError("Redis connection needs to be open.")
   }
 }

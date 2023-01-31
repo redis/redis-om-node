@@ -444,12 +444,10 @@ export abstract class AbstractSearch {
       LIMIT: { from: offset, size: count }
     }
 
-    // TODO: Check this again upon upgrade of Node Redis.
-    // @ts-ignore: Node Redis claims that SortByProperty needs to start with @ but it doesn't.
     if (this.sortOptions !== undefined) options.SORTBY = this.sortOptions
 
     // TODO: Uncomment this line upon resolution of https://github.com/redis/node-redis/issues/2364.
-    // if (keysOnly) options.RETURN = []
+    if (keysOnly) options.RETURN = []
 
     let searchResults
     try {
