@@ -81,7 +81,9 @@ describe.each([
           expect(client.search).toHaveBeenCalledTimes(1)
           expect(client.search).toHaveBeenCalledWith(indexName, query, {
             LIMIT: { from: 0, size: 1 },
-            SORTBY: { BY: 'aNumber', DIRECTION: 'ASC' } })
+            SORTBY: { BY: 'aNumber', DIRECTION: 'ASC' },
+            RETURN: '$'
+          })
         })
 
         it("return no result", () => expect(entity).toBe(null))
@@ -97,7 +99,9 @@ describe.each([
           expect(client.search).toHaveBeenCalledTimes(1)
           expect(client.search).toHaveBeenCalledWith(indexName, query, {
             LIMIT: { from: 0, size: 1 },
-            SORTBY: { BY: 'aNumber', DIRECTION: 'ASC' } })
+            SORTBY: { BY: 'aNumber', DIRECTION: 'ASC' },
+            RETURN: '$'
+          })
         })
 
         it("returns the first result of a given repository", () => {

@@ -46,7 +46,7 @@ export const simpleJsonSchema = new Schema("SimpleJsonEntity", {
   dataStructure: 'JSON'
 });
 
-export const simpleSortableJsonSchema = new Schema("SimpleHashEntity", {
+export const simpleSortableJsonSchema = new Schema("SimpleJsonEntity", {
   aString: { type: 'string', sortable: true },
   someText: { type: 'text', sortable: true },
   aNumber: { type: 'number', sortable: true },

@@ -10,15 +10,11 @@ import {
   mockClientSearchToReturnMultipleHashes as hashMocker,
   mockClientSearchToReturnMultipleJsonStrings as jsonMocker
 } from '../helpers/search-helpers'
-import { RedisError } from '../../../lib'
+import { RedisError } from '$lib/errors'
 
 
 const warnSpy = vi.spyOn(global.console, 'warn').mockImplementation(() => {})
 const errorSpy = vi.spyOn(global.console, 'error').mockImplementation(() => {})
-
-type HashSearch = Search | RawSearch
-type JsonSearch = Search | RawSearch
-
 
 beforeEach(() => {
   vi.mocked(client.search).mockReset()
@@ -31,32 +27,25 @@ describe.each([
     new Search(simpleHashSchema, client),
     new Search(simpleSortableHashSchema, client),
     new Search(simpleJsonSchema, client),
-    new Search(simpleSortableJsonSchema,client)],
+    new Search(simpleSortableJsonSchema, client)],
   ["RawSearch",
     new RawSearch(simpleHashSchema, client),
     new RawSearch(simpleSortableHashSchema, client),
     new RawSearch(simpleJsonSchema, client),
     new RawSearch(simpleSortableJsonSchema, client)]
-])("%s", (_,
-  hashSearch: HashSearch, sortableHashSearch: HashSearch,
-  jsonSearch: JsonSearch, sortableJsonSearch: JsonSearch) => {
+])("%s", (_, hashSearch, sortableHashSearch, jsonSearch, sortableJsonSearch) => {
 
-  describe.each([
-    ["on a Hash", sortableHashSearch, hashMocker],
-    ["on a JSON Document", sortableJsonSearch, jsonMocker]
-  ])("%s", (_, search: HashSearch | JsonSearch, clientMocker) => {
+  describe("on a Hash", () => {
 
-    beforeEach(async () => {
-      clientMocker()
-    })
+    beforeEach(async () => { hashMocker() })
 
     describe("#sortAscending", () => {
       beforeEach(async () => {
-        await search.sortAscending('aNumber').return.first()
+        await sortableHashSearch.sortAscending('aNumber').return.first()
       })
 
       it("asks the client for the results with the expected sort options", () => {
-        expect(client.search).toHaveBeenCalledWith(expect.stringMatching('Simple(Hash|Json)Entity:index'), '*', {
+        expect(client.search).toHaveBeenCalledWith('SimpleHashEntity:index', '*', {
           LIMIT: { from: 0, size: 1 },
           SORTBY: { BY: 'aNumber', DIRECTION: 'ASC' } })
       })
@@ -64,11 +53,11 @@ describe.each([
 
     describe("#sortAsc", () => {
       beforeEach(async () => {
-        await search.sortAsc('aNumber').return.first()
+        await sortableHashSearch.sortAsc('aNumber').return.first()
       })
 
       it("asks the client for the results with the expected sort options", () => {
-        expect(client.search).toHaveBeenCalledWith(expect.stringMatching('Simple(Hash|Json)Entity:index'), '*', {
+        expect(client.search).toHaveBeenCalledWith('SimpleHashEntity:index', '*', {
           LIMIT: { from: 0, size: 1 },
           SORTBY: { BY: 'aNumber', DIRECTION: 'ASC' } })
       })
@@ -76,11 +65,11 @@ describe.each([
 
     describe("#sortDescending", () => {
       beforeEach(async () => {
-        await search.sortDescending('aNumber').return.first()
+        await sortableHashSearch.sortDescending('aNumber').return.first()
       })
 
       it("asks the client for the results with the expected sort options", () => {
-        expect(client.search).toHaveBeenCalledWith(expect.stringMatching('Simple(Hash|Json)Entity:index'), '*', {
+        expect(client.search).toHaveBeenCalledWith('SimpleHashEntity:index', '*', {
           LIMIT: { from: 0, size: 1 },
           SORTBY: { BY: 'aNumber', DIRECTION: 'DESC' } })
       })
@@ -88,13 +77,74 @@ describe.each([
 
     describe("#sortDesc", () => {
       beforeEach(async () => {
-        await search.sortDesc('aNumber').return.first()
+        await sortableHashSearch.sortDesc('aNumber').return.first()
       })
 
       it("asks the client for the results with the expected sort options", () => {
-        expect(client.search).toHaveBeenCalledWith(expect.stringMatching('Simple(Hash|Json)Entity:index'), '*', {
+        expect(client.search).toHaveBeenCalledWith('SimpleHashEntity:index', '*', {
           LIMIT: { from: 0, size: 1 },
           SORTBY: { BY: 'aNumber', DIRECTION: 'DESC' } })
+      })
+    })
+  })
+
+  describe("on a JSON Document", () => {
+
+    beforeEach(async () => { jsonMocker() })
+
+    describe("#sortAscending", () => {
+      beforeEach(async () => {
+        await sortableJsonSearch.sortAscending('aNumber').return.first()
+      })
+
+      it("asks the client for the results with the expected sort options", () => {
+        expect(client.search).toHaveBeenCalledWith('SimpleJsonEntity:index', '*', {
+          LIMIT: { from: 0, size: 1 },
+          SORTBY: { BY: 'aNumber', DIRECTION: 'ASC' },
+          RETURN: '$'
+        })
+      })
+    })
+
+    describe("#sortAsc", () => {
+      beforeEach(async () => {
+        await sortableJsonSearch.sortAsc('aNumber').return.first()
+      })
+
+      it("asks the client for the results with the expected sort options", () => {
+        expect(client.search).toHaveBeenCalledWith('SimpleJsonEntity:index', '*', {
+          LIMIT: { from: 0, size: 1 },
+          SORTBY: { BY: 'aNumber', DIRECTION: 'ASC' },
+          RETURN: '$'
+        })
+      })
+    })
+
+    describe("#sortDescending", () => {
+      beforeEach(async () => {
+        await sortableJsonSearch.sortDescending('aNumber').return.first()
+      })
+
+      it("asks the client for the results with the expected sort options", () => {
+        expect(client.search).toHaveBeenCalledWith('SimpleJsonEntity:index', '*', {
+          LIMIT: { from: 0, size: 1 },
+          SORTBY: { BY: 'aNumber', DIRECTION: 'DESC' },
+          RETURN: '$'
+        })
+      })
+    })
+
+    describe("#sortDesc", () => {
+      beforeEach(async () => {
+        await sortableJsonSearch.sortDesc('aNumber').return.first()
+      })
+
+      it("asks the client for the results with the expected sort options", () => {
+        expect(client.search).toHaveBeenCalledWith('SimpleJsonEntity:index', '*', {
+          LIMIT: { from: 0, size: 1 },
+          SORTBY: { BY: 'aNumber', DIRECTION: 'DESC' },
+          RETURN: '$'
+        })
       })
     })
   })
@@ -254,7 +304,7 @@ describe.each([
           expectedError: "'sortBy' was called on field 'somethingMissing' which is not defined in the Schema."
         }]
 
-    ])("%s", (_, search: HashSearch | JsonSearch, clientMocker, data: any) => {
+    ])("%s", (_, search, clientMocker, data: any) => {
 
       let field = data.field
       let order = data.sortOrder
@@ -286,9 +336,19 @@ describe.each([
       })
 
       it("asks the client for the results with the expected sort options", () => {
-        expect(client.search).toHaveBeenCalledWith(expect.stringMatching('Simple(Hash|Json)Entity:index'), '*', {
-          LIMIT: { from: 0, size: 1 },
-          SORTBY: { BY: field, DIRECTION: order } })
+        // ya, this is a little jank
+        if (clientMocker === jsonMocker) {
+          expect(client.search).toHaveBeenCalledWith('SimpleJsonEntity:index', '*', {
+            LIMIT: { from: 0, size: 1 },
+            SORTBY: { BY: field, DIRECTION: order },
+            RETURN: '$'
+          })
+        } else {
+          expect(client.search).toHaveBeenCalledWith('SimpleHashEntity:index', '*', {
+            LIMIT: { from: 0, size: 1 },
+            SORTBY: { BY: field, DIRECTION: order }
+          })
+        }
       })
 
       if (expectedWarning) {

@@ -438,6 +438,7 @@ export abstract class AbstractSearch {
 
   private async callSearch(offset = 0, count = 0, keysOnly = false) {
 
+    const dataStructure = this.schema.dataStructure
     const indexName = this.schema.indexName
     const query = this.query
     const options: SearchOptions = {
@@ -446,8 +447,11 @@ export abstract class AbstractSearch {
 
     if (this.sortOptions !== undefined) options.SORTBY = this.sortOptions
 
-    // TODO: Uncomment this line upon resolution of https://github.com/redis/node-redis/issues/2364.
-    if (keysOnly) options.RETURN = []
+    if (keysOnly) {
+      options.RETURN = []
+    } else if (dataStructure === 'JSON') {
+      options.RETURN = '$'
+    }
 
     let searchResults
     try {

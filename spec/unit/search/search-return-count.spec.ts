@@ -50,7 +50,9 @@ describe("Search", () => {
         it("askes the client for results", () => {
           expect(client.search).toHaveBeenCalledTimes(1)
           expect(client.search).toHaveBeenCalledWith('SimpleJsonEntity:index', query, {
-            LIMIT: { from: offset, size: count } })
+            LIMIT: { from: offset, size: count },
+            RETURN: '$'
+          })
         })
 
         it("returns the expected count", () => expect(actualCount).toBe(3))
