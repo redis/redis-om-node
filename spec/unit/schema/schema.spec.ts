@@ -14,7 +14,7 @@ describe("Schema", () => {
     it("has the keyspace prefix from the constructor", () => expect(schema.prefix).toBe("TestEntity"))
     it("generates the index name from the entity constructor name", () => expect(schema.indexName).toBe("TestEntity:index"))
     it("generates the index hash name from the entity constructor name", () => expect(schema.indexHashName).toBe("TestEntity:index:hash"))
-    it("generates default Redis IDs", () => expect(schema.generateId()).toMatch(/^[0-9ABCDEFGHJKMNPQRSTVWXYZ]{26}$/))
+    it("generates default Redis IDs", () => expect(schema.generateId()).resolves.toMatch(/^[0-9ABCDEFGHJKMNPQRSTVWXYZ]{26}$/))
 
     it("provides the default stop word settings", () => {
       expect(schema.useStopWords).toBe('DEFAULT')
@@ -84,9 +84,9 @@ describe("Schema", () => {
 
   describe("that overrides the id generation strategy", () => {
     beforeEach(() => {
-      schema = new Schema('TestEntity', {}, { idStrategy: () => '1' })
+      schema = new Schema('TestEntity', {}, { idStrategy: async () => '1' })
     })
-    it("generates Redis IDs from the strategy", () => expect(schema.generateId()).toBe('1'))
+    it("generates Redis IDs from the strategy", () => expect(schema.generateId()).resolves.toBe('1'))
   })
 
   describe("that disables stop words", () => {

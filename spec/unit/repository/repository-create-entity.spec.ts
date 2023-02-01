@@ -33,7 +33,7 @@ describe("Repository", () => {
     beforeEach(() => { repository = new Repository(simpleSchema, client) })
 
     describe("when creating an entity", () => {
-      beforeEach(() => { entity = repository.createEntity() })
+      beforeEach(async () => { entity = await repository.createEntity() })
 
       it("has a generated entity id", () => expect(entity[EntityId]).toMatch(ULID_REGEX))
       it("has a keyname based on the entity id", () => expect(entity[EntityKeyName]).toMatch(KEYNAME_REGEX))
@@ -41,7 +41,7 @@ describe("Repository", () => {
     })
 
     describe("when creating an entity with a provided id", () => {
-      beforeEach(() => { entity = repository.createEntity('foo') })
+      beforeEach(async () => { entity = await repository.createEntity('foo') })
 
       it("has the provided entity id", () => expect(entity[EntityId]).toBe('foo'))
       it("has a keyname based on the entity id", () => expect(entity[EntityKeyName]).toBe(`SimpleEntity:foo`))
@@ -49,9 +49,7 @@ describe("Repository", () => {
     })
 
     describe("when mistakenly creating an entity with an explicitly defined entityId and keyName", () => {
-      beforeEach(() => {
-        entity = repository.createEntity(EMPTY_ENTITY_DATA_WITH_ID)
-      })
+      beforeEach(async () => { entity = await repository.createEntity(EMPTY_ENTITY_DATA_WITH_ID) })
 
       it("has a generated entity id", () => expect(entity[EntityId]).toMatch(ULID_REGEX))
       it("has a keyname based on the entity id", () => expect(entity[EntityKeyName]).toMatch(KEYNAME_REGEX))
@@ -59,9 +57,7 @@ describe("Repository", () => {
     })
 
     describe("when mistakenly creating an entity with an explicitly defined entityId and keyName and a provided id", () => {
-      beforeEach(() => {
-        entity = repository.createEntity('foo', EMPTY_ENTITY_DATA_WITH_ID)
-      })
+      beforeEach(async () => { entity = await repository.createEntity('foo', EMPTY_ENTITY_DATA_WITH_ID) })
 
       it("has the provided entity id", () => expect(entity[EntityId]).toBe('foo'))
       it("has a keyname based on the entity id", () => expect(entity[EntityKeyName]).toBe(`SimpleEntity:foo`))
@@ -69,9 +65,7 @@ describe("Repository", () => {
     })
 
     describe("when creating an entity with data", () => {
-      beforeEach(() => {
-        entity = repository.createEntity(ENTITY_DATA)
-      })
+      beforeEach(async () => { entity = await repository.createEntity(ENTITY_DATA) })
 
       it("has a generated entity id", () => expect(entity[EntityId]).toMatch(ULID_REGEX))
       it("has a keyname based on the entity id", () => expect(entity[EntityKeyName]).toMatch(KEYNAME_REGEX))
@@ -83,9 +77,7 @@ describe("Repository", () => {
     })
 
     describe("when creating an entity with data and a provided id", () => {
-      beforeEach(() => {
-        entity = repository.createEntity('foo', ENTITY_DATA)
-      })
+      beforeEach(async () => { entity = await repository.createEntity('foo', ENTITY_DATA) })
 
       it("has a generated entity id", () => expect(entity[EntityId]).toBe('foo'))
       it("has a keyname based on the entity id", () => expect(entity[EntityKeyName]).toBe(`SimpleEntity:foo`))

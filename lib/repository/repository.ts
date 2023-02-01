@@ -129,7 +129,7 @@ export class Repository {
    *
    * @returns A newly created Entity.
    */
-  createEntity(): Entity
+  async createEntity(): Promise<Entity>
 
   /**
    * Creates an empty {@link Entity} with a provided entityId.
@@ -137,7 +137,7 @@ export class Repository {
    * @param id The provided entityId.
    * @returns A newly created Entity.
    */
-  createEntity(id: string): Entity
+  async createEntity(id: string): Promise<Entity>
 
   /**
    * Creates an {@link Entity} populated with provided data and a generated entityId property.
@@ -145,7 +145,7 @@ export class Repository {
    * @param entityData The provided entity data.
    * @returns A newly created Entity.
    */
-  createEntity(entityData: EntityData): Entity
+  async createEntity(entityData: EntityData): Promise<Entity>
 
   /**
    * Creates an {@link Entity} populated with provided data and a provided entityId.
@@ -154,9 +154,9 @@ export class Repository {
    * @param entityData The provided entity data.
    * @returns A newly created Entity.
    */
-  createEntity(id: string, entityData: EntityData): Entity
+  async createEntity(id: string, entityData: EntityData): Promise<Entity>
 
-  createEntity(entityDataOrId?: EntityData | string, maybeEntityData?: EntityData): Entity {
+  async createEntity(entityDataOrId?: EntityData | string, maybeEntityData?: EntityData): Promise<Entity> {
     let entityId: string | undefined
     let entityData: EntityData | undefined
 
@@ -167,7 +167,7 @@ export class Repository {
       entityData = maybeEntityData
     }
 
-    entityId ??= this.#schema.generateId()
+    entityId ??= await this.#schema.generateId()
     const keyName = `${this.#schema.prefix}:${entityId}`
     return { ...entityData, [EntityId]: entityId, [EntityKeyName]: keyName }
   }
@@ -191,7 +191,7 @@ export class Repository {
   async save(id: string, entity: Entity): Promise<string>
 
   async save(entityOrId: Entity | string, maybeEntity?: Entity): Promise<string> {
-    const entityId = typeof(entityOrId) === 'string' ? entityOrId : entityOrId[EntityId] ?? this.#schema.generateId()
+    const entityId = typeof(entityOrId) === 'string' ? entityOrId : entityOrId[EntityId] ?? await this.#schema.generateId()
     const keyName = `${this.#schema.prefix}:${entityId}`
     const entity = typeof(entityOrId) === 'object' ? entityOrId : maybeEntity ?? {}
     await this.writeEntity({ ...entity, [EntityId]: entityId, [EntityKeyName]: keyName })
@@ -218,7 +218,7 @@ export class Repository {
   async createAndSave(id: string, entityData: EntityData): Promise<Entity>
 
   async createAndSave(entityDataOrId: EntityData | string, maybeEntityData?: EntityData): Promise<Entity> {
-    const entityId = typeof(entityDataOrId) === 'string' ? entityDataOrId : this.#schema.generateId()
+    const entityId = typeof(entityDataOrId) === 'string' ? entityDataOrId : await this.#schema.generateId()
     const keyName = `${this.#schema.prefix}:${entityId}`
     const entityData = typeof(entityDataOrId) === 'object' ? entityDataOrId : maybeEntityData ?? {}
     const entity = { ...entityData, [EntityId]: entityId, [EntityKeyName]: keyName }

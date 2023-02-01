@@ -4,7 +4,7 @@
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and Redis OM adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## 0.4.0 - 2022-12-xx
+## 0.4.0 - 2023-02-01
 ### Added
 - Added methods to *Repository* to allow you to provide your own *entityId* instead of relying on a generated one.
 - Added support for Redis clustering by passing in a Node Redis connection created with `createCluster`.
@@ -14,6 +14,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - *Breaking Change* Removed `.execute` method on *Client*. Use Node Redis instead.
 - *Schema* now supports nested JSON via the `path` option.
 - *Schema* now supports specifying the field for a Hash via the `field` option.
+- *Schema* now supports `async` functions for *IdStrategy* allowing you to slow down your saves with network calls to generate IDs.
 - *Repository* now allows adding Entities with properties that are not in the *Schema*. These can even be nested if you are using JSON.
 - *Repository* can be now be constructed directly with `new` in addition to being created from a *Client* via `.fetchRepository`.
 - *Repository* can now directly be handed an open Node Redis connection. No need to create a *Client* instance.

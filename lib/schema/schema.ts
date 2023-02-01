@@ -106,9 +106,9 @@ export class Schema {
    *
    * @returns The generated id.
    */
-  generateId(): string {
-    const ulidStrategy: IdStrategy = () => ulid()
-    return (this._options?.idStrategy ?? ulidStrategy)()
+  async generateId(): Promise<string> {
+    const ulidStrategy: IdStrategy = async () => ulid()
+    return await (this._options?.idStrategy ?? ulidStrategy)()
   }
 
   /**

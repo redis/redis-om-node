@@ -2,7 +2,7 @@
 export type DataStructure = 'HASH' | 'JSON';
 
 /** A function that generates random entityIds. */
-export type IdStrategy = () => string;
+export type IdStrategy = () => Promise<string>;
 
 /** Valid values for how to use stop words for a given {@link Schema}. */
 export type StopWordOptions = 'OFF' | 'DEFAULT' | 'CUSTOM';
