@@ -243,11 +243,11 @@ const albumSchema = new Schema('album', {
 
 And that's it.
 
-Of course, Hashes and JSON are somewhat different data structures. Hashes are flat data structures with fields containing values. JSON documents, however, are trees and can have depth and—most excitingly—can be nested. This difference is reflected in how Redis OM maps data to entities and how you configure your Schema.
+Of course, Hashes and JSON are somewhat different data structures. Hashes are flat with fields containing values. JSON documents, however, are trees and can have depth and—most excitingly—can be nested. This difference is reflected in how Redis OM maps data to entities and how you configure your Schema.
 
 #### Configuring JSON
 
-When you store your entities as JSON, the path to the properties in your JSON document and your JavaScript object default to the name of your field in the schema. In the above example, this would result in a document that looks like this:
+When you store your entities as JSON, the path to the properties in your JSON document and your JavaScript object default to the name of your property in the schema. In the above example, this would result in a document that looks like this:
 
 ```json
 {
@@ -449,21 +449,21 @@ Sometimes you might want to create an entity *before* you `.save` it. Maybe you'
 If you just call `.createEntity` you'll get a newly created entity with a generated entity ID:
 
 ```javascript
-const album = albumRepository.createEntity()
+const album = await albumRepository.createEntity()
 album[EntityId] // '01FJYWEYRHYFT8YTEGQBABJ43J'
 ```
 
 You can, of course, provide your own entity ID:
 
 ```javascript
-const album = albumRepository.createEntity('BWOMP')
+const album = await albumRepository.createEntity('BWOMP')
 album[EntityId] // 'BWOMP'
 ```
 
 Or some data to get the entity started:
 
 ```javascript
-const album = albumRepository.createEntity({
+const album = await albumRepository.createEntity({
   artist: "Mushroomhead",
   title: "The Righteous & The Butterfly",
   year: 2014,
@@ -482,7 +482,7 @@ album.outOfPublication // true
 And, you can provide *both*:
 
 ```javascript
-const album = albumRepository.createEntity('BWOMP', {
+const album = await albumRepository.createEntity('BWOMP', {
   artist: "Mushroomhead",
   title: "The Righteous & The Butterfly",
   year: 2014,
@@ -497,7 +497,6 @@ album.year // 2014
 album.genres // [ 'metal' ]
 album.outOfPublication // true
 ```
-
 
 ### Missing Entities and Null Values
 
