@@ -376,13 +376,13 @@ const album = {
   outOfPublication: true
 }
 
-const entityId = albumRepository.save(album) // '01FJYWEYRHYFT8YTEGQBABJ43J'
+const entityId = await albumRepository.save(album) // '01FJYWEYRHYFT8YTEGQBABJ43J'
 ```
 
 This saves your entity and returns the entity ID under which it was saved. This ID is a [ULID](https://github.com/ulid/spec) and is a unique id representing that object. If you don't like ULIDs for some reason and instead want to provide your own IDs, you can totally do that:
 
 ```javascript
-const entityId = albumRepository.save('BWOMP', album) // 'BWOMP'
+const entityId = await albumRepository.save('BWOMP', album) // 'BWOMP'
 ```
 
 Once you have an object's entity ID you can `.fetch` with it:

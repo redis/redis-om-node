@@ -254,11 +254,11 @@ export class Repository {
   async fetch(ids: string[]): Promise<Entity[]>
 
   async fetch(ids: string | string[]): Promise<Entity | Entity[]> {
-    if (arguments.length > 1)  return this.readEntities([...arguments])
+    if (arguments.length > 1) return this.readEntities([...arguments])
     if (Array.isArray(ids)) return this.readEntities(ids)
 
-    const entities = await this.readEntities([ids])
-    return entities[0]
+    const [entity] = await this.readEntities([ids])
+    return entity
   }
 
   /**
@@ -286,6 +286,7 @@ export class Repository {
   async remove(ids: string[]): Promise<void>
 
   async remove(ids: string | string[]): Promise<void> {
+    // TODO: clean code
     const keys = arguments.length > 1
       ? this.makeKeys([...arguments])
       : Array.isArray(ids)
@@ -315,9 +316,12 @@ export class Repository {
 
   async expire(idOrIds: string | string[], ttlInSeconds: number): Promise<void> {
     const ids = typeof(idOrIds) === 'string' ? [ idOrIds ] : idOrIds
-    await Promise.all(ids
-      .map(id => this.makeKey(id))
-      .map( key => this.client.expire(key, ttlInSeconds)))
+    await Promise.all(
+      ids.map(id => {
+        const key = this.makeKey(id)
+        return this.client.expire(key, ttlInSeconds)
+      })
+    )
   }
 
   /**
@@ -353,14 +357,16 @@ export class Repository {
     return this.#schema.dataStructure === 'HASH' ? this.readEntitiesFromHash(ids) : this.readEntitiesFromJson(ids)
   }
 
+  // TODO: make this actually private... like with #
   private async writeEntityToHash(entity: Entity): Promise<void> {
-    const keyName = entity[EntityKeyName]
+    const keyName = entity[EntityKeyName]!
+    // TODO: copy?
     const { ...entityData } = entity
     const hashData: RedisHashData = toRedisHash(this.#schema, entityData)
     if (Object.keys(hashData).length === 0) {
-      await this.client.unlink(keyName ?? '')
+      await this.client.unlink(keyName)
     } else {
-      await this.client.hsetall(keyName ?? '', hashData)
+      await this.client.hsetall(keyName, hashData)
     }
   }
 
@@ -376,10 +382,10 @@ export class Repository {
   }
 
   private async writeEntityToJson(entity: Entity): Promise<void> {
-    const keyName = entity[EntityKeyName]
+    const keyName = entity[EntityKeyName]!
     const { ...entityData } = entity
     const jsonData: RedisJsonData = toRedisJson(this.#schema, entityData)
-    await this.client.jsonset(keyName ?? '', jsonData)
+    await this.client.jsonset(keyName, jsonData)
   }
 
   private async readEntitiesFromJson(ids: string[]): Promise<Entity[]> {
@@ -388,7 +394,7 @@ export class Repository {
         const keyName = this.makeKey(entityId)
         const jsonData = await this.client.jsonget(keyName) ?? {}
         const entityData = fromRedisJson(this.#schema, jsonData)
-        const entity = { ...entityData, [EntityId]: entityId, [EntityKeyName]: keyName }
+        const entity = {...entityData, [EntityId]: entityId, [EntityKeyName]: keyName }
         return entity
       }))
   }
