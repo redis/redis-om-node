@@ -1,6 +1,6 @@
 import { createClient } from 'redis'
 
-import { Entity, RedisConnection, Repository, Schema } from '$lib/index'
+import { Entity, EntityId, EntityKeyName, RedisConnection, Repository, Schema } from '$lib/index'
 
 import { createHashEntitySchema } from '../helpers/data-helper'
 import { keyExists, removeKeys, saveHash, fetchHashData } from '../helpers/redis-helper'
@@ -13,7 +13,7 @@ describe("update hash", () => {
   let repository: Repository
   let schema: Schema
   let entity: Entity
-  let entityId: string
+  let returnedEntity: Entity
 
   beforeAll(async () => {
     redis = createClient()
@@ -50,10 +50,15 @@ describe("update hash", () => {
       entity.anotherDate = ANOTHER_ENTITY.anotherDate
       entity.someStrings = ANOTHER_ENTITY.someStrings
       entity.someOtherStrings = ANOTHER_ENTITY.someOtherStrings
-      entityId = await repository.save(entity)
+      returnedEntity = await repository.save(entity)
     })
 
-    it("returns the expected entity id", () => expect(entityId).toBe('1'))
+    it("returns the expected entity", () => expect(returnedEntity).toEqual({
+      ...ANOTHER_ENTITY,
+      [EntityId]: '1',
+      [EntityKeyName]: 'update-hash:1'
+    }))
+
     it('saves the expected Hash in Redis', async () => expect(fetchHashData(redis, 'update-hash:1')).resolves.toEqual(ANOTHER_HASH))
   })
 
@@ -74,10 +79,24 @@ describe("update hash", () => {
       delete entity.anotherDate
       delete entity.someStrings
       delete entity.someOtherStrings
-      entityId = await repository.save(entity)
+      returnedEntity = await repository.save(entity)
     })
 
-    it("returns the expected entity id", () => expect(entityId).toBe('1'))
+    it("returns the expected entity", () => expect(returnedEntity).toEqual({
+      aString: null,
+      anotherString: null,
+      someText: null,
+      someOtherText: null,
+      aNumber: null,
+      anotherNumber: undefined,
+      aBoolean: undefined,
+      anotherBoolean: undefined,
+      aPoint: undefined,
+      anotherPoint: undefined,
+      [EntityId]: '1',
+      [EntityKeyName]: 'update-hash:1'
+    }))
+
     it('saves an empty Hash in Redis', async () => expect(fetchHashData(redis, 'update-hash:1')).resolves.toEqual(AN_EMPTY_HASH))
     it("removes the Hash from Redis", async () => expect(keyExists(redis, 'update-hash:1')).resolves.toBe(false))
   })

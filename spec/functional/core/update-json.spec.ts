@@ -1,6 +1,6 @@
 import { createClient } from 'redis'
 
-import { Entity, RedisConnection, Repository, Schema } from '$lib/index'
+import { Entity, EntityId, EntityKeyName, RedisConnection, Repository, Schema } from '$lib/index'
 
 import { createJsonEntitySchema } from '../helpers/data-helper'
 import { fetchJsonData, keyExists, removeKeys, saveJson } from '../helpers/redis-helper'
@@ -13,7 +13,7 @@ describe("update JSON", () => {
   let repository: Repository
   let schema: Schema
   let entity: Entity
-  let entityId: string
+  let returnedEntity: Entity
 
   beforeAll(async () => {
     redis = createClient()
@@ -44,10 +44,15 @@ describe("update JSON", () => {
       entity.anotherPoint = ANOTHER_ENTITY.anotherPoint
       entity.anotherDate = ANOTHER_ENTITY.anotherDate
       entity.someOtherStrings = ANOTHER_ENTITY.someOtherStrings
-      entityId = await repository.save(entity)
+      returnedEntity = await repository.save(entity)
     })
 
-    it("returns the expected entity id", () => expect(entityId).toBe('1'))
+    it("returns the expected entity", () => expect(returnedEntity).toEqual({
+      ...ANOTHER_ENTITY,
+      [EntityId]: '1',
+      [EntityKeyName]: 'update-json:1'
+    }))
+
     it('create the expected JSON in Redis', async () => expect(fetchJsonData(redis, 'update-json:1')).resolves.toEqual(ANOTHER_JSON))
   })
 
@@ -62,10 +67,18 @@ describe("update JSON", () => {
       delete entity.anotherPoint
       delete entity.anotherDate
       delete entity.someOtherStrings
-      entityId = await repository.save(entity)
+      returnedEntity = await repository.save(entity)
     })
 
-    it("returns the expected entity id", () => expect(entityId).toBe('1'))
+    it("returns the expected entity", () => expect(returnedEntity).toEqual({
+      root: undefined,
+      anotherString: undefined,
+      someOtherText: undefined,
+      anotherNumber: undefined,
+      [EntityId]: '1',
+      [EntityKeyName]: 'update-json:1'
+    }))
+
     it("creates the expected JSON", async () => expect(fetchJsonData(redis, 'update-json:1')).resolves.toEqual(AN_EMPTY_JSON))
     it("stores an empty key", async () => expect(keyExists(redis, 'update-json:1')).resolves.toBe(true))
   })

@@ -49,24 +49,11 @@ describe("Repository", () => {
 
         beforeEach(async () => { returnedEntity = await repository.save(entity) })
 
-        describe("the returned entity", () => {
-          it("has a generated entity id", () => expect(returnedEntity[EntityId]).toMatch(entityIdRegex))
-          it("has a keyname based on the entity id", () => expect(returnedEntity[EntityKeyName]).toMatch(keyNameRegex))
-
-          if (isEmpty) {
-            it("has populated properties", () => {
-              expect(returnedEntity.aString).toBeUndefined()
-              expect(returnedEntity.aNumber).toBeUndefined()
-              expect(returnedEntity.aBoolean).toBeUndefined()
-            })
-          } else {
-            it("has populated properties", () => {
-              expect(returnedEntity.aString).toBe(A_STRING)
-              expect(returnedEntity.aNumber).toBe(A_NUMBER)
-              expect(returnedEntity.aBoolean).toBe(true)
-            })
-          }
-        })
+        it("returns the expected entity", () => expect(returnedEntity).toEqual({
+          ...entity,
+          [EntityId]: expect.stringMatching(entityIdRegex),
+          [EntityKeyName]: expect.stringMatching(keyNameRegex)
+        }))
 
         if (!isEmpty) it("saves the entity data to the key", () =>
           expect(client.hsetall).toHaveBeenCalledWith(
@@ -86,24 +73,11 @@ describe("Repository", () => {
 
         beforeEach(async () => { returnedEntity = await repository.save(id, entity) })
 
-        describe("the returned entity", () => {
-          it("has a generated entity id", () => expect(returnedEntity[EntityId]).toMatch(entityIdRegex))
-          it("has a keyname based on the entity id", () => expect(returnedEntity[EntityKeyName]).toMatch(keyNameRegex))
-
-          if (isEmpty) {
-            it("has populated properties", () => {
-              expect(returnedEntity.aString).toBeUndefined()
-              expect(returnedEntity.aNumber).toBeUndefined()
-              expect(returnedEntity.aBoolean).toBeUndefined()
-            })
-          } else {
-            it("has populated properties", () => {
-              expect(returnedEntity.aString).toBe(A_STRING)
-              expect(returnedEntity.aNumber).toBe(A_NUMBER)
-              expect(returnedEntity.aBoolean).toBe(true)
-            })
-          }
-        })
+        it("returns the expected entity", () => expect(returnedEntity).toEqual({
+          ...entity,
+          [EntityId]: expect.stringMatching(entityIdRegex),
+          [EntityKeyName]: expect.stringMatching(keyNameRegex)
+        }))
 
         if (!isEmpty) it("saves the entity data to the key", () =>
           expect(client.hsetall).toHaveBeenCalledWith(

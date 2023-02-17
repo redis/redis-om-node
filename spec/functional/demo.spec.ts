@@ -7,7 +7,7 @@ describe("Demo", () => {
   it("demos", async () => {
 
     let entity: Entity
-    let entityId: string
+    let entityId: string | undefined
 
     // establish a connection to Redis
     const redis = createClient()
@@ -56,7 +56,9 @@ describe("Demo", () => {
       fullMoon: false,
     }
 
-    entityId = await repository.save(entity)
+    entity = await repository.save(entity)
+    entityId = entity[EntityId]
+
     expect(entityId).toMatch(/^[0-9ABCDEFGHJKMNPQRSTVWXYZ]{26}$/)
 
     // write an entity that already has an entityId
@@ -77,7 +79,9 @@ describe("Demo", () => {
       fullMoon: false,
     }
 
-    entityId = await repository.save(entity)
+    entity = await repository.save(entity)
+    entityId = entity[EntityId]
+
     expect(entityId).toBe('8086')
 
     // write an entity with a provided entityId
@@ -97,7 +101,9 @@ describe("Demo", () => {
       fullMoon: false,
     }
 
-    entityId = await repository.save('8087', entity)
+    entity = await repository.save('8087', entity)
+    entityId = entity[EntityId]
+
     expect(entityId).toBe('8087')
 
     // fetch an entity
