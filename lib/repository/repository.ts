@@ -115,7 +115,9 @@ export class Repository {
         this.client.dropIndex(this.#schema.indexName)
       ])
     } catch (e) {
-      // TODO: This error handler should only be attached to `dropIndex`.
+      /* NOTE: It would be better if this error handler was only around the call
+         to `.dropIndex`. Might muss up the code a bit though. Life is full of
+         tough choices. */
       if (e instanceof Error && e.message === "Unknown Index name") {
         // no-op: the thing we are dropping doesn't exist
       } else {
@@ -125,105 +127,40 @@ export class Repository {
   }
 
   /**
-   * Creates an empty {@link Entity} with a generated entityId property.
-   *
-   * @returns A newly created Entity.
-   */
-  async createEntity(): Promise<Entity>
-
-  /**
-   * Creates an empty {@link Entity} with a provided entityId.
-   *
-   * @param id The provided entityId.
-   * @returns A newly created Entity.
-   */
-  async createEntity(id: string): Promise<Entity>
-
-  /**
-   * Creates an {@link Entity} populated with provided data and a generated entityId property.
-   *
-   * @param entityData The provided entity data.
-   * @returns A newly created Entity.
-   */
-  async createEntity(entityData: EntityData): Promise<Entity>
-
-  /**
-   * Creates an {@link Entity} populated with provided data and a provided entityId.
-   *
-   * @param id The provided entityId.
-   * @param entityData The provided entity data.
-   * @returns A newly created Entity.
-   */
-  async createEntity(id: string, entityData: EntityData): Promise<Entity>
-
-  async createEntity(entityDataOrId?: EntityData | string, maybeEntityData?: EntityData): Promise<Entity> {
-    let entityId: string | undefined
-    let entityData: EntityData | undefined
-
-    if (entityDataOrId && typeof(entityDataOrId) !== 'string') {
-      entityData = entityDataOrId
-    } else {
-      entityId = entityDataOrId
-      entityData = maybeEntityData
-    }
-
-    entityId ??= await this.#schema.generateId()
-    const keyName = `${this.#schema.prefix}:${entityId}`
-    return { ...entityData, [EntityId]: entityId, [EntityKeyName]: keyName }
-  }
-
-  /**
    * Insert or update an {@link Entity} to Redis using its entityId property
    * if present. If it's not, one is generated.
    *
    * @param entity The Entity to save.
-   * @returns The provided or generated entityId.
+   * @returns A copy of the provided Entity with EntityId and EntityKeyName properties added.
    */
-  async save(entity: Entity): Promise<string>
+  async save(entity: Entity): Promise<Entity>
 
   /**
    * Insert or update the {@link Entity} to Redis using the provided entityId.
    *
-   * @param id The Entity to save.
+   * @param id The id to save the Entity under.
    * @param entity The Entity to save.
-   * @returns The provided or generated entityId.
+   * @returns A copy of the provided Entity with EntityId and EntityKeyName properties added.
    */
-  async save(id: string, entity: Entity): Promise<string>
+  async save(id: string, entity: Entity): Promise<Entity>
 
-  async save(entityOrId: Entity | string, maybeEntity?: Entity): Promise<string> {
-    const entityId = typeof(entityOrId) === 'string' ? entityOrId : entityOrId[EntityId] ?? await this.#schema.generateId()
+  async save(entityOrId: Entity | string, maybeEntity?: Entity): Promise<Entity> {
+    let entity: Entity | undefined
+    let entityId: string | undefined
+
+    if (typeof(entityOrId) !== 'string') {
+      entity = entityOrId
+      entityId = entity[EntityId] ?? await this.#schema.generateId()
+    } else {
+      entity = maybeEntity
+      entityId = entityOrId
+    }
+
     const keyName = `${this.#schema.prefix}:${entityId}`
-    const entity = typeof(entityOrId) === 'object' ? entityOrId : maybeEntity ?? {}
-    await this.writeEntity({ ...entity, [EntityId]: entityId, [EntityKeyName]: keyName })
-    return entityId
-  }
+    const clonedEntity = { ...entity, [EntityId]: entityId, [EntityKeyName]: keyName }
+    await this.writeEntity(clonedEntity)
 
-  /**
-   * Creates and saves an {@link Entity}. Equivalent of calling
-   * {@link Repository#createEntity} followed by {@link Repository#save}.
-   *
-   * @param entityData The data to be saved.
-   * @returns The newly created and saved Entity.
-   */
-  async createAndSave(entityData: EntityData): Promise<Entity>
-
-  /**
-   * Creates and saves an {@link Entity} to using the provided entityId. Equivalent
-   * of calling {@link Repository#createEntity} followed by {@link Repository#save}.
-   *
-   * @param id The entityId to save to.
-   * @param entityData The data to be saved.
-   * @returns The newly created and saved Entity.
-   */
-  async createAndSave(id: string, entityData: EntityData): Promise<Entity>
-
-  async createAndSave(entityDataOrId: EntityData | string, maybeEntityData?: EntityData): Promise<Entity> {
-    const entityId = typeof(entityDataOrId) === 'string' ? entityDataOrId : await this.#schema.generateId()
-    const keyName = `${this.#schema.prefix}:${entityId}`
-    const entityData = typeof(entityDataOrId) === 'object' ? entityDataOrId : maybeEntityData ?? {}
-    const entity = { ...entityData, [EntityId]: entityId, [EntityKeyName]: keyName }
-    await this.writeEntity(entity)
-    return entity
+    return clonedEntity
   }
 
   /**
@@ -360,7 +297,7 @@ export class Repository {
   // TODO: make this actually private... like with #
   private async writeEntityToHash(entity: Entity): Promise<void> {
     const keyName = entity[EntityKeyName]!
-    // TODO: copy?
+    // TODO: Not sure if this clone is needed or not
     const { ...entityData } = entity
     const hashData: RedisHashData = toRedisHash(this.#schema, entityData)
     if (Object.keys(hashData).length === 0) {

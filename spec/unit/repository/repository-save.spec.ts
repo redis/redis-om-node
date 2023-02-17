@@ -5,7 +5,7 @@ import { Repository } from '$lib/repository'
 import { Schema, SchemaDefinition } from '$lib/schema'
 
 import { A_STRING, A_NUMBER, A_NUMBER_STRING } from '../../helpers/example-data'
-import { EntityId, EntityKeyName } from '$lib/entity'
+import { Entity, EntityId, EntityKeyName } from '$lib/entity'
 
 const aSimpleSchemaDef: SchemaDefinition = {
   aString: { type: 'string' },
@@ -31,7 +31,7 @@ describe("Repository", () => {
   describe("#save", () => {
 
     let client: Client
-    let entityId: string
+    let returnedEntity: Entity
 
     beforeAll(() => { client = new Client() })
 
@@ -47,10 +47,26 @@ describe("Repository", () => {
         [ "when saving an empty entity with an entityId", EMPTY_ENTITY_WITH_ID, 'foo', 'SimpleEntity:foo', true ]
       ])('%s', (_, entity, entityIdRegex, keyNameRegex, isEmpty) => {
 
-        beforeEach(async () => { entityId = await repository.save(entity) })
+        beforeEach(async () => { returnedEntity = await repository.save(entity) })
 
-        it("returns the expected entity id", () =>
-          expect(entityId).toMatch(entityIdRegex))
+        describe("the returned entity", () => {
+          it("has a generated entity id", () => expect(returnedEntity[EntityId]).toMatch(entityIdRegex))
+          it("has a keyname based on the entity id", () => expect(returnedEntity[EntityKeyName]).toMatch(keyNameRegex))
+
+          if (isEmpty) {
+            it("has populated properties", () => {
+              expect(returnedEntity.aString).toBeUndefined()
+              expect(returnedEntity.aNumber).toBeUndefined()
+              expect(returnedEntity.aBoolean).toBeUndefined()
+            })
+          } else {
+            it("has populated properties", () => {
+              expect(returnedEntity.aString).toBe(A_STRING)
+              expect(returnedEntity.aNumber).toBe(A_NUMBER)
+              expect(returnedEntity.aBoolean).toBe(true)
+            })
+          }
+        })
 
         if (!isEmpty) it("saves the entity data to the key", () =>
           expect(client.hsetall).toHaveBeenCalledWith(
@@ -68,9 +84,26 @@ describe("Repository", () => {
         [ "when saving an empty entity with an entityId *and* a provided id", 'bar', EMPTY_ENTITY_WITH_ID, 'bar', 'SimpleEntity:bar', true ],
       ])('%s', (_, id, entity, entityIdRegex, keyNameRegex, isEmpty) => {
 
-        beforeEach(async () => { entityId = await repository.save(id, entity) })
+        beforeEach(async () => { returnedEntity = await repository.save(id, entity) })
 
-        it("returns the expected entity id", () => expect(entityId).toMatch(entityIdRegex))
+        describe("the returned entity", () => {
+          it("has a generated entity id", () => expect(returnedEntity[EntityId]).toMatch(entityIdRegex))
+          it("has a keyname based on the entity id", () => expect(returnedEntity[EntityKeyName]).toMatch(keyNameRegex))
+
+          if (isEmpty) {
+            it("has populated properties", () => {
+              expect(returnedEntity.aString).toBeUndefined()
+              expect(returnedEntity.aNumber).toBeUndefined()
+              expect(returnedEntity.aBoolean).toBeUndefined()
+            })
+          } else {
+            it("has populated properties", () => {
+              expect(returnedEntity.aString).toBe(A_STRING)
+              expect(returnedEntity.aNumber).toBe(A_NUMBER)
+              expect(returnedEntity.aBoolean).toBe(true)
+            })
+          }
+        })
 
         if (!isEmpty) it("saves the entity data to the key", () =>
           expect(client.hsetall).toHaveBeenCalledWith(
@@ -95,10 +128,26 @@ describe("Repository", () => {
         [ "when saving an empty entity with an entityId", EMPTY_ENTITY_WITH_ID, 'foo', 'SimpleEntity:foo', true ]
       ])('%s', (_, entity, entityIdRegex, keyNameRegex, isEmpty) => {
 
-        beforeEach(async () => { entityId = await repository.save(entity) })
+        beforeEach(async () => { returnedEntity = await repository.save(entity) })
 
-        it("returns the expected entity id", () =>
-          expect(entityId).toMatch(entityIdRegex))
+        describe("the returned entity", () => {
+          it("has a generated entity id", () => expect(returnedEntity[EntityId]).toMatch(entityIdRegex))
+          it("has a keyname based on the entity id", () => expect(returnedEntity[EntityKeyName]).toMatch(keyNameRegex))
+
+          if (isEmpty) {
+            it("has populated properties", () => {
+              expect(returnedEntity.aString).toBeUndefined()
+              expect(returnedEntity.aNumber).toBeUndefined()
+              expect(returnedEntity.aBoolean).toBeUndefined()
+            })
+          } else {
+            it("has populated properties", () => {
+              expect(returnedEntity.aString).toBe(A_STRING)
+              expect(returnedEntity.aNumber).toBe(A_NUMBER)
+              expect(returnedEntity.aBoolean).toBe(true)
+            })
+          }
+        })
 
         if (!isEmpty) it("saves the entity data to the key", () =>
           expect(client.jsonset).toHaveBeenCalledWith(
@@ -118,9 +167,26 @@ describe("Repository", () => {
         [ "when saving an empty entity with an entityId *and* a provided id", 'bar', EMPTY_ENTITY_WITH_ID, 'bar', 'SimpleEntity:bar', true ],
       ])('%s', (_, id, entity, entityIdRegex, keyNameRegex, isEmpty) => {
 
-        beforeEach(async () => { entityId = await repository.save(id, entity) })
+        beforeEach(async () => { returnedEntity = await repository.save(id, entity) })
 
-        it("returns the expected entity id", () => expect(entityId).toMatch(entityIdRegex))
+        describe("the returned entity", () => {
+          it("has a generated entity id", () => expect(returnedEntity[EntityId]).toMatch(entityIdRegex))
+          it("has a keyname based on the entity id", () => expect(returnedEntity[EntityKeyName]).toMatch(keyNameRegex))
+
+          if (isEmpty) {
+            it("has populated properties", () => {
+              expect(returnedEntity.aString).toBeUndefined()
+              expect(returnedEntity.aNumber).toBeUndefined()
+              expect(returnedEntity.aBoolean).toBeUndefined()
+            })
+          } else {
+            it("has populated properties", () => {
+              expect(returnedEntity.aString).toBe(A_STRING)
+              expect(returnedEntity.aNumber).toBe(A_NUMBER)
+              expect(returnedEntity.aBoolean).toBe(true)
+            })
+          }
+        })
 
         if (!isEmpty) it("saves the entity data to the key", () =>
           expect(client.jsonset).toHaveBeenCalledWith(
