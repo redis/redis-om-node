@@ -3,7 +3,7 @@ import { createClient } from 'redis'
 import { Entity, EntityKeyName, RedisConnection, Repository, Schema } from '$lib/index'
 
 import { createJsonEntitySchema } from '../helpers/data-helper'
-import { removeKeys, saveJson } from '../helpers/redis-helper'
+import { removeKeys, saveJson, sleep } from '../helpers/redis-helper'
 
 import { A_POINT, A_DATE } from '../../helpers/example-data'
 import { ANOTHER_ENTITY, ANOTHER_JSON, AN_ENTITY, AN_ESCAPED_ENTITY, AN_ESCAPED_JSON, A_JSON, A_THIRD_ENTITY, A_THIRD_JSON } from '../helpers/json-example-data'
@@ -29,6 +29,7 @@ describe("search for JSON documents", () => {
     repository = new Repository(schema, redis)
 
     await repository.createIndex()
+    await sleep(50) // Yuck! Gotta wait for RediSearch to index everything.
   })
 
   afterAll(async () => {

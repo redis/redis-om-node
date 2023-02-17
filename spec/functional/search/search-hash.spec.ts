@@ -3,7 +3,7 @@ import { createClient } from 'redis'
 import { Entity, EntityKeyName, Repository, RedisConnection, Schema } from '$lib/index'
 
 import { createHashEntitySchema } from '../helpers/data-helper'
-import { removeKeys, saveHash } from '../helpers/redis-helper'
+import { removeKeys, saveHash, sleep } from '../helpers/redis-helper'
 
 import { ANOTHER_ENTITY, ANOTHER_HASH, AN_ENTITY, AN_ESCAPED_ENTITY, AN_ESCAPED_HASH, A_HASH, A_THIRD_ENTITY, A_THIRD_HASH } from '../helpers/hash-example-data'
 import { A_DATE, A_POINT } from '../../helpers/example-data'
@@ -29,6 +29,7 @@ describe("search for hashes", () => {
     repository = new Repository(schema, redis)
 
     await repository.createIndex()
+    await sleep(50) // Yuck! Gotta wait for RediSearch to index everything.
   })
 
   afterAll(async () => {

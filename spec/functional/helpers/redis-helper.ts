@@ -1,5 +1,9 @@
 import { RedisConnection, RedisHashData, RedisJsonData } from "$lib/client"
 
+export async function sleep(ms: number) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 export async function removeKeys(redis: RedisConnection, ...keys: string[]) {
   for (const key of keys) await redis.del(key)
 }
