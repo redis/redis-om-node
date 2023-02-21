@@ -14,6 +14,10 @@ await client.open()
 A Client is primarily used by a [Repository](Repository.md) which requires a client in
 its constructor.
 
+**`Deprecated`**
+
+Just used Node Redis client directly and pass it to the Repository.
+
 ## Table of contents
 
 ### Constructors
@@ -51,6 +55,10 @@ Returns the underlying Node Redis connection being used.
 
 `undefined` \| [`RedisConnection`](../README.md#redisconnection)
 
+#### Defined in
+
+[lib/client/client.ts:70](https://github.com/redis/redis-om-node/blob/b3c437e/lib/client/client.ts#L70)
+
 ## Methods
 
 ### close
@@ -62,6 +70,10 @@ Close the connection to Redis.
 #### Returns
 
 `Promise`<`void`\>
+
+#### Defined in
+
+[lib/client/client.ts:127](https://github.com/redis/redis-om-node/blob/b3c437e/lib/client/client.ts#L127)
 
 ___
 
@@ -83,6 +95,10 @@ Creates a repository for the given schema.
 
 A repository for the provided schema.
 
+#### Defined in
+
+[lib/client/client.ts:119](https://github.com/redis/redis-om-node/blob/b3c437e/lib/client/client.ts#L119)
+
 ___
 
 ### isOpen
@@ -94,6 +110,10 @@ ___
 `boolean`
 
 Whether a connection is already open.
+
+#### Defined in
+
+[lib/client/client.ts:207](https://github.com/redis/redis-om-node/blob/b3c437e/lib/client/client.ts#L207)
 
 ___
 
@@ -114,6 +134,10 @@ Open a connection to Redis at the provided URL.
 `Promise`<[`Client`](Client.md)\>
 
 This [Client](Client.md) instance.
+
+#### Defined in
+
+[lib/client/client.ts:104](https://github.com/redis/redis-om-node/blob/b3c437e/lib/client/client.ts#L104)
 
 ___
 
@@ -136,6 +160,10 @@ any existing connection.
 
 This [Client](Client.md) instance.
 
+#### Defined in
+
+[lib/client/client.ts:81](https://github.com/redis/redis-om-node/blob/b3c437e/lib/client/client.ts#L81)
+
 ___
 
 ### useNoClose
@@ -156,3 +184,7 @@ not close any existing connection.
 [`Client`](Client.md)
 
 This [Client](Client.md) instance.
+
+#### Defined in
+
+[lib/client/client.ts:93](https://github.com/redis/redis-om-node/blob/b3c437e/lib/client/client.ts#L93)

@@ -71,7 +71,7 @@ this multiple times will have no effect.
 
 #### Defined in
 
-[lib/search/where-field.ts:92](https://github.com/redis/redis-om-node/blob/6c13dd9/lib/search/where-field.ts#L92)
+[lib/search/where-field.ts:92](https://github.com/redis/redis-om-node/blob/b3c437e/lib/search/where-field.ts#L92)
 
 ___
 
@@ -84,7 +84,7 @@ this multiple times will have no effect.
 
 #### Defined in
 
-[lib/search/where-field.ts:99](https://github.com/redis/redis-om-node/blob/6c13dd9/lib/search/where-field.ts#L99)
+[lib/search/where-field.ts:99](https://github.com/redis/redis-om-node/blob/b3c437e/lib/search/where-field.ts#L99)
 
 ## Accessors
 
@@ -100,6 +100,10 @@ Returns the current instance. Syntactic sugar to make your code more fluent.
 
 this
 
+#### Defined in
+
+[lib/search/where-field.ts:289](https://github.com/redis/redis-om-node/blob/b3c437e/lib/search/where-field.ts#L289)
+
 ___
 
 ### is
@@ -113,6 +117,10 @@ Returns the current instance. Syntactic sugar to make your code more fluent.
 `this`
 
 this
+
+#### Defined in
+
+[lib/search/where-field.ts:281](https://github.com/redis/redis-om-node/blob/b3c437e/lib/search/where-field.ts#L281)
 
 ___
 
@@ -128,6 +136,10 @@ Negates the query on the field, cause it to match when the condition is
 `this`
 
 this
+
+#### Defined in
+
+[lib/search/where-field.ts:298](https://github.com/redis/redis-om-node/blob/b3c437e/lib/search/where-field.ts#L298)
 
 ## Methods
 
@@ -149,6 +161,10 @@ Add a search that matches all datetimes *after* the provided UTC datetime to the
 
 The [Search](Search.md) that was called to create this [WhereField](WhereField.md).
 
+#### Defined in
+
+[lib/search/where-field.ts:240](https://github.com/redis/redis-om-node/blob/b3c437e/lib/search/where-field.ts#L240)
+
 ___
 
 ### before
@@ -168,6 +184,10 @@ Add a search that matches all datetimes *before* the provided UTC datetime to th
 [`Search`](Search.md)
 
 The [Search](Search.md) that was called to create this [WhereField](WhereField.md).
+
+#### Defined in
+
+[lib/search/where-field.ts:233](https://github.com/redis/redis-om-node/blob/b3c437e/lib/search/where-field.ts#L233)
 
 ___
 
@@ -190,6 +210,10 @@ Adds an inclusive range comparison against a field to the search query.
 
 The [Search](Search.md) that was called to create this [WhereField](WhereField.md).
 
+#### Defined in
+
+[lib/search/where-field.ts:175](https://github.com/redis/redis-om-node/blob/b3c437e/lib/search/where-field.ts#L175)
+
 ___
 
 ### contain
@@ -210,11 +234,15 @@ Adds a whole-string match for a value within a string array to the search query.
 
 The [Search](Search.md) that was called to create this [WhereField](WhereField.md).
 
+#### Defined in
+
+[lib/search/where-field.ts:182](https://github.com/redis/redis-om-node/blob/b3c437e/lib/search/where-field.ts#L182)
+
 ___
 
 ### containOneOf
 
-▸ **containOneOf**(...`value`): [`Search`](Search.md)
+▸ **containOneOf**(`...value`): [`Search`](Search.md)
 
 Adds a whole-string match against a string array to the query. If any of the provided
 strings in `value` is matched in the array, this matched.
@@ -230,6 +258,10 @@ strings in `value` is matched in the array, this matched.
 [`Search`](Search.md)
 
 The [Search](Search.md) that was called to create this [WhereField](WhereField.md).
+
+#### Defined in
+
+[lib/search/where-field.ts:197](https://github.com/redis/redis-om-node/blob/b3c437e/lib/search/where-field.ts#L197)
 
 ___
 
@@ -251,11 +283,15 @@ Adds a whole-string match for a value within a string array to the search query.
 
 The [Search](Search.md) that was called to create this [WhereField](WhereField.md).
 
+#### Defined in
+
+[lib/search/where-field.ts:189](https://github.com/redis/redis-om-node/blob/b3c437e/lib/search/where-field.ts#L189)
+
 ___
 
 ### containsOneOf
 
-▸ **containsOneOf**(...`value`): [`Search`](Search.md)
+▸ **containsOneOf**(`...value`): [`Search`](Search.md)
 
 Adds a whole-string match against a string array to the query. If any of the provided
 strings in `value` is matched in the array, this matched.
@@ -271,6 +307,10 @@ strings in `value` is matched in the array, this matched.
 [`Search`](Search.md)
 
 The [Search](Search.md) that was called to create this [WhereField](WhereField.md).
+
+#### Defined in
+
+[lib/search/where-field.ts:205](https://github.com/redis/redis-om-node/blob/b3c437e/lib/search/where-field.ts#L205)
 
 ___
 
@@ -295,6 +335,10 @@ search is enabled. In that scenario, use `.match`.
 
 The [Search](Search.md) that was called to create this [WhereField](WhereField.md).
 
+#### Defined in
+
+[lib/search/where-field.ts:20](https://github.com/redis/redis-om-node/blob/b3c437e/lib/search/where-field.ts#L20)
+
 ___
 
 ### equal
@@ -317,6 +361,10 @@ search is enabled. In that scenario, use `.match`.
 [`Search`](Search.md)
 
 The [Search](Search.md) that was called to create this [WhereField](WhereField.md).
+
+#### Defined in
+
+[lib/search/where-field.ts:30](https://github.com/redis/redis-om-node/blob/b3c437e/lib/search/where-field.ts#L30)
 
 ___
 
@@ -341,6 +389,10 @@ search is enabled. In that scenario, use `.match`.
 
 The [Search](Search.md) that was called to create this [WhereField](WhereField.md).
 
+#### Defined in
+
+[lib/search/where-field.ts:50](https://github.com/redis/redis-om-node/blob/b3c437e/lib/search/where-field.ts#L50)
+
 ___
 
 ### equals
@@ -364,6 +416,10 @@ search is enabled. In that scenario, use `.match`.
 
 The [Search](Search.md) that was called to create this [WhereField](WhereField.md).
 
+#### Defined in
+
+[lib/search/where-field.ts:40](https://github.com/redis/redis-om-node/blob/b3c437e/lib/search/where-field.ts#L40)
+
 ___
 
 ### false
@@ -377,6 +433,10 @@ Adds a boolean match with a value of `false` to the query.
 [`Search`](Search.md)
 
 The [Search](Search.md) that was called to create this [WhereField](WhereField.md).
+
+#### Defined in
+
+[lib/search/where-field.ts:111](https://github.com/redis/redis-om-node/blob/b3c437e/lib/search/where-field.ts#L111)
 
 ___
 
@@ -398,6 +458,10 @@ Adds a greater than comparison against a field to the search query.
 
 The [Search](Search.md) that was called to create this [WhereField](WhereField.md).
 
+#### Defined in
+
+[lib/search/where-field.ts:125](https://github.com/redis/redis-om-node/blob/b3c437e/lib/search/where-field.ts#L125)
+
 ___
 
 ### greaterThanOrEqualTo
@@ -417,6 +481,10 @@ Adds a greater than or equal to comparison against a field to the search query.
 [`Search`](Search.md)
 
 The [Search](Search.md) that was called to create this [WhereField](WhereField.md).
+
+#### Defined in
+
+[lib/search/where-field.ts:139](https://github.com/redis/redis-om-node/blob/b3c437e/lib/search/where-field.ts#L139)
 
 ___
 
@@ -438,6 +506,10 @@ Adds a greater than comparison against a field to the search query.
 
 The [Search](Search.md) that was called to create this [WhereField](WhereField.md).
 
+#### Defined in
+
+[lib/search/where-field.ts:118](https://github.com/redis/redis-om-node/blob/b3c437e/lib/search/where-field.ts#L118)
+
 ___
 
 ### gte
@@ -457,6 +529,10 @@ Adds a greater than or equal to comparison against a field to the search query.
 [`Search`](Search.md)
 
 The [Search](Search.md) that was called to create this [WhereField](WhereField.md).
+
+#### Defined in
+
+[lib/search/where-field.ts:132](https://github.com/redis/redis-om-node/blob/b3c437e/lib/search/where-field.ts#L132)
 
 ___
 
@@ -478,6 +554,10 @@ Adds a search for points that fall within a defined circle.
 
 The [Search](Search.md) that was called to create this [WhereField](WhereField.md).
 
+#### Defined in
+
+[lib/search/where-field.ts:212](https://github.com/redis/redis-om-node/blob/b3c437e/lib/search/where-field.ts#L212)
+
 ___
 
 ### inRadius
@@ -497,6 +577,10 @@ Adds a search for points that fall within a defined radius.
 [`Search`](Search.md)
 
 The [Search](Search.md) that was called to create this [WhereField](WhereField.md).
+
+#### Defined in
+
+[lib/search/where-field.ts:219](https://github.com/redis/redis-om-node/blob/b3c437e/lib/search/where-field.ts#L219)
 
 ___
 
@@ -518,6 +602,10 @@ Adds a less than comparison against a field to the search query.
 
 The [Search](Search.md) that was called to create this [WhereField](WhereField.md).
 
+#### Defined in
+
+[lib/search/where-field.ts:153](https://github.com/redis/redis-om-node/blob/b3c437e/lib/search/where-field.ts#L153)
+
 ___
 
 ### lessThanOrEqualTo
@@ -537,6 +625,10 @@ Adds a less than or equal to comparison against a field to the search query.
 [`Search`](Search.md)
 
 The [Search](Search.md) that was called to create this [WhereField](WhereField.md).
+
+#### Defined in
+
+[lib/search/where-field.ts:167](https://github.com/redis/redis-om-node/blob/b3c437e/lib/search/where-field.ts#L167)
 
 ___
 
@@ -558,6 +650,10 @@ Adds a less than comparison against a field to the search query.
 
 The [Search](Search.md) that was called to create this [WhereField](WhereField.md).
 
+#### Defined in
+
+[lib/search/where-field.ts:146](https://github.com/redis/redis-om-node/blob/b3c437e/lib/search/where-field.ts#L146)
+
 ___
 
 ### lte
@@ -577,6 +673,10 @@ Adds a less than or equal to comparison against a field to the search query.
 [`Search`](Search.md)
 
 The [Search](Search.md) that was called to create this [WhereField](WhereField.md).
+
+#### Defined in
+
+[lib/search/where-field.ts:160](https://github.com/redis/redis-om-node/blob/b3c437e/lib/search/where-field.ts#L160)
 
 ___
 
@@ -598,6 +698,10 @@ Adds a full-text search comparison to the query.
 
 The [Search](Search.md) that was called to create this [WhereField](WhereField.md).
 
+#### Defined in
+
+[lib/search/where-field.ts:57](https://github.com/redis/redis-om-node/blob/b3c437e/lib/search/where-field.ts#L57)
+
 ___
 
 ### matchExact
@@ -617,6 +721,10 @@ Adds a full-text search comparison to the query that matches an exact word or ph
 [`Search`](Search.md)
 
 The [Search](Search.md) that was called to create this [WhereField](WhereField.md).
+
+#### Defined in
+
+[lib/search/where-field.ts:71](https://github.com/redis/redis-om-node/blob/b3c437e/lib/search/where-field.ts#L71)
 
 ___
 
@@ -638,6 +746,10 @@ Adds a full-text search comparison to the query that matches an exact word or ph
 
 The [Search](Search.md) that was called to create this [WhereField](WhereField.md).
 
+#### Defined in
+
+[lib/search/where-field.ts:78](https://github.com/redis/redis-om-node/blob/b3c437e/lib/search/where-field.ts#L78)
+
 ___
 
 ### matches
@@ -657,6 +769,10 @@ Adds a full-text search comparison to the query.
 [`Search`](Search.md)
 
 The [Search](Search.md) that was called to create this [WhereField](WhereField.md).
+
+#### Defined in
+
+[lib/search/where-field.ts:64](https://github.com/redis/redis-om-node/blob/b3c437e/lib/search/where-field.ts#L64)
 
 ___
 
@@ -678,6 +794,10 @@ Adds a full-text search comparison to the query that matches an exact word or ph
 
 The [Search](Search.md) that was called to create this [WhereField](WhereField.md).
 
+#### Defined in
+
+[lib/search/where-field.ts:85](https://github.com/redis/redis-om-node/blob/b3c437e/lib/search/where-field.ts#L85)
+
 ___
 
 ### on
@@ -697,6 +817,10 @@ Add a search for an exact UTC datetime to the query.
 [`Search`](Search.md)
 
 The [Search](Search.md) that was called to create this [WhereField](WhereField.md).
+
+#### Defined in
+
+[lib/search/where-field.ts:226](https://github.com/redis/redis-om-node/blob/b3c437e/lib/search/where-field.ts#L226)
 
 ___
 
@@ -718,6 +842,10 @@ Add a search that matches all datetimes *on or after* the provided UTC datetime 
 
 The [Search](Search.md) that was called to create this [WhereField](WhereField.md).
 
+#### Defined in
+
+[lib/search/where-field.ts:254](https://github.com/redis/redis-om-node/blob/b3c437e/lib/search/where-field.ts#L254)
+
 ___
 
 ### onOrBefore
@@ -738,6 +866,10 @@ Add a search that matches all datetimes *on or before* the provided UTC datetime
 
 The [Search](Search.md) that was called to create this [WhereField](WhereField.md).
 
+#### Defined in
+
+[lib/search/where-field.ts:247](https://github.com/redis/redis-om-node/blob/b3c437e/lib/search/where-field.ts#L247)
+
 ___
 
 ### toString
@@ -754,6 +886,10 @@ Converts this [Where](Where.md) into a portion of a RediSearch query.
 
 [Where](Where.md).[toString](Where.md#tostring)
 
+#### Defined in
+
+[lib/search/where-field.ts:303](https://github.com/redis/redis-om-node/blob/b3c437e/lib/search/where-field.ts#L303)
+
 ___
 
 ### true
@@ -767,3 +903,7 @@ Adds a boolean match with a value of `true` to the query.
 [`Search`](Search.md)
 
 The [Search](Search.md) that was called to create this [WhereField](WhereField.md).
+
+#### Defined in
+
+[lib/search/where-field.ts:105](https://github.com/redis/redis-om-node/blob/b3c437e/lib/search/where-field.ts#L105)

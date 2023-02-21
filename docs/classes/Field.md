@@ -40,6 +40,10 @@ Creates a Field.
 | `name` | `string` | The name of the Field. |
 | `definition` | [`FieldDefinition`](../README.md#fielddefinition) | The underlying [FieldDefinition](../README.md#fielddefinition). |
 
+#### Defined in
+
+[lib/schema/field.ts:17](https://github.com/redis/redis-om-node/blob/b3c437e/lib/schema/field.ts#L17)
+
 ## Accessors
 
 ### caseSensitive
@@ -51,6 +55,10 @@ The case-sensitivity of the field.
 #### Returns
 
 `boolean`
+
+#### Defined in
+
+[lib/schema/field.ts:55](https://github.com/redis/redis-om-node/blob/b3c437e/lib/schema/field.ts#L55)
 
 ___
 
@@ -64,6 +72,10 @@ The field name used to store this [Field](Field.md) in a Hash.
 
 `string`
 
+#### Defined in
+
+[lib/schema/field.ts:33](https://github.com/redis/redis-om-node/blob/b3c437e/lib/schema/field.ts#L33)
+
 ___
 
 ### indexed
@@ -75,6 +87,10 @@ Indicates the field as being indexed—and thus queryable—by RediSearch.
 #### Returns
 
 `boolean`
+
+#### Defined in
+
+[lib/schema/field.ts:60](https://github.com/redis/redis-om-node/blob/b3c437e/lib/schema/field.ts#L60)
 
 ___
 
@@ -88,6 +104,10 @@ The JSONPath used to store this [Field](Field.md) in a JSON document.
 
 `string`
 
+#### Defined in
+
+[lib/schema/field.ts:38](https://github.com/redis/redis-om-node/blob/b3c437e/lib/schema/field.ts#L38)
+
 ___
 
 ### matcher
@@ -99,6 +119,10 @@ The phonetic matcher for the field.
 #### Returns
 
 ``null`` \| `string`
+
+#### Defined in
+
+[lib/schema/field.ts:80](https://github.com/redis/redis-om-node/blob/b3c437e/lib/schema/field.ts#L80)
 
 ___
 
@@ -112,6 +136,10 @@ The name of the field.
 
 `string`
 
+#### Defined in
+
+[lib/schema/field.ts:23](https://github.com/redis/redis-om-node/blob/b3c437e/lib/schema/field.ts#L23)
+
 ___
 
 ### normalized
@@ -123,6 +151,10 @@ Inidicates that the field is normalized.
 #### Returns
 
 `boolean`
+
+#### Defined in
+
+[lib/schema/field.ts:70](https://github.com/redis/redis-om-node/blob/b3c437e/lib/schema/field.ts#L70)
 
 ___
 
@@ -136,6 +168,10 @@ The separator for string[] fields when stored in Hashes.
 
 `string`
 
+#### Defined in
+
+[lib/schema/field.ts:45](https://github.com/redis/redis-om-node/blob/b3c437e/lib/schema/field.ts#L45)
+
 ___
 
 ### sortable
@@ -147,6 +183,10 @@ Indicates that the field as sortable.
 #### Returns
 
 `boolean`
+
+#### Defined in
+
+[lib/schema/field.ts:50](https://github.com/redis/redis-om-node/blob/b3c437e/lib/schema/field.ts#L50)
 
 ___
 
@@ -160,6 +200,10 @@ Indicates that the field as indexed with stemming support.
 
 `boolean`
 
+#### Defined in
+
+[lib/schema/field.ts:65](https://github.com/redis/redis-om-node/blob/b3c437e/lib/schema/field.ts#L65)
+
 ___
 
 ### type
@@ -172,6 +216,10 @@ The [type](../README.md#fieldtype) of the field.
 
 [`FieldType`](../README.md#fieldtype)
 
+#### Defined in
+
+[lib/schema/field.ts:28](https://github.com/redis/redis-om-node/blob/b3c437e/lib/schema/field.ts#L28)
+
 ___
 
 ### weight
@@ -183,3 +231,7 @@ The search weight of the field.
 #### Returns
 
 ``null`` \| `number`
+
+#### Defined in
+
+[lib/schema/field.ts:75](https://github.com/redis/redis-om-node/blob/b3c437e/lib/schema/field.ts#L75)

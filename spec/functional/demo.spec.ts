@@ -1,12 +1,28 @@
 import { createClient } from 'redis'
 
-import { Entity, EntityId, Repository, Schema } from '$lib/index'
+import { Entity, EntityData, EntityId, Point, Repository, Schema } from '$lib/index'
+
+type BigfootSighting = Entity & {
+  date?: Date,
+  title?: string,
+  classification?: string[],
+  location?: EntityData & {
+    county?: string,
+    state?: string,
+    latlng?: Point
+  },
+  temperature?: EntityData & {
+    high?: number,
+    low?: number
+  },
+  fullMoon?: boolean
+}
 
 describe("Demo", () => {
 
   it("demos", async () => {
 
-    let entity: Entity
+    let entity: BigfootSighting
     let entityId: string | undefined
 
     // establish a connection to Redis
@@ -39,11 +55,11 @@ describe("Demo", () => {
     const repository = new Repository(schema, redis)
     await repository.createIndex()
 
-    // write and entity and generate an entityId that is a ULID
+    // write an entity and generate an entityId that is a ULID
     entity = {
       date: new Date('1978-10-09T00:00:00.000Z'),
       title: "Bigfoot by the Walmart",
-      observed: " I saw Bigfoot at Walmary buying flip flops. He wears a size 17.",
+      observed: "I saw Bigfoot at Walmart buying flip flops. He wears a size 17.",
       classification: [ 'Class A', 'Class B' ],
       location: {
         latlong: { longitude: 12.34, latitude: 56.78 },
@@ -66,7 +82,7 @@ describe("Demo", () => {
       [EntityId]: '8086', // the provided id
       date: new Date('1978-10-09T00:00:00.000Z'),
       title: "Bigfoot by the Walmart",
-      observed: " I saw Bigfoot at Walmary buying flip flops. He wears a size 17.",
+      observed: "I saw Bigfoot at Walmart buying flip flops. He wears a size 17.",
       classification: [ 'Class A', 'Class B' ],
       location: {
         latlong: { longitude: 12.34, latitude: 56.78 },
@@ -88,7 +104,7 @@ describe("Demo", () => {
     entity = {
       date: new Date('1978-10-09T00:00:00.000Z'),
       title: "Bigfoot by the Walmart",
-      observed: " I saw Bigfoot at Walmary buying flip flops. He wears a size 17.",
+      observed: "I saw Bigfoot at Walmart buying flip flops. He wears a size 17.",
       classification: [ 'Class A', 'Class B' ],
       location: {
         latlong: { longitude: 12.34, latitude: 56.78 },
@@ -111,10 +127,10 @@ describe("Demo", () => {
 
     // update an entity
     entity.date = new Date('1978-10-09T00:00:00.000Z')
-    entity.temperature.low = 29
-    entity.location.county = "Athens"
-    entity.location.state = "Ohio"
-    entity.location.latlng = { longitude: 23.45, latitude: 67.89 }
+    entity.temperature!.low = 29
+    entity.location!.county = "Athens"
+    entity.location!.state = "Ohio"
+    entity.location!.latlng = { longitude: 23.45, latitude: 67.89 }
 
     await repository.save(entity)
 
@@ -142,7 +158,7 @@ describe("Demo", () => {
 
     // clean up
     await repository.dropIndex()
-    const allIds: string[] = allEntities.map(entity => entity.entityId ?? '')
+    const allIds: string[] = allEntities.map(entity => entity.entityId ?? '') as string[]
     await repository.remove(allIds)
 
     // close Redis

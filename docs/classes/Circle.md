@@ -29,6 +29,7 @@ A builder that defines a circle.
 
 - [latitude](Circle.md#latitude)
 - [longitude](Circle.md#longitude)
+- [origin](Circle.md#origin)
 - [radius](Circle.md#radius)
 
 ## Constructors
@@ -51,6 +52,10 @@ Sets the units to feet.
 
 This instance.
 
+#### Defined in
+
+[lib/search/where-point.ts:149](https://github.com/redis/redis-om-node/blob/b3c437e/lib/search/where-point.ts#L149)
+
 ___
 
 ### foot
@@ -64,6 +69,10 @@ Sets the units to feet.
 `this`
 
 This instance.
+
+#### Defined in
+
+[lib/search/where-point.ts:143](https://github.com/redis/redis-om-node/blob/b3c437e/lib/search/where-point.ts#L143)
 
 ___
 
@@ -79,6 +88,10 @@ Sets the units to feet.
 
 This instance.
 
+#### Defined in
+
+[lib/search/where-point.ts:137](https://github.com/redis/redis-om-node/blob/b3c437e/lib/search/where-point.ts#L137)
+
 ___
 
 ### kilometer
@@ -92,6 +105,10 @@ Sets the units to kilometers.
 `this`
 
 This instance.
+
+#### Defined in
+
+[lib/search/where-point.ts:122](https://github.com/redis/redis-om-node/blob/b3c437e/lib/search/where-point.ts#L122)
 
 ___
 
@@ -107,6 +124,10 @@ Sets the units to kilometers.
 
 This instance.
 
+#### Defined in
+
+[lib/search/where-point.ts:128](https://github.com/redis/redis-om-node/blob/b3c437e/lib/search/where-point.ts#L128)
+
 ___
 
 ### km
@@ -120,6 +141,10 @@ Sets the units to kilometers.
 `this`
 
 This instance.
+
+#### Defined in
+
+[lib/search/where-point.ts:116](https://github.com/redis/redis-om-node/blob/b3c437e/lib/search/where-point.ts#L116)
 
 ___
 
@@ -135,6 +160,10 @@ Sets the units to meters.
 
 This instance.
 
+#### Defined in
+
+[lib/search/where-point.ts:95](https://github.com/redis/redis-om-node/blob/b3c437e/lib/search/where-point.ts#L95)
+
 ___
 
 ### meter
@@ -148,6 +177,10 @@ Sets the units to meters.
 `this`
 
 This instance.
+
+#### Defined in
+
+[lib/search/where-point.ts:101](https://github.com/redis/redis-om-node/blob/b3c437e/lib/search/where-point.ts#L101)
 
 ___
 
@@ -163,6 +196,10 @@ Sets the units to meters.
 
 This instance.
 
+#### Defined in
+
+[lib/search/where-point.ts:107](https://github.com/redis/redis-om-node/blob/b3c437e/lib/search/where-point.ts#L107)
+
 ___
 
 ### mi
@@ -176,6 +213,10 @@ Sets the units to miles.
 `this`
 
 This instance.
+
+#### Defined in
+
+[lib/search/where-point.ts:158](https://github.com/redis/redis-om-node/blob/b3c437e/lib/search/where-point.ts#L158)
 
 ___
 
@@ -191,6 +232,10 @@ Sets the units to miles.
 
 This instance.
 
+#### Defined in
+
+[lib/search/where-point.ts:164](https://github.com/redis/redis-om-node/blob/b3c437e/lib/search/where-point.ts#L164)
+
 ___
 
 ### miles
@@ -204,6 +249,10 @@ Sets the units to miles.
 `this`
 
 This instance.
+
+#### Defined in
+
+[lib/search/where-point.ts:170](https://github.com/redis/redis-om-node/blob/b3c437e/lib/search/where-point.ts#L170)
 
 ## Methods
 
@@ -225,6 +274,10 @@ Sets the latitude. If not set, defaults to 0.0.
 
 This instance.
 
+#### Defined in
+
+[lib/search/where-point.ts:42](https://github.com/redis/redis-om-node/blob/b3c437e/lib/search/where-point.ts#L42)
+
 ___
 
 ### longitude
@@ -244,6 +297,57 @@ Sets the longitude. If not set, defaults to 0.0.
 [`Circle`](Circle.md)
 
 This instance.
+
+#### Defined in
+
+[lib/search/where-point.ts:31](https://github.com/redis/redis-om-node/blob/b3c437e/lib/search/where-point.ts#L31)
+
+___
+
+### origin
+
+▸ **origin**(`point`): [`Circle`](Circle.md)
+
+Sets the origin of the circle using a [Point](../README.md#point). If not
+set, defaults to [Null Island](https://en.wikipedia.org/wiki/Null_Island).
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `point` | [`Point`](../README.md#point) | A [Point](../README.md#point) containing the longitude and latitude of the origin. |
+
+#### Returns
+
+[`Circle`](Circle.md)
+
+This instance.
+
+#### Defined in
+
+[lib/search/where-point.ts:54](https://github.com/redis/redis-om-node/blob/b3c437e/lib/search/where-point.ts#L54)
+
+▸ **origin**(`longitude`, `latitude`): [`Circle`](Circle.md)
+
+Sets the origin of the circle. If not set, defaults to
+[Null Island](https://en.wikipedia.org/wiki/Null_Island).
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `longitude` | `number` | The longitude. |
+| `latitude` | `number` | The latitude. |
+
+#### Returns
+
+[`Circle`](Circle.md)
+
+This instance.
+
+#### Defined in
+
+[lib/search/where-point.ts:64](https://github.com/redis/redis-om-node/blob/b3c437e/lib/search/where-point.ts#L64)
 
 ___
 
@@ -265,3 +369,7 @@ not specified, defaults to meters.
 [`Circle`](Circle.md)
 
 This instance.
+
+#### Defined in
+
+[lib/search/where-point.ts:86](https://github.com/redis/redis-om-node/blob/b3c437e/lib/search/where-point.ts#L86)

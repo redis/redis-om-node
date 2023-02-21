@@ -19,7 +19,9 @@ describe("drop missing index on hash", () => {
     repository = new Repository(schema, redis)
   })
 
-  afterAll(async () => await redis.quit())
+  afterAll(async () => {
+    await redis.quit()
+  })
 
   describe("when the index is dropped", () => {
     beforeEach(async () => {

@@ -61,6 +61,10 @@ Constructs a Schema.
 | `schemaDef` | [`SchemaDefinition`](../README.md#schemadefinition) | Defines all of the fields for the Schema and how they are mapped to Redis. |
 | `options?` | [`SchemaOptions`](../README.md#schemaoptions) | Additional options for this Schema. |
 
+#### Defined in
+
+[lib/schema/schema.ts:47](https://github.com/redis/redis-om-node/blob/b3c437e/lib/schema/schema.ts#L47)
+
 ## Accessors
 
 ### dataStructure
@@ -74,6 +78,10 @@ that this Schema uses to store [Entities](../README.md#entity) in Redis.
 
 [`DataStructure`](../README.md#datastructure)
 
+#### Defined in
+
+[lib/schema/schema.ts:90](https://github.com/redis/redis-om-node/blob/b3c437e/lib/schema/schema.ts#L90)
+
 ___
 
 ### fields
@@ -85,6 +93,10 @@ The [Fields](Field.md) defined by this Schema.
 #### Returns
 
 [`Field`](Field.md)[]
+
+#### Defined in
+
+[lib/schema/schema.ts:66](https://github.com/redis/redis-om-node/blob/b3c437e/lib/schema/schema.ts#L66)
 
 ___
 
@@ -99,6 +111,10 @@ changed when calling [createIndex](Repository.md#createindex).
 
 `string`
 
+#### Defined in
+
+[lib/schema/schema.ts:118](https://github.com/redis/redis-om-node/blob/b3c437e/lib/schema/schema.ts#L118)
+
 ___
 
 ### indexHashName
@@ -111,6 +127,10 @@ The configured name for the RediSearch index hash for this Schema.
 
 `string`
 
+#### Defined in
+
+[lib/schema/schema.ts:84](https://github.com/redis/redis-om-node/blob/b3c437e/lib/schema/schema.ts#L84)
+
 ___
 
 ### indexName
@@ -122,6 +142,10 @@ The configured name for the RediSearch index for this Schema.
 #### Returns
 
 `string`
+
+#### Defined in
+
+[lib/schema/schema.ts:81](https://github.com/redis/redis-om-node/blob/b3c437e/lib/schema/schema.ts#L81)
 
 ___
 
@@ -137,6 +161,10 @@ idStrategy returns `12345` then the generated key would be `Foo:12345`.
 
 `string`
 
+#### Defined in
+
+[lib/schema/schema.ts:61](https://github.com/redis/redis-om-node/blob/b3c437e/lib/schema/schema.ts#L61)
+
 ___
 
 ### stopWords
@@ -150,6 +178,10 @@ than `CUSTOM`.
 
 `string`[]
 
+#### Defined in
+
+[lib/schema/schema.ts:102](https://github.com/redis/redis-om-node/blob/b3c437e/lib/schema/schema.ts#L102)
+
 ___
 
 ### useStopWords
@@ -162,6 +194,10 @@ or `CUSTOM`. See [SchemaOptions](../README.md#schemaoptions) for more details.
 #### Returns
 
 [`StopWordOptions`](../README.md#stopwordoptions)
+
+#### Defined in
+
+[lib/schema/schema.ts:96](https://github.com/redis/redis-om-node/blob/b3c437e/lib/schema/schema.ts#L96)
 
 ## Methods
 
@@ -183,16 +219,24 @@ Gets a single [Field](Field.md) defined by this Schema.
 
 The [Field](Field.md), or null of not found.
 
+#### Defined in
+
+[lib/schema/schema.ts:76](https://github.com/redis/redis-om-node/blob/b3c437e/lib/schema/schema.ts#L76)
+
 ___
 
 ### generateId
 
-▸ **generateId**(): `string`
+▸ **generateId**(): `Promise`<`string`\>
 
 Generates a unique string using the configured [IdStrategy](../README.md#idstrategy).
 
 #### Returns
 
-`string`
+`Promise`<`string`\>
 
 The generated id.
+
+#### Defined in
+
+[lib/schema/schema.ts:109](https://github.com/redis/redis-om-node/blob/b3c437e/lib/schema/schema.ts#L109)

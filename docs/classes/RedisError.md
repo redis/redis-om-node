@@ -43,11 +43,15 @@
 
 Error.constructor
 
+#### Defined in
+
+[lib/errors.ts:2](https://github.com/redis/redis-om-node/blob/b3c437e/lib/errors.ts#L2)
+
 ## Properties
 
 ### cause
 
-• `Optional` **cause**: `Error`
+• `Optional` **cause**: `unknown`
 
 #### Inherited from
 
@@ -69,7 +73,7 @@ Error.message
 
 #### Defined in
 
-node_modules/typescript/lib/lib.es5.d.ts:1029
+node_modules/typescript/lib/lib.es5.d.ts:1054
 
 ___
 
@@ -83,7 +87,7 @@ Error.name
 
 #### Defined in
 
-node_modules/typescript/lib/lib.es5.d.ts:1028
+node_modules/typescript/lib/lib.es5.d.ts:1053
 
 ___
 
@@ -97,7 +101,7 @@ Error.stack
 
 #### Defined in
 
-node_modules/typescript/lib/lib.es5.d.ts:1030
+node_modules/typescript/lib/lib.es5.d.ts:1055
 
 ___
 
@@ -111,7 +115,9 @@ ___
 
 Optional override for formatting stack traces
 
-**`see`** https://v8.dev/docs/stack-trace-api#customizing-stack-traces
+**`See`**
+
+https://v8.dev/docs/stack-trace-api#customizing-stack-traces
 
 ##### Parameters
 
@@ -168,3 +174,7 @@ Create .stack property on a target object
 #### Inherited from
 
 Error.captureStackTrace
+
+#### Defined in
+
+node_modules/@types/node/globals.d.ts:4

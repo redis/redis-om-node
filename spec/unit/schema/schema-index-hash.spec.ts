@@ -50,7 +50,7 @@ describe("Schema", () => {
       }],
       ["that overrides the id generation strategy", {
         schemaDef: EMPTY_SCHEMA_DEF,
-        options: { idStrategy: () => '1' } as SchemaOptions,
+        options: { idStrategy: async () => '1' } as SchemaOptions,
         expectedHash: EMPTY_HASH
       }],
       ["that disables stop words", {

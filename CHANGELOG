@@ -16,6 +16,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - *Repository* now allows adding Entities with properties that are not in the *Schema*. These can even be nested if you are using JSON.
 - *Repository* can be now be constructed directly with `new` in addition to being created from a *Client* via `.fetchRepository`.
 - *Repository* can now directly be handed an open Node Redis connection. No need to create a *Client* instance.
+- *Client* was deprecated in favor of using Node Redis connections.
 
 ### Removed
 - *Breaking Change* Removed *Entity* class. While still a type, it's no longer a class and is just an alias for a JavaScript object.

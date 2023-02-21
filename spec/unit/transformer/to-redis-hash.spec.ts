@@ -35,7 +35,7 @@ describe("#toRedisHash", () => {
     it("removes a null", () => expect(actual).not.toHaveProperty('aNull'))
 
     it("complains when given an array", () => {
-      expect(() => toRedisHash(schema, { anArray: [A_STRING, A_NUMBER, true]}))
+        expect(() => toRedisHash(schema, { anArray: [A_STRING, A_NUMBER, true]}))
         .toThrow("You can not store an array in a Redis Hash without defining it in the Schema.")
     })
 

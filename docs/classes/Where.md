@@ -37,3 +37,7 @@ Converts this [Where](Where.md) into a portion of a RediSearch query.
 #### Returns
 
 `string`
+
+#### Defined in
+
+[lib/search/where.ts:8](https://github.com/redis/redis-om-node/blob/b3c437e/lib/search/where.ts#L8)

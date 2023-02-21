@@ -5,7 +5,9 @@
 Entry point to fluent search. This is the default Redis OM experience.
 Requires that RediSearch (and optionally RedisJSON) be installed.
 
-**`template`** The type of [Entity](../README.md#entity) being sought.
+**`Template`**
+
+The type of [Entity](../README.md#entity) being sought.
 
 ## Hierarchy
 
@@ -80,6 +82,10 @@ this
 
 AbstractSearch.return
 
+#### Defined in
+
+[lib/search/search.ts:308](https://github.com/redis/redis-om-node/blob/b3c437e/lib/search/search.ts#L308)
+
 ## Methods
 
 ### all
@@ -111,6 +117,10 @@ An array of [Entities](../README.md#entity) matching the query.
 #### Inherited from
 
 [AbstractSearch](AbstractSearch.md).[all](AbstractSearch.md#all)
+
+#### Defined in
+
+[lib/search/search.ts:264](https://github.com/redis/redis-om-node/blob/b3c437e/lib/search/search.ts#L264)
 
 ___
 
@@ -144,6 +154,10 @@ An array of entity IDs matching the query.
 
 [AbstractSearch](AbstractSearch.md).[allIds](AbstractSearch.md#allids)
 
+#### Defined in
+
+[lib/search/search.ts:282](https://github.com/redis/redis-om-node/blob/b3c437e/lib/search/search.ts#L282)
+
 ___
 
 ### allKeys
@@ -176,6 +190,10 @@ An array of key names matching the query.
 
 [AbstractSearch](AbstractSearch.md).[allKeys](AbstractSearch.md#allkeys)
 
+#### Defined in
+
+[lib/search/search.ts:300](https://github.com/redis/redis-om-node/blob/b3c437e/lib/search/search.ts#L300)
+
 ___
 
 ### and
@@ -196,6 +214,10 @@ Sets up a query matching a particular field as a logical AND.
 
 A subclass of [WhereField](WhereField.md) matching the type of the field.
 
+#### Defined in
+
+[lib/search/search.ts:530](https://github.com/redis/redis-om-node/blob/b3c437e/lib/search/search.ts#L530)
+
 ▸ **and**(`subSearchFn`): [`Search`](Search.md)
 
 Sets up a nested search as a logical AND.
@@ -211,6 +233,10 @@ Sets up a nested search as a logical AND.
 [`Search`](Search.md)
 
 `this`.
+
+#### Defined in
+
+[lib/search/search.ts:537](https://github.com/redis/redis-om-node/blob/b3c437e/lib/search/search.ts#L537)
 
 ___
 
@@ -228,6 +254,10 @@ Returns the number of [Entities](../README.md#entity) that match this query.
 
 [AbstractSearch](AbstractSearch.md).[count](AbstractSearch.md#count)
 
+#### Defined in
+
+[lib/search/search.ts:188](https://github.com/redis/redis-om-node/blob/b3c437e/lib/search/search.ts#L188)
+
 ___
 
 ### first
@@ -243,6 +273,10 @@ Returns the first [Entity](../README.md#entity) that matches this query.
 #### Inherited from
 
 [AbstractSearch](AbstractSearch.md).[first](AbstractSearch.md#first)
+
+#### Defined in
+
+[lib/search/search.ts:229](https://github.com/redis/redis-om-node/blob/b3c437e/lib/search/search.ts#L229)
 
 ___
 
@@ -260,6 +294,10 @@ Returns the first entity ID that matches this query.
 
 [AbstractSearch](AbstractSearch.md).[firstId](AbstractSearch.md#firstid)
 
+#### Defined in
+
+[lib/search/search.ts:237](https://github.com/redis/redis-om-node/blob/b3c437e/lib/search/search.ts#L237)
+
 ___
 
 ### firstKey
@@ -275,6 +313,10 @@ Returns the first key name that matches this query.
 #### Inherited from
 
 [AbstractSearch](AbstractSearch.md).[firstKey](AbstractSearch.md#firstkey)
+
+#### Defined in
+
+[lib/search/search.ts:245](https://github.com/redis/redis-om-node/blob/b3c437e/lib/search/search.ts#L245)
 
 ___
 
@@ -300,6 +342,10 @@ The entity ID [Entity](../README.md#entity) with the maximal value
 
 [AbstractSearch](AbstractSearch.md).[max](AbstractSearch.md#max)
 
+#### Defined in
+
+[lib/search/search.ts:162](https://github.com/redis/redis-om-node/blob/b3c437e/lib/search/search.ts#L162)
+
 ___
 
 ### maxId
@@ -323,6 +369,10 @@ The entity ID with the maximal value
 #### Inherited from
 
 [AbstractSearch](AbstractSearch.md).[maxId](AbstractSearch.md#maxid)
+
+#### Defined in
+
+[lib/search/search.ts:171](https://github.com/redis/redis-om-node/blob/b3c437e/lib/search/search.ts#L171)
 
 ___
 
@@ -348,6 +398,10 @@ The key name with the maximal value
 
 [AbstractSearch](AbstractSearch.md).[maxKey](AbstractSearch.md#maxkey)
 
+#### Defined in
+
+[lib/search/search.ts:180](https://github.com/redis/redis-om-node/blob/b3c437e/lib/search/search.ts#L180)
+
 ___
 
 ### min
@@ -371,6 +425,10 @@ The [Entity](../README.md#entity) with the minimal value
 #### Inherited from
 
 [AbstractSearch](AbstractSearch.md).[min](AbstractSearch.md#min)
+
+#### Defined in
+
+[lib/search/search.ts:135](https://github.com/redis/redis-om-node/blob/b3c437e/lib/search/search.ts#L135)
 
 ___
 
@@ -396,6 +454,10 @@ The entity ID with the minimal value
 
 [AbstractSearch](AbstractSearch.md).[minId](AbstractSearch.md#minid)
 
+#### Defined in
+
+[lib/search/search.ts:144](https://github.com/redis/redis-om-node/blob/b3c437e/lib/search/search.ts#L144)
+
 ___
 
 ### minKey
@@ -420,6 +482,10 @@ The key name with the minimal value
 
 [AbstractSearch](AbstractSearch.md).[minKey](AbstractSearch.md#minkey)
 
+#### Defined in
+
+[lib/search/search.ts:153](https://github.com/redis/redis-om-node/blob/b3c437e/lib/search/search.ts#L153)
+
 ___
 
 ### or
@@ -440,6 +506,10 @@ Sets up a query matching a particular field as a logical OR.
 
 A subclass of [WhereField](WhereField.md) matching the type of the field.
 
+#### Defined in
+
+[lib/search/search.ts:547](https://github.com/redis/redis-om-node/blob/b3c437e/lib/search/search.ts#L547)
+
 ▸ **or**(`subSearchFn`): [`Search`](Search.md)
 
 Sets up a nested search as a logical OR.
@@ -455,6 +525,10 @@ Sets up a nested search as a logical OR.
 [`Search`](Search.md)
 
 `this`.
+
+#### Defined in
+
+[lib/search/search.ts:554](https://github.com/redis/redis-om-node/blob/b3c437e/lib/search/search.ts#L554)
 
 ___
 
@@ -481,6 +555,10 @@ An array of [Entities](../README.md#entity) matching the query.
 
 [AbstractSearch](AbstractSearch.md).[page](AbstractSearch.md#page)
 
+#### Defined in
+
+[lib/search/search.ts:199](https://github.com/redis/redis-om-node/blob/b3c437e/lib/search/search.ts#L199)
+
 ___
 
 ### pageOfIds
@@ -505,6 +583,10 @@ An array of strings matching the query.
 #### Inherited from
 
 [AbstractSearch](AbstractSearch.md).[pageOfIds](AbstractSearch.md#pageofids)
+
+#### Defined in
+
+[lib/search/search.ts:210](https://github.com/redis/redis-om-node/blob/b3c437e/lib/search/search.ts#L210)
 
 ___
 
@@ -531,6 +613,10 @@ An array of strings matching the query.
 
 [AbstractSearch](AbstractSearch.md).[pageOfKeys](AbstractSearch.md#pageofkeys)
 
+#### Defined in
+
+[lib/search/search.ts:221](https://github.com/redis/redis-om-node/blob/b3c437e/lib/search/search.ts#L221)
+
 ___
 
 ### returnAll
@@ -553,6 +639,10 @@ Alias for [all](Search.md#all).
 #### Inherited from
 
 [AbstractSearch](AbstractSearch.md).[returnAll](AbstractSearch.md#returnall)
+
+#### Defined in
+
+[lib/search/search.ts:406](https://github.com/redis/redis-om-node/blob/b3c437e/lib/search/search.ts#L406)
 
 ___
 
@@ -577,6 +667,10 @@ Alias for [allIds](Search.md#allids).
 
 [AbstractSearch](AbstractSearch.md).[returnAllIds](AbstractSearch.md#returnallids)
 
+#### Defined in
+
+[lib/search/search.ts:413](https://github.com/redis/redis-om-node/blob/b3c437e/lib/search/search.ts#L413)
+
 ___
 
 ### returnAllKeys
@@ -600,6 +694,10 @@ Alias for [allKeys](Search.md#allkeys).
 
 [AbstractSearch](AbstractSearch.md).[returnAllKeys](AbstractSearch.md#returnallkeys)
 
+#### Defined in
+
+[lib/search/search.ts:420](https://github.com/redis/redis-om-node/blob/b3c437e/lib/search/search.ts#L420)
+
 ___
 
 ### returnCount
@@ -615,6 +713,10 @@ Alias for [count](Search.md#count).
 #### Inherited from
 
 [AbstractSearch](AbstractSearch.md).[returnCount](AbstractSearch.md#returncount)
+
+#### Defined in
+
+[lib/search/search.ts:357](https://github.com/redis/redis-om-node/blob/b3c437e/lib/search/search.ts#L357)
 
 ___
 
@@ -632,6 +734,10 @@ Alias for [first](Search.md#first).
 
 [AbstractSearch](AbstractSearch.md).[returnFirst](AbstractSearch.md#returnfirst)
 
+#### Defined in
+
+[lib/search/search.ts:385](https://github.com/redis/redis-om-node/blob/b3c437e/lib/search/search.ts#L385)
+
 ___
 
 ### returnFirstId
@@ -648,6 +754,10 @@ Alias for [firstId](Search.md#firstid).
 
 [AbstractSearch](AbstractSearch.md).[returnFirstId](AbstractSearch.md#returnfirstid)
 
+#### Defined in
+
+[lib/search/search.ts:392](https://github.com/redis/redis-om-node/blob/b3c437e/lib/search/search.ts#L392)
+
 ___
 
 ### returnFirstKey
@@ -663,6 +773,10 @@ Alias for [firstKey](Search.md#firstkey).
 #### Inherited from
 
 [AbstractSearch](AbstractSearch.md).[returnFirstKey](AbstractSearch.md#returnfirstkey)
+
+#### Defined in
+
+[lib/search/search.ts:399](https://github.com/redis/redis-om-node/blob/b3c437e/lib/search/search.ts#L399)
 
 ___
 
@@ -686,6 +800,10 @@ Alias for [max](Search.md#max).
 
 [AbstractSearch](AbstractSearch.md).[returnMax](AbstractSearch.md#returnmax)
 
+#### Defined in
+
+[lib/search/search.ts:336](https://github.com/redis/redis-om-node/blob/b3c437e/lib/search/search.ts#L336)
+
 ___
 
 ### returnMaxId
@@ -707,6 +825,10 @@ Alias for [maxId](Search.md#maxid).
 #### Inherited from
 
 [AbstractSearch](AbstractSearch.md).[returnMaxId](AbstractSearch.md#returnmaxid)
+
+#### Defined in
+
+[lib/search/search.ts:343](https://github.com/redis/redis-om-node/blob/b3c437e/lib/search/search.ts#L343)
 
 ___
 
@@ -730,6 +852,10 @@ Alias for [maxKey](Search.md#maxkey).
 
 [AbstractSearch](AbstractSearch.md).[returnMaxKey](AbstractSearch.md#returnmaxkey)
 
+#### Defined in
+
+[lib/search/search.ts:350](https://github.com/redis/redis-om-node/blob/b3c437e/lib/search/search.ts#L350)
+
 ___
 
 ### returnMin
@@ -751,6 +877,10 @@ Alias for [min](Search.md#min).
 #### Inherited from
 
 [AbstractSearch](AbstractSearch.md).[returnMin](AbstractSearch.md#returnmin)
+
+#### Defined in
+
+[lib/search/search.ts:315](https://github.com/redis/redis-om-node/blob/b3c437e/lib/search/search.ts#L315)
 
 ___
 
@@ -774,6 +904,10 @@ Alias for [minId](Search.md#minid).
 
 [AbstractSearch](AbstractSearch.md).[returnMinId](AbstractSearch.md#returnminid)
 
+#### Defined in
+
+[lib/search/search.ts:322](https://github.com/redis/redis-om-node/blob/b3c437e/lib/search/search.ts#L322)
+
 ___
 
 ### returnMinKey
@@ -795,6 +929,10 @@ Alias for [minKey](Search.md#minkey).
 #### Inherited from
 
 [AbstractSearch](AbstractSearch.md).[returnMinKey](AbstractSearch.md#returnminkey)
+
+#### Defined in
+
+[lib/search/search.ts:329](https://github.com/redis/redis-om-node/blob/b3c437e/lib/search/search.ts#L329)
 
 ___
 
@@ -819,6 +957,10 @@ Alias for [page](Search.md#page).
 
 [AbstractSearch](AbstractSearch.md).[returnPage](AbstractSearch.md#returnpage)
 
+#### Defined in
+
+[lib/search/search.ts:364](https://github.com/redis/redis-om-node/blob/b3c437e/lib/search/search.ts#L364)
+
 ___
 
 ### returnPageOfIds
@@ -841,6 +983,10 @@ Alias for [pageOfIds](Search.md#pageofids).
 #### Inherited from
 
 [AbstractSearch](AbstractSearch.md).[returnPageOfIds](AbstractSearch.md#returnpageofids)
+
+#### Defined in
+
+[lib/search/search.ts:371](https://github.com/redis/redis-om-node/blob/b3c437e/lib/search/search.ts#L371)
 
 ___
 
@@ -865,6 +1011,10 @@ Alias for [pageOfKeys](Search.md#pageofkeys).
 
 [AbstractSearch](AbstractSearch.md).[returnPageOfKeys](AbstractSearch.md#returnpageofkeys)
 
+#### Defined in
+
+[lib/search/search.ts:378](https://github.com/redis/redis-om-node/blob/b3c437e/lib/search/search.ts#L378)
+
 ___
 
 ### sortAsc
@@ -886,6 +1036,10 @@ Alias for [sortAscending](Search.md#sortascending).
 #### Inherited from
 
 [AbstractSearch](AbstractSearch.md).[sortAsc](AbstractSearch.md#sortasc)
+
+#### Defined in
+
+[lib/search/search.ts:86](https://github.com/redis/redis-om-node/blob/b3c437e/lib/search/search.ts#L86)
 
 ___
 
@@ -910,6 +1064,10 @@ this
 #### Inherited from
 
 [AbstractSearch](AbstractSearch.md).[sortAscending](AbstractSearch.md#sortascending)
+
+#### Defined in
+
+[lib/search/search.ts:63](https://github.com/redis/redis-om-node/blob/b3c437e/lib/search/search.ts#L63)
 
 ___
 
@@ -936,6 +1094,10 @@ this
 
 [AbstractSearch](AbstractSearch.md).[sortBy](AbstractSearch.md#sortby)
 
+#### Defined in
+
+[lib/search/search.ts:96](https://github.com/redis/redis-om-node/blob/b3c437e/lib/search/search.ts#L96)
+
 ___
 
 ### sortDesc
@@ -957,6 +1119,10 @@ Alias for [sortDescending](Search.md#sortdescending).
 #### Inherited from
 
 [AbstractSearch](AbstractSearch.md).[sortDesc](AbstractSearch.md#sortdesc)
+
+#### Defined in
+
+[lib/search/search.ts:70](https://github.com/redis/redis-om-node/blob/b3c437e/lib/search/search.ts#L70)
 
 ___
 
@@ -982,6 +1148,10 @@ this
 
 [AbstractSearch](AbstractSearch.md).[sortDescending](AbstractSearch.md#sortdescending)
 
+#### Defined in
+
+[lib/search/search.ts:79](https://github.com/redis/redis-om-node/blob/b3c437e/lib/search/search.ts#L79)
+
 ___
 
 ### where
@@ -1003,6 +1173,10 @@ to [where](Search.md#where), they are treated logically as AND.
 
 A subclass of [WhereField](WhereField.md) matching the type of the field.
 
+#### Defined in
+
+[lib/search/search.ts:512](https://github.com/redis/redis-om-node/blob/b3c437e/lib/search/search.ts#L512)
+
 ▸ **where**(`subSearchFn`): [`Search`](Search.md)
 
 Sets up a nested search. If there are multiple calls to [where](Search.md#where),
@@ -1019,3 +1193,7 @@ they are treated logically as AND.
 [`Search`](Search.md)
 
 `this`.
+
+#### Defined in
+
+[lib/search/search.ts:520](https://github.com/redis/redis-om-node/blob/b3c437e/lib/search/search.ts#L520)
