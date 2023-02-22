@@ -6,6 +6,7 @@ import { RedisJsonData } from "../client"
 
 import { convertDateToEpoch, convertIsoDateToEpoch, convertKnownValueToString, convertPointToString, isArray, isBoolean, isDate, isDefined, isNull, isNumber, isObject, isPoint, isString, isUndefined, stringifyError } from "./transformer-common"
 import { EntityData } from '../entity'
+import { RedisOmError } from '../errors'
 
 export function toRedisJson(schema: Schema, data: EntityData): RedisJsonData {
   let json: RedisJsonData = clone(data)
@@ -30,7 +31,7 @@ function convertToRedisJsonKnown(schema: Schema, json: RedisJsonData) {
       return
     }
 
-    throw new Error(`Expected path to point to a single value but found many: "${field.jsonPath}"`)
+    throw new RedisOmError(`Expected path to point to a single value but found many: "${field.jsonPath}"`)
   })
 }
 
@@ -68,18 +69,18 @@ function convertKnownValueToJson(field: Field, value: any): any {
   switch (field.type) {
     case 'boolean':
       if (isBoolean(value)) return value
-      throw Error(`Expected a boolean but received: ${stringifyError(value)}`)
+      throw new RedisOmError(`Expected a boolean but received: ${stringifyError(value)}`)
     case 'number':
       if (isNumber(value)) return value
-      throw Error(`Expected a number but received: ${stringifyError(value)}`)
+      throw new RedisOmError(`Expected a number but received: ${stringifyError(value)}`)
     case 'date':
       if (isDate(value)) return convertDateToEpoch(value)
       if (isString(value)) return convertIsoDateToEpoch(value)
       if (isNumber(value)) return value
-      throw Error(`Expected a date but received: ${stringifyError(value)}`)
+      throw new RedisOmError(`Expected a date but received: ${stringifyError(value)}`)
     case 'point':
       if (isPoint(value)) return convertPointToString(value)
-      throw Error(`Expected a point but received: ${stringifyError(value)}`)
+      throw new RedisOmError(`Expected a point but received: ${stringifyError(value)}`)
     case 'string':
     case 'text':
       return convertKnownValueToString(value)

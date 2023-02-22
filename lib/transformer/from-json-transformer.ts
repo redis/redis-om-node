@@ -6,6 +6,7 @@ import { RedisJsonData } from "../client"
 
 import { convertEpochToDate, convertKnownValueToString, convertStringToPoint, isArray, isBoolean, isNull, isNumber, isString, stringifyError } from "./transformer-common"
 import { EntityData } from '../entity'
+import { RedisOmError } from '../errors'
 
 
 export function fromRedisJson(schema: Schema, json: RedisJsonData): EntityData {
@@ -41,13 +42,13 @@ function convertKnownValueFromJson(field: Field, value: any): any {
   switch (field.type) {
     case 'boolean':
       if (isBoolean(value)) return value
-      throw Error(`Expected a value of true, false, or null from RedisJSON for a boolean but received: ${stringifyError(value)}`)
+      throw new RedisOmError(`Expected a value of true, false, or null from RedisJSON for a boolean but received: ${stringifyError(value)}`)
     case 'number':
       if (isNumber(value)) return value
-      throw Error(`Expected a number from RedisJSON but received: ${stringifyError(value)}`)
+      throw new RedisOmError(`Expected a number from RedisJSON but received: ${stringifyError(value)}`)
     case 'date':
       if (isNumber(value)) return convertEpochToDate(value)
-      throw Error(`Expected a number containing a epoch date from RedisJSON but received: ${stringifyError(value)}`)
+      throw new RedisOmError(`Expected a number containing a epoch date from RedisJSON but received: ${stringifyError(value)}`)
     case 'point':
       return convertStringToPoint(value)
     case 'string':
@@ -55,14 +56,14 @@ function convertKnownValueFromJson(field: Field, value: any): any {
       if (isString(value)) return value
       if (isBoolean(value)) return value.toString()
       if (isNumber(value)) return value.toString()
-      throw Error(`Expected a string from RedisJSON but received: ${stringifyError(value)}`)
+      throw new RedisOmError(`Expected a string from RedisJSON but received: ${stringifyError(value)}`)
     case 'string[]':
       if (isArray(value)) return convertFromJsonArrayToStringArray(value)
-      throw Error(`Expected a string[] from RedisJSON but received: ${stringifyError(value)}`)
+      throw new RedisOmError(`Expected a string[] from RedisJSON but received: ${stringifyError(value)}`)
   }
 }
 
 const convertFromJsonArrayToStringArray = (array: any[]): string[] => array.map(value => {
-  if (isNull(value)) throw `Expected a string[] from RedisJSON but received an array containing null: ${stringifyError(array)}`
+  if (isNull(value)) throw new RedisOmError(`Expected a string[] from RedisJSON but received an array containing null: ${stringifyError(array)}`)
   return value.toString()
 })

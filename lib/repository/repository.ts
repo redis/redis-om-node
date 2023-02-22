@@ -1,7 +1,5 @@
-import { RediSearchSchema } from 'redis'
-
 import { Client, CreateOptions, RedisConnection, RedisHashData, RedisJsonData } from '../client'
-import { Entity, EntityData, EntityId, EntityKeyName } from '../entity'
+import { Entity, EntityId, EntityKeyName } from '../entity'
 import { buildRediSearchSchema } from '../indexer'
 import { Schema } from '../schema'
 import { Search, RawSearch } from '../search'

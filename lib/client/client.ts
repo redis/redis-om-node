@@ -2,7 +2,7 @@ import { createClient, createCluster, RediSearchSchema, SearchOptions } from 're
 
 import { Repository } from '../repository'
 import { Schema } from '../schema'
-import { RedisError } from '../errors'
+import { RedisOmError } from '../errors'
 
 /** A conventional Redis connection. */
 export type RedisClientConnection = ReturnType<typeof createClient>
@@ -209,6 +209,6 @@ export class Client {
   }
 
   #validateRedisOpen(): asserts this is { redis: RedisConnection } {
-    if (!this.redis) throw new RedisError("Redis connection needs to be open.")
+    if (!this.redis) throw new RedisOmError("Redis connection needs to be open.")
   }
 }

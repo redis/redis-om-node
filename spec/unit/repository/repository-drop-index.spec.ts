@@ -28,7 +28,7 @@ describe("Repository", () => {
 
     describe("when the index doesn't exist", () => {
       beforeEach(async () => {
-        vi.mocked(client.dropIndex).mockRejectedValue(new Error("Unknown Index name"))
+        vi.mocked(client.dropIndex).mockRejectedValue(Error("Unknown Index name"))
       })
 
       it("eats the exception", async () => await repository.dropIndex()) // it doesn't throw an exception
@@ -36,7 +36,7 @@ describe("Repository", () => {
 
     describe("when dropping the index throws some other Redis exception", () => {
       beforeEach(async () => {
-        vi.mocked(client.dropIndex).mockRejectedValue(new Error("Some other error"))
+        vi.mocked(client.dropIndex).mockRejectedValue(Error("Some other error"))
       })
 
       it("propogates the exception", async () =>

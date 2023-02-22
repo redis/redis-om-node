@@ -1,3 +1,4 @@
+import { RedisOmError } from "../errors"
 import { Point } from "../entity"
 
 export const isNull = (value: any): boolean => value === null
@@ -40,7 +41,7 @@ export const convertIsoDateToEpoch = (value: string) => convertDateToEpoch(conve
 export const convertIsoDateToString = (value: string) => convertDateToString(convertIsoDateToDate(value))
 const convertIsoDateToDate = (value: string): Date => {
   const date = new Date(value)
-  if (isNaN(date.getTime())) throw Error(`Expected a date but received: ${stringifyError(value)}`)
+  if (isNaN(date.getTime())) throw new RedisOmError(`Expected a date but received: ${stringifyError(value)}`)
   return date
 }
 
@@ -49,11 +50,11 @@ export const convertEpochToDate = (value: number): Date => new Date(value * 1000
 
 export const convertPointToString = (value: Point) => {
   if (isValidPoint(value)) return `${value.longitude},${value.latitude}`
-  throw Error("Points must be between ±85.05112878 latitude and ±180 longitude")
+  throw new RedisOmError("Points must be between ±85.05112878 latitude and ±180 longitude")
 }
 
 export const convertStringToPoint = (value: string): Point => {
-  if (!isPointString(value)) throw Error(`Expected a point string from Redis but received: ${stringifyError(value)}`)
+  if (!isPointString(value)) throw new RedisOmError(`Expected a point string from Redis but received: ${stringifyError(value)}`)
   const [ longitude, latitude ] = value.split(',').map(convertStringToNumber)
   return { longitude: longitude!, latitude: latitude! }
 }
@@ -62,7 +63,7 @@ export function convertKnownValueToString(value: any) {
   if (isBoolean(value)) return value.toString()
   if (isNumber(value)) return value.toString()
   if (isString(value)) return value
-  throw Error(`Expected a string but received: ${stringifyError(value)}`)
+  throw new RedisOmError(`Expected a string but received: ${stringifyError(value)}`)
 }
 
 export const stringifyError = (value: any) => JSON.stringify(value, null, 1)

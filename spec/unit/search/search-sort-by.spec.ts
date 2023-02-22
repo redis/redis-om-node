@@ -10,7 +10,7 @@ import {
   mockClientSearchToReturnMultipleHashes as hashMocker,
   mockClientSearchToReturnMultipleJsonStrings as jsonMocker
 } from '../helpers/search-helpers'
-import { RedisError } from '$lib/errors'
+import { RedisOmError } from '$lib/errors'
 
 
 const warnSpy = vi.spyOn(global.console, 'warn').mockImplementation(() => {})
@@ -310,14 +310,14 @@ describe.each([
       let order = data.sortOrder
       let expectedWarning = data.expectedWarning
       let expectedError = data.expectedError
-      let actualError: RedisError
+      let actualError: RedisOmError
 
       beforeEach(async () => {
         clientMocker()
         try {
           await search.sortBy(field, order).return.first()
         } catch (error) {
-          actualError = error as RedisError
+          actualError = error as RedisOmError
         }
       })
 

@@ -7,6 +7,7 @@ import { IdStrategy, DataStructure, StopWordOptions, SchemaOptions } from './opt
 
 import { SchemaDefinition } from './definitions'
 import { Field } from './field'
+import { RedisOmError } from '..'
 
 /**
  * Defines a schema that determines how an {@link Entity} is mapped
@@ -142,22 +143,22 @@ export class Schema {
     const { dataStructure, useStopWords } = this
 
     if (dataStructure !== 'HASH' && dataStructure !== 'JSON')
-      throw Error(`'${dataStructure}' in an invalid data structure. Valid data structures are 'HASH' and 'JSON'.`)
+      throw new RedisOmError(`'${dataStructure}' in an invalid data structure. Valid data structures are 'HASH' and 'JSON'.`)
 
     if (useStopWords !== 'OFF' && useStopWords !== 'DEFAULT' && useStopWords !== 'CUSTOM')
-      throw Error(`'${useStopWords}' in an invalid value for stop words. Valid values are 'OFF', 'DEFAULT', and 'CUSTOM'.`)
+      throw new RedisOmError(`'${useStopWords}' in an invalid value for stop words. Valid values are 'OFF', 'DEFAULT', and 'CUSTOM'.`)
 
     if (this.#options?.idStrategy && typeof this.#options.idStrategy !== 'function')
-      throw Error("ID strategy must be a function that takes no arguments and returns a string.")
+      throw new RedisOmError("ID strategy must be a function that takes no arguments and returns a string.")
 
-    if (this.schemaName === '') throw Error(`Schema name must be a non-empty string.`)
-    if (this.indexName === '') throw Error(`Index name must be a non-empty string.`)
+    if (this.schemaName === '') throw new RedisOmError(`Schema name must be a non-empty string.`)
+    if (this.indexName === '') throw new RedisOmError(`Index name must be a non-empty string.`)
   }
 
   private validateField(field: Field) {
     const { type } = field
     if (type !== 'boolean' && type !== 'date' && type !== 'number' && type !== 'point' &&
-      type !== 'string' && type !== 'string[]' && type !== 'text')
-        throw Error(`The field '${field.name}' is configured with a type of '${field.type}'. Valid types include 'boolean', 'date', 'number', 'point', 'string', 'string[]', and 'text'.`)
+        type !== 'string' && type !== 'string[]' && type !== 'text')
+      throw new RedisOmError(`The field '${field.name}' is configured with a type of '${field.type}'. Valid types include 'boolean', 'date', 'number', 'point', 'string', 'string[]', and 'text'.`)
   }
 }

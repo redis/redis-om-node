@@ -16,7 +16,7 @@ import { WhereString } from './where-string'
 import { WhereText } from './where-text'
 
 import { extractCountFromSearchResults, extractEntitiesFromSearchResults, extractEntityIdsFromSearchResults, extractKeyNamesFromSearchResults } from "./results-converter"
-import { RedisError } from "../errors"
+import { RedisOmError } from "../errors"
 import { WhereDate } from "./where-date"
 
 /**
@@ -100,7 +100,7 @@ export abstract class AbstractSearch {
     if (!field) {
       const message = `'sortBy' was called on field '${fieldName}' which is not defined in the Schema.`
       console.error(message)
-      throw new RedisError(message)
+      throw new RedisOmError(message)
     }
 
     const type = field.type
@@ -113,7 +113,7 @@ export abstract class AbstractSearch {
     if (UNSORTABLE.includes(type)) {
       const message = `'sortBy' was called on '${field.type}' field '${field.name}' which cannot be sorted.`
       console.error(message)
-      throw new RedisError(message)
+      throw new RedisOmError(message)
     }
 
     if (dataStructure === 'JSON' && JSON_SORTABLE.includes(type) && !markedSortable)
@@ -459,7 +459,7 @@ export abstract class AbstractSearch {
     } catch (error) {
       const message = (error as Error).message
       if (message.startsWith("Syntax error")) {
-        throw new RedisError(`The query to RediSearch had a syntax error: "${message}".\nThis is often the result of using a stop word in the query. Either change the query to not use a stop word or change the stop words in the schema definition. You can check the RediSearch source for the default stop words at: https://github.com/RediSearch/RediSearch/blob/master/src/stopwords.h.`)
+        throw new RedisOmError(`The query to RediSearch had a syntax error: "${message}".\nThis is often the result of using a stop word in the query. Either change the query to not use a stop word or change the stop words in the schema definition. You can check the RediSearch source for the default stop words at: https://github.com/RediSearch/RediSearch/blob/master/src/stopwords.h.`)
       }
       throw error
     }
@@ -581,7 +581,7 @@ export class Search extends AbstractSearch {
     const subSearch = subSearchFn(search)
 
     if (subSearch.rootWhere === undefined) {
-      throw new Error("Sub-search without and root where was somehow defined.")
+      throw new RedisOmError("Sub-search without and root where was somehow defined.")
     } else {
       if (this.rootWhere === undefined) {
         this.rootWhere = subSearch.rootWhere
@@ -596,7 +596,7 @@ export class Search extends AbstractSearch {
   private createWhere(fieldName: string): WhereField {
     const field = this.schema.fieldByName(fieldName)
 
-    if (field === null) throw new Error(`The field '${fieldName}' is not part of the schema.`)
+    if (field === null) throw new RedisOmError(`The field '${fieldName}' is not part of the schema.`)
 
     if (field.type === 'boolean' && this.schema.dataStructure === 'HASH') return new WhereHashBoolean(this, field)
     if (field.type === 'boolean' && this.schema.dataStructure === 'JSON') return new WhereJsonBoolean(this, field)
@@ -608,6 +608,6 @@ export class Search extends AbstractSearch {
     if (field.type === 'string[]') return new WhereStringArray(this, field)
 
     // @ts-ignore: This is a trap for JavaScript
-    throw new Error(`The field type of '${fieldDef.type}' is not a valid field type. Valid types include 'boolean', 'date', 'number', 'point', 'string', and 'string[]'.`)
+    throw new RedisOmError(`The field type of '${fieldDef.type}' is not a valid field type. Valid types include 'boolean', 'date', 'number', 'point', 'string', and 'string[]'.`)
   }
 }
