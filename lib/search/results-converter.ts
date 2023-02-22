@@ -13,7 +13,7 @@ export function extractKeyNamesFromSearchResults(results: SearchResults): string
 
 export function extractEntityIdsFromSearchResults(schema: Schema, results: SearchResults): string[] {
   const keyNames = extractKeyNamesFromSearchResults(results)
-  const entityIds = keyNamesToEntityIds(schema.prefix, keyNames)
+  const entityIds = keyNamesToEntityIds(schema.schemaName, keyNames)
   return entityIds
 }
 
@@ -30,7 +30,7 @@ function hashDocumentToEntity(schema: Schema, document: SearchDocument): Entity 
   const hashData: RedisHashData = document.value
 
   const entityData = fromRedisHash(schema, hashData)
-  const entity = enrichEntityData(schema.prefix, keyName, entityData)
+  const entity = enrichEntityData(schema.schemaName, keyName, entityData)
   return entity
 }
 
@@ -39,7 +39,7 @@ function jsonDocumentToEntity(schema: Schema, document: SearchDocument): Entity 
   const jsonData: RedisJsonData = document.value['$'] ?? false ? JSON.parse(document.value['$']) : document.value
 
   const entityData = fromRedisJson(schema, jsonData)
-  const entity = enrichEntityData(schema.prefix, keyName, entityData)
+  const entity = enrichEntityData(schema.schemaName, keyName, entityData)
   return entity
 }
 

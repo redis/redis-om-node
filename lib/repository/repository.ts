@@ -81,7 +81,7 @@ export class Repository {
 
       const {
         indexName, indexHashName, dataStructure,
-        prefix, useStopWords, stopWords
+        schemaName: prefix, useStopWords, stopWords
       } = this.#schema
 
       const schema = buildRediSearchSchema(this.#schema)
@@ -148,7 +148,7 @@ export class Repository {
     let entity: Entity | undefined
     let entityId: string | undefined
 
-    if (typeof(entityOrId) !== 'string') {
+    if (typeof entityOrId !== 'string') {
       entity = entityOrId
       entityId = entity[EntityId] ?? await this.#schema.generateId()
     } else {
@@ -156,7 +156,7 @@ export class Repository {
       entityId = entityOrId
     }
 
-    const keyName = `${this.#schema.prefix}:${entityId}`
+    const keyName = `${this.#schema.schemaName}:${entityId}`
     const clonedEntity = { ...entity, [EntityId]: entityId, [EntityKeyName]: keyName }
     await this.writeEntity(clonedEntity)
 
@@ -195,7 +195,7 @@ export class Repository {
     if (Array.isArray(ids)) return this.readEntities(ids)
 
     const [entity] = await this.readEntities([ids])
-    return entity
+    return entity!
   }
 
   /**
@@ -297,9 +297,7 @@ export class Repository {
   // TODO: make this actually private... like with #
   private async writeEntityToHash(entity: Entity): Promise<void> {
     const keyName = entity[EntityKeyName]!
-    // TODO: Not sure if this clone is needed or not
-    const { ...entityData } = entity
-    const hashData: RedisHashData = toRedisHash(this.#schema, entityData)
+    const hashData: RedisHashData = toRedisHash(this.#schema, entity)
     if (Object.keys(hashData).length === 0) {
       await this.client.unlink(keyName)
     } else {
@@ -320,8 +318,7 @@ export class Repository {
 
   private async writeEntityToJson(entity: Entity): Promise<void> {
     const keyName = entity[EntityKeyName]!
-    const { ...entityData } = entity
-    const jsonData: RedisJsonData = toRedisJson(this.#schema, entityData)
+    const jsonData: RedisJsonData = toRedisJson(this.#schema, entity)
     await this.client.jsonset(keyName, jsonData)
   }
 
@@ -341,6 +338,6 @@ export class Repository {
   }
 
   private makeKey(id: string): string {
-    return `${this.#schema.prefix}:${id}`
+    return `${this.#schema.schemaName}:${id}`
   }
 }

@@ -40,7 +40,7 @@ describe("Repository", () => {
           expect(buildRediSearchSchema).toHaveBeenCalledWith(simpleSchema))
 
         it("asks the client to create the index with data from the schema", () => {
-          const { indexName, dataStructure, prefix } = simpleSchema
+          const { indexName, dataStructure, schemaName: prefix } = simpleSchema
           expect(client.createIndex).toHaveBeenCalledWith(indexName, bogusSchema, {
             ON: dataStructure,
             PREFIX: `${prefix}:`
@@ -96,7 +96,7 @@ describe("Repository", () => {
           expect(buildRediSearchSchema).toHaveBeenCalledWith(simpleSchema))
 
         it("asks the client to create a new index with data from the schema", () => {
-          const { indexName, dataStructure, prefix } = simpleSchema
+          const { indexName, dataStructure, schemaName: prefix } = simpleSchema
           expect(client.createIndex).toHaveBeenCalledWith(indexName, bogusSchema, {
             ON: dataStructure,
             PREFIX: `${prefix}:`
@@ -116,7 +116,7 @@ describe("Repository", () => {
       })
 
       it("asks the client to create the index with data from the schema", () => {
-        const { indexName, dataStructure, prefix, stopWords } = stopWordsOffSchema
+        const { indexName, dataStructure, schemaName: prefix, stopWords } = stopWordsOffSchema
         expect(client.createIndex).toHaveBeenCalledWith(indexName, bogusSchema, {
           ON: dataStructure,
           PREFIX: `${prefix}:`,
@@ -133,7 +133,7 @@ describe("Repository", () => {
       })
 
       it("asks the client to create the index with data from the schema", () => {
-        const { indexName, dataStructure, prefix, stopWords } = customStopWordsSchema
+        const { indexName, dataStructure, schemaName: prefix, stopWords } = customStopWordsSchema
         expect(client.createIndex).toHaveBeenCalledWith(indexName, bogusSchema, {
           ON: dataStructure,
           PREFIX: `${prefix}:`,

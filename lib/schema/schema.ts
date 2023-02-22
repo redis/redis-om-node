@@ -9,12 +9,12 @@ import { SchemaDefinition } from './definitions'
 import { Field } from './field'
 
 /**
- * Defines a schema that determines how an {@link Entity} is mapped to Redis
- * data structures. Construct by passing in a prefix for keys in Redis, a
- * {@link SchemaDefinition}, and optionally {@link SchemaOptions}:
+ * Defines a schema that determines how an {@link Entity} is mapped
+ * to Redis data structures. Construct by passing in a schema name,
+ * a {@link SchemaDefinition}, and optionally {@link SchemaOptions}:
  *
  * ```typescript
- * const schema = new Schema('Foo', {
+ * const schema = new Schema('foo', {
  *   aString: { type: 'string' },
  *   aNumber: { type: 'number' },
  *   aBoolean: { type: 'boolean' },
@@ -32,39 +32,39 @@ import { Field } from './field'
  */
 export class Schema {
 
-  private _prefix: string
-  private _fieldsByName: Record<string, Field> = {}
-  private _definition: SchemaDefinition
-  private _options?: SchemaOptions
+  #schemaName: string
+  #fieldsByName: Record<string, Field> = {}
+  #definition: SchemaDefinition
+  #options?: SchemaOptions
 
   /**
    * Constructs a Schema.
    *
-   * @param prefix The string that comes before the ID when creating Redis keys.
+   * @param schemaName The name of the schema. Prefixes the ID when creating Redis keys.
    * @param schemaDef Defines all of the fields for the Schema and how they are mapped to Redis.
    * @param options Additional options for this Schema.
    */
-  constructor(prefix: string, schemaDef: SchemaDefinition, options?: SchemaOptions) {
-    this._prefix = prefix
-    this._definition = schemaDef
-    this._options = options
+  constructor(schemaName: string, schemaDef: SchemaDefinition, options?: SchemaOptions) {
+    this.#schemaName = schemaName
+    this.#definition = schemaDef
+    this.#options = options
 
     this.validateOptions()
     this.createFields()
   }
 
   /**
-   * The string that comes before the ID when creating Redis keys. Combined
-   * with the results of idStrategy to generate a key. If prefix is `Foo` and
-   * idStrategy returns `12345` then the generated key would be `Foo:12345`.
+   * The name of the schema. Prefixes the ID when creating Redis keys. Combined
+   * with the results of idStrategy to generate a key. If name is `foo` and
+   * idStrategy returns `12345` then the generated key would be `foo:12345`.
    */
-  get prefix(): string {
-    return this._prefix
+  get schemaName(): string {
+    return this.#schemaName
   }
 
   /** The {@link Field | Fields} defined by this Schema. */
   get fields(): Field[] {
-    return Object.entries(this._fieldsByName).map(([_name, field]) => field)
+    return Object.entries(this.#fieldsByName).map(([_name, field]) => field)
   }
 
   /**
@@ -73,33 +73,33 @@ export class Schema {
    * @param name The name of the {@link Field} in this Schema.
    * @returns The {@link Field}, or null of not found.
    */
-  fieldByName(name: string): Field {
-    return this._fieldsByName[name] ?? null
+  fieldByName(name: string): Field | null {
+    return this.#fieldsByName[name] ?? null
   }
 
   /** The configured name for the RediSearch index for this Schema. */
-  get indexName(): string { return this._options?.indexName ?? `${this.prefix}:index` }
+  get indexName(): string { return this.#options?.indexName ?? `${this.schemaName}:index` }
 
   /** The configured name for the RediSearch index hash for this Schema. */
-  get indexHashName(): string { return this._options?.indexHashName ?? `${this.prefix}:index:hash` }
+  get indexHashName(): string { return this.#options?.indexHashName ?? `${this.schemaName}:index:hash` }
 
   /**
    * The configured data structure, a string with the value of either `HASH` or `JSON`,
    * that this Schema uses to store {@link Entity | Entities} in Redis.
    */
-  get dataStructure(): DataStructure { return this._options?.dataStructure ?? 'JSON' }
+  get dataStructure(): DataStructure { return this.#options?.dataStructure ?? 'JSON' }
 
   /**
    * The configured usage of stop words, a string with the value of either `OFF`, `DEFAULT`,
    * or `CUSTOM`. See {@link SchemaOptions} for more details.
    */
-  get useStopWords(): StopWordOptions { return this._options?.useStopWords ?? 'DEFAULT' }
+  get useStopWords(): StopWordOptions { return this.#options?.useStopWords ?? 'DEFAULT' }
 
   /**
    * The configured stop words. Ignored if {@link Schema.useStopWords} is anything other
    * than `CUSTOM`.
    */
-  get stopWords(): Array<string> { return this._options?.stopWords ?? [] }
+  get stopWords(): Array<string> { return this.#options?.stopWords ?? [] }
 
   /**
    * Generates a unique string using the configured {@link IdStrategy}.
@@ -107,8 +107,8 @@ export class Schema {
    * @returns The generated id.
    */
   async generateId(): Promise<string> {
-    const ulidStrategy: IdStrategy = async () => ulid()
-    return await (this._options?.idStrategy ?? ulidStrategy)()
+    const ulidStrategy = () => ulid()
+    return await (this.#options?.idStrategy ?? ulidStrategy)()
   }
 
   /**
@@ -118,8 +118,8 @@ export class Schema {
   get indexHash(): string {
 
     const data = JSON.stringify({
-      definition: this._definition,
-      prefix: this.prefix,
+      definition: this.#definition,
+      prefix: this.schemaName,
       indexName: this.indexName,
       indexHashName: this.indexHashName,
       dataStructure: this.dataStructure,
@@ -131,29 +131,33 @@ export class Schema {
   }
 
   private createFields() {
-    return Object.entries(this._definition).forEach(([fieldName, fieldDef]) => {
+    return Object.entries(this.#definition).forEach(([fieldName, fieldDef]) => {
       const field = new Field(fieldName, fieldDef)
       this.validateField(field)
-      this._fieldsByName[fieldName] = new Field(fieldName, fieldDef)
+      this.#fieldsByName[fieldName] = field
     })
   }
 
   private validateOptions() {
-    if (!['HASH', 'JSON'].includes(this.dataStructure))
-      throw Error(`'${this.dataStructure}' in an invalid data structure. Valid data structures are 'HASH' and 'JSON'.`)
+    const { dataStructure, useStopWords } = this
 
-    if (!['OFF', 'DEFAULT', 'CUSTOM'].includes(this.useStopWords))
-      throw Error(`'${this.useStopWords}' in an invalid value for stop words. Valid values are 'OFF', 'DEFAULT', and 'CUSTOM'.`)
+    if (dataStructure !== 'HASH' && dataStructure !== 'JSON')
+      throw Error(`'${dataStructure}' in an invalid data structure. Valid data structures are 'HASH' and 'JSON'.`)
 
-    if (this._options?.idStrategy && !(this._options.idStrategy instanceof Function))
+    if (useStopWords !== 'OFF' && useStopWords !== 'DEFAULT' && useStopWords !== 'CUSTOM')
+      throw Error(`'${useStopWords}' in an invalid value for stop words. Valid values are 'OFF', 'DEFAULT', and 'CUSTOM'.`)
+
+    if (this.#options?.idStrategy && typeof this.#options.idStrategy !== 'function')
       throw Error("ID strategy must be a function that takes no arguments and returns a string.")
 
-    if (this.prefix === '') throw Error(`Prefix must be a non-empty string.`)
+    if (this.schemaName === '') throw Error(`Schema name must be a non-empty string.`)
     if (this.indexName === '') throw Error(`Index name must be a non-empty string.`)
   }
 
   private validateField(field: Field) {
-    if (!['boolean', 'date', 'number', 'point', 'string', 'string[]', 'text'].includes(field.type))
-      throw Error(`The field '${field.name}' is configured with a type of '${field.type}'. Valid types include 'boolean', 'date', 'number', 'point', 'string', 'string[]', and 'text'.`)
+    const { type } = field
+    if (type !== 'boolean' && type !== 'date' && type !== 'number' && type !== 'point' &&
+      type !== 'string' && type !== 'string[]' && type !== 'text')
+        throw Error(`The field '${field.name}' is configured with a type of '${field.type}'. Valid types include 'boolean', 'date', 'number', 'point', 'string', 'string[]', and 'text'.`)
   }
 }

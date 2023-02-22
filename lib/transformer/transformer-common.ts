@@ -53,8 +53,9 @@ export const convertPointToString = (value: Point) => {
 }
 
 export const convertStringToPoint = (value: string): Point => {
-  const [longitude, latitude] = value.split(',').map(convertStringToNumber)
-  return { longitude, latitude }
+  if (!isPointString(value)) throw Error(`Expected a point string from Redis but received: ${stringifyError(value)}`)
+  const [ longitude, latitude ] = value.split(',').map(convertStringToNumber)
+  return { longitude: longitude!, latitude: latitude! }
 }
 
 export function convertKnownValueToString(value: any) {

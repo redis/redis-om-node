@@ -13,6 +13,7 @@ export type AllFieldDefinition = {
    * value or in the case of JSON documents, sets the JSONPath to this
    * value preceded by `$.`. Overridden by {@link field} and/or {@link path}
    * settings.
+   * @deprecated
    */
   alias?: string
 

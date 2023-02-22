@@ -16,7 +16,7 @@ export type Entity = EntityData & {
 
 /** The free-form data associated with an {@link Entity}. */
 export type EntityData = {
-  [key: string]: EntityDataValue | Array<EntityDataValue> | EntityData | EntityData[]
+  [key: string]: EntityDataValue | EntityData | Array<EntityDataValue | EntityData>
 }
 
 /** Valid types for values in an {@link Entity}. */

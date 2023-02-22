@@ -160,10 +160,10 @@ describe("#fromRedisJson", () => {
       ["complains when a pathed date is invalid", { aPathedDate: 'NOT_A_NUMBER' }, `Expected a number containing a epoch date from RedisJSON but received: "NOT_A_NUMBER"`],
       ["complains when a nested date is invalid", { aNestedDate: { aDate: 'NOT_A_NUMBER' } }, `Expected a number containing a epoch date from RedisJSON but received: "NOT_A_NUMBER"`],
 
-      ["complains when a point is not a point string", { aPoint: 'NOT_A_POINT' }, `Expected a point string from RedisJSON but received: "NOT_A_POINT"`],
-      ["complains when a point is not a string", { aPoint: A_NUMBER }, `Expected a point string from RedisJSON but received: 42`],
-      ["complains when a pathed point is invalid", { aPathedPoint: 'NOT_A_POINT' }, `Expected a point string from RedisJSON but received: "NOT_A_POINT"`],
-      ["complains when a nested point is invalid", { aNestedPoint: { aPoint: 'NOT_A_POINT' } }, `Expected a point string from RedisJSON but received: "NOT_A_POINT"`],
+      ["complains when a point is not a point string", { aPoint: 'NOT_A_POINT' }, `Expected a point string from Redis but received: "NOT_A_POINT"`],
+      ["complains when a point is not a string", { aPoint: A_NUMBER }, `Expected a point string from Redis but received: 42`],
+      ["complains when a pathed point is invalid", { aPathedPoint: 'NOT_A_POINT' }, `Expected a point string from Redis but received: "NOT_A_POINT"`],
+      ["complains when a nested point is invalid", { aNestedPoint: { aPoint: 'NOT_A_POINT' } }, `Expected a point string from Redis but received: "NOT_A_POINT"`],
 
       ["complains when a string is invalid", { aString: SOME_STRINGS }, `Expected a string from RedisJSON but received: [\n "alfa",\n "bravo",\n "charlie"\n]`],
       ["complains when a pathed string is invalid", { aPathedString: SOME_STRINGS }, `Expected a string from RedisJSON but received: [\n "alfa",\n "bravo",\n "charlie"\n]`],

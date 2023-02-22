@@ -4,7 +4,7 @@ import clone from 'just-clone'
 import { Field, Schema } from "../schema"
 import { RedisJsonData } from "../client"
 
-import { convertEpochToDate, convertKnownValueToString, convertStringToPoint, isArray, isBoolean, isNull, isNumber, isPointString, isString, stringifyError } from "./transformer-common"
+import { convertEpochToDate, convertKnownValueToString, convertStringToPoint, isArray, isBoolean, isNull, isNumber, isString, stringifyError } from "./transformer-common"
 import { EntityData } from '../entity'
 
 
@@ -49,8 +49,7 @@ function convertKnownValueFromJson(field: Field, value: any): any {
       if (isNumber(value)) return convertEpochToDate(value)
       throw Error(`Expected a number containing a epoch date from RedisJSON but received: ${stringifyError(value)}`)
     case 'point':
-      if (isPointString(value)) return convertStringToPoint(value)
-      throw Error(`Expected a point string from RedisJSON but received: ${stringifyError(value)}`)
+      return convertStringToPoint(value)
     case 'string':
     case 'text':
       if (isString(value)) return value

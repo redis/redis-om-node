@@ -1,6 +1,6 @@
 import { Field, Schema } from "../schema"
 import { RedisHashData } from "../client"
-import { convertEpochStringToDate, convertStringToNumber, convertStringToPoint, isNotNullish, isNumberString, isPointString, stringifyError } from "./transformer-common"
+import { convertEpochStringToDate, convertStringToNumber, convertStringToPoint, isNotNullish, isNumberString, stringifyError } from "./transformer-common"
 import { EntityData } from "../entity"
 
 export function fromRedisHash(schema: Schema, hashData: RedisHashData): EntityData {
@@ -8,7 +8,7 @@ export function fromRedisHash(schema: Schema, hashData: RedisHashData): EntityDa
   schema.fields.forEach(field => {
     if (field.hashField) delete data[field.hashField]
     const value = hashData[field.hashField]
-    if (isNotNullish(value)) data[field.name] = convertKnownValueFromString(field, value)
+    if (isNotNullish(value)) data[field.name] = convertKnownValueFromString(field, value!)
   })
   return data
 }
@@ -26,8 +26,7 @@ function convertKnownValueFromString(field: Field, value: string): any {
       if (isNumberString(value)) return convertEpochStringToDate(value)
       throw Error(`Expected an string containing a epoch date from Redis but received: ${stringifyError(value)}`)
     case 'point':
-      if (isPointString(value)) return convertStringToPoint(value)
-      throw Error(`Expected a point string from Redis but received: ${stringifyError(value)}`)
+      return convertStringToPoint(value)
     case 'string':
     case 'text':
       return value

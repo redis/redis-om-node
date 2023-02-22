@@ -11,7 +11,7 @@ describe("Schema", () => {
     })
 
     it("provides the default data structure", () => expect(schema.dataStructure).toBe("JSON"))
-    it("has the keyspace prefix from the constructor", () => expect(schema.prefix).toBe("TestEntity"))
+    it("has the keyspace prefix from the constructor", () => expect(schema.schemaName).toBe("TestEntity"))
     it("generates the index name from the entity constructor name", () => expect(schema.indexName).toBe("TestEntity:index"))
     it("generates the index hash name from the entity constructor name", () => expect(schema.indexHashName).toBe("TestEntity:index:hash"))
     it("generates default Redis IDs", () => expect(schema.generateId()).resolves.toMatch(/^[0-9ABCDEFGHJKMNPQRSTVWXYZ]{26}$/))
@@ -49,8 +49,9 @@ describe("Schema", () => {
 
     it("returns a field by name", () => {
       const field = schema.fieldByName('aBoolean')
-      expect(field.name).toBe('aBoolean')
-      expect(field.type).toBe('boolean')
+      expect(field).toBeDefined()
+      expect(field!.name).toBe('aBoolean')
+      expect(field!.type).toBe('boolean')
     })
   })
 
@@ -120,7 +121,7 @@ describe("Schema", () => {
   describe("that is misconfigured", () => {
     it("throws an exception when keyspace prefix is empty", () =>
       expect(() => new Schema('', {}))
-        .toThrow("Prefix must be a non-empty string."))
+        .toThrow("Schema name must be a non-empty string."))
 
     it("throws an exception when the type is missing on a field definition", () =>
       // @ts-ignore: JavaScript test
