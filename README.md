@@ -87,7 +87,7 @@ const album = {
   year: 2014
 }
 
-const id = await repository.save(album)
+await repository.save(album)
 ```
 
 Search for matching entities:
@@ -112,7 +112,7 @@ Once you have that sweet, sweet `package.json`, let's add our newest favorite pa
 
     $ npm install redis-om
 
-Redis OM for Node.js uses [Node Redis](https://github.com/redis/node-redis). So you'll need to install that too:
+Redis OM for Node.js uses [Node Redis](https://github.com/redis/node-redis). So you should install that too:
 
     $ npm install redis
 
@@ -169,9 +169,9 @@ Node Redis has lots of other ways you can create a connection. You can use discr
 
 ## Entities and Schemas
 
-Redis OM is all about creating, reading, updating, and deleting *entities*. An [Entity](docs/README.md#entity) is just data in a JavaScript object that you want to save or retrieve from Redis. Almost any JavaScript object is a valid `Entity`.
+Redis OM is all about saving, reading, and deleting *entities*. An [Entity](docs/README.md#entity) is just data in a JavaScript object that you want to save or retrieve from Redis. Almost any JavaScript object is a valid `Entity`.
 
-[Schemas](docs/classes/Schema.md) define fields that might be on an `Entity`. It includes a field's type, how it is stored internally in Redis, and how to search on them if you are using RediSearch. By default, they are mapped to JSON documents using RedisJSON, but you can change it to use Hashes if want (more on that later).
+[Schemas](docs/classes/Schema.md) define fields that might be on an `Entity`. It includes a field's type, how it is stored internally in Redis, and how to search on it if you are using RediSearch. By default, they are mapped to JSON documents using RedisJSON, but you can change it to use Hashes if want (more on that later).
 
 Ok. Let's start doing some object mapping and create a `Schema`:
 
@@ -195,9 +195,9 @@ const studioSchema = new Schema('studio', {
 })
 ```
 
-The *first argument* defines the key name prefix that entities stored in Redis will have. It should be unique for your particular instance of Redis and probably meaningful to what you're doing. Here we have selected `album` for our album data and `studio` for data on recording studios. Imaginative, I know.
+The *first argument* is the `Schema` name. It defines the key name prefix that entities stored in Redis will have. It should be unique for your particular instance of Redis and probably meaningful to what you're doing. Here we have selected `album` for our album data and `studio` for data on recording studios. Imaginative, I know.
 
-The *second argument* defines fields that might be stored in that key. The name is, well, the name of the field. The type property tells Redis OM what sort of data is in the field. Valid types are: `string`, `number`, `boolean`, `string[]`, `date`, `point`, and `text`.
+The *second argument* defines fields that might be stored in that key. The property name is the name of the field that you'll be referencing in your Redis OM queries. The type property tells Redis OM what sort of data is in that field. Valid types are: `string`, `number`, `boolean`, `string[]`, `date`, `point`, and `text`.
 
 The first three types do exactly what you think—they define a field that is a [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String), a [Number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number), or a [Boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean). `string[]` does what you'd think as well, specifically describing an [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array) of Strings.
 
@@ -209,7 +209,7 @@ A `point` defines a point somewhere on the globe as a longitude and a latitude. 
 const point = { longitude: 12.34, latitude: 56.78 }
 ```
 
-A `text` field is a lot like a `string`. If you're just reading and writing objects, they are identical. But if you want to *search* on them, **they are very, very different**. I'll cover that in detail when I talk about [using RediSearch](#-using-redisearch) but the tl;dr is that `string` fields can only be matched on their exact value and are best for keys and discrete data—like postal codes or status indicators—while `text` fields have full-text search enabled on them, are optimized for human-readable text, and can take advantage of [stemming](https://redis.io/docs/stack/search/reference/stemming/) and [stop words](https://redis.io/docs/stack/search/reference/stopwords/).
+A `text` field is a lot like a `string`. If you're just reading and writing objects, they are identical. But if you want to *search* on them, **they are very, very different**. I'll cover that in detail when I talk about [searching](#searching) but the tl;dr is that `string` fields can only be matched on their exact value and are best for keys and discrete data—like postal codes or status indicators—while `text` fields have full-text search enabled on them, are optimized for human-readable text, and can take advantage of [stemming](https://redis.io/docs/stack/search/reference/stemming/) and [stop words](https://redis.io/docs/stack/search/reference/stopwords/).
 
 ### JSON and Hashes
 
@@ -356,7 +356,7 @@ With this configuration, your entities will remain unchanged and will still have
 
 ## Reading, Writing, and Removing with Repository
 
-Now that we have a client and a schema, we have what we need to make a [*repository*](docs/classes/Repository.md). A repository provides the means to write, read, and remove entities. Creating a repository is pretty straightforward—just instantiate one with a schema a client:
+Now that we have a client and a schema, we have what we need to make a [*repository*](docs/classes/Repository.md). A repository provides the means to write, read, and remove entities. Creating a repository is pretty straightforward—just instantiate one with a schema and a client:
 
 ```javascript
 import { Repository } from 'redis-om'
@@ -368,7 +368,7 @@ const studioRepository = new Repository(studioSchema, redis)
 Once we have a repository, we can use `.save` to, well, save entities:
 
 ```javascript
-const album = {
+let album = {
   artist: "Mushroomhead",
   title: "The Righteous & The Butterfly",
   year: 2014,
@@ -376,16 +376,31 @@ const album = {
   outOfPublication: true
 }
 
-const entityId = await albumRepository.save(album) // '01FJYWEYRHYFT8YTEGQBABJ43J'
+album = await albumRepository.save(album)
 ```
 
-This saves your entity and returns the entity ID under which it was saved. This ID is a [ULID](https://github.com/ulid/spec) and is a unique id representing that object. If you don't like ULIDs for some reason and instead want to provide your own IDs, you can totally do that:
+This saves your entity and returns a copy, a copy with some additional properties. The primary property we care about right now is the entity ID, which Redis OM will generate for you. However, this isn't stored and accessed like a typical property. After all, you might have a property in your data with a name that conflicts with the name Redis OM uses and that would create all sorts of problems.
+
+So, Redis OM uses a [Symbol](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol) to access it instead. You'll need to import this symbol from Redis OM:
 
 ```javascript
-const entityId = await albumRepository.save('BWOMP', album) // 'BWOMP'
+import { EntityId } from 'redis-om'
 ```
 
-Once you have an object's entity ID you can `.fetch` with it:
+Then you can access the entity ID using that symbol:
+
+```javascript
+album = await albumRepository.save(album)
+album[EntityId] // '01FJYWEYRHYFT8YTEGQBABJ43J'
+```
+
+The entity ID that Redis OM generates is a [ULID](https://github.com/ulid/spec) and is a unique id representing that object. If you don't like using generated IDs for some reason and instead want to provide your own, you can totally do that:
+
+```javascript
+album = await albumRepository.save('BWOMP', album)
+```
+
+Regardless, once you have an object's entity ID you can `.fetch` with it:
 
 ```javascript
 const album = await albumRepository.fetch('01FJYWEYRHYFT8YTEGQBABJ43J')
@@ -396,37 +411,24 @@ album.genres // [ 'metal' ]
 album.outOfPublication // true
 ```
 
-Fetched entities include their entity ID as a property. But, since you might have a property in your data named `entityId` already, Redis OM uses a [Symbol](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol) to access it instead. You'll need to import this symbol from Redis OM:
+If you call `.save` with an entity that *already* has an entity ID, probably because you *fetched* it, `.save` will update it instead of creating a new `Entity`:
 
 ```javascript
-import { EntityId } from 'redis-om'
+let album = await albumRepository.fetch('01FJYWEYRHYFT8YTEGQBABJ43J')
+album.genres = [ 'metal', 'nu metal', 'avantgarde' ]
+album.outOfPublication = false
+
+album = await albumRepository.save(album)
 ```
 
-Then you can access the entity ID using that symbol:
-
-```javascript
-const album = await albumRepository.fetch('01FJYWEYRHYFT8YTEGQBABJ43J')
-album[EntityId] // '01FJYWEYRHYFT8YTEGQBABJ43J'
-```
-
-If you call `.save` with an entity that *already* has an entity ID, you know, because you *fetched* it, `.save` will update it:
+You can even use `.save` to clone an `Entity`. Just pass in a new entity ID to `.save` and it'll save the data to that entity ID:
 
 ```javascript
 const album = await albumRepository.fetch('01FJYWEYRHYFT8YTEGQBABJ43J')
 album.genres = [ 'metal', 'nu metal', 'avantgarde' ]
 album.outOfPublication = false
 
-const entityId = await albumRepository.save(album) // '01FJYWEYRHYFT8YTEGQBABJ43J'
-```
-
-You can even use `.save` to clone a fetched entity. Just pass in a new entity ID to `.save` and it'll save that data to that entity ID:
-
-```javascript
-const album = await albumRepository.fetch('01FJYWEYRHYFT8YTEGQBABJ43J')
-album.genres = [ 'metal', 'nu metal', 'avantgarde' ]
-album.outOfPublication = false
-
-const entityId = await albumRepository.save('BWOMP', album) // 'BWOMP'
+const clonedEntity = await albumRepository.save('BWOMP', album)
 ```
 
 And, of course, you need to be able to delete things. Use `.remove` to do that:
@@ -440,62 +442,6 @@ You can also set an entity to expire after a certain number of seconds. Redis wi
 ```javascript
 const ttlInSeconds = 12 * 60 * 60  // 12 hours
 await albumRepository.expire('01FJYWEYRHYFT8YTEGQBABJ43J', ttlInSeconds)
-```
-
-### Creating Entities
-
-Sometimes you might want to create an entity *before* you `.save` it. Maybe you're not sure what properties your going to add and it'll just make your code tidier to save it later. Well, there's a `.createEntity` for that.
-
-If you just call `.createEntity` you'll get a newly created entity with a generated entity ID:
-
-```javascript
-const album = await albumRepository.createEntity()
-album[EntityId] // '01FJYWEYRHYFT8YTEGQBABJ43J'
-```
-
-You can, of course, provide your own entity ID:
-
-```javascript
-const album = await albumRepository.createEntity('BWOMP')
-album[EntityId] // 'BWOMP'
-```
-
-Or some data to get the entity started:
-
-```javascript
-const album = await albumRepository.createEntity({
-  artist: "Mushroomhead",
-  title: "The Righteous & The Butterfly",
-  year: 2014,
-  genres: [ 'metal' ],
-  outOfPublication: true
-})
-
-album[EntityId] // '01FJYWEYRHYFT8YTEGQBABJ43J'
-album.artist // "Mushroomhead"
-album.title // "The Righteous & The Butterfly"
-album.year // 2014
-album.genres // [ 'metal' ]
-album.outOfPublication // true
-```
-
-And, you can provide *both*:
-
-```javascript
-const album = await albumRepository.createEntity('BWOMP', {
-  artist: "Mushroomhead",
-  title: "The Righteous & The Butterfly",
-  year: 2014,
-  genres: [ 'metal' ],
-  outOfPublication: true
-})
-
-album[EntityId] // 'BWOMP'
-album.artist // "Mushroomhead"
-album.title // "The Righteous & The Butterfly"
-album.year // 2014
-album.genres // [ 'metal' ]
-album.outOfPublication // true
 ```
 
 ### Missing Entities and Null Values
