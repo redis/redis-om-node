@@ -12,16 +12,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ### Changed
 - *Schema* now supports nested JSON via the `path` option.
 - *Schema* now supports specifying the field for a Hash via the `field` option.
-- *Schema* now supports `async` functions for *IdStrategy* allowing you to slow down your saves with network calls to generate IDs.
+- *Schema* now supports `async` functions for *IdStrategy* allowing you to slow down your saves with I/O calls to generate IDs.
 - *Repository* now allows adding Entities with properties that are not in the *Schema*. These can even be nested if you are using JSON.
 - *Repository* can be now be constructed directly with `new` in addition to being created from a *Client* via `.fetchRepository`.
 - *Repository* can now directly be handed an open Node Redis connection. No need to create a *Client* instance.
-- *Client* was deprecated in favor of using Node Redis connections.
+- *Client* deprecated in favor of using Node Redis connections.
 
 ### Removed
-- *Breaking Change* Removed *Entity* class. While still a type, it's no longer a class and is just an alias for a JavaScript object.
+- *Breaking Change* Removed *Entity* class. While still a type, it's no longer a class and is mostly just an alias for a JavaScript object.
 - *Breaking Change* Removed `.execute` method on *Client*. Use Node Redis instead.
-- *Breaking Change* Removed `.createEntity` and `.createAndSave` methods on *Repository*. Entities are simply JavaScript objects—to create one just create an JavaScript object and call `.save`.
+- *Breaking Change* Removed `.createEntity` and `.createAndSave` methods on *Repository*. Entities are simply JavaScript objects—to create one just create a JavaScript object and call `.save`.
 - As *Entity* is no longer a class, custom methods on an *Entity* are no longer supported.
 
 ## 0.3.6 - 2022-07-12
