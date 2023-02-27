@@ -1,51 +1,68 @@
-[redis-om](../README.md) / RedisError
+[redis-om](../README.md) / RedisOmError
 
-# Class: RedisError
+# Class: RedisOmError
 
 ## Hierarchy
 
 - `Error`
 
-  ↳ **`RedisError`**
+  ↳ **`RedisOmError`**
 
 ## Table of contents
 
 ### Constructors
 
-- [constructor](RedisError.md#constructor)
+- [constructor](RedisOmError.md#constructor)
 
 ### Properties
 
-- [cause](RedisError.md#cause)
-- [message](RedisError.md#message)
-- [name](RedisError.md#name)
-- [stack](RedisError.md#stack)
-- [prepareStackTrace](RedisError.md#preparestacktrace)
-- [stackTraceLimit](RedisError.md#stacktracelimit)
+- [cause](RedisOmError.md#cause)
+- [message](RedisOmError.md#message)
+- [name](RedisOmError.md#name)
+- [stack](RedisOmError.md#stack)
+- [prepareStackTrace](RedisOmError.md#preparestacktrace)
+- [stackTraceLimit](RedisOmError.md#stacktracelimit)
 
 ### Methods
 
-- [captureStackTrace](RedisError.md#capturestacktrace)
+- [captureStackTrace](RedisOmError.md#capturestacktrace)
 
 ## Constructors
 
 ### constructor
 
-• **new RedisError**(`message`)
+• **new RedisOmError**(`message?`)
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `message` | `string` |
+| `message?` | `string` |
 
-#### Overrides
+#### Inherited from
 
 Error.constructor
 
 #### Defined in
 
-[lib/errors.ts:2](https://github.com/redis/redis-om-node/blob/b3c437e/lib/errors.ts#L2)
+node_modules/typescript/lib/lib.es5.d.ts:1059
+
+• **new RedisOmError**(`message?`, `options?`)
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `message?` | `string` |
+| `options?` | `ErrorOptions` |
+
+#### Inherited from
+
+Error.constructor
+
+#### Defined in
+
+node_modules/typescript/lib/lib.es2022.error.d.ts:30
 
 ## Properties
 

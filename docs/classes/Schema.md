@@ -2,12 +2,12 @@
 
 # Class: Schema
 
-Defines a schema that determines how an [Entity](../README.md#entity) is mapped to Redis
-data structures. Construct by passing in a prefix for keys in Redis, a
-[SchemaDefinition](../README.md#schemadefinition), and optionally [SchemaOptions](../README.md#schemaoptions):
+Defines a schema that determines how an [Entity](../README.md#entity) is mapped
+to Redis data structures. Construct by passing in a schema name,
+a [SchemaDefinition](../README.md#schemadefinition), and optionally [SchemaOptions](../README.md#schemaoptions):
 
 ```typescript
-const schema = new Schema('Foo', {
+const schema = new Schema('foo', {
   aString: { type: 'string' },
   aNumber: { type: 'number' },
   aBoolean: { type: 'boolean' },
@@ -36,7 +36,7 @@ its constructor.
 - [indexHash](Schema.md#indexhash)
 - [indexHashName](Schema.md#indexhashname)
 - [indexName](Schema.md#indexname)
-- [prefix](Schema.md#prefix)
+- [schemaName](Schema.md#schemaname)
 - [stopWords](Schema.md#stopwords)
 - [useStopWords](Schema.md#usestopwords)
 
@@ -49,7 +49,7 @@ its constructor.
 
 ### constructor
 
-• **new Schema**(`prefix`, `schemaDef`, `options?`)
+• **new Schema**(`schemaName`, `schemaDef`, `options?`)
 
 Constructs a Schema.
 
@@ -57,13 +57,13 @@ Constructs a Schema.
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `prefix` | `string` | The string that comes before the ID when creating Redis keys. |
+| `schemaName` | `string` | The name of the schema. Prefixes the ID when creating Redis keys. |
 | `schemaDef` | [`SchemaDefinition`](../README.md#schemadefinition) | Defines all of the fields for the Schema and how they are mapped to Redis. |
 | `options?` | [`SchemaOptions`](../README.md#schemaoptions) | Additional options for this Schema. |
 
 #### Defined in
 
-[lib/schema/schema.ts:47](https://github.com/redis/redis-om-node/blob/b3c437e/lib/schema/schema.ts#L47)
+[lib/schema/schema.ts:48](https://github.com/redis/redis-om-node/blob/e552415/lib/schema/schema.ts#L48)
 
 ## Accessors
 
@@ -80,7 +80,7 @@ that this Schema uses to store [Entities](../README.md#entity) in Redis.
 
 #### Defined in
 
-[lib/schema/schema.ts:90](https://github.com/redis/redis-om-node/blob/b3c437e/lib/schema/schema.ts#L90)
+[lib/schema/schema.ts:91](https://github.com/redis/redis-om-node/blob/e552415/lib/schema/schema.ts#L91)
 
 ___
 
@@ -96,7 +96,7 @@ The [Fields](Field.md) defined by this Schema.
 
 #### Defined in
 
-[lib/schema/schema.ts:66](https://github.com/redis/redis-om-node/blob/b3c437e/lib/schema/schema.ts#L66)
+[lib/schema/schema.ts:67](https://github.com/redis/redis-om-node/blob/e552415/lib/schema/schema.ts#L67)
 
 ___
 
@@ -113,7 +113,7 @@ changed when calling [createIndex](Repository.md#createindex).
 
 #### Defined in
 
-[lib/schema/schema.ts:118](https://github.com/redis/redis-om-node/blob/b3c437e/lib/schema/schema.ts#L118)
+[lib/schema/schema.ts:119](https://github.com/redis/redis-om-node/blob/e552415/lib/schema/schema.ts#L119)
 
 ___
 
@@ -129,7 +129,7 @@ The configured name for the RediSearch index hash for this Schema.
 
 #### Defined in
 
-[lib/schema/schema.ts:84](https://github.com/redis/redis-om-node/blob/b3c437e/lib/schema/schema.ts#L84)
+[lib/schema/schema.ts:85](https://github.com/redis/redis-om-node/blob/e552415/lib/schema/schema.ts#L85)
 
 ___
 
@@ -145,17 +145,17 @@ The configured name for the RediSearch index for this Schema.
 
 #### Defined in
 
-[lib/schema/schema.ts:81](https://github.com/redis/redis-om-node/blob/b3c437e/lib/schema/schema.ts#L81)
+[lib/schema/schema.ts:82](https://github.com/redis/redis-om-node/blob/e552415/lib/schema/schema.ts#L82)
 
 ___
 
-### prefix
+### schemaName
 
-• `get` **prefix**(): `string`
+• `get` **schemaName**(): `string`
 
-The string that comes before the ID when creating Redis keys. Combined
-with the results of idStrategy to generate a key. If prefix is `Foo` and
-idStrategy returns `12345` then the generated key would be `Foo:12345`.
+The name of the schema. Prefixes the ID when creating Redis keys. Combined
+with the results of idStrategy to generate a key. If name is `foo` and
+idStrategy returns `12345` then the generated key would be `foo:12345`.
 
 #### Returns
 
@@ -163,7 +163,7 @@ idStrategy returns `12345` then the generated key would be `Foo:12345`.
 
 #### Defined in
 
-[lib/schema/schema.ts:61](https://github.com/redis/redis-om-node/blob/b3c437e/lib/schema/schema.ts#L61)
+[lib/schema/schema.ts:62](https://github.com/redis/redis-om-node/blob/e552415/lib/schema/schema.ts#L62)
 
 ___
 
@@ -180,7 +180,7 @@ than `CUSTOM`.
 
 #### Defined in
 
-[lib/schema/schema.ts:102](https://github.com/redis/redis-om-node/blob/b3c437e/lib/schema/schema.ts#L102)
+[lib/schema/schema.ts:103](https://github.com/redis/redis-om-node/blob/e552415/lib/schema/schema.ts#L103)
 
 ___
 
@@ -197,13 +197,13 @@ or `CUSTOM`. See [SchemaOptions](../README.md#schemaoptions) for more details.
 
 #### Defined in
 
-[lib/schema/schema.ts:96](https://github.com/redis/redis-om-node/blob/b3c437e/lib/schema/schema.ts#L96)
+[lib/schema/schema.ts:97](https://github.com/redis/redis-om-node/blob/e552415/lib/schema/schema.ts#L97)
 
 ## Methods
 
 ### fieldByName
 
-▸ **fieldByName**(`name`): [`Field`](Field.md)
+▸ **fieldByName**(`name`): ``null`` \| [`Field`](Field.md)
 
 Gets a single [Field](Field.md) defined by this Schema.
 
@@ -215,13 +215,13 @@ Gets a single [Field](Field.md) defined by this Schema.
 
 #### Returns
 
-[`Field`](Field.md)
+``null`` \| [`Field`](Field.md)
 
 The [Field](Field.md), or null of not found.
 
 #### Defined in
 
-[lib/schema/schema.ts:76](https://github.com/redis/redis-om-node/blob/b3c437e/lib/schema/schema.ts#L76)
+[lib/schema/schema.ts:77](https://github.com/redis/redis-om-node/blob/e552415/lib/schema/schema.ts#L77)
 
 ___
 
@@ -239,4 +239,4 @@ The generated id.
 
 #### Defined in
 
-[lib/schema/schema.ts:109](https://github.com/redis/redis-om-node/blob/b3c437e/lib/schema/schema.ts#L109)
+[lib/schema/schema.ts:110](https://github.com/redis/redis-om-node/blob/e552415/lib/schema/schema.ts#L110)
