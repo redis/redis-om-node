@@ -127,8 +127,8 @@ export abstract class Repository<TEntity extends Entity> {
    * @param data Optional values with which to initialize the entity.
    * @returns The newly created and saved Entity.
    */
-  async createAndSave(data: EntityData = {}): Promise<TEntity> {
-    const entity = this.createEntity(data);
+  async createAndSave(data: EntityData = {}, customEntityId?: string): Promise<TEntity> {
+    const entity = this.createEntity(data, customEntityId);
     await this.save(entity)
     return entity
   }
