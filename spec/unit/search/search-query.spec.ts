@@ -1,7 +1,10 @@
+import '../helpers/custom-matchers'
+
 import { Client } from "$lib/client"
 import { Search } from "$lib/search"
 
 import { simpleHashSchema, simpleJsonSchema } from "../helpers/test-entity-and-schema"
+import { SearchError } from "$lib/errors"
 
 import {
   A_STRING, ANOTHER_STRING, A_THIRD_STRING,
@@ -55,7 +58,7 @@ describe("Search", () => {
 
       it("throws an exception when invoked with a missing field", () => {
         expect(() => search.where('missingString'))
-          .toThrow("The field 'missingString' is not part of the schema.")
+          .toThrowErrorOfType(SearchError, "The field 'missingString' is not part of the schema.")
       })
 
       it("generates a query using .where", () => {
@@ -172,7 +175,7 @@ describe("Search", () => {
 
       it("throws an exception when invoked with a missing field", () => {
         expect(() => search.where('missingString'))
-          .toThrow("The field 'missingString' is not part of the schema.")
+          .toThrowErrorOfType(SearchError, "The field 'missingString' is not part of the schema.")
       })
 
       it("generates a query using .where", () => {

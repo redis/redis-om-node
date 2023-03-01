@@ -7,7 +7,8 @@ import { IdStrategy, DataStructure, StopWordOptions, SchemaOptions } from './opt
 
 import { SchemaDefinition } from './definitions'
 import { Field } from './field'
-import { RedisOmError } from '..'
+import { SchemaError } from '../errors'
+
 
 /**
  * Defines a schema that determines how an {@link Entity} is mapped
@@ -50,8 +51,8 @@ export class Schema {
     this.#definition = schemaDef
     this.#options = options
 
-    this.validateOptions()
-    this.createFields()
+    this.#validateOptions()
+    this.#createFields()
   }
 
   /**
@@ -131,34 +132,34 @@ export class Schema {
     return createHash('sha1').update(data).digest('base64')
   }
 
-  private createFields() {
+  #createFields() {
     return Object.entries(this.#definition).forEach(([fieldName, fieldDef]) => {
       const field = new Field(fieldName, fieldDef)
-      this.validateField(field)
+      this.#validateField(field)
       this.#fieldsByName[fieldName] = field
     })
   }
 
-  private validateOptions() {
+  #validateOptions() {
     const { dataStructure, useStopWords } = this
 
     if (dataStructure !== 'HASH' && dataStructure !== 'JSON')
-      throw new RedisOmError(`'${dataStructure}' in an invalid data structure. Valid data structures are 'HASH' and 'JSON'.`)
+      throw new SchemaError(`'${dataStructure}' in an invalid data structure. Valid data structures are 'HASH' and 'JSON'.`)
 
     if (useStopWords !== 'OFF' && useStopWords !== 'DEFAULT' && useStopWords !== 'CUSTOM')
-      throw new RedisOmError(`'${useStopWords}' in an invalid value for stop words. Valid values are 'OFF', 'DEFAULT', and 'CUSTOM'.`)
+      throw new SchemaError(`'${useStopWords}' in an invalid value for stop words. Valid values are 'OFF', 'DEFAULT', and 'CUSTOM'.`)
 
     if (this.#options?.idStrategy && typeof this.#options.idStrategy !== 'function')
-      throw new RedisOmError("ID strategy must be a function that takes no arguments and returns a string.")
+      throw new SchemaError("ID strategy must be a function that takes no arguments and returns a string.")
 
-    if (this.schemaName === '') throw new RedisOmError(`Schema name must be a non-empty string.`)
-    if (this.indexName === '') throw new RedisOmError(`Index name must be a non-empty string.`)
+    if (this.schemaName === '') throw new SchemaError(`Schema name must be a non-empty string.`)
+    if (this.indexName === '') throw new SchemaError(`Index name must be a non-empty string.`)
   }
 
-  private validateField(field: Field) {
+  #validateField(field: Field) {
     const { type } = field
     if (type !== 'boolean' && type !== 'date' && type !== 'number' && type !== 'point' &&
         type !== 'string' && type !== 'string[]' && type !== 'text')
-      throw new RedisOmError(`The field '${field.name}' is configured with a type of '${field.type}'. Valid types include 'boolean', 'date', 'number', 'point', 'string', 'string[]', and 'text'.`)
+      throw new SchemaError(`The field '${field.name}' is configured with a type of '${field.type}'. Valid types include 'boolean', 'date', 'number', 'point', 'string', 'string[]', and 'text'.`)
   }
 }

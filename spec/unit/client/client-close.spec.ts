@@ -1,6 +1,6 @@
 import { redis } from '../helpers/mock-redis'
-import { Client } from '$lib/client'
 
+import { Client } from '$lib/client'
 
 describe("Client", () => {
 

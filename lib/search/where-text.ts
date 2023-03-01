@@ -1,7 +1,7 @@
 import { Search } from "./search"
 import { WhereField } from "./where-field"
 
-import { RedisOmError } from "../errors"
+import { SearchError } from "../errors"
 
 export class WhereText extends WhereField {
   private value!: string
@@ -47,6 +47,6 @@ export class WhereText extends WhereField {
   }
 
   private throwEqualsExcpetion(): Search {
-    throw new RedisOmError("Cannot call .equals on a field of type 'text', either use .match to perform full-text search or change the type to 'string' in the Schema.")
+    throw new SearchError("Cannot call .equals on a field of type 'text', either use .match to perform full-text search or change the type to 'string' in the Schema.")
   }
 }

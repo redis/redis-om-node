@@ -1,8 +1,10 @@
 import '../helpers/mock-client'
+import '../helpers/custom-matchers'
 
 import { Client } from '$lib/client'
 import { Repository } from '$lib/repository'
 import { Schema } from '$lib/schema'
+
 
 const simpleSchema = new Schema("SimpleEntity", {}, { dataStructure: 'HASH' })
 
@@ -40,7 +42,7 @@ describe("Repository", () => {
       })
 
       it("propogates the exception", async () =>
-        expect(async () => await repository.dropIndex()).rejects.toThrow("Some other error"))
+        expect(async () => await repository.dropIndex()).rejects.toThrowErrorOfType(Error, "Some other error"))
     })
   })
 })

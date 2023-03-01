@@ -1,4 +1,7 @@
+import '../helpers/custom-matchers'
+
 import { Client } from "$lib/client"
+import { SearchError } from "$lib/errors"
 import { Search, WhereField } from "$lib/search"
 
 import { A_STRING , A_NUMBER } from '../../helpers/example-data'
@@ -127,10 +130,10 @@ describe("Search", () => {
     describe("when trying to perform string equality full-text", () => {
       const EXPECTED_EXCEPTION = "Cannot call .equals on a field of type 'text', either use .match to perform full-text search or change the type to 'string' in the Schema."
       it("throws an exception telling you what to do", () => {
-        expect(() => where.eq(A_STRING)).toThrow(EXPECTED_EXCEPTION)
-        expect(() => where.equal(A_STRING)).toThrow(EXPECTED_EXCEPTION)
-        expect(() => where.equals(A_STRING)).toThrow(EXPECTED_EXCEPTION)
-        expect(() => where.equalTo(A_STRING)).toThrow(EXPECTED_EXCEPTION)
+        expect(() => where.eq(A_STRING)).toThrowErrorOfType(SearchError, EXPECTED_EXCEPTION)
+        expect(() => where.equal(A_STRING)).toThrowErrorOfType(SearchError, EXPECTED_EXCEPTION)
+        expect(() => where.equals(A_STRING)).toThrowErrorOfType(SearchError, EXPECTED_EXCEPTION)
+        expect(() => where.equalTo(A_STRING)).toThrowErrorOfType(SearchError, EXPECTED_EXCEPTION)
       })
     })
   })

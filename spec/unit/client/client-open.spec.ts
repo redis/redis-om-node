@@ -1,7 +1,6 @@
 import { redis, createClient } from '../helpers/mock-redis'
 import { Client } from '$lib/client'
 
-
 describe("Client", () => {
 
   let client: Client, self: Client

@@ -16,7 +16,7 @@ import { WhereString } from './where-string'
 import { WhereText } from './where-text'
 
 import { extractCountFromSearchResults, extractEntitiesFromSearchResults, extractEntityIdsFromSearchResults, extractKeyNamesFromSearchResults } from "./results-converter"
-import { RedisOmError } from "../errors"
+import { RedisOmError, SearchError } from "../errors"
 import { WhereDate } from "./where-date"
 
 /**
@@ -581,7 +581,7 @@ export class Search extends AbstractSearch {
     const subSearch = subSearchFn(search)
 
     if (subSearch.rootWhere === undefined) {
-      throw new RedisOmError("Sub-search without and root where was somehow defined.")
+      throw new SearchError("Sub-search without a root where was somehow defined.")
     } else {
       if (this.rootWhere === undefined) {
         this.rootWhere = subSearch.rootWhere
@@ -596,7 +596,7 @@ export class Search extends AbstractSearch {
   private createWhere(fieldName: string): WhereField {
     const field = this.schema.fieldByName(fieldName)
 
-    if (field === null) throw new RedisOmError(`The field '${fieldName}' is not part of the schema.`)
+    if (field === null) throw new SearchError(`The field '${fieldName}' is not part of the schema.`)
 
     if (field.type === 'boolean' && this.schema.dataStructure === 'HASH') return new WhereHashBoolean(this, field)
     if (field.type === 'boolean' && this.schema.dataStructure === 'JSON') return new WhereJsonBoolean(this, field)

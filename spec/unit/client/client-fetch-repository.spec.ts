@@ -1,9 +1,11 @@
+import '../helpers/custom-matchers'
+
 import { Client } from '$lib/client'
+import { RedisOmError } from '$lib/errors'
 import { Repository } from '$lib/repository'
 import { Schema } from '$lib/schema/schema'
 
 vi.mock('$lib/repository')
-
 
 describe("Client", () => {
 
@@ -48,12 +50,12 @@ describe("Client", () => {
 
         it("errors when called on a closed client", () =>
           expect(() => client.fetchRepository(schema))
-            .toThrow("Redis connection needs to be open."))
+            .toThrowErrorOfType(RedisOmError, "Redis connection needs to be open."))
       })
 
       it("errors when called on a new client", () =>
         expect(() => client.fetchRepository(schema))
-          .toThrow("Redis connection needs to be open."))
+          .toThrowErrorOfType(RedisOmError, "Redis connection needs to be open."))
     })
   })
 })

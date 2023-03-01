@@ -1,6 +1,9 @@
-import { redis, multi } from '../helpers/mock-redis'
-import { Client } from '$lib/client'
+import '../helpers/custom-matchers'
 
+import { redis, multi } from '../helpers/mock-redis'
+
+import { Client } from '$lib/client'
+import { RedisOmError } from '$lib/errors'
 
 describe("Client", () => {
 
@@ -32,11 +35,11 @@ describe("Client", () => {
 
       it("errors when called on a closed client", () =>
         expect(async () => await client.hsetall('foo', { foo: 'bar', baz: 'qux' }))
-          .rejects.toThrow("Redis connection needs to be open."))
+          .rejects.toThrowErrorOfType(RedisOmError, "Redis connection needs to be open."))
     })
 
     it("errors when called on a new client", async () =>
       expect(async () => await client.hsetall('foo', { foo: 'bar', baz: 'qux' }))
-        .rejects.toThrow("Redis connection needs to be open."))
+        .rejects.toThrowErrorOfType(RedisOmError, "Redis connection needs to be open."))
   })
 })

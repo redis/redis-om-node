@@ -1,6 +1,6 @@
 import { Search } from "./search"
 import { WhereField } from "./where-field"
-import { RedisOmError } from "../errors"
+import { SearchError } from "../errors"
 
 export class WhereString extends WhereField {
   private value!: string
@@ -30,10 +30,10 @@ export class WhereString extends WhereField {
   }
 
   private throwMatchExcpetion(): Search {
-    throw new RedisOmError("Cannot perform full-text search operations like .match on field of type 'string'. If full-text search is needed on this field, change the type to 'text' in the Schema.")
+    throw new SearchError("Cannot perform full-text search operations like .match on field of type 'string'. If full-text search is needed on this field, change the type to 'text' in the Schema.")
   }
 
   private throwMatchExcpetionReturningThis(): WhereString {
-    throw new RedisOmError("Cannot perform full-text search operations like .match on field of type 'string'. If full-text search is needed on this field, change the type to 'text' in the Schema.")
+    throw new SearchError("Cannot perform full-text search operations like .match on field of type 'string'. If full-text search is needed on this field, change the type to 'text' in the Schema.")
   }
 }
