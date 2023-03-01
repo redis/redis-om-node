@@ -105,8 +105,8 @@ export abstract class Repository<TEntity extends Entity> {
    * @param data Optional values with which to initialize the entity.
    * @returns A newly created Entity.
    */
-  createEntity(data: EntityData = {}): TEntity {
-    const id = this.schema.generateId();
+  createEntity(data: EntityData = {}, customEntityId?: string): TEntity {
+    const id = customEntityId ? customEntityId : this.schema.generateId();
     return new this.schema.entityCtor(this.schema, id, data);
   }
 
