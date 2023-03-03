@@ -1,8 +1,11 @@
+import '../../helpers/custom-matchers'
+
 import { RedisHashData } from "$lib/client"
 import { Schema } from "$lib/schema"
 import { toRedisHash } from "$lib/transformer"
 
 import { AN_INVALID_POINT, A_DATE, A_DATE_EPOCH, A_DATE_EPOCH_STRING, A_DATE_ISO, A_NUMBER, A_NUMBER_STRING, A_PARITAL_POINT, A_POINT, A_POINT_PRETTY_JSON, A_POINT_STRING, A_STRING, SOME_STRINGS, SOME_STRINGS_JOINED, SOME_TEXT } from "../../helpers/example-data"
+import { InvalidHashInput, NestedHashInput, PointOutOfRange, ArrayHashInput } from '$lib/errors'
 
 
 describe("#toRedisHash", () => {
@@ -36,17 +39,17 @@ describe("#toRedisHash", () => {
 
     it("complains when given an array", () => {
         expect(() => toRedisHash(schema, { anArray: [A_STRING, A_NUMBER, true]}))
-        .toThrow("You can not store an array in a Redis Hash without defining it in the Schema.")
+        .toThrowErrorOfType(ArrayHashInput, "Unexpected array in Hash at property 'anArray'. You can not store an array in a Redis Hash without defining it in the Schema.")
     })
 
     it("complains when given an object", () => {
       expect(() => toRedisHash(schema, { anObject: { aString: A_STRING, aNumber: A_NUMBER, aBoolean: true }}))
-        .toThrow("You can not store a nested object in a Redis Hash.")
+        .toThrowErrorOfType(NestedHashInput, "Unexpected object in Hash at property 'anObject'. You can not store a nested object in a Redis Hash.")
     })
 
     it("complains when given an invalid point", () => {
       expect(() => toRedisHash(schema, { aBadPoint: AN_INVALID_POINT }))
-        .toThrow("Points must be between ±85.05112878 latitude and ±180 longitude")
+        .toThrowErrorOfType(PointOutOfRange, "Points must be between ±85.05112878 latitude and ±180 longitude")
     })
   })
 
@@ -136,42 +139,42 @@ describe("#toRedisHash", () => {
 
     it("complains when given an invalid point", () => {
       expect(() => toRedisHash(schema, { aPoint: AN_INVALID_POINT }))
-        .toThrow("Points must be between ±85.05112878 latitude and ±180 longitude")
+        .toThrowErrorOfType(PointOutOfRange, "Points must be between ±85.05112878 latitude and ±180 longitude")
     })
 
     it.each([
 
       // boolean
-      ["complains when a boolean is not a boolean", { aBoolean: 'NOT_A_BOOLEAN' }, `Expected a boolean but received: "NOT_A_BOOLEAN"`],
-      ["complains when a boolean is an object", { aBoolean: A_POINT }, `Expected a boolean but received: ${A_POINT_PRETTY_JSON}`],
+      ["complains when a boolean is not a boolean", { aBoolean: 'NOT_A_BOOLEAN' }, `Unexpected value for field 'aBoolean' of type 'boolean' in Hash.`],
+      ["complains when a boolean is an object", { aBoolean: A_POINT }, `Unexpected value for field 'aBoolean' of type 'boolean' in Hash.`],
 
       // number
-      ["complains when a number is not a number", { aNumber: 'NOT_A_NUMBER' }, `Expected a number but received: "NOT_A_NUMBER"`],
-      ["complains when a number is an object", { aNumber: A_POINT }, `Expected a number but received: ${A_POINT_PRETTY_JSON}`],
+      ["complains when a number is not a number", { aNumber: 'NOT_A_NUMBER' }, `Unexpected value for field 'aNumber' of type 'number' in Hash.`],
+      ["complains when a number is an object", { aNumber: A_POINT }, `Unexpected value for field 'aNumber' of type 'number' in Hash.`],
 
       /// date
-      ["complains when a date is not a date", { aDate: true }, `Expected a date but received: true`],
-      ["complains when a date is not a date string", { aDate: 'NOT_A_DATE' }, `Expected a date but received: "NOT_A_DATE"`],
-      ["complains when a date is an object", { aDate: A_POINT }, `Expected a date but received: ${A_POINT_PRETTY_JSON}`],
+      ["complains when a date is not a date", { aDate: true }, `Unexpected value for field 'aDate' of type 'date' in Hash.`],
+      ["complains when a date is not a date string", { aDate: 'NOT_A_DATE' }, `Unexpected value for field 'aDate' of type 'date' in Hash.`],
+      ["complains when a date is an object", { aDate: A_POINT }, `Unexpected value for field 'aDate' of type 'date' in Hash.`],
 
       // point
-      ["complains when a point is not a point", { aPoint: 'NOT_A_POINT' }, `Expected a point but received: "NOT_A_POINT"`],
-      ["complains when a point is a partial point", { aPoint: A_PARITAL_POINT }, `Expected a point but received: {\n "latitude": 85.05112879\n}`],
+      ["complains when a point is not a point", { aPoint: 'NOT_A_POINT' }, `Unexpected value for field 'aPoint' of type 'point' in Hash.`],
+      ["complains when a point is a partial point", { aPoint: A_PARITAL_POINT }, `Unexpected value for field 'aPoint' of type 'point' in Hash.`],
 
       // string
-      ["complains when a string is not a string", { aString: A_DATE }, `Expected a string but received: "${A_DATE.toISOString()}"`],
-      ["complains when a string is an object", { aString: A_POINT }, `Expected a string but received: ${A_POINT_PRETTY_JSON}`],
+      ["complains when a string is not a string", { aString: A_DATE }, `Unexpected value for field 'aString' of type 'string' in Hash.`],
+      ["complains when a string is an object", { aString: A_POINT }, `Unexpected value for field 'aString' of type 'string' in Hash.`],
 
       // text
-      ["complains when a text is not a string", { someText: A_DATE }, `Expected a string but received: "${A_DATE.toISOString()}"`],
-      ["complains when a text is an object", { someText: A_POINT }, `Expected a string but received: ${A_POINT_PRETTY_JSON}`],
+      ["complains when a text is not a string", { someText: A_DATE }, `Unexpected value for field 'someText' of type 'text' in Hash.`],
+      ["complains when a text is an object", { someText: A_POINT }, `Unexpected value for field 'someText' of type 'text' in Hash.`],
 
       // string[]
-      ["complains when a string[] is not an array", { aStringArray: 'NOT_AN_ARRAY' }, `Expected a string[] but received: "NOT_AN_ARRAY"`],
-      ["complains when a string[] is an object", { aStringArray: A_POINT }, `Expected a string[] but received: ${A_POINT_PRETTY_JSON}`],
+      ["complains when a string[] is not an array", { aStringArray: 'NOT_AN_ARRAY' }, `Unexpected value for field 'aStringArray' of type 'string[]' in Hash.`],
+      ["complains when a string[] is an object", { aStringArray: A_POINT }, `Unexpected value for field 'aStringArray' of type 'string[]' in Hash.`],
 
-    ])('%s', (_, data, expectedException) => {
-      expect(() => toRedisHash(schema, data)).toThrow(expectedException)
+    ])('%s', (_, data, expectedMessage) => {
+      expect(() => toRedisHash(schema, data)).toThrowErrorOfType(InvalidHashInput, expectedMessage)
     })
   })
 })

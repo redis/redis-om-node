@@ -1,9 +1,12 @@
+import '../../helpers/custom-matchers'
+
 import { RedisHashData } from "$lib/client"
 import { EntityData } from "$lib/entity"
 import { Schema } from "$lib/schema"
 import { fromRedisHash } from "$lib/transformer"
 
 import { A_DATE, A_DATE_EPOCH_STRING, A_NUMBER, A_NUMBER_STRING, A_POINT, A_POINT_STRING, A_STRING, SOME_STRINGS, SOME_STRINGS_JOINED, SOME_TEXT } from "../../helpers/example-data"
+import { InvalidHashValue } from '$lib/errors'
 
 describe("#fromRedisHash", () => {
 
@@ -102,12 +105,16 @@ describe("#fromRedisHash", () => {
     })
 
     it.each([
-      ["complains when a boolean is invalid", { aBoolean: 'NOT_A_BOOLEAN' }, `Expected a value of '1' or '0' from Redis for a boolean but received: "NOT_A_BOOLEAN"`],
-      ["complains when a number is not numeric", { aNumber: 'NOT_A_NUMBER' }, `Expected a string containing a number from Redis but received: "NOT_A_NUMBER"`],
-      ["complains when a date is not an epoch string", { aDate: 'NOT_A_NUMBER' }, `Expected an string containing a epoch date from Redis but received: "NOT_A_NUMBER"`],
-      ["complains when a point is not a point string", { aPoint: 'NOT_A_POINT' }, `Expected a point string from Redis but received: "NOT_A_POINT"`],
-    ])('%s', (_, hashData: RedisHashData, expectedException) => {
-      expect(() => fromRedisHash(schema, hashData)).toThrow(expectedException)
+      ["complains when a boolean is invalid", { aBoolean: 'NOT_A_BOOLEAN' }, `Unexpected value for field 'aBoolean' of type 'boolean' from Hash field "aBoolean" read from Redis.`],
+      ["complains when an aliased boolean is invalid", { aRenamedBoolean: 'NOT_A_BOOLEAN' }, `Unexpected value for field 'anotherBoolean' of type 'boolean' from Hash field "aRenamedBoolean" read from Redis.`],
+      ["complains when a number is not numeric", { aNumber: 'NOT_A_NUMBER' }, `Unexpected value for field 'aNumber' of type 'number' from Hash field "aNumber" read from Redis.`],
+      ["complains when an alaised number is not numeric", { aRenamedNumber: 'NOT_A_NUMBER' }, `Unexpected value for field 'anotherNumber' of type 'number' from Hash field "aRenamedNumber" read from Redis.`],
+      ["complains when a date is not an epoch string", { aDate: 'NOT_A_NUMBER' }, `Unexpected value for field 'aDate' of type 'date' from Hash field "aDate" read from Redis.`],
+      ["complains when an aliased date is not an epoch string", { aRenamedDate: 'NOT_A_NUMBER' }, `Unexpected value for field 'anotherDate' of type 'date' from Hash field "aRenamedDate" read from Redis.`],
+      ["complains when a point is not a point string", { aPoint: 'NOT_A_POINT' }, `Unexpected value for field 'aPoint' of type 'point' from Hash field "aPoint" read from Redis.`],
+      ["complains when an aliased point is not a point string", { aRenamedPoint: 'NOT_A_POINT' }, `Unexpected value for field 'anotherPoint' of type 'point' from Hash field "aRenamedPoint" read from Redis.`],
+    ])('%s', (_, hashData: RedisHashData, expectedMessage) => {
+      expect(() => fromRedisHash(schema, hashData)).toThrowErrorOfType(InvalidHashValue, expectedMessage)
     })
   })
 })

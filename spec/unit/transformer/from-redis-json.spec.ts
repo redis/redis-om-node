@@ -1,9 +1,12 @@
+import '../../helpers/custom-matchers'
+
 import { RedisJsonData } from "$lib/client"
 import { EntityData } from "$lib/entity"
 import { Schema } from "$lib/schema"
 import { fromRedisJson } from "$lib/transformer"
+import { InvalidJsonValue, NullJsonValue } from '$lib/errors'
 
-import { ANOTHER_STRING, A_DATE, A_DATE_EPOCH, A_DATE_EPOCH_STRING, A_NUMBER, A_NUMBER_STRING, A_POINT, A_POINT_STRING, A_STRING, A_THIRD_STRING, SOME_STRINGS, SOME_STRINGS_JOINED, SOME_TEXT } from "../../helpers/example-data"
+import { ANOTHER_STRING, A_DATE, A_DATE_EPOCH, A_DATE_EPOCH_STRING, A_NUMBER, A_NUMBER_STRING, A_POINT, A_POINT_STRING, A_STRING, A_THIRD_STRING, SOME_STRINGS, SOME_TEXT } from "../../helpers/example-data"
 
 describe("#fromRedisJson", () => {
 
@@ -148,37 +151,42 @@ describe("#fromRedisJson", () => {
     })
 
     it.each([
-      ["complains when a boolean is invalid", { aBoolean: 'NOT_A_BOOLEAN' }, `Expected a value of true, false, or null from RedisJSON for a boolean but received: "NOT_A_BOOLEAN"`],
-      ["complains when a pathed boolean is invalid", { aPathedBoolean: 'NOT_A_BOOLEAN' }, `Expected a value of true, false, or null from RedisJSON for a boolean but received: "NOT_A_BOOLEAN"`],
-      ["complains when a nested boolean is invalid", { aNestedBoolean: { aBoolean: 'NOT_A_BOOLEAN' } }, `Expected a value of true, false, or null from RedisJSON for a boolean but received: "NOT_A_BOOLEAN"`],
+      ["complains when a boolean is invalid", { aBoolean: 'NOT_A_BOOLEAN' }, `Unexpected value for field 'aBoolean' of type 'boolean' from JSON path "$.aBoolean" in Redis.`],
+      ["complains when a pathed boolean is invalid", { aPathedBoolean: 'NOT_A_BOOLEAN' }, `Unexpected value for field 'anotherBoolean' of type 'boolean' from JSON path "$.aPathedBoolean" in Redis.`],
+      ["complains when a nested boolean is invalid", { aNestedBoolean: { aBoolean: 'NOT_A_BOOLEAN' } }, `Unexpected value for field 'aNestedBoolean' of type 'boolean' from JSON path "$.aNestedBoolean.aBoolean" in Redis.`],
 
-      ["complains when a number is invalid", { aNumber: 'NOT_A_NUMBER' }, `Expected a number from RedisJSON but received: "NOT_A_NUMBER"`],
-      ["complains when a pathed number is invalid", { aPathedNumber: 'NOT_A_NUMBER' }, `Expected a number from RedisJSON but received: "NOT_A_NUMBER"`],
-      ["complains when a nested number is invalid", { aNestedNumber: { aNumber: 'NOT_A_NUMBER' } }, `Expected a number from RedisJSON but received: "NOT_A_NUMBER"`],
+      ["complains when a number is invalid", { aNumber: 'NOT_A_NUMBER' }, `Unexpected value for field 'aNumber' of type 'number' from JSON path "$.aNumber" in Redis.`],
+      ["complains when a pathed number is invalid", { aPathedNumber: 'NOT_A_NUMBER' }, `Unexpected value for field 'anotherNumber' of type 'number' from JSON path "$.aPathedNumber" in Redis.`],
+      ["complains when a nested number is invalid", { aNestedNumber: { aNumber: 'NOT_A_NUMBER' } }, `Unexpected value for field 'aNestedNumber' of type 'number' from JSON path "$.aNestedNumber.aNumber" in Redis.`],
 
-      ["complains when a date is invalid", { aDate: 'NOT_A_NUMBER' }, `Expected a number containing a epoch date from RedisJSON but received: "NOT_A_NUMBER"`],
-      ["complains when a pathed date is invalid", { aPathedDate: 'NOT_A_NUMBER' }, `Expected a number containing a epoch date from RedisJSON but received: "NOT_A_NUMBER"`],
-      ["complains when a nested date is invalid", { aNestedDate: { aDate: 'NOT_A_NUMBER' } }, `Expected a number containing a epoch date from RedisJSON but received: "NOT_A_NUMBER"`],
+      ["complains when a date is invalid", { aDate: 'NOT_A_NUMBER' }, `Unexpected value for field 'aDate' of type 'date' from JSON path "$.aDate" in Redis.`],
+      ["complains when a pathed date is invalid", { aPathedDate: 'NOT_A_NUMBER' }, `Unexpected value for field 'anotherDate' of type 'date' from JSON path "$.aPathedDate" in Redis.`],
+      ["complains when a nested date is invalid", { aNestedDate: { aDate: 'NOT_A_NUMBER' } }, `Unexpected value for field 'aNestedDate' of type 'date' from JSON path "$.aNestedDate.aDate" in Redis.`],
 
-      ["complains when a point is not a point string", { aPoint: 'NOT_A_POINT' }, `Expected a point string from Redis but received: "NOT_A_POINT"`],
-      ["complains when a point is not a string", { aPoint: A_NUMBER }, `Expected a point string from Redis but received: 42`],
-      ["complains when a pathed point is invalid", { aPathedPoint: 'NOT_A_POINT' }, `Expected a point string from Redis but received: "NOT_A_POINT"`],
-      ["complains when a nested point is invalid", { aNestedPoint: { aPoint: 'NOT_A_POINT' } }, `Expected a point string from Redis but received: "NOT_A_POINT"`],
+      ["complains when a point is not a point string", { aPoint: 'NOT_A_POINT' }, `Unexpected value for field 'aPoint' of type 'point' from JSON path "$.aPoint" in Redis.`],
+      ["complains when a point is not a string", { aPoint: A_NUMBER }, `Unexpected value for field 'aPoint' of type 'point' from JSON path "$.aPoint" in Redis.`],
+      ["complains when a pathed point is invalid", { aPathedPoint: 'NOT_A_POINT' }, `Unexpected value for field 'anotherPoint' of type 'point' from JSON path "$.aPathedPoint" in Redis.`],
+      ["complains when a nested point is invalid", { aNestedPoint: { aPoint: 'NOT_A_POINT' } }, `Unexpected value for field 'aNestedPoint' of type 'point' from JSON path "$.aNestedPoint.aPoint" in Redis.`],
 
-      ["complains when a string is invalid", { aString: SOME_STRINGS }, `Expected a string from RedisJSON but received: [\n "alfa",\n "bravo",\n "charlie"\n]`],
-      ["complains when a pathed string is invalid", { aPathedString: SOME_STRINGS }, `Expected a string from RedisJSON but received: [\n "alfa",\n "bravo",\n "charlie"\n]`],
-      ["complains when a nested string is invalid", { aNestedString: { aString: SOME_STRINGS } }, `Expected a string from RedisJSON but received: [\n "alfa",\n "bravo",\n "charlie"\n]`],
+      ["complains when a string is invalid", { aString: SOME_STRINGS }, `Unexpected value for field 'aString' of type 'string' from JSON path "$.aString" in Redis.`],
+      ["complains when a pathed string is invalid", { aPathedString: SOME_STRINGS }, `Unexpected value for field 'anotherString' of type 'string' from JSON path "$.aPathedString" in Redis.`],
+      ["complains when a nested string is invalid", { aNestedString: { aString: SOME_STRINGS } }, `Unexpected value for field 'aNestedString' of type 'string' from JSON path "$.aNestedString.aString" in Redis.`],
 
-      ["complains when text is invalid", { someText: SOME_STRINGS }, `Expected a string from RedisJSON but received: [\n "alfa",\n "bravo",\n "charlie"\n]`],
-      ["complains when pathed text is invalid", { somePathedText: SOME_STRINGS }, `Expected a string from RedisJSON but received: [\n "alfa",\n "bravo",\n "charlie"\n]`],
-      ["complains when nested text is invalid", { someNestedText: { someText: SOME_STRINGS } }, `Expected a string from RedisJSON but received: [\n "alfa",\n "bravo",\n "charlie"\n]`],
+      ["complains when text is invalid", { someText: SOME_STRINGS }, `Unexpected value for field 'someText' of type 'text' from JSON path "$.someText" in Redis.`],
+      ["complains when pathed text is invalid", { somePathedText: SOME_STRINGS }, `Unexpected value for field 'someMoreText' of type 'text' from JSON path "$.somePathedText" in Redis.`],
+      ["complains when nested text is invalid", { someNestedText: { someText: SOME_STRINGS } }, `Unexpected value for field 'someNestedText' of type 'text' from JSON path "$.someNestedText.someText" in Redis.`],
 
-      ["complains when a string[] contains a null", { aStringArray: [ A_STRING, null, ANOTHER_STRING ] }, `Expected a string[] from RedisJSON but received an array or object containing null: [\n "foo",\n null,\n "bar"\n]`],
-      ["complains when a dispersed string[] contains null", { someOtherStrings:  [ A_STRING, null, ANOTHER_STRING] }, `Expected a string[] from RedisJSON but received an array or object containing null: [\n "foo",\n null,\n "bar"\n]`],
-      ["complains when a widely dispersed string[] contains null", { someObjects: [ { aString: A_STRING }, { aString: null }, { aString: ANOTHER_STRING } ] }, `Expected a string[] from RedisJSON but received an array or object containing null: {\n "aString": null\n}`]
+    ])('%s', (_, jsonData: RedisJsonData, expectedMessage) => {
+      expect(() => fromRedisJson(schema, jsonData)).toThrowErrorOfType(InvalidJsonValue, expectedMessage)
+    })
 
-    ])('%s', (_, jsonData: RedisJsonData, expectedException) => {
-      expect(() => fromRedisJson(schema, jsonData)).toThrow(expectedException)
+    it.each([
+      ["complains when a string[] contains a null", { aStringArray: [ A_STRING, null, ANOTHER_STRING ] }, `Null or undefined found in field 'aStringArray' of type 'string[]' from JSON path "$.aStringArray[*]" in Redis.`],
+      ["complains when a dispersed string[] contains null", { someOtherStrings:  [ A_STRING, null, ANOTHER_STRING] }, `Null or undefined found in field 'someStringsAsAnArray' of type 'string[]' from JSON path "$.someOtherStrings[*]" in Redis.`],
+      ["complains when a widely dispersed string[] contains null", { someObjects: [ { aString: A_STRING }, { aString: null }, { aString: ANOTHER_STRING } ] }, `Null or undefined found in field 'someOtherStringsAsAnArray' of type 'string[]' from JSON path "$.someObjects[*].aString" in Redis.`]
+
+    ])('%s', (_, jsonData: RedisJsonData, expectedMessage) => {
+      expect(() => fromRedisJson(schema, jsonData)).toThrowErrorOfType(NullJsonValue, expectedMessage)
     })
   })
 })

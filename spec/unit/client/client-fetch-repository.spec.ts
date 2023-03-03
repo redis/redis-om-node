@@ -1,4 +1,4 @@
-import '../helpers/custom-matchers'
+import '../../helpers/custom-matchers'
 
 import { Client } from '$lib/client'
 import { RedisOmError } from '$lib/errors'

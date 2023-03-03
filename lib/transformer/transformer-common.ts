@@ -1,4 +1,4 @@
-import { RedisOmError } from "../errors"
+import { PointOutOfRange, RedisOmError } from "../errors"
 import { Point } from "../entity"
 
 export const isNull = (value: any): boolean => value === null
@@ -10,6 +10,7 @@ export const isBoolean = (value: any): boolean => typeof value === 'boolean'
 export const isNumber = (value: any): boolean => typeof value === 'number'
 export const isString = (value: any): boolean => typeof value === 'string'
 export const isDate = (value: any): boolean => value instanceof Date
+export const isDateString = (value: any): boolean => isString(value) && !isNaN(new Date(value).getTime())
 export const isArray = (value: any): boolean => Array.isArray(value)
 export const isObject = (value: any): boolean => value !== null && typeof value === 'object' && !isArray(value) && !isDate(value)
 
@@ -37,24 +38,18 @@ export const convertDateToEpoch = (value: Date) => (value.getTime() / 1000)
 export const convertDateToString = (value: Date) => convertDateToEpoch(value).toString()
 export const convertEpochDateToString = (value: number) => convertNumberToString(value)
 
-export const convertIsoDateToEpoch = (value: string) => convertDateToEpoch(convertIsoDateToDate(value))
-export const convertIsoDateToString = (value: string) => convertDateToString(convertIsoDateToDate(value))
-const convertIsoDateToDate = (value: string): Date => {
-  const date = new Date(value)
-  if (isNaN(date.getTime())) throw new RedisOmError(`Expected a date but received: ${stringifyError(value)}`)
-  return date
-}
+export const convertIsoDateToEpoch = (value: string) => convertDateToEpoch(new Date(value))
+export const convertIsoDateToString = (value: string) => convertDateToString(new Date(value))
 
 export const convertEpochStringToDate = (value: string): Date => new Date(convertEpochToDate(convertStringToNumber(value)))
 export const convertEpochToDate = (value: number): Date => new Date(value * 1000)
 
 export const convertPointToString = (value: Point) => {
   if (isValidPoint(value)) return `${value.longitude},${value.latitude}`
-  throw new RedisOmError("Points must be between ±85.05112878 latitude and ±180 longitude")
+  throw new PointOutOfRange(value)
 }
 
 export const convertStringToPoint = (value: string): Point => {
-  if (!isPointString(value)) throw new RedisOmError(`Expected a point string from Redis but received: ${stringifyError(value)}`)
   const [ longitude, latitude ] = value.split(',').map(convertStringToNumber)
   return { longitude: longitude!, latitude: latitude! }
 }

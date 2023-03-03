@@ -1,5 +1,5 @@
 import '../helpers/mock-client'
-import '../helpers/custom-matchers'
+import '../../helpers/custom-matchers'
 
 import { Client } from '$lib/client'
 import { Repository } from '$lib/repository'

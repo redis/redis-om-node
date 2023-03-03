@@ -4,9 +4,9 @@ import clone from 'just-clone'
 import { Field, Schema } from "../schema"
 import { RedisJsonData } from "../client"
 
-import { convertEpochToDate, convertKnownValueToString, convertStringToPoint, isArray, isBoolean, isNull, isNumber, isString, stringifyError } from "./transformer-common"
+import { convertEpochToDate, convertKnownValueToString, convertStringToPoint, isArray, isBoolean, isNull, isNumber, isPointString, isString, stringifyError } from "./transformer-common"
 import { EntityData } from '../entity'
-import { RedisOmError } from '../errors'
+import { InvalidJsonValue, NullJsonValue, RedisOmError } from '../errors'
 
 
 export function fromRedisJson(schema: Schema, json: RedisJsonData): EntityData {
@@ -28,7 +28,7 @@ function convertFromRedisJsonKnown(schema: Schema, data: EntityData) {
       if (field.type === 'string[]') {
         results.forEach((result: any) => {
           const { value, parent, parentProperty } = result
-          if (isNull(value)) throw `Expected a string[] from RedisJSON but received an array or object containing null: ${stringifyError(parent)}`
+          if (isNull(value)) throw new NullJsonValue(field)
           parent[parentProperty] = convertKnownValueToString(value)
         })
       }
@@ -42,28 +42,29 @@ function convertKnownValueFromJson(field: Field, value: any): any {
   switch (field.type) {
     case 'boolean':
       if (isBoolean(value)) return value
-      throw new RedisOmError(`Expected a value of true, false, or null from RedisJSON for a boolean but received: ${stringifyError(value)}`)
+      throw new InvalidJsonValue(field)
     case 'number':
       if (isNumber(value)) return value
-      throw new RedisOmError(`Expected a number from RedisJSON but received: ${stringifyError(value)}`)
+      throw new InvalidJsonValue(field)
     case 'date':
       if (isNumber(value)) return convertEpochToDate(value)
-      throw new RedisOmError(`Expected a number containing a epoch date from RedisJSON but received: ${stringifyError(value)}`)
+      throw new InvalidJsonValue(field)
     case 'point':
-      return convertStringToPoint(value)
+      if (isPointString(value)) return convertStringToPoint(value)
+      throw new InvalidJsonValue(field)
     case 'string':
     case 'text':
-      if (isString(value)) return value
       if (isBoolean(value)) return value.toString()
       if (isNumber(value)) return value.toString()
-      throw new RedisOmError(`Expected a string from RedisJSON but received: ${stringifyError(value)}`)
+      if (isString(value)) return value
+      throw new InvalidJsonValue(field)
     case 'string[]':
-      if (isArray(value)) return convertFromJsonArrayToStringArray(value)
-      throw new RedisOmError(`Expected a string[] from RedisJSON but received: ${stringifyError(value)}`)
+      if (isArray(value)) return convertFromJsonArrayToStringArray(field, value)
+      throw new NullJsonValue(field)
   }
 }
 
-const convertFromJsonArrayToStringArray = (array: any[]): string[] => array.map(value => {
-  if (isNull(value)) throw new RedisOmError(`Expected a string[] from RedisJSON but received an array containing null: ${stringifyError(array)}`)
+const convertFromJsonArrayToStringArray = (field: Field, array: any[]): string[] => array.map(value => {
+  if (isNull(value)) throw new NullJsonValue(field)
   return value.toString()
 })

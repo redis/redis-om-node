@@ -1,4 +1,4 @@
-import '../helpers/custom-matchers'
+import '../../helpers/custom-matchers'
 
 import { ft } from '../helpers/mock-redis'
 

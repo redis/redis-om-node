@@ -1,6 +1,8 @@
+import '../../helpers/custom-matchers'
+
 import { createClient } from 'redis'
 
-import { Entity, EntityKeyName, Repository, RedisConnection, Schema } from '$lib/index'
+import { Entity, EntityKeyName, Repository, RedisConnection, Schema, SearchError } from '$lib/index'
 
 import { createHashEntitySchema } from '../helpers/data-helper'
 import { removeKeys, saveHash, sleep } from '../helpers/redis-helper'
@@ -123,9 +125,14 @@ describe("search for hashes", () => {
   })
 
   it("throw an error when searching a string with full text, an exact match, and stop words", async () => {
-    expect(async () => {
-      entities = await repository.search().where('someText').exactly.matches('the quick brown').returnAll()
-    }).rejects.toThrow(`The query to RediSearch had a syntax error: "Syntax error at offset 12 near the".\nThis is often the result of using a stop word in the query. Either change the query to not use a stop word or change the stop words in the schema definition. You can check the RediSearch source for the default stop words at: https://github.com/RediSearch/RediSearch/blob/master/src/stopwords.h`)
+    expect.assertions(2)
+    try {
+      await repository.search().where('someText').exactly.matches('the quick brown').returnAll()
+    } catch (error) {
+      const err = error as Error
+      expect(err).toBeInstanceOf(SearchError)
+      expect(err.message).toEqual(`The query to RediSearch had a syntax error: "Syntax error at offset 12 near the".\nThis is often the result of using a stop word in the query. Either change the query to not use a stop word or change the stop words in the schema definition. You can check the RediSearch source for the default stop words at: https://github.com/RediSearch/RediSearch/blob/master/src/stopwords.h.`)
+    }
   })
 
   it("searches a number", async () => {

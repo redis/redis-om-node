@@ -1,4 +1,7 @@
+import '../../helpers/custom-matchers'
+
 import { RedisJsonData } from "$lib/client"
+import { InvalidJsonInput, NullJsonInput, PointOutOfRange } from "$lib/errors"
 import { Schema } from "$lib/schema"
 import { toRedisJson } from "$lib/transformer"
 
@@ -60,7 +63,7 @@ describe("#toRedisJson", () => {
         aDate: { type: 'date' },
         anotherDate: { type: 'date', path: '$.aPathedDate' },
         aNestedDate: { type: 'date', path: '$.aNestedDate.aDate' },
-        someDates: { type: 'number', path: '$.someDates[*]' },
+        someDates: { type: 'date', path: '$.someDates[*]' },
         aPoint: { type: 'point' },
         anotherPoint: { type: 'point', path: '$.aPathedPoint' },
         aNestedPoint: { type: 'point', path: '$.aNestedPoint.aPoint' },
@@ -191,62 +194,68 @@ describe("#toRedisJson", () => {
 
     it("complains when given an invalid point", () => {
       expect(() => toRedisJson(schema, { aPoint: AN_INVALID_POINT }))
-        .toThrow("Points must be between ±85.05112878 latitude and ±180 longitude")
+        .toThrowErrorOfType(PointOutOfRange, "Points must be between ±85.05112878 latitude and ±180 longitude")
     })
 
     it.each([
 
       // boolean
-      ["complains when a boolean is not a boolean", { aBoolean: 'NOT_A_BOOLEAN' }, `Expected a boolean but received: "NOT_A_BOOLEAN"`],
-      ["complains when a pathed boolean is not a boolean", { aPathedBoolean: 'NOT_A_BOOLEAN' }, `Expected a boolean but received: "NOT_A_BOOLEAN"`],
-      ["complains when a nested boolean is not a boolean", { aNestedBoolean: { aBoolean: 'NOT_A_BOOLEAN' } }, `Expected a boolean but received: "NOT_A_BOOLEAN"`],
-      ["complains when a pathed boolean points to multiple results", { someBooleans: [ true, false, true ] }, `Expected path to point to a single value but found many: "$.someBooleans[*]"`],
+      ["complains when a boolean is not a boolean", { aBoolean: 'NOT_A_BOOLEAN' }, `Unexpected value for field 'aBoolean' of type 'boolean' in JSON at "$.aBoolean".`],
+      ["complains when a pathed boolean is not a boolean", { aPathedBoolean: 'NOT_A_BOOLEAN' }, `Unexpected value for field 'anotherBoolean' of type 'boolean' in JSON at "$.aPathedBoolean".`],
+      ["complains when a nested boolean is not a boolean", { aNestedBoolean: { aBoolean: 'NOT_A_BOOLEAN' } }, `Unexpected value for field 'aNestedBoolean' of type 'boolean' in JSON at "$.aNestedBoolean.aBoolean".`],
+      ["complains when a pathed boolean points to multiple results", { someBooleans: [ true, false, true ] }, `Unexpected value for field 'someBooleans' of type 'boolean' in JSON at "$.someBooleans[*]".`],
 
       // number
-      ["complains when a number is not a number", { aNumber: 'NOT_A_NUMBER' }, `Expected a number but received: "NOT_A_NUMBER"`],
-      ["complains when a pathed number is not a number", { aPathedNumber: 'NOT_A_NUMBER' }, `Expected a number but received: "NOT_A_NUMBER"`],
-      ["complains when a nested number is not a number", { aNestedNumber: { aNumber: 'NOT_A_NUMBER' } }, `Expected a number but received: "NOT_A_NUMBER"`],
-      ["complains when a pathed number points to multiple results", { someNumbers: [ 42, 23, 13 ] }, `Expected path to point to a single value but found many: "$.someNumbers[*]"`],
+      ["complains when a number is not a number", { aNumber: 'NOT_A_NUMBER' }, `Unexpected value for field 'aNumber' of type 'number' in JSON at "$.aNumber".`],
+      ["complains when a pathed number is not a number", { aPathedNumber: 'NOT_A_NUMBER' }, `Unexpected value for field 'anotherNumber' of type 'number' in JSON at "$.aPathedNumber".`],
+      ["complains when a nested number is not a number", { aNestedNumber: { aNumber: 'NOT_A_NUMBER' } }, `Unexpected value for field 'aNestedNumber' of type 'number' in JSON at "$.aNestedNumber.aNumber".`],
+      ["complains when a pathed number points to multiple results", { someNumbers: [ 42, 23, 13 ] }, `Unexpected value for field 'someNumbers' of type 'number' in JSON at "$.someNumbers[*]".`],
 
       // date
-      ["complains when a date is not a date", { aDate: true }, `Expected a date but received: true`],
-      ["complains when a date is not a date string", { aDate: 'NOT_A_DATE' }, `Expected a date but received: "NOT_A_DATE"`],
-      ["complains when a pathed date is not a date", { aPathedDate: true }, `Expected a date but received: true`],
-      ["complains when a pathed date is not a date string", { aPathedDate: 'NOT_A_DATE' }, `Expected a date but received: "NOT_A_DATE"`],
-      ["complains when a nested date is not a date", { aNestedDate: { aDate: true } }, `Expected a date but received: true`],
-      ["complains when a nested date is not a date string", { aNestedDate: { aDate: 'NOT_A_DATE' } }, `Expected a date but received: "NOT_A_DATE"`],
-      ["complains when a pathed date points to multiple results", { someDates: [ A_DATE, A_DATE, A_DATE ] }, `Expected path to point to a single value but found many: "$.someDates[*]"`],
+      ["complains when a date is not a date", { aDate: true }, `Unexpected value for field 'aDate' of type 'date' in JSON at "$.aDate".`],
+      ["complains when a date is not a date string", { aDate: 'NOT_A_DATE' }, `Unexpected value for field 'aDate' of type 'date' in JSON at "$.aDate".`],
+      ["complains when a pathed date is not a date", { aPathedDate: true }, `Unexpected value for field 'anotherDate' of type 'date' in JSON at "$.aPathedDate".`],
+      ["complains when a pathed date is not a date string", { aPathedDate: 'NOT_A_DATE' }, `Unexpected value for field 'anotherDate' of type 'date' in JSON at "$.aPathedDate".`],
+      ["complains when a nested date is not a date", { aNestedDate: { aDate: true } }, `Unexpected value for field 'aNestedDate' of type 'date' in JSON at "$.aNestedDate.aDate".`],
+      ["complains when a nested date is not a date string", { aNestedDate: { aDate: 'NOT_A_DATE' } }, `Unexpected value for field 'aNestedDate' of type 'date' in JSON at "$.aNestedDate.aDate".`],
+      ["complains when a pathed date points to multiple results", { someDates: [ A_DATE, A_DATE, A_DATE ] }, `Unexpected value for field 'someDates' of type 'date' in JSON at "$.someDates[*]".`],
 
       // point
-      ["complains when a point is not a point", { aPoint: 'NOT_A_POINT' }, `Expected a point but received: "NOT_A_POINT"`],
-      ["complains when a point is a partial point", { aPoint: A_PARITAL_POINT }, `Expected a point but received: {\n "latitude": 85.05112879\n}`],
-      ["complains when a pathed point is not a point", { aPathedPoint: 'NOT_A_POINT' }, `Expected a point but received: "NOT_A_POINT"`],
-      ["complains when a pathed point is a partial point", { aPathedPoint: A_PARITAL_POINT }, `Expected a point but received: {\n "latitude": 85.05112879\n}`],
-      ["complains when a nested point is not a point", { aNestedPoint: { aPoint: 'NOT_A_POINT' } }, `Expected a point but received: "NOT_A_POINT"`],
-      ["complains when a nested point is a partial point", { aNestedPoint: { aPoint: A_PARITAL_POINT } }, `Expected a point but received: {\n "latitude": 85.05112879\n}`],
-      ["complains when a pathed point points to multiple results", { somePoints: [ A_POINT, A_POINT, A_POINT ] }, `Expected path to point to a single value but found many: "$.somePoints[*]"`],
+      ["complains when a point is not a point", { aPoint: 'NOT_A_POINT' }, `Unexpected value for field 'aPoint' of type 'point' in JSON at "$.aPoint".`],
+      ["complains when a point is a partial point", { aPoint: A_PARITAL_POINT }, `Unexpected value for field 'aPoint' of type 'point' in JSON at "$.aPoint".`],
+      ["complains when a pathed point is not a point", { aPathedPoint: 'NOT_A_POINT' }, `Unexpected value for field 'anotherPoint' of type 'point' in JSON at "$.aPathedPoint".`],
+      ["complains when a pathed point is a partial point", { aPathedPoint: A_PARITAL_POINT }, `Unexpected value for field 'anotherPoint' of type 'point' in JSON at "$.aPathedPoint".`],
+      ["complains when a nested point is not a point", { aNestedPoint: { aPoint: 'NOT_A_POINT' } }, `Unexpected value for field 'aNestedPoint' of type 'point' in JSON at "$.aNestedPoint.aPoint".`],
+      ["complains when a nested point is a partial point", { aNestedPoint: { aPoint: A_PARITAL_POINT } }, `Unexpected value for field 'aNestedPoint' of type 'point' in JSON at "$.aNestedPoint.aPoint".`],
+      ["complains when a pathed point points to multiple results", { somePoints: [ A_POINT, A_POINT, A_POINT ] }, `Unexpected value for field 'somePoints' of type 'point' in JSON at "$.somePoints[*]".`],
 
       // string
-      ["complains when a string is not a string", { aString: A_DATE }, `Expected a string but received: "${A_DATE.toISOString()}"`],
-      ["complains when a pathed string is not a string", { aPathedString: A_DATE }, `Expected a string but received: "${A_DATE.toISOString()}"`],
-      ["complains when a nested string is not a string", { aNestedString: { aString: A_DATE } }, `Expected a string but received: "${A_DATE.toISOString()}"`],
-      ["complains when a pathed string points to multiple results", { someStrings: SOME_STRINGS }, `Expected path to point to a single value but found many: "$.someStrings[*]"`],
+      ["complains when a string is not a string", { aString: A_DATE }, `Unexpected value for field 'aString' of type 'string' in JSON at "$.aString".`],
+      ["complains when a pathed string is not a string", { aPathedString: A_DATE }, `Unexpected value for field 'anotherString' of type 'string' in JSON at "$.aPathedString".`],
+      ["complains when a nested string is not a string", { aNestedString: { aString: A_DATE } }, `Unexpected value for field 'aNestedString' of type 'string' in JSON at "$.aNestedString.aString".`],
+      ["complains when a pathed string points to multiple results", { someStrings: SOME_STRINGS }, `Unexpected value for field 'someStrings' of type 'string' in JSON at "$.someStrings[*]".`],
 
       // text
-      ["complains when text is not a string", { someText: A_DATE }, `Expected a string but received: "${A_DATE.toISOString()}"`],
-      ["complains when pathed text is not a string", { somePathedText: A_DATE }, `Expected a string but received: "${A_DATE.toISOString()}"`],
-      ["complains when nested text is not a string", { someNestedText: { someText: A_DATE } }, `Expected a string but received: "${A_DATE.toISOString()}"`],
-      ["complains when a pathed text points to multiple results", { arrayOfText: SOME_STRINGS }, `Expected path to point to a single value but found many: "$.arrayOfText[*]"`],
+      ["complains when text is not a string", { someText: A_DATE }, `Unexpected value for field 'someText' of type 'text' in JSON at "$.someText".`],
+      ["complains when pathed text is not a string", { somePathedText: A_DATE }, `Unexpected value for field 'someMoreText' of type 'text' in JSON at "$.somePathedText".`],
+      ["complains when nested text is not a string", { someNestedText: { someText: A_DATE } }, `Unexpected value for field 'someNestedText' of type 'text' in JSON at "$.someNestedText.someText".`],
+      ["complains when a pathed text points to multiple results", { arrayOfText: SOME_STRINGS }, `Unexpected value for field 'arrayOfText' of type 'text' in JSON at "$.arrayOfText[*]".`],
+
+    ])('%s', (_, data, expectedMessage) => {
+      expect(() => toRedisJson(schema, data)).toThrowErrorOfType(InvalidJsonInput, expectedMessage)
+    })
+
+    it.each([
 
       // string[]
-      ["complains when a string[] contains null", { aStringArray: [ A_STRING, null, ANOTHER_STRING ] }, `Expected a string[] but received an array or object containing null: [\n "foo",\n null,\n "bar"\n]`],
-      ["complains when a string[] contains undefined", { aStringArray: [ A_STRING, undefined, ANOTHER_STRING] }, `Expected a string[] but received an array containing undefined: [\n "foo",\n null,\n "bar"\n]`],
-      ["complains when a dispersed string[] contains null", { someOtherStrings:  [ A_STRING, null, ANOTHER_STRING] }, `Expected a string[] but received an array or object containing null: [\n "foo",\n null,\n "bar"\n]`],
-      ["complains when a dispersed string[] contains undefined", { someOtherStrings:  [ A_STRING, undefined, ANOTHER_STRING] }, `Expected a string[] but received an array containing undefined: [\n "foo",\n null,\n "bar"\n]`],
-      ["complains when a widely dispersed string[] contains null", { someObjects: [ { aString: A_STRING }, { aString: null }, { aString: ANOTHER_STRING } ] }, `Expected a string[] but received an array or object containing null: {\n "aString": null\n}`]
+      ["complains when a string[] contains null", { aStringArray: [ A_STRING, null, ANOTHER_STRING ] }, `Null or undefined found in field 'aStringArray' of type 'string[]' in JSON at "$.aStringArray[*]".`],
+      ["complains when a string[] contains undefined", { aStringArray: [ A_STRING, undefined, ANOTHER_STRING] }, `Null or undefined found in field 'aStringArray' of type 'string[]' in JSON at "$.aStringArray[*]".`],
+      ["complains when a dispersed string[] contains null", { someOtherStrings:  [ A_STRING, null, ANOTHER_STRING] }, `Null or undefined found in field 'someStringsAsAnArray' of type 'string[]' in JSON at "$.someOtherStrings[*]".`],
+      ["complains when a dispersed string[] contains undefined", { someOtherStrings:  [ A_STRING, undefined, ANOTHER_STRING] }, `Null or undefined found in field 'someStringsAsAnArray' of type 'string[]' in JSON at "$.someOtherStrings[*]".`],
+      ["complains when a widely dispersed string[] contains null", { someObjects: [ { aString: A_STRING }, { aString: null }, { aString: ANOTHER_STRING } ] }, `Null or undefined found in field 'someOtherStringsAsAnArray' of type 'string[]' in JSON at "$.someObjects[*].aString".`]
 
-    ])('%s', (_, data, expectedException) => {
-      expect(() => toRedisJson(schema, data)).toThrow(expectedException)
+    ])('%s', (_, data, expectedMessage) => {
+      expect(() => toRedisJson(schema, data)).toThrowErrorOfType(NullJsonInput, expectedMessage)
     })
   })
 })

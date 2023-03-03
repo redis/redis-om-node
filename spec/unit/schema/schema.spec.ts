@@ -1,7 +1,7 @@
-import { SchemaError } from '$lib/errors'
+import { InvalidSchema } from '$lib/errors'
 import { Schema } from '$lib/schema'
 
-import '../helpers/custom-matchers'
+import '../../helpers/custom-matchers'
 
 describe("Schema", () => {
 
@@ -123,37 +123,37 @@ describe("Schema", () => {
 
   describe("that is misconfigured", () => {
     it("throws an exception when keyspace prefix is empty", () =>
-      expect(() => new Schema('', {})).toThrowErrorOfType(SchemaError, "Schema name must be a non-empty string."))
+      expect(() => new Schema('', {})).toThrowErrorOfType(InvalidSchema, "Schema name must be a non-empty string."))
 
     it("throws an exception when the type is missing on a field definition", () =>
       // @ts-ignore: JavaScript test
       expect(() => new Schema('TestEntity', { aField: {} }))
-        .toThrowErrorOfType(SchemaError, "The field 'aField' is configured with a type of 'undefined'. Valid types include 'boolean', 'date', 'number', 'point', 'string', 'string[]', and 'text'."))
+        .toThrowErrorOfType(InvalidSchema, "The field 'aField' is configured with a type of 'undefined'. Valid types include 'boolean', 'date', 'number', 'point', 'string', 'string[]', and 'text'."))
 
     it("throws an exception when the type is invalid on a field definition", () =>
       // @ts-ignore: JavaScript test
       expect(() => new Schema('TestEntity', { aField: { type: 'foo' } }))
-        .toThrowErrorOfType(SchemaError, "The field 'aField' is configured with a type of 'foo'. Valid types include 'boolean', 'date', 'number', 'point', 'string', 'string[]', and 'text'."))
+        .toThrowErrorOfType(InvalidSchema, "The field 'aField' is configured with a type of 'foo'. Valid types include 'boolean', 'date', 'number', 'point', 'string', 'string[]', and 'text'."))
 
     it("throws an exception when the data structure is invalid", () => {
       // @ts-ignore: JavaScript test
       expect(() => new Schema('TestEntity', {}, { dataStructure: 'FOO' }))
-        .toThrowErrorOfType(SchemaError, "'FOO' in an invalid data structure. Valid data structures are 'HASH' and 'JSON'.")
+        .toThrowErrorOfType(InvalidSchema, "'FOO' in an invalid data structure. Valid data structures are 'HASH' and 'JSON'.")
     })
 
     it("throws an exception when use stop words are invalid", () => {
       // @ts-ignore: JavaScript test
       expect(() => new Schema('TestEntity', {}, { useStopWords: 'FOO' }))
-        .toThrowErrorOfType(SchemaError, "'FOO' in an invalid value for stop words. Valid values are 'OFF', 'DEFAULT', and 'CUSTOM'.")
+        .toThrowErrorOfType(InvalidSchema, "'FOO' in an invalid value for stop words. Valid values are 'OFF', 'DEFAULT', and 'CUSTOM'.")
     })
 
     it("throws an exception when index name is empty", () =>
       expect(() => new Schema('TestEntity', {}, { indexName: '' }))
-        .toThrowErrorOfType(SchemaError, "Index name must be a non-empty string."))
+        .toThrowErrorOfType(InvalidSchema, "Index name must be a non-empty string."))
 
     it("throws an exception when ID strategy is not a function", () =>
       // @ts-ignore: JavaScript test
       expect(() => new Schema('TestEntity', {}, { idStrategy: 'NOT A FUNCTION' }))
-        .toThrowErrorOfType(SchemaError, "ID strategy must be a function that takes no arguments and returns a string."))
+        .toThrowErrorOfType(InvalidSchema, "ID strategy must be a function that takes no arguments and returns a string."))
   })
 })

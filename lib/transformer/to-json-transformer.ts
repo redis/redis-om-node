@@ -4,9 +4,9 @@ import clone from 'just-clone'
 import { Field, Schema } from "../schema"
 import { RedisJsonData } from "../client"
 
-import { convertDateToEpoch, convertIsoDateToEpoch, convertKnownValueToString, convertPointToString, isArray, isBoolean, isDate, isDefined, isNull, isNumber, isObject, isPoint, isString, isUndefined, stringifyError } from "./transformer-common"
+import { convertDateToEpoch, convertIsoDateToEpoch, convertKnownValueToString, convertPointToString, isArray, isBoolean, isDate, isDateString, isDefined, isNull, isNumber, isObject, isPoint, isString, isUndefined, stringifyError } from "./transformer-common"
 import { EntityData } from '../entity'
-import { RedisOmError } from '../errors'
+import { InvalidJsonInput, NullJsonInput } from '../errors'
 
 export function toRedisJson(schema: Schema, data: EntityData): RedisJsonData {
   let json: RedisJsonData = clone(data)
@@ -31,7 +31,7 @@ function convertToRedisJsonKnown(schema: Schema, json: RedisJsonData) {
       return
     }
 
-    throw new RedisOmError(`Expected path to point to a single value but found many: "${field.jsonPath}"`)
+    throw new InvalidJsonInput(field)
   })
 }
 
@@ -56,8 +56,8 @@ function convertKnownResultToJson(field: Field, result: any): any {
 function convertKnownResultsToJson(field: Field, results: any[]): any {
   results.forEach((result: any) => {
     const { value, parent, parentProperty } = result
-    if (isNull(value)) throw `Expected a string[] but received an array or object containing null: ${stringifyError(parent)}`
-    if (isUndefined(value) && isArray(parent)) throw `Expected a string[] but received an array containing undefined: ${stringifyError(parent)}`
+    if (isNull(value)) throw new NullJsonInput(field)
+    if (isUndefined(value) && isArray(parent)) throw new NullJsonInput(field)
     if (isDefined(value)) parent[parentProperty] = convertKnownValueToString(value)
   })
 }
@@ -69,21 +69,24 @@ function convertKnownValueToJson(field: Field, value: any): any {
   switch (field.type) {
     case 'boolean':
       if (isBoolean(value)) return value
-      throw new RedisOmError(`Expected a boolean but received: ${stringifyError(value)}`)
+      throw new InvalidJsonInput(field)
     case 'number':
       if (isNumber(value)) return value
-      throw new RedisOmError(`Expected a number but received: ${stringifyError(value)}`)
+      throw new InvalidJsonInput(field)
     case 'date':
-      if (isDate(value)) return convertDateToEpoch(value)
-      if (isString(value)) return convertIsoDateToEpoch(value)
       if (isNumber(value)) return value
-      throw new RedisOmError(`Expected a date but received: ${stringifyError(value)}`)
+      if (isDate(value)) return convertDateToEpoch(value)
+      if (isDateString(value)) return convertIsoDateToEpoch(value)
+      throw new InvalidJsonInput(field)
     case 'point':
       if (isPoint(value)) return convertPointToString(value)
-      throw new RedisOmError(`Expected a point but received: ${stringifyError(value)}`)
+      throw new InvalidJsonInput(field)
     case 'string':
     case 'text':
-      return convertKnownValueToString(value)
+      if (isBoolean(value)) return value.toString()
+      if (isNumber(value)) return value.toString()
+      if (isString(value)) return value
+      throw new InvalidJsonInput(field)
   }
 }
 
@@ -91,9 +94,3 @@ function convertUnknownValueToJson(value: any): any {
   if (isDate(value)) return convertDateToEpoch(value)
   return value
 }
-
-const convertArrayToStringArray = (array: any[]): string[] => array.map(value => {
-  if (isNull(value)) throw `Expected a string[] but received an array containing null: ${stringifyError(array)}`
-  if (isUndefined(value)) throw `Expected a string[] but received an array containing undefined: ${stringifyError(array)}`
-  return value.toString()
-})

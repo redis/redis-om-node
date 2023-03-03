@@ -16,7 +16,7 @@ import { WhereString } from './where-string'
 import { WhereText } from './where-text'
 
 import { extractCountFromSearchResults, extractEntitiesFromSearchResults, extractEntityIdsFromSearchResults, extractKeyNamesFromSearchResults } from "./results-converter"
-import { RedisOmError, SearchError } from "../errors"
+import { FieldNotInSchema, RedisOmError, SearchError } from "../errors"
 import { WhereDate } from "./where-date"
 
 /**
@@ -459,7 +459,7 @@ export abstract class AbstractSearch {
     } catch (error) {
       const message = (error as Error).message
       if (message.startsWith("Syntax error")) {
-        throw new RedisOmError(`The query to RediSearch had a syntax error: "${message}".\nThis is often the result of using a stop word in the query. Either change the query to not use a stop word or change the stop words in the schema definition. You can check the RediSearch source for the default stop words at: https://github.com/RediSearch/RediSearch/blob/master/src/stopwords.h.`)
+        throw new SearchError(`The query to RediSearch had a syntax error: "${message}".\nThis is often the result of using a stop word in the query. Either change the query to not use a stop word or change the stop words in the schema definition. You can check the RediSearch source for the default stop words at: https://github.com/RediSearch/RediSearch/blob/master/src/stopwords.h.`)
       }
       throw error
     }
@@ -596,7 +596,7 @@ export class Search extends AbstractSearch {
   private createWhere(fieldName: string): WhereField {
     const field = this.schema.fieldByName(fieldName)
 
-    if (field === null) throw new SearchError(`The field '${fieldName}' is not part of the schema.`)
+    if (field === null) throw new FieldNotInSchema(fieldName)
 
     if (field.type === 'boolean' && this.schema.dataStructure === 'HASH') return new WhereHashBoolean(this, field)
     if (field.type === 'boolean' && this.schema.dataStructure === 'JSON') return new WhereJsonBoolean(this, field)
