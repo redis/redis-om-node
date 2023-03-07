@@ -1,41 +1,47 @@
-import { Client } from "$lib/client";
+import { RedisConnection, RedisHashData, RedisJsonData } from "$lib/client"
 
-export async function removeAll(client: Client, prefix: string) {
-  const keys = (await client.execute(['KEYS', prefix + '*'])) as string[];
-  if (keys.length) {
-    await client.execute(['DEL',...keys]);
-  }
+export async function sleep(ms: number) {
+  return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-export async function saveHash(client: Client, key: string, fields: Array<string>) {
-  await client.execute(['HSET', key, ...fields]);
+export async function removeKeys(redis: RedisConnection, ...keys: string[]) {
+  for (const key of keys) await redis.del(key)
 }
 
-export async function saveJson(client: Client, key: string, json: string) {
-  await client.execute(['JSON.SET', key, '.', json]);
+export async function saveHash(redis: RedisConnection, key: string, fieldsAndValues: RedisHashData) {
+  await redis.hSet(key, fieldsAndValues)
 }
 
-export async function keyExists(client: Client, key: string): Promise<boolean> {
-  const exists = await client.execute(['EXISTS', key]);
-  return !!exists;
+export async function saveJson(redis: RedisConnection, key: string, json: RedisJsonData) {
+  await redis.json.set(key, '$', json)
 }
 
-export async function fetchJson(client: Client, key: string): Promise<string> {
-  return <string>await client.execute(['JSON.GET', key, '.']);
+export async function keyExists(redis: RedisConnection, key: string): Promise<boolean> {
+  const exists = await redis.exists(key)
+  return !!exists
 }
 
-export async function fetchHashKeys(client: Client, key: string): Promise<Array<string>> {
-  return <Array<string>>await client.execute(['HKEYS', key]);
+export async function fetchJsonData(redis: RedisConnection, key: string): Promise<RedisJsonData | null> {
+  const results = await redis.json.get(key, { path: '$' })
+  return results === null ? null : (results as RedisJsonData)[0]
 }
 
-export async function fetchHashFields(client: Client, key: string, ...fields: Array<string>): Promise<Array<string>> {
-  return <Array<string>>await client.execute(['HMGET', key, ...fields]);
+export async function fetchHashKeys(redis: RedisConnection, key: string): Promise<string[]> {
+  return await redis.hKeys(key)
 }
 
-export async function fetchIndexInfo(client: Client, indexName: string): Promise<Array<string>> {
-  return <Array<string>>await client.execute(['FT.INFO', indexName]);
+export async function fetchHashFields(redis: RedisConnection, key: string, ...fields: string[]): Promise<string[]> {
+  return await redis.hmGet(key, fields)
 }
 
-export async function fetchIndexHash(client: Client, indexHashName: string): Promise<string> {
-  return <string>await client.execute(['GET', indexHashName]);
+export async function fetchHashData(redis: RedisConnection, key: string): Promise<RedisHashData> {
+  return await redis.hGetAll(key)
+}
+
+export async function fetchIndexInfo(redis: RedisConnection, indexName: string): Promise<any> {
+  return await redis.ft.info(indexName)
+}
+
+export async function fetchIndexHash(redis: RedisConnection, indexHashName: string): Promise<string | null> {
+  return await redis.get(indexHashName)
 }

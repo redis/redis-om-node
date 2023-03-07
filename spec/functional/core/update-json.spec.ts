@@ -1,155 +1,85 @@
-import { Client } from '$lib/client';
-import { Schema } from '$lib/schema/schema';
-import { Repository } from '$lib/repository';
+import { createClient } from 'redis'
 
-import { SampleJsonEntity, createJsonEntitySchema, loadTestJson } from '../helpers/data-helper';
-import { fetchJson, removeAll, keyExists } from '../helpers/redis-helper';
+import { Entity, EntityId, EntityKeyName, RedisConnection, Repository, Schema } from '$lib/index'
 
-import {
-  AN_ENTITY, ANOTHER_ENTITY,
-  ANOTHER_POINT_STRING, A_THIRD_POINT_STRING,
-  ANOTHER_DATE_EPOCH, A_THIRD_DATE_EPOCH } from '../../helpers/example-data';
+import { createJsonEntitySchema } from '../helpers/data-helper'
+import { fetchJsonData, keyExists, removeKeys, saveJson } from '../helpers/redis-helper'
+
+import { ANOTHER_ENTITY, ANOTHER_JSON, AN_EMPTY_JSON, A_JSON } from '../helpers/json-example-data'
 
 describe("update JSON", () => {
 
-  let client: Client;
-  let repository: Repository<SampleJsonEntity>;
-  let schema: Schema<SampleJsonEntity>;
-  let entity: SampleJsonEntity;
-  let entityId: string;
-  let entityKey: string;
+  let redis: RedisConnection
+  let repository: Repository
+  let schema: Schema
+  let entity: Entity
+  let returnedEntity: Entity
 
   beforeAll(async () => {
-    client = new Client();
-    await client.open();
+    redis = createClient()
+    await redis.connect()
 
-    schema = createJsonEntitySchema('update-json');
-    repository = client.fetchRepository<SampleJsonEntity>(schema);
-  });
+    schema = createJsonEntitySchema('update-json')
+    repository = new Repository(schema, redis)
+  })
 
   beforeEach(async () => {
-    await removeAll(client, 'update-json:');
-    await loadTestJson(client, 'update-json:full', AN_ENTITY);
-  });
+    await removeKeys(redis, 'update-json:1')
+    await saveJson(redis, 'update-json:1', A_JSON)
+  })
 
   afterAll(async () => {
-    await removeAll(client, 'update-json:');
-    await client.close()
-  });
+    await removeKeys(redis, 'update-json:1')
+    await redis.quit()
+  })
 
-  describe("when updating a fully populated entity to redis", () => {
+  describe("when updating an Entity to Redis", () => {
     beforeEach(async () => {
-      entity = await repository.fetch('full');
-      entity.aString = ANOTHER_ENTITY.aString;
-      entity.anotherString = ANOTHER_ENTITY.anotherString;
-      entity.someText = ANOTHER_ENTITY.someText;
-      entity.someOtherText = ANOTHER_ENTITY.someOtherText;
-      entity.aNumber = ANOTHER_ENTITY.aNumber;
-      entity.anotherNumber = ANOTHER_ENTITY.anotherNumber;
-      entity.aBoolean = ANOTHER_ENTITY.aBoolean;
-      entity.anotherBoolean = ANOTHER_ENTITY.anotherBoolean;
-      entity.aPoint = ANOTHER_ENTITY.aPoint;
-      entity.anotherPoint = ANOTHER_ENTITY.anotherPoint;
-      entity.aDate = ANOTHER_ENTITY.aDate;
-      entity.anotherDate = ANOTHER_ENTITY.anotherDate;
-      entity.someStrings = ANOTHER_ENTITY.someStrings;
-      entity.someOtherStrings = ANOTHER_ENTITY.someOtherStrings;
-      entityId = await repository.save(entity);
-      entityKey = `update-json:full`;
-    });
+      entity = await repository.fetch('1')
+      entity.root = ANOTHER_ENTITY.root
+      entity.anotherString = ANOTHER_ENTITY.anotherString
+      entity.someOtherText = ANOTHER_ENTITY.someOtherText
+      entity.anotherNumber = ANOTHER_ENTITY.anotherNumber
+      entity.anotherBoolean = ANOTHER_ENTITY.anotherBoolean
+      entity.anotherPoint = ANOTHER_ENTITY.anotherPoint
+      entity.anotherDate = ANOTHER_ENTITY.anotherDate
+      entity.someOtherStrings = ANOTHER_ENTITY.someOtherStrings
+      returnedEntity = await repository.save(entity)
+    })
 
-    it("returns the expected entity id", () => expect(entityId).toBe('full'));
+    it("returns the expected entity", () => expect(returnedEntity).toEqual({
+      ...ANOTHER_ENTITY,
+      [EntityId]: '1',
+      [EntityKeyName]: 'update-json:1'
+    }))
 
-    it("creates the expected JSON", async () => {
-      let json = await fetchJson(client, entityKey);
-      let data = JSON.parse(json);
-      expect(data.aString).toBe(ANOTHER_ENTITY.aString);
-      expect(data.anotherString).toBe(ANOTHER_ENTITY.anotherString);
-      expect(data.someText).toBe(ANOTHER_ENTITY.someText);
-      expect(data.someOtherText).toBe(ANOTHER_ENTITY.someOtherText);
-      expect(data.aNumber).toBe(ANOTHER_ENTITY.aNumber);
-      expect(data.anotherNumber).toBe(ANOTHER_ENTITY.anotherNumber);
-      expect(data.aBoolean).toBe(ANOTHER_ENTITY.aBoolean);
-      expect(data.anotherBoolean).toBe(ANOTHER_ENTITY.anotherBoolean);
-      expect(data.aPoint).toBe(ANOTHER_POINT_STRING);
-      expect(data.anotherPoint).toBe(A_THIRD_POINT_STRING);
-      expect(data.aDate).toBe(ANOTHER_DATE_EPOCH);
-      expect(data.anotherDate).toBe(A_THIRD_DATE_EPOCH);
-      expect(data.someStrings).toEqual(ANOTHER_ENTITY.someStrings);
-      expect(data.someOtherStrings).toEqual(ANOTHER_ENTITY.someOtherStrings);
-    });
-  });
+    it('create the expected JSON in Redis', async () => expect(fetchJsonData(redis, 'update-json:1')).resolves.toEqual(ANOTHER_JSON))
+  })
 
-  describe("when updating a partially populated entity to redis", () => {
+  describe("when updating an empty entity to Redis", () => {
     beforeEach(async () => {
-      entity = await repository.fetch('full');
-      entity.aString = ANOTHER_ENTITY.aString;
-      entity.anotherString = null;
-      entity.someText = ANOTHER_ENTITY.someText;
-      entity.someOtherText = null;
-      entity.aNumber = ANOTHER_ENTITY.aNumber;
-      entity.anotherNumber = null;
-      entity.aBoolean = ANOTHER_ENTITY.aBoolean;
-      entity.anotherBoolean = null;
-      entity.aPoint = ANOTHER_ENTITY.aPoint;
-      entity.anotherPoint = null;
-      entity.aDate = ANOTHER_ENTITY.aDate;
-      entity.anotherDate = null;
-      entity.someStrings = ANOTHER_ENTITY.someStrings;
-      entity.someOtherStrings = null;
-      entityId = await repository.save(entity);
-      entityKey = `update-json:full`;
-    });
+      entity = await repository.fetch('1')
+      entity.root = undefined
+      entity.anotherString = undefined
+      entity.someOtherText = undefined
+      entity.anotherNumber = undefined
+      delete entity.anotherBoolean
+      delete entity.anotherPoint
+      delete entity.anotherDate
+      delete entity.someOtherStrings
+      returnedEntity = await repository.save(entity)
+    })
 
-    it("returns the expected entity id", () => expect(entityId).toBe('full'));
+    it("returns the expected entity", () => expect(returnedEntity).toEqual({
+      root: undefined,
+      anotherString: undefined,
+      someOtherText: undefined,
+      anotherNumber: undefined,
+      [EntityId]: '1',
+      [EntityKeyName]: 'update-json:1'
+    }))
 
-    it("creates the expected JSON", async () => {
-      let json = await fetchJson(client, entityKey);
-      let data = JSON.parse(json);
-      expect(data.aString).toBe(ANOTHER_ENTITY.aString);
-      expect(data.anotherString).toBeUndefined()
-      expect(data.someText).toBe(ANOTHER_ENTITY.someText);
-      expect(data.someOtherText).toBeUndefined();
-      expect(data.aNumber).toBe(ANOTHER_ENTITY.aNumber);
-      expect(data.anotherNumber).toBeUndefined();
-      expect(data.aBoolean).toBe(ANOTHER_ENTITY.aBoolean);
-      expect(data.anotherBoolean).toBeUndefined();
-      expect(data.aPoint).toBe(ANOTHER_POINT_STRING);
-      expect(data.anotherPoint).toBeUndefined();
-      expect(data.aDate).toBe(ANOTHER_DATE_EPOCH);
-      expect(data.anotherDate).toBeUndefined();
-      expect(data.someStrings).toEqual(ANOTHER_ENTITY.someStrings);
-      expect(data.someOtherStrings).toBeUndefined();
-    });
-  });
-
-  describe("when updating an empty entity to redis", () => {
-    beforeEach(async () => {
-      entity = await repository.fetch('full');
-      entity.aString = null;
-      entity.anotherString = null;
-      entity.someText = null;
-      entity.someOtherText = null;
-      entity.aNumber = null;
-      entity.anotherNumber = null;
-      entity.aBoolean = null;
-      entity.anotherBoolean = null;
-      entity.aPoint = null;
-      entity.anotherPoint = null;
-      entity.aDate = null;
-      entity.anotherDate = null;
-      entity.someStrings = null;
-      entity.someOtherStrings = null;
-      entityId = await repository.save(entity);
-      entityKey = `update-json:full`;
-    });
-
-    it("returns the expected entity id", () => expect(entityId).toBe('full'));
-
-    it("creates the expected JSON", async () => {
-      let json = await fetchJson(client, entityKey);
-      let data = JSON.parse(json);
-      expect(data).toEqual({});
-    });
-  });
-});
+    it("creates the expected JSON", async () => expect(fetchJsonData(redis, 'update-json:1')).resolves.toEqual(AN_EMPTY_JSON))
+    it("stores an empty key", async () => expect(keyExists(redis, 'update-json:1')).resolves.toBe(true))
+  })
+})

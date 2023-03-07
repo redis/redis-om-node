@@ -1,27 +1,26 @@
-import { Entity } from "../entity/entity";
-import { Search } from "./search";
-import { WhereField } from "./where-field";
+import { Search } from "./search"
+import { WhereField } from "./where-field"
 
-export class WhereStringArray<TEntity extends Entity> extends WhereField<TEntity> {
-  private value!: Array<string>;
+export class WhereStringArray extends WhereField {
+  private value!: Array<string>
 
-  contain(value: string): Search<TEntity> {
-    this.value = [value];
-    return this.search;
+  contain(value: string): Search {
+    this.value = [value]
+    return this.search
   }
 
-  contains(value: string): Search<TEntity> { return this.contain(value); }
+  contains(value: string): Search { return this.contain(value) }
 
-  containsOneOf(...value: Array<string>): Search<TEntity> {
-    this.value = value;
-    return this.search;
+  containsOneOf(...value: Array<string>): Search {
+    this.value = value
+    return this.search
   }
 
-  containOneOf(...value: Array<string>): Search<TEntity> { return this.containsOneOf(...value); }
+  containOneOf(...value: Array<string>): Search { return this.containsOneOf(...value) }
 
   toString(): string {
-    const matchPunctuation = /[,.<>{}[\]"':;!@#$%^&*()\-+=~| ]/g;
-    const escapedValue = this.value.map(s => s.replace(matchPunctuation, '\\$&')).join('|');
-    return this.buildQuery(`{${escapedValue}}`);
+    const matchPunctuation = /[,.<>{}[\]"':;!@#$%^&*()\-+=~| ]/g
+    const escapedValue = this.value.map(s => s.replace(matchPunctuation, '\\$&')).join('|')
+    return this.buildQuery(`{${escapedValue}}`)
   }
 }

@@ -1,6 +1,6 @@
 {
   "name": "redis-om",
-  "version": "0.3.6",
+  "version": "0.4.0-beta.1",
   "description": "Object mapping, and more, for Redis and Node.js. Written in TypeScript.",
   "main": "dist/index.js",
   "types": "./dist/index.d.ts",
@@ -53,7 +53,9 @@
     "vitest": "^0.20.0"
   },
   "dependencies": {
-    "redis": "^4.0.4",
+    "jsonpath-plus": "^7.2.0",
+    "just-clone": "^6.1.1",
+    "redis": "^4.6.4",
     "ulid": "^2.3.0"
   }
 }

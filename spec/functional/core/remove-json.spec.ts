@@ -1,77 +1,70 @@
-import { Client } from '$lib/client';
-import { Schema } from '$lib/schema/schema';
-import { Repository } from '$lib/repository';
+import { createClient } from 'redis'
 
-import { SampleJsonEntity, loadTestJson, createJsonEntitySchema } from '../helpers/data-helper';
-import { keyExists, removeAll } from '../helpers/redis-helper';
+import { RedisConnection, Repository, Schema } from '$lib/index'
 
-import { ANOTHER_ENTITY, AN_EMPTY_ENTITY, AN_ENTITY, A_THIRD_ENTITY } from '../../helpers/example-data';
+import { createJsonEntitySchema } from '../helpers/data-helper'
+import { keyExists, removeKeys, saveJson } from '../helpers/redis-helper'
+
+import { ANOTHER_JSON, A_JSON, A_THIRD_JSON } from '../helpers/json-example-data'
 
 describe("remove JSON", () => {
 
-  let client: Client;
-  let repository: Repository<SampleJsonEntity>;
-  let schema: Schema<SampleJsonEntity>;
-
-  let exists: boolean;
+  let redis: RedisConnection
+  let repository: Repository
+  let schema: Schema
 
   beforeAll(async () => {
-    client = await new Client().open();
+    redis = createClient()
+    await redis.connect()
     schema = createJsonEntitySchema('remove-json')
-    repository = client.fetchRepository<SampleJsonEntity>(schema);
+    repository = new Repository(schema, redis)
   })
 
   beforeEach(async () => {
-    await removeAll(client, 'remove-json:')
-    await loadTestJson(client, 'remove-json:foo', AN_ENTITY);
-    await loadTestJson(client, 'remove-json:bar', ANOTHER_ENTITY);
-    await loadTestJson(client, 'remove-json:baz', A_THIRD_ENTITY);
-  });
+    await removeKeys(redis, 'remove-json:1', 'remove-json:2', 'remove-json:3')
+    await saveJson(redis, 'remove-json:1', A_JSON)
+    await saveJson(redis, 'remove-json:2', ANOTHER_JSON)
+    await saveJson(redis, 'remove-json:3', A_THIRD_JSON)
+  })
 
   afterAll(async () => {
-    await removeAll(client, 'remove-json:')
-    await client.close()
-  });
+    await removeKeys(redis, 'remove-json:1', 'remove-json:2', 'remove-json:3')
+    await redis.quit()
+  })
 
   it("removes a single entity", async () => {
-    exists = await keyExists(client, 'remove-json:foo');
-    expect(exists).toBe(true);
+    expect(keyExists(redis, 'remove-json:1')).resolves.toBe(true)
+    await repository.remove('1')
+    expect(keyExists(redis, 'remove-json:1')).resolves.toBe(false)
+  })
 
-    await repository.remove('foo');
+  it("removes multiple entities with discrete arguments", async () => {
+    expect(keyExists(redis, 'remove-json:1')).resolves.toBe(true)
+    expect(keyExists(redis, 'remove-json:2')).resolves.toBe(true)
+    expect(keyExists(redis, 'remove-json:3')).resolves.toBe(true)
 
-    exists = await keyExists(client, 'remove-json:foo');
-    expect(exists).toBe(false);
-  });
+    await repository.remove('1', '2', '3')
 
-  it("removes multiple entities", async () => {
-    exists = await keyExists(client, 'remove-json:foo');
-    expect(exists).toBe(true);
+    expect(keyExists(redis, 'remove-json:1')).resolves.toBe(false)
+    expect(keyExists(redis, 'remove-json:2')).resolves.toBe(false)
+    expect(keyExists(redis, 'remove-json:3')).resolves.toBe(false)
+  })
 
-    exists = await keyExists(client, 'remove-json:bar');
-    expect(exists).toBe(true);
+  it("removes multiple entities with an array", async () => {
+    expect(keyExists(redis, 'remove-json:1')).resolves.toBe(true)
+    expect(keyExists(redis, 'remove-json:2')).resolves.toBe(true)
+    expect(keyExists(redis, 'remove-json:3')).resolves.toBe(true)
 
-    exists = await keyExists(client, 'remove-json:baz');
-    expect(exists).toBe(true);
+    await repository.remove([ '1', '2', '3' ])
 
-    await repository.remove('foo', 'bar', 'baz');
-
-    exists = await keyExists(client, 'remove-json:foo');
-    expect(exists).toBe(false);
-
-    exists = await keyExists(client, 'remove-json:bar');
-    expect(exists).toBe(false);
-
-    exists = await keyExists(client, 'remove-json:baz');
-    expect(exists).toBe(false);
-  });
+    expect(keyExists(redis, 'remove-json:1')).resolves.toBe(false)
+    expect(keyExists(redis, 'remove-json:2')).resolves.toBe(false)
+    expect(keyExists(redis, 'remove-json:3')).resolves.toBe(false)
+  })
 
   it("removes a non-existing entity", async () => {
-    exists = await keyExists(client, 'remove-json:empty');
-    expect(exists).toBe(false);
-
-    await repository.remove('empty');
-
-    exists = await keyExists(client, 'remove-json:empty');
-    expect(exists).toBe(false);
-  });
-});
+    expect(keyExists(redis, 'remove-json:empty')).resolves.toBe(false)
+    await repository.remove('empty')
+    expect(keyExists(redis, 'remove-json:empty')).resolves.toBe(false)
+  })
+})

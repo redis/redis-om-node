@@ -1,71 +1,74 @@
-import { Schema } from "../schema/schema";
-import { Client, LimitOptions, SearchOptions } from "../client";
-import { Entity } from '../entity/entity';
+import { SearchOptions } from "redis"
 
-import { Where } from './where';
-import { WhereAnd } from './where-and';
-import { WhereOr } from './where-or';
-import { WhereField } from './where-field';
-import { WhereStringArray } from './where-string-array';
-import { WhereHashBoolean, WhereJsonBoolean } from './where-boolean';
-import { WhereNumber } from './where-number';
-import { WherePoint } from './where-point';
-import { WhereString } from './where-string';
-import { WhereText } from './where-text';
+import { Client } from "../client"
+import { Entity } from '../entity'
+import { Schema } from "../schema"
 
-import { HashSearchResultsConverter, JsonSearchResultsConverter } from "./results-converter";
-import { RedisError } from "../errors";
-import { SortOptions } from "../client";
-import { WhereDate } from "./where-date";
-import { SortableFieldDefinition } from "../schema/definition";
+import { Where } from './where'
+import { WhereAnd } from './where-and'
+import { WhereOr } from './where-or'
+import { WhereField } from './where-field'
+import { WhereStringArray } from './where-string-array'
+import { WhereHashBoolean, WhereJsonBoolean } from './where-boolean'
+import { WhereNumber } from './where-number'
+import { WherePoint } from './where-point'
+import { WhereString } from './where-string'
+import { WhereText } from './where-text'
+
+import { extractCountFromSearchResults, extractEntitiesFromSearchResults, extractEntityIdsFromSearchResults, extractKeyNamesFromSearchResults } from "./results-converter"
+import { FieldNotInSchema, RedisOmError, SearchError } from "../error"
+import { WhereDate } from "./where-date"
 
 /**
  * A function that takes a {@link Search} and returns a {@link Search}. Used in nested queries.
  * @template TEntity The type of {@link Entity} being sought.
  */
-export type SubSearchFunction<TEntity extends Entity> = (search: Search<TEntity>) => Search<TEntity>
+export type SubSearchFunction = (search: Search) => Search
 
-type AndOrConstructor = new (left: Where, right: Where) => Where;
+type AndOrConstructor = new (left: Where, right: Where) => Where
+
+// This is a simplified redefintion of the SortByProperty type that is not exported by Node Redis
+type SortOptions = { BY: string, DIRECTION: 'ASC' | 'DESC' }
 
 /**
  * Abstract base class for {@link Search} and {@link RawSearch} that
  * contains methods to return search results.
  * @template TEntity The type of {@link Entity} being sought.
  */
-export abstract class AbstractSearch<TEntity extends Entity> {
+export abstract class AbstractSearch {
 
   /** @internal */
-  protected schema: Schema<TEntity>;
+  protected schema: Schema
 
   /** @internal */
-  protected client: Client;
+  protected client: Client
 
   /** @internal */
-  protected sort?: SortOptions;
+  protected sortOptions?: SortOptions
 
   /** @internal */
-  constructor(schema: Schema<TEntity>, client: Client) {
-    this.schema = schema;
-    this.client = client;
+  constructor(schema: Schema, client: Client) {
+    this.schema = schema
+    this.client = client
   }
 
   /** @internal */
-  abstract get query(): string;
+  abstract get query(): string
 
   /**
    * Applies an ascending sort to the query.
    * @param field The field to sort by.
    * @returns this
    */
-  sortAscending(field: string): AbstractSearch<TEntity> {
-    return this.sortBy(field, 'ASC');
+  sortAscending(field: string): AbstractSearch {
+    return this.sortBy(field, 'ASC')
   }
 
   /**
    * Alias for {@link Search.sortDescending}.
    */
-  sortDesc(field: string): AbstractSearch<TEntity> {
-    return this.sortDescending(field);
+  sortDesc(field: string): AbstractSearch {
+    return this.sortDescending(field)
   }
 
   /**
@@ -73,15 +76,15 @@ export abstract class AbstractSearch<TEntity extends Entity> {
    * @param field The field to sort by.
    * @returns this
    */
-  sortDescending(field: string): AbstractSearch<TEntity> {
-    return this.sortBy(field, 'DESC');
+  sortDescending(field: string): AbstractSearch {
+    return this.sortBy(field, 'DESC')
   }
 
   /**
    * Alias for {@link Search.sortAscending}.
    */
-  sortAsc(field: string): AbstractSearch<TEntity> {
-    return this.sortAscending(field);
+  sortAsc(field: string): AbstractSearch {
+    return this.sortAscending(field)
   }
 
   /**
@@ -90,37 +93,38 @@ export abstract class AbstractSearch<TEntity extends Entity> {
      * @param order The order of returned {@link Entity | Entities} Defaults to `ASC` (ascending) if not specified
      * @returns this
      */
-  sortBy(field: string, order: 'ASC' | 'DESC' = 'ASC'): AbstractSearch<TEntity> {
-    const fieldDef = this.schema.definition[field];
-    const dataStructure = this.schema.dataStructure;
+  sortBy(fieldName: string, order: 'ASC' | 'DESC' = 'ASC'): AbstractSearch {
+    const field = this.schema.fieldByName(fieldName)
+    const dataStructure = this.schema.dataStructure
 
-    if (fieldDef === undefined) {
-      const message = `'sortBy' was called on field '${field}' which is not defined in the Schema.`;
-      console.error(message);
-      throw new RedisError(message)
+    if (!field) {
+      const message = `'sortBy' was called on field '${fieldName}' which is not defined in the Schema.`
+      console.error(message)
+      throw new RedisOmError(message)
     }
 
-    const type = fieldDef.type;
-    const markedSortable = (fieldDef as SortableFieldDefinition).sortable;
+    const type = field.type
+    const markedSortable = field.sortable
 
-    const UNSORTABLE = ['point', 'string[]'];
-    const JSON_SORTABLE = ['number', 'text', 'date'];
-    const HASH_SORTABLE = ['string', 'boolean', 'number', 'text', 'date'];
+    const UNSORTABLE = ['point', 'string[]']
+    const JSON_SORTABLE = ['number', 'text', 'date']
+    const HASH_SORTABLE = ['string', 'boolean', 'number', 'text', 'date']
 
     if (UNSORTABLE.includes(type)) {
-      const message = `'sortBy' was called on '${type}' field '${field}' which cannot be sorted.`;
-      console.error(message);
-      throw new RedisError(message)
+      const message = `'sortBy' was called on '${field.type}' field '${field.name}' which cannot be sorted.`
+      console.error(message)
+      throw new RedisOmError(message)
     }
 
     if (dataStructure === 'JSON' && JSON_SORTABLE.includes(type) && !markedSortable)
-      console.warn(`'sortBy' was called on field '${field}' which is not marked as sortable in the Schema. This may result is slower searches. If possible, mark the field as sortable in the Schema.`);
+      console.warn(`'sortBy' was called on field '${field.name}' which is not marked as sortable in the Schema. This may result is slower searches. If possible, mark the field as sortable in the Schema.`)
 
     if (dataStructure === 'HASH' && HASH_SORTABLE.includes(type) && !markedSortable)
-      console.warn(`'sortBy' was called on field '${field}' which is not marked as sortable in the Schema. This may result is slower searches. If possible, mark the field as sortable in the Schema.`);
+      console.warn(`'sortBy' was called on field '${field.name}' which is not marked as sortable in the Schema. This may result is slower searches. If possible, mark the field as sortable in the Schema.`)
 
-    this.sort = { field, order };
-    return this;
+    this.sortOptions = { BY: field.name, DIRECTION: order }
+
+    return this
   }
 
   /**
@@ -128,8 +132,8 @@ export abstract class AbstractSearch<TEntity extends Entity> {
    * @param field The field with the minimal value.
    * @returns The {@link Entity} with the minimal value
    */
-  async min(field: string): Promise<TEntity | null> {
-    return await this.sortBy(field, 'ASC').first();
+  async min(field: string): Promise<Entity | null> {
+    return await this.sortBy(field, 'ASC').first()
   }
 
   /**
@@ -138,8 +142,7 @@ export abstract class AbstractSearch<TEntity extends Entity> {
    * @returns The entity ID with the minimal value
    */
   async minId(field: string): Promise<string | null> {
-    const key = await this.minKey(field);
-    return this.keyToEntityId(key);
+    return await this.sortBy(field, 'ASC').firstId()
   }
 
   /**
@@ -148,7 +151,7 @@ export abstract class AbstractSearch<TEntity extends Entity> {
    * @returns The key name with the minimal value
    */
   async minKey(field: string): Promise<string | null> {
-    return await this.sortBy(field, 'ASC').firstKey();
+    return await this.sortBy(field, 'ASC').firstKey()
   }
 
   /**
@@ -156,8 +159,8 @@ export abstract class AbstractSearch<TEntity extends Entity> {
    * @param field The field with the maximal value.
    * @returns The entity ID {@link Entity} with the maximal value
    */
-  async max(field: string): Promise<TEntity | null> {
-    return await this.sortBy(field, 'DESC').first();
+  async max(field: string): Promise<Entity | null> {
+    return await this.sortBy(field, 'DESC').first()
   }
 
   /**
@@ -166,8 +169,7 @@ export abstract class AbstractSearch<TEntity extends Entity> {
    * @returns The entity ID with the maximal value
    */
   async maxId(field: string): Promise<string | null>{
-    const key = await this.maxKey(field);
-    return this.keyToEntityId(key);
+    return await this.sortBy(field, 'DESC').firstId()
   }
 
   /**
@@ -176,7 +178,7 @@ export abstract class AbstractSearch<TEntity extends Entity> {
    * @returns The key name with the maximal value
    */
   async maxKey(field: string): Promise<string | null> {
-    return await this.sortBy(field, 'DESC').firstKey();
+    return await this.sortBy(field, 'DESC').firstKey()
   }
 
   /**
@@ -185,9 +187,7 @@ export abstract class AbstractSearch<TEntity extends Entity> {
    */
   async count(): Promise<number> {
     const searchResults = await this.callSearch()
-    return this.schema.dataStructure === 'JSON'
-      ? new JsonSearchResultsConverter(this.schema, searchResults).count
-      : new HashSearchResultsConverter(this.schema, searchResults).count;
+    return extractCountFromSearchResults(searchResults)
   }
 
   /**
@@ -196,11 +196,9 @@ export abstract class AbstractSearch<TEntity extends Entity> {
    * @param count The number of {@link Entity | Entities} to return.
    * @returns An array of {@link Entity | Entities} matching the query.
    */
-  async page(offset: number, count: number): Promise<TEntity[]> {
-    const searchResults = await this.callSearch({ offset, count });
-    return this.schema.dataStructure === 'JSON'
-      ? new JsonSearchResultsConverter(this.schema, searchResults).entities
-      : new HashSearchResultsConverter(this.schema, searchResults).entities;
+  async page(offset: number, count: number): Promise<Entity[]> {
+    const searchResults = await this.callSearch(offset, count)
+    return extractEntitiesFromSearchResults(this.schema, searchResults)
   }
 
   /**
@@ -210,8 +208,8 @@ export abstract class AbstractSearch<TEntity extends Entity> {
    * @returns An array of strings matching the query.
    */
    async pageOfIds(offset: number, count: number): Promise<string[]> {
-    const keys = await this.pageOfKeys(offset, count);
-    return this.keysToEntityIds(keys);
+    const searchResults = await this.callSearch(offset, count, true)
+    return extractEntityIdsFromSearchResults(this.schema, searchResults)
   }
 
   /**
@@ -221,32 +219,32 @@ export abstract class AbstractSearch<TEntity extends Entity> {
    * @returns An array of strings matching the query.
    */
   async pageOfKeys(offset: number, count: number): Promise<string[]> {
-    const [ _count, ...keys] = await this.callSearch({ offset, count }, true);
-    return keys;
+    const searchResults = await this.callSearch(offset, count, true)
+    return extractKeyNamesFromSearchResults(searchResults)
   }
 
   /**
    * Returns the first {@link Entity} that matches this query.
    */
-  async first(): Promise<TEntity | null> {
-    const foundEntity = await this.page(0, 1);
-    return foundEntity[0] ?? null;
+  async first(): Promise<Entity | null> {
+    const foundEntity = await this.page(0, 1)
+    return foundEntity[0] ?? null
   }
 
   /**
    * Returns the first entity ID that matches this query.
    */
    async firstId(): Promise<string | null> {
-    const key = await this.firstKey()
-    return this.keyToEntityId(key)
+    const foundIds = await this.pageOfIds(0, 1)
+    return foundIds[0] ?? null
   }
 
   /**
    * Returns the first key name that matches this query.
    */
    async firstKey(): Promise<string | null> {
-    const foundIds = await this.pageOfKeys(0, 1);
-    return foundIds[0] ?? null;
+    const foundKeys = await this.pageOfKeys(0, 1)
+    return foundKeys[0] ?? null
   }
 
   /**
@@ -256,26 +254,15 @@ export abstract class AbstractSearch<TEntity extends Entity> {
    * options:
    *
    * ```typescript
-   * const entities = await repository.search().returnAll({ pageSize: 100 });
+   * const entities = await repository.search().returnAll({ pageSize: 100 })
    * ```
    *
    * @param options Options for the call.
    * @param options.pageSize Number of {@link Entity | Entities} returned per batch.
    * @returns An array of {@link Entity | Entities} matching the query.
    */
-  async all(options = { pageSize: 10 }): Promise<TEntity[]> {
-    const entities: TEntity[] = [];
-    let offset = 0;
-    const pageSize = options.pageSize;
-
-    while (true) {
-      const foundEntities = await this.page(offset, pageSize);
-      entities.push(...foundEntities);
-      if (foundEntities.length < pageSize) break;
-      offset += pageSize;
-    }
-
-    return entities;
+  async all(options = { pageSize: 10 }): Promise<Entity[]> {
+    return this.allThings(this.page, options) as Promise<Entity[]>
   }
 
   /**
@@ -285,7 +272,7 @@ export abstract class AbstractSearch<TEntity extends Entity> {
    * options:
    *
    * ```typescript
-   * const keys = await repository.search().returnAllIds({ pageSize: 100 });
+   * const keys = await repository.search().returnAllIds({ pageSize: 100 })
    * ```
    *
    * @param options Options for the call.
@@ -293,8 +280,7 @@ export abstract class AbstractSearch<TEntity extends Entity> {
    * @returns An array of entity IDs matching the query.
    */
   async allIds(options = { pageSize: 10 }): Promise<string[]> {
-    const keys = await this.allKeys(options)
-    return this.keysToEntityIds(keys);
+    return this.allThings(this.pageOfIds, options) as Promise<string[]>
   }
 
   /**
@@ -304,7 +290,7 @@ export abstract class AbstractSearch<TEntity extends Entity> {
    * options:
    *
    * ```typescript
-   * const keys = await repository.search().returnAllKeys({ pageSize: 100 });
+   * const keys = await repository.search().returnAllKeys({ pageSize: 100 })
    * ```
    *
    * @param options Options for the call.
@@ -312,123 +298,112 @@ export abstract class AbstractSearch<TEntity extends Entity> {
    * @returns An array of key names matching the query.
    */
   async allKeys(options = { pageSize: 10 }): Promise<string[]> {
-    const keys: string[] = [];
-    let offset = 0;
-    const pageSize = options.pageSize;
-
-    while (true) {
-      const foundKeys = await this.pageOfKeys(offset, pageSize);
-      keys.push(...foundKeys);
-      if (foundKeys.length < pageSize) break;
-      offset += pageSize;
-    }
-
-    return keys;
+    return this.allThings(this.pageOfKeys, options) as Promise<string[]>
   }
 
   /**
    * Returns the current instance. Syntactic sugar to make your code more fluent.
    * @returns this
    */
-  get return(): AbstractSearch<TEntity> {
-    return this;
+  get return(): AbstractSearch {
+    return this
   }
 
   /**
    * Alias for {@link Search.min}.
    */
-  async returnMin(field: string): Promise<TEntity | null> {
-    return await this.min(field);
+  async returnMin(field: string): Promise<Entity | null> {
+    return await this.min(field)
   }
 
   /**
    * Alias for {@link Search.minId}.
    */
   async returnMinId(field: string): Promise<string | null> {
-    return await this.minId(field);
+    return await this.minId(field)
   }
 
   /**
    * Alias for {@link Search.minKey}.
    */
   async returnMinKey(field: string): Promise<string | null> {
-    return await this.minKey(field);
+    return await this.minKey(field)
   }
 
   /**
    * Alias for {@link Search.max}.
    */
-  async returnMax(field: string): Promise<TEntity | null> {
-    return await this.max(field);
+  async returnMax(field: string): Promise<Entity | null> {
+    return await this.max(field)
   }
 
   /**
    * Alias for {@link Search.maxId}.
    */
   async returnMaxId(field: string): Promise<string | null> {
-    return await this.maxId(field);
+    return await this.maxId(field)
   }
 
   /**
    * Alias for {@link Search.maxKey}.
    */
   async returnMaxKey(field: string): Promise<string | null> {
-    return await this.maxKey(field);
+    return await this.maxKey(field)
   }
 
   /**
    * Alias for {@link Search.count}.
    */
   async returnCount(): Promise<number> {
-    return await this.count();
+    return await this.count()
   }
 
   /**
    * Alias for {@link Search.page}.
    */
-  async returnPage(offset: number, count: number): Promise<TEntity[]> {
-    return await this.page(offset, count);
+  async returnPage(offset: number, count: number): Promise<Entity[]> {
+    return await this.page(offset, count)
   }
 
   /**
    * Alias for {@link Search.pageOfIds}.
    */
   async returnPageOfIds(offset: number, count: number): Promise<string[]> {
-    return await this.pageOfIds(offset, count);
+    return await this.pageOfIds(offset, count)
   }
 
   /**
-   * Alias for {@link Search.pageOrKeys}.
+   * Alias for {@link Search.pageOfKeys}.
    */
   async returnPageOfKeys(offset: number, count: number): Promise<string[]> {
-    return await this.pageOfKeys(offset, count);
+    return await this.pageOfKeys(offset, count)
   }
 
   /**
    * Alias for {@link Search.first}.
    */
-  async returnFirst(): Promise<TEntity | null> {
-    return await this.first();
+  async returnFirst(): Promise<Entity | null> {
+    return await this.first()
   }
 
   /**
    * Alias for {@link Search.firstId}.
    */
   async returnFirstId(): Promise<string | null> {
-    return await this.firstId();
+    return await this.firstId()
   }
 
   /**
    * Alias for {@link Search.firstKey}.
    */
   async returnFirstKey(): Promise<string | null> {
-    return await this.firstKey();
+    return await this.firstKey()
   }
 
   /**
    * Alias for {@link Search.all}.
    */
-   async returnAll(options = { pageSize: 10 }): Promise<TEntity[]> {
+   async returnAll(options = { pageSize: 10 }): Promise<Entity[]> {
     return await this.all(options)
   }
 
@@ -446,38 +421,51 @@ export abstract class AbstractSearch<TEntity extends Entity> {
     return await this.allKeys(options)
   }
 
-  private async callSearch(limit: LimitOptions = { offset: 0, count: 0 }, keysOnly = false) {
+  private async allThings(pageFn: Function, options = { pageSize: 10 }): Promise<Entity[] | string[]> {
+    const things = []
+    let offset = 0
+    const pageSize = options.pageSize
+
+    while (true) {
+      const foundThings = await pageFn.call(this, offset, pageSize)
+      things.push(...foundThings)
+      if (foundThings.length < pageSize) break
+      offset += pageSize
+    }
+
+    return things
+  }
+
+  private async callSearch(offset = 0, count = 0, keysOnly = false) {
+
+    const dataStructure = this.schema.dataStructure
+    const indexName = this.schema.indexName
+    const query = this.query
     const options: SearchOptions = {
-      indexName: this.schema.indexName,
-      query: this.query,
-      limit,
-      keysOnly
-    };
+      LIMIT: { from: offset, size: count }
+    }
 
-    if (this.sort !== undefined) options.sort = this.sort;
+    if (this.sortOptions !== undefined) options.SORTBY = this.sortOptions
 
-    let searchResults;
+    if (keysOnly) {
+      options.RETURN = []
+    } else if (dataStructure === 'JSON') {
+      options.RETURN = '$'
+    }
+
+    let searchResults
     try {
-      searchResults = await this.client.search(options);
+      searchResults = await this.client.search(indexName, query, options)
     } catch (error) {
       const message = (error as Error).message
       if (message.startsWith("Syntax error")) {
-        throw new RedisError(`The query to RediSearch had a syntax error: "${message}".\nThis is often the result of using a stop word in the query. Either change the query to not use a stop word or change the stop words in the schema definition. You can check the RediSearch source for the default stop words at: https://github.com/RediSearch/RediSearch/blob/master/src/stopwords.h.`)
+        throw new SearchError(`The query to RediSearch had a syntax error: "${message}".\nThis is often the result of using a stop word in the query. Either change the query to not use a stop word or change the stop words in the schema definition. You can check the RediSearch source for the default stop words at: https://github.com/RediSearch/RediSearch/blob/master/src/stopwords.h.`)
       }
       throw error
     }
     return searchResults
   }
-
-  private keysToEntityIds(keys: string[]): string[] {
-    return keys.map(key => this.keyToEntityId(key) ?? '');
-  }
-
-  private keyToEntityId(key: string | null): string | null {
-    return key ? key.replace(`${this.schema.prefix}:`, '') : null;
-  }
 }
-
 
 /**
  * Entry point to raw search which allows using raw RediSearch queries
@@ -485,18 +473,18 @@ export abstract class AbstractSearch<TEntity extends Entity> {
  * installed.
  * @template TEntity The type of {@link Entity} being sought.
  */
-export class RawSearch<TEntity extends Entity> extends AbstractSearch<TEntity> {
-  private rawQuery: string;
+export class RawSearch extends AbstractSearch {
+  private rawQuery: string
 
   /** @internal */
-  constructor(schema: Schema<TEntity>, client: Client, query: string = '*') {
-    super(schema, client);
-    this.rawQuery = query;
+  constructor(schema: Schema, client: Client, query: string = '*') {
+    super(schema, client)
+    this.rawQuery = query
   }
 
   /** @internal */
   get query(): string {
-    return this.rawQuery;
+    return this.rawQuery
   }
 }
 
@@ -506,13 +494,13 @@ export class RawSearch<TEntity extends Entity> extends AbstractSearch<TEntity> {
  * Requires that RediSearch (and optionally RedisJSON) be installed.
  * @template TEntity The type of {@link Entity} being sought.
  */
-export class Search<TEntity extends Entity> extends AbstractSearch<TEntity> {
-  private rootWhere?: Where;
+export class Search extends AbstractSearch {
+  private rootWhere?: Where
 
   /** @internal */
   get query(): string {
-    if (this.rootWhere === undefined) return '*';
-    return `${this.rootWhere.toString()}`;
+    if (this.rootWhere === undefined) return '*'
+    return `${this.rootWhere.toString()}`
   }
 
   /**
@@ -521,7 +509,7 @@ export class Search<TEntity extends Entity> extends AbstractSearch<TEntity> {
    * @param field The field to filter on.
    * @returns A subclass of {@link WhereField} matching the type of the field.
    */
-  where(field: string): WhereField<TEntity>;
+  where(field: string): WhereField
 
   /**
    * Sets up a nested search. If there are multiple calls to {@link Search.where},
@@ -529,9 +517,9 @@ export class Search<TEntity extends Entity> extends AbstractSearch<TEntity> {
    * @param subSearchFn A function that takes a {@link Search} and returns another {@link Search}.
    * @returns `this`.
    */
-  where(subSearchFn: SubSearchFunction<TEntity>): Search<TEntity>;
-  where(fieldOrFn: string | SubSearchFunction<TEntity>): WhereField<TEntity> | Search<TEntity> {
-    return this.anyWhere(WhereAnd, fieldOrFn);
+  where(subSearchFn: SubSearchFunction): Search
+  where(fieldOrFn: string | SubSearchFunction): WhereField | Search {
+    return this.anyWhere(WhereAnd, fieldOrFn)
   }
 
   /**
@@ -539,16 +527,16 @@ export class Search<TEntity extends Entity> extends AbstractSearch<TEntity> {
    * @param field The field to filter on.
    * @returns A subclass of {@link WhereField} matching the type of the field.
    */
-  and(field: string): WhereField<TEntity>;
+  and(field: string): WhereField
 
   /**
    * Sets up a nested search as a logical AND.
    * @param subSearchFn A function that takes a {@link Search} and returns another {@link Search}.
    * @returns `this`.
    */
-  and(subSearchFn: SubSearchFunction<TEntity>): Search<TEntity>;
-  and(fieldOrFn: string | SubSearchFunction<TEntity>): WhereField<TEntity> | Search<TEntity> {
-    return this.anyWhere(WhereAnd, fieldOrFn);
+  and(subSearchFn: SubSearchFunction): Search
+  and(fieldOrFn: string | SubSearchFunction): WhereField | Search {
+    return this.anyWhere(WhereAnd, fieldOrFn)
   }
 
   /**
@@ -556,70 +544,70 @@ export class Search<TEntity extends Entity> extends AbstractSearch<TEntity> {
    * @param field The field to filter on.
    * @returns A subclass of {@link WhereField} matching the type of the field.
    */
-  or(field: string): WhereField<TEntity>;
+  or(field: string): WhereField
 
   /**
    * Sets up a nested search as a logical OR.
    * @param subSearchFn A function that takes a {@link Search} and returns another {@link Search}.
    * @returns `this`.
    */
-  or(subSearchFn: SubSearchFunction<TEntity>): Search<TEntity>;
-  or(fieldOrFn: string | SubSearchFunction<TEntity>): WhereField<TEntity> | Search<TEntity> {
-    return this.anyWhere(WhereOr, fieldOrFn);
+  or(subSearchFn: SubSearchFunction): Search
+  or(fieldOrFn: string | SubSearchFunction): WhereField | Search {
+    return this.anyWhere(WhereOr, fieldOrFn)
   }
 
-  private anyWhere(ctor: AndOrConstructor, fieldOrFn: string | SubSearchFunction<TEntity>): WhereField<TEntity> | Search<TEntity> {
+  private anyWhere(ctor: AndOrConstructor, fieldOrFn: string | SubSearchFunction): WhereField | Search {
     if (typeof fieldOrFn === 'string') {
-      return this.anyWhereForField(ctor, fieldOrFn);
+      return this.anyWhereForField(ctor, fieldOrFn)
     } else {
-      return this.anyWhereForFunction(ctor, fieldOrFn);
+      return this.anyWhereForFunction(ctor, fieldOrFn)
     }
   }
 
-  private anyWhereForField(ctor: AndOrConstructor, field: string): WhereField<TEntity> {
-    const where = this.createWhere(field);
+  private anyWhereForField(ctor: AndOrConstructor, field: string): WhereField {
+    const where = this.createWhere(field)
 
     if (this.rootWhere === undefined) {
-      this.rootWhere = where;
+      this.rootWhere = where
     } else {
-      this.rootWhere = new ctor(this.rootWhere, where);
+      this.rootWhere = new ctor(this.rootWhere, where)
     }
 
-    return where;
+    return where
   }
 
-  private anyWhereForFunction(ctor: AndOrConstructor, subSearchFn: SubSearchFunction<TEntity>): Search<TEntity> {
-    const search = new Search<TEntity>(this.schema, this.client);
-    const subSearch = subSearchFn(search);
+  private anyWhereForFunction(ctor: AndOrConstructor, subSearchFn: SubSearchFunction): Search {
+    const search = new Search(this.schema, this.client)
+    const subSearch = subSearchFn(search)
 
     if (subSearch.rootWhere === undefined) {
-      throw new Error("Sub-search without and root where was somehow defined.");
+      throw new SearchError("Sub-search without a root where was somehow defined.")
     } else {
       if (this.rootWhere === undefined) {
-        this.rootWhere = subSearch.rootWhere;
+        this.rootWhere = subSearch.rootWhere
       } else {
-        this.rootWhere = new ctor(this.rootWhere, subSearch.rootWhere);
+        this.rootWhere = new ctor(this.rootWhere, subSearch.rootWhere)
       }
     }
 
-    return this;
+    return this
   }
 
-  private createWhere(field: string): WhereField<TEntity> {
-    const fieldDef = this.schema.definition[field];
+  private createWhere(fieldName: string): WhereField {
+    const field = this.schema.fieldByName(fieldName)
 
-    if (fieldDef === undefined) throw new Error(`The field '${field}' is not part of the schema.`);
+    if (field === null) throw new FieldNotInSchema(fieldName)
 
-    if (fieldDef.type === 'boolean' && this.schema.dataStructure === 'HASH') return new WhereHashBoolean<TEntity>(this, field);
-    if (fieldDef.type === 'boolean' && this.schema.dataStructure === 'JSON') return new WhereJsonBoolean<TEntity>(this, field);
-    if (fieldDef.type === 'date') return new WhereDate<TEntity>(this, field);
-    if (fieldDef.type === 'number') return new WhereNumber<TEntity>(this, field);
-    if (fieldDef.type === 'point') return new WherePoint<TEntity>(this, field);
-    if (fieldDef.type === 'text') return new WhereText<TEntity>(this, field);
-    if (fieldDef.type === 'string') return new WhereString<TEntity>(this, field);
-    if (fieldDef.type === 'string[]') return new WhereStringArray<TEntity>(this, field);
+    if (field.type === 'boolean' && this.schema.dataStructure === 'HASH') return new WhereHashBoolean(this, field)
+    if (field.type === 'boolean' && this.schema.dataStructure === 'JSON') return new WhereJsonBoolean(this, field)
+    if (field.type === 'date') return new WhereDate(this, field)
+    if (field.type === 'number') return new WhereNumber(this, field)
+    if (field.type === 'point') return new WherePoint(this, field)
+    if (field.type === 'text') return new WhereText(this, field)
+    if (field.type === 'string') return new WhereString(this, field)
+    if (field.type === 'string[]') return new WhereStringArray(this, field)
 
     // @ts-ignore: This is a trap for JavaScript
-    throw new Error(`The field type of '${fieldDef.type}' is not a valid field type. Valid types include 'boolean', 'date', 'number', 'point', 'string', and 'string[]'.`);
+    throw new RedisOmError(`The field type of '${fieldDef.type}' is not a valid field type. Valid types include 'boolean', 'date', 'number', 'point', 'string', and 'string[]'.`)
   }
 }

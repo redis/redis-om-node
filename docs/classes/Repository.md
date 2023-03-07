@@ -1,59 +1,50 @@
 [redis-om](../README.md) / Repository
 
-# Class: Repository<TEntity\>
+# Class: Repository
 
 A repository is the main interaction point for reading, writing, and
-removing [Entities](Entity.md) from Redis. Create one by calling
-[Client.fetchRepository](Client.md#fetchrepository) and passing in a [Schema](Schema.md). Then
-use the [Repository.fetch](Repository.md#fetch), [Repository.save](Repository.md#save), and
-[Repository.remove](Repository.md#remove) methods to manage your data:
+removing [Entities](../README.md#entity) from Redis. Create one by calling
+[fetchRepository](Client.md#fetchrepository) and passing in a [Schema](Schema.md). Then
+use the [fetch](Repository.md#fetch), [save](Repository.md#save), and
+[remove](Repository.md#remove) methods to manage your data:
 
 ```typescript
-const repository = client.fetchRepository<Foo>(schema);
+const repository = client.fetchRepository(schema)
 
-const foo = await repository.fetch('01FK6TCJBDK41RJ766A4SBWDJ9');
-foo.aString = 'bar';
-foo.aBoolean = false;
-await repository.save(foo);
+const foo = await repository.fetch('01FK6TCJBDK41RJ766A4SBWDJ9')
+foo.aString = 'bar'
+foo.aBoolean = false
+await repository.save(foo)
 ```
 
-Be sure to use the repository to create a new instance of an
-[Entity](Entity.md) you want to create before you save it:
+Use the repository to create a new instance of an [Entity](../README.md#entity)
+before you save it:
 
 ```typescript
-const foo = await repository.createEntity();
-foo.aString = 'bar';
-foo.aBoolean = false;
-await repository.save(foo);
+const foo = await repository.createEntity()
+foo.aString = 'bar'
+foo.aBoolean = false
+await repository.save(foo)
 ```
 
-If you want to the [Repository.search](Repository.md#search) method, you need to create an index
+If you want to use the [search](Repository.md#search) method, you need to create an index
 first, and you need RediSearch or RedisJSON installed on your instance of Redis:
 
 ```typescript
-await repository.createIndex();
+await repository.createIndex()
 const entities = await repository.search()
   .where('aString').eq('bar')
-  .and('aBoolean').is.false().returnAll();
+  .and('aBoolean').is.false().returnAll()
 ```
-
-## Type parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `TEntity` | extends [`Entity`](Entity.md) | The type of [Entity](Entity.md) that this repository manages. |
 
 ## Table of contents
 
-### Properties
+### Constructors
 
-- [client](Repository.md#client)
-- [schema](Repository.md#schema)
+- [constructor](Repository.md#constructor)
 
 ### Methods
 
-- [createAndSave](Repository.md#createandsave)
-- [createEntity](Repository.md#createentity)
 - [createIndex](Repository.md#createindex)
 - [dropIndex](Repository.md#dropindex)
 - [expire](Repository.md#expire)
@@ -63,83 +54,34 @@ const entities = await repository.search()
 - [search](Repository.md#search)
 - [searchRaw](Repository.md#searchraw)
 
-## Properties
+## Constructors
 
-### client
+### constructor
 
-• `Protected` **client**: [`Client`](Client.md)
+• **new Repository**(`schema`, `clientOrConnection`)
+
+Creates a new [Repository](Repository.md).
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `schema` | [`Schema`](Schema.md) | The schema defining that data in the repository. |
+| `clientOrConnection` | [`Client`](Client.md) \| [`RedisConnection`](../README.md#redisconnection) | - |
 
 #### Defined in
 
-[lib/repository/index.ts:49](https://github.com/redis/redis-om-node/blob/f2d3aed/lib/repository/index.ts#L49)
-
-___
-
-### schema
-
-• `Protected` **schema**: [`Schema`](Schema.md)<`TEntity`\>
-
-#### Defined in
-
-[lib/repository/index.ts:50](https://github.com/redis/redis-om-node/blob/f2d3aed/lib/repository/index.ts#L50)
+[lib/repository/repository.ts:56](https://github.com/redis/redis-om-node/blob/5777b6c/lib/repository/repository.ts#L56)
 
 ## Methods
-
-### createAndSave
-
-▸ **createAndSave**(`data?`): `Promise`<`TEntity`\>
-
-Creates and saves an [Entity](Entity.md). Equivalent of calling
-[Repository.createEntity](Repository.md#createentity) followed by [Repository.save](Repository.md#save).
-
-#### Parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `data` | [`EntityData`](../README.md#entitydata) | Optional values with which to initialize the entity. |
-
-#### Returns
-
-`Promise`<`TEntity`\>
-
-The newly created and saved Entity.
-
-#### Defined in
-
-[lib/repository/index.ts:130](https://github.com/redis/redis-om-node/blob/f2d3aed/lib/repository/index.ts#L130)
-
-___
-
-### createEntity
-
-▸ **createEntity**(`data?`): `TEntity`
-
-Creates an [Entity](Entity.md) with a populated [Entity.entityId](Entity.md#entityid) property.
-
-#### Parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `data` | [`EntityData`](../README.md#entitydata) | Optional values with which to initialize the entity. |
-
-#### Returns
-
-`TEntity`
-
-A newly created Entity.
-
-#### Defined in
-
-[lib/repository/index.ts:108](https://github.com/redis/redis-om-node/blob/f2d3aed/lib/repository/index.ts#L108)
-
-___
 
 ### createIndex
 
 ▸ **createIndex**(): `Promise`<`void`\>
 
-Creates an index in Redis for use by the [Repository.search](Repository.md#search) method. Requires
-that RediSearch or RedisJSON is installed on your instance of Redis.
+Creates an index in Redis for use by the [search](Repository.md#search) method.
+Does not create a new index if the index hasn't changed. Requires that
+RediSearch and RedisJSON are installed on your instance of Redis.
 
 #### Returns
 
@@ -147,7 +89,7 @@ that RediSearch or RedisJSON is installed on your instance of Redis.
 
 #### Defined in
 
-[lib/repository/index.ts:62](https://github.com/redis/redis-om-node/blob/f2d3aed/lib/repository/index.ts#L62)
+[lib/repository/repository.ts:71](https://github.com/redis/redis-om-node/blob/5777b6c/lib/repository/repository.ts#L71)
 
 ___
 
@@ -156,7 +98,7 @@ ___
 ▸ **dropIndex**(): `Promise`<`void`\>
 
 Removes an existing index from Redis. Use this method if you want to swap out your index
-because your [Entity](Entity.md) has changed. Requires that RediSearch or RedisJSON is installed
+because your [Entity](../README.md#entity) has changed. Requires that RediSearch and RedisJSON are installed
 on your instance of Redis.
 
 #### Returns
@@ -165,7 +107,7 @@ on your instance of Redis.
 
 #### Defined in
 
-[lib/repository/index.ts:90](https://github.com/redis/redis-om-node/blob/f2d3aed/lib/repository/index.ts#L90)
+[lib/repository/repository.ts:109](https://github.com/redis/redis-om-node/blob/5777b6c/lib/repository/repository.ts#L109)
 
 ___
 
@@ -173,14 +115,14 @@ ___
 
 ▸ **expire**(`id`, `ttlInSeconds`): `Promise`<`void`\>
 
-Set the time to live of the [Entity](Entity.md). If the [Entity](Entity.md) is not
+Set the time to live of the [Entity](../README.md#entity). If the [Entity](../README.md#entity) is not
 found, does nothing.
 
 #### Parameters
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `id` | `string` | The ID of the [Entity](Entity.md) to set and expiration for. |
+| `id` | `string` | The ID of the [Entity](../README.md#entity) to set and expiration for. |
 | `ttlInSeconds` | `number` | The time to live in seconds. |
 
 #### Returns
@@ -189,77 +131,94 @@ found, does nothing.
 
 #### Defined in
 
-[lib/repository/index.ts:214](https://github.com/redis/redis-om-node/blob/f2d3aed/lib/repository/index.ts#L214)
+[lib/repository/repository.ts:242](https://github.com/redis/redis-om-node/blob/5777b6c/lib/repository/repository.ts#L242)
+
+▸ **expire**(`ids`, `ttlInSeconds`): `Promise`<`void`\>
+
+Set the time to live of the [Entities](../README.md#entity) in Redis with the given
+ids. If a particular [Entity](../README.md#entity) is not found, does nothing.
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `ids` | `string`[] | The IDs of the [Entities](../README.md#entity) you wish to delete. |
+| `ttlInSeconds` | `number` | - |
+
+#### Returns
+
+`Promise`<`void`\>
+
+#### Defined in
+
+[lib/repository/repository.ts:250](https://github.com/redis/redis-om-node/blob/5777b6c/lib/repository/repository.ts#L250)
 
 ___
 
 ### fetch
 
-▸ **fetch**(`id`): `Promise`<`TEntity`\>
+▸ **fetch**(`id`): `Promise`<[`Entity`](../README.md#entity)\>
 
-Read and return an [Entity](Entity.md) from Redis with the given id. If
-the [Entity](Entity.md) is not found, returns an [Entity](Entity.md) with all
-properties set to `null`.
+Read and return an [Entity](../README.md#entity) from Redis for the given id. If
+the [Entity](../README.md#entity) is not found, returns an empty [Entity](../README.md#entity).
 
 #### Parameters
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `id` | `string` | The ID of the [Entity](Entity.md) you seek. |
+| `id` | `string` | The ID of the [Entity](../README.md#entity) you seek. |
 
 #### Returns
 
-`Promise`<`TEntity`\>
+`Promise`<[`Entity`](../README.md#entity)\>
 
 The matching Entity.
 
 #### Defined in
 
-[lib/repository/index.ts:143](https://github.com/redis/redis-om-node/blob/f2d3aed/lib/repository/index.ts#L143)
+[lib/repository/repository.ts:171](https://github.com/redis/redis-om-node/blob/5777b6c/lib/repository/repository.ts#L171)
 
-▸ **fetch**(...`ids`): `Promise`<`TEntity`[]\>
+▸ **fetch**(`...ids`): `Promise`<[`Entity`](../README.md#entity)[]\>
 
-Read and return the [Entities](Entity.md) from Redis with the given IDs. If
-a particular [Entity](Entity.md) is not found, returns an [Entity](Entity.md) with all
-properties set to `null`.
-
-#### Parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `...ids` | `string`[] | The IDs of the [Entities](Entity.md) you seek. |
-
-#### Returns
-
-`Promise`<`TEntity`[]\>
-
-The matching Entities.
-
-#### Defined in
-
-[lib/repository/index.ts:152](https://github.com/redis/redis-om-node/blob/f2d3aed/lib/repository/index.ts#L152)
-
-▸ **fetch**(`ids`): `Promise`<`TEntity`[]\>
-
-Read and return the [Entities](Entity.md) from Redis with the given IDs. If
-a particular [Entity](Entity.md) is not found, returns an [Entity](Entity.md) with all
-properties set to `null`.
+Read and return the [Entities](../README.md#entity) from Redis with the given IDs. If
+a particular [Entity](../README.md#entity) is not found, returns that [Entity](../README.md#entity) as empty.
 
 #### Parameters
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `ids` | `string`[] | The IDs of the [Entities](Entity.md) you seek. |
+| `...ids` | `string`[] | The IDs of the [Entities](../README.md#entity) you seek. |
 
 #### Returns
 
-`Promise`<`TEntity`[]\>
+`Promise`<[`Entity`](../README.md#entity)[]\>
 
 The matching Entities.
 
 #### Defined in
 
-[lib/repository/index.ts:161](https://github.com/redis/redis-om-node/blob/f2d3aed/lib/repository/index.ts#L161)
+[lib/repository/repository.ts:180](https://github.com/redis/redis-om-node/blob/5777b6c/lib/repository/repository.ts#L180)
+
+▸ **fetch**(`ids`): `Promise`<[`Entity`](../README.md#entity)[]\>
+
+Read and return the [Entities](../README.md#entity) from Redis with the given IDs. If
+a particular [Entity](../README.md#entity) is not found, returns that [Entity](../README.md#entity) as empty.
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `ids` | `string`[] | The IDs of the [Entities](../README.md#entity) you seek. |
+
+#### Returns
+
+`Promise`<[`Entity`](../README.md#entity)[]\>
+
+The matching Entities.
+
+#### Defined in
+
+[lib/repository/repository.ts:189](https://github.com/redis/redis-om-node/blob/5777b6c/lib/repository/repository.ts#L189)
 
 ___
 
@@ -267,14 +226,14 @@ ___
 
 ▸ **remove**(`id`): `Promise`<`void`\>
 
-Remove an [Entity](Entity.md) from Redis with the given id. If the [Entity](Entity.md) is
+Remove an [Entity](../README.md#entity) from Redis for the given id. If the [Entity](../README.md#entity) is
 not found, does nothing.
 
 #### Parameters
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `id` | `string` | The ID of the [Entity](Entity.md) you wish to delete. |
+| `id` | `string` | The ID of the [Entity](../README.md#entity) you wish to delete. |
 
 #### Returns
 
@@ -282,18 +241,18 @@ not found, does nothing.
 
 #### Defined in
 
-[lib/repository/index.ts:181](https://github.com/redis/redis-om-node/blob/f2d3aed/lib/repository/index.ts#L181)
+[lib/repository/repository.ts:205](https://github.com/redis/redis-om-node/blob/5777b6c/lib/repository/repository.ts#L205)
 
-▸ **remove**(...`ids`): `Promise`<`void`\>
+▸ **remove**(`...ids`): `Promise`<`void`\>
 
-Remove the [Entities](Entity.md) from Redis with the given ids. If a
-particular [Entity](Entity.md) is not found, does nothing.
+Remove the [Entities](../README.md#entity) from Redis for the given ids. If a
+particular [Entity](../README.md#entity) is not found, does nothing.
 
 #### Parameters
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `...ids` | `string`[] | The IDs of the [Entities](Entity.md) you wish to delete. |
+| `...ids` | `string`[] | The IDs of the [Entities](../README.md#entity) you wish to delete. |
 
 #### Returns
 
@@ -301,18 +260,18 @@ particular [Entity](Entity.md) is not found, does nothing.
 
 #### Defined in
 
-[lib/repository/index.ts:188](https://github.com/redis/redis-om-node/blob/f2d3aed/lib/repository/index.ts#L188)
+[lib/repository/repository.ts:213](https://github.com/redis/redis-om-node/blob/5777b6c/lib/repository/repository.ts#L213)
 
 ▸ **remove**(`ids`): `Promise`<`void`\>
 
-Remove the [Entities](Entity.md) from Redis with the given ids. If a
-particular [Entity](Entity.md) is not found, does nothing.
+Remove the [Entities](../README.md#entity) from Redis for the given ids. If a
+particular [Entity](../README.md#entity) is not found, does nothing.
 
 #### Parameters
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `ids` | `string`[] | The IDs of the [Entities](Entity.md) you wish to delete. |
+| `ids` | `string`[] | The IDs of the [Entities](../README.md#entity) you wish to delete. |
 
 #### Returns
 
@@ -320,63 +279,89 @@ particular [Entity](Entity.md) is not found, does nothing.
 
 #### Defined in
 
-[lib/repository/index.ts:195](https://github.com/redis/redis-om-node/blob/f2d3aed/lib/repository/index.ts#L195)
+[lib/repository/repository.ts:221](https://github.com/redis/redis-om-node/blob/5777b6c/lib/repository/repository.ts#L221)
 
 ___
 
 ### save
 
-▸ **save**(`entity`): `Promise`<`string`\>
+▸ **save**(`entity`): `Promise`<[`Entity`](../README.md#entity)\>
 
-Save the [Entity](Entity.md) to Redis. If it already exists, it will be updated. If it doesn't
-exist, it will be created.
+Insert or update an [Entity](../README.md#entity) to Redis using its entityId property
+if present. If it's not, one is generated.
 
 #### Parameters
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `entity` | `TEntity` | The Entity to save. |
+| `entity` | [`Entity`](../README.md#entity) | The Entity to save. |
 
 #### Returns
 
-`Promise`<`string`\>
+`Promise`<[`Entity`](../README.md#entity)\>
 
-The ID of the Entity just saved.
+A copy of the provided Entity with EntityId and EntityKeyName properties added.
 
 #### Defined in
 
-[lib/repository/index.ts:119](https://github.com/redis/redis-om-node/blob/f2d3aed/lib/repository/index.ts#L119)
+[lib/repository/repository.ts:134](https://github.com/redis/redis-om-node/blob/5777b6c/lib/repository/repository.ts#L134)
+
+▸ **save**(`id`, `entity`): `Promise`<[`Entity`](../README.md#entity)\>
+
+Insert or update the [Entity](../README.md#entity) to Redis using the provided entityId.
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `id` | `string` | The id to save the Entity under. |
+| `entity` | [`Entity`](../README.md#entity) | The Entity to save. |
+
+#### Returns
+
+`Promise`<[`Entity`](../README.md#entity)\>
+
+A copy of the provided Entity with EntityId and EntityKeyName properties added.
+
+#### Defined in
+
+[lib/repository/repository.ts:143](https://github.com/redis/redis-om-node/blob/5777b6c/lib/repository/repository.ts#L143)
 
 ___
 
 ### search
 
-▸ **search**(): [`Search`](Search.md)<`TEntity`\>
+▸ **search**(): [`Search`](Search.md)
 
 Kicks off the process of building a query. Requires that RediSearch (and optionally
-RedisJSON) be is installed on your instance of Redis.
+RedisJSON) be installed on your instance of Redis.
 
 #### Returns
 
-[`Search`](Search.md)<`TEntity`\>
+[`Search`](Search.md)
 
 A [Search](Search.md) object.
 
 #### Defined in
 
-[lib/repository/index.ts:225](https://github.com/redis/redis-om-node/blob/f2d3aed/lib/repository/index.ts#L225)
+[lib/repository/repository.ts:268](https://github.com/redis/redis-om-node/blob/5777b6c/lib/repository/repository.ts#L268)
 
 ___
 
 ### searchRaw
 
-▸ **searchRaw**(`query`): [`RawSearch`](RawSearch.md)<`TEntity`\>
+▸ **searchRaw**(`query`): [`RawSearch`](RawSearch.md)
 
-Creates a search that bypassed Redis OM and instead allows you to execute a raw
+Creates a search that bypasses Redis OM and instead allows you to execute a raw
 RediSearch query. Requires that RediSearch (and optionally RedisJSON) be installed
 on your instance of Redis.
 
-**`query`** The raw RediSearch query you want to rune.
+Refer to https://redis.io/docs/stack/search/reference/query_syntax/ for details on
+RediSearch query syntax.
+
+**`Query`**
+
+The raw RediSearch query you want to rune.
 
 #### Parameters
 
@@ -386,10 +371,10 @@ on your instance of Redis.
 
 #### Returns
 
-[`RawSearch`](RawSearch.md)<`TEntity`\>
+[`RawSearch`](RawSearch.md)
 
 A [RawSearch](RawSearch.md) object.
 
 #### Defined in
 
-[lib/repository/index.ts:237](https://github.com/redis/redis-om-node/blob/f2d3aed/lib/repository/index.ts#L237)
+[lib/repository/repository.ts:283](https://github.com/redis/redis-om-node/blob/5777b6c/lib/repository/repository.ts#L283)

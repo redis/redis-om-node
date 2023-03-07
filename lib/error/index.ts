@@ -1,0 +1,6 @@
+export * from './invalid-input'
+export * from './invalid-schema'
+export * from './invalid-value'
+export * from './point-out-of-range'
+export * from './redis-om-error'
+export * from './search-error'

@@ -1,75 +1,42 @@
-import { client } from '../helpers/mock-client'
-import { Client } from '$lib/client';
-import { JsonRepository, HashRepository } from '$lib/repository';
+import '../helpers/mock-client'
 
-import { simpleHashSchema, simpleJsonSchema, SimpleHashEntity, SimpleJsonEntity } from '../helpers/test-entity-and-schema';
+import { Client } from '$lib/client'
+import { Repository } from '$lib/repository'
+import { Schema } from '$lib/schema'
 
+const simpleSchema = new Schema("SimpleEntity", {}, { dataStructure: 'HASH' })
 
 describe("Repository", () => {
-
-  // let client: Client;
-
   describe("#remove", () => {
 
-    let hashRepository: HashRepository<SimpleHashEntity>;
-    let jsonRepository: JsonRepository<SimpleJsonEntity>;
+    let client: Client
+    let repository: Repository
 
-    beforeAll(() => {
-      // client = new Client()
-    });
+    beforeAll(() => { client = new Client() })
+    beforeEach(() => { repository = new Repository(simpleSchema, client) })
 
-    beforeEach(() => {
-      const client = new Client()
-      hashRepository = new HashRepository<SimpleHashEntity>(simpleHashSchema, client);
-      jsonRepository = new JsonRepository<SimpleJsonEntity>(simpleJsonSchema, client);
+    it("removes no entities", async () => {
+      await repository.remove()
+      expect(client.unlink).not.toHaveBeenCalled()
     })
 
-    it("removes no hashes", async () => {
-      await hashRepository.remove();
-      expect(client.unlink).not.toHaveBeenCalled();
-    });
-
-    it("removes a single hash", async () => {
-      await hashRepository.remove('foo');
-      expect(client.unlink).toHaveBeenCalledWith('SimpleHashEntity:foo');
-    });
-
-    it("removes multiple hashes", async () => {
-      await hashRepository.remove('foo', 'bar', 'baz');
-      expect(client.unlink).toHaveBeenCalledWith(
-        'SimpleHashEntity:foo', 'SimpleHashEntity:bar', 'SimpleHashEntity:baz'
-      );
-    });
-
-    it("removes an array of hashes", async () => {
-      await hashRepository.remove(['foo', 'bar', 'baz']);
-      expect(client.unlink).toHaveBeenCalledWith(
-        'SimpleHashEntity:foo', 'SimpleHashEntity:bar', 'SimpleHashEntity:baz'
-      );
-    });
-
-    it("removes no JSON", async () => {
-      await jsonRepository.remove();
-      expect(client.unlink).not.toHaveBeenCalled();
-    });
-
-    it("removes a single JSON", async () => {
-      await jsonRepository.remove('foo');
-      expect(client.unlink).toHaveBeenCalledWith('SimpleJsonEntity:foo');
-    });
-
-    it("removes multiple JSONs", async () => {
-      await jsonRepository.remove('foo', 'bar', 'baz');
-      expect(client.unlink).toHaveBeenCalledWith(
-        'SimpleJsonEntity:foo', 'SimpleJsonEntity:bar', 'SimpleJsonEntity:baz'
-      );
+    it("removes a single entity", async () => {
+      await repository.remove('foo')
+      expect(client.unlink).toHaveBeenCalledWith('SimpleEntity:foo')
     })
 
-    it("removes an array of JSONs", async () => {
-      await jsonRepository.remove(['foo', 'bar', 'baz']);
+    it("removes multiple entities", async () => {
+      await repository.remove('foo', 'bar', 'baz')
       expect(client.unlink).toHaveBeenCalledWith(
-        'SimpleJsonEntity:foo', 'SimpleJsonEntity:bar', 'SimpleJsonEntity:baz'
-      );
+        'SimpleEntity:foo', 'SimpleEntity:bar', 'SimpleEntity:baz'
+      )
     })
-  });
-});
+
+    it("removes multiple entities discretely", async () => {
+      await repository.remove(['foo', 'bar', 'baz'])
+      expect(client.unlink).toHaveBeenCalledWith(
+        'SimpleEntity:foo', 'SimpleEntity:bar', 'SimpleEntity:baz'
+      )
+    })
+  })
+})

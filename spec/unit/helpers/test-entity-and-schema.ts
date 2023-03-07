@@ -1,39 +1,6 @@
-import { Entity } from '$lib/entity/entity';
 import { Schema } from '$lib/schema/schema';
-import { Point } from '$lib/entity/point';
 
-export class SimpleEntity extends Entity { }
-export class SimpleHashEntity extends SimpleEntity { }
-export class SimpleJsonEntity extends SimpleEntity { }
-
-export interface SimpleEntity {
-  aString?: string | number | boolean | null;
-  someText?: string | number | boolean | null;
-  aNumber?: number | null;
-  aBoolean?: boolean | null;
-  aPoint?: Point | null;
-  aDate?: Date | string | number | null;
-  someStrings?: any[] | null;
-}
-
-export interface SimpleHashEntity extends SimpleEntity { }
-export interface SimpleJsonEntity extends SimpleEntity { }
-
-export class AliasedEntity extends Entity { }
-export class StopWordsOffEntity extends Entity { }
-export class CustomStopWordsEntity extends Entity { }
-
-export interface AliasedEntity {
-  aString?: string | null;
-  someText?: string | null;
-  aNumber?: number | null;
-  aBoolean?: boolean | null;
-  aPoint?: Point | null;
-  aDate?: Date | null;
-  someStrings?: Array<string> | null;
-}
-
-export const simpleSchema = new Schema(SimpleEntity, {
+export const simpleSchema = new Schema("SimpleEntity", {
   aString: { type: 'string' },
   someText: { type: 'text' },
   aNumber: { type: 'number' },
@@ -43,7 +10,7 @@ export const simpleSchema = new Schema(SimpleEntity, {
   someStrings: { type: 'string[]' }
 });
 
-export const simpleHashSchema = new Schema(SimpleHashEntity, {
+export const simpleHashSchema = new Schema("SimpleHashEntity", {
   aString: { type: 'string' },
   someText: { type: 'text' },
   aNumber: { type: 'number' },
@@ -55,7 +22,7 @@ export const simpleHashSchema = new Schema(SimpleHashEntity, {
   dataStructure: 'HASH'
 });
 
-export const simpleSortableHashSchema = new Schema(SimpleHashEntity, {
+export const simpleSortableHashSchema = new Schema("SimpleHashEntity", {
   aString: { type: 'string', sortable: true },
   someText: { type: 'text', sortable: true },
   aNumber: { type: 'number', sortable: true },
@@ -67,7 +34,7 @@ export const simpleSortableHashSchema = new Schema(SimpleHashEntity, {
   dataStructure: 'HASH'
 });
 
-export const simpleJsonSchema = new Schema(SimpleJsonEntity, {
+export const simpleJsonSchema = new Schema("SimpleJsonEntity", {
   aString: { type: 'string' },
   someText: { type: 'text' },
   aNumber: { type: 'number' },
@@ -79,7 +46,7 @@ export const simpleJsonSchema = new Schema(SimpleJsonEntity, {
   dataStructure: 'JSON'
 });
 
-export const simpleSortableJsonSchema = new Schema(SimpleHashEntity, {
+export const simpleSortableJsonSchema = new Schema("SimpleJsonEntity", {
   aString: { type: 'string', sortable: true },
   someText: { type: 'text', sortable: true },
   aNumber: { type: 'number', sortable: true },
@@ -91,7 +58,7 @@ export const simpleSortableJsonSchema = new Schema(SimpleHashEntity, {
   dataStructure: 'JSON'
 });
 
-export const aliasedSchema = new Schema(AliasedEntity, {
+export const aliasedSchema = new Schema("AliasedEntity", {
   aString: { type: 'string', alias: 'anotherString' },
   someText: { type: 'text', alias: 'someOtherText' },
   aNumber: { type: 'number', alias: 'anotherNumber' },
@@ -101,13 +68,13 @@ export const aliasedSchema = new Schema(AliasedEntity, {
   someStrings: { type: 'string[]', alias: 'someOtherStrings' }
 });
 
-export const stopWordsOffSchema = new Schema(StopWordsOffEntity, {
+export const stopWordsOffSchema = new Schema("StopWordsOffEntity", {
   someText: { type: 'text' }
 }, {
   useStopWords: 'OFF'
 });
 
-export const customStopWordsSchema = new Schema(CustomStopWordsEntity, {
+export const customStopWordsSchema = new Schema("CustomStopWordsEntity", {
   someText: { type: 'text' }
 }, {
   useStopWords: 'CUSTOM',

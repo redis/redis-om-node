@@ -22,24 +22,25 @@
 [![Build][build-shield]][build-url]
 [![License][license-shield]][license-url]
 
-**Redis OM Node.js** makes it easy to model Redis data in your Node.js applications.
+**Redis OM for Node.js** makes it easy to model Redis data in your Node.js applications.
 
 [Redis OM .NET][redis-om-dotnet] | **Redis OM Node.js** | [Redis OM Python][redis-om-python] | [Redis OM Spring][redis-om-spring]
 
 <details>
   <summary><strong>Table of contents</strong></summary>
 
-  - 💡 [Redis OM for Node.js](#-redis-om-for-nodejs)
-  - 🏁 [Getting Started](#-getting-started)
-  - 🔌 [Connect to Redis with a Client](#-connect-to-redis-with-a-client)
+  - [Redis OM for Node.js](#redis-om-for-nodejs)
+  - [Getting Started](#getting-started)
+  - [Connect to Redis with Node Redis](#connect-to-redis-with-node-redis)
     - [Redis Connection Strings](#redis-connection-strings)
-  - 📇 [Define an Entity and a Schema](#-define-an-entity-and-a-schema)
-  - 🖋 [Reading, Writing, and Removing with Repository](#-reading-writing-and-removing-with-repository)
+  - [Entities and Schemas](#entities-and-schemas)
+    - [JSON and Hashes](#json-and-hashes)
+      - [Configuring JSON](#configuring-json)
+      - [Configuring Hashes](#configuring-hashes)
+  - [Reading, Writing, and Removing with Repository](#reading-writing-and-removing-with-repository)
+    - [Creating Entities](#creating-entities)
     - [Missing Entities and Null Values](#missing-entities-and-null-values)
-    - [A Note for TypeScript Users](#a-note-for-typescript-users)
-  - 🧮 [Embedding Your Own Logic into Entities](#-embedding-your-own-logic-into-entities)
-  - 📄 [Using Hashes](#-using-hashes)
-  - 🔎 [Using RediSearch](#-using-redisearch)
+  - [Searching](#searching)
     - [Build the Index](#build-the-index)
     - [Finding All The Things (and Returning Them)](#finding-all-the-things-and-returning-them)
       - [Pagination](#pagination)
@@ -56,34 +57,36 @@
       - [Chaining Searches](#chaining-searches)
       - [Running Raw Searches](#running-raw-searches)
     - [Sorting Search Results](#sorting-search-results)
-  - 📚 [Documentation](#-documentation)
-  - ⛏️ [Troubleshooting](#%EF%B8%8F-troubleshooting)
-  - ❤️ [Contributing](#%EF%B8%8F-contributing)
+  - [Advanced Stuff](#advanced-stuff)
+    - [Schema Options](#schema-options)
+  - [Documentation](#documentation)
+  - [Troubleshooting](#troubleshooting)
+  - [Contributing](#contributing)
 </details>
 
-## 💡 Redis OM for Node.js
+## Redis OM for Node.js
 
-Redis OM (pronounced _REDiss OHM_) makes it easy to add Redis to your Node.js application by mapping the Redis data structures you know and love to classes that you define. No more pesky, low-level commands, just pure code with a fluent interface.
+Redis OM (pronounced _REDiss OHM_) makes it easy to add Redis to your Node.js application by mapping the Redis data structures you know and love to simple JavaScript objects. No more pesky, low-level commands, just pure code with a fluent interface.
 
-Define an entity:
+Define a schema:
 
 ```javascript
-class Album extends Entity {}
-
-const schema = new Schema(Album, {
+const schema = new Schema('album', {
   artist: { type: 'string' },
   title: { type: 'text' },
   year: { type: 'number' }
-});
+})
 ```
 
-Create a new entity and save it:
+Create a JavaScript object and save it:
 
 ```javascript
-const album = repository.createEntity()
-album.artist = "Mushroomhead"
-album.title = "The Righteous & The Butterfly"
-album.year = 2014
+const album = {
+  artist: "Mushroomhead",
+  title: "The Righteous & The Butterfly",
+  year: 2014
+}
+
 await repository.save(album)
 ```
 
@@ -93,12 +96,13 @@ Search for matching entities:
 const albums = await repository.search()
   .where('artist').equals('Mushroomhead')
   .and('title').matches('butterfly')
-  .and('year').is.greaterThan(2000).return.all()
+  .and('year').is.greaterThan(2000)
+    .return.all()
 ```
 
 Pretty cool, right? Read on for details.
 
-## 🏁 Getting Started
+## Getting Started
 
 First things first, get yourself a Node.js project. There are lots of ways to do this, but I'm gonna go with a classic:
 
@@ -106,106 +110,75 @@ First things first, get yourself a Node.js project. There are lots of ways to do
 
 Once you have that sweet, sweet `package.json`, let's add our newest favorite package to it:
 
-    $ npm install redis-om --save
+    $ npm install redis-om
 
-Of course, you'll need some Redis, preferably [Redis Stack][redis-stack-url] as it comes with [RediSearch][redisearch-url] and [RedisJSON][redis-json-url] ready to go. The easiest way to do this is to set up a free [Redis Cloud][redis-cloud-url] instance. But, you can also use Docker:
+Redis OM for Node.js uses [Node Redis](https://github.com/redis/node-redis). So you should install that too:
+
+    $ npm install redis
+
+And, of course, you'll need some Redis, preferably [Redis Stack][redis-stack-url] as it comes with [RediSearch][redisearch-url] and [RedisJSON][redis-json-url] ready to go. The easiest way to do this is to set up a free [Redis Cloud][redis-cloud-url] instance. But, you can also use Docker:
 
     $ docker run -d --name redis-stack -p 6379:6379 -p 8001:8001 redis/redis-stack:latest
 
 Excellent. Setup done. Let's write some code!
 
-## 🔌 Connect to Redis with a Client
+## Connect to Redis with Node Redis
 
-You connect to Redis using a [*client*](docs/classes/Client.md). The `Client` class has methods to open, close, and execute raw commands against Redis.
-
-```javascript
-import { Client } from 'redis-om'
-
-const client = new Client()
-await client.open('redis://localhost:6379')
-
-const aString = await client.execute(['PING'])
-// 'PONG'
-
-const aNumber = await client.execute(['HSET', 'foo', 'bar', 'baz', 'qux', 42])
-// 2
-
-const anArray = await client.execute(['HGETALL', 'foo'])
-// [ 'bar', 'baz', 'qux', '42' ]
-
-await client.close()
-```
-
-<details>
-<summary>Or, in TypeScript:</summary>
-
-In Typescript you should type cast the returning type.
-Typecasts can be done in 2 ways, casting it before the returning value `client.execute(["PING"])` or after using the `as` keyword `client.execute(["PING"]) as string`.
-
-```typescript
-import { Client } from 'redis-om';
-
-let client = await new Client().open('redis://localhost:6379');
-
-let aString = await <string>client.execute(['PING']);
-// 'PONG'
-
-let aNumber = await <number>client.execute(['HSET', 'foo', 'bar', 'baz', 'qux', 42]);
-// 2
-
-let anArray = await <Array<string>>client.execute(['HGETALL', 'foo']);
-// [ 'bar', 'baz', 'qux', '42' ]
-await client.close();
-```
-</details>
-
-Mostly you'll use `.open`, `.close`, and `.fetchRepository` (which we'll talk about soon enough). But, on occasion, you might need to talk to Redis directly. The `.execute` method allows you to do that.
-
-If you find you need to talk to Redis directly a *lot* or you need more than just a basic connection to Redis, you'll want to take a look at the `.use` method on `Client`. It will allow you to bind an existing [Node Redis](https://github.com/redis/node-redis) connection to your Redis OM Client:
+Before you can use Redis OM, you need to connect to Redis with Node Redis. Here's how you do that, stolen straight from the top of the Node Redis [README](https://github.com/redis/node-redis):
 
 ```javascript
 import { createClient } from 'redis'
-import { Client } from 'redis-om'
 
-const redis = createClient('redis://localhost:6379')
+const redis = createClient()
+redis.on('error', (err) => console.log('Redis Client Error', err));
 await redis.connect()
-const client = await new Client().use(redis)
-
-await redis.set('foo', 'bar')
-const value = await client.execute(['GET', 'foo'])
 ```
 
-Use `.use` to take advantage of things like [clustering](https://github.com/redis/node-redis#clustering). Details on all that stuff are way beyond the scope of this README. You can read about it in the Node Redis [documentation](https://github.com/redis/node-redis).
+Node Redis is a powerful piece of software with lots and lots of capabilities. Its details are *way* beyond the scope of this README. But, if you're curious—or if you need that power—you can find all the info in the Node Redis [documentation](https://github.com/redis/node-redis).
+
+Regardless, once you have a connection to Redis you can use it to execute Redis commands:
+
+```javascript
+
+const aString = await redis.ping() // 'PONG'
+const aNumber = await redis.hSet('foo', 'alfa', '42', 'bravo', '23') // 2
+const aHash = await redis.hGetAll('foo') // { alfa: '42', bravo: '23' }
+```
+
+You might not need to do this, but it's always handy to have the option. When you're done with a Redis connection, you can let the server know by calling `.quit`:
+
+```javascript
+await redis.quit()
+```
 
 ### Redis Connection Strings
 
-When you open a Redis client, you hand it a URL. The basic format for this URL is:
+By default, Node Redis connects to `localhost` on port `6379`. This is, of course, configurable. Just pass in a *url* with the hostname and port that you want to use:
+
+```javascript
+const redis = createClient({ url: 'redis://alice:foobared@awesome.redis.server:6380' })
+```
+
+The basic format for this URL is:
 
     redis://username:password@host:port
 
-This is the bulk of what you will need, but if you want more, the full specification for the URL is [defined with the IANA](https://www.iana.org/assignments/uri-schemes/prov/redis). And yes, there is a [TLS version](https://www.iana.org/assignments/uri-schemes/prov/rediss) as well.
+This will probably cover most scenarios, but if you want something more, the full specification for the URL is [defined with the IANA](https://www.iana.org/assignments/uri-schemes/prov/redis). And yes, there is a [TLS version](https://www.iana.org/assignments/uri-schemes/prov/rediss) as well.
 
-If you don't provide a URL, it defaults to `redis://localhost:6379`.
+Node Redis has lots of other ways you can create a connection. You can use discrete parameters, UNIX sockets, and all sorts of cool things. Details can be found in the [client configuration guide](https://github.com/redis/node-redis/blob/master/docs/client-configuration.md) for Node Redis and the [clusterting guide](https://github.com/redis/node-redis/blob/master/docs/clustering.md).
 
-## 📇 Define an Entity and a Schema
+## Entities and Schemas
 
-Ok. Let's start doing some object mapping. We'll start by defining an [*entity*](docs/classes/Entity.md) and a [*schema*](docs/classes/Schema.md).
+Redis OM is all about saving, reading, and deleting *entities*. An [Entity](docs/README.md#entity) is just data in a JavaScript object that you want to save or retrieve from Redis. Almost any JavaScript object is a valid `Entity`.
 
-```javascript
-import { Entity, Schema } from 'redis-om'
-```
+[Schemas](docs/classes/Schema.md) define fields that might be on an `Entity`. It includes a field's type, how it is stored internally in Redis, and how to search on it if you are using RediSearch. By default, they are mapped to JSON documents using RedisJSON, but you can change it to use Hashes if want (more on that later).
 
-[Entities](docs/classes/Entity.md) are the classes that you work with. The things being created, read, updated, and deleted. Any class that extends `Entity` is an entity. Usually, you'll define an entity with a single line of code:
+Ok. Let's start doing some object mapping and create a `Schema`:
 
 ```javascript
-class Album extends Entity {}
-class Studio extends Entity {}
-```
+import { Schema } from 'redis-om'
 
-[Schemas](docs/classes/Schema.md) define the fields on your entity, their types, and how they are mapped internally to Redis. By default, entities map to JSON documents using RedisJSON, but you can change it to use Hashes if want (more on that later):
-
-```javascript
-const albumSchema = new Schema(Album, {
+const albumSchema = new Schema('album', {
   artist: { type: 'string' },
   title: { type: 'text' },
   year: { type: 'number' },
@@ -213,7 +186,7 @@ const albumSchema = new Schema(Album, {
   outOfPublication: { type: 'boolean' }
 })
 
-const studioSchema = new Schema(Studio, {
+const studioSchema = new Schema('studio', {
   name: { type: 'string' },
   city: { type: 'string' },
   state: { type: 'string' },
@@ -222,247 +195,42 @@ const studioSchema = new Schema(Studio, {
 })
 ```
 
-When you create a `Schema`, it modifies the entity you handed it, adding getters and setters for the properties you define. The type those getters and setters accept and return are defined with the type parameter above. Valid values are: `string`, `number`, `boolean`, `string[]`, `date`, `point`, or `text`.
+The *first argument* is the `Schema` name. It defines the key name prefix that entities stored in Redis will have. It should be unique for your particular instance of Redis and probably meaningful to what you're doing. Here we have selected `album` for our album data and `studio` for data on recording studios. Imaginative, I know.
 
-The first three do exactly what you think—they define a property that is a [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String), a [Number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number), or a [Boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean). `string[]` does what you'd think as well, specifically defining an [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array) of Strings.
+The *second argument* defines fields that might be stored in that key. The property name is the name of the field that you'll be referencing in your Redis OM queries. The type property tells Redis OM what sort of data is in that field. Valid types are: `string`, `number`, `boolean`, `string[]`, `date`, `point`, and `text`.
 
-`date` is a little different, but still more or less what you'd expect. It defines a property that returns a [Date](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date) and can be set using not only a Date but also a String containing an [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) date or a number with the [UNIX epoch time](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date#the_ecmascript_epoch_and_timestamps) in *seconds* (NOTE: the JavaScript Date object is specified in *milliseconds*).
+The first three types do exactly what you think—they define a field that is a [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String), a [Number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number), or a [Boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean). `string[]` does what you'd think as well, specifically describing an [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array) of Strings.
 
-A `point` defines a point somewhere on the globe as a longitude and a latitude. It defines a property that returns and accepts a simple object with `longitude` and `latitude` properties. Like this:
+`date` is a little different, but still more or less what you'd expect. It describes a property that contains a [Date](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date) and can be set using not only a Date but also a String containing an [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) date or a number with the [UNIX epoch time](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date#the_ecmascript_epoch_and_timestamps) in *seconds* (NOTE: the JavaScript Date object is specified in *milliseconds*).
+
+A `point` defines a point somewhere on the globe as a longitude and a latitude. It is expressed as a simple object with `longitude` and `latitude` properties. Like this:
 
 ```javascript
 const point = { longitude: 12.34, latitude: 56.78 }
 ```
 
-A `text` field is a lot like a `string`. If you're just reading and writing objects, they are identical. But if you want to *search* on them, they are very, very different. I'll cover that in detail when I talk about [using RediSearch](#-using-redisearch) but the tl;dr is that `string` fields can only be matched on their whole value—no partial matches—and are best for keys while `text` fields have full-text search enabled on them and are optimized for human-readable text.
+A `text` field is a lot like a `string`. If you're just reading and writing objects, they are identical. But if you want to *search* on them, **they are very, very different**. I'll cover that in detail when I talk about [searching](#searching) but the tl;dr is that `string` fields can only be matched on their exact value and are best for keys and discrete data—like postal codes or status indicators—while `text` fields have full-text search enabled on them, are optimized for human-readable text, and can take advantage of [stemming](https://redis.io/docs/stack/search/reference/stemming/) and [stop words](https://redis.io/docs/stack/search/reference/stopwords/).
 
-Additional field options can be set depending on the field type. These correspond to the [Field Options](https://redis.io/commands/ft.create/#field-options) available when creating a RediSearch full-text index. Other than the `separator` option, these only affect how content is indexed and searched.
+### JSON and Hashes
 
-|  schema type   | RediSearch type | `indexed` | `sortable` | `normalized` | `stemming` | `phonetic` | `weight` | `separator` | `caseSensitive` |
-| -------------- | :-------------: | :-------: | :--------: | :----------: | :--------: | :--------: | :------: | :---------: | :-------------: |
-| `string`       |       TAG       |    yes    |  HASH Only |   HASH Only  |      -     |      -     |     -    |     yes     |        yes      |
-| `number`       |     NUMERIC     |    yes    |    yes     |       -      |      -     |      -     |     -    |      -      |         -       |
-| `boolean`      |       TAG       |    yes    |  HASH Only |       -      |      -     |      -     |     -    |      -      |         -       |
-| `string[]`     |       TAG       |    yes    |  HASH Only |   HASH Only  |      -     |      -     |     -    |     yes     |        yes      |
-| `date`         |     NUMERIC     |    yes    |    yes     |       -      |            |      -     |     -    |      -      |         -       |
-| `point`        |       GEO       |    yes    |     -      |       -      |            |      -     |     -    |      -      |         -       |
-| `text`         |       TEXT      |    yes    |    yes     |      yes     |     yes    |     yes    |    yes   |      -      |         -       |
-
-* `indexed`: true | false, whether this field is indexed by RediSearch (default true)
-* `sortable`: true | false, whether to create an additional index to optmize sorting (default false)
-* `normalized`: true | false, whether to apply normalization for sorting (default true)
-* `matcher`: string defining phonetic matcher which can be one of 'dm:en' for English | 'dm:fr' for French | 'dm:pt' for Portugese)| 'dm:es' for Spanish (default none)
-* `stemming`: true | false, whether word stemming is applied to text fields (default true)
-* `weight`: number, the importance weighting to use when ranking results (default 1)
-* `separator`: string, the character to delimit multiple tags (default '|')
-* `caseSensitive`: true | false, whether original letter casing is kept for search (default false)
-
-Example showing additional options:
+As I mentioned earlier, by default Redis OM stores your entities in JSON documents using RedisJSON. You can make this explicit in code if you like:
 
 ```javascript
-const commentSchema = new Schema(Comment, {
-  name: { type: 'text', stemming: false, matcher: 'dm:en' },
-  email: { type: 'string', normalized: false, },
-  posted: { type: 'date', sortable: true },
-  title: { type: 'text', weight: 2 },
-  comment: { type: 'text', weight: 1 },
-  approved: { type: 'boolean', indexed: false },
-  iphash: { type: 'string', caseSensitive: true },
-  notes: { type: 'string', indexed: false },
-})
-```
-
-There are several other options available when defining a schema for your entity. Check them out in the [detailed documentation](docs/classes/Schema.md) for the `Schema` class.
-
-## 🖋 Reading, Writing, and Removing with Repository
-
-Now that we have a client and a schema, we have what we need to make a [*repository*](docs/classes/Repository.md). A repository provides the means to read, write, and remove entities. Creating a repository is pretty straightforward—just ask the client for it:
-
-```javascript
-import { Repository } from 'redis-om'
-
-const albumRepository = client.fetchRepository(albumSchema)
-const studioRepository = client.fetchRepository(studioSchema)
-```
-
-Once we have a repository, we can use it to create entities:
-
-```javascript
-const album = albumRepository.createEntity()
-album.entityId // '01FJYWEYRHYFT8YTEGQBABJ43J'
-```
-
-Note that entities created by `.createEntity` are not saved to Redis (at least not yet). They've only been instantiated and populated with an entity ID. This ID is a [ULID](https://github.com/ulid/spec) and is a unique id representing that object. To create a new entity *and* save it to Redis, we need to set all the properties on the entity that we care about, and call `.save`:
-
-```javascript
-const album = albumRepository.createEntity()
-album.artist = "Mushroomhead"
-album.title = "The Righteous & The Butterfly"
-album.year = 2014
-album.genres = [ 'metal' ]
-album.outOfPublication = true
-
-const id = await albumRepository.save(album) // '01FJYWEYRHYFT8YTEGQBABJ43J'
-```
-
-As a convenience, you can pass in the values for the entity in the constructor:
-
-```javascript
-const studio = studioRepository.createEntity({
-  name: "Bad Racket Recording Studio",
-  city: "Cleveland",
-  state: "Ohio",
-  location: { longitude: -81.6764187, latitude: 41.5080462 },
-  established: new Date('2010-12-27')
-})
-
-const id = await studioRepository.save(studio) // '01FVDN241NGTPHSAV0DFDBXC90'
-```
-
-And for even *more* convenience, you can create and save in a single call:
-
-```javascript
-const studio = studioRepository.createAndSave({
-  name: "Bad Racket Recording Studio",
-  city: "Cleveland",
-  state: "Ohio",
-  location: { longitude: -81.6764187, latitude: 41.5080462 },
-  established: new Date('2010-12-27')
-})
-```
-
-You also use `.save` to update an existing entity:
-
-```javascript
-album.genres = [ 'metal', 'nu metal', 'avantgarde' ]
-album.outOfPublication = false
-
-const id = await albumRepository.save(album) // '01FJYWEYRHYFT8YTEGQBABJ43J'
-```
-
-If you know an object's entity ID you can `.fetch` it:
-
-```javascript
-const album = await albumRepository.fetch('01FJYWEYRHYFT8YTEGQBABJ43J')
-album.artist // "Mushroomhead"
-album.title // "The Righteous & The Butterfly"
-album.year // 2014
-album.genres // [ 'metal', 'nu metal', 'avantgarde' ]
-album.outOfPublication // false
-```
-
-Or `.remove` it:
-
-```javascript
-await studioRepository.remove('01FVDN241NGTPHSAV0DFDBXC90')
-```
-
-You can also set an entity to expire after a certain number of seconds. Redis will automatically remove that entity when the time's up. Use the `.expire` method to do this:
-
-```javascript
-const ttlInSeconds = 12 * 60 * 60  // 12 hours
-await studioRepository.expire('01FVDN241NGTPHSAV0DFDBXC90', ttlInSeconds)
-```
-
-### Missing Entities and Null Values
-
-Redis, and by extension Redis OM, doesn't differentiate between missing and null. Missing fields in Redis are returned as `null`, and missing keys return `null`. So, if you fetch an entity that doesn't exist, it will happily return you an entity full of nulls:
-
-```javascript
-const album = await albumRepository.fetch('DOES_NOT_EXIST')
-album.artist // null
-album.title // null
-album.year // null
-album.genres // null
-album.outOfPublication // null
-```
-
-Conversely, if you set all the properties on an entity to `null` and then save it, it will remove the entity from Redis:
-
-```javascript
-const album = await albumRepository.fetch('01FJYWEYRHYFT8YTEGQBABJ43J')
-album.artist = null
-album.title = null
-album.year = null
-album.genres = null
-album.outOfPublication = null
-
-const id = await albumRepository.save(album)
-
-const exists = await client.execute(['EXISTS', 'Album:01FJYWEYRHYFT8YTEGQBABJ43J']) // 0
-```
-
-It does this because Redis—particularly Redis Hashes—doesn't distinguish between missing and null. You could have an entity that is all nulls. Or you could not. Redis doesn't know which is your intention, and so always returns *something* when you call `.fetch`.
-
-### A Note for TypeScript Users
-
-When you define an entity and schema in TypeScript, all is well. But when you go to *use* that entity, you might have a problem. You'll get an error accessing the properties that the schema added to the entity. This code won't work:
-
-```typescript
-const album = albumRepository.createEntity()
-album.artist = "Mushroomhead"                 // Property 'artist' does not exist on type 'Album'
-album.title = "The Righteous & The Butterfly" // Property 'title' does not exist on type 'Album'
-album.year = 2014                             // Property 'year' does not exist on type 'Album'
-album.genres = [ 'metal' ]                    // Property 'genres' does not exist on type 'Album'
-album.outOfPublication = true                 // Property 'outOfPublication' does not exist on type 'Album'
-```
-
-To fix this—without resorting to `// @ts-ignore`—add an interface with the same name as your entity. On that interface, add all the properties you provided to the schema:
-
-```typescript
-interface Album {
-  artist: string;
-  title: string;
-  year: number;
-  genres: string[];
-  outOfPublication: boolean;
-}
-
-class Album extends Entity {}
-
-const albumSchema = new Schema(Album, {
+const albumSchema = new Schema('album', {
   artist: { type: 'string' },
   title: { type: 'string' },
   year: { type: 'number' },
   genres: { type: 'string[]' },
   outOfPublication: { type: 'boolean' }
+}, {
+  dataStructure: 'JSON'
 })
 ```
 
-## 🧮 Embedding Your Own Logic into Entities
-
-You might be looking at how you define an entity and think it's a bit odd. Just an empty class? Really? Well, this class can contain additional logic that works with the data it retrieves from Redis. Which can be pretty useful.
-
-You can use this to create computed fields and add domain logic:
+But you can also store your entities as Hashes instead. Just change the `dataStructure` property to reflect it:
 
 ```javascript
-class Album extends Entity {
-  get is70sRock() {
-    return this.year >= 1970 && this.year < 1980 && this.genres.includes('rock')
-  }
-
-  makeItRock() {
-    this.genres.push('rock');
-  }
-}
-```
-
-Or even use more Redis OM to find related entities:
-
-```javascript
-class Album extends Entity {
-  async recordedAt() {
-    return await studioRepository.fetch(this.studioId)
-  }
-}
-```
-
-## 📄 Using Hashes
-
-By default, Redis OM stores your entities in JSON documents. But if you're not using [RedisJSON][redis-json-url], you can instead choose to store your entities as Hashes. It works exactly the same as using JSON, but when you define your schema, just pass in an option telling it to use Hashes:
-
-```javascript
-const albumSchema = new Schema(Album, {
+const albumSchema = new Schema('album', {
   artist: { type: 'string' },
   title: { type: 'string' },
   year: { type: 'number' },
@@ -473,9 +241,241 @@ const albumSchema = new Schema(Album, {
 })
 ```
 
-Everything else is the same.
+And that's it.
 
-## 🔎 Using RediSearch
+Of course, Hashes and JSON are somewhat different data structures. Hashes are flat with fields containing values. JSON documents, however, are trees and can have depth and—most excitingly—can be nested. This difference is reflected in how Redis OM maps data to entities and how you configure your Schema.
+
+#### Configuring JSON
+
+When you store your entities as JSON, the path to the properties in your JSON document and your JavaScript object default to the name of your property in the schema. In the above example, this would result in a document that looks like this:
+
+```json
+{
+  "artist": "Mushroomhead",
+  "title": "The Righteous & The Butterfly",
+  "year": 2014,
+  "genres": [ "metal" ],
+  "outOfPublication": true
+}
+```
+
+However, you might not want your JavaScript object and your JSON to map this way. So, you can provide a `path` option in your schema that contains a [JSONPath](https://redis.io/docs/stack/json/path/#jsonpath-syntax) pointing to where that field *actually* exists in the JSON and your entity. For example, we might want to store some of the album's data inside of an album property like this:
+
+```json
+{
+  "album": {
+    "artist": "Mushroomhead",
+    "title": "The Righteous & The Butterfly",
+    "year": 2014,
+    "genres": [ "metal" ]
+  },
+  "outOfPublication": true
+}
+```
+
+To do this, we'll need to specify the `path` property for the nested fields in the schema:
+
+```javascript
+const albumSchema = new Schema('album', {
+  artist: { type: 'string', path: '$.album.artist' },
+  title: { type: 'string', path: '$.album.title' },
+  year: { type: 'number', path: '$.album.year' },
+  genres: { type: 'string[]', path: '$.album.genres[*]' },
+  outOfPublication: { type: 'boolean' }
+})
+```
+
+There are two things to note here:
+
+  1. We haven't specified a path for `outOfPublication` as it's still in the root of the document. It defaults to `$.outOfPublication`.
+  2. Our `genres` field points to a `string[]`. When using a `string[]`, the JSONPath must return an array. If it doesn't, an error will be generated.
+
+#### Configuring Hashes
+
+When you store your entities as Hashes there is no nesting—all the entities are flat. In Redis, the properties on your entity are stored in fields inside a Hash. The default name for each field is the name of the property in your schema and this is the name that will be used in your entities. So, for the following schema:
+
+```javascript
+const albumSchema = new Schema('album', {
+  artist: { type: 'string' },
+  title: { type: 'string' },
+  year: { type: 'number' },
+  genres: { type: 'string[]' },
+  outOfPublication: { type: 'boolean' }
+}, {
+  dataStructure: 'HASH'
+})
+```
+
+In your code, your entities would look like this:
+
+```javascript
+{
+  artist: 'Mushroomhead',
+  title: 'The Righteous & The Butterfly',
+  year: 2014,
+  genres: [ 'metal' ],
+  outOfPublication: true
+}
+```
+
+Inside Redis, your Hash would be stored like this:
+
+| Field            | Value                                   |
+|------------------|:----------------------------------------|
+| artist           | Mushroomhead                            |
+| title            | The Righteous & The Butterfly           |
+| year             | 2014                                    |
+| genres           | metal                                   |
+| outOfPublication | 1                                       |
+
+However, you might not want the names of your fields and the names of the properties on your entity to be exactly the same. Maybe you've got some existing data with existing names or something.
+
+Fear not! You can change the name of the field used by Redis with the `field` property:
+
+```javascript
+const albumSchema = new Schema('album', {
+  artist: { type: 'string', field: 'album_artist' },
+  title: { type: 'string', field: 'album_title' },
+  year: { type: 'number', field: 'album_year' },
+  genres: { type: 'string[]' },
+  outOfPublication: { type: 'boolean' }
+}, {
+  dataStructure: 'HASH'
+})
+```
+
+With this configuration, your entities will remain unchanged and will still have properties for `artist`, `title`, `year`, `genres`, and `outOfPublication`. But inside Redis, the field will have changed:
+
+| Field            | Value                                   |
+|------------------|:----------------------------------------|
+| album_artist     | Mushroomhead                            |
+| album_title      | The Righteous & The Butterfly           |
+| album_year       | 2014                                    |
+| genres           | metal                                   |
+| outOfPublication | 1                                       |
+
+## Reading, Writing, and Removing with Repository
+
+Now that we have a client and a schema, we have what we need to make a [*repository*](docs/classes/Repository.md). A repository provides the means to write, read, and remove entities. Creating a repository is pretty straightforward—just instantiate one with a schema and a client:
+
+```javascript
+import { Repository } from 'redis-om'
+
+const albumRepository = new Repository(albumSchema, redis)
+const studioRepository = new Repository(studioSchema, redis)
+```
+
+Once we have a repository, we can use `.save` to, well, save entities:
+
+```javascript
+let album = {
+  artist: "Mushroomhead",
+  title: "The Righteous & The Butterfly",
+  year: 2014,
+  genres: [ 'metal' ],
+  outOfPublication: true
+}
+
+album = await albumRepository.save(album)
+```
+
+This saves your entity and returns a copy, a copy with some additional properties. The primary property we care about right now is the entity ID, which Redis OM will generate for you. However, this isn't stored and accessed like a typical property. After all, you might have a property in your data with a name that conflicts with the name Redis OM uses and that would create all sorts of problems.
+
+So, Redis OM uses a [Symbol](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol) to access it instead. You'll need to import this symbol from Redis OM:
+
+```javascript
+import { EntityId } from 'redis-om'
+```
+
+Then you can access the entity ID using that symbol:
+
+```javascript
+album = await albumRepository.save(album)
+album[EntityId] // '01FJYWEYRHYFT8YTEGQBABJ43J'
+```
+
+The entity ID that Redis OM generates is a [ULID](https://github.com/ulid/spec) and is a unique id representing that object. If you don't like using generated IDs for some reason and instead want to provide your own, you can totally do that:
+
+```javascript
+album = await albumRepository.save('BWOMP', album)
+```
+
+Regardless, once you have an object's entity ID you can `.fetch` with it:
+
+```javascript
+const album = await albumRepository.fetch('01FJYWEYRHYFT8YTEGQBABJ43J')
+album.artist // "Mushroomhead"
+album.title // "The Righteous & The Butterfly"
+album.year // 2014
+album.genres // [ 'metal' ]
+album.outOfPublication // true
+```
+
+If you call `.save` with an entity that *already* has an entity ID, probably because you *fetched* it, `.save` will update it instead of creating a new `Entity`:
+
+```javascript
+let album = await albumRepository.fetch('01FJYWEYRHYFT8YTEGQBABJ43J')
+album.genres = [ 'metal', 'nu metal', 'avantgarde' ]
+album.outOfPublication = false
+
+album = await albumRepository.save(album)
+```
+
+You can even use `.save` to clone an `Entity`. Just pass in a new entity ID to `.save` and it'll save the data to that entity ID:
+
+```javascript
+const album = await albumRepository.fetch('01FJYWEYRHYFT8YTEGQBABJ43J')
+album.genres = [ 'metal', 'nu metal', 'avantgarde' ]
+album.outOfPublication = false
+
+const clonedEntity = await albumRepository.save('BWOMP', album)
+```
+
+And, of course, you need to be able to delete things. Use `.remove` to do that:
+
+```javascript
+await albumRepository.remove('01FJYWEYRHYFT8YTEGQBABJ43J')
+```
+
+You can also set an entity to expire after a certain number of seconds. Redis will automatically remove that entity when the time's up. Use the `.expire` method to do this:
+
+```javascript
+const ttlInSeconds = 12 * 60 * 60  // 12 hours
+await albumRepository.expire('01FJYWEYRHYFT8YTEGQBABJ43J', ttlInSeconds)
+```
+
+### Missing Entities and Null Values
+
+Redis, and by extension Redis OM, doesn't differentiate between missing and null—particularly for Hashes. Missing fields in Redis Hashes are returned as `null`. Missing keys also return `null`. So, if you fetch an entity that doesn't exist, it will happily return you an empty entity, complete with the provided entity ID:
+
+```javascript
+const album = await albumRepository.fetch('TOTALLY_BOGUS')
+album[EntityId] // 'TOTALLY_BOGUS'
+album.artist // undefined
+album.title // undefined
+album.year // undefined
+album.genres // undefined
+album.outOfPublication // undefined
+```
+
+Conversely, if you remove all the properties on an entity and then save it, it will remove the entity from Redis:
+
+```javascript
+const album = await albumRepository.fetch('01FJYWEYRHYFT8YTEGQBABJ43J')
+delete album.artist
+delete album.title
+delete album.year
+delete album.genres
+delete album.outOfPublication
+
+const entityId = await albumRepository.save(album)
+
+const exists = await redis.exists('album:01FJYWEYRHYFT8YTEGQBABJ43J') // 0
+```
+
+It does this because Redis doesn't distinguish between missing and null. You could have an entity that is empty. Or you could not have an entity at all. Redis doesn't know which is your intention, and so always returns *something* when you call `.fetch`.
+
+## Searching
 
 Using [RediSearch][redisearch-url] with Redis OM is where the power of this fully armed and operational battle station starts to become apparent. If you have RediSearch installed on your Redis server you can use the search capabilities of Redis OM. This enables commands like:
 
@@ -499,7 +499,7 @@ await albumRepository.createIndex();
 
 If you change your schema, no worries. Redis OM will automatically rebuild the index for you. Just call `.createIndex` again. And don't worry if you call `.createIndex` when your schema *hasn't* changed. Redis OM will only rebuild your index if the schema has changed. So, you can safely use it in your startup code.
 
-However, if you have a *lot* of data, rebuilding an index can take some time. So, you might want to explicitly manage the building and rebuilding of your indices in some sort of deployment code script thing. To support those devops sorts of things, Redis OM includes a `.dropIndex` method to explicit remove an index without rebuilding it:
+However, if you have a *lot* of data, rebuilding an index can take some time. So, you might want to explicitly manage the building and rebuilding of your indices in some sort of deployment code script thing. To support those devops sorts of things, Redis OM includes a `.dropIndex` method to explicitly remove an index without rebuilding it:
 
 ```javascript
 await albumRepository.dropIndex();
@@ -535,7 +535,7 @@ Sometimes you only have one album. Or maybe you only care about the first album 
 const firstAlbum = await albumRepository.search().return.first();
 ```
 
-Note: If you have *no* albums, this will return `null`.
+Note: If you have *no* albums, this will return `null`. And I feel sorry for you.
 
 #### Counting
 
@@ -553,7 +553,7 @@ And it does it with a fluent interface that allows—but does not demand—code 
 
 #### Searching on Strings
 
-When you set the field type in your schema to `string`, you can search for a whole string. This syntax will not search for partial strings or words within a string. It only matches the *entire* string. If you want to search for words or partial words within text you need to use the `text` type and search it using the [Full-Text Search](#full-text-search) syntax.
+When you set the field type in your schema to `string`, you can search for a particular value in that string. You can also search for partial strings (no shorter than two characters) that occur at the beginning, middle, or end of a string. If you need to search strings in a more sophisticated manner, you'll want to look at the `text` type and search it using the [Full-Text Search](#full-text-search) syntax.
 
 ```javascript
 let albums
@@ -563,6 +563,11 @@ albums = await albumRepository.search().where('artist').eq('Mushroomhead').retur
 
 // find all albums where the artist is *not* 'Mushroomhead'
 albums = await albumRepository.search().where('artist').not.eq('Mushroomhead').return.all()
+
+// find all albums using wildcards
+albums = await albumRepository.search().where('artist').eq('Mush*').return.all()
+albums = await albumRepository.search().where('artist').eq('*head').return.all()
+albums = await albumRepository.search().where('artist').eq('*room*').return.all()
 
 // fluent alternatives that do the same thing
 albums = await albumRepository.search().where('artist').equals('Mushroomhead').return.all()
@@ -586,7 +591,7 @@ albums = await albumRepository.search().where('year').gte(1984).return.all()
 albums = await albumRepository.search().where('year').lt(1984).return.all()
 albums = await albumRepository.search().where('year').lte(1984).return.all()
 
-// find all albums where year is between 1980 and 1989 inclusive
+// find all albums where the year is between 1980 and 1989 inclusive
 albums = await albumRepository.search().where('year').between(1980, 1989).return.all()
 
 // find all albums where the year is *not* ===, >, >=, <, and <= 1984
@@ -672,7 +677,7 @@ albums = await albumRepository.search().where('outOfPublication').is.not.false()
 
 #### Searching on Dates
 
-If you have a field type of `date` in your schema, you can search on it using [Dates](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date), [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) formated strings, or the [UNIX epoch time](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date#the_ecmascript_epoch_and_timestamps) in *seconds*:
+If you have a field type of `date` in your schema, you can search on it using [Dates](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date), [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) formatted strings, or the [UNIX epoch time](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date#the_ecmascript_epoch_and_timestamps) in *seconds*:
 
 ```javascript
 studios = await studioRepository.search().where('established').on(new Date('2010-12-27')).return.all()
@@ -792,11 +797,17 @@ albums = await albumRepository.search().where('genres').does.containOneOf('rock'
 albums = await albumRepository.search().where('genres').does.not.containOneOf('rock', 'metal', 'blues').return.all()
 ```
 
+Wildcards work here too:
+
+```javascript
+albums = await albumRepository.search().where('genres').contain('*rock*').return.all()
+```
+
 #### Full-Text Search
 
-If you've defined a field with a type of `text` in your schema, you can store text in it and perform full-text searches against it. Full-text search is different from how a `string` is searched, which can only match the entire string. With full-text search, you can look for words, partial words, and exact phrases within a body of text.
+If you've defined a field with a type of `text` in your schema, you can store text in it and perform full-text searches against it. Full-text search is different from how a `string` is searched. With full-text search, you can look for words, partial words, and exact phrases within a body of text.
 
-Full-text search is optimized for human-readable text and it's pretty clever. It understands that certain words (like *a*, *an*, or *the*) are common and ignores them. It understands how words relate to each other and so if you search for *give*, it matches *gives*, *given*, *giving*, and *gave* too. It ignores punctuation.
+Full-text search is optimized for human-readable text and it's pretty clever. It understands that certain words (like *a*, *an*, or *the*) are common and ignores them. It understands how words relate to each other and so if you search for *give*, it matches *gives*, *given*, *giving*, and *gave* too. It ignores punctuation and whitespace.
 
 Here are some examples of doing full-text search against some album titles:
 
@@ -806,32 +817,21 @@ let albums
 // finds all albums where the title contains the word 'butterfly'
 albums = await albumRepository.search().where('title').match('butterfly').return.all()
 
-// finds all albums where the title contains the the words 'beautiful' and 'children'
+// finds all albums where the title contains the words 'beautiful' and 'children'
 albums = await albumRepository.search().where('title').match('beautiful children').return.all()
 
 // finds all albums where the title contains the exact phrase 'beautiful stories'
 albums = await albumRepository.search().where('title').matchExact('beautiful stories').return.all()
 ```
 
-If you want to search for a part of a word, you can do that too, but only the front part of a word. To do it, just tack a `*` on the end of your partial word and it'll match accordingly:
+If you want to search for a part of a word. To do it, just tack a `*` on the beginning or end (or both) of your partial word and it'll match accordingly:
 
 ```javascript
-// finds all albums where the title contains a word that starts with 'right'
-albums = await albumRepository.search().where('title').match('right*').return.all()
+// finds all albums where the title contains a word that contains 'right'
+albums = await albumRepository.search().where('title').match('*right*').return.all()
 ```
 
-However, this only works for the front part of a word. And you need to provide *at least* two characters. So, for example, the following queries will *not* work:
-
-```javascript
-// INVALID: Wildcard must be at the end of the word
-albums = await albumRepository.search().where('title').match('*fly').return.all()
-albums = await albumRepository.search().where('title').match('*hild*').return.all()
-
-// INVALID: At least two characters required before wildcard
-albums = await albumRepository.search().where('title').match('b*').return.all()
-```
-
-Also, do not combine partial-word searches with exact matches. Partial-word searches and exact matches are not compatible in RediSearch. If you try to exactly match a partial-word search, you'll get an error.
+Do not combine partial-word searches with exact matches. Partial-word searches and exact matches are not compatible in RediSearch. If you try to exactly match a partial-word search, you'll get an error.
 
 ```javascript
 // THIS WILL ERROR
@@ -875,11 +875,11 @@ Note that coordinates are specified with the longitude *first*, and then the lat
 If you don't want to rely on argument order, you can also specify longitude and latitude more explicitly:
 
 ```javascript
-// finds all the studios with 50 miles of downtown Cleveland using a point
+// finds all the studios within 50 miles of downtown Cleveland using a point
 studios = await studioRepository.search().where('location').inRadius(
   circle => circle.origin({ longitude: -81.7758995, latitude: 41.4976393 }).radius(50).miles).return.all()
 
-// finds all the studios with 50 miles of downtown Cleveland using longitude and latitude
+// finds all the studios within 50 miles of downtown Cleveland using longitude and latitude
 studios = await studioRepository.search().where('location').inRadius(
   circle => circle.longitude(-81.7758995).latitude(41.4976393).radius(50).miles).return.all()
 ```
@@ -1040,24 +1040,67 @@ const albumSchema = new Schema(Album, {
 })
 ```
 
-If your schema is for a JSON data structure (the default), you can mark `number`, `date`, and `text` fields as sortable. You can also mark `string` and `boolean` field sortable, but this will have no effect and will generate a warning.
+If your schema is for a JSON data structure (the default), you can mark `number`, `date`, and `text` fields as sortable. You can also mark `string` and `boolean` fields as sortable, but this will have no effect and will generate a warning.
 
 If your schema is for a Hash, you can mark `string`, `number`, `boolean`, `date`, and `text` fields as sortable.
 
 Fields of the types `point` and `string[]` are never sortable.
 
-If this seems like a confusion flowchart to parse, don't worry. If you call `.sortBy` on a field in the Schema that's not marked as `sortable` and it *could* be, Redis OM will log a warning to let you know.
+If this seems like a confusing flowchart to parse, don't worry. If you call `.sortBy` on a field in the Schema that's not marked as `sortable` and it *could* be, Redis OM will log a warning to let you know.
 
+## Advanced Stuff
 
-## 📚 Documentation
+This is a bit of a catch-all for some of the more advanced stuff you can do with Redis OM.
+
+### Schema Options
+
+Additional field options can be set depending on the field type. These correspond to the [Field Options](https://redis.io/commands/ft.create/#field-options) available when creating a RediSearch full-text index. Other than the `separator` option, these only affect how content is indexed and searched.
+
+|  schema type   | RediSearch type | `indexed` | `sortable` | `normalized` | `stemming` | `phonetic` | `weight` | `separator` | `caseSensitive` |
+| -------------- | :-------------: | :-------: | :--------: | :----------: | :--------: | :--------: | :------: | :---------: | :-------------: |
+| `string`       |       TAG       |    yes    |  HASH Only |   HASH Only  |      -     |      -     |     -    |     yes     |        yes      |
+| `number`       |     NUMERIC     |    yes    |    yes     |       -      |      -     |      -     |     -    |      -      |         -       |
+| `boolean`      |       TAG       |    yes    |  HASH Only |       -      |      -     |      -     |     -    |      -      |         -       |
+| `string[]`     |       TAG       |    yes    |  HASH Only |   HASH Only  |      -     |      -     |     -    |     yes     |        yes      |
+| `date`         |     NUMERIC     |    yes    |    yes     |       -      |            |      -     |     -    |      -      |         -       |
+| `point`        |       GEO       |    yes    |     -      |       -      |            |      -     |     -    |      -      |         -       |
+| `text`         |       TEXT      |    yes    |    yes     |      yes     |     yes    |     yes    |    yes   |      -      |         -       |
+
+* `indexed`: true | false, whether this field is indexed by RediSearch (default true)
+* `sortable`: true | false, whether to create an additional index to optimize sorting (default false)
+* `normalized`: true | false, whether to apply normalization for sorting (default true)
+* `matcher`: string defining phonetic matcher which can be one of: 'dm:en' for English, 'dm:fr' for French, 'dm:pt' for Portugese, 'dm:es' for Spanish (default none)
+* `stemming`: true | false, whether word-stemming is applied to text fields (default true)
+* `weight`: number, the importance weighting to use when ranking results (default 1)
+* `separator`: string, the character to delimit multiple tags (default '|')
+* `caseSensitive`: true | false, whether original letter casing is kept for search (default false)
+
+Example showing additional options:
+
+```javascript
+const commentSchema = new Schema(Comment, {
+  name: { type: 'text', stemming: false, matcher: 'dm:en' },
+  email: { type: 'string', normalized: false, },
+  posted: { type: 'date', sortable: true },
+  title: { type: 'text', weight: 2 },
+  comment: { type: 'text', weight: 1 },
+  approved: { type: 'boolean', indexed: false },
+  iphash: { type: 'string', caseSensitive: true },
+  notes: { type: 'string', indexed: false },
+})
+```
+
+There are several other options available when defining a schema for your entity. Check them out in the [detailed documentation](docs/classes/Schema.md) for the `Schema` class.
+
+## Documentation
 
 This README is pretty extensive, but if you want to check out every last corner of Redis OM for Node.js, take a look at the complete [API documentation](/docs).
 
-## ⛏️ Troubleshooting
+## Troubleshooting
 
 I'll eventually have a FAQ full of answered questions, but since this is a new library, nobody has asked anything yet, frequently or otherwise. So, if you run into a problem, open an issue. Even cooler, dive into the code and send a pull request. If you just want to ping somebody, hit me up on the [Redis Discord server][discord-url].
 
-## ❤️ Contributing
+## Contributing
 
 Contributions are always appreciated. I take PayPal and Bitcoin. Just kidding, I would sincerely appreciate your help in making this software better. Here are a couple of ways to help:
 

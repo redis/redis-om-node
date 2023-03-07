@@ -1,55 +1,60 @@
 import { client } from '../helpers/mock-client'
-import { Client } from "$lib/client";
-import { Search, RawSearch } from "$lib/search";
+import { Client } from "$lib/client"
+import { EntityId } from '$lib/entity'
+import { Search, RawSearch } from "$lib/search"
 
-import { simpleHashSchema, SimpleHashEntity } from "../helpers/test-entity-and-schema";
+import { simpleHashSchema } from "../helpers/test-entity-and-schema"
 import { mockClientSearchToReturnNothing, mockClientSearchToReturnSingleKey,
-   SIMPLE_ENTITY_1 } from '../helpers/search-helpers';
+   SIMPLE_ENTITY_1 } from '../helpers/search-helpers'
 
 
-type HashSearch = Search<SimpleHashEntity> | RawSearch<SimpleHashEntity>;
+type HashSearch = Search | RawSearch
 
 describe.each([
   [ "FluentSearch",
-    new Search<SimpleHashEntity>(simpleHashSchema, new Client()) ],
+    new Search(simpleHashSchema, new Client()) ],
   [ "RawSearch",
-    new RawSearch<SimpleHashEntity>(simpleHashSchema, new Client()) ]
+    new RawSearch(simpleHashSchema, new Client()) ]
 ])("%s", (_, search: HashSearch) => {
 
   describe("#returnFirstKey", () => {
-    let id: string | null;
-    let indexName = 'SimpleHashEntity:index', query = '*';
+    let id: string | null
+    let indexName = 'SimpleHashEntity:index', query = '*'
 
     describe("when querying no results", () => {
       beforeEach( async () => {
-        mockClientSearchToReturnNothing();
-        id = await search.return.firstKey();
-      });
-
-      it("asks the client for the first result of a given repository", () => {
-        expect(client.search).toHaveBeenCalledTimes(1);
-        expect(client.search).toHaveBeenCalledWith({
-          indexName, query, limit: { offset: 0, count: 1 }, keysOnly: true });
-      });
-
-      it("return no result", () => expect(id).toBe(null));
-    });
-
-    describe("when getting a result", () => {
-      beforeEach(async () => {
-        mockClientSearchToReturnSingleKey();
-        id = await search.return.firstKey();
-      });
+        mockClientSearchToReturnNothing()
+        id = await search.return.firstKey()
+      })
 
       it("asks the client for the first result of a given repository", () => {
         expect(client.search).toHaveBeenCalledTimes(1)
-        expect(client.search).toHaveBeenCalledWith({
-          indexName, query, limit: { offset: 0, count: 1 }, keysOnly: true });
-      });
+        expect(client.search).toHaveBeenCalledWith(indexName, query, {
+          LIMIT: { from: 0, size: 1 },
+          RETURN: []
+        })
+      })
+
+      it("return no result", () => expect(id).toBe(null))
+    })
+
+    describe("when getting a result", () => {
+      beforeEach(async () => {
+        mockClientSearchToReturnSingleKey()
+        id = await search.return.firstKey()
+      })
+
+      it("asks the client for the first result of a given repository", () => {
+        expect(client.search).toHaveBeenCalledTimes(1)
+        expect(client.search).toHaveBeenCalledWith(indexName, query, {
+          LIMIT: { from: 0, size: 1 },
+          RETURN: []
+        })
+      })
 
       it("returns the first result of a given repository", () => {
-        expect(id).toEqual(`SimpleHashEntity:${SIMPLE_ENTITY_1.entityId}`);
-      });
-    });
-  });
-});
+        expect(id).toEqual(`SimpleHashEntity:${SIMPLE_ENTITY_1[EntityId]}`)
+      })
+    })
+  })
+})

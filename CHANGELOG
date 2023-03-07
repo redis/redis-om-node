@@ -4,21 +4,42 @@
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and Redis OM adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 0.4.0 - 2023-03-07
+### Added
+- Added methods to *Repository* to allow you to provide your own *entityId* instead of relying on a generated one.
+- Added support for Redis clustering by passing in a Node Redis connection created with `createCluster`.
+- Added better and more meaningful exceptions.
+
+### Changed
+- *Schema* now supports nested JSON via the `path` option.
+- *Schema* now supports specifying the field for a Hash via the `field` option.
+- *Schema* now supports `async` functions for *IdStrategy* allowing you to slow down your saves with I/O calls to generate IDs.
+- *Repository* now allows adding Entities with properties that are not in the *Schema*. These can even be nested if you are using JSON.
+- *Repository* can be now be constructed directly with `new` in addition to being created from a *Client* via `.fetchRepository`.
+- *Repository* can now directly be handed an open Node Redis connection. No need to create a *Client* instance.
+- *Client* deprecated in favor of using Node Redis connections.
+
+### Removed
+- *Breaking Change* Removed *Entity* class. While still a type, it's no longer a class and is mostly just an alias for a JavaScript object.
+- *Breaking Change* Removed `.execute` method on *Client*. Use Node Redis instead.
+- *Breaking Change* Removed `.createEntity` and `.createAndSave` methods on *Repository*. Entities are simply JavaScript objects—to create one just create a JavaScript object and call `.save`.
+- As *Entity* is no longer a class, custom methods on an *Entity* are no longer supported.
+
 ## 0.3.6 - 2022-07-12
 ### Changed
-- *Breaking Change* Removed .fetchMany and replaced it with a variadic version of .fetch.
+- *Breaking Change* Removed `.fetchMany` and replaced it with a variadic version of `.fetch`.
 - Assorted internal cleanup.
 - Changed test suite to use vitest.
 
 ## 0.3.5 - 2022-06-21
 ### Added
 - Added additional field attributes to control RediSearch indexing behavior.
-- Added search methods to retreive just key name or just entity IDs instead of the entire entity. Methods include: .returnAllKeys, .returnAllIds, .returnFirstKey, .returnFirstId, .returnPageOfKeys, .returnPageOfIds, .returnMinKey, .returnMinId, .returnMaxKey, .returnMaxId
-- Added .fetchMany to Repository which variadicly takes multiple entity IDs and returns an array of fetch entities.
+- Added search methods to retreive just key name or just *entityIds* instead of the entire entity. Methods include: `.returnAllKeys`, `.returnAllIds`, `.returnFirstKey`, `.returnFirstId`, `.returnPageOfKeys`, `.returnPageOfIds`, `.returnMinKey`, `.returnMinId`, `.returnMaxKey`, `.returnMaxId`
+- Added `.fetchMany` to *Repository* which variadicly takes multiple *entityIds* and returns an array of fetch entities.
 
 ### Changed
-- Search methods that return a single item (like .first, .min, etc.) and can return null are now marked as returning null for TypeScript users.
-- Repository .remove method is now variadic and takes one or more entity IDs to remove.
+- Search methods that return a single item (like `.first`, `.min`, etc.) and can return *null* are now marked as returning *null* for TypeScript users.
+- Repository `.remove` method is now variadic and takes one or more *entityIds* to remove.
 
 ## 0.3.4 - 2022-06-07
 ### Changed
@@ -30,13 +51,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## 0.3.3 - 2022-05-05
 ### Changed
-- Reverted breaking change that changed field type from 'string[]' to 'array'. The correct field type is 'string[]'.
+- Reverted breaking change that changed field `type` from 'string[]' to 'array'. The correct field type is 'string[]'.
 
 
 ## 0.3.2 - 2022-05-03
 ### Changed
-- *Breaking Change*: date values are stored in EPOCH seconds to align with [date/time APPLY functions](https://redis.io/docs/stack/search/reference/aggregations/#list-of-datetime-apply-functions)
-
+- *Breaking Change*: Date values are stored in EPOCH seconds to align with [date/time APPLY functions](https://redis.io/docs/stack/search/reference/aggregations/#list-of-datetime-apply-functions).
 
 ## 0.3.1 - 2022-05-02
 ### Fixed
@@ -58,7 +78,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## 0.2.1 - 2022-03-30
 ### Added
 - Added limited ability to sort search results using `.sortBy`.
-- Added `.min` and `.max` which returns the `Entity` with the minimum or maximum value for a provided field.
+- Added `.min` and `.max` which returns the *Entity* with the minimum or maximum value for a provided field.
 
 ## 0.2.0 - 2022-02-25
 ### Added
@@ -67,9 +87,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Perform radius searches on 'point' data type using `.inRadius`.
 - Perform searches on 'date' data type using `.before`, `.after`, etc.
 - Issue raw RediSearch commands using `Repository.searchRaw`.
-- Attach existing Node Redis connections using `Client.use`. Handy if you need to do raw Redis stuff too!
-- Added `.keyName` property on `Entity` that lets you to get the Redis keyname storing that `Entity`.
-- Added `.expire` method to `Repository` allowing you to expire an `Entity`.
+- Attach existing Node Redis connections using `.use` on *Client*. Handy if you need to do raw Redis stuff too!
+- Added `.keyName` property on *Entity* that lets you to get the Redis keyname storing that *Entity*.
+- Added `.expire` method to *Repository* allowing you to expire an *Entity*.
 
 ### Changed
 - String fields and searches can now be set to numbers or booleans and will be coerced to a string.
@@ -77,7 +97,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - *Breaking Change*: Changed 'array' type in Schema definitions to 'string[]' in preparation for adding other types of arrays.
 - *Breaking Change*: Split 'string' type into 'string' and 'text' types, representing string values that support `.eq` searches and text values that support `.match` searches.
 - *Breaking Change*: Removed the `textSearch` property from strings as it was no longer needed with 'string' and 'text' types replacing it.
-- *Breaking Change*: Schema data structure now defaults to JSON instead of HASH.
+- *Breaking Change*: *Schema* data structure now defaults to JSON instead of HASH.
 
 ### Fixed
 - Wildcard searches on text fields no longer fail.
@@ -89,35 +109,35 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## 0.1.7 - 2022-01-07
 ### Added
-- Added .isOpen() to Client
+- Added `.isOpen` to *Client*
 
 ### Changed
-- Client no longer errors when opened or closed if already opened or closed.
+- *Client* no longer errors when opened or closed if already opened or closed.
 - Update table of contents in README.
 
 
 ## 0.1.6 - 2022-01-05
 ### Added
-- Added .return.first() and .returnFirst() methods to search. Sometimes you really can eat just one.
+- Added `.return.first` and `.returnFirst` methods to search. Sometimes you really can eat just one.
 
 ### Fixed
-- Entity now has a better default JSON serialization output.
+- *Entity* now has a better default JSON serialization output.
 
 
 ## 0.1.5 - 2021-12-23
 ### Added
-- Added ability to pass in initial values when creating an Entity with .createEntity.
-- Added .createAndSave method to Repository that does exactly what you think it does.
+- Added ability to pass in initial values when creating an *Entity* with `.createEntity`.
+- Added `.createAndSave` method to Repository that does exactly what you think it does.
 
 ### Changed
-- More fluent interface on .return.all(), return.page(), and return.count() on Search.
-- Replace .return with .returnPage in Search class.
+- More fluent interface on `.return.all`, `return.page`, and `return.count` on *Search*.
+- Replace `.return` with `.returnPage` in *Search* class.
 
 
 ## 0.1.4 - 2021-12-17
 ### Added
 - This CHANGELOG file because communicating changes matters.
-- Ability to specify and override default stop word behavior when defining a Schema.
+- Ability to specify and override default stop word behavior when defining a *Schema*.
 
 ### Fixed
 - Doing an exact match with a stop word used to generate a cryptic error. RediSearch does not permit searching for stop words within an exact match. This error was captured, and a better error is presented that directs the user to either change their stop words or not use stop words in their query.

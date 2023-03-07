@@ -1,139 +1,118 @@
-import { Client } from '$lib/client';
-import { Schema } from '$lib/schema/schema';
-import { Repository } from '$lib/repository';
+import { createClient } from 'redis'
 
-import { SampleJsonEntity, createJsonEntitySchema } from '../helpers/data-helper';
-import { fetchIndexHash, fetchIndexInfo, removeAll } from '../helpers/redis-helper';
+import { RedisConnection, Repository, Schema } from '$lib/index'
+
+import { createJsonEntitySchema } from '../helpers/data-helper'
+import { fetchIndexHash, fetchIndexInfo, removeKeys } from '../helpers/redis-helper'
 
 const expected = [
-  ['identifier', '$.aString', 'attribute', 'aString', 'type', 'TAG', 'SEPARATOR', '|'],
-  ['identifier', '$.anotherString', 'attribute', 'anotherString', 'type', 'TAG', 'SEPARATOR', '|'],
-  ['identifier', '$.someText', 'attribute', 'someText', 'type', 'TEXT', 'WEIGHT', '1', 'SORTABLE', 'UNF'],
-  ['identifier', '$.someOtherText', 'attribute', 'someOtherText', 'type', 'TEXT', 'WEIGHT', '1', 'SORTABLE', 'UNF'],
-  ['identifier', '$.aNumber', 'attribute', 'aNumber', 'type', 'NUMERIC', 'SORTABLE', 'UNF'],
-  ['identifier', '$.anotherNumber', 'attribute', 'anotherNumber', 'type', 'NUMERIC', 'SORTABLE', 'UNF'],
-  ['identifier', '$.aBoolean', 'attribute', 'aBoolean', 'type', 'TAG', 'SEPARATOR', ''],
-  ['identifier', '$.anotherBoolean', 'attribute', 'anotherBoolean', 'type', 'TAG', 'SEPARATOR', ''],
-  ['identifier', '$.aPoint', 'attribute', 'aPoint', 'type', 'GEO'],
-  ['identifier', '$.anotherPoint', 'attribute', 'anotherPoint', 'type', 'GEO'],
-  ['identifier', '$.aDate', 'attribute', 'aDate', 'type', 'NUMERIC', 'SORTABLE', 'UNF'],
-  ['identifier', '$.anotherDate', 'attribute', 'anotherDate', 'type', 'NUMERIC', 'SORTABLE', 'UNF'],
-  ['identifier', '$.someStrings[*]', 'attribute', 'someStrings', 'type', 'TAG', 'SEPARATOR', '|'],
-  ['identifier', '$.someOtherStrings[*]', 'attribute', 'someOtherStrings', 'type', 'TAG', 'SEPARATOR', '|']
+  { identifier: '$.root.aString', attribute: 'aString', type: 'TAG', SEPARATOR: '|' },
+  { identifier: '$.root.someText', attribute: 'someText', type: 'TEXT', WEIGHT: '1', SORTABLE: 'UNF' },
+  { identifier: '$.root.aNumber', attribute: 'aNumber', type: 'NUMERIC', SORTABLE: 'UNF' },
+  { identifier: '$.root.aBoolean', attribute: 'aBoolean', type: 'TAG', SEPARATOR: '' },
+  { identifier: '$.root.aPoint', attribute: 'aPoint', type: 'GEO' },
+  { identifier: '$.root.aDate', attribute: 'aDate', type: 'NUMERIC', SORTABLE: 'UNF' },
+  { identifier: '$.root.someStrings[*]', attribute: 'someStrings', type: 'TAG', SEPARATOR: '|' }
 ]
 
 describe("create and drop index on JSON", () => {
 
-  let client: Client;
-  let repository: Repository<SampleJsonEntity>;
-  let schema: Schema<SampleJsonEntity>;
-  let indexInfo: Array<string>;
-  let indexHash: string;
+  let redis: RedisConnection
+  let repository: Repository
+  let schema: Schema
+  let indexInfo: any
+  let indexHash: string | null
 
   beforeAll(async () => {
-    client = new Client();
-    await client.open();
+    redis = createClient()
+    await redis.connect()
 
-    schema = createJsonEntitySchema('create-drop-json');
-    repository = client.fetchRepository<SampleJsonEntity>(schema);
-  });
+    schema = createJsonEntitySchema('create-drop-json')
+    repository = new Repository(schema, redis)
+  })
 
   afterAll(async () => {
-    await removeAll(client, 'create-drop-json:');
+    await removeKeys(redis, 'create-drop-json:index:hash', 'create-drop-json-changed:index:hash')
     await repository.dropIndex()
-    await client.close()
-  });
+    await redis.quit()
+  })
 
   describe("when the index is created", () => {
     beforeEach(async () => {
-      await removeAll(client, 'create-drop-json:');
-      await repository.createIndex();
-      indexInfo = await fetchIndexInfo(client, 'create-drop-json:index');
-      indexHash = await fetchIndexHash(client, 'create-drop-json:index:hash');
-    });
+      await removeKeys(redis, 'create-drop-json:index:hash', 'create-drop-json-changed:index:hash')
+      await repository.createIndex()
+      indexInfo = await fetchIndexInfo(redis, 'create-drop-json:index')
+      indexHash = await fetchIndexHash(redis, 'create-drop-json:index:hash')
+    })
 
     it("has the expected name", () => {
-      let indexName = indexInfo[1];
-      expect(indexName).toBe('create-drop-json:index');
-    });
+      expect(indexInfo.indexName).toBe('create-drop-json:index')
+    })
 
     it("has the expected key type", () => {
-      let keyType = indexInfo[5][1];
-      expect(keyType).toBe('JSON');
-    });
+      expect(indexInfo.indexDefinition.key_type).toBe('JSON')
+    })
 
     it("has the expected prefixes", () => {
-      let prefixes = indexInfo[5][3];
-      expect(prefixes).toEqual(['create-drop-json:']);
-    });
+      expect(indexInfo.indexDefinition.prefixes).toEqual(['create-drop-json:'])
+    })
 
     it("has the expected hash", () => {
-      expect(indexHash).toBe("p2zV8lqN3AUmui41o3PSkvLZ/XQ=");
-    });
+      expect(indexHash).toBe("o74BCR4MFyeWwukz8UvLjyIx/mQ=")
+    })
 
     it("has the expected fields", () => {
-      let fields = indexInfo[7];
-      expect(fields).toHaveLength(14);
-      expect(fields).toEqual(expected);
-    });
+      expect(indexInfo.attributes).toHaveLength(7)
+      expect(indexInfo.attributes).toEqual(expected)
+    })
 
     describe("when the index is dropped", () => {
-      beforeEach(async () => await repository.dropIndex());
+      beforeEach(async () => await repository.dropIndex())
 
       it("the index no longer exists", () => {
-        expect(async () => await fetchIndexInfo(client, 'create-drop-json:index'))
-          .rejects.toThrow("Unknown Index name");
-      });
+        expect(async () => await fetchIndexInfo(redis, 'create-drop-json:index'))
+          .rejects.toThrow("Unknown Index name")
+      })
 
       it("the index hash no longer exists", async () => {
-        let hash = await fetchIndexHash(client, 'create-drop-json:index:hash');
-        expect(hash).toBeNull();
-      });
-    });
+        let hash = await fetchIndexHash(redis, 'create-drop-json:index:hash')
+        expect(hash).toBeNull()
+      })
+    })
 
     describe("and then the index is recreated but not changed", () => {
       beforeEach(async () => {
-        await repository.createIndex();
-        indexInfo = await fetchIndexInfo(client, 'create-drop-json:index');
-        indexHash = await fetchIndexHash(client, 'create-drop-json:index:hash');
-      });
+        await repository.createIndex()
+        indexInfo = await fetchIndexInfo(redis, 'create-drop-json:index')
+        indexHash = await fetchIndexHash(redis, 'create-drop-json:index:hash')
+      })
 
       it("still has the expected attributes", () => {
-        let indexName = indexInfo[1];
-        let keyType = indexInfo[5][1];
-        let prefixes = indexInfo[5][3];
-        let fields = indexInfo[7];
-
-        expect(indexName).toBe('create-drop-json:index');
-        expect(keyType).toBe('JSON');
-        expect(prefixes).toEqual(['create-drop-json:']);
-        expect(indexHash).toBe("p2zV8lqN3AUmui41o3PSkvLZ/XQ=");
-
-        expect(fields).toHaveLength(14);
-        expect(fields).toEqual(expected);
-      });
-    });
+        expect(indexInfo.indexName).toBe('create-drop-json:index')
+        expect(indexInfo.indexDefinition.key_type).toBe('JSON')
+        expect(indexInfo.indexDefinition.prefixes).toEqual(['create-drop-json:'])
+        expect(indexHash).toBe("o74BCR4MFyeWwukz8UvLjyIx/mQ=")
+        expect(indexInfo.attributes).toHaveLength(7)
+        expect(indexInfo.attributes).toEqual(expected)
+      })
+    })
 
     describe("and then the index is changed", () => {
       beforeEach(async () => {
         schema = createJsonEntitySchema('create-drop-json-changed')
-        repository = client.fetchRepository<SampleJsonEntity>(schema);
+        repository = new Repository(schema, redis)
 
-        await repository.createIndex();
-        indexInfo = await fetchIndexInfo(client, 'create-drop-json-changed:index');
-        indexHash = await fetchIndexHash(client, 'create-drop-json-changed:index:hash');
-      });
+        await repository.createIndex()
+        indexInfo = await fetchIndexInfo(redis, 'create-drop-json-changed:index')
+        indexHash = await fetchIndexHash(redis, 'create-drop-json-changed:index:hash')
+      })
 
       it("has new attributes", () => {
-        let indexName = indexInfo[1];
-        let keyType = indexInfo[5][1];
-        let prefixes = indexInfo[5][3];
-
-        expect(indexName).toBe('create-drop-json-changed:index');
-        expect(keyType).toBe('JSON');
-        expect(prefixes).toEqual(['create-drop-json-changed:']);
-        expect(indexHash).toBe("j+q7Pi1/nRlHgqYoAa78xXtvKPc=");
-      });
-    });
-  });
-});
+        expect(indexInfo.indexName).toBe('create-drop-json-changed:index')
+        expect(indexInfo.indexDefinition.key_type).toBe('JSON')
+        expect(indexInfo.indexDefinition.prefixes).toEqual(['create-drop-json-changed:'])
+        expect(indexHash).toBe("a1Rv7/FRuFW/jQ6KJxp2jgpOH1I=")
+      })
+    })
+  })
+})

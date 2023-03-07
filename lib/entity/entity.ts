@@ -1,135 +1,31 @@
-import { EntityData } from "./entity-data";
-import {
-  EntityField,
-  EntityBooleanField,
-  EntityDateField,
-  EntityNumberField,
-  EntityPointField,
-  EntityStringArrayField,
-  EntityStringField,
-  EntityTextField,
-  EntityFieldConstructor,
-} from "./fields";
-import { Schema } from "../schema/schema";
-import { SchemaDefinition, FieldDefinition, SchemaFieldType } from "../schema/definition";
-import { RedisJsonData, RedisHashData } from "../client";
+/** The Symbol used to access the entity ID of an {@link Entity}. */
+export const EntityId = Symbol('entityId')
 
-const ENTITY_FIELD_CONSTRUCTORS: Record<SchemaFieldType, EntityFieldConstructor> = {
-  'string': EntityStringField,
-  'number': EntityNumberField,
-  'boolean': EntityBooleanField,
-  'text': EntityTextField,
-  'date': EntityDateField,
-  'point': EntityPointField,
-  'string[]': EntityStringArrayField
+/** The Symbol used to access the keyname of an {@link Entity}. */
+export const EntityKeyName = Symbol('entityKeyName')
+
+/** Defines the objects returned from calls to {@link Repository | repositories }. */
+export type Entity = EntityData & {
+
+  /** The unique ID of the {@link Entity}. Access using the {@link EntityId} Symbol. */
+  [EntityId]?: string
+
+  /** The key the {@link Entity} is stored under inside of Redis. Access using the {@link EntityKeyName} Symbol. */
+  [EntityKeyName]?: string
 }
 
-/**
- * An Entity is the class from which objects that Redis OM maps to are made. You need
- * to subclass Entity in your application:
- *
- * ```typescript
- * class Foo extends Entity {}
- * ```
- */
-export abstract class Entity {
-  /** The generated entity ID. */
-  readonly entityId: string;
+/** The free-form data associated with an {@link Entity}. */
+export type EntityData = {
+  [key: string]: EntityDataValue | EntityData | Array<EntityDataValue | EntityData>
+}
 
-  private schemaDef: SchemaDefinition;
-  private prefix: string;
-  private entityFields: Record<string, EntityField> = {};
+/** Valid types for values in an {@link Entity}. */
+export type EntityDataValue = string | number | boolean | Date | Point | null | undefined
 
-  /**
-   * Creates an new Entity.
-   * @internal
-   */
-  constructor(schema: Schema<any>, id: string, data: EntityData = {}) {
-    this.schemaDef = schema.definition;
-    this.prefix = schema.prefix;
-    this.entityId = id;
-    this.createFields(data);
-  }
-
-  /**
-   * Create the fields on the Entity.
-   * @internal
-   */
-  private createFields(data: EntityData) {
-    Object.keys(this.schemaDef).forEach(fieldName => {
-      const fieldDef: FieldDefinition = this.schemaDef[fieldName];
-      const fieldType = fieldDef.type;
-      const fieldAlias = fieldDef.alias ?? fieldName;
-      const fieldValue = data[fieldAlias] ?? null;
-
-      const entityField = new ENTITY_FIELD_CONSTRUCTORS[fieldType](fieldName, fieldDef, fieldValue);
-      this.entityFields[fieldAlias] = entityField;
-    })
-  };
-
-  /**
-   * @returns The keyname this {@link Entity} is stored with in Redis.
-   */
-  get keyName(): string {
-    return `${this.prefix}:${this.entityId}`;
-  }
-
-  /**
-   * Converts this {@link Entity} to a JavaScript object suitable for stringification.
-   * @returns a JavaScript object.
-   */
-  toJSON() {
-    const json: Record<string, any> = { entityId: this.entityId }
-    Object.keys(this.schemaDef).forEach(field => {
-      json[field] = (this as Record<string, any>)[field];
-    })
-    return json;
-  }
-
-  /**
-   * Converts this {@link Entity} to a JavaScript object suitable for writing to RedisJSON.
-   * @internal
-   */
-  toRedisJson(): RedisJsonData {
-    let data: RedisJsonData = {};
-    Object.keys(this.entityFields).forEach(field => {
-      const entityField: EntityField = this.entityFields[field];
-      data = { ...data, ...entityField.toRedisJson() };
-    })
-    return data;
-  }
-
-  /**
-   * Loads this {@link Entity} from Redis JSON data.
-   * @internal
-   */
-  fromRedisJson(data: RedisJsonData) {
-    if (!data) return data;
-    Object.keys(data).forEach(field => {
-      this.entityFields[field].fromRedisJson(data[field]);
-    })
-  }
-
-  /**
-   * Converts this {@link Entity} to a JavaScript object suitable for writing to a Redis Hash.
-   * @internal
-   */
-  toRedisHash(): RedisHashData {
-    let data: RedisHashData = {};
-    Object.keys(this.entityFields).forEach(field => {
-      const entityField: EntityField = this.entityFields[field];
-      data = { ...data, ...entityField.toRedisHash() };
-    })
-    return data;
-  }
-
-  /**
-   * Loads this {@link Entity} from Redis Hash data.
-   * @internal
-   */
-  fromRedisHash(data: RedisHashData) {
-    Object.keys(data).forEach(field => {
-      this.entityFields[field].fromRedisHash(data[field]);
-    })
-  }
+/** Defines a point on the globe using longitude and latitude. */
+export type Point = {
+  /** The longitude of the point. */
+  longitude: number
+  /** The latitude of the point. */
+  latitude: number
 }

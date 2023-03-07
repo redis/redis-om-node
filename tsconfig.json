@@ -11,7 +11,8 @@
     "types": ["vitest/globals"],
     "paths": {
       "$lib/*": ["./lib/*"]
-    }
+    },
+    "noUncheckedIndexedAccess": true
   },
   "exclude": [
     "node_modules",

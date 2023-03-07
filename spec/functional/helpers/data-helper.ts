@@ -1,99 +1,47 @@
-import { saveHash, saveJson } from './redis-helper';
+import { saveJson } from './redis-helper'
 
-import { Client, SearchDataStructure } from "$lib/client";
-import { Entity } from "$lib/entity/entity";
-import { EntityConstructor } from '$lib/entity/entity-constructor';
-import { Schema } from '$lib/schema/schema';
-import { Point } from '../../../lib';
+import { EntityData, RedisConnection, Schema } from "$lib/index"
 
-import { SampleEntityData } from "../../helpers/example-data";
-
-interface SampleEntity {
-  aString?: string | null;
-  anotherString?: string | null;
-  someText?: string | null;
-  someOtherText?: string | null;
-  aNumber?: number | null;
-  anotherNumber?: number | null;
-  aBoolean?: boolean | null;
-  anotherBoolean?: boolean | null;
-  aPoint?: Point | null;
-  anotherPoint?: Point | null;
-  aDate?: Date | null;
-  anotherDate?: Date | null;
-  someStrings?: Array<string> | null;
-  someOtherStrings?: Array<string> | null;
-}
-
-export interface SampleHashEntity extends SampleEntity { }
-export interface SampleJsonEntity extends SampleEntity { }
-
-class SampleEntity extends Entity { }
-export class SampleHashEntity extends SampleEntity { }
-export class SampleJsonEntity extends SampleEntity { }
-
-export function createHashEntitySchema(prefix: string): Schema<SampleHashEntity> {
-  return createSchemaOfType<SampleHashEntity>(SampleHashEntity, 'HASH', prefix);
-}
-
-export function createJsonEntitySchema(prefix: string): Schema<SampleJsonEntity> {
-  return createSchemaOfType<SampleJsonEntity>(SampleJsonEntity, 'JSON', prefix);
-}
-
-function createSchemaOfType<TEntity extends Entity>(ctor: EntityConstructor<TEntity>, dataStructure: SearchDataStructure, prefix: string): Schema<TEntity> {
-  return new Schema<TEntity>(
-    ctor, {
-    aString: { type: 'string' },
-    anotherString: { type: 'string' },
-    someText: { type: 'text', sortable: true },
-    someOtherText: { type: 'text', sortable: true },
-    aNumber: { type: 'number', sortable: true },
-    anotherNumber: { type: 'number', sortable: true },
-    aBoolean: { type: 'boolean' },
-    anotherBoolean: { type: 'boolean' },
-    aPoint: { type: 'point' },
-    anotherPoint: { type: 'point' },
-    aDate: { type: 'date', sortable: true },
-    anotherDate: { type: 'date', sortable: true },
-    someStrings: { type: 'string[]' },
-    someOtherStrings: { type: 'string[]' }
+export function createHashEntitySchema(prefix: string): Schema {
+  return new Schema(prefix, {
+    aString: { type: 'string', field: 'root_aString' },
+    someText: { type: 'text', field: 'root_someText', sortable: true },
+    aNumber: { type: 'number', field: 'root_aNumber', sortable: true },
+    aBoolean: { type: 'boolean', field: 'root_aBoolean' },
+    aPoint: { type: 'point', field: 'root_aPoint' },
+    aDate: { type: 'date', field: 'root_aDate', sortable: true },
+    someStrings: { type: 'string[]', field: 'root_someStrings', }
   }, {
-    prefix,
-    dataStructure
-  });
+    dataStructure: 'HASH'
+  })
 }
 
-export async function loadTestHash(client: Client, key: string, data: SampleEntityData) {
+export function createJsonEntitySchema(prefix: string): Schema {
+  return new Schema(prefix, {
+    aString: { type: 'string', path: '$.root.aString' },
+    someText: { type: 'text', path: '$.root.someText', sortable: true },
+    aNumber: { type: 'number', path: '$.root.aNumber', sortable: true },
+    aBoolean: { type: 'boolean', path: '$.root.aBoolean' },
+    aPoint: { type: 'point', path: '$.root.aPoint' },
+    aDate: { type: 'date', path: '$.root.aDate', sortable: true },
+    someStrings: { type: 'string[]', path: '$.root.someStrings[*]' }
+  }, {
+    dataStructure: 'JSON'
+  })
+}
 
-  const command: Array<string> = [];
+export async function loadTestJson(redis: RedisConnection, key: string, data: EntityData) {
+
+  const json: any = {}
 
   Object.keys(data).forEach(field => {
-    const value = (data as any)[field];
+    const value = (data as any)[field]
     if (value !== null) {
-      if (typeof value === 'boolean') command.push(field, value ? '1' : '0');
-      else if (typeof value === 'number') command.push(field, value.toString());
-      else if (typeof value === 'string') command.push(field, value);
-      else if (Array.isArray(value)) command.push(field, value.join('|'));
-      else if (value instanceof Date) command.push(field, (value.getTime() / 1000).toString());
-      else if (typeof value === 'object') command.push(field, `${value.longitude},${value.latitude}`)
+      if (value instanceof Date) json[field] = value.getTime() / 1000
+      else if (typeof value === 'object' && !Array.isArray(value)) json[field] = `${value.longitude},${value.latitude}`
+      else json[field] = value
     }
   })
 
-  if (command.length > 0) await saveHash(client, key, command);
-}
-
-export async function loadTestJson(client: Client, key: string, data: SampleEntityData) {
-
-  const json: any = {};
-
-  Object.keys(data).forEach(field => {
-    const value = (data as any)[field];
-    if (value !== null) {
-      if (value instanceof Date) json[field] = value.getTime() / 1000;
-      else if (typeof value === 'object' && !Array.isArray(value)) json[field] = `${value.longitude},${value.latitude}`;
-      else json[field] = value;
-    }
-  })
-
-  await saveJson(client, key, JSON.stringify(json));
+  await saveJson(redis, key, json)
 }

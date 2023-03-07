@@ -1,69 +1,61 @@
-import { RedisHashData, RedisJsonData } from "../client";
-import { Entity } from "../entity/entity";
-import { Schema } from "../schema/schema";
+import { RedisHashData, RedisJsonData, SearchDocument, SearchResults } from "../client"
+import { Entity, EntityData, EntityId, EntityKeyName } from "../entity"
+import { Schema } from "../schema"
+import { fromRedisHash, fromRedisJson } from "../transformer"
 
-export abstract class SearchResultsConverter<TEntity extends Entity> {
-
-  private results: any[];
-  protected schema: Schema<TEntity>;
-
-  constructor(schema: Schema<TEntity>, results: any[]) {
-    this.schema = schema;
-    this.results = results;
-  }
-
-  get count(): number {
-    const [count] = this.results;
-    return Number.parseInt(count);
-  }
-
-  get ids(): Array<string> {
-    return this.keys.map(key => (key as string).replace(/^.*:/, ""));
-  }
-
-  get keys(): Array<string> {
-    const [_count, ...keysAndValues] = this.results;
-    return keysAndValues.filter((_entry, index) => index % 2 === 0);
-  }
-
-  get values(): any[] {
-    const [_count, ...keysAndValues] = this.results;
-    return keysAndValues.filter((_entry, index) => index % 2 !== 0)
-  }
-
-  get entities(): TEntity[] {
-    const ids = this.ids;
-    const values = this.values;
-
-    return values.map((array, index) => this.arrayToEntity(ids[index], array));
-  }
-
-  protected abstract arrayToEntity(id: string, array: Array<string>): TEntity;
+export function extractCountFromSearchResults(results: SearchResults): number {
+  return results.total
 }
 
-export class HashSearchResultsConverter<TEntity extends Entity> extends SearchResultsConverter<TEntity> {
-  protected arrayToEntity(id: string, array: Array<string>): TEntity {
-    const keys = array.filter((_entry, index) => index % 2 === 0);
-    const values = array.filter((_entry, index) => index % 2 !== 0);
+export function extractKeyNamesFromSearchResults(results: SearchResults): string[] {
+  return results.documents.map(document => document.id)
+}
 
-    const hashData: RedisHashData = keys.reduce((object: any, key, index) => {
-      object[key] = values[index]
-      return object
-    }, {});
+export function extractEntityIdsFromSearchResults(schema: Schema, results: SearchResults): string[] {
+  const keyNames = extractKeyNamesFromSearchResults(results)
+  const entityIds = keyNamesToEntityIds(schema.schemaName, keyNames)
+  return entityIds
+}
 
-    const entity = new this.schema.entityCtor(this.schema, id);
-    entity.fromRedisHash(hashData);
-    return entity;
+export function extractEntitiesFromSearchResults(schema: Schema, results: SearchResults): Entity[] {
+  if (schema.dataStructure === 'HASH') {
+    return results.documents.map(document => hashDocumentToEntity(schema, document))
+  } else {
+    return results.documents.map(document => jsonDocumentToEntity(schema, document))
   }
 }
 
-export class JsonSearchResultsConverter<TEntity extends Entity> extends SearchResultsConverter<TEntity> {
-  protected arrayToEntity(id: string, array: Array<string>): TEntity {
-    const index = array.findIndex(value => value === '$') + 1;
-    const jsonString = array[index];
-    const jsonData: RedisJsonData = JSON.parse(jsonString);
-    const entity = new this.schema.entityCtor(this.schema, id);
-    entity.fromRedisJson(jsonData);
-    return entity;
-  }
+function hashDocumentToEntity(schema: Schema, document: SearchDocument): Entity {
+  const keyName: string = document.id
+  const hashData: RedisHashData = document.value
+
+  const entityData = fromRedisHash(schema, hashData)
+  const entity = enrichEntityData(schema.schemaName, keyName, entityData)
+  return entity
+}
+
+function jsonDocumentToEntity(schema: Schema, document: SearchDocument): Entity {
+  const keyName: string = document.id
+  const jsonData: RedisJsonData = document.value['$'] ?? false ? JSON.parse(document.value['$']) : document.value
+
+  const entityData = fromRedisJson(schema, jsonData)
+  const entity = enrichEntityData(schema.schemaName, keyName, entityData)
+  return entity
+}
+
+function enrichEntityData(keyPrefix: string, keyName: string, entityData: EntityData) {
+  const entityId = keyNameToEntityId(keyPrefix, keyName)
+  const entity = { ...entityData, [EntityId]: entityId, [EntityKeyName]: keyName}
+  return entity
+}
+
+function keyNamesToEntityIds(keyPrefix: string, keyNames: string[]): string[] {
+  return keyNames.map(keyName => keyNameToEntityId(keyPrefix, keyName))
+}
+
+function keyNameToEntityId(keyPrefix: string, keyName: string): string {
+  const escapedPrefix = keyPrefix.replace(/[/\-\\^$*+?.()|[\]{}]/g, '\\$&')
+  const regex = new RegExp(`^${escapedPrefix}:`)
+  const entityId = keyName.replace(regex, "")
+  return entityId
 }

@@ -1,13 +1,13 @@
 [redis-om](../README.md) / Schema
 
-# Class: Schema<TEntity\>
+# Class: Schema
 
-Defines a schema that determines how an [Entity](Entity.md) is mapped to Redis
-data structures. Construct by passing in an [EntityConstructor](../README.md#entityconstructor),
+Defines a schema that determines how an [Entity](../README.md#entity) is mapped
+to Redis data structures. Construct by passing in a schema name,
 a [SchemaDefinition](../README.md#schemadefinition), and optionally [SchemaOptions](../README.md#schemaoptions):
 
 ```typescript
-const schema = new Schema(Foo, {
+const schema = new Schema('foo', {
   aString: { type: 'string' },
   aNumber: { type: 'number' },
   aBoolean: { type: 'boolean' },
@@ -17,17 +17,11 @@ const schema = new Schema(Foo, {
   someStrings: { type: 'string[]' }
 }, {
   dataStructure: 'HASH'
-});
+})
 ```
 
 A Schema is primarily used by a [Repository](Repository.md) which requires a Schema in
 its constructor.
-
-## Type parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `TEntity` | extends [`Entity`](Entity.md) | The [Entity](Entity.md) this Schema defines. |
 
 ## Table of contents
 
@@ -38,41 +32,38 @@ its constructor.
 ### Accessors
 
 - [dataStructure](Schema.md#datastructure)
+- [fields](Schema.md#fields)
 - [indexHash](Schema.md#indexhash)
 - [indexHashName](Schema.md#indexhashname)
 - [indexName](Schema.md#indexname)
-- [indexedDefault](Schema.md#indexeddefault)
-- [prefix](Schema.md#prefix)
+- [schemaName](Schema.md#schemaname)
 - [stopWords](Schema.md#stopwords)
 - [useStopWords](Schema.md#usestopwords)
 
 ### Methods
 
+- [fieldByName](Schema.md#fieldbyname)
 - [generateId](Schema.md#generateid)
 
 ## Constructors
 
 ### constructor
 
-• **new Schema**<`TEntity`\>(`ctor`, `schemaDef`, `options?`)
+• **new Schema**(`schemaName`, `schemaDef`, `options?`)
 
-#### Type parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `TEntity` | extends [`Entity`](Entity.md)<`TEntity`\> | The [Entity](Entity.md) this Schema defines. |
+Constructs a Schema.
 
 #### Parameters
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `ctor` | [`EntityConstructor`](../README.md#entityconstructor)<`TEntity`\> | A constructor that creates an [Entity](Entity.md) of type TEntity. |
+| `schemaName` | `string` | The name of the schema. Prefixes the ID when creating Redis keys. |
 | `schemaDef` | [`SchemaDefinition`](../README.md#schemadefinition) | Defines all of the fields for the Schema and how they are mapped to Redis. |
 | `options?` | [`SchemaOptions`](../README.md#schemaoptions) | Additional options for this Schema. |
 
 #### Defined in
 
-[lib/schema/schema.ts:57](https://github.com/redis/redis-om-node/blob/f2d3aed/lib/schema/schema.ts#L57)
+[lib/schema/schema.ts:49](https://github.com/redis/redis-om-node/blob/5777b6c/lib/schema/schema.ts#L49)
 
 ## Accessors
 
@@ -81,7 +72,7 @@ its constructor.
 • `get` **dataStructure**(): [`DataStructure`](../README.md#datastructure)
 
 The configured data structure, a string with the value of either `HASH` or `JSON`,
-that this Schema uses to store [Entities](Entity.md) in Redis.
+that this Schema uses to store [Entities](../README.md#entity) in Redis.
 
 #### Returns
 
@@ -89,7 +80,23 @@ that this Schema uses to store [Entities](Entity.md) in Redis.
 
 #### Defined in
 
-[lib/schema/schema.ts:79](https://github.com/redis/redis-om-node/blob/f2d3aed/lib/schema/schema.ts#L79)
+[lib/schema/schema.ts:92](https://github.com/redis/redis-om-node/blob/5777b6c/lib/schema/schema.ts#L92)
+
+___
+
+### fields
+
+• `get` **fields**(): [`Field`](Field.md)[]
+
+The [Fields](Field.md) defined by this Schema.
+
+#### Returns
+
+[`Field`](Field.md)[]
+
+#### Defined in
+
+[lib/schema/schema.ts:68](https://github.com/redis/redis-om-node/blob/5777b6c/lib/schema/schema.ts#L68)
 
 ___
 
@@ -97,7 +104,8 @@ ___
 
 • `get` **indexHash**(): `string`
 
-The hash value of this index. Stored in Redis under [Schema.indexHashName](Schema.md#indexhashname).
+A hash for this Schema that is used to determine if the Schema has been
+changed when calling [createIndex](Repository.md#createindex).
 
 #### Returns
 
@@ -105,7 +113,7 @@ The hash value of this index. Stored in Redis under [Schema.indexHashName](Schem
 
 #### Defined in
 
-[lib/schema/schema.ts:100](https://github.com/redis/redis-om-node/blob/f2d3aed/lib/schema/schema.ts#L100)
+[lib/schema/schema.ts:120](https://github.com/redis/redis-om-node/blob/5777b6c/lib/schema/schema.ts#L120)
 
 ___
 
@@ -121,7 +129,7 @@ The configured name for the RediSearch index hash for this Schema.
 
 #### Defined in
 
-[lib/schema/schema.ts:73](https://github.com/redis/redis-om-node/blob/f2d3aed/lib/schema/schema.ts#L73)
+[lib/schema/schema.ts:86](https://github.com/redis/redis-om-node/blob/5777b6c/lib/schema/schema.ts#L86)
 
 ___
 
@@ -137,31 +145,17 @@ The configured name for the RediSearch index for this Schema.
 
 #### Defined in
 
-[lib/schema/schema.ts:70](https://github.com/redis/redis-om-node/blob/f2d3aed/lib/schema/schema.ts#L70)
+[lib/schema/schema.ts:83](https://github.com/redis/redis-om-node/blob/5777b6c/lib/schema/schema.ts#L83)
 
 ___
 
-### indexedDefault
+### schemaName
 
-• `get` **indexedDefault**(): `boolean`
+• `get` **schemaName**(): `string`
 
-The configured indexed default setting for fields
-
-#### Returns
-
-`boolean`
-
-#### Defined in
-
-[lib/schema/schema.ts:97](https://github.com/redis/redis-om-node/blob/f2d3aed/lib/schema/schema.ts#L97)
-
-___
-
-### prefix
-
-• `get` **prefix**(): `string`
-
-The configured keyspace prefix in Redis for this Schema.
+The name of the schema. Prefixes the ID when creating Redis keys. Combined
+with the results of idStrategy to generate a key. If name is `foo` and
+idStrategy returns `12345` then the generated key would be `foo:12345`.
 
 #### Returns
 
@@ -169,7 +163,7 @@ The configured keyspace prefix in Redis for this Schema.
 
 #### Defined in
 
-[lib/schema/schema.ts:67](https://github.com/redis/redis-om-node/blob/f2d3aed/lib/schema/schema.ts#L67)
+[lib/schema/schema.ts:63](https://github.com/redis/redis-om-node/blob/5777b6c/lib/schema/schema.ts#L63)
 
 ___
 
@@ -177,7 +171,7 @@ ___
 
 • `get` **stopWords**(): `string`[]
 
-The configured stop words. Ignored if [Schema.useStopWords](Schema.md#usestopwords) is anything other
+The configured stop words. Ignored if [useStopWords](Schema.md#usestopwords) is anything other
 than `CUSTOM`.
 
 #### Returns
@@ -186,7 +180,7 @@ than `CUSTOM`.
 
 #### Defined in
 
-[lib/schema/schema.ts:92](https://github.com/redis/redis-om-node/blob/f2d3aed/lib/schema/schema.ts#L92)
+[lib/schema/schema.ts:104](https://github.com/redis/redis-om-node/blob/5777b6c/lib/schema/schema.ts#L104)
 
 ___
 
@@ -195,8 +189,7 @@ ___
 • `get` **useStopWords**(): [`StopWordOptions`](../README.md#stopwordoptions)
 
 The configured usage of stop words, a string with the value of either `OFF`, `DEFAULT`,
-or `CUSTOM`. See {@link SchemaOptions.useStopWords} and {@link SchemaOptions.stopWords}
-for more details.
+or `CUSTOM`. See [SchemaOptions](../README.md#schemaoptions) for more details.
 
 #### Returns
 
@@ -204,20 +197,46 @@ for more details.
 
 #### Defined in
 
-[lib/schema/schema.ts:86](https://github.com/redis/redis-om-node/blob/f2d3aed/lib/schema/schema.ts#L86)
+[lib/schema/schema.ts:98](https://github.com/redis/redis-om-node/blob/5777b6c/lib/schema/schema.ts#L98)
 
 ## Methods
 
+### fieldByName
+
+▸ **fieldByName**(`name`): ``null`` \| [`Field`](Field.md)
+
+Gets a single [Field](Field.md) defined by this Schema.
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `name` | `string` | The name of the [Field](Field.md) in this Schema. |
+
+#### Returns
+
+``null`` \| [`Field`](Field.md)
+
+The [Field](Field.md), or null of not found.
+
+#### Defined in
+
+[lib/schema/schema.ts:78](https://github.com/redis/redis-om-node/blob/5777b6c/lib/schema/schema.ts#L78)
+
+___
+
 ### generateId
 
-▸ **generateId**(): `string`
+▸ **generateId**(): `Promise`<`string`\>
 
 Generates a unique string using the configured [IdStrategy](../README.md#idstrategy).
 
 #### Returns
 
-`string`
+`Promise`<`string`\>
+
+The generated id.
 
 #### Defined in
 
-[lib/schema/schema.ts:126](https://github.com/redis/redis-om-node/blob/f2d3aed/lib/schema/schema.ts#L126)
+[lib/schema/schema.ts:111](https://github.com/redis/redis-om-node/blob/5777b6c/lib/schema/schema.ts#L111)

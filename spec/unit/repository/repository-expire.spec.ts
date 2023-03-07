@@ -1,34 +1,30 @@
 import '../helpers/mock-client'
-import { Client } from '$lib/client';
-import { JsonRepository, HashRepository } from '$lib/repository';
 
-import { simpleHashSchema, simpleJsonSchema, SimpleHashEntity, SimpleJsonEntity } from '../helpers/test-entity-and-schema';
+import { Client } from '$lib/client'
+import { Repository } from '$lib/repository'
+import { Schema } from '$lib/schema'
 
+const simpleSchema = new Schema("SimpleEntity", {}, { dataStructure: 'HASH' })
 
 describe("Repository", () => {
-
-  let client: Client;
-  let entityId = 'foo';
-  let ttl = 60;
-
   describe("#expire", () => {
 
-    beforeAll(() => {
-      client = new Client()
-    });
+    let client: Client
+    let repository: Repository
 
-    it("expires a hash", async () => {
-      let repository = new HashRepository<SimpleHashEntity>(simpleHashSchema, client);
-      let expectedKey = `SimpleHashEntity:${entityId}`;
-      await repository.expire(entityId, ttl);
-      expect(client.expire).toHaveBeenCalledWith(expectedKey, ttl);
-    });
+    beforeAll(() => { client = new Client() })
+    beforeEach(() => { repository = new Repository(simpleSchema, client) })
 
-    it("expires a JSON", async () => {
-      let repository = new JsonRepository<SimpleJsonEntity>(simpleJsonSchema, client);
-      let expectedKey = `SimpleJsonEntity:${entityId}`;
-      await repository.expire(entityId, ttl);
-      expect(client.expire).toHaveBeenCalledWith(expectedKey, ttl);
-    });
-  });
-});
+    it("expires a single entity", async () => {
+      await repository.expire('foo', 60)
+      expect(client.expire).toHaveBeenCalledWith('SimpleEntity:foo', 60)
+    })
+
+    it("expires a multiple entities", async () => {
+      await repository.expire(['foo', 'bar', 'baz'], 60)
+      expect(client.expire).toHaveBeenNthCalledWith(1, 'SimpleEntity:foo', 60)
+      expect(client.expire).toHaveBeenNthCalledWith(2, 'SimpleEntity:bar', 60)
+      expect(client.expire).toHaveBeenNthCalledWith(3, 'SimpleEntity:baz', 60)
+    })
+  })
+})

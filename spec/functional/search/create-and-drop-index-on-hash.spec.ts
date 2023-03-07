@@ -1,139 +1,118 @@
-import { Client } from '$lib/client';
-import { Schema } from '$lib/schema/schema';
-import { Repository } from '$lib/repository';
+import { createClient } from 'redis'
 
-import { SampleHashEntity, createHashEntitySchema } from '../helpers/data-helper';
-import { fetchIndexHash, fetchIndexInfo, removeAll } from '../helpers/redis-helper';
+import { RedisConnection, Repository, Schema } from '$lib/index'
+
+import { createHashEntitySchema } from '../helpers/data-helper'
+import { fetchIndexHash, fetchIndexInfo, removeKeys } from '../helpers/redis-helper'
 
 const expected = [
-  ['identifier', 'aString', 'attribute', 'aString', 'type', 'TAG', 'SEPARATOR', '|'],
-  ['identifier', 'anotherString', 'attribute', 'anotherString', 'type', 'TAG', 'SEPARATOR', '|'],
-  ['identifier', 'someText', 'attribute', 'someText', 'type', 'TEXT', 'WEIGHT', '1', 'SORTABLE'],
-  ['identifier', 'someOtherText', 'attribute', 'someOtherText', 'type', 'TEXT', 'WEIGHT', '1', 'SORTABLE'],
-  ['identifier', 'aNumber', 'attribute', 'aNumber', 'type', 'NUMERIC', 'SORTABLE'],
-  ['identifier', 'anotherNumber', 'attribute', 'anotherNumber', 'type', 'NUMERIC', 'SORTABLE'],
-  ['identifier', 'aBoolean', 'attribute', 'aBoolean', 'type', 'TAG', 'SEPARATOR', ','],
-  ['identifier', 'anotherBoolean', 'attribute', 'anotherBoolean', 'type', 'TAG', 'SEPARATOR', ','],
-  ['identifier', 'aPoint', 'attribute', 'aPoint', 'type', 'GEO'],
-  ['identifier', 'anotherPoint', 'attribute', 'anotherPoint', 'type', 'GEO'],
-  ['identifier', 'aDate', 'attribute', 'aDate', 'type', 'NUMERIC', 'SORTABLE'],
-  ['identifier', 'anotherDate', 'attribute', 'anotherDate', 'type', 'NUMERIC', 'SORTABLE'],
-  ['identifier', 'someStrings', 'attribute', 'someStrings', 'type', 'TAG', 'SEPARATOR', '|'],
-  ['identifier', 'someOtherStrings', 'attribute', 'someOtherStrings', 'type', 'TAG', 'SEPARATOR', '|']
+  { identifier: 'root_aString', attribute: 'aString', type: 'TAG', SEPARATOR: '|' },
+  { identifier: 'root_someText', attribute: 'someText', type: 'TEXT', WEIGHT: '1', SORTABLE: undefined },
+  { identifier: 'root_aNumber', attribute: 'aNumber', type: 'NUMERIC', SORTABLE: undefined },
+  { identifier: 'root_aBoolean', attribute: 'aBoolean', type: 'TAG', SEPARATOR: ',' },
+  { identifier: 'root_aPoint', attribute: 'aPoint', type: 'GEO' },
+  { identifier: 'root_aDate', attribute: 'aDate', type: 'NUMERIC', SORTABLE: undefined },
+  { identifier: 'root_someStrings', attribute: 'someStrings', type: 'TAG', SEPARATOR: '|' },
 ]
 
 describe("create and drop index on hash", () => {
 
-  let client: Client;
-  let repository: Repository<SampleHashEntity>;
-  let schema: Schema<SampleHashEntity>;
-  let indexInfo: Array<string>;
-  let indexHash: string;
+  let redis: RedisConnection
+  let repository: Repository
+  let schema: Schema
+  let indexInfo: any
+  let indexHash: string | null
 
   beforeAll(async () => {
-    client = new Client();
-    await client.open();
+    redis = createClient()
+    await redis.connect()
 
     schema = createHashEntitySchema('create-drop-hash')
-    repository = client.fetchRepository<SampleHashEntity>(schema);
-  });
+    repository = new Repository(schema, redis)
+  })
 
   afterAll(async () => {
-    await removeAll(client, 'create-drop-hash:');
+    await removeKeys(redis, 'create-drop-hash:index:hash', 'create-drop-hash-changed:index:hash')
     await repository.dropIndex()
-    await client.close()
-  });
+    await redis.quit()
+  })
 
   describe("when the index is created", () => {
     beforeEach(async () => {
-      await removeAll(client, 'create-drop-hash:');
-      await repository.createIndex();
-      indexInfo = await fetchIndexInfo(client, 'create-drop-hash:index');
-      indexHash = await fetchIndexHash(client, 'create-drop-hash:index:hash');
-    });
+      await removeKeys(redis, 'create-drop-hash:index:hash', 'create-drop-hash-changed:index:hash')
+      await repository.createIndex()
+      indexInfo = await fetchIndexInfo(redis, 'create-drop-hash:index')
+      indexHash = await fetchIndexHash(redis, 'create-drop-hash:index:hash')
+    })
 
     it("has the expected name", () => {
-      let indexName = indexInfo[1];
-      expect(indexName).toBe('create-drop-hash:index');
-    });
+      expect(indexInfo.indexName).toBe('create-drop-hash:index')
+    })
 
     it("has the expected key type", () => {
-      let keyType = indexInfo[5][1];
-      expect(keyType).toBe('HASH');
-    });
+      expect(indexInfo.indexDefinition.key_type).toBe('HASH')
+    })
 
     it("has the expected prefixes", () => {
-      let prefixes = indexInfo[5][3];
-      expect(prefixes).toEqual(['create-drop-hash:']);
-    });
+      expect(indexInfo.indexDefinition.prefixes).toEqual(['create-drop-hash:'])
+    })
 
     it("has the expected hash", () => {
-      expect(indexHash).toBe("ryZTksm66ndOWrltH5b2z8u8BgI=");
-    });
+      expect(indexHash).toBe("Kw31lMY+/x+l+GB0RLuUpptoFCY=")
+    })
 
     it("has the expected fields", () => {
-      let fields = indexInfo[7];
-      expect(fields).toHaveLength(14);
-      expect(fields).toEqual(expected);
-    });
+      expect(indexInfo.attributes).toHaveLength(7)
+      expect(indexInfo.attributes).toEqual(expected)
+    })
 
     describe("and then the index is dropped", () => {
-      beforeEach(async () => await repository.dropIndex());
+      beforeEach(async () => await repository.dropIndex())
 
       it("the index no longer exists", async () => {
-        expect(async () => await fetchIndexInfo(client, 'create-drop-hash:index'))
-          .rejects.toThrow("Unknown Index name");
-      });
+        expect(async () => await fetchIndexInfo(redis, 'create-drop-hash:index'))
+          .rejects.toThrow("Unknown Index name")
+      })
 
       it("the index hash no longer exists", async () => {
-        let hash = await fetchIndexHash(client, 'create-drop-hash:index:hash');
-        expect(hash).toBeNull();
-      });
-    });
+        let hash = await fetchIndexHash(redis, 'create-drop-hash:index:hash')
+        expect(hash).toBeNull()
+      })
+    })
 
     describe("and then the index is recreated but not changed", () => {
       beforeEach(async () => {
-        await repository.createIndex();
-        indexInfo = await fetchIndexInfo(client, 'create-drop-hash:index');
-        indexHash = await fetchIndexHash(client, 'create-drop-hash:index:hash');
-      });
+        await repository.createIndex()
+        indexInfo = await fetchIndexInfo(redis, 'create-drop-hash:index')
+        indexHash = await fetchIndexHash(redis, 'create-drop-hash:index:hash')
+      })
 
       it("still has the expected attributes", () => {
-        let indexName = indexInfo[1];
-        let keyType = indexInfo[5][1];
-        let prefixes = indexInfo[5][3];
-        let fields = indexInfo[7];
-
-        expect(indexName).toBe('create-drop-hash:index');
-        expect(keyType).toBe('HASH');
-        expect(prefixes).toEqual(['create-drop-hash:']);
-        expect(indexHash).toBe("ryZTksm66ndOWrltH5b2z8u8BgI=");
-
-        expect(fields).toHaveLength(14);
-        expect(fields).toEqual(expected);
-      });
-    });
+        expect(indexInfo.indexName).toBe('create-drop-hash:index')
+        expect(indexInfo.indexDefinition.key_type).toBe('HASH')
+        expect(indexInfo.indexDefinition.prefixes).toEqual(['create-drop-hash:'])
+        expect(indexHash).toBe("Kw31lMY+/x+l+GB0RLuUpptoFCY=")
+        expect(indexInfo.attributes).toHaveLength(7)
+        expect(indexInfo.attributes).toEqual(expected)
+      })
+    })
 
     describe("and then the index is changed", () => {
       beforeEach(async () => {
         schema = createHashEntitySchema('create-drop-hash-changed')
-        repository = client.fetchRepository<SampleHashEntity>(schema);
+        repository = new Repository(schema, redis)
 
-        await repository.createIndex();
-        indexInfo = await fetchIndexInfo(client, 'create-drop-hash-changed:index');
-        indexHash = await fetchIndexHash(client, 'create-drop-hash-changed:index:hash');
-      });
+        await repository.createIndex()
+        indexInfo = await fetchIndexInfo(redis, 'create-drop-hash-changed:index')
+        indexHash = await fetchIndexHash(redis, 'create-drop-hash-changed:index:hash')
+      })
 
       it("has new attributes", () => {
-        let indexName = indexInfo[1];
-        let keyType = indexInfo[5][1];
-        let prefixes = indexInfo[5][3];
-
-        expect(indexName).toBe('create-drop-hash-changed:index');
-        expect(keyType).toBe('HASH');
-        expect(prefixes).toEqual(['create-drop-hash-changed:']);
-        expect(indexHash).toBe("++rNPbC9OqRfBgIZUGriDJDsS+o=");
-      });
-    });
-  });
-});
+        expect(indexInfo.indexName).toBe('create-drop-hash-changed:index')
+        expect(indexInfo.indexDefinition.key_type).toBe('HASH')
+        expect(indexInfo.indexDefinition.prefixes).toEqual(['create-drop-hash-changed:'])
+        expect(indexHash).toBe("Sbpbl+ZRM8GhzNbfqpJXgOlwYfo=")
+      })
+    })
+  })
+})

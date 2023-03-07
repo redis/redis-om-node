@@ -1,77 +1,70 @@
-import { Client } from '$lib/client';
-import { Schema } from '$lib/schema/schema';
-import { Repository } from '$lib/repository';
+import { createClient } from 'redis'
 
-import { SampleHashEntity, loadTestHash, createHashEntitySchema } from '../helpers/data-helper';
-import { keyExists, removeAll } from '../helpers/redis-helper';
+import { RedisConnection, Repository, Schema } from '$lib/index'
 
-import { ANOTHER_ENTITY, AN_EMPTY_ENTITY, AN_ENTITY, A_THIRD_ENTITY } from '../../helpers/example-data';
+import { createHashEntitySchema } from '../helpers/data-helper'
+import { keyExists, removeKeys, saveHash } from '../helpers/redis-helper'
+
+import { ANOTHER_HASH, A_HASH, A_THIRD_HASH } from '../helpers/hash-example-data'
+
 
 describe("remove hash", () => {
 
-  let client: Client;
-  let repository: Repository<SampleHashEntity>;
-  let schema: Schema<SampleHashEntity>;
-
-  let exists: boolean;
+  let redis: RedisConnection
+  let repository: Repository
+  let schema: Schema
 
   beforeAll(async () => {
-    client = await new Client().open();
-    schema = createHashEntitySchema('remove-hash');
-    repository = client.fetchRepository<SampleHashEntity>(schema);
+    redis = createClient()
+    await redis.connect()
+    schema = createHashEntitySchema('remove-hash')
+    repository = new Repository(schema, redis)
   })
 
   beforeEach(async () => {
-    await removeAll(client, 'remove-hash:')
-    await loadTestHash(client, 'remove-hash:foo', AN_ENTITY);
-    await loadTestHash(client, 'remove-hash:bar', ANOTHER_ENTITY);
-    await loadTestHash(client, 'remove-hash:baz', A_THIRD_ENTITY);
-  });
+    await removeKeys(redis, 'remove-hash:1', 'remove-hash:2', 'remove-hash:3')
+    await saveHash(redis, 'remove-hash:1', A_HASH)
+    await saveHash(redis, 'remove-hash:2', ANOTHER_HASH)
+    await saveHash(redis, 'remove-hash:3', A_THIRD_HASH)
+  })
 
   afterAll(async () => {
-    await removeAll(client, 'remove-hash:')
-    await client.close()
-  });
+    await removeKeys(redis, 'remove-hash:1', 'remove-hash:2', 'remove-hash:3')
+    await redis.quit()
+  })
 
   it("removes a single entity", async () => {
-    exists = await keyExists(client, 'remove-hash:foo');
-    expect(exists).toBe(true);
+    expect(keyExists(redis, 'remove-hash:1')).resolves.toBe(true)
+    await repository.remove('1')
+    expect(keyExists(redis, 'remove-hash:1')).resolves.toBe(false)
+  })
 
-    await repository.remove('foo');
+  it("removes multiple entities with discrete arguments", async () => {
+    expect(keyExists(redis, 'remove-hash:1')).resolves.toBe(true)
+    expect(keyExists(redis, 'remove-hash:2')).resolves.toBe(true)
+    expect(keyExists(redis, 'remove-hash:3')).resolves.toBe(true)
 
-    exists = await keyExists(client, 'remove-hash:foo');
-    expect(exists).toBe(false);
-  });
+    await repository.remove('1', '2', '3')
 
-  it("removes multiple entities", async () => {
-    exists = await keyExists(client, 'remove-hash:foo');
-    expect(exists).toBe(true);
+    expect(keyExists(redis, 'remove-hash:1')).resolves.toBe(false)
+    expect(keyExists(redis, 'remove-hash:2')).resolves.toBe(false)
+    expect(keyExists(redis, 'remove-hash:full')).resolves.toBe(false)
+  })
 
-    exists = await keyExists(client, 'remove-hash:bar');
-    expect(exists).toBe(true);
+  it("removes multiple entities with an array", async () => {
+    expect(keyExists(redis, 'remove-hash:1')).resolves.toBe(true)
+    expect(keyExists(redis, 'remove-hash:2')).resolves.toBe(true)
+    expect(keyExists(redis, 'remove-hash:3')).resolves.toBe(true)
+    await repository.remove([ '1', '2', '3' ])
 
-    exists = await keyExists(client, 'remove-hash:baz');
-    expect(exists).toBe(true);
-
-    await repository.remove('foo', 'bar', 'baz');
-
-    exists = await keyExists(client, 'remove-hash:foo');
-    expect(exists).toBe(false);
-
-    exists = await keyExists(client, 'remove-hash:bar');
-    expect(exists).toBe(false);
-
-    exists = await keyExists(client, 'remove-hash:full');
-    expect(exists).toBe(false);
-  });
+    expect(keyExists(redis, 'remove-hash:1')).resolves.toBe(false)
+    expect(keyExists(redis, 'remove-hash:2')).resolves.toBe(false)
+    expect(keyExists(redis, 'remove-hash:3')).resolves.toBe(false)
+  })
 
   it("removes a non-existing entity", async () => {
-    exists = await keyExists(client, 'remove-hash:empty');
-    expect(exists).toBe(false);
-
-    await repository.remove('empty');
-
-    exists = await keyExists(client, 'remove-hash:empty');
-    expect(exists).toBe(false);
-  });
-});
+    expect(keyExists(redis, 'remove-hash:empty')).resolves.toBe(false)
+    await repository.remove('empty')
+    expect(keyExists(redis, 'remove-hash:empty')).resolves.toBe(false)
+  })
+})
