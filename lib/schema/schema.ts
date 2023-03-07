@@ -7,7 +7,7 @@ import { IdStrategy, DataStructure, StopWordOptions, SchemaOptions } from './opt
 
 import { SchemaDefinition } from './definitions'
 import { Field } from './field'
-import { InvalidSchema } from '../errors'
+import { InvalidSchema } from '../error'
 
 
 /**

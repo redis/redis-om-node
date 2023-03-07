@@ -1,7 +1,7 @@
 import '../../helpers/custom-matchers'
 
 import { Client } from "$lib/client"
-import { SemanticSearchError } from "$lib/errors"
+import { SemanticSearchError } from "$lib/error"
 import { Search, WhereField } from "$lib/search"
 
 import { A_STRING , A_NUMBER } from '../../helpers/example-data'

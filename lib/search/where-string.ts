@@ -1,6 +1,6 @@
 import { Search } from "./search"
 import { WhereField } from "./where-field"
-import { SemanticSearchError } from "../errors"
+import { SemanticSearchError } from "../error"
 
 export class WhereString extends WhereField {
   private value!: string

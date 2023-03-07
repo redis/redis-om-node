@@ -1,4 +1,4 @@
-import { InvalidSchema } from '$lib/errors'
+import { InvalidSchema } from '$lib/error'
 import { Schema } from '$lib/schema'
 
 import '../../helpers/custom-matchers'

@@ -16,7 +16,7 @@ import { WhereString } from './where-string'
 import { WhereText } from './where-text'
 
 import { extractCountFromSearchResults, extractEntitiesFromSearchResults, extractEntityIdsFromSearchResults, extractKeyNamesFromSearchResults } from "./results-converter"
-import { FieldNotInSchema, RedisOmError, SearchError } from "../errors"
+import { FieldNotInSchema, RedisOmError, SearchError } from "../error"
 import { WhereDate } from "./where-date"
 
 /**

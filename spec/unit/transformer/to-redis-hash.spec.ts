@@ -5,7 +5,7 @@ import { Schema } from "$lib/schema"
 import { toRedisHash } from "$lib/transformer"
 
 import { AN_INVALID_POINT, A_DATE, A_DATE_EPOCH, A_DATE_EPOCH_STRING, A_DATE_ISO, A_NUMBER, A_NUMBER_STRING, A_PARITAL_POINT, A_POINT, A_POINT_PRETTY_JSON, A_POINT_STRING, A_STRING, SOME_STRINGS, SOME_STRINGS_JOINED, SOME_TEXT } from "../../helpers/example-data"
-import { InvalidHashInput, NestedHashInput, PointOutOfRange, ArrayHashInput } from '$lib/errors'
+import { InvalidHashInput, NestedHashInput, PointOutOfRange, ArrayHashInput } from '$lib/error'
 
 
 describe("#toRedisHash", () => {
@@ -49,7 +49,7 @@ describe("#toRedisHash", () => {
 
     it("complains when given an invalid point", () => {
       expect(() => toRedisHash(schema, { aBadPoint: AN_INVALID_POINT }))
-        .toThrowErrorOfType(PointOutOfRange, "Points must be between ±85.05112878 latitude and ±180 longitude")
+        .toThrowErrorOfType(PointOutOfRange, "Points must be between ±85.05112878 latitude and ±180 longitude.")
     })
   })
 
@@ -139,7 +139,7 @@ describe("#toRedisHash", () => {
 
     it("complains when given an invalid point", () => {
       expect(() => toRedisHash(schema, { aPoint: AN_INVALID_POINT }))
-        .toThrowErrorOfType(PointOutOfRange, "Points must be between ±85.05112878 latitude and ±180 longitude")
+        .toThrowErrorOfType(PointOutOfRange, "Points must be between ±85.05112878 latitude and ±180 longitude.")
     })
 
     it.each([

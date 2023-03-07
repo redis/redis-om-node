@@ -1,6 +1,6 @@
 export { Client, RedisClientConnection, RedisConnection, RedisClusterConnection } from './client'
 export { Entity, EntityData, EntityDataValue, EntityId, EntityKeyName, Point } from './entity'
-export { FieldNotInSchema, InvalidJsonInput, InvalidSchema, PointOutOfRange, RedisOmError, SearchError, SemanticSearchError } from './errors'
+export * from './error'
 export { Field } from './schema/field'
 export { Schema } from './schema/schema'
 export { DataStructure, IdStrategy, SchemaOptions, StopWordOptions } from './schema/options'

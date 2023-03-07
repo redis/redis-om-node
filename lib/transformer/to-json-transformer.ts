@@ -6,7 +6,7 @@ import { RedisJsonData } from "../client"
 
 import { convertDateToEpoch, convertIsoDateToEpoch, convertKnownValueToString, convertPointToString, isArray, isBoolean, isDate, isDateString, isDefined, isNull, isNumber, isObject, isPoint, isString, isUndefined, stringifyError } from "./transformer-common"
 import { EntityData } from '../entity'
-import { InvalidJsonInput, NullJsonInput } from '../errors'
+import { InvalidJsonInput, NullJsonInput } from '../error'
 
 export function toRedisJson(schema: Schema, data: EntityData): RedisJsonData {
   let json: RedisJsonData = clone(data)

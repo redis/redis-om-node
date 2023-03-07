@@ -10,7 +10,7 @@ import {
   mockClientSearchToReturnMultipleHashes as hashMocker,
   mockClientSearchToReturnMultipleJsonStrings as jsonMocker
 } from '../helpers/search-helpers'
-import { RedisOmError } from '$lib/errors'
+import { RedisOmError } from '$lib/error'
 
 
 const warnSpy = vi.spyOn(global.console, 'warn').mockImplementation(() => {})

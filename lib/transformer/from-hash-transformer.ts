@@ -2,7 +2,7 @@ import { Field, Schema } from "../schema"
 import { RedisHashData } from "../client"
 import { convertEpochStringToDate, convertStringToNumber, convertStringToPoint, isNotNullish, isNumberString, isPointString, stringifyError } from "./transformer-common"
 import { EntityData } from "../entity"
-import { InvalidHashValue } from "../errors"
+import { InvalidHashValue } from "../error"
 
 export function fromRedisHash(schema: Schema, hashData: RedisHashData): EntityData {
   const data: { [key: string]: any } = { ...hashData }

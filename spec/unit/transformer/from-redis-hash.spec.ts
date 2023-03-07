@@ -6,7 +6,7 @@ import { Schema } from "$lib/schema"
 import { fromRedisHash } from "$lib/transformer"
 
 import { A_DATE, A_DATE_EPOCH_STRING, A_NUMBER, A_NUMBER_STRING, A_POINT, A_POINT_STRING, A_STRING, SOME_STRINGS, SOME_STRINGS_JOINED, SOME_TEXT } from "../../helpers/example-data"
-import { InvalidHashValue } from '$lib/errors'
+import { InvalidHashValue } from '$lib/error'
 
 describe("#fromRedisHash", () => {
 

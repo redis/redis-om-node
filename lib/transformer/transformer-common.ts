@@ -1,4 +1,4 @@
-import { PointOutOfRange, RedisOmError } from "../errors"
+import { PointOutOfRange, RedisOmError } from "../error"
 import { Point } from "../entity"
 
 export const isNull = (value: any): boolean => value === null

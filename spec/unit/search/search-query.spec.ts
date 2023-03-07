@@ -4,7 +4,7 @@ import { Client } from "$lib/client"
 import { Search } from "$lib/search"
 
 import { simpleHashSchema, simpleJsonSchema } from "../helpers/test-entity-and-schema"
-import { FieldNotInSchema } from "$lib/errors"
+import { FieldNotInSchema } from "$lib/error"
 
 import {
   A_STRING, ANOTHER_STRING, A_THIRD_STRING,

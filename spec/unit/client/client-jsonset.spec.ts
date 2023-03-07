@@ -3,7 +3,7 @@ import '../../helpers/custom-matchers'
 import { json } from '../helpers/mock-redis'
 
 import { Client } from '$lib/client'
-import { RedisOmError } from '$lib/errors'
+import { RedisOmError } from '$lib/error'
 
 describe("Client", () => {
 

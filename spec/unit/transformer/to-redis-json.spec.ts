@@ -1,7 +1,7 @@
 import '../../helpers/custom-matchers'
 
 import { RedisJsonData } from "$lib/client"
-import { InvalidJsonInput, NullJsonInput, PointOutOfRange } from "$lib/errors"
+import { InvalidJsonInput, NullJsonInput, PointOutOfRange } from "$lib/error"
 import { Schema } from "$lib/schema"
 import { toRedisJson } from "$lib/transformer"
 
@@ -194,7 +194,7 @@ describe("#toRedisJson", () => {
 
     it("complains when given an invalid point", () => {
       expect(() => toRedisJson(schema, { aPoint: AN_INVALID_POINT }))
-        .toThrowErrorOfType(PointOutOfRange, "Points must be between ±85.05112878 latitude and ±180 longitude")
+        .toThrowErrorOfType(PointOutOfRange, "Points must be between ±85.05112878 latitude and ±180 longitude.")
     })
 
     it.each([

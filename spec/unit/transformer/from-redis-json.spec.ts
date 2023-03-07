@@ -4,7 +4,7 @@ import { RedisJsonData } from "$lib/client"
 import { EntityData } from "$lib/entity"
 import { Schema } from "$lib/schema"
 import { fromRedisJson } from "$lib/transformer"
-import { InvalidJsonValue, NullJsonValue } from '$lib/errors'
+import { InvalidJsonValue, NullJsonValue } from '$lib/error'
 
 import { ANOTHER_STRING, A_DATE, A_DATE_EPOCH, A_DATE_EPOCH_STRING, A_NUMBER, A_NUMBER_STRING, A_POINT, A_POINT_STRING, A_STRING, A_THIRD_STRING, SOME_STRINGS, SOME_TEXT } from "../../helpers/example-data"
 

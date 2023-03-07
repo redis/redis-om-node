@@ -4,7 +4,7 @@ import { RediSearchSchema, SchemaFieldTypes } from 'redis'
 
 import { redis } from '../helpers/mock-redis'
 import { Client, CreateOptions } from '$lib/client'
-import { RedisOmError } from '$lib/errors'
+import { RedisOmError } from '$lib/error'
 
 
 

@@ -1,7 +1,7 @@
 import '../../helpers/custom-matchers'
 
 import { Client } from '$lib/client'
-import { RedisOmError } from '$lib/errors'
+import { RedisOmError } from '$lib/error'
 import { Repository } from '$lib/repository'
 import { Schema } from '$lib/schema/schema'
 

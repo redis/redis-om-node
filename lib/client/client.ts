@@ -2,7 +2,7 @@ import { createClient, createCluster, RediSearchSchema, SearchOptions } from 're
 
 import { Repository } from '../repository'
 import { Schema } from '../schema'
-import { RedisOmError } from '../errors'
+import { RedisOmError } from '../error'
 
 /** A conventional Redis connection. */
 export type RedisClientConnection = ReturnType<typeof createClient>

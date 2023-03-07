@@ -6,7 +6,7 @@ import { RedisJsonData } from "../client"
 
 import { convertEpochToDate, convertKnownValueToString, convertStringToPoint, isArray, isBoolean, isNull, isNumber, isPointString, isString, stringifyError } from "./transformer-common"
 import { EntityData } from '../entity'
-import { InvalidJsonValue, NullJsonValue, RedisOmError } from '../errors'
+import { InvalidJsonValue, NullJsonValue, RedisOmError } from '../error'
 
 
 export function fromRedisJson(schema: Schema, json: RedisJsonData): EntityData {
