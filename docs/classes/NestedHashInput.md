@@ -1,78 +1,55 @@
-[redis-om](../README.md) / RedisOmError
+[redis-om](../README.md) / NestedHashInput
 
-# Class: RedisOmError
+# Class: NestedHashInput
 
 ## Hierarchy
 
-- `Error`
+- [`InvalidInput`](InvalidInput.md)
 
-  ↳ **`RedisOmError`**
-
-  ↳↳ [`InvalidInput`](InvalidInput.md)
-
-  ↳↳ [`InvalidSchema`](InvalidSchema.md)
-
-  ↳↳ [`InvalidValue`](InvalidValue.md)
-
-  ↳↳ [`PointOutOfRange`](PointOutOfRange.md)
-
-  ↳↳ [`SearchError`](SearchError.md)
+  ↳ **`NestedHashInput`**
 
 ## Table of contents
 
 ### Constructors
 
-- [constructor](RedisOmError.md#constructor)
+- [constructor](NestedHashInput.md#constructor)
 
 ### Properties
 
-- [cause](RedisOmError.md#cause)
-- [message](RedisOmError.md#message)
-- [name](RedisOmError.md#name)
-- [stack](RedisOmError.md#stack)
-- [prepareStackTrace](RedisOmError.md#preparestacktrace)
-- [stackTraceLimit](RedisOmError.md#stacktracelimit)
+- [cause](NestedHashInput.md#cause)
+- [message](NestedHashInput.md#message)
+- [name](NestedHashInput.md#name)
+- [stack](NestedHashInput.md#stack)
+- [prepareStackTrace](NestedHashInput.md#preparestacktrace)
+- [stackTraceLimit](NestedHashInput.md#stacktracelimit)
+
+### Accessors
+
+- [field](NestedHashInput.md#field)
 
 ### Methods
 
-- [captureStackTrace](RedisOmError.md#capturestacktrace)
+- [captureStackTrace](NestedHashInput.md#capturestacktrace)
 
 ## Constructors
 
 ### constructor
 
-• **new RedisOmError**(`message?`)
+• **new NestedHashInput**(`property`)
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `message?` | `string` |
+| `property` | `string` |
 
-#### Inherited from
+#### Overrides
 
-Error.constructor
-
-#### Defined in
-
-node_modules/typescript/lib/lib.es5.d.ts:1059
-
-• **new RedisOmError**(`message?`, `options?`)
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `message?` | `string` |
-| `options?` | `ErrorOptions` |
-
-#### Inherited from
-
-Error.constructor
+[InvalidInput](InvalidInput.md).[constructor](InvalidInput.md#constructor)
 
 #### Defined in
 
-node_modules/typescript/lib/lib.es2022.error.d.ts:30
+[lib/error/invalid-input.ts:54](https://github.com/redis/redis-om-node/blob/5777b6c/lib/error/invalid-input.ts#L54)
 
 ## Properties
 
@@ -82,7 +59,7 @@ node_modules/typescript/lib/lib.es2022.error.d.ts:30
 
 #### Inherited from
 
-Error.cause
+[InvalidInput](InvalidInput.md).[cause](InvalidInput.md#cause)
 
 #### Defined in
 
@@ -96,7 +73,7 @@ ___
 
 #### Inherited from
 
-Error.message
+[InvalidInput](InvalidInput.md).[message](InvalidInput.md#message)
 
 #### Defined in
 
@@ -110,7 +87,7 @@ ___
 
 #### Inherited from
 
-Error.name
+[InvalidInput](InvalidInput.md).[name](InvalidInput.md#name)
 
 #### Defined in
 
@@ -124,7 +101,7 @@ ___
 
 #### Inherited from
 
-Error.stack
+[InvalidInput](InvalidInput.md).[stack](InvalidInput.md#stack)
 
 #### Defined in
 
@@ -159,7 +136,7 @@ https://v8.dev/docs/stack-trace-api#customizing-stack-traces
 
 #### Inherited from
 
-Error.prepareStackTrace
+[InvalidInput](InvalidInput.md).[prepareStackTrace](InvalidInput.md#preparestacktrace)
 
 #### Defined in
 
@@ -173,11 +150,25 @@ ___
 
 #### Inherited from
 
-Error.stackTraceLimit
+[InvalidInput](InvalidInput.md).[stackTraceLimit](InvalidInput.md#stacktracelimit)
 
 #### Defined in
 
 node_modules/@types/node/globals.d.ts:13
+
+## Accessors
+
+### field
+
+• `get` **field**(): `string`
+
+#### Returns
+
+`string`
+
+#### Defined in
+
+[lib/error/invalid-input.ts:60](https://github.com/redis/redis-om-node/blob/5777b6c/lib/error/invalid-input.ts#L60)
 
 ## Methods
 
@@ -200,7 +191,7 @@ Create .stack property on a target object
 
 #### Inherited from
 
-Error.captureStackTrace
+[InvalidInput](InvalidInput.md).[captureStackTrace](InvalidInput.md#capturestacktrace)
 
 #### Defined in
 

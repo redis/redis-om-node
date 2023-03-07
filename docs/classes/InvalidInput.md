@@ -1,47 +1,47 @@
-[redis-om](../README.md) / RedisOmError
+[redis-om](../README.md) / InvalidInput
 
-# Class: RedisOmError
+# Class: InvalidInput
 
 ## Hierarchy
 
-- `Error`
+- [`RedisOmError`](RedisOmError.md)
 
-  ↳ **`RedisOmError`**
+  ↳ **`InvalidInput`**
 
-  ↳↳ [`InvalidInput`](InvalidInput.md)
+  ↳↳ [`NullJsonInput`](NullJsonInput.md)
 
-  ↳↳ [`InvalidSchema`](InvalidSchema.md)
+  ↳↳ [`InvalidJsonInput`](InvalidJsonInput.md)
 
-  ↳↳ [`InvalidValue`](InvalidValue.md)
+  ↳↳ [`InvalidHashInput`](InvalidHashInput.md)
 
-  ↳↳ [`PointOutOfRange`](PointOutOfRange.md)
+  ↳↳ [`NestedHashInput`](NestedHashInput.md)
 
-  ↳↳ [`SearchError`](SearchError.md)
+  ↳↳ [`ArrayHashInput`](ArrayHashInput.md)
 
 ## Table of contents
 
 ### Constructors
 
-- [constructor](RedisOmError.md#constructor)
+- [constructor](InvalidInput.md#constructor)
 
 ### Properties
 
-- [cause](RedisOmError.md#cause)
-- [message](RedisOmError.md#message)
-- [name](RedisOmError.md#name)
-- [stack](RedisOmError.md#stack)
-- [prepareStackTrace](RedisOmError.md#preparestacktrace)
-- [stackTraceLimit](RedisOmError.md#stacktracelimit)
+- [cause](InvalidInput.md#cause)
+- [message](InvalidInput.md#message)
+- [name](InvalidInput.md#name)
+- [stack](InvalidInput.md#stack)
+- [prepareStackTrace](InvalidInput.md#preparestacktrace)
+- [stackTraceLimit](InvalidInput.md#stacktracelimit)
 
 ### Methods
 
-- [captureStackTrace](RedisOmError.md#capturestacktrace)
+- [captureStackTrace](InvalidInput.md#capturestacktrace)
 
 ## Constructors
 
 ### constructor
 
-• **new RedisOmError**(`message?`)
+• **new InvalidInput**(`message?`)
 
 #### Parameters
 
@@ -51,13 +51,13 @@
 
 #### Inherited from
 
-Error.constructor
+[RedisOmError](RedisOmError.md).[constructor](RedisOmError.md#constructor)
 
 #### Defined in
 
 node_modules/typescript/lib/lib.es5.d.ts:1059
 
-• **new RedisOmError**(`message?`, `options?`)
+• **new InvalidInput**(`message?`, `options?`)
 
 #### Parameters
 
@@ -68,7 +68,7 @@ node_modules/typescript/lib/lib.es5.d.ts:1059
 
 #### Inherited from
 
-Error.constructor
+[RedisOmError](RedisOmError.md).[constructor](RedisOmError.md#constructor)
 
 #### Defined in
 
@@ -82,7 +82,7 @@ node_modules/typescript/lib/lib.es2022.error.d.ts:30
 
 #### Inherited from
 
-Error.cause
+[RedisOmError](RedisOmError.md).[cause](RedisOmError.md#cause)
 
 #### Defined in
 
@@ -96,7 +96,7 @@ ___
 
 #### Inherited from
 
-Error.message
+[RedisOmError](RedisOmError.md).[message](RedisOmError.md#message)
 
 #### Defined in
 
@@ -110,7 +110,7 @@ ___
 
 #### Inherited from
 
-Error.name
+[RedisOmError](RedisOmError.md).[name](RedisOmError.md#name)
 
 #### Defined in
 
@@ -124,7 +124,7 @@ ___
 
 #### Inherited from
 
-Error.stack
+[RedisOmError](RedisOmError.md).[stack](RedisOmError.md#stack)
 
 #### Defined in
 
@@ -159,7 +159,7 @@ https://v8.dev/docs/stack-trace-api#customizing-stack-traces
 
 #### Inherited from
 
-Error.prepareStackTrace
+[RedisOmError](RedisOmError.md).[prepareStackTrace](RedisOmError.md#preparestacktrace)
 
 #### Defined in
 
@@ -173,7 +173,7 @@ ___
 
 #### Inherited from
 
-Error.stackTraceLimit
+[RedisOmError](RedisOmError.md).[stackTraceLimit](RedisOmError.md#stacktracelimit)
 
 #### Defined in
 
@@ -200,7 +200,7 @@ Create .stack property on a target object
 
 #### Inherited from
 
-Error.captureStackTrace
+[RedisOmError](RedisOmError.md).[captureStackTrace](RedisOmError.md#capturestacktrace)
 
 #### Defined in
 

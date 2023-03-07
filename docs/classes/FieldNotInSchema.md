@@ -1,78 +1,55 @@
-[redis-om](../README.md) / RedisOmError
+[redis-om](../README.md) / FieldNotInSchema
 
-# Class: RedisOmError
+# Class: FieldNotInSchema
 
 ## Hierarchy
 
-- `Error`
+- [`SearchError`](SearchError.md)
 
-  ↳ **`RedisOmError`**
-
-  ↳↳ [`InvalidInput`](InvalidInput.md)
-
-  ↳↳ [`InvalidSchema`](InvalidSchema.md)
-
-  ↳↳ [`InvalidValue`](InvalidValue.md)
-
-  ↳↳ [`PointOutOfRange`](PointOutOfRange.md)
-
-  ↳↳ [`SearchError`](SearchError.md)
+  ↳ **`FieldNotInSchema`**
 
 ## Table of contents
 
 ### Constructors
 
-- [constructor](RedisOmError.md#constructor)
+- [constructor](FieldNotInSchema.md#constructor)
 
 ### Properties
 
-- [cause](RedisOmError.md#cause)
-- [message](RedisOmError.md#message)
-- [name](RedisOmError.md#name)
-- [stack](RedisOmError.md#stack)
-- [prepareStackTrace](RedisOmError.md#preparestacktrace)
-- [stackTraceLimit](RedisOmError.md#stacktracelimit)
+- [cause](FieldNotInSchema.md#cause)
+- [message](FieldNotInSchema.md#message)
+- [name](FieldNotInSchema.md#name)
+- [stack](FieldNotInSchema.md#stack)
+- [prepareStackTrace](FieldNotInSchema.md#preparestacktrace)
+- [stackTraceLimit](FieldNotInSchema.md#stacktracelimit)
+
+### Accessors
+
+- [field](FieldNotInSchema.md#field)
 
 ### Methods
 
-- [captureStackTrace](RedisOmError.md#capturestacktrace)
+- [captureStackTrace](FieldNotInSchema.md#capturestacktrace)
 
 ## Constructors
 
 ### constructor
 
-• **new RedisOmError**(`message?`)
+• **new FieldNotInSchema**(`fieldName`)
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `message?` | `string` |
+| `fieldName` | `string` |
 
-#### Inherited from
+#### Overrides
 
-Error.constructor
-
-#### Defined in
-
-node_modules/typescript/lib/lib.es5.d.ts:1059
-
-• **new RedisOmError**(`message?`, `options?`)
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `message?` | `string` |
-| `options?` | `ErrorOptions` |
-
-#### Inherited from
-
-Error.constructor
+[SearchError](SearchError.md).[constructor](SearchError.md#constructor)
 
 #### Defined in
 
-node_modules/typescript/lib/lib.es2022.error.d.ts:30
+[lib/error/search-error.ts:11](https://github.com/redis/redis-om-node/blob/5777b6c/lib/error/search-error.ts#L11)
 
 ## Properties
 
@@ -82,7 +59,7 @@ node_modules/typescript/lib/lib.es2022.error.d.ts:30
 
 #### Inherited from
 
-Error.cause
+[SearchError](SearchError.md).[cause](SearchError.md#cause)
 
 #### Defined in
 
@@ -96,7 +73,7 @@ ___
 
 #### Inherited from
 
-Error.message
+[SearchError](SearchError.md).[message](SearchError.md#message)
 
 #### Defined in
 
@@ -110,7 +87,7 @@ ___
 
 #### Inherited from
 
-Error.name
+[SearchError](SearchError.md).[name](SearchError.md#name)
 
 #### Defined in
 
@@ -124,7 +101,7 @@ ___
 
 #### Inherited from
 
-Error.stack
+[SearchError](SearchError.md).[stack](SearchError.md#stack)
 
 #### Defined in
 
@@ -159,7 +136,7 @@ https://v8.dev/docs/stack-trace-api#customizing-stack-traces
 
 #### Inherited from
 
-Error.prepareStackTrace
+[SearchError](SearchError.md).[prepareStackTrace](SearchError.md#preparestacktrace)
 
 #### Defined in
 
@@ -173,11 +150,25 @@ ___
 
 #### Inherited from
 
-Error.stackTraceLimit
+[SearchError](SearchError.md).[stackTraceLimit](SearchError.md#stacktracelimit)
 
 #### Defined in
 
 node_modules/@types/node/globals.d.ts:13
+
+## Accessors
+
+### field
+
+• `get` **field**(): `string`
+
+#### Returns
+
+`string`
+
+#### Defined in
+
+[lib/error/search-error.ts:16](https://github.com/redis/redis-om-node/blob/5777b6c/lib/error/search-error.ts#L16)
 
 ## Methods
 
@@ -200,7 +191,7 @@ Create .stack property on a target object
 
 #### Inherited from
 
-Error.captureStackTrace
+[SearchError](SearchError.md).[captureStackTrace](SearchError.md#capturestacktrace)
 
 #### Defined in
 

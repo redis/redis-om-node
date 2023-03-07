@@ -1,47 +1,37 @@
-[redis-om](../README.md) / RedisOmError
+[redis-om](../README.md) / SemanticSearchError
 
-# Class: RedisOmError
+# Class: SemanticSearchError
 
 ## Hierarchy
 
-- `Error`
+- [`SearchError`](SearchError.md)
 
-  ↳ **`RedisOmError`**
-
-  ↳↳ [`InvalidInput`](InvalidInput.md)
-
-  ↳↳ [`InvalidSchema`](InvalidSchema.md)
-
-  ↳↳ [`InvalidValue`](InvalidValue.md)
-
-  ↳↳ [`PointOutOfRange`](PointOutOfRange.md)
-
-  ↳↳ [`SearchError`](SearchError.md)
+  ↳ **`SemanticSearchError`**
 
 ## Table of contents
 
 ### Constructors
 
-- [constructor](RedisOmError.md#constructor)
+- [constructor](SemanticSearchError.md#constructor)
 
 ### Properties
 
-- [cause](RedisOmError.md#cause)
-- [message](RedisOmError.md#message)
-- [name](RedisOmError.md#name)
-- [stack](RedisOmError.md#stack)
-- [prepareStackTrace](RedisOmError.md#preparestacktrace)
-- [stackTraceLimit](RedisOmError.md#stacktracelimit)
+- [cause](SemanticSearchError.md#cause)
+- [message](SemanticSearchError.md#message)
+- [name](SemanticSearchError.md#name)
+- [stack](SemanticSearchError.md#stack)
+- [prepareStackTrace](SemanticSearchError.md#preparestacktrace)
+- [stackTraceLimit](SemanticSearchError.md#stacktracelimit)
 
 ### Methods
 
-- [captureStackTrace](RedisOmError.md#capturestacktrace)
+- [captureStackTrace](SemanticSearchError.md#capturestacktrace)
 
 ## Constructors
 
 ### constructor
 
-• **new RedisOmError**(`message?`)
+• **new SemanticSearchError**(`message?`)
 
 #### Parameters
 
@@ -51,13 +41,13 @@
 
 #### Inherited from
 
-Error.constructor
+[SearchError](SearchError.md).[constructor](SearchError.md#constructor)
 
 #### Defined in
 
 node_modules/typescript/lib/lib.es5.d.ts:1059
 
-• **new RedisOmError**(`message?`, `options?`)
+• **new SemanticSearchError**(`message?`, `options?`)
 
 #### Parameters
 
@@ -68,7 +58,7 @@ node_modules/typescript/lib/lib.es5.d.ts:1059
 
 #### Inherited from
 
-Error.constructor
+[SearchError](SearchError.md).[constructor](SearchError.md#constructor)
 
 #### Defined in
 
@@ -82,7 +72,7 @@ node_modules/typescript/lib/lib.es2022.error.d.ts:30
 
 #### Inherited from
 
-Error.cause
+[SearchError](SearchError.md).[cause](SearchError.md#cause)
 
 #### Defined in
 
@@ -96,7 +86,7 @@ ___
 
 #### Inherited from
 
-Error.message
+[SearchError](SearchError.md).[message](SearchError.md#message)
 
 #### Defined in
 
@@ -110,7 +100,7 @@ ___
 
 #### Inherited from
 
-Error.name
+[SearchError](SearchError.md).[name](SearchError.md#name)
 
 #### Defined in
 
@@ -124,7 +114,7 @@ ___
 
 #### Inherited from
 
-Error.stack
+[SearchError](SearchError.md).[stack](SearchError.md#stack)
 
 #### Defined in
 
@@ -159,7 +149,7 @@ https://v8.dev/docs/stack-trace-api#customizing-stack-traces
 
 #### Inherited from
 
-Error.prepareStackTrace
+[SearchError](SearchError.md).[prepareStackTrace](SearchError.md#preparestacktrace)
 
 #### Defined in
 
@@ -173,7 +163,7 @@ ___
 
 #### Inherited from
 
-Error.stackTraceLimit
+[SearchError](SearchError.md).[stackTraceLimit](SearchError.md#stacktracelimit)
 
 #### Defined in
 
@@ -200,7 +190,7 @@ Create .stack property on a target object
 
 #### Inherited from
 
-Error.captureStackTrace
+[SearchError](SearchError.md).[captureStackTrace](SearchError.md#capturestacktrace)
 
 #### Defined in
 
