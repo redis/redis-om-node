@@ -95,6 +95,7 @@ describe("#fromRedisHash", () => {
 
       // string[]
       ["converts a string[] from a delimited string", { aStringArray: SOME_STRINGS_JOINED }, { aStringArray: SOME_STRINGS }],
+      ["converts a string[] from a string without delimiters", { aStringArray: A_STRING }, { aStringArray: [ A_STRING ] }],
       ["converts a renamed string[] from a delimited string", { aRenamedStringArray: SOME_STRINGS_JOINED }, { anotherStringArray: SOME_STRINGS }],
       ["converts a string[] from a delimited string with a custom delimiter", { aSeparatedStringArray: SOME_STRINGS.join(',') }, { aSeparatedStringArray: SOME_STRINGS }]
 

@@ -6,7 +6,7 @@ import { RedisJsonData } from "../client"
 
 import { convertEpochToDate, convertKnownValueToString, convertStringToPoint, isArray, isBoolean, isNull, isNumber, isPointString, isString, stringifyError } from "./transformer-common"
 import { EntityData } from '../entity'
-import { InvalidJsonValue, NullJsonValue, RedisOmError } from '../error'
+import { InvalidJsonValue, NullJsonValue } from '../error'
 
 
 export function fromRedisJson(schema: Schema, json: RedisJsonData): EntityData {
@@ -21,17 +21,17 @@ function convertFromRedisJsonKnown(schema: Schema, data: EntityData) {
     const path = field.jsonPath
     const results = JSONPath({ resultType: 'all', path, json: data })
 
-    if (results.length === 1) {
+    if (field.type === 'string[]') {
+      results.forEach((result: any) => {
+        const { value, parent, parentProperty } = result
+        if (isNull(value)) throw new NullJsonValue(field)
+        parent[parentProperty] = convertKnownValueToString(value)
+      })
+    } else if (results.length === 1) {
       const [ { value, parent, parentProperty } ] = results
       parent[parentProperty] = convertKnownValueFromJson(field, value)
     } else if (results.length > 1) {
-      if (field.type === 'string[]') {
-        results.forEach((result: any) => {
-          const { value, parent, parentProperty } = result
-          if (isNull(value)) throw new NullJsonValue(field)
-          parent[parentProperty] = convertKnownValueToString(value)
-        })
-      }
+      throw new InvalidJsonValue(field)
     }
   })
 }

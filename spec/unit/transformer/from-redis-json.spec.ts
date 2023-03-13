@@ -61,6 +61,8 @@ describe("#fromRedisJson", () => {
         aTrueBoolean: true, aFalseBoolean: false,
         aMissingNumber: A_NUMBER, aMissingDate: A_DATE_EPOCH_STRING,
         aMissingPoint: A_POINT_STRING, aMissingString: A_STRING,
+        aMissingEmptyArray: [],
+        aMissingSingleArray: [ A_STRING ],
         aMissingArray: [ A_STRING, A_NUMBER, true ],
         aMissingObject: { withArray: [ A_STRING, A_NUMBER, true ] }
       })
@@ -73,7 +75,9 @@ describe("#fromRedisJson", () => {
       ["leaves a converted date as a string", { aMissingDate: A_DATE_EPOCH_STRING }],
       ["leaves a converted point as a string", { aMissingPoint: A_POINT_STRING }],
       ["leaves a string as a string", { aMissingString: A_STRING }],
-      ["leaves an array as an array", { aMissingArray: [ A_STRING, A_NUMBER, true ] }],
+      ["leaves an empty array empty", { aMissingEmptyArray: [] }],
+      ["leaves a lonely array alone", { aMissingSingleArray: [ A_STRING ] }],
+      ["leaves a populated array populated", { aMissingArray: [ A_STRING, A_NUMBER, true ] }],
       ["leaves nested objects as objects", { aMissingObject: { withArray: [ A_STRING, A_NUMBER, true ] } }]
     ])('%s', (_, expected) => {
       expect(actual).toEqual(expect.objectContaining(expected))
@@ -126,7 +130,9 @@ describe("#fromRedisJson", () => {
       ["leaves a nested string as a string", { someNestedText: { someText: SOME_TEXT } }, { someNestedText: { someText: SOME_TEXT } }],
 
       // string[]
-      ["leaves a string[] as a string[]", { aStringArray: SOME_STRINGS }, { aStringArray: SOME_STRINGS }],
+      ["leaves an empty string[] empty", { aStringArray: [] }, { aStringArray: [] }],
+      ["leaves a lonely string[] alone", { aStringArray: [ A_STRING ] }, { aStringArray: [ A_STRING] }],
+      ["leaves a populated string[] populated", { aStringArray: SOME_STRINGS }, { aStringArray: SOME_STRINGS }],
       ["leaves a null string[] as null", { aStringArray: null }, { aStringArray: null }],
       ["leaves a string[] that doesn't contain a string[] as is", { aStringArray: 'NOT_AN_ARRAY' }, { aStringArray: 'NOT_AN_ARRAY' }],
       ["coerces numbers and booleans in a string[] to strings", { aStringArray: [ A_STRING, A_NUMBER, true] }, { aStringArray: [A_STRING, A_NUMBER_STRING, 'true'] }],
