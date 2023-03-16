@@ -110,7 +110,7 @@ First things first, get yourself a Node.js project. There are lots of ways to do
 
 Once you have that sweet, sweet `package.json`, let's add our newest favorite package to it:
 
-    $ npm install redis-om
+    $ npm install redis-om@beta
 
 Redis OM for Node.js uses [Node Redis](https://github.com/redis/node-redis). So you should install that too:
 
