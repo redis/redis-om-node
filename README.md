@@ -112,6 +112,12 @@ Once you have that sweet, sweet `package.json`, let's add our newest favorite pa
 
     $ npm install redis-om@beta
 
+> ### ⚠️ Author's Note
+>
+> You might have noticed that there is a `@beta` on that `npm install redis-om` command. That's because _this_ README is for Redis OM 0.4.0-beta. You should totally try it out as I biasedly think it's pretty awesome. However, you might be looking to use the current production preview (i.e. version 0.3.6). If so, you'll want to check out [the README for that version](https://www.npmjs.com/package/redis-om/v/0.3.6) over on NPM.
+>
+> If you're already using the current production preview and _want_ to try the new beta, firstly, a hearty thank you from me. But secondly, know that there are several breaking changes that you can read about in the [CHANGELOG](CHANGELOG).
+
 Redis OM for Node.js uses [Node Redis](https://github.com/redis/node-redis). So you should install that too:
 
     $ npm install redis
