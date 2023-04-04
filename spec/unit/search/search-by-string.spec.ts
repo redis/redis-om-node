@@ -76,8 +76,13 @@ describe("Search", () => {
       })
 
       it("generates a query that escapes all punctuation", () => {
-        let query = where.eq(",.<>{}[]\"':;!@#$%^&*()-+=~|/\\ ").query
-        expect(query).toBe("(@aString:{\\,\\.\\<\\>\\{\\}\\[\\]\\\"\\'\\:\\;\\!\\@\\#\\$\\%\\^\\&\\*\\(\\)\\-\\+\\=\\~\\|\\/\\\\\\ })")
+        let query = where.eq(",.<>{}[]\"':;!@#$%^&()-+=~|/\\ ").query
+        expect(query).toBe("(@aString:{\\,\\.\\<\\>\\{\\}\\[\\]\\\"\\'\\:\\;\\!\\@\\#\\$\\%\\^\\&\\(\\)\\-\\+\\=\\~\\|\\/\\\\\\ })")
+      })
+
+      it("generates a query with a prefix matching wildcard", () => {
+        let query = where.eq("foo*").query
+        expect(query).toBe("(@aString:{foo*})")
       })
     })
 
