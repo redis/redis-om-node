@@ -47,7 +47,7 @@ describe("Search", () => {
         expect(query).toBe("(@someStrings:{\\,\\.\\<\\>\\{\\}\\[\\]\\\"\\'\\:\\;\\|\\!\\@\\#\\$\\%\\^\\&\\(\\)\\-\\+\\=\\~\\ })")
       })
 
-      it("generates a query with .containsOnOf that escapes all punctuation", () => {
+      it("generates a query with .containsOneOf that escapes all punctuation", () => {
         let query = where.containsOneOf(",.<>{}[]\"':;|", "!@#$%^&()-+=~ ").query
         expect(query).toBe("(@someStrings:{\\,\\.\\<\\>\\{\\}\\[\\]\\\"\\'\\:\\;\\||\\!\\@\\#\\$\\%\\^\\&\\(\\)\\-\\+\\=\\~\\ })")
       })
