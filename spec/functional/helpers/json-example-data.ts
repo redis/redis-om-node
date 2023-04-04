@@ -142,16 +142,16 @@ export const AN_EMPTY_JSON: RedisJsonData = {}
 export const AN_ESCAPED_ENTITY: Entity = {
   [EntityId]: 'escaped',
   root: {
-    aString: "foo ,.<>{}[]\"':;!@#$%^*()-+=~& bar",
+    aString: "foo ,.<>{}[]\"':;!@#$%^()-+=~& bar",
     someText: "zany ,.<>{}[]\"':;!@#$%^&*()-+=~| fox",
-    someStrings: ['alfa ,.<>{}[]"\':;!@#$%^&*()-+=~ bravo', 'charlie delta']
+    someStrings: ['alfa ,.<>{}[]"\':;!@#$%^&()-+=~ bravo', 'charlie delta']
   }
 }
 
 export const AN_ESCAPED_JSON: RedisJsonData = {
   root: {
-    aString: "foo ,.<>{}[]\"':;!@#$%^*()-+=~& bar",
+    aString: "foo ,.<>{}[]\"':;!@#$%^()-+=~& bar",
     someText: "zany ,.<>{}[]\"':;!@#$%^&*()-+=~| fox",
-    someStrings: ['alfa ,.<>{}[]"\':;!@#$%^&*()-+=~ bravo', 'charlie delta']
+    someStrings: ['alfa ,.<>{}[]"\':;!@#$%^&()-+=~ bravo', 'charlie delta']
   }
 }

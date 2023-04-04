@@ -19,7 +19,7 @@ export class WhereStringArray extends WhereField {
   containOneOf(...value: Array<string>): Search { return this.containsOneOf(...value) }
 
   toString(): string {
-    const matchPunctuation = /[,.<>{}[\]"':;!@#$%^&*()\-+=~| ]/g
+    const matchPunctuation = /[,.<>{}[\]"':;!@#$%^&()\-+=~| ]/g
     const escapedValue = this.value.map(s => s.replace(matchPunctuation, '\\$&')).join('|')
     return this.buildQuery(`{${escapedValue}}`)
   }

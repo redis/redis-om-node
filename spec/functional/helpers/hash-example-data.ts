@@ -129,13 +129,13 @@ export const AN_EMPTY_HASH: RedisHashData = {}
 
 export const AN_ESCAPED_ENTITY: Entity = {
   [EntityId]: 'escaped',
-  aString: "foo ,.<>{}[]\"':;!@#$%^*()-+=~& bar",
+  aString: "foo ,.<>{}[]\"':;!@#$%^()-+=~& bar",
   someText: "zany ,.<>{}[]\"':;!@#$%^&*()-+=~| fox",
-  someStrings: ['alfa ,.<>{}[]"\':;!@#$%^&*()-+=~ bravo', 'charlie delta']
+  someStrings: ['alfa ,.<>{}[]"\':;!@#$%^&()-+=~ bravo', 'charlie delta']
 }
 
 export const AN_ESCAPED_HASH: RedisHashData = {
-  root_aString: "foo ,.<>{}[]\"':;!@#$%^*()-+=~& bar",
+  root_aString: "foo ,.<>{}[]\"':;!@#$%^()-+=~& bar",
   root_someText: "zany ,.<>{}[]\"':;!@#$%^&*()-+=~| fox",
-  root_someStrings: ['alfa ,.<>{}[]"\':;!@#$%^&*()-+=~ bravo', 'charlie delta'].join('|')
+  root_someStrings: ['alfa ,.<>{}[]"\':;!@#$%^&()-+=~ bravo', 'charlie delta'].join('|')
 }

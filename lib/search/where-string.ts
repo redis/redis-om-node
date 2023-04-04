@@ -24,7 +24,7 @@ export class WhereString extends WhereField {
   get exactly() { return this.throwMatchExcpetionReturningThis() }
 
   toString(): string {
-    const matchPunctuation = /[,.<>{}[\]"':;!@#$%^&*()\-+=~|/\\ ]/g
+    const matchPunctuation = /[,.<>{}[\]"':;!@#$%^&()\-+=~|/\\ ]/g
     const escapedValue = this.value.replace(matchPunctuation, '\\$&')
     return this.buildQuery(`{${escapedValue}}`)
   }

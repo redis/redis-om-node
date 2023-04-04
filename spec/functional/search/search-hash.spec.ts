@@ -94,7 +94,7 @@ describe("search for hashes", () => {
     ]))
   })
 
-  it("searches a string with full text", async () => {
+  it("searches a text", async () => {
     entities = await repository.search().where('someText').matches('brown quick').returnAll()
 
     expect(entities).toHaveLength(1)
@@ -103,28 +103,28 @@ describe("search for hashes", () => {
     ]))
   })
 
-  it("searches a string with full text and wildcards", async () => {
+  it("searches a text with wildcards", async () => {
     entities = await repository.search().where('someText').matches('br*').returnAll()
 
     expect(entities).toHaveLength(1)
     expect(entities).toEqual([ { [EntityKeyName]: 'search-hash:1', ...AN_ENTITY } ])
   })
 
-  it("searches a string with full text and an exact match", async () => {
+  it("searches a text with an exact match", async () => {
     entities = await repository.search().where('someText').exactly.matches('quick brown').returnAll()
 
     expect(entities).toHaveLength(1)
     expect(entities).toEqual([ { [EntityKeyName]: 'search-hash:1', ...AN_ENTITY } ])
   })
 
-  it("searches a string with full text and stop words", async () => {
+  it("searches a text with stop words", async () => {
     entities = await repository.search().where('someText').matches('brown quick the').returnAll()
 
     expect(entities).toHaveLength(1)
     expect(entities).toEqual([ { [EntityKeyName]: 'search-hash:1', ...AN_ENTITY } ])
   })
 
-  it("throw an error when searching a string with full text, an exact match, and stop words", async () => {
+  it("throw an error when searching a text with an exact match and stop words", async () => {
     expect.assertions(2)
     try {
       await repository.search().where('someText').exactly.matches('the quick brown').returnAll()
@@ -197,13 +197,13 @@ describe("search for hashes", () => {
   })
 
   it("searches a string with escaped punctuation", async () => {
-    entities = await repository.search().where('aString').equals('foo ,.<>{}[]"\':;!@#$%^*()-+=~& bar').returnAll()
+    entities = await repository.search().where('aString').equals('foo ,.<>{}[]"\':;!@#$%^()-+=~& bar').returnAll()
 
     expect(entities).toHaveLength(1)
     expect(entities).toEqual([ { [EntityKeyName]: 'search-hash:escaped', ...AN_ESCAPED_ENTITY } ])
   })
 
-  it("searches a string with full text with escaped punctuation", async () => {
+  it("searches a text with escaped punctuation", async () => {
     entities = await repository.search().where('someText').matches('zany').returnAll()
 
     expect(entities).toHaveLength(1)
@@ -211,7 +211,7 @@ describe("search for hashes", () => {
   })
 
   it("searches an array with escaped punctuation", async () => {
-    entities = await repository.search().where('someStrings').contains('alfa ,.<>{}[]"\':;!@#$%^&*()-+=~ bravo').returnAll()
+    entities = await repository.search().where('someStrings').contains('alfa ,.<>{}[]"\':;!@#$%^&()-+=~ bravo').returnAll()
 
     expect(entities).toHaveLength(1)
     expect(entities).toEqual([ { [EntityKeyName]: 'search-hash:escaped', ...AN_ESCAPED_ENTITY } ])
