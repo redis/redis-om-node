@@ -71,7 +71,11 @@ Redis OM (pronounced _REDiss OHM_) makes it easy to add Redis to your Node.js ap
 Define a schema:
 
 ```javascript
-const schema = new Schema('album', {
+import { Entity } from 'redis-om'
+
+class album extends Entity {}
+
+const schema = new Schema(album, {
   artist: { type: 'string' },
   title: { type: 'text' },
   year: { type: 'number' }
@@ -182,9 +186,11 @@ Redis OM is all about saving, reading, and deleting *entities*. An [Entity](docs
 Ok. Let's start doing some object mapping and create a `Schema`:
 
 ```javascript
-import { Schema } from 'redis-om'
+import { Schema, Entity } from 'redis-om'
 
-const albumSchema = new Schema('album', {
+class album extends Entity {}
+
+const albumSchema = new Schema(album, {
   artist: { type: 'string' },
   title: { type: 'text' },
   year: { type: 'number' },
@@ -192,7 +198,9 @@ const albumSchema = new Schema('album', {
   outOfPublication: { type: 'boolean' }
 })
 
-const studioSchema = new Schema('studio', {
+class studio extends Entity {}
+
+const studioSchema = new Schema(studio, {
   name: { type: 'string' },
   city: { type: 'string' },
   state: { type: 'string' },
@@ -222,7 +230,11 @@ A `text` field is a lot like a `string`. If you're just reading and writing obje
 As I mentioned earlier, by default Redis OM stores your entities in JSON documents using RedisJSON. You can make this explicit in code if you like:
 
 ```javascript
-const albumSchema = new Schema('album', {
+import { Entity } from 'redis-om'
+
+class album extends Entity {}
+
+const albumSchema = new Schema(album, {
   artist: { type: 'string' },
   title: { type: 'string' },
   year: { type: 'number' },
@@ -236,7 +248,11 @@ const albumSchema = new Schema('album', {
 But you can also store your entities as Hashes instead. Just change the `dataStructure` property to reflect it:
 
 ```javascript
-const albumSchema = new Schema('album', {
+import { Entity } from 'redis-om'
+
+class album extends Entity {}
+
+const albumSchema = new Schema(album, {
   artist: { type: 'string' },
   title: { type: 'string' },
   year: { type: 'number' },
@@ -282,7 +298,11 @@ However, you might not want your JavaScript object and your JSON to map this way
 To do this, we'll need to specify the `path` property for the nested fields in the schema:
 
 ```javascript
-const albumSchema = new Schema('album', {
+import { Entity } from 'redis-om'
+
+class album extends Entity {}
+
+const albumSchema = new Schema(album, {
   artist: { type: 'string', path: '$.album.artist' },
   title: { type: 'string', path: '$.album.title' },
   year: { type: 'number', path: '$.album.year' },
@@ -301,7 +321,11 @@ There are two things to note here:
 When you store your entities as Hashes there is no nesting—all the entities are flat. In Redis, the properties on your entity are stored in fields inside a Hash. The default name for each field is the name of the property in your schema and this is the name that will be used in your entities. So, for the following schema:
 
 ```javascript
-const albumSchema = new Schema('album', {
+import { Entity } from 'redis-om'
+
+class album extends Entity {}
+
+const albumSchema = new Schema(album, {
   artist: { type: 'string' },
   title: { type: 'string' },
   year: { type: 'number' },
@@ -339,7 +363,11 @@ However, you might not want the names of your fields and the names of the proper
 Fear not! You can change the name of the field used by Redis with the `field` property:
 
 ```javascript
-const albumSchema = new Schema('album', {
+import { Entity } from 'redis-om'
+
+class album extends Entity {}
+
+const albumSchema = new Schema(album, {
   artist: { type: 'string', field: 'album_artist' },
   title: { type: 'string', field: 'album_title' },
   year: { type: 'number', field: 'album_year' },
@@ -1084,6 +1112,10 @@ Additional field options can be set depending on the field type. These correspon
 Example showing additional options:
 
 ```javascript
+import { Entity } from 'redis-om'
+
+class Comment extends Entity {}
+
 const commentSchema = new Schema(Comment, {
   name: { type: 'text', stemming: false, matcher: 'dm:en' },
   email: { type: 'string', normalized: false, },
