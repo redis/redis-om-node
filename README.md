@@ -76,6 +76,9 @@ const schema = new Schema('album', {
   title: { type: 'text' },
   year: { type: 'number' }
 })
+
+// redis is the connection (client) instance from createClient()
+const repository = new Repository(schema, redis)
 ```
 
 Create a JavaScript object and save it:
