@@ -1,3 +1,21 @@
+<h2>
+<p align="center">
+⚠️ COMPATABILITY WARNING FOR DOCUMENTATION ⚠️
+</p>
+</h2>
+
+> **Warning**
+> This Documentation is not compatible with npm latest version of redis-om!
+> This page is for v0.4.x ```npm i redis-om@beta```
+
+
+> **Note**
+> By default, npm will install redis-om v0.3.x ```npm i redis-om```, and the documentation for it is found on the [npm page itself](https://www.npmjs.com/package/redis-om/v/0.3.6?activeTab=readme).
+
+
+***
+
+
 <div align="center">
   <br/>
   <br/>
