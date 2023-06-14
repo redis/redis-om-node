@@ -985,7 +985,7 @@ studios = await studioRepository.search().where('location').is.not.inCircle(
 So far we've been doing searches that match on a single field. However, we often want to query on multiple fields. Not a problem:
 
 ```javascript
-const albums = await albumRepository.search
+const albums = await albumRepository.search()
   .where('artist').equals('Mushroomhread')
   .or('title').matches('butterfly')
   .and('year').is.greaterThan(1990).return.all()
@@ -996,7 +996,7 @@ These are executed in order from left to right, and ignore any order of operatio
 If you'd like to change this you can nest your queries:
 
 ```javascript
-const albums = await albumRepository.search
+const albums = await albumRepository.search()
   .where('title').matches('butterfly').return.all()
   .or(search => search
     .where('artist').equals('Mushroomhead')
@@ -1025,11 +1025,11 @@ The nice thing here is that it returns the same entities that you've been using 
 RediSearch provides a basic mechanism for sorting your search results and Redis OM exposes it. You can sort on a single field and can sort on the following types: `string`, `number`, `boolean`, `date`, and `text`. To sort, simply call `.sortBy`, `.sortAscending`, or `.sortDescending`:
 
 ```javascript
-const albumsByYear = await albumRepository.search
+const albumsByYear = await albumRepository.search()
   .where('artist').equals('Mushroomhread')
     .sortAscending('year').return.all()
 
-const albumsByTitle = await albumRepository.search
+const albumsByTitle = await albumRepository.search()
   .where('artist').equals('Mushroomhread')
     .sortBy('title', 'DESC').return.all()
 ```
