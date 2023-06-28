@@ -1,6 +1,6 @@
 import { Field, Schema } from "../schema"
 import { RedisHashData } from "../client"
-import { convertEpochStringToDate, convertStringToNumber, convertStringToPoint, isNotNullish, isNumberString, isPointString, stringifyError } from "./transformer-common"
+import { convertEpochStringToDate, convertStringToNumber, convertStringToPoint, isNotNullish, isNullish, isNumberString, isPointString, stringifyError } from "./transformer-common"
 import { EntityData } from "../entity"
 import { InvalidHashValue } from "../error"
 
@@ -9,7 +9,11 @@ export function fromRedisHash(schema: Schema, hashData: RedisHashData): EntityDa
   schema.fields.forEach(field => {
     if (field.hashField) delete data[field.hashField]
     const value = hashData[field.hashField]
-    if (isNotNullish(value)) data[field.name] = convertKnownValueFromString(field, value!)
+    if (isNotNullish(value)) {
+      data[field.name] = convertKnownValueFromString(field, value!)
+    } else if (isNullish(value) && field.type === 'string[]') {
+      data[field.name] = []
+    }
   })
   return data
 }
