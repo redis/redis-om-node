@@ -130,6 +130,8 @@ describe("#toRedisHash", () => {
       ["coerces numbers and booleans in a string[] to strings", { aStringArray: [ A_STRING, A_NUMBER, true] }, { aStringArray: [A_STRING, A_NUMBER_STRING, 'true'].join('|') }],
       ["converts a string[] to a delimited string with a custom delimiter", { aSeparatedStringArray: SOME_STRINGS }, { aSeparatedStringArray: SOME_STRINGS.join(',') }],
       ["coerces numbers and booleans in a string[] to string with a custom delimiter", { aSeparatedStringArray: [ A_STRING, A_NUMBER, true] }, { aSeparatedStringArray: [A_STRING, A_NUMBER_STRING, 'true'].join(',') }],
+      ["converts a string[] with a single empty string to an empty string", { aStringArray: [ '' ] }, { aStringArray: "" }],
+      ["converts an empty string[] to undefined", { aStringArray: [] }, {}],
 
     ])('%s', (_, data, expected) => {
       const actual = toRedisHash(schema, data)

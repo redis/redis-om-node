@@ -34,7 +34,7 @@ describe("fetch hash", () => {
     expect(repository.fetch('1')).resolves.toEqual({ [EntityKeyName]: 'fetch-hash:1', ...AN_ENTITY }))
 
   it("fetches an empty entity from Redis", async () =>
-    expect(repository.fetch('empty')).resolves.toEqual({ [EntityKeyName]: 'fetch-hash:empty', ...AN_EMPTY_ENTITY }))
+    expect(repository.fetch('empty')).resolves.toEqual({ [EntityKeyName]: 'fetch-hash:empty', someStrings: [], ...AN_EMPTY_ENTITY }))
 
   it("fetches multiple entities from Redis with discrete arguments", async () => {
     let entities = await repository.fetch('1', '2', '3')

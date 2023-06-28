@@ -38,8 +38,12 @@ describe("#fromRedisHash", () => {
       actual = fromRedisHash(schema, {})
     })
 
-    it("returns an empty object", () => {
-      expect(actual).toEqual({})
+    it("returns only the empty arrays from the schema", () => {
+      expect(actual).toEqual({
+        aStringArray: [],
+        aSeparatedStringArray: [],
+        anotherStringArray: []
+      })
     })
   })
 
@@ -97,12 +101,14 @@ describe("#fromRedisHash", () => {
       ["converts a string[] from a delimited string", { aStringArray: SOME_STRINGS_JOINED }, { aStringArray: SOME_STRINGS }],
       ["converts a string[] from a string without delimiters", { aStringArray: A_STRING }, { aStringArray: [ A_STRING ] }],
       ["converts a renamed string[] from a delimited string", { aRenamedStringArray: SOME_STRINGS_JOINED }, { anotherStringArray: SOME_STRINGS }],
-      ["converts a string[] from a delimited string with a custom delimiter", { aSeparatedStringArray: SOME_STRINGS.join(',') }, { aSeparatedStringArray: SOME_STRINGS }]
+      ["converts a string[] from a delimited string with a custom delimiter", { aSeparatedStringArray: SOME_STRINGS.join(',') }, { aSeparatedStringArray: SOME_STRINGS }],
+      ["converts a string[] from an empty string", { aStringArray: "" }, { aStringArray: [ '' ] }],
+      ["converts a string[] from an undefined", {}, { aStringArray: [] }],
 
     ])('%s', (_, hashData: RedisHashData, expected) => {
       const actual = fromRedisHash(schema, hashData)
       expect(actual).not.toBe(hashData)
-      expect(actual).toEqual(expected)
+      expect(actual).toEqual(expect.objectContaining(expected))
     })
 
     it.each([

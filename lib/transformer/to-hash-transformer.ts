@@ -10,7 +10,11 @@ export function toRedisHash(schema: Schema, data: EntityData): RedisHashData {
     if (isNotNullish(value)) {
       const field = schema.fieldByName(key)
       const hashField = field ? field.hashField : key
-      hashData[hashField] = field ? convertKnownValueToString(field, value) : convertUnknownValueToString(key, value)
+      if (field && field.type === 'string[]' && isArray(value) && (value as string[]).length === 0) {
+        // no-op
+      } else {
+        hashData[hashField] = field ? convertKnownValueToString(field, value) : convertUnknownValueToString(key, value)
+      }
     }
   })
   return hashData
