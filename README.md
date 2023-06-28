@@ -1001,7 +1001,7 @@ const albums = await albumRepository.search()
   .or(search => search
     .where('artist').equals('Mushroomhead')
     .and('year').is.greaterThan(1990)
-  )
+  ).return.all()
 ```
 
 This query finds all Mushroomhead albums after 1990 or albums that have "butterfly" in the title.
