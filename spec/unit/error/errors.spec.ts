@@ -18,16 +18,16 @@ describe("Errors", () => {
   })
 
   describe.each([
-    ["NullJsonInput", NullJsonInput, `Null or undefined found in field 'aString' of type 'string' in JSON at "$.aString".`],
-    ["InvalidJsonInput", InvalidJsonInput, `Unexpected value for field 'aString' of type 'string' in JSON at "$.aString".`],
-    ["NullJsonValue", NullJsonValue, `Null or undefined found in field 'aString' of type 'string' from JSON path "$.aString" in Redis.`],
-    ["InvalidJsonValue", InvalidJsonValue, `Unexpected value for field 'aString' of type 'string' from JSON path "$.aString" in Redis.`]
+    ["NullJsonInput", NullJsonInput, `Null or undefined found in field 'aString' of type 'string' in JSON at '$["aString"]'.`],
+    ["InvalidJsonInput", InvalidJsonInput, `Unexpected value for field 'aString' of type 'string' in JSON at '$["aString"]'.`],
+    ["NullJsonValue", NullJsonValue, `Null or undefined found in field 'aString' of type 'string' from JSON path '$["aString"]' in Redis.`],
+    ["InvalidJsonValue", InvalidJsonValue, `Unexpected value for field 'aString' of type 'string' from JSON path '$["aString"]' in Redis.`]
   ])("%s", (_, errorClass, expectedMessage) => {
     beforeEach(() => { error = new errorClass(new Field('aString', { type: 'string' })) })
     it("has the expected message", () => expect(error.message).toBe(expectedMessage))
     it("has the expected field name", () => expect(error.fieldName).toBe('aString'))
     it("has the expected field type", () => expect(error.fieldType).toBe('string'))
-    it("has the expected JSON path", () => expect(error.jsonPath).toBe('$.aString'))
+    it("has the expected JSON path", () => expect(error.jsonPath).toBe('$["aString"]'))
   })
 
   describe.each([
@@ -49,7 +49,7 @@ describe("Errors", () => {
 
   describe("InvalidHashValue", () => {
     beforeEach(() => { error = new InvalidHashValue(new Field('aString', { type: 'string' })) })
-    it("has the expected message", () => expect(error.message).toBe(`Unexpected value for field 'aString' of type 'string' from Hash field "aString" read from Redis.`))
+    it("has the expected message", () => expect(error.message).toBe(`Unexpected value for field 'aString' of type 'string' from Hash field 'aString' read from Redis.`))
     it("has the expected field name", () => expect(error.fieldName).toBe('aString'))
     it("has the expected field type", () => expect(error.fieldType).toBe('string'))
     it("has the expected Hash field", () => expect(error.hashField).toBe('aString'))

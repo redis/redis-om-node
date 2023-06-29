@@ -80,3 +80,35 @@ export const customStopWordsSchema = new Schema("CustomStopWordsEntity", {
   useStopWords: 'CUSTOM',
   stopWords: ['foo', 'bar', 'baz']
 });
+
+export const escapedFieldsSchema = new Schema("EscapedFieldsEntity", {
+  "a,field": { type: 'string' },
+  "a.field": { type: 'string' },
+  "a<field": { type: 'string' },
+  "a>field": { type: 'string' },
+  "a{field": { type: 'string' },
+  "a}field": { type: 'string' },
+  "a[field": { type: 'string' },
+  "a]field": { type: 'string' },
+  "a\"field": { type: 'string' },
+  "a'field": { type: 'string' },
+  "a:field": { type: 'string' },
+  "a;field": { type: 'string' },
+  "a!field": { type: 'string' },
+  "a@field": { type: 'string' },
+  "a#field": { type: 'string' },
+  "a$field": { type: 'string' },
+  "a%field": { type: 'string' },
+  "a^field": { type: 'string' },
+  "a&field": { type: 'string' },
+  "a(field": { type: 'string' },
+  "a)field": { type: 'string' },
+  "a-field": { type: 'string' },
+  "a+field": { type: 'string' },
+  "a=field": { type: 'string' },
+  "a~field": { type: 'string' },
+  "a|field": { type: 'string' },
+  "a/field": { type: 'string' },
+  "a\\field": { type: 'string' },
+  "a field": { type: 'string' }
+});

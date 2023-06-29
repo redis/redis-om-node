@@ -37,8 +37,8 @@ export class Field {
   /** The JSONPath used to store this {@link Field} in a JSON document. */
   get jsonPath(): string {
     if (this.#definition.path) return this.#definition.path
-    const alias = this.#definition.alias ?? this.name
-    return this.type === 'string[]' ? `$.${alias}[*]` : `$.${alias}`
+    const alias = (this.#definition.alias ?? this.name).replace(/"/g, '\\"')
+    return this.type === 'string[]' ? `$["${alias}"][*]` : `$["${alias}"]`
   }
 
   /** The separator for string[] fields when stored in Hashes. */

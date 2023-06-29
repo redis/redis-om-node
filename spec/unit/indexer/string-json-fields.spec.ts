@@ -12,14 +12,14 @@ describe("#buildRediSearchSchema", () => {
     ["that defines an unconfigured string for a JSON", {
       schemaDef: { aField: { type: 'string' } } as SchemaDefinition,
       dataStructure: 'JSON',
-      expectedRedisSchema: { '$.aField': { AS: 'aField', type: 'TAG', SEPARATOR: '|' } },
+      expectedRedisSchema: { '$["aField"]': { AS: 'aField', type: 'TAG', SEPARATOR: '|' } },
       expectedWarning: null
     }],
 
     ["that defines an aliased string for a JSON", {
       schemaDef: { aField: { type: 'string', alias: 'anotherField' } } as SchemaDefinition,
       dataStructure: 'JSON',
-      expectedRedisSchema: { '$.anotherField': { AS: 'aField', type: 'TAG', SEPARATOR: '|' } },
+      expectedRedisSchema: { '$["anotherField"]': { AS: 'aField', type: 'TAG', SEPARATOR: '|' } },
       expectedWarning: null
     }],
 
@@ -33,42 +33,42 @@ describe("#buildRediSearchSchema", () => {
     ["that defines an unsorted string for a JSON", {
       schemaDef: { aField: { type: 'string', sortable: false } } as SchemaDefinition,
       dataStructure: 'JSON',
-      expectedRedisSchema: { '$.aField': { AS: 'aField', type: 'TAG', SEPARATOR: '|' } },
+      expectedRedisSchema: { '$["aField"]': { AS: 'aField', type: 'TAG', SEPARATOR: '|' } },
       expectedWarning: null
     }],
 
     ["that defines a sorted string for a JSON", {
       schemaDef: { aField: { type: 'string', sortable: true } } as SchemaDefinition,
       dataStructure: 'JSON',
-      expectedRedisSchema: { '$.aField': { AS: 'aField', type: 'TAG', SEPARATOR: '|' } },
+      expectedRedisSchema: { '$["aField"]': { AS: 'aField', type: 'TAG', SEPARATOR: '|' } },
       expectedWarning: "You have marked a string field as sortable but RediSearch doesn't support the SORTABLE argument on a TAG for JSON. Ignored."
     }],
 
     ["that defines a separated string for a JSON", {
       schemaDef: { aField: { type: 'string', separator: ',' } } as SchemaDefinition,
       dataStructure: 'JSON',
-      expectedRedisSchema: { '$.aField': { AS: 'aField', type: 'TAG', SEPARATOR: ',' } },
+      expectedRedisSchema: { '$["aField"]': { AS: 'aField', type: 'TAG', SEPARATOR: ',' } },
       expectedWarning: null
     }],
 
     ["that defines an indexed string for a JSON", {
       schemaDef: { aField: { type: 'string', indexed: true } } as SchemaDefinition,
       dataStructure: 'JSON',
-      expectedRedisSchema: { '$.aField': { AS: 'aField', type: 'TAG', SEPARATOR: '|' } },
+      expectedRedisSchema: { '$["aField"]': { AS: 'aField', type: 'TAG', SEPARATOR: '|' } },
       expectedWarning: null
     }],
 
     ["that defines an unindexed string for a JSON", {
       schemaDef: { aField: { type: 'string', indexed: false } } as SchemaDefinition,
       dataStructure: 'JSON',
-      expectedRedisSchema: { '$.aField': { AS: 'aField', type: 'TAG', SEPARATOR: '|', NOINDEX: true } },
+      expectedRedisSchema: { '$["aField"]': { AS: 'aField', type: 'TAG', SEPARATOR: '|', NOINDEX: true } },
       expectedWarning: null
     }],
 
     ["that defines a caseSensitive string for a JSON", {
       schemaDef: { aField: { type: 'string', caseSensitive: true } } as SchemaDefinition,
       dataStructure: 'JSON',
-      expectedRedisSchema: { '$.aField': { AS: 'aField', type: 'TAG', SEPARATOR: '|', CASESENSITIVE: true } },
+      expectedRedisSchema: { '$["aField"]': { AS: 'aField', type: 'TAG', SEPARATOR: '|', CASESENSITIVE: true } },
       expectedWarning: null
     }],
 

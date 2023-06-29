@@ -8,13 +8,13 @@ describe("#buildRediSearchSchema", () => {
     ["that defines an unconfigured date for a JSON", {
       schemaDef: { aField: { type: 'date' } } as SchemaDefinition,
       dataStructure: 'JSON',
-      expectedRedisSchema: { '$.aField': { AS: 'aField', type: 'NUMERIC' } }
+      expectedRedisSchema: { '$["aField"]': { AS: 'aField', type: 'NUMERIC' } }
     }],
 
     ["that defines an aliased date for a JSON", {
       schemaDef: { aField: { type: 'date', alias: 'anotherField' } } as SchemaDefinition,
       dataStructure: 'JSON',
-      expectedRedisSchema: { '$.anotherField': { AS: 'aField', type: 'NUMERIC' } }
+      expectedRedisSchema: { '$["anotherField"]': { AS: 'aField', type: 'NUMERIC' } }
     }],
 
     ["that defines an pathed date for a JSON", {
@@ -26,25 +26,25 @@ describe("#buildRediSearchSchema", () => {
     ["that defines a sorted date for a JSON", {
       schemaDef: { aField: { type: 'date', sortable: true } } as SchemaDefinition,
       dataStructure: 'JSON',
-      expectedRedisSchema: { '$.aField': { AS: 'aField', type: 'NUMERIC', SORTABLE: true } }
+      expectedRedisSchema: { '$["aField"]': { AS: 'aField', type: 'NUMERIC', SORTABLE: true } }
     }],
 
     ["that defines an unsorted date for a JSON", {
       schemaDef: { aField: { type: 'date', sortable: false } } as SchemaDefinition,
       dataStructure: 'JSON',
-      expectedRedisSchema: { '$.aField': { AS: 'aField', type: 'NUMERIC' } }
+      expectedRedisSchema: { '$["aField"]': { AS: 'aField', type: 'NUMERIC' } }
     }],
 
     ["that defines an indexed date for a JSON", {
       schemaDef: { aField: { type: 'date', indexed: true } } as SchemaDefinition,
       dataStructure: 'JSON',
-      expectedRedisSchema: { '$.aField': { AS: 'aField', type: 'NUMERIC' } }
+      expectedRedisSchema: { '$["aField"]': { AS: 'aField', type: 'NUMERIC' } }
     }],
 
     ["that defines an indexed date for a JSON", {
       schemaDef: { aField: { type: 'date', indexed: false } } as SchemaDefinition,
       dataStructure: 'JSON',
-      expectedRedisSchema: { '$.aField': { AS: 'aField', type: 'NUMERIC', NOINDEX: true } }
+      expectedRedisSchema: { '$["aField"]': { AS: 'aField', type: 'NUMERIC', NOINDEX: true } }
     }],
 
     ["that defines a fully configured date for a JSON", {
