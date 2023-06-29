@@ -58,6 +58,18 @@ describe("Field", () => {
   })
 
   describe.each([
+    ['configured with a space in the field name', 'foo bar', { expectedField: 'foo bar', expectedPath: '$["foo bar"]' }],
+    ['configured with a dot in the field name', 'foo.bar', { expectedField: 'foo.bar', expectedPath: '$["foo.bar"]' }],
+    ['configured with a quote in the field name', 'foo"bar', { expectedField: 'foo"bar', expectedPath: '$["foo\\"bar"]' }],
+  ])('%s', (_, providedFieldName, { expectedField, expectedPath } ) => {
+
+    beforeEach(() => { field = new Field(providedFieldName, { type: 'string'}) })
+
+    it("has the name as the Hash field", () => expect(field.hashField).toBe(expectedField))
+    it("has the name as a root JSON path", () => expect(field.jsonPath).toBe(expectedPath))
+  })
+
+  describe.each([
     ['sortable', true],
     ['sortable', false],
     ['caseSensitive', true],
