@@ -61,6 +61,7 @@ describe("Field", () => {
     ['configured with a space in the field name', 'foo bar', { expectedField: 'foo bar', expectedPath: '$["foo bar"]' }],
     ['configured with a dot in the field name', 'foo.bar', { expectedField: 'foo.bar', expectedPath: '$["foo.bar"]' }],
     ['configured with a quote in the field name', 'foo"bar', { expectedField: 'foo"bar', expectedPath: '$["foo\\"bar"]' }],
+    ['configured with a slash in the field name', 'foo\\bar', { expectedField: 'foo\\bar', expectedPath: '$["foo\\bar"]' }],
   ])('%s', (_, providedFieldName, { expectedField, expectedPath } ) => {
 
     beforeEach(() => { field = new Field(providedFieldName, { type: 'string'}) })
