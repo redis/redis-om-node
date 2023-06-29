@@ -8,13 +8,13 @@ describe("#buildRediSearchSchema", () => {
     ["that defines an unconfigured array for a JSON", {
       schemaDef: { aField: { type: 'string[]' } } as SchemaDefinition,
       dataStructure: 'JSON',
-      expectedRedisSchema: { '$.aField[*]': { AS: 'aField', type: 'TAG', SEPARATOR: '|' } }
+      expectedRedisSchema: { '$["aField"][*]': { AS: 'aField', type: 'TAG', SEPARATOR: '|' } }
     }],
 
     ["that defines an aliased array for a JSON", {
       schemaDef: { aField: { type: 'string[]', alias: 'anotherField' } } as SchemaDefinition,
       dataStructure: 'JSON',
-      expectedRedisSchema: { '$.anotherField[*]': { AS: 'aField', type: 'TAG', SEPARATOR: '|' } }
+      expectedRedisSchema: { '$["anotherField"][*]': { AS: 'aField', type: 'TAG', SEPARATOR: '|' } }
     }],
 
     ["that defines a pathed array for a JSON", {
@@ -26,13 +26,13 @@ describe("#buildRediSearchSchema", () => {
     ["that defines an indexed array for a JSON", {
       schemaDef: { aField: { type: 'string[]', indexed: true } } as SchemaDefinition,
       dataStructure: 'JSON',
-      expectedRedisSchema: { '$.aField[*]': { AS: 'aField', type: 'TAG', SEPARATOR: '|' } }
+      expectedRedisSchema: { '$["aField"][*]': { AS: 'aField', type: 'TAG', SEPARATOR: '|' } }
     }],
 
     ["that defines an unindexed array for a JSON", {
       schemaDef: { aField: { type: 'string[]', indexed: false } } as SchemaDefinition,
       dataStructure: 'JSON',
-      expectedRedisSchema: { '$.aField[*]': { AS: 'aField', type: 'TAG', SEPARATOR: '|', NOINDEX: true } }
+      expectedRedisSchema: { '$["aField"][*]': { AS: 'aField', type: 'TAG', SEPARATOR: '|', NOINDEX: true } }
     }],
 
     ["that defines a fully-configured array for a JSON", {

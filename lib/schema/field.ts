@@ -38,7 +38,7 @@ export class Field {
   get jsonPath(): string {
     if (this.#definition.path) return this.#definition.path
     const alias = this.#definition.alias ?? this.name
-    return this.type === 'string[]' ? `$.${alias}[*]` : `$.${alias}`
+    return this.type === 'string[]' ? `$["${alias}"][*]` : `$["${alias}"]`
   }
 
   /** The separator for string[] fields when stored in Hashes. */

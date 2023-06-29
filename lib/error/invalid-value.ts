@@ -8,7 +8,7 @@ export class NullJsonValue extends InvalidValue {
   #field
 
   constructor(field: Field) {
-    const message = `Null or undefined found in field '${field.name}' of type '${field.type}' from JSON path "${field.jsonPath}" in Redis.`
+    const message = `Null or undefined found in field '${field.name}' of type '${field.type}' from JSON path '${field.jsonPath}' in Redis.`
     super(message)
     this.#field = field
   }
@@ -23,7 +23,7 @@ export class InvalidJsonValue extends InvalidValue {
   #field
 
   constructor(field: Field) {
-    const message = `Unexpected value for field '${field.name}' of type '${field.type}' from JSON path "${field.jsonPath}" in Redis.`
+    const message = `Unexpected value for field '${field.name}' of type '${field.type}' from JSON path '${field.jsonPath}' in Redis.`
     super(message)
     this.#field = field
   }
@@ -38,7 +38,7 @@ export class InvalidHashValue extends InvalidValue {
   #field
 
   constructor(field: Field) {
-    const message = `Unexpected value for field '${field.name}' of type '${field.type}' from Hash field "${field.hashField}" read from Redis.`
+    const message = `Unexpected value for field '${field.name}' of type '${field.type}' from Hash field '${field.hashField}' read from Redis.`
     super(message)
     this.#field = field
   }

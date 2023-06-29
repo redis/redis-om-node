@@ -12,14 +12,14 @@ describe("#buildRediSearchSchema", () => {
     ["that defines an unconfigured boolean for a JSON", {
       schemaDef: { aField: { type: 'boolean' } } as SchemaDefinition,
       dataStructure: 'JSON',
-      expectedRedisSchema: { '$.aField': { AS: 'aField', type: 'TAG' } },
+      expectedRedisSchema: { '$["aField"]': { AS: 'aField', type: 'TAG' } },
       expectedWarning: null
     }],
 
     ["that defines an aliased boolean for a JSON", {
       schemaDef: { aField: { type: 'boolean', alias: 'anotherField' } } as SchemaDefinition,
       dataStructure: 'JSON',
-      expectedRedisSchema: { '$.anotherField': { AS: 'aField', type: 'TAG' } },
+      expectedRedisSchema: { '$["anotherField"]': { AS: 'aField', type: 'TAG' } },
       expectedWarning: null
     }],
 
@@ -33,28 +33,28 @@ describe("#buildRediSearchSchema", () => {
     ["that defines a sorted boolean for a JSON", {
       schemaDef: { aField: { type: 'boolean', sortable: true } } as SchemaDefinition,
       dataStructure: 'JSON',
-      expectedRedisSchema: { '$.aField': { AS: 'aField', type: 'TAG' } },
+      expectedRedisSchema: { '$["aField"]': { AS: 'aField', type: 'TAG' } },
       expectedWarning: "You have marked a boolean field as sortable but RediSearch doesn't support the SORTABLE argument on a TAG for JSON. Ignored."
     }],
 
     ["that defines an unsorted boolean for a JSON", {
       schemaDef: { aField: { type: 'boolean', sortable: false } } as SchemaDefinition,
       dataStructure: 'JSON',
-      expectedRedisSchema: { '$.aField': { AS: 'aField', type: 'TAG' } },
+      expectedRedisSchema: { '$["aField"]': { AS: 'aField', type: 'TAG' } },
       expectedWarning: null
     }],
 
     ["that defines an indexed boolean for a JSON", {
       schemaDef: { aField: { type: 'boolean', indexed: true } } as SchemaDefinition,
       dataStructure: 'JSON',
-      expectedRedisSchema: { '$.aField': { AS: 'aField', type: 'TAG' } },
+      expectedRedisSchema: { '$["aField"]': { AS: 'aField', type: 'TAG' } },
       expectedWarning: null
     }],
 
     ["that defines an unidexed boolean for a JSON", {
       schemaDef: { aField: { type: 'boolean', indexed: false } } as SchemaDefinition,
       dataStructure: 'JSON',
-      expectedRedisSchema: { '$.aField': { AS: 'aField', type: 'TAG', NOINDEX: true } },
+      expectedRedisSchema: { '$["aField"]': { AS: 'aField', type: 'TAG', NOINDEX: true } },
       expectedWarning: null
     }],
 

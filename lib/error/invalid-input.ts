@@ -8,7 +8,7 @@ export class NullJsonInput extends InvalidInput {
   #field
 
   constructor(field: Field) {
-    const message = `Null or undefined found in field '${field.name}' of type '${field.type}' in JSON at "${field.jsonPath}".`
+    const message = `Null or undefined found in field '${field.name}' of type '${field.type}' in JSON at '${field.jsonPath}'.`
     super(message)
     this.#field = field
   }
@@ -23,7 +23,7 @@ export class InvalidJsonInput extends InvalidInput {
   #field
 
   constructor(field: Field) {
-    const message = `Unexpected value for field '${field.name}' of type '${field.type}' in JSON at "${field.jsonPath}".`
+    const message = `Unexpected value for field '${field.name}' of type '${field.type}' in JSON at '${field.jsonPath}'.`
     super(message)
     this.#field = field
   }
