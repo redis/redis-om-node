@@ -102,6 +102,18 @@ const albums = await repository.search()
 
 Pretty cool, right? Read on for details.
 
+> ## ⚠️ Warning: This Version Has Breaking Changes from 0.3.6
+>
+> Redis OM 0.4 is new, improved, and includes breaking changes. If you're trying it for the first time, no worries. Just follow what's in this README and you'll be fine.
+>
+> However, you might be a user of Redis OM already. If that is the case, you'll want to review this document to understand those changes.
+>
+> Of course, you don't have to upgrade. If this is you, you'll want to check out [the README for that version](https://www.npmjs.com/package/redis-om/v/0.3.6) over on NPM.
+>
+> However, I hope you choose to try to try the new version. It has many changes that have been frequently requested that are documented in the [CHANGELOG](CHANGELOG). And more, *non-breaking* changes will follow these.
+>
+
+
 ## Getting Started
 
 First things first, get yourself a Node.js project. There are lots of ways to do this, but I'm gonna go with a classic:
@@ -110,13 +122,7 @@ First things first, get yourself a Node.js project. There are lots of ways to do
 
 Once you have that sweet, sweet `package.json`, let's add our newest favorite package to it:
 
-    $ npm install redis-om@beta
-
-> ### ⚠️ Author's Note
->
-> You might have noticed that there is a `@beta` on that `npm install redis-om` command. That's because _this_ README is for Redis OM 0.4.0-beta. You should totally try it out as I biasedly think it's pretty awesome. However, you might be looking to use the current production preview (i.e. version 0.3.6). If so, you'll want to check out [the README for that version](https://www.npmjs.com/package/redis-om/v/0.3.6) over on NPM.
->
-> If you're already using the current production preview and _want_ to try the new beta, firstly, a hearty thank you from me. But secondly, know that there are several breaking changes that you can read about in the [CHANGELOG](CHANGELOG).
+    $ npm install redis-om
 
 Redis OM for Node.js uses [Node Redis](https://github.com/redis/node-redis). So you should install that too:
 
