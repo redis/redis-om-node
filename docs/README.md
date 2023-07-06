@@ -93,7 +93,7 @@ All configuration properties that any field might have, regardless of type.
 
 #### Defined in
 
-[lib/schema/definitions.ts:5](https://github.com/redis/redis-om-node/blob/5777b6c/lib/schema/definitions.ts#L5)
+[lib/schema/definitions.ts:5](https://github.com/redis/redis-om-node/blob/660c639/lib/schema/definitions.ts#L5)
 
 ___
 
@@ -105,7 +105,7 @@ A field representing a boolean.
 
 #### Defined in
 
-[lib/schema/definitions.ts:78](https://github.com/redis/redis-om-node/blob/5777b6c/lib/schema/definitions.ts#L78)
+[lib/schema/definitions.ts:78](https://github.com/redis/redis-om-node/blob/660c639/lib/schema/definitions.ts#L78)
 
 ___
 
@@ -131,7 +131,7 @@ A function that defines a circle for `.inCircle` searches.
 
 #### Defined in
 
-[lib/search/where-point.ts:8](https://github.com/redis/redis-om-node/blob/5777b6c/lib/search/where-point.ts#L8)
+[lib/search/where-point.ts:8](https://github.com/redis/redis-om-node/blob/660c639/lib/search/where-point.ts#L8)
 
 ___
 
@@ -143,7 +143,7 @@ The configuration properties that all fields have in common.
 
 #### Defined in
 
-[lib/schema/definitions.ts:75](https://github.com/redis/redis-om-node/blob/5777b6c/lib/schema/definitions.ts#L75)
+[lib/schema/definitions.ts:75](https://github.com/redis/redis-om-node/blob/660c639/lib/schema/definitions.ts#L75)
 
 ___
 
@@ -155,7 +155,7 @@ The type of data structure in Redis to map objects to.
 
 #### Defined in
 
-[lib/schema/options.ts:2](https://github.com/redis/redis-om-node/blob/5777b6c/lib/schema/options.ts#L2)
+[lib/schema/options.ts:2](https://github.com/redis/redis-om-node/blob/660c639/lib/schema/options.ts#L2)
 
 ___
 
@@ -167,7 +167,7 @@ A field representing a date/time.
 
 #### Defined in
 
-[lib/schema/definitions.ts:83](https://github.com/redis/redis-om-node/blob/5777b6c/lib/schema/definitions.ts#L83)
+[lib/schema/definitions.ts:83](https://github.com/redis/redis-om-node/blob/660c639/lib/schema/definitions.ts#L83)
 
 ___
 
@@ -179,7 +179,7 @@ Defines the objects returned from calls to [repositories](classes/Repository.md)
 
 #### Defined in
 
-[lib/entity/entity.ts:8](https://github.com/redis/redis-om-node/blob/5777b6c/lib/entity/entity.ts#L8)
+[lib/entity/entity.ts:8](https://github.com/redis/redis-om-node/blob/660c639/lib/entity/entity.ts#L8)
 
 ___
 
@@ -195,7 +195,7 @@ The free-form data associated with an [Entity](README.md#entity).
 
 #### Defined in
 
-[lib/entity/entity.ts:18](https://github.com/redis/redis-om-node/blob/5777b6c/lib/entity/entity.ts#L18)
+[lib/entity/entity.ts:18](https://github.com/redis/redis-om-node/blob/660c639/lib/entity/entity.ts#L18)
 
 ___
 
@@ -207,7 +207,7 @@ Valid types for values in an [Entity](README.md#entity).
 
 #### Defined in
 
-[lib/entity/entity.ts:23](https://github.com/redis/redis-om-node/blob/5777b6c/lib/entity/entity.ts#L23)
+[lib/entity/entity.ts:23](https://github.com/redis/redis-om-node/blob/660c639/lib/entity/entity.ts#L23)
 
 ___
 
@@ -219,7 +219,7 @@ Contains instructions telling how to map a property on an [Entity](README.md#ent
 
 #### Defined in
 
-[lib/schema/definitions.ts:112](https://github.com/redis/redis-om-node/blob/5777b6c/lib/schema/definitions.ts#L112)
+[lib/schema/definitions.ts:112](https://github.com/redis/redis-om-node/blob/660c639/lib/schema/definitions.ts#L112)
 
 ___
 
@@ -231,7 +231,7 @@ Valid field types for a [FieldDefinition](README.md#fielddefinition).
 
 #### Defined in
 
-[lib/schema/definitions.ts:2](https://github.com/redis/redis-om-node/blob/5777b6c/lib/schema/definitions.ts#L2)
+[lib/schema/definitions.ts:2](https://github.com/redis/redis-om-node/blob/660c639/lib/schema/definitions.ts#L2)
 
 ___
 
@@ -251,7 +251,7 @@ A function that generates random entityIds.
 
 #### Defined in
 
-[lib/schema/options.ts:5](https://github.com/redis/redis-om-node/blob/5777b6c/lib/schema/options.ts#L5)
+[lib/schema/options.ts:5](https://github.com/redis/redis-om-node/blob/660c639/lib/schema/options.ts#L5)
 
 ___
 
@@ -263,7 +263,7 @@ A field representing a number.
 
 #### Defined in
 
-[lib/schema/definitions.ts:88](https://github.com/redis/redis-om-node/blob/5777b6c/lib/schema/definitions.ts#L88)
+[lib/schema/definitions.ts:88](https://github.com/redis/redis-om-node/blob/660c639/lib/schema/definitions.ts#L88)
 
 ___
 
@@ -282,7 +282,7 @@ Defines a point on the globe using longitude and latitude.
 
 #### Defined in
 
-[lib/entity/entity.ts:26](https://github.com/redis/redis-om-node/blob/5777b6c/lib/entity/entity.ts#L26)
+[lib/entity/entity.ts:26](https://github.com/redis/redis-om-node/blob/660c639/lib/entity/entity.ts#L26)
 
 ___
 
@@ -294,7 +294,7 @@ A field representing a point on the globe.
 
 #### Defined in
 
-[lib/schema/definitions.ts:93](https://github.com/redis/redis-om-node/blob/5777b6c/lib/schema/definitions.ts#L93)
+[lib/schema/definitions.ts:93](https://github.com/redis/redis-om-node/blob/660c639/lib/schema/definitions.ts#L93)
 
 ___
 
@@ -306,7 +306,7 @@ A conventional Redis connection.
 
 #### Defined in
 
-[lib/client/client.ts:8](https://github.com/redis/redis-om-node/blob/5777b6c/lib/client/client.ts#L8)
+[lib/client/client.ts:8](https://github.com/redis/redis-om-node/blob/660c639/lib/client/client.ts#L8)
 
 ___
 
@@ -318,7 +318,7 @@ A clustered Redis connection.
 
 #### Defined in
 
-[lib/client/client.ts:11](https://github.com/redis/redis-om-node/blob/5777b6c/lib/client/client.ts#L11)
+[lib/client/client.ts:11](https://github.com/redis/redis-om-node/blob/660c639/lib/client/client.ts#L11)
 
 ___
 
@@ -330,7 +330,7 @@ A Redis connection, clustered or conventional.
 
 #### Defined in
 
-[lib/client/client.ts:14](https://github.com/redis/redis-om-node/blob/5777b6c/lib/client/client.ts#L14)
+[lib/client/client.ts:14](https://github.com/redis/redis-om-node/blob/660c639/lib/client/client.ts#L14)
 
 ___
 
@@ -342,7 +342,7 @@ Group of [FieldDefinition](README.md#fielddefinition)s that define the schema fo
 
 #### Defined in
 
-[lib/schema/definitions.ts:118](https://github.com/redis/redis-om-node/blob/5777b6c/lib/schema/definitions.ts#L118)
+[lib/schema/definitions.ts:118](https://github.com/redis/redis-om-node/blob/660c639/lib/schema/definitions.ts#L118)
 
 ___
 
@@ -365,7 +365,7 @@ Configuration options for a [Schema](classes/Schema.md).
 
 #### Defined in
 
-[lib/schema/options.ts:11](https://github.com/redis/redis-om-node/blob/5777b6c/lib/schema/options.ts#L11)
+[lib/schema/options.ts:11](https://github.com/redis/redis-om-node/blob/660c639/lib/schema/options.ts#L11)
 
 ___
 
@@ -377,7 +377,7 @@ Valid values for how to use stop words for a given [Schema](classes/Schema.md).
 
 #### Defined in
 
-[lib/schema/options.ts:8](https://github.com/redis/redis-om-node/blob/5777b6c/lib/schema/options.ts#L8)
+[lib/schema/options.ts:8](https://github.com/redis/redis-om-node/blob/660c639/lib/schema/options.ts#L8)
 
 ___
 
@@ -389,7 +389,7 @@ A field representing an array of strings.
 
 #### Defined in
 
-[lib/schema/definitions.ts:97](https://github.com/redis/redis-om-node/blob/5777b6c/lib/schema/definitions.ts#L97)
+[lib/schema/definitions.ts:97](https://github.com/redis/redis-om-node/blob/660c639/lib/schema/definitions.ts#L97)
 
 ___
 
@@ -401,7 +401,7 @@ A field representing a whole string.
 
 #### Defined in
 
-[lib/schema/definitions.ts:102](https://github.com/redis/redis-om-node/blob/5777b6c/lib/schema/definitions.ts#L102)
+[lib/schema/definitions.ts:102](https://github.com/redis/redis-om-node/blob/660c639/lib/schema/definitions.ts#L102)
 
 ___
 
@@ -427,7 +427,7 @@ A function that takes a [Search](classes/Search.md) and returns a [Search](class
 
 #### Defined in
 
-[lib/search/search.ts:26](https://github.com/redis/redis-om-node/blob/5777b6c/lib/search/search.ts#L26)
+[lib/search/search.ts:26](https://github.com/redis/redis-om-node/blob/660c639/lib/search/search.ts#L26)
 
 ___
 
@@ -439,7 +439,7 @@ A field representing searchable text.
 
 #### Defined in
 
-[lib/schema/definitions.ts:107](https://github.com/redis/redis-om-node/blob/5777b6c/lib/schema/definitions.ts#L107)
+[lib/schema/definitions.ts:107](https://github.com/redis/redis-om-node/blob/660c639/lib/schema/definitions.ts#L107)
 
 ## Variables
 
@@ -451,7 +451,7 @@ The Symbol used to access the entity ID of an [Entity](README.md#entity).
 
 #### Defined in
 
-[lib/entity/entity.ts:2](https://github.com/redis/redis-om-node/blob/5777b6c/lib/entity/entity.ts#L2)
+[lib/entity/entity.ts:2](https://github.com/redis/redis-om-node/blob/660c639/lib/entity/entity.ts#L2)
 
 ___
 
@@ -463,4 +463,4 @@ The Symbol used to access the keyname of an [Entity](README.md#entity).
 
 #### Defined in
 
-[lib/entity/entity.ts:5](https://github.com/redis/redis-om-node/blob/5777b6c/lib/entity/entity.ts#L5)
+[lib/entity/entity.ts:5](https://github.com/redis/redis-om-node/blob/660c639/lib/entity/entity.ts#L5)

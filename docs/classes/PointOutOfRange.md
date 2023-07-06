@@ -49,7 +49,7 @@
 
 #### Defined in
 
-[lib/error/point-out-of-range.ts:9](https://github.com/redis/redis-om-node/blob/5777b6c/lib/error/point-out-of-range.ts#L9)
+[lib/error/point-out-of-range.ts:9](https://github.com/redis/redis-om-node/blob/660c639/lib/error/point-out-of-range.ts#L9)
 
 ## Properties
 
@@ -173,7 +173,7 @@ node_modules/@types/node/globals.d.ts:13
 
 #### Defined in
 
-[lib/error/point-out-of-range.ts:15](https://github.com/redis/redis-om-node/blob/5777b6c/lib/error/point-out-of-range.ts#L15)
+[lib/error/point-out-of-range.ts:15](https://github.com/redis/redis-om-node/blob/660c639/lib/error/point-out-of-range.ts#L15)
 
 ## Methods
 
