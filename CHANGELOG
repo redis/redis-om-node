@@ -4,7 +4,7 @@
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and Redis OM adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## 0.4.0 - 2023-06-28
+## 0.4.0 - 2023-07-06
 ### Added
 - Added methods to *Repository* to allow you to provide your own *entityId* instead of relying on a generated one.
 - Added support for Redis clustering by passing in a Node Redis connection created with `createCluster`.

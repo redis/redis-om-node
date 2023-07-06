@@ -71,7 +71,7 @@ this multiple times will have no effect.
 
 #### Defined in
 
-[lib/search/where-field.ts:92](https://github.com/redis/redis-om-node/blob/5777b6c/lib/search/where-field.ts#L92)
+[lib/search/where-field.ts:92](https://github.com/redis/redis-om-node/blob/660c639/lib/search/where-field.ts#L92)
 
 ___
 
@@ -84,7 +84,7 @@ this multiple times will have no effect.
 
 #### Defined in
 
-[lib/search/where-field.ts:99](https://github.com/redis/redis-om-node/blob/5777b6c/lib/search/where-field.ts#L99)
+[lib/search/where-field.ts:99](https://github.com/redis/redis-om-node/blob/660c639/lib/search/where-field.ts#L99)
 
 ## Accessors
 
@@ -102,7 +102,7 @@ this
 
 #### Defined in
 
-[lib/search/where-field.ts:289](https://github.com/redis/redis-om-node/blob/5777b6c/lib/search/where-field.ts#L289)
+[lib/search/where-field.ts:289](https://github.com/redis/redis-om-node/blob/660c639/lib/search/where-field.ts#L289)
 
 ___
 
@@ -120,7 +120,7 @@ this
 
 #### Defined in
 
-[lib/search/where-field.ts:281](https://github.com/redis/redis-om-node/blob/5777b6c/lib/search/where-field.ts#L281)
+[lib/search/where-field.ts:281](https://github.com/redis/redis-om-node/blob/660c639/lib/search/where-field.ts#L281)
 
 ___
 
@@ -139,7 +139,7 @@ this
 
 #### Defined in
 
-[lib/search/where-field.ts:298](https://github.com/redis/redis-om-node/blob/5777b6c/lib/search/where-field.ts#L298)
+[lib/search/where-field.ts:298](https://github.com/redis/redis-om-node/blob/660c639/lib/search/where-field.ts#L298)
 
 ## Methods
 
@@ -163,7 +163,7 @@ The [Search](Search.md) that was called to create this [WhereField](WhereField.m
 
 #### Defined in
 
-[lib/search/where-field.ts:240](https://github.com/redis/redis-om-node/blob/5777b6c/lib/search/where-field.ts#L240)
+[lib/search/where-field.ts:240](https://github.com/redis/redis-om-node/blob/660c639/lib/search/where-field.ts#L240)
 
 ___
 
@@ -187,7 +187,7 @@ The [Search](Search.md) that was called to create this [WhereField](WhereField.m
 
 #### Defined in
 
-[lib/search/where-field.ts:233](https://github.com/redis/redis-om-node/blob/5777b6c/lib/search/where-field.ts#L233)
+[lib/search/where-field.ts:233](https://github.com/redis/redis-om-node/blob/660c639/lib/search/where-field.ts#L233)
 
 ___
 
@@ -212,7 +212,7 @@ The [Search](Search.md) that was called to create this [WhereField](WhereField.m
 
 #### Defined in
 
-[lib/search/where-field.ts:175](https://github.com/redis/redis-om-node/blob/5777b6c/lib/search/where-field.ts#L175)
+[lib/search/where-field.ts:175](https://github.com/redis/redis-om-node/blob/660c639/lib/search/where-field.ts#L175)
 
 ___
 
@@ -236,7 +236,7 @@ The [Search](Search.md) that was called to create this [WhereField](WhereField.m
 
 #### Defined in
 
-[lib/search/where-field.ts:182](https://github.com/redis/redis-om-node/blob/5777b6c/lib/search/where-field.ts#L182)
+[lib/search/where-field.ts:182](https://github.com/redis/redis-om-node/blob/660c639/lib/search/where-field.ts#L182)
 
 ___
 
@@ -261,7 +261,7 @@ The [Search](Search.md) that was called to create this [WhereField](WhereField.m
 
 #### Defined in
 
-[lib/search/where-field.ts:197](https://github.com/redis/redis-om-node/blob/5777b6c/lib/search/where-field.ts#L197)
+[lib/search/where-field.ts:197](https://github.com/redis/redis-om-node/blob/660c639/lib/search/where-field.ts#L197)
 
 ___
 
@@ -285,7 +285,7 @@ The [Search](Search.md) that was called to create this [WhereField](WhereField.m
 
 #### Defined in
 
-[lib/search/where-field.ts:189](https://github.com/redis/redis-om-node/blob/5777b6c/lib/search/where-field.ts#L189)
+[lib/search/where-field.ts:189](https://github.com/redis/redis-om-node/blob/660c639/lib/search/where-field.ts#L189)
 
 ___
 
@@ -310,7 +310,7 @@ The [Search](Search.md) that was called to create this [WhereField](WhereField.m
 
 #### Defined in
 
-[lib/search/where-field.ts:205](https://github.com/redis/redis-om-node/blob/5777b6c/lib/search/where-field.ts#L205)
+[lib/search/where-field.ts:205](https://github.com/redis/redis-om-node/blob/660c639/lib/search/where-field.ts#L205)
 
 ___
 
@@ -337,7 +337,7 @@ The [Search](Search.md) that was called to create this [WhereField](WhereField.m
 
 #### Defined in
 
-[lib/search/where-field.ts:20](https://github.com/redis/redis-om-node/blob/5777b6c/lib/search/where-field.ts#L20)
+[lib/search/where-field.ts:20](https://github.com/redis/redis-om-node/blob/660c639/lib/search/where-field.ts#L20)
 
 ___
 
@@ -364,7 +364,7 @@ The [Search](Search.md) that was called to create this [WhereField](WhereField.m
 
 #### Defined in
 
-[lib/search/where-field.ts:30](https://github.com/redis/redis-om-node/blob/5777b6c/lib/search/where-field.ts#L30)
+[lib/search/where-field.ts:30](https://github.com/redis/redis-om-node/blob/660c639/lib/search/where-field.ts#L30)
 
 ___
 
@@ -391,7 +391,7 @@ The [Search](Search.md) that was called to create this [WhereField](WhereField.m
 
 #### Defined in
 
-[lib/search/where-field.ts:50](https://github.com/redis/redis-om-node/blob/5777b6c/lib/search/where-field.ts#L50)
+[lib/search/where-field.ts:50](https://github.com/redis/redis-om-node/blob/660c639/lib/search/where-field.ts#L50)
 
 ___
 
@@ -418,7 +418,7 @@ The [Search](Search.md) that was called to create this [WhereField](WhereField.m
 
 #### Defined in
 
-[lib/search/where-field.ts:40](https://github.com/redis/redis-om-node/blob/5777b6c/lib/search/where-field.ts#L40)
+[lib/search/where-field.ts:40](https://github.com/redis/redis-om-node/blob/660c639/lib/search/where-field.ts#L40)
 
 ___
 
@@ -436,7 +436,7 @@ The [Search](Search.md) that was called to create this [WhereField](WhereField.m
 
 #### Defined in
 
-[lib/search/where-field.ts:111](https://github.com/redis/redis-om-node/blob/5777b6c/lib/search/where-field.ts#L111)
+[lib/search/where-field.ts:111](https://github.com/redis/redis-om-node/blob/660c639/lib/search/where-field.ts#L111)
 
 ___
 
@@ -460,7 +460,7 @@ The [Search](Search.md) that was called to create this [WhereField](WhereField.m
 
 #### Defined in
 
-[lib/search/where-field.ts:125](https://github.com/redis/redis-om-node/blob/5777b6c/lib/search/where-field.ts#L125)
+[lib/search/where-field.ts:125](https://github.com/redis/redis-om-node/blob/660c639/lib/search/where-field.ts#L125)
 
 ___
 
@@ -484,7 +484,7 @@ The [Search](Search.md) that was called to create this [WhereField](WhereField.m
 
 #### Defined in
 
-[lib/search/where-field.ts:139](https://github.com/redis/redis-om-node/blob/5777b6c/lib/search/where-field.ts#L139)
+[lib/search/where-field.ts:139](https://github.com/redis/redis-om-node/blob/660c639/lib/search/where-field.ts#L139)
 
 ___
 
@@ -508,7 +508,7 @@ The [Search](Search.md) that was called to create this [WhereField](WhereField.m
 
 #### Defined in
 
-[lib/search/where-field.ts:118](https://github.com/redis/redis-om-node/blob/5777b6c/lib/search/where-field.ts#L118)
+[lib/search/where-field.ts:118](https://github.com/redis/redis-om-node/blob/660c639/lib/search/where-field.ts#L118)
 
 ___
 
@@ -532,7 +532,7 @@ The [Search](Search.md) that was called to create this [WhereField](WhereField.m
 
 #### Defined in
 
-[lib/search/where-field.ts:132](https://github.com/redis/redis-om-node/blob/5777b6c/lib/search/where-field.ts#L132)
+[lib/search/where-field.ts:132](https://github.com/redis/redis-om-node/blob/660c639/lib/search/where-field.ts#L132)
 
 ___
 
@@ -556,7 +556,7 @@ The [Search](Search.md) that was called to create this [WhereField](WhereField.m
 
 #### Defined in
 
-[lib/search/where-field.ts:212](https://github.com/redis/redis-om-node/blob/5777b6c/lib/search/where-field.ts#L212)
+[lib/search/where-field.ts:212](https://github.com/redis/redis-om-node/blob/660c639/lib/search/where-field.ts#L212)
 
 ___
 
@@ -580,7 +580,7 @@ The [Search](Search.md) that was called to create this [WhereField](WhereField.m
 
 #### Defined in
 
-[lib/search/where-field.ts:219](https://github.com/redis/redis-om-node/blob/5777b6c/lib/search/where-field.ts#L219)
+[lib/search/where-field.ts:219](https://github.com/redis/redis-om-node/blob/660c639/lib/search/where-field.ts#L219)
 
 ___
 
@@ -604,7 +604,7 @@ The [Search](Search.md) that was called to create this [WhereField](WhereField.m
 
 #### Defined in
 
-[lib/search/where-field.ts:153](https://github.com/redis/redis-om-node/blob/5777b6c/lib/search/where-field.ts#L153)
+[lib/search/where-field.ts:153](https://github.com/redis/redis-om-node/blob/660c639/lib/search/where-field.ts#L153)
 
 ___
 
@@ -628,7 +628,7 @@ The [Search](Search.md) that was called to create this [WhereField](WhereField.m
 
 #### Defined in
 
-[lib/search/where-field.ts:167](https://github.com/redis/redis-om-node/blob/5777b6c/lib/search/where-field.ts#L167)
+[lib/search/where-field.ts:167](https://github.com/redis/redis-om-node/blob/660c639/lib/search/where-field.ts#L167)
 
 ___
 
@@ -652,7 +652,7 @@ The [Search](Search.md) that was called to create this [WhereField](WhereField.m
 
 #### Defined in
 
-[lib/search/where-field.ts:146](https://github.com/redis/redis-om-node/blob/5777b6c/lib/search/where-field.ts#L146)
+[lib/search/where-field.ts:146](https://github.com/redis/redis-om-node/blob/660c639/lib/search/where-field.ts#L146)
 
 ___
 
@@ -676,7 +676,7 @@ The [Search](Search.md) that was called to create this [WhereField](WhereField.m
 
 #### Defined in
 
-[lib/search/where-field.ts:160](https://github.com/redis/redis-om-node/blob/5777b6c/lib/search/where-field.ts#L160)
+[lib/search/where-field.ts:160](https://github.com/redis/redis-om-node/blob/660c639/lib/search/where-field.ts#L160)
 
 ___
 
@@ -700,7 +700,7 @@ The [Search](Search.md) that was called to create this [WhereField](WhereField.m
 
 #### Defined in
 
-[lib/search/where-field.ts:57](https://github.com/redis/redis-om-node/blob/5777b6c/lib/search/where-field.ts#L57)
+[lib/search/where-field.ts:57](https://github.com/redis/redis-om-node/blob/660c639/lib/search/where-field.ts#L57)
 
 ___
 
@@ -724,7 +724,7 @@ The [Search](Search.md) that was called to create this [WhereField](WhereField.m
 
 #### Defined in
 
-[lib/search/where-field.ts:71](https://github.com/redis/redis-om-node/blob/5777b6c/lib/search/where-field.ts#L71)
+[lib/search/where-field.ts:71](https://github.com/redis/redis-om-node/blob/660c639/lib/search/where-field.ts#L71)
 
 ___
 
@@ -748,7 +748,7 @@ The [Search](Search.md) that was called to create this [WhereField](WhereField.m
 
 #### Defined in
 
-[lib/search/where-field.ts:78](https://github.com/redis/redis-om-node/blob/5777b6c/lib/search/where-field.ts#L78)
+[lib/search/where-field.ts:78](https://github.com/redis/redis-om-node/blob/660c639/lib/search/where-field.ts#L78)
 
 ___
 
@@ -772,7 +772,7 @@ The [Search](Search.md) that was called to create this [WhereField](WhereField.m
 
 #### Defined in
 
-[lib/search/where-field.ts:64](https://github.com/redis/redis-om-node/blob/5777b6c/lib/search/where-field.ts#L64)
+[lib/search/where-field.ts:64](https://github.com/redis/redis-om-node/blob/660c639/lib/search/where-field.ts#L64)
 
 ___
 
@@ -796,7 +796,7 @@ The [Search](Search.md) that was called to create this [WhereField](WhereField.m
 
 #### Defined in
 
-[lib/search/where-field.ts:85](https://github.com/redis/redis-om-node/blob/5777b6c/lib/search/where-field.ts#L85)
+[lib/search/where-field.ts:85](https://github.com/redis/redis-om-node/blob/660c639/lib/search/where-field.ts#L85)
 
 ___
 
@@ -820,7 +820,7 @@ The [Search](Search.md) that was called to create this [WhereField](WhereField.m
 
 #### Defined in
 
-[lib/search/where-field.ts:226](https://github.com/redis/redis-om-node/blob/5777b6c/lib/search/where-field.ts#L226)
+[lib/search/where-field.ts:226](https://github.com/redis/redis-om-node/blob/660c639/lib/search/where-field.ts#L226)
 
 ___
 
@@ -844,7 +844,7 @@ The [Search](Search.md) that was called to create this [WhereField](WhereField.m
 
 #### Defined in
 
-[lib/search/where-field.ts:254](https://github.com/redis/redis-om-node/blob/5777b6c/lib/search/where-field.ts#L254)
+[lib/search/where-field.ts:254](https://github.com/redis/redis-om-node/blob/660c639/lib/search/where-field.ts#L254)
 
 ___
 
@@ -868,7 +868,7 @@ The [Search](Search.md) that was called to create this [WhereField](WhereField.m
 
 #### Defined in
 
-[lib/search/where-field.ts:247](https://github.com/redis/redis-om-node/blob/5777b6c/lib/search/where-field.ts#L247)
+[lib/search/where-field.ts:247](https://github.com/redis/redis-om-node/blob/660c639/lib/search/where-field.ts#L247)
 
 ___
 
@@ -888,7 +888,7 @@ Converts this [Where](Where.md) into a portion of a RediSearch query.
 
 #### Defined in
 
-[lib/search/where-field.ts:303](https://github.com/redis/redis-om-node/blob/5777b6c/lib/search/where-field.ts#L303)
+[lib/search/where-field.ts:303](https://github.com/redis/redis-om-node/blob/660c639/lib/search/where-field.ts#L303)
 
 ___
 
@@ -906,4 +906,4 @@ The [Search](Search.md) that was called to create this [WhereField](WhereField.m
 
 #### Defined in
 
-[lib/search/where-field.ts:105](https://github.com/redis/redis-om-node/blob/5777b6c/lib/search/where-field.ts#L105)
+[lib/search/where-field.ts:105](https://github.com/redis/redis-om-node/blob/660c639/lib/search/where-field.ts#L105)

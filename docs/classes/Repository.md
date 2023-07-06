@@ -71,7 +71,7 @@ Creates a new [Repository](Repository.md).
 
 #### Defined in
 
-[lib/repository/repository.ts:56](https://github.com/redis/redis-om-node/blob/5777b6c/lib/repository/repository.ts#L56)
+[lib/repository/repository.ts:56](https://github.com/redis/redis-om-node/blob/660c639/lib/repository/repository.ts#L56)
 
 ## Methods
 
@@ -89,7 +89,7 @@ RediSearch and RedisJSON are installed on your instance of Redis.
 
 #### Defined in
 
-[lib/repository/repository.ts:71](https://github.com/redis/redis-om-node/blob/5777b6c/lib/repository/repository.ts#L71)
+[lib/repository/repository.ts:71](https://github.com/redis/redis-om-node/blob/660c639/lib/repository/repository.ts#L71)
 
 ___
 
@@ -107,7 +107,7 @@ on your instance of Redis.
 
 #### Defined in
 
-[lib/repository/repository.ts:109](https://github.com/redis/redis-om-node/blob/5777b6c/lib/repository/repository.ts#L109)
+[lib/repository/repository.ts:109](https://github.com/redis/redis-om-node/blob/660c639/lib/repository/repository.ts#L109)
 
 ___
 
@@ -131,7 +131,7 @@ found, does nothing.
 
 #### Defined in
 
-[lib/repository/repository.ts:242](https://github.com/redis/redis-om-node/blob/5777b6c/lib/repository/repository.ts#L242)
+[lib/repository/repository.ts:242](https://github.com/redis/redis-om-node/blob/660c639/lib/repository/repository.ts#L242)
 
 ▸ **expire**(`ids`, `ttlInSeconds`): `Promise`<`void`\>
 
@@ -151,7 +151,7 @@ ids. If a particular [Entity](../README.md#entity) is not found, does nothing.
 
 #### Defined in
 
-[lib/repository/repository.ts:250](https://github.com/redis/redis-om-node/blob/5777b6c/lib/repository/repository.ts#L250)
+[lib/repository/repository.ts:250](https://github.com/redis/redis-om-node/blob/660c639/lib/repository/repository.ts#L250)
 
 ___
 
@@ -176,7 +176,7 @@ The matching Entity.
 
 #### Defined in
 
-[lib/repository/repository.ts:171](https://github.com/redis/redis-om-node/blob/5777b6c/lib/repository/repository.ts#L171)
+[lib/repository/repository.ts:171](https://github.com/redis/redis-om-node/blob/660c639/lib/repository/repository.ts#L171)
 
 ▸ **fetch**(`...ids`): `Promise`<[`Entity`](../README.md#entity)[]\>
 
@@ -197,7 +197,7 @@ The matching Entities.
 
 #### Defined in
 
-[lib/repository/repository.ts:180](https://github.com/redis/redis-om-node/blob/5777b6c/lib/repository/repository.ts#L180)
+[lib/repository/repository.ts:180](https://github.com/redis/redis-om-node/blob/660c639/lib/repository/repository.ts#L180)
 
 ▸ **fetch**(`ids`): `Promise`<[`Entity`](../README.md#entity)[]\>
 
@@ -218,7 +218,7 @@ The matching Entities.
 
 #### Defined in
 
-[lib/repository/repository.ts:189](https://github.com/redis/redis-om-node/blob/5777b6c/lib/repository/repository.ts#L189)
+[lib/repository/repository.ts:189](https://github.com/redis/redis-om-node/blob/660c639/lib/repository/repository.ts#L189)
 
 ___
 
@@ -241,7 +241,7 @@ not found, does nothing.
 
 #### Defined in
 
-[lib/repository/repository.ts:205](https://github.com/redis/redis-om-node/blob/5777b6c/lib/repository/repository.ts#L205)
+[lib/repository/repository.ts:205](https://github.com/redis/redis-om-node/blob/660c639/lib/repository/repository.ts#L205)
 
 ▸ **remove**(`...ids`): `Promise`<`void`\>
 
@@ -260,7 +260,7 @@ particular [Entity](../README.md#entity) is not found, does nothing.
 
 #### Defined in
 
-[lib/repository/repository.ts:213](https://github.com/redis/redis-om-node/blob/5777b6c/lib/repository/repository.ts#L213)
+[lib/repository/repository.ts:213](https://github.com/redis/redis-om-node/blob/660c639/lib/repository/repository.ts#L213)
 
 ▸ **remove**(`ids`): `Promise`<`void`\>
 
@@ -279,7 +279,7 @@ particular [Entity](../README.md#entity) is not found, does nothing.
 
 #### Defined in
 
-[lib/repository/repository.ts:221](https://github.com/redis/redis-om-node/blob/5777b6c/lib/repository/repository.ts#L221)
+[lib/repository/repository.ts:221](https://github.com/redis/redis-om-node/blob/660c639/lib/repository/repository.ts#L221)
 
 ___
 
@@ -304,7 +304,7 @@ A copy of the provided Entity with EntityId and EntityKeyName properties added.
 
 #### Defined in
 
-[lib/repository/repository.ts:134](https://github.com/redis/redis-om-node/blob/5777b6c/lib/repository/repository.ts#L134)
+[lib/repository/repository.ts:134](https://github.com/redis/redis-om-node/blob/660c639/lib/repository/repository.ts#L134)
 
 ▸ **save**(`id`, `entity`): `Promise`<[`Entity`](../README.md#entity)\>
 
@@ -325,7 +325,7 @@ A copy of the provided Entity with EntityId and EntityKeyName properties added.
 
 #### Defined in
 
-[lib/repository/repository.ts:143](https://github.com/redis/redis-om-node/blob/5777b6c/lib/repository/repository.ts#L143)
+[lib/repository/repository.ts:143](https://github.com/redis/redis-om-node/blob/660c639/lib/repository/repository.ts#L143)
 
 ___
 
@@ -344,7 +344,7 @@ A [Search](Search.md) object.
 
 #### Defined in
 
-[lib/repository/repository.ts:268](https://github.com/redis/redis-om-node/blob/5777b6c/lib/repository/repository.ts#L268)
+[lib/repository/repository.ts:268](https://github.com/redis/redis-om-node/blob/660c639/lib/repository/repository.ts#L268)
 
 ___
 
@@ -377,4 +377,4 @@ A [RawSearch](RawSearch.md) object.
 
 #### Defined in
 
-[lib/repository/repository.ts:283](https://github.com/redis/redis-om-node/blob/5777b6c/lib/repository/repository.ts#L283)
+[lib/repository/repository.ts:283](https://github.com/redis/redis-om-node/blob/660c639/lib/repository/repository.ts#L283)

@@ -49,7 +49,7 @@
 
 #### Defined in
 
-[lib/error/search-error.ts:11](https://github.com/redis/redis-om-node/blob/5777b6c/lib/error/search-error.ts#L11)
+[lib/error/search-error.ts:11](https://github.com/redis/redis-om-node/blob/660c639/lib/error/search-error.ts#L11)
 
 ## Properties
 
@@ -168,7 +168,7 @@ node_modules/@types/node/globals.d.ts:13
 
 #### Defined in
 
-[lib/error/search-error.ts:16](https://github.com/redis/redis-om-node/blob/5777b6c/lib/error/search-error.ts#L16)
+[lib/error/search-error.ts:16](https://github.com/redis/redis-om-node/blob/660c639/lib/error/search-error.ts#L16)
 
 ## Methods
 
