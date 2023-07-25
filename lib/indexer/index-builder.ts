@@ -49,13 +49,14 @@ function addJsonEntry(schema: RediSearchSchema, field: Field): RediSearchSchema 
       schema[jsonPath] = buildDateNumber(field)
       break
     case 'number':
+    case 'number[]':
       schema[jsonPath] = buildDateNumber(field)
       break
     case 'point':
       schema[jsonPath] = buildPoint(field)
       break
-    case 'string[]':
     case 'string':
+    case 'string[]':
       schema[jsonPath] = buildJsonString(field)
       break
     case 'text':

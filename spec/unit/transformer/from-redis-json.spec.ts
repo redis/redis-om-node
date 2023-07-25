@@ -6,7 +6,7 @@ import { Schema } from "$lib/schema"
 import { fromRedisJson } from "$lib/transformer"
 import { InvalidJsonValue, NullJsonValue } from '$lib/error'
 
-import { ANOTHER_STRING, A_DATE, A_DATE_EPOCH, A_DATE_EPOCH_STRING, A_NUMBER, A_NUMBER_STRING, A_POINT, A_POINT_STRING, A_STRING, A_THIRD_STRING, SOME_STRINGS, SOME_TEXT } from "../../helpers/example-data"
+import { ANOTHER_NUMBER, ANOTHER_STRING, A_DATE, A_DATE_EPOCH, A_DATE_EPOCH_STRING, A_NUMBER, A_NUMBER_STRING, A_POINT, A_POINT_STRING, A_STRING, A_THIRD_NUMBER, A_THIRD_STRING, SOME_NUMBERS, SOME_STRINGS, SOME_TEXT } from "../../helpers/example-data"
 
 describe("#fromRedisJson", () => {
 
@@ -41,7 +41,10 @@ describe("#fromRedisJson", () => {
       arrayOfText: { type: 'text', path: '$.arrayOfText[*]' },
       aStringArray: { type: 'string[]' },
       someStringsAsAnArray: { type: 'string[]', path: '$.someOtherStrings[*]' },
-      someOtherStringsAsAnArray: { type: 'string[]', path: '$.someObjects[*].aString' }
+      someOtherStringsAsAnArray: { type: 'string[]', path: '$.someObjects[*].aString' },
+      aNumberArray: { type: 'number[]' },
+      someNumbersAsAnArray: { type: 'number[]', path: '$.someOtherNumbers[*]' },
+      someOtherNumbersAsAnArray: { type: 'number[]', path: '$.someObjects[*].aNumber' }
     })
   })
 
@@ -58,8 +61,11 @@ describe("#fromRedisJson", () => {
   describe("when converting data not described in the schema", () => {
     beforeEach(() => {
       actual = fromRedisJson(schema, {
-        aTrueBoolean: true, aFalseBoolean: false,
-        aMissingNumber: A_NUMBER, aMissingDate: A_DATE_EPOCH_STRING,
+        aTrueBoolean: true,
+        aFalseBoolean: false,
+        aMissingNumber: A_NUMBER,
+        aMissingNumberArray: SOME_NUMBERS,
+        aMissingDate: A_DATE_EPOCH_STRING,
         aMissingPoint: A_POINT_STRING, aMissingString: A_STRING,
         aMissingEmptyArray: [],
         aMissingSingleArray: [ A_STRING ],
@@ -72,6 +78,7 @@ describe("#fromRedisJson", () => {
       ["leaves a true boolean as true", { aTrueBoolean: true }],
       ["leaves a false boolean as false", { aFalseBoolean: false }],
       ["leaves a number as a number", { aMissingNumber: A_NUMBER }],
+      ["leaves a number array as an array", { aMissingNumberArray: SOME_NUMBERS }],
       ["leaves a converted date as a string", { aMissingDate: A_DATE_EPOCH_STRING }],
       ["leaves a converted point as a string", { aMissingPoint: A_POINT_STRING }],
       ["leaves a string as a string", { aMissingString: A_STRING }],

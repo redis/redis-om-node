@@ -1,5 +1,5 @@
 /** Valid field types for a {@link FieldDefinition}. */
-export type FieldType = 'boolean' | 'date' | 'number' | 'point' | 'string' | 'string[]' | 'text'
+export type FieldType = 'boolean' | 'date' | 'number' | 'number[]' | 'point' | 'string' | 'string[]' | 'text'
 
 /** All configuration properties that any field might have, regardless of type. */
 export type AllFieldDefinition = {
@@ -89,17 +89,22 @@ export type NumberFieldDefinition = { type: 'number' }
   & CommonFieldDefinition
   & Pick<AllFieldDefinition, "sortable">
 
+/** A field representing an array of numbers. */
+export type NumberArrayFieldDefinition = { type: 'number[]' }
+  & CommonFieldDefinition
+  & Pick<AllFieldDefinition, "sortable">
+
 /** A field representing a point on the globe. */
 export type PointFieldDefinition = { type: 'point' }
   & CommonFieldDefinition
 
-/** A field representing an array of strings. */
-export type StringArrayFieldDefinition = { type: 'string[]' }
+/** A field representing a whole string. */
+export type StringFieldDefinition = { type: 'string' }
   & CommonFieldDefinition
   & Pick<AllFieldDefinition, "sortable" | "caseSensitive" | "normalized" | "separator">
 
-/** A field representing a whole string. */
-export type StringFieldDefinition = { type: 'string' }
+/** A field representing an array of strings. */
+export type StringArrayFieldDefinition = { type: 'string[]' }
   & CommonFieldDefinition
   & Pick<AllFieldDefinition, "sortable" | "caseSensitive" | "normalized" | "separator">
 
@@ -110,8 +115,8 @@ export type TextFieldDefinition = { type: 'text' }
 
 /** Contains instructions telling how to map a property on an {@link Entity} to Redis. */
 export type FieldDefinition =
-  BooleanFieldDefinition | DateFieldDefinition | NumberFieldDefinition |
-  PointFieldDefinition | StringArrayFieldDefinition | StringFieldDefinition |
+  BooleanFieldDefinition | DateFieldDefinition | NumberFieldDefinition | NumberArrayFieldDefinition |
+  PointFieldDefinition | StringFieldDefinition | StringArrayFieldDefinition |
   TextFieldDefinition
 
 /** Group of {@link FieldDefinition}s that define the schema for an {@link Entity}. */

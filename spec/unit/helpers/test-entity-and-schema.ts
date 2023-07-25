@@ -7,7 +7,8 @@ export const simpleSchema = new Schema("SimpleEntity", {
   aBoolean: { type: 'boolean' },
   aPoint: { type: 'point' },
   aDate: { type: 'date' },
-  someStrings: { type: 'string[]' }
+  someStrings: { type: 'string[]' },
+  someNumbers: { type: 'number[]' }
 });
 
 export const simpleHashSchema = new Schema("SimpleHashEntity", {
@@ -41,7 +42,8 @@ export const simpleJsonSchema = new Schema("SimpleJsonEntity", {
   aBoolean: { type: 'boolean' },
   aPoint: { type: 'point' },
   aDate: { type: 'date' },
-  someStrings: { type: 'string[]' }
+  someStrings: { type: 'string[]' },
+  someNumbers: { type: 'number[]' }
 }, {
   dataStructure: 'JSON'
 });
@@ -53,7 +55,8 @@ export const simpleSortableJsonSchema = new Schema("SimpleJsonEntity", {
   aBoolean: { type: 'boolean', sortable: true },
   aPoint: { type: 'point' },
   aDate: { type: 'date', sortable: true },
-  someStrings: { type: 'string[]' }
+  someStrings: { type: 'string[]' },
+  someNumbers: { type: 'number[]' }
 }, {
   dataStructure: 'JSON'
 });
@@ -65,7 +68,8 @@ export const aliasedSchema = new Schema("AliasedEntity", {
   aBoolean: { type: 'boolean', alias: 'anotherBoolean' },
   aPoint: { type: 'point', alias: 'anotherPoint' },
   aDate: { type: 'date', alias: 'anotherDate' },
-  someStrings: { type: 'string[]', alias: 'someOtherStrings' }
+  someStrings: { type: 'string[]', alias: 'someOtherStrings' },
+  someNumbers: { type: 'number[]', alias: 'someOtherNumbers' }
 });
 
 export const stopWordsOffSchema = new Schema("StopWordsOffEntity", {

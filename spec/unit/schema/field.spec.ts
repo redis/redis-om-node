@@ -31,6 +31,7 @@ describe("Field", () => {
     ['configured as a point', { type: 'point' }, { expectedField: 'foo', expectedPath: '$["foo"]' }],
     ['configured as a text', { type: 'text' }, { expectedField: 'foo', expectedPath: '$["foo"]' }],
     ['configured as a string', { type: 'string' }, { expectedField: 'foo', expectedPath: '$["foo"]' }],
+    ['configured as a number[]', { type: 'number[]' }, { expectedField: 'foo', expectedPath: '$["foo"][*]' }],
     ['configured as a string[]', { type: 'string[]' }, { expectedField: 'foo', expectedPath: '$["foo"][*]' }],
 
     /* aliased string */
