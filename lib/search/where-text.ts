@@ -6,9 +6,19 @@ import { SemanticSearchError } from "../error"
 export class WhereText extends WhereField {
   private value!: string
   private exactValue = false
+  private fuzzyMatching!: boolean
+  private levenshteinDistance!: number
 
-  match(value: string | number | boolean): Search {
+  match(
+    value: string | number | boolean,
+    options: { fuzzyMatching?: boolean; levenshteinDistance?: 1 | 2 | 3 } = {
+      fuzzyMatching: false,
+      levenshteinDistance: 1,
+    }
+  ): Search {
     this.value = value.toString()
+    this.fuzzyMatching = options.fuzzyMatching ?? false
+    this.levenshteinDistance = options.levenshteinDistance ?? 1
     return this.search
   }
 
@@ -17,7 +27,13 @@ export class WhereText extends WhereField {
     return this.search
   }
 
-  matches(value: string | number | boolean): Search { return this.match(value) }
+  matches(
+    value: string | number | boolean,
+    options: { fuzzyMatching?: boolean; levenshteinDistance?: 1 | 2 | 3 } = {
+      fuzzyMatching: false,
+      levenshteinDistance: 1,
+    }
+  ): Search { return this.match(value, options) }
   matchExactly(value: string | number | boolean): Search { return this.matchExact(value) }
   matchesExactly(value: string | number | boolean): Search { return this.matchExact(value) }
 
@@ -41,6 +57,8 @@ export class WhereText extends WhereField {
 
     if (this.exactValue) {
       return this.buildQuery(`"${escapedValue}"`)
+    } else if (this.fuzzyMatching) {
+      return this.buildQuery(`${"%".repeat(this.levenshteinDistance)}${escapedValue}${"%".repeat(this.levenshteinDistance)}`);
     } else {
       return this.buildQuery(`'${escapedValue}'`)
     }
