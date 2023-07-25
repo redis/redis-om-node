@@ -138,7 +138,7 @@ describe("#fromRedisJson", () => {
 
       // string[]
       ["leaves an empty string[] empty", { aStringArray: [] }, { aStringArray: [] }],
-      ["leaves a lonely string[] alone", { aStringArray: [ A_STRING ] }, { aStringArray: [ A_STRING] }],
+      ["leaves a lonely string[] alone", { aStringArray: [ A_STRING ] }, { aStringArray: [ A_STRING ] }],
       ["leaves a populated string[] populated", { aStringArray: SOME_STRINGS }, { aStringArray: SOME_STRINGS }],
       ["leaves a null string[] as null", { aStringArray: null }, { aStringArray: null }],
       ["leaves a string[] that doesn't contain a string[] as is", { aStringArray: 'NOT_AN_ARRAY' }, { aStringArray: 'NOT_AN_ARRAY' }],
@@ -157,6 +157,17 @@ describe("#fromRedisJson", () => {
       ["coerces numbers and booleans in a widely dispersed string[] to strings",
         { someObjects: [ { aString: A_STRING }, { aString: A_NUMBER }, { aString: true } ] },
         { someObjects: [ { aString: A_STRING }, { aString: A_NUMBER_STRING }, { aString: 'true' } ] }],
+
+      // number[]
+      ["leaves an empty number[] empty", { aNumberArray: [] }, { aNumberArray: [] }],
+      ["leaves a lonely number[] alone", { aNumberArray: [ A_NUMBER ] }, { aNumberArray: [ A_NUMBER ] }],
+      ["leaves a populated number[] populated", { aNumberArray: SOME_NUMBERS }, { aNumberArray: SOME_NUMBERS }],
+      ["leaves a null number[] as null", { aNumberArray: null }, { aNumberArray: null }],
+      ["leaves a number[] that doesn't contain a number[] as is", { aNumberArray: 'NOT_AN_ARRAY' }, { aNumberArray: 'NOT_AN_ARRAY' }],
+      ["leaves dispersed number[] as numbers", { someOtherNumbers: SOME_NUMBERS }, { someOtherNumbers: SOME_NUMBERS }],
+      ["leaves widely dispersed number[] as numbers",
+        { someObjects: [ { aNumber: A_NUMBER }, { aNumber: ANOTHER_NUMBER }, { aNumber: A_THIRD_NUMBER } ] },
+        { someObjects: [ { aNumber: A_NUMBER }, { aNumber: ANOTHER_NUMBER }, { aNumber: A_THIRD_NUMBER } ] }],
 
     ])('%s', (_, jsonData: RedisJsonData, expected) => {
       const actual = fromRedisJson(schema, jsonData)
@@ -189,14 +200,27 @@ describe("#fromRedisJson", () => {
       ["complains when pathed text is invalid", { somePathedText: SOME_STRINGS }, `Unexpected value for field 'someMoreText' of type 'text' from JSON path '$.somePathedText' in Redis.`],
       ["complains when nested text is invalid", { someNestedText: { someText: SOME_STRINGS } }, `Unexpected value for field 'someNestedText' of type 'text' from JSON path '$.someNestedText.someText' in Redis.`],
 
+      ["complains when strings are in a number[]", { aNumberArray: [ A_NUMBER, A_STRING, ANOTHER_NUMBER] }, `Unexpected value for field 'aNumberArray' of type 'number[]' from JSON path '$["aNumberArray"][*]' in Redis.`],
+      ["complains when strings are in a dispersed number[]", { someOtherNumbers: [ A_NUMBER, A_STRING, ANOTHER_NUMBER] }, `Unexpected value for field 'someNumbersAsAnArray' of type 'number[]' from JSON path '$.someOtherNumbers[*]' in Redis.`],
+      ["complains when strings are in a widely dispersed number[]", { someObjects: [ { aNumber: A_NUMBER }, { aNumber: A_STRING }, { aNumber: ANOTHER_NUMBER } ] }, `Unexpected value for field 'someOtherNumbersAsAnArray' of type 'number[]' from JSON path '$.someObjects[*].aNumber' in Redis.`],
+
+      ["complains when booleans are in a number[]", { aNumberArray: [ A_NUMBER, ANOTHER_NUMBER, true] }, `Unexpected value for field 'aNumberArray' of type 'number[]' from JSON path '$["aNumberArray"][*]' in Redis.`],
+      ["complains when booleans are in a dispersed number[]", { someOtherNumbers: [ A_NUMBER, ANOTHER_NUMBER, true] }, `Unexpected value for field 'someNumbersAsAnArray' of type 'number[]' from JSON path '$.someOtherNumbers[*]' in Redis.`],
+      ["complains when booleans are in a widely dispersed number[]", { someObjects: [ { aNumber: A_NUMBER }, { aNumber: ANOTHER_NUMBER }, { aNumber: true } ] }, `Unexpected value for field 'someOtherNumbersAsAnArray' of type 'number[]' from JSON path '$.someObjects[*].aNumber' in Redis.`]
+
     ])('%s', (_, jsonData: RedisJsonData, expectedMessage) => {
       expect(() => fromRedisJson(schema, jsonData)).toThrowErrorOfType(InvalidJsonValue, expectedMessage)
     })
 
     it.each([
+
       ["complains when a string[] contains a null", { aStringArray: [ A_STRING, null, ANOTHER_STRING ] }, `Null or undefined found in field 'aStringArray' of type 'string[]' from JSON path '$["aStringArray"][*]' in Redis.`],
       ["complains when a dispersed string[] contains null", { someOtherStrings:  [ A_STRING, null, ANOTHER_STRING] }, `Null or undefined found in field 'someStringsAsAnArray' of type 'string[]' from JSON path '$.someOtherStrings[*]' in Redis.`],
-      ["complains when a widely dispersed string[] contains null", { someObjects: [ { aString: A_STRING }, { aString: null }, { aString: ANOTHER_STRING } ] }, `Null or undefined found in field 'someOtherStringsAsAnArray' of type 'string[]' from JSON path '$.someObjects[*].aString' in Redis.`]
+      ["complains when a widely dispersed string[] contains null", { someObjects: [ { aString: A_STRING }, { aString: null }, { aString: ANOTHER_STRING } ] }, `Null or undefined found in field 'someOtherStringsAsAnArray' of type 'string[]' from JSON path '$.someObjects[*].aString' in Redis.`],
+
+      ["complains when a number[] contains a null", { aNumberArray: [ A_NUMBER, null, ANOTHER_NUMBER ] }, `Null or undefined found in field 'aNumberArray' of type 'number[]' from JSON path '$["aNumberArray"][*]' in Redis.`],
+      ["complains when a dispersed number[] contains null", { someOtherNumbers:  [ A_NUMBER, null, ANOTHER_NUMBER] }, `Null or undefined found in field 'someNumbersAsAnArray' of type 'number[]' from JSON path '$.someOtherNumbers[*]' in Redis.`],
+      ["complains when a widely dispersed number[] contains null", { someObjects: [ { aNumber: A_NUMBER }, { aNumber: null }, { aNumber: ANOTHER_NUMBER } ] }, `Null or undefined found in field 'someOtherNumbersAsAnArray' of type 'number[]' from JSON path '$.someObjects[*].aNumber' in Redis.`]
 
     ])('%s', (_, jsonData: RedisJsonData, expectedMessage) => {
       expect(() => fromRedisJson(schema, jsonData)).toThrowErrorOfType(NullJsonValue, expectedMessage)
