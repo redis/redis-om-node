@@ -310,13 +310,19 @@ export abstract class WhereField {
   /** @internal */
   protected buildQuery(valuePortion: string): string {
     const negationPortion = this.negated ? '-' : ''
-    const fieldPortion = this.escapePunctuation(this.field.name)
+    const fieldPortion = this.escapePunctuationAndSpaces(this.field.name)
     return `(${negationPortion}@${fieldPortion}:${valuePortion})`
   }
 
   /** @internal */
   protected escapePunctuation(value: string): string {
-    const matchPunctuation = /[,.<>{}[\]"':;!@#$%^&()\-+=~|/\\ ]/g
+    const matchPunctuation = /[,.?<>{}[\]"':;!@#$%^&()\-+=~|/\\]/g
+    return value.replace(matchPunctuation, '\\$&')
+  }
+
+  /** @internal */
+  protected escapePunctuationAndSpaces(value: string): string {
+    const matchPunctuation = /[,.?<>{}[\]"':;!@#$%^&()\-+=~|/\\ ]/g
     return value.replace(matchPunctuation, '\\$&')
   }
 }

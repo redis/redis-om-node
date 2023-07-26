@@ -117,13 +117,13 @@ describe("Search", () => {
 
     describe("when generating a query with special characters in the string", () => {
       it("generates a query that escapes all punctuation for a match", () => {
-        let query = where.match(",.<>{}[]\"':;!@#$%^&()-+=~|").query
-        expect(query).toBe("(@someText:'\\,\\.\\<\\>\\{\\}\\[\\]\\\"\\'\\:\\;\\!\\@\\#\\$\\%\\^\\&\\(\\)\\-\\+\\=\\~\\|')")
+        let query = where.match(",.?<>{}[]\"':;!@#$%^&()-+=~|\\").query
+        expect(query).toBe("(@someText:'\\,\\.\\?\\<\\>\\{\\}\\[\\]\\\"\\'\\:\\;\\!\\@\\#\\$\\%\\^\\&\\(\\)\\-\\+\\=\\~\\|\\\\')")
       })
 
       it("generates a query that escapes all punctuation for an exact match", () => {
-        let query = where.exact.match(",.<>{}[]\"':;!@#$%^&()-+=~|").query
-        expect(query).toBe('(@someText:"\\,\\.\\<\\>\\{\\}\\[\\]\\"\\\'\\:\\;\\!\\@\\#\\$\\%\\^\\&\\(\\)\\-\\+\\=\\~\\|")')
+        let query = where.exact.match(",.?<>{}[]\"':;!@#$%^&()-+=~|\\").query
+        expect(query).toBe('(@someText:"\\,\\.\\?\\<\\>\\{\\}\\[\\]\\"\\\'\\:\\;\\!\\@\\#\\$\\%\\^\\&\\(\\)\\-\\+\\=\\~\\|\\\\")')
       })
     })
 
