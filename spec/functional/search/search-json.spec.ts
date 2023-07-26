@@ -158,7 +158,7 @@ describe("search for JSON documents", () => {
     expect(entities).toEqual([ { [EntityKeyName]: 'search-json:3', ...A_THIRD_ENTITY } ])
   })
 
-  it("searches a array", async () => {
+  it("searches a string[]", async () => {
     entities = await repository.search().where('someStrings').contains('charlie').returnAll()
 
     expect(entities).toHaveLength(3)
@@ -166,6 +166,16 @@ describe("search for JSON documents", () => {
       { [EntityKeyName]: 'search-json:1', ...AN_ENTITY },
       { [EntityKeyName]: 'search-json:2', ...ANOTHER_ENTITY },
       { [EntityKeyName]: 'search-json:3', ...A_THIRD_ENTITY }
+    ]))
+  })
+
+  it("searches a number[]", async () => {
+    entities = await repository.search().where('someNumbers').eq(23).returnAll()
+
+    expect(entities).toHaveLength(2)
+    expect(entities).toEqual(expect.arrayContaining([
+      { [EntityKeyName]: 'search-json:1', ...AN_ENTITY },
+      { [EntityKeyName]: 'search-json:2', ...ANOTHER_ENTITY }
     ]))
   })
 
@@ -177,6 +187,7 @@ describe("search for JSON documents", () => {
       .and('aBoolean').true()
       .and('aPoint').inCircle(circle => circle.origin(12.34, 56.78).radius(10).meters)
       .and('someStrings').contains('alfa')
+      .and('someNumbers').eq(23)
       .returnAll()
 
     expect(entities).toHaveLength(1)

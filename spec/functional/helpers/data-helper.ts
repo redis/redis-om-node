@@ -24,7 +24,8 @@ export function createJsonEntitySchema(prefix: string): Schema {
     aBoolean: { type: 'boolean', path: '$.root.aBoolean' },
     aPoint: { type: 'point', path: '$.root.aPoint' },
     aDate: { type: 'date', path: '$.root.aDate', sortable: true },
-    someStrings: { type: 'string[]', path: '$.root.someStrings[*]' }
+    someStrings: { type: 'string[]', path: '$.root.someStrings[*]' },
+    someNumbers: { type: 'number[]', path: '$.root.someNumbers[*]' }
   }, {
     dataStructure: 'JSON'
   })

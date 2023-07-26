@@ -12,7 +12,8 @@ const expected = [
   { identifier: '$.root.aBoolean', attribute: 'aBoolean', type: 'TAG', SEPARATOR: '' },
   { identifier: '$.root.aPoint', attribute: 'aPoint', type: 'GEO' },
   { identifier: '$.root.aDate', attribute: 'aDate', type: 'NUMERIC', SORTABLE: 'UNF' },
-  { identifier: '$.root.someStrings[*]', attribute: 'someStrings', type: 'TAG', SEPARATOR: '|' }
+  { identifier: '$.root.someStrings[*]', attribute: 'someStrings', type: 'TAG', SEPARATOR: '|' },
+  { identifier: '$.root.someNumbers[*]', attribute: 'someNumbers', type: 'NUMERIC' }
 ]
 
 describe("create and drop index on JSON", () => {
@@ -58,11 +59,11 @@ describe("create and drop index on JSON", () => {
     })
 
     it("has the expected hash", () => {
-      expect(indexHash).toBe("o74BCR4MFyeWwukz8UvLjyIx/mQ=")
+      expect(indexHash).toBe("/BhyqlMq0RtIcp/W8LW/X/z73LQ=")
     })
 
     it("has the expected fields", () => {
-      expect(indexInfo.attributes).toHaveLength(7)
+      expect(indexInfo.attributes).toHaveLength(8)
       expect(indexInfo.attributes).toEqual(expected)
     })
 
@@ -91,8 +92,8 @@ describe("create and drop index on JSON", () => {
         expect(indexInfo.indexName).toBe('create-drop-json:index')
         expect(indexInfo.indexDefinition.key_type).toBe('JSON')
         expect(indexInfo.indexDefinition.prefixes).toEqual(['create-drop-json:'])
-        expect(indexHash).toBe("o74BCR4MFyeWwukz8UvLjyIx/mQ=")
-        expect(indexInfo.attributes).toHaveLength(7)
+        expect(indexHash).toBe("/BhyqlMq0RtIcp/W8LW/X/z73LQ=")
+        expect(indexInfo.attributes).toHaveLength(8)
         expect(indexInfo.attributes).toEqual(expected)
       })
     })
@@ -111,7 +112,7 @@ describe("create and drop index on JSON", () => {
         expect(indexInfo.indexName).toBe('create-drop-json-changed:index')
         expect(indexInfo.indexDefinition.key_type).toBe('JSON')
         expect(indexInfo.indexDefinition.prefixes).toEqual(['create-drop-json-changed:'])
-        expect(indexHash).toBe("a1Rv7/FRuFW/jQ6KJxp2jgpOH1I=")
+        expect(indexHash).toBe("d6LNvdCG6WRGzTL3R3zWByFSeR0=")
       })
     })
   })

@@ -2,7 +2,7 @@ import { Entity, EntityId } from "$lib/index"
 
 import { RedisJsonData } from "$lib/client"
 
-import { ANOTHER_DATE, ANOTHER_DATE_EPOCH, ANOTHER_NUMBER, ANOTHER_POINT, ANOTHER_POINT_STRING, ANOTHER_STRING, A_DATE, A_DATE_EPOCH, A_NUMBER, A_POINT, A_POINT_STRING, A_STRING, A_THIRD_DATE, A_THIRD_DATE_EPOCH, A_THIRD_NUMBER, A_THIRD_POINT, A_THIRD_POINT_STRING, A_THIRD_STRING, SOME_MORE_STRINGS, SOME_MORE_TEXT, SOME_OTHER_STRINGS, SOME_OTHER_TEXT, SOME_STRINGS, SOME_TEXT } from "../../helpers/example-data"
+import { ANOTHER_DATE, ANOTHER_DATE_EPOCH, ANOTHER_NUMBER, ANOTHER_POINT, ANOTHER_POINT_STRING, ANOTHER_STRING, A_DATE, A_DATE_EPOCH, A_NUMBER, A_POINT, A_POINT_STRING, A_STRING, A_THIRD_DATE, A_THIRD_DATE_EPOCH, A_THIRD_NUMBER, A_THIRD_POINT, A_THIRD_POINT_STRING, A_THIRD_STRING, SOME_MORE_NUMBERS, SOME_MORE_STRINGS, SOME_MORE_TEXT, SOME_NUMBERS, SOME_OTHER_NUMBERS, SOME_OTHER_STRINGS, SOME_OTHER_TEXT, SOME_STRINGS, SOME_TEXT } from "../../helpers/example-data"
 
 export const AN_ENTITY: Entity = {
   [EntityId]: '1',
@@ -14,7 +14,8 @@ export const AN_ENTITY: Entity = {
     aBoolean: true,
     aPoint: A_POINT,
     aDate: A_DATE,
-    someStrings: SOME_STRINGS
+    someStrings: SOME_STRINGS,
+    someNumbers: SOME_NUMBERS
   },
   // not in schema
   anotherString: ANOTHER_STRING,
@@ -23,7 +24,8 @@ export const AN_ENTITY: Entity = {
   anotherBoolean: false,
   anotherPoint: ANOTHER_POINT,
   anotherDate: ANOTHER_DATE_EPOCH,
-  someOtherStrings: SOME_OTHER_STRINGS
+  someOtherStrings: SOME_OTHER_STRINGS,
+  someOtherNumbers: SOME_OTHER_NUMBERS
 }
 
 export const A_JSON: RedisJsonData = {
@@ -35,7 +37,8 @@ export const A_JSON: RedisJsonData = {
     aBoolean: true,
     aPoint: A_POINT_STRING,
     aDate: A_DATE_EPOCH,
-    someStrings: SOME_STRINGS
+    someStrings: SOME_STRINGS,
+    someNumbers: SOME_NUMBERS
   },
   // not in schema
   anotherString: ANOTHER_STRING,
@@ -44,7 +47,8 @@ export const A_JSON: RedisJsonData = {
   anotherBoolean: false,
   anotherPoint: ANOTHER_POINT,
   anotherDate: ANOTHER_DATE_EPOCH,
-  someOtherStrings: SOME_OTHER_STRINGS
+  someOtherStrings: SOME_OTHER_STRINGS,
+  someOtherNumbers: SOME_OTHER_NUMBERS
 }
 
 export const ANOTHER_ENTITY: Entity = {
@@ -57,7 +61,8 @@ export const ANOTHER_ENTITY: Entity = {
     aBoolean: true,
     aPoint: ANOTHER_POINT,
     aDate: ANOTHER_DATE,
-    someStrings: SOME_OTHER_STRINGS
+    someStrings: SOME_OTHER_STRINGS,
+    someNumbers: SOME_OTHER_NUMBERS
   },
   // not in schema
   anotherString: A_THIRD_STRING,
@@ -66,7 +71,8 @@ export const ANOTHER_ENTITY: Entity = {
   anotherBoolean: true,
   anotherPoint: A_THIRD_POINT,
   anotherDate: A_THIRD_DATE_EPOCH,
-  someOtherStrings: SOME_MORE_STRINGS
+  someOtherStrings: SOME_MORE_STRINGS,
+  someOtherNumbers: SOME_MORE_NUMBERS
 }
 
 export const ANOTHER_JSON: RedisJsonData = {
@@ -78,7 +84,8 @@ export const ANOTHER_JSON: RedisJsonData = {
     aBoolean: true,
     aPoint: ANOTHER_POINT_STRING,
     aDate: ANOTHER_DATE_EPOCH,
-    someStrings: SOME_OTHER_STRINGS
+    someStrings: SOME_OTHER_STRINGS,
+    someNumbers: SOME_OTHER_NUMBERS
   },
   // not in schema
   anotherString: A_THIRD_STRING,
@@ -87,7 +94,8 @@ export const ANOTHER_JSON: RedisJsonData = {
   anotherBoolean: true,
   anotherPoint: A_THIRD_POINT,
   anotherDate: A_THIRD_DATE_EPOCH,
-  someOtherStrings: SOME_MORE_STRINGS
+  someOtherStrings: SOME_MORE_STRINGS,
+  someOtherNumbers: SOME_MORE_NUMBERS
 }
 
 export const A_THIRD_ENTITY: Entity = {
@@ -100,7 +108,8 @@ export const A_THIRD_ENTITY: Entity = {
     aBoolean: false,
     aPoint: A_THIRD_POINT,
     aDate: A_THIRD_DATE,
-    someStrings: SOME_MORE_STRINGS
+    someStrings: SOME_MORE_STRINGS,
+    someNumbers: SOME_MORE_NUMBERS
   },
   // not in schema
   anotherString: A_STRING,
@@ -109,7 +118,8 @@ export const A_THIRD_ENTITY: Entity = {
   anotherBoolean: false,
   anotherPoint: A_POINT,
   anotherDate: A_DATE_EPOCH,
-  someOtherStrings: SOME_STRINGS
+  someOtherStrings: SOME_STRINGS,
+  someOtherNumbers: SOME_NUMBERS
 }
 
 export const A_THIRD_JSON: RedisJsonData = {
@@ -121,7 +131,8 @@ export const A_THIRD_JSON: RedisJsonData = {
     aBoolean: false,
     aPoint: A_THIRD_POINT_STRING,
     aDate: A_THIRD_DATE_EPOCH,
-    someStrings: SOME_MORE_STRINGS
+    someStrings: SOME_MORE_STRINGS,
+    someNumbers: SOME_MORE_NUMBERS
   },
   // not in schema
   anotherString: A_STRING,
@@ -130,7 +141,8 @@ export const A_THIRD_JSON: RedisJsonData = {
   anotherBoolean: false,
   anotherPoint: A_POINT,
   anotherDate: A_DATE_EPOCH,
-  someOtherStrings: SOME_STRINGS
+  someOtherStrings: SOME_STRINGS,
+  someOtherNumbers: SOME_NUMBERS
 }
 
 export const AN_EMPTY_ENTITY: Entity = {

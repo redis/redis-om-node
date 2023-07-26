@@ -44,6 +44,7 @@ describe("update JSON", () => {
       entity.anotherPoint = ANOTHER_ENTITY.anotherPoint
       entity.anotherDate = ANOTHER_ENTITY.anotherDate
       entity.someOtherStrings = ANOTHER_ENTITY.someOtherStrings
+      entity.someOtherNumbers = ANOTHER_ENTITY.someOtherNumbers
       returnedEntity = await repository.save(entity)
     })
 
@@ -67,6 +68,7 @@ describe("update JSON", () => {
       delete entity.anotherPoint
       delete entity.anotherDate
       delete entity.someOtherStrings
+      delete entity.someOtherNumbers
       returnedEntity = await repository.save(entity)
     })
 
