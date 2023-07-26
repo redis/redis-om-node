@@ -5,7 +5,7 @@ import { InvalidJsonInput, NullJsonInput, PointOutOfRange } from "$lib/error"
 import { Schema } from "$lib/schema"
 import { toRedisJson } from "$lib/transformer"
 
-import { ANOTHER_STRING, AN_INVALID_POINT, A_DATE, A_DATE_EPOCH, A_DATE_ISO, A_NUMBER, A_NUMBER_STRING, A_PARITAL_POINT, A_POINT, A_POINT_STRING, A_STRING, A_THIRD_STRING, SOME_STRINGS, SOME_TEXT } from "../../helpers/example-data"
+import { ANOTHER_NUMBER, ANOTHER_STRING, AN_INVALID_POINT, A_DATE, A_DATE_EPOCH, A_DATE_ISO, A_NUMBER, A_NUMBER_STRING, A_PARITAL_POINT, A_POINT, A_POINT_STRING, A_STRING, A_THIRD_NUMBER, A_THIRD_STRING, SOME_NUMBERS, SOME_STRINGS, SOME_TEXT } from "../../helpers/example-data"
 
 
 describe("#toRedisJson", () => {
@@ -78,7 +78,10 @@ describe("#toRedisJson", () => {
         arrayOfText: { type: 'text', path: '$.arrayOfText[*]' },
         aStringArray: { type: 'string[]' },
         someStringsAsAnArray: { type: 'string[]', path: '$.someOtherStrings[*]' },
-        someOtherStringsAsAnArray: { type: 'string[]', path: '$.someObjects[*].aString' }
+        someOtherStringsAsAnArray: { type: 'string[]', path: '$.someObjects[*].aString' },
+        aNumberArray: { type: 'number[]' },
+        someNumbersAsAnArray: { type: 'number[]', path: '$.someOtherNumbers[*]' },
+        someOtherNumbersAsAnArray: { type: 'number[]', path: '$.someObjects[*].aNumber' }
       })
     })
 
@@ -184,7 +187,28 @@ describe("#toRedisJson", () => {
         { someObjects: [ { aString: A_STRING }, { aString: A_NUMBER_STRING }, { aString: 'true' } ] }],
       ["removes explicity undefined values in a widely dispersed string[]",
         { someObjects: [ { aString: A_STRING }, { aString: undefined }, { aString: ANOTHER_STRING } ] },
-        { someObjects: [ { aString: A_STRING }, {}, { aString: ANOTHER_STRING }, ] }]
+        { someObjects: [ { aString: A_STRING }, {}, { aString: ANOTHER_STRING } ] }],
+
+      // number[]
+      ["leaves a number[] as a number[]", { aNumberArray: SOME_NUMBERS }, { aNumberArray: SOME_NUMBERS }],
+      ["leaves an empty number[] as a number[]", { aNumberArray: [] }, { aNumberArray: [] }],
+      ["leaves a null number[] as null", { aNumberArray: null }, { aNumberArray: null }],
+      ["leaves a number[] that doesn't contain a number[] as is", { aNumberArray: 'NOT_AN_ARRAY' }, { aNumberArray: 'NOT_AN_ARRAY' }],
+      ["leaves a pathed number[] as a number[]", { aPathedNumberArray: SOME_NUMBERS }, { aPathedNumberArray: SOME_NUMBERS }],
+      ["leaves a nested number[] as a number[]", { aNestedNumberArray: { aNumberArray: SOME_NUMBERS } }, { aNestedNumberArray: { aNumberArray: SOME_NUMBERS } }],
+      ["removes an explicitly undefined number[]", { aNumberArray: undefined }, {}],
+      ["removes an explicitly undefined pathed number[]", { aPathedNumberArray: undefined }, {}],
+
+      // dispersed number[]
+      ["leaves dispersed number[] as numbers", { someOtherNumbers: SOME_NUMBERS }, { someOtherNumbers: SOME_NUMBERS }],
+
+      // widely dispersed number[]
+      ["leaves widely dispersed number[] as numbers",
+        { someObjects: [ { aNumber: A_NUMBER }, { aNumber: ANOTHER_NUMBER }, { aNumber: A_THIRD_NUMBER } ] },
+        { someObjects: [ { aNumber: A_NUMBER }, { aNumber: ANOTHER_NUMBER }, { aNumber: A_THIRD_NUMBER } ] }],
+      ["removes explicity undefined values in a widely dispersed string[]",
+        { someObjects: [ { aNumber: A_NUMBER }, { aNumber: undefined }, { aNumber: ANOTHER_NUMBER } ] },
+        { someObjects: [ { aNumber: A_NUMBER }, {}, { aNumber: ANOTHER_NUMBER } ] }]
 
     ])('%s', (_, data, expected) => {
       const actual = toRedisJson(schema, data)
@@ -241,6 +265,22 @@ describe("#toRedisJson", () => {
       ["complains when nested text is not a string", { someNestedText: { someText: A_DATE } }, `Unexpected value for field 'someNestedText' of type 'text' in JSON at '$.someNestedText.someText'.`],
       ["complains when a pathed text points to multiple results", { arrayOfText: SOME_STRINGS }, `Unexpected value for field 'arrayOfText' of type 'text' in JSON at '$.arrayOfText[*]'.`],
 
+      // string[]
+      ["complains when a string[] contains an array", { aStringArray: [ A_STRING, SOME_NUMBERS, ANOTHER_STRING ] }, `Unexpected value for field 'aStringArray' of type 'string[]' in JSON at '$["aStringArray"][*]'.`],
+      ["complains when a dispersed string[] contains an array", { someOtherStrings: [ A_STRING, SOME_NUMBERS, ANOTHER_STRING ] }, `Unexpected value for field 'someStringsAsAnArray' of type 'string[]' in JSON at '$.someOtherStrings[*]'.`],
+      ["complains when a widely dispersed string[] contains an array", { someObjects: [ { aString: A_STRING }, { aString: SOME_NUMBERS }, { aString: ANOTHER_STRING } ] }, `Unexpected value for field 'someOtherStringsAsAnArray' of type 'string[]' in JSON at '$.someObjects[*].aString'.`],
+
+      // number[]
+      ["complains when a number[] contains a string", { aNumberArray: [ A_NUMBER, A_STRING, ANOTHER_NUMBER ] }, `Unexpected value for field 'aNumberArray' of type 'number[]' in JSON at '$["aNumberArray"][*]'.`],
+      ["complains when a number[] contains a boolean", { aNumberArray: [ A_NUMBER, true, ANOTHER_NUMBER ] }, `Unexpected value for field 'aNumberArray' of type 'number[]' in JSON at '$["aNumberArray"][*]'.`],
+      ["complains when a number[] contains an array", { aNumberArray: [ A_NUMBER, SOME_STRINGS, ANOTHER_NUMBER ] }, `Unexpected value for field 'aNumberArray' of type 'number[]' in JSON at '$["aNumberArray"][*]'.`],
+      ["complains when a dispersed number[] contains a string", { someOtherNumbers: [ A_NUMBER, A_STRING, ANOTHER_NUMBER ] }, `Unexpected value for field 'someNumbersAsAnArray' of type 'number[]' in JSON at '$.someOtherNumbers[*]'.`],
+      ["complains when a dispersed number[] contains a boolean", { someOtherNumbers: [ A_NUMBER, true, ANOTHER_NUMBER ] }, `Unexpected value for field 'someNumbersAsAnArray' of type 'number[]' in JSON at '$.someOtherNumbers[*]'.`],
+      ["complains when a dispersed number[] contains an array", { someOtherNumbers: [ A_NUMBER, SOME_STRINGS, ANOTHER_NUMBER ] }, `Unexpected value for field 'someNumbersAsAnArray' of type 'number[]' in JSON at '$.someOtherNumbers[*]'.`],
+      ["complains when a widely dispersed number[] contains a string", { someObjects: [ { aNumber: A_NUMBER }, { aNumber: A_STRING }, { aNumber: ANOTHER_NUMBER } ] }, `Unexpected value for field 'someOtherNumbersAsAnArray' of type 'number[]' in JSON at '$.someObjects[*].aNumber'.`],
+      ["complains when a widely dispersed number[] contains a boolean", { someObjects: [ { aNumber: A_NUMBER }, { aNumber: true }, { aNumber: ANOTHER_NUMBER } ] }, `Unexpected value for field 'someOtherNumbersAsAnArray' of type 'number[]' in JSON at '$.someObjects[*].aNumber'.`],
+      ["complains when a widely dispersed number[] contains an array", { someObjects: [ { aNumber: A_NUMBER }, { aNumber: SOME_STRINGS }, { aNumber: ANOTHER_NUMBER } ] }, `Unexpected value for field 'someOtherNumbersAsAnArray' of type 'number[]' in JSON at '$.someObjects[*].aNumber'.`]
+
     ])('%s', (_, data, expectedMessage) => {
       expect(() => toRedisJson(schema, data)).toThrowErrorOfType(InvalidJsonInput, expectedMessage)
     })
@@ -253,6 +293,19 @@ describe("#toRedisJson", () => {
       ["complains when a dispersed string[] contains null", { someOtherStrings:  [ A_STRING, null, ANOTHER_STRING] }, `Null or undefined found in field 'someStringsAsAnArray' of type 'string[]' in JSON at '$.someOtherStrings[*]'.`],
       ["complains when a dispersed string[] contains undefined", { someOtherStrings:  [ A_STRING, undefined, ANOTHER_STRING] }, `Null or undefined found in field 'someStringsAsAnArray' of type 'string[]' in JSON at '$.someOtherStrings[*]'.`],
       ["complains when a widely dispersed string[] contains null", { someObjects: [ { aString: A_STRING }, { aString: null }, { aString: ANOTHER_STRING } ] }, `Null or undefined found in field 'someOtherStringsAsAnArray' of type 'string[]' in JSON at '$.someObjects[*].aString'.`]
+
+    ])('%s', (_, data, expectedMessage) => {
+      expect(() => toRedisJson(schema, data)).toThrowErrorOfType(NullJsonInput, expectedMessage)
+    })
+
+    it.each([
+
+      // number[]
+      ["complains when a number[] contains null", { aNumberArray: [ A_NUMBER, null, ANOTHER_NUMBER ] }, `Null or undefined found in field 'aNumberArray' of type 'number[]' in JSON at '$["aNumberArray"][*]'.`],
+      ["complains when a number[] contains undefined", { aNumberArray: [ A_NUMBER, undefined, ANOTHER_NUMBER] }, `Null or undefined found in field 'aNumberArray' of type 'number[]' in JSON at '$["aNumberArray"][*]'.`],
+      ["complains when a dispersed number[] contains null", { someOtherNumbers:  [ A_NUMBER, null, ANOTHER_NUMBER] }, `Null or undefined found in field 'someNumbersAsAnArray' of type 'number[]' in JSON at '$.someOtherNumbers[*]'.`],
+      ["complains when a dispersed number[] contains undefined", { someOtherNumbers:  [ A_NUMBER, undefined, ANOTHER_NUMBER] }, `Null or undefined found in field 'someNumbersAsAnArray' of type 'number[]' in JSON at '$.someOtherNumbers[*]'.`],
+      ["complains when a widely dispersed number[] contains null", { someObjects: [ { aNumber: A_NUMBER }, { aNumber: null }, { aNumber: ANOTHER_NUMBER } ] }, `Null or undefined found in field 'someOtherNumbersAsAnArray' of type 'number[]' in JSON at '$.someObjects[*].aNumber'.`]
 
     ])('%s', (_, data, expectedMessage) => {
       expect(() => toRedisJson(schema, data)).toThrowErrorOfType(NullJsonInput, expectedMessage)

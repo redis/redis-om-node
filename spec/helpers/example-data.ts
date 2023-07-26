@@ -61,3 +61,7 @@ export const SOME_OTHER_STRINGS_JOINED: string = SOME_OTHER_STRINGS.join('|')
 export const SOME_MORE_STRINGS: Array<string> = ['charlie', 'delta', 'echo']
 export const SOME_MORE_STRINGS_JSON: string = JSON.stringify(SOME_MORE_STRINGS)
 export const SOME_MORE_STRINGS_JOINED: string = SOME_MORE_STRINGS.join('|')
+
+export const SOME_NUMBERS: Array<number> = [42, 23, 13]
+export const SOME_OTHER_NUMBERS: Array<number> = [23, 13, 72]
+export const SOME_MORE_NUMBERS: Array<number> = [13, 72, 94]

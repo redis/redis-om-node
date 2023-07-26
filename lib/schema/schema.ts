@@ -158,8 +158,11 @@ export class Schema {
 
   #validateField(field: Field) {
     const { type } = field
-    if (type !== 'boolean' && type !== 'date' && type !== 'number' && type !== 'point' &&
+    if (type !== 'boolean' && type !== 'date' && type !== 'number' && type !== 'number[]' && type !== 'point' &&
         type !== 'string' && type !== 'string[]' && type !== 'text')
-      throw new InvalidSchema(`The field '${field.name}' is configured with a type of '${field.type}'. Valid types include 'boolean', 'date', 'number', 'point', 'string', 'string[]', and 'text'.`)
+      throw new InvalidSchema(`The field '${field.name}' is configured with a type of '${field.type}'. Valid types include 'boolean', 'date', 'number', 'number[]', 'point', 'string', 'string[]', and 'text'.`)
+
+    if (type === 'number[]' && this.dataStructure === 'HASH')
+      throw new InvalidSchema(`The field '${field.name}' is configured with a type of '${field.type}'. This type is only valid with a data structure of 'JSON'.`)
   }
 }

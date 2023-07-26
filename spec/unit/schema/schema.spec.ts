@@ -128,12 +128,16 @@ describe("Schema", () => {
     it("throws an exception when the type is missing on a field definition", () =>
       // @ts-ignore: JavaScript test
       expect(() => new Schema('TestEntity', { aField: {} }))
-        .toThrowErrorOfType(InvalidSchema, "The field 'aField' is configured with a type of 'undefined'. Valid types include 'boolean', 'date', 'number', 'point', 'string', 'string[]', and 'text'."))
+        .toThrowErrorOfType(InvalidSchema, "The field 'aField' is configured with a type of 'undefined'. Valid types include 'boolean', 'date', 'number', 'number[]', 'point', 'string', 'string[]', and 'text'."))
 
     it("throws an exception when the type is invalid on a field definition", () =>
       // @ts-ignore: JavaScript test
       expect(() => new Schema('TestEntity', { aField: { type: 'foo' } }))
-        .toThrowErrorOfType(InvalidSchema, "The field 'aField' is configured with a type of 'foo'. Valid types include 'boolean', 'date', 'number', 'point', 'string', 'string[]', and 'text'."))
+        .toThrowErrorOfType(InvalidSchema, "The field 'aField' is configured with a type of 'foo'. Valid types include 'boolean', 'date', 'number', 'number[]', 'point', 'string', 'string[]', and 'text'."))
+
+    it("throws an exception when the type is 'number[]' for data structure of 'HASH'", () =>
+      expect(() => new Schema('TestEntity', { aField: { type: 'number[]' } }, { dataStructure: 'HASH' }))
+        .toThrowErrorOfType(InvalidSchema, "The field 'aField' is configured with a type of 'number[]'. This type is only valid with a data structure of 'JSON'."))
 
     it("throws an exception when the data structure is invalid", () => {
       // @ts-ignore: JavaScript test
