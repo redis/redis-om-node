@@ -1022,7 +1022,7 @@ So far we've been doing searches that match on a single field. However, we often
 
 ```javascript
 const albums = await albumRepository.search()
-  .where('artist').equals('Mushroomhread')
+  .where('artist').equals('Mushroomhead')
   .or('title').matches('butterfly')
   .and('year').is.greaterThan(1990).return.all()
 ```
@@ -1062,11 +1062,11 @@ RediSearch provides a basic mechanism for sorting your search results and Redis 
 
 ```javascript
 const albumsByYear = await albumRepository.search()
-  .where('artist').equals('Mushroomhread')
+  .where('artist').equals('Mushroomhead')
     .sortAscending('year').return.all()
 
 const albumsByTitle = await albumRepository.search()
-  .where('artist').equals('Mushroomhread')
+  .where('artist').equals('Mushroomhead')
     .sortBy('title', 'DESC').return.all()
 ```
 
