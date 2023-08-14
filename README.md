@@ -111,7 +111,7 @@ Pretty cool, right? Read on for details.
 >
 > Of course, you don't have to upgrade. If this is you, you'll want to check out [the README for that version](https://www.npmjs.com/package/redis-om/v/0.3.6) over on NPM.
 >
-> However, I hope you choose to try to try the new version. It has many changes that have been frequently requested that are documented in the [CHANGELOG](CHANGELOG). And more, *non-breaking* changes will follow these.
+> However, I hope you choose to try the new version. It has many changes that have been frequently requested that are documented in the [CHANGELOG](CHANGELOG). And more, *non-breaking* changes will follow these.
 >
 
 
