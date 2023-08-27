@@ -1,4 +1,6 @@
-node_modules
-dist
-coverage
+node_modules/
+dist/
+bench-dist/
+coverage/
 .DS_Store
+.dccache

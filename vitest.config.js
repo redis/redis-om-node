@@ -7,14 +7,12 @@ export default defineConfig({
     clearMocks: true,
     isolate: false,
     coverage: {
-      provider: 'istanbul',
+      reporter: ["text", "html"],
       exclude: [
-        'spec/*'
+        "spec/*",
+        "src/typings/*"
       ]
-    },
-    exclude: [
-      './node_modules/**',
-    ]
+    }
   },
   resolve: {
     alias: {

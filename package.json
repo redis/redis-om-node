@@ -3,33 +3,30 @@
   "version": "0.0.0",
   "description": "Object mapping, and more, for Redis and Node.js. Written in TypeScript.",
   "main": "dist/index.js",
-  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "require": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./types": {
+      "types": "./dist/typings/index.d.ts",
+      "require": "./dist/typings/index.js",
+      "default": "./dist/typings/index.js"
+    },
+    "./package.json": "./package.json",
+    "./dist/utils/symbols.js": null
+  },
   "files": [
-    "README.md",
-    "CHANGELOG",
-    "LICENSE",
     "logo.svg",
-    "dist/**/*",
-    "docs/**/*"
+    "dist/**/*"
   ],
   "scripts": {
-    "build": "tsup",
+    "build": "rm -rf ./dist && tsc",
     "docs": "rm -rf ./docs && typedoc",
     "test": "vitest",
     "test:coverage": "vitest run --coverage",
-    "test:ui": "vitest --ui",
-    "test:unit": "vitest --dir ./spec/unit",
-    "test:functional": "vitest --dir ./spec/functional"
-  },
-  "tsup": {
-    "entry": [
-      "lib/index.ts"
-    ],
-    "clean": true,
-    "dts": true,
-    "noExternal": [
-      "ulid"
-    ]
+    "test:ui": "vitest --ui"
   },
   "repository": "github:redis/redis-om-node",
   "homepage": "https://github.com/redis/redis-om-node#readme",
@@ -39,23 +36,31 @@
   ],
   "license": "MIT",
   "author": "Guy Royse <guy@guyroyse.com> (http://guyroyse.com/)",
+  "contributors": [
+    "DidaS <didasoficial@gmail.com>"
+  ],
   "engines": {
     "node": ">= 14"
   },
   "devDependencies": {
-    "@types/node": "^18.0.0",
-    "@vitest/ui": "^0.17.1",
-    "c8": "^7.11.3",
-    "tsup": "^6.1.2",
-    "typedoc": "^0.23.2",
-    "typedoc-plugin-markdown": "^3.13.1",
-    "typescript": "^4.7.2",
-    "vitest": "^0.20.0"
+    "@microsoft/tsdoc": "^0.14.2",
+    "@microsoft/tsdoc-config": "^0.16.2",
+    "@types/node": "^20.5.6",
+    "@typescript-eslint/eslint-plugin": "^6.4.1",
+    "@typescript-eslint/parser": "^6.4.1",
+    "c8": "^8.0.1",
+    "eslint": "^8.48.0",
+    "eslint-plugin-import": "^2.28.1",
+    "eslint-plugin-tsdoc": "^0.2.17",
+    "redis-om": "0.4.2",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.2.2",
+    "vitest": "^0.34.3"
   },
   "dependencies": {
-    "jsonpath-plus": "^7.2.0",
-    "just-clone": "^6.1.1",
-    "redis": "^4.6.4",
-    "ulid": "^2.3.0"
+    "@infinite-fansub/logger": "^2.2.1",
+    "colours.js": "^3.1.2",
+    "redis": "^4.6.8",
+    "tslib": "^2.6.2"
   }
 }

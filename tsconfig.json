@@ -2,24 +2,43 @@
   "compilerOptions": {
     "target": "ESNext",
     "module": "CommonJS",
-    "rootDir": ".",
-    "outDir": "./dist",
-    "declaration": true,
+    "moduleResolution": "node",
+    "outDir": "dist",
+    "baseUrl": ".",
     "strict": true,
+    "allowUnreachableCode": false,
+    "allowUnusedLabels": false,
+    "exactOptionalPropertyTypes": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitAny": true,
+    "noImplicitOverride": true,
+    "noImplicitReturns": true,
+    "noImplicitThis": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "strictFunctionTypes": true,
+    "strictNullChecks": true,
+    "strictPropertyInitialization": true,
+    "useUnknownInCatchVariables": true,
+    "resolveJsonModule": true,
+    "declaration": true,
+    "declarationMap": true,
+    "importHelpers": true,
+    "noEmitOnError": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
-    "types": ["vitest/globals"],
-    "paths": {
-      "$lib/*": ["./lib/*"]
-    },
-    "noUncheckedIndexedAccess": true
+    "allowSyntheticDefaultImports": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "incremental": false,
+    "stripInternal": true
   },
-  "exclude": [
-    "node_modules",
+  "include": [
+    "src/**/*"
   ],
   "typedocOptions": {
     "entryPoints": [
-      "lib/index.ts"
+      "src/index.ts"
     ],
     "out": "docs",
     "excludePrivate": true,

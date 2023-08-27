@@ -1,0 +1,8 @@
+// This file is just for intellisense purposes
+{
+    "compilerOptions": {
+        "types": [
+            "vitest/globals"
+        ]
+    }
+}
