@@ -1,29 +1,50 @@
 import type { ParseSchema } from "./parse-schema";
 import type { ReferenceArray } from "../utils";
 import type { FieldMap } from "./field-map";
+import type { Expand } from "./utils";
 
 export type MapSchema<
     T extends ParseSchema<any>,
     AF extends boolean = false,
     CAS extends boolean = false
-> = MapSchemaData<T["data"], CAS> & MapSchemaReferences<T["references"], AF, CAS>;
+> = Expand<MapSchemaData<T["data"], CAS> & MapSchemaReferences<T["references"], AF, CAS>>;
 
 type MapSchemaData<T extends ParseSchema<any>["data"], CAS extends boolean = false> = {
-    [K in keyof T as T[K]["type"] extends "object" ? K : T[K]["optional"] extends true ? never : T[K]["default"] extends {} ? CAS extends true ? never : K : never]: _MapSchemaData<T[K]>
+    [K in keyof T as T[K]["optional"] extends false
+    ? T[K]["default"] extends {}
+    ? CAS extends true
+    ? never
+    : K
+    : K
+    : T[K]["default"] extends {}
+    ? CAS extends true
+    ? never
+    : K
+    : never]: _MapSchemaData<T[K]>
 } & {
-        [K in keyof T as T[K]["type"] extends "object" ? never : T[K]["optional"] extends true ? K : T[K]["default"] extends {} ? CAS extends true ? K : never : K]?: _MapSchemaData<T[K]>
+        [K in keyof T as T[K]["optional"] extends false
+        ? T[K]["default"] extends {}
+        ? CAS extends true
+        ? K
+        : never
+        : never
+        : T[K]["default"] extends {}
+        ? CAS extends true
+        ? K
+        : never
+        : K]?: _MapSchemaData<T[K]>
     };
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
 type _MapSchemaData<T extends ParseSchema<any>["data"][number]> = T extends { properties: unknown }
     ? T["properties"] extends ParseSchema<any>
-    ? MapSchema<T["properties"]>
+    ? Expand<MapSchema<T["properties"]>>
     : T["properties"] extends ParseSchema<any>["data"]
-    ? MapSchemaData<T["properties"]>
+    ? Expand<MapSchemaData<T["properties"]>>
     : unknown
     : T extends { elements: unknown }
     ? T["elements"] extends [unknown, ...Array<unknown>]
-    ? Test<T["elements"]>
+    ? ParseTupleElements<T["elements"]>
     : T["elements"] extends object
     ? Array<MapSchemaData<T["elements"]>>
     : FieldMap<FieldMap[T["elements"]]>["array"]
@@ -33,6 +54,12 @@ type _MapSchemaData<T extends ParseSchema<any>["data"][number]> = T extends { pr
     : T extends { vecType: "FLOAT64" }
     ? Float64Array | Array<number>
     : unknown
+    : T extends { literal: unknown }
+    ? T["literal"] extends {}
+    ? T["literal"] extends Array<unknown>
+    ? T["literal"][number]
+    : T["literal"]
+    : FieldMap[T["type"]]
     : FieldMap[T["type"]]
     ;
 
@@ -47,6 +74,6 @@ type _MapSchemaReferences<T extends ParseSchema<any>["references"][number], AF e
     ? Array<MapSchema<T["schema"]>>
     : ReferenceArray;
 
-type Test<T> = {
+type ParseTupleElements<T> = {
     [K in keyof T]: T[K] extends ParseSchema<any>["data"][number] ? _MapSchemaData<T[K]> : never
 };

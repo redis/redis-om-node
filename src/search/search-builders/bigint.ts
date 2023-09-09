@@ -3,7 +3,7 @@ import { SearchField } from "./base";
 import type { ParseSchema } from "../../typings";
 import type { Search } from "../search";
 
-export class StringField<T extends ParseSchema<any>, L extends string> extends SearchField<T, L> {
+export class BigIntField<T extends ParseSchema<any>, L extends bigint> extends SearchField<T, L> {
 
     public eq(...value: Array<L>): Search<T>;
     public eq(value: Array<L>): Search<T>;
@@ -28,14 +28,14 @@ export class StringField<T extends ParseSchema<any>, L extends string> extends S
     }
 
     /** @internal */
-    #handleMultipleFields(value: Array<any> | IArguments): Search<T> {
+    #handleMultipleFields(value: Array<L> | IArguments): Search<T> {
         const length = value.length;
 
-        this.value = value[0];
+        this.value = value[0].toString();
 
         if (length > 1) {
             for (let i = 1; i < length; i++) {
-                this.or.push(value[i]);
+                this.or.push(value[i].toString());
             }
         }
 

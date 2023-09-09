@@ -1,8 +1,11 @@
-import type { FieldTypes, ObjectField, ReferenceField, TupleField } from "./schema-definition";
+import type { FieldMap } from "./field-map";
 
-export interface Parsed {
-    value: Exclude<FieldTypes, TupleField | ObjectField | ReferenceField>;
-    path: string;
+export interface ParsedSchemaToSearch {
+    map: ParsedMap;
+    index: Array<string>;
 }
 
-export type ParsedMap = Map<string, Parsed>;
+export type ParsedMap = Map<string, {
+    type: Exclude<keyof FieldMap, "array" | "tuple" | "reference" | "object">,
+    searchPath: string
+}>;

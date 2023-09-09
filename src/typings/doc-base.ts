@@ -1,3 +1,3 @@
 export interface DocumentShared {
-    toString: () => string;
+    toString: () => string | Array<string>;
 }

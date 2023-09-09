@@ -74,7 +74,7 @@ export class TextField<T extends ParseSchema<any>> extends SearchField<T> {
     }
 
     /** @internal */
-    #handleMultipleFields(value: Array<any> | IArguments, exact: boolean = false): Search<T> {
+    #handleMultipleFields(value: Array<string> | IArguments, exact: boolean = false): Search<T> {
         const length = value.length;
 
         this.value = { val: value[0], exact };

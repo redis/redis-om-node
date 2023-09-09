@@ -4,28 +4,27 @@ import { randomUUID } from "node:crypto";
 import { ReferenceArray } from "../utils";
 import {
     validateSchemaReferences,
-    validateSchemaData,
-    tupleToObjStrings,
-    jsonFieldToDoc,
-    docToJson
+    documentFieldToJSONValue,
+    JSONValueToDocumentField,
+    validateSchemaData
 } from "./document-helpers";
 
-import type { DocumentShared, ParseSchema } from "../typings";
+import type { DocumentShared, ParsedSchemaDefinition } from "../typings";
 
 export class JSONDocument implements DocumentShared {
 
-    readonly #schema: ParseSchema<any>;
+    readonly #schema: ParsedSchemaDefinition;
     readonly #validate: boolean;
     readonly #autoFetch: boolean;
     #validateSchemaReferences = validateSchemaReferences;
     #validateSchemaData = validateSchemaData;
 
-    public readonly $global_prefix: string;
-    public readonly $prefix: string;
-    public readonly $model_name: string;
-    public readonly $suffix: string | undefined;
-    public readonly $id: string;
-    public readonly $record_id: string;
+    readonly #global_prefix: string;
+    readonly #prefix: string;
+    readonly #model_name: string;
+    readonly #suffix: string | undefined;
+    readonly #id: string;
+    readonly #record_id: string;
 
     /*
     * Using any so everything works as intended
@@ -35,7 +34,7 @@ export class JSONDocument implements DocumentShared {
     [key: string]: any;
 
     public constructor(
-        schema: ParseSchema<any>,
+        schema: ParsedSchemaDefinition,
         record: {
             globalPrefix: string,
             prefix: string,
@@ -48,12 +47,12 @@ export class JSONDocument implements DocumentShared {
         validate: boolean = true,
         wasAutoFetched: boolean = false
     ) {
-        this.$global_prefix = record.globalPrefix;
-        this.$prefix = record.prefix;
-        this.$model_name = record.name;
-        this.$suffix = data?.$suffix ?? (typeof record.suffix === "function" ? record.suffix() : record.suffix);
-        this.$id = data?.$id ?? record.id ?? randomUUID();
-        this.$record_id = `${this.$global_prefix}:${this.$prefix}:${this.$model_name}:${this.$suffix ? `${this.$suffix}:` : ""}${this.$id}`;
+        this.#global_prefix = record.globalPrefix;
+        this.#prefix = record.prefix;
+        this.#model_name = record.name;
+        this.#suffix = data?.$suffix ?? (typeof record.suffix === "function" ? record.suffix() : record.suffix);
+        this.#id = data?.$id?.toString() ?? record.id ?? randomUUID();
+        this.#record_id = `${this.#global_prefix}:${this.#prefix}:${this.#model_name}:${this.#suffix ? `${this.#suffix}:` : ""}${this.#id}`;
         this.#schema = schema;
         this.#validate = validate;
         this.#autoFetch = wasAutoFetched;
@@ -65,27 +64,9 @@ export class JSONDocument implements DocumentShared {
                 for (let i = 0, entries = Object.entries(data), len = entries.length; i < len; i++) {
                     const [key, value] = entries[i];
                     if (key.startsWith("$")) continue;
-                    const arr = key.split(".");
-
-                    if (arr.length > 1) /* This is a tuple */ {
-
-                        // var name
-                        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-                        const temp = arr.shift()!;
-
-                        if (arr.length === 1) {
-                            //@ts-expect-error Type overload
-                            this[temp].push(jsonFieldToDoc(schema.data[temp].elements[arr[0]], value));
-                            continue;
-                        }
-
-                        //@ts-expect-error Type overload
-                        this[temp].push({ [arr[1]]: jsonFieldToDoc(schema.data[temp].elements[arr[0]].properties[arr[1]], value) });
-                        continue;
-                    }
 
                     if (typeof schema.data[key] !== "undefined") {
-                        this[key] = jsonFieldToDoc(<never>schema.data[key], value);
+                        this[key] = JSONValueToDocumentField(schema.data[key], value);
                         continue;
                     }
 
@@ -112,16 +93,12 @@ export class JSONDocument implements DocumentShared {
             const [key, value] = entries[i];
             this[key] = value.default ?? (value.type === "object"
                 ? {}
-                : value.type === "tuple"
+                : value.type === "tuple" || value.type === "array"
                     ? []
                     : value.type === "vector"
-                        //@ts-expect-error Type overload
                         ? value.vecType === "FLOAT32"
                             ? new Float32Array()
-                            //@ts-expect-error Type overload
-                            : value.vecType === "FLOAT64"
-                                ? new Float64Array()
-                                : []
+                            : new Float64Array()
                         : void 0);
         }
 
@@ -132,48 +109,58 @@ export class JSONDocument implements DocumentShared {
     }
 
     public toString(): string {
-        if (this.#validate) this.#validateSchemaData(this.#schema.data);
+        if (this.#validate) this.#validateSchemaData(this.#schema.data, this);
 
         const obj: Record<string, unknown> = {
-            $suffix: this.$suffix,
-            $id: this.$id
+            $suffix: this.#suffix,
+            $id: this.#id
         };
 
-        for (let i = 0, entries = Object.entries(this.#schema.data), len = entries.length; i < len; i++) {
+        for (let i = 0, entries = Object.entries(this), length = entries.length; i < length; i++) {
             const [key, val] = entries[i];
+            const schema = this.#schema.data[key];
 
-            if (typeof this[key] === "undefined") continue;
-
-            if (val.type === "tuple") {
-                const temp = tupleToObjStrings(<never>this[key], key);
-                for (let j = 0, le = temp.length; j < le; j++) {
-                    const [k, value] = Object.entries(temp[j])[0];
-
-                    //@ts-expect-error Type overload
-                    if (val.elements[j].type === "object") {
-                        //@ts-expect-error Type overload
-                        for (let u = 0, en = Object.entries(val.elements[j].properties), l = en.length; u < l; u++) {
-                            const objV = en[u][1];
-                            obj[k] = docToJson(<any>objV, value);
-                        }
-                        continue;
-                    }
-
-                    obj[k] = value;
-                }
+            if (typeof schema !== "undefined") {
+                obj[key] = documentFieldToJSONValue(schema, val);
                 continue;
             }
 
-            obj[key] = docToJson(<never>val, this[key]);
+            if (typeof this.#schema.references[key] === "undefined") obj[key] = val;
+
         }
 
         if (!this.#autoFetch) {
-            if (this.#validate) this.#validateSchemaReferences(this.#schema.references);
+            if (this.#validate) this.#validateSchemaReferences(this.#schema.references, this);
             for (let i = 0, keys = Object.keys(this.#schema.references), len = keys.length; i < len; i++) {
                 const key = keys[i];
-                obj[key] = this[key];
+                if (this[key].length > 0) obj[key] = this[key];
             }
         }
+
         return JSON.stringify(obj, null);
+    }
+
+    public get $globalPrefix(): string {
+        return this.#global_prefix;
+    }
+
+    public get $prefix(): string {
+        return this.#prefix;
+    }
+
+    public get $model_name(): string {
+        return this.#model_name;
+    }
+
+    public get $suffix(): string | undefined {
+        return this.#suffix;
+    }
+
+    public get $id(): string {
+        return this.#id;
+    }
+
+    public get $record_id(): string {
+        return this.#record_id;
     }
 }

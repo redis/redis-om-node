@@ -5,11 +5,16 @@ import { Color } from "colours.js";
 import { methods, schemaData } from "./utils/symbols";
 
 import type {
+    ExtractSchemaDefinition,
     MethodsDefinition,
     SchemaDefinition,
     SchemaOptions,
     ParseSchema,
-    BaseField
+    NumberField,
+    StringField,
+    BaseField,
+    FieldType,
+    ParsedSchemaDefinition
 } from "./typings";
 
 export class Schema<S extends SchemaDefinition, M extends MethodsDefinition<S> = MethodsDefinition<S>, P extends ParseSchema<S> = ParseSchema<S>> {
@@ -17,17 +22,35 @@ export class Schema<S extends SchemaDefinition, M extends MethodsDefinition<S> =
     /** @internal */
     public [methods]: M;
 
-    /** @internal */
+    /**
+     * @internal
+     * The real type is: {@link ParsedSchemaDefinition}
+    */
     public [schemaData]: P;
 
     public constructor(rawData: S, methodsData?: M, public readonly options: SchemaOptions = {}) {
-        this[schemaData] = this.#parse(rawData);
+        this[schemaData] = <never>this.#parse(rawData);
         this[methods] = methodsData ?? <M>{};
         this.options.dataStructure = options.dataStructure ?? "JSON";
 
     }
 
-    #parse<T extends SchemaDefinition>(schema: T): P {
+    /** This only extends the definition, it does not extend methods nor options */
+    public extends<T extends Schema<any>, SD = ExtractSchemaDefinition<T>>(schema: T): Schema<Omit<SD, keyof S> & S> {
+        this[schemaData] = <never>{
+            data: {
+                ...schema[schemaData].data,
+                ...this[schemaData].data
+            },
+            references: {
+                ...schema[schemaData].references,
+                ...this[schemaData].references
+            }
+        };
+        return <never>this;
+    }
+
+    #parse(schema: SchemaDefinition): ParsedSchemaDefinition {
         const data: Record<string, unknown> = {};
         const references: Record<string, unknown> = {};
 
@@ -94,7 +117,7 @@ export class Schema<S extends SchemaDefinition, M extends MethodsDefinition<S> =
                 } else if (value === "tuple") {
                     throw new PrettyError("Type 'tuple' needs to use its object definition");
                 } else if (value === "array") {
-                    value = { type: value, elements: "string", default: undefined, optional: false, sortable: false, index: true };
+                    value = { type: value, elements: "string", default: undefined, optional: false, sortable: false, index: false, separator: "|" };
                 } else if (value === "vector") {
                     value = {
                         type: value,
@@ -105,10 +128,11 @@ export class Schema<S extends SchemaDefinition, M extends MethodsDefinition<S> =
                         default: undefined,
                         optional: false,
                         sortable: false,
-                        index: true
+                        index: false
                     };
                 } else {
-                    value = { type: value, default: undefined, optional: false, sortable: false, index: true };
+                    value = { type: value, default: undefined, optional: false, sortable: false, index: false };
+                    if ((<FieldType>value).type === "string" || (<FieldType>value).type === "number") (<StringField | NumberField>value).literal = undefined;
                 }
 
                 data[key] = value;
@@ -128,10 +152,9 @@ export class Schema<S extends SchemaDefinition, M extends MethodsDefinition<S> =
 
             if (value.type === "array") {
                 if (typeof value.elements === "undefined") value.elements = "string";
-                if (typeof value.separator === "undefined") value.separator = ",";
+                if (typeof value.separator === "undefined") value.separator = "|";
                 if (typeof value.elements === "object") {
                     value.elements = <never>this.#parse(value.elements).data;
-                    if (!this.options.noLogs) console.log(`'${key}' will not be indexed because array of objects is not yet supported on RediSearch`);
                 }
                 value = this.#fill(value);
             } else if (value.type === "date") {
@@ -141,15 +164,15 @@ export class Schema<S extends SchemaDefinition, M extends MethodsDefinition<S> =
             } else if (value.type === "object") {
                 if (typeof value.default === "undefined") value.default = undefined;
                 if (typeof value.optional === "undefined") value.optional = false;
-                if (!value.properties) value.properties = undefined;
+                if (typeof value.properties === "undefined") value.properties = <never>null;
+                else if (value.properties instanceof Schema) value.properties = <never>value.properties[schemaData].data;
                 else value.properties = <never>this.#parse(value.properties).data;
             } else if (value.type === "tuple") {
                 if (typeof value.elements === "undefined") throw new PrettyError("Tuple needs to have at least 1 element", {
                     reference: "redis-om"
                 });
                 for (let j = 0, le = value.elements.length; j < le; j++) {
-                    //@ts-expect-error No comment
-                    value.elements[j] = this.#parse({ [j]: typeof value.elements[j] === "string" ? value.elements[j] : { type: "object", properties: value.elements[j] } }).data[j];
+                    value.elements[j] = <never>this.#parse({ [j]: value.elements[j] }).data[j];
                 }
                 value = this.#fill(value);
             } else if (value.type === "reference") {
@@ -206,6 +229,10 @@ export class Schema<S extends SchemaDefinition, M extends MethodsDefinition<S> =
                     if (typeof value.epsilon === "undefined") value.epsilon = undefined;
                 }
                 value = this.#fill(value);
+            } else if (value.type === "string" || value.type === "number" || value.type === "bigint") {
+                if (typeof value.literal === "undefined") value.literal = undefined;
+                else if (!Array.isArray(value.literal)) value.literal = [<never>value.literal];
+                value = this.#fill(value);
             } else {
                 value = this.#fill(value);
             }
@@ -219,7 +246,7 @@ export class Schema<S extends SchemaDefinition, M extends MethodsDefinition<S> =
         if (typeof value.default === "undefined") value.default = undefined;
         if (typeof value.optional === "undefined") value.optional = false;
         if (typeof value.sortable === "undefined") value.sortable = false;
-        if (typeof value.index === "undefined") value.index = true;
+        if (typeof value.index === "undefined") value.index = false;
         return value;
     }
 }

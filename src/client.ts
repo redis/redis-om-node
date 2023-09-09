@@ -8,37 +8,36 @@ import type {
     ExtractSchemaMethods,
     MethodsDefinition,
     SchemaDefinition,
-    SchemaOptions,
-    WithModules,
     NodeRedisClient,
+    SchemaOptions,
+    ClientOptions,
     ExtractName,
+    WithModules,
     URLObject,
-    Module,
-    ClientOptions
+    Narrow,
+    Module
 } from "./typings";
 
 export class Client<SD extends SchemaDefinition = {}, MD extends MethodsDefinition<SD> = {}> {
     #client!: NodeRedisClient;
     #models: Map<string, Model<any>> = new Map();
     #open: boolean = false;
-    #prefix: string = "Redis-OM";
-
-    /** Please only access this from within a module or if you know what you are doing */
-    public _options: ClientOptions<SD, MD>;
+    #prefix: string = "redis-om";
+    #options: ClientOptions<SD, MD>;
 
     public constructor(options?: ClientOptions<SD, MD>) {
-        this._options = options ?? <ClientOptions<SD, MD>>{};
+        this.#options = options ?? <ClientOptions<SD, MD>>{};
 
-        if (this._options.modules) {
-            for (let i = 0, len = this._options.modules.length; i < len; i++) {
-                const module = this._options.modules[i];
+        if (this.#options.modules) {
+            for (let i = 0, len = this.#options.modules.length; i < len; i++) {
+                const module = this.#options.modules[i];
                 //@ts-expect-error shenanigans
                 this[module.name] = new module.ctor(this);
             }
         }
     }
 
-    public async connect(url: string | URLObject = this._options.url ?? "redis://localhost:6379"): Promise<Client> {
+    public async connect(url: string | URLObject = this.#options.url ?? "redis://localhost:6379"): Promise<Client> {
         if (this.#open) return this;
 
         if (typeof url === "object") {
@@ -73,18 +72,18 @@ export class Client<SD extends SchemaDefinition = {}, MD extends MethodsDefiniti
         return this;
     }
 
-    public schema<T extends SchemaDefinition, M extends MethodsDefinition<(T & SD)>>(definition: T, methods?: M, options?: SchemaOptions): Schema<
+    public schema<T extends Narrow<SchemaDefinition>, M extends MethodsDefinition<(T & SD)>>(definition: T, methods?: M, options?: SchemaOptions): Schema<
         { [K in keyof (T & SD)]: (T & SD)[K] },
         { [K in keyof (M & MD)]: (M & MD)[K] }
     > {
         return <never>new Schema({
-            ...this._options.inject?.schema?.definition,
+            ...this.#options.inject?.schema?.definition,
             ...definition
         }, <never>{
-            ...this._options.inject?.schema?.methods,
+            ...this.#options.inject?.schema?.methods,
             ...methods
         }, {
-            ...this._options.inject?.schema?.options,
+            ...this.#options.inject?.schema?.options,
             ...options
         });
     }
@@ -118,6 +117,20 @@ export class Client<SD extends SchemaDefinition = {}, MD extends MethodsDefiniti
 
     public get isOpen(): boolean {
         return this.#open;
+    }
+
+    public get options(): ClientOptions<SD, MD> {
+        return this.#options;
+    }
+
+    public set options(options: ClientOptions<SD, MD>) {
+        if (this.#open) {
+            throw new PrettyError("Client options cannot be modified when the client is connected", {
+                reference: "redis-om"
+            });
+        }
+
+        this.#options = { ...this.#options, ...options };
     }
 
     public set redisClient(client: NodeRedisClient) {

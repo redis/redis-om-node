@@ -1,22 +1,22 @@
 import type { ParseSchema } from "../../typings";
 import type { Search } from "../search";
 
-export abstract class SearchField<T extends ParseSchema<any>> {
+export abstract class SearchField<T extends ParseSchema<any>, L = unknown> {
 
     protected negated: boolean = false;
     protected value: unknown;
-    public or: Array<unknown> = [];
+    public or: Array<L> = [];
 
     public constructor(protected search: Search<T>, protected field: string) { }
 
     // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
-    public abstract eq(value: Array<unknown> | unknown): Search<T>;
+    public abstract eq(value: Array<L> | L): Search<T>;
 
     /** Syntactic sugar, calls `eq` */
-    public abstract equals(value: unknown): Search<T>;
+    public abstract equals(value: L): Search<T>;
 
     /** Syntactic sugar, calls `eq` */
-    public abstract equalsTo(value: unknown): Search<T>;
+    public abstract equalsTo(value: L): Search<T>;
 
     /** Syntactic sugar, return self */
     public get does(): this {

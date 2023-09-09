@@ -1,27 +1,30 @@
 import type { ParseSchema } from "./parse-schema";
 import type {
     BooleanField,
-    DateField,
-    NumberField,
-    PointField,
     StringField,
+    NumberField,
+    BigIntField,
+    VectorField,
+    PointField,
     TextField,
-    VectorField
+    DateField
 } from "../search/search-builders";
 
-export type MapSearchField<K extends keyof T, S extends ParseSchema<any>, T extends ParseSearchSchema<S["data"]>> = T[K] extends "string"
-    ? StringField<S>
-    : T[K] extends "number"
-    ? NumberField<S>
-    : T[K] extends "boolean"
+export type MapSearchField<K extends keyof T, S extends ParseSchema<any>, T extends ParseSearchSchema<S["data"]>> = T[K][0] extends "string"
+    ? StringField<S, T[K][1] extends undefined ? string : (T[K][1] & string)>
+    : T[K][0] extends "number"
+    ? NumberField<S, T[K][1] extends undefined ? number : (T[K][1] & number)>
+    : T[K][0] extends "bigint"
+    ? BigIntField<S, T[K][1] extends undefined ? bigint : (T[K][1] & bigint)>
+    : T[K][0] extends "boolean"
     ? BooleanField<S>
-    : T[K] extends "text"
+    : T[K][0] extends "text"
     ? TextField<S>
-    : T[K] extends "date"
+    : T[K][0] extends "date"
     ? DateField<S>
-    : T[K] extends "point"
+    : T[K][0] extends "point"
     ? PointField<S>
-    : T[K] extends "vector"
+    : T[K][0] extends "vector"
     ? VectorField<S>
     : never;
 
@@ -47,11 +50,17 @@ export type GetFinalProperty<T extends string, S extends ParseSchema<any>["data"
     : S[Head] extends { elements: unknown }
     ? GetFinalProperty<Tail, S[Head]["elements"]>
     : never
-    : S[T] extends { elements: unknown }
-    ? S[T]["elements"] extends {}
-    ? S[T]["elements"]
-    : "string"
-    : S[T]["type"];
+    : [S[T] extends { elements: unknown }
+        ? S[T]["elements"] extends {}
+        ? S[T]["elements"]
+        : "string"
+        : S[T]["type"],
+        S[T] extends { literal: unknown }
+        ? S[T]["literal"] extends Array<unknown>
+        ? S[T]["literal"][number]
+        : S[T]["literal"]
+        : never
+    ];
 
 export type ParseSearchSchema<T extends ParseSchema<any>["data"]> = {
     [K in SchemaToStrings<T>]: GetFinalProperty<K, T>

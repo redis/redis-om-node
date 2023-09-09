@@ -14,17 +14,17 @@ class Table<T extends Model<any>> {
     readonly #oldSuffix: ModelOptions["suffix"];
 
     constructor(name: string, public model: T) {
-        const { suffix } = model.getOptions;
+        const { suffix } = model.options;
         this.#oldSuffix = suffix;
 
         if (typeof suffix !== "undefined") {
             if (typeof suffix === "function") throw new PrettyError("Using tables is not allowed with dynamic suffixes");
 
-            model.mutateOptions = {
+            model.options = {
                 suffix: `${suffix}:${name}`
             }
         } else {
-            model.mutateOptions = {
+            model.options = {
                 suffix: name
             }
         }
@@ -32,7 +32,7 @@ class Table<T extends Model<any>> {
 
     /** @internal */
     public _cleanUp(): void {
-        this.model.mutateOptions = {
+        this.model.options = {
             suffix: this.#oldSuffix
         }
     }
@@ -79,17 +79,17 @@ const client = new Client({
     /*
     Expected Redis log:
     
-    "JSON.GET" "Redis-OM:V1:test:1"
+    "JSON.GET" "redis-om:V1:test:1"
     
     Expected result:
      
     JSONDocument {
-        '$global_prefix': 'Redis-OM',
+        '$global_prefix': 'redis-om',
         '$prefix': 'V1',
         '$model_name': 'test',
         '$suffix': undefined,
         '$id': '1',
-        '$record_id': 'Redis-OM:V1:test:1',
+        '$record_id': 'redis-om:V1:test:1',
         name: 'DidaS',
         age: 18
     }
@@ -104,6 +104,7 @@ const client = new Client({
     await exampleModel.withTable("table1", async (table: ExampleTable) => {
         await table.model.createAndSave({
             $id: 1,
+            name: "DidaS",
             age: 21
         })
 
@@ -117,17 +118,17 @@ const client = new Client({
         /*
         Expected Redis log:
         
-        "JSON.GET" "Redis-OM:V1:test:table1:1"
+        "JSON.GET" "redis-om:V1:test:table1:1"
         
         Expected result:
         
         JSONDocument {
-            '$global_prefix': 'Redis-OM',
+            '$global_prefix': 'redis-om',
             '$prefix': 'V1',
             '$model_name': 'test',
             '$suffix': 'table1',
             '$id': '1',
-            '$record_id': 'Redis-OM:V1:test:table1:1',
+            '$record_id': 'redis-om:V1:test:table1:1',
             name: undefined,
             age: 21
         }

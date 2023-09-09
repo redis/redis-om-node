@@ -6,25 +6,26 @@ import type { SearchOptions, SearchReply } from "redis";
 
 import {
     type SearchField,
+    BooleanField,
     StringField,
     NumberField,
-    BooleanField,
-    TextField,
-    DateField,
+    BigIntField,
+    VectorField,
     PointField,
-    VectorField
+    TextField,
+    DateField
 } from "./search-builders";
 
 import type {
-    FieldTypes,
+    ParseSearchSchema,
+    SearchInformation,
     NodeRedisClient,
     MapSearchField,
+    ReturnDocument,
     ParseSchema,
-    ParseSearchSchema,
     BaseField,
     ParsedMap,
-    ReturnDocument,
-    SearchInformation
+    FieldType
 } from "../typings";
 
 export type SearchReturn<T extends Search<ParseSchema<any>>> = Omit<T, "where" | "and" | "or" | "rawQuery" | `sort${string}` | `return${string}`>;
@@ -37,7 +38,7 @@ export class Search<T extends ParseSchema<any>, P extends ParseSearchSchema<T["d
     readonly #information: SearchInformation;
     // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
     readonly #docType: typeof JSONDocument | typeof HASHDocument;
-    #workingType!: FieldTypes["type"];
+    #workingType!: FieldType["type"];
 
     /**
      * LIMIT defaults to 0 10
@@ -82,10 +83,6 @@ export class Search<T extends ParseSchema<any>, P extends ParseSearchSchema<T["d
         return this;
     }
 
-    // else(_value: unknown) {
-
-    // }
-
     public sortBy<F extends keyof P>(field: F, order: "ASC" | "DESC" = "ASC"): SearchSortReturn<Search<T>> {
         this.#options.SORTBY = { BY: <string>field, DIRECTION: order };
         return <never>this;
@@ -112,9 +109,11 @@ export class Search<T extends ParseSchema<any>, P extends ParseSearchSchema<T["d
         return (await this.#search()).total;
     }
 
-    public async page<F extends boolean = false>(offset: number, count: number, autoFetch?: F): Promise<Array<ReturnDocument<T, F>>> {
+    public async page<F extends boolean = false>(offset: number, count: number, autoFetch?: F): Promise<Array<ReturnDocument<T, F>> | undefined> {
+        const { total, documents } = await this.#search({ LIMIT: { from: offset, size: count } });
+        if (total === 0) return void 0;
+
         const docs = [];
-        const { documents } = await this.#search({ LIMIT: { from: offset, size: count } });
 
         for (let i = 0, len = documents.length; i < len; i++) {
             const doc = documents[i];
@@ -132,7 +131,7 @@ export class Search<T extends ParseSchema<any>, P extends ParseSearchSchema<T["d
                 }
             }
 
-            docs.push(new this.#docType(this.#schema, {
+            docs.push(new this.#docType(<never>this.#schema, {
                 globalPrefix: this.#information.globalPrefix,
                 prefix: this.#information.prefix,
                 name: this.#information.modelName
@@ -142,9 +141,11 @@ export class Search<T extends ParseSchema<any>, P extends ParseSearchSchema<T["d
         return <never>docs;
     }
 
-    public async pageOfIds(offset: number, count: number, idOnly: boolean = false): Promise<Array<string>> {
+    public async pageOfIds(offset: number, count: number, idOnly: boolean = false): Promise<Array<string> | undefined> {
+        const { total, documents } = await this.#search({ LIMIT: { from: offset, size: count } }, true);
+        if (total === 0) return void 0;
+
         const docs: Array<string> = [];
-        const { documents } = await this.#search({ LIMIT: { from: offset, size: count } }, true);
 
         for (let j = 0, len = documents.length; j < len; j++) {
             const doc = documents[j];
@@ -154,33 +155,36 @@ export class Search<T extends ParseSchema<any>, P extends ParseSearchSchema<T["d
         return docs;
     }
 
-    public async first<F extends boolean = false>(autoFetch?: F): Promise<ReturnDocument<T, F>> {
-        return (await this.page(0, 1, autoFetch))[0];
+    public async first<F extends boolean = false>(autoFetch?: F): Promise<ReturnDocument<T, F> | undefined> {
+        return (await this.page(0, 1, autoFetch))?.[0];
     }
 
-    public async firstId(withKey: boolean = false): Promise<string> {
-        return (await this.pageOfIds(0, 1, withKey))[0];
+    public async firstId(withKey: boolean = false): Promise<string | undefined> {
+        return (await this.pageOfIds(0, 1, withKey))?.[0];
     }
 
-    public async min<F extends keyof P, AF extends boolean = false>(field: F, autoFetch?: AF): Promise<ReturnDocument<T, AF>> {
+    public async min<F extends keyof P, AF extends boolean = false>(field: F, autoFetch?: AF): Promise<ReturnDocument<T, AF> | undefined> {
         return await this.sortBy(field, "ASC").first(autoFetch);
     }
 
-    public async minId<F extends keyof P>(field: F): Promise<string> {
+    public async minId<F extends keyof P>(field: F): Promise<string | undefined> {
         return await this.sortBy(field, "ASC").firstId();
     }
 
-    public async max<F extends keyof P, AF extends boolean = false>(field: F, autoFetch?: AF): Promise<ReturnDocument<T, AF>> {
+    public async max<F extends keyof P, AF extends boolean = false>(field: F, autoFetch?: AF): Promise<ReturnDocument<T, AF> | undefined> {
         return await this.sortBy(field, "DESC").first(autoFetch);
     }
 
-    public async maxId<F extends keyof P>(field: F): Promise<string> {
+    public async maxId<F extends keyof P>(field: F): Promise<string | undefined> {
         return await this.sortBy(field, "DESC").firstId();
     }
 
-    public async all<F extends boolean = false>(autoFetch?: F): Promise<Array<ReturnDocument<T, F>>> {
+    public async all<F extends boolean = false>(autoFetch?: F): Promise<Array<ReturnDocument<T, F>> | undefined> {
+        const { total } = await this.#search({ LIMIT: { from: 0, size: 0 } });
+        if (total === 0) return void 0;
+
+        const { documents } = await this.#search({ LIMIT: { from: 0, size: total } });
         const docs = [];
-        const { documents } = await this.#search({ LIMIT: { from: 0, size: (await this.#search({ LIMIT: { from: 0, size: 0 } })).total } });
 
         for (let i = 0, len = documents.length; i < len; i++) {
             const doc = documents[i];
@@ -198,7 +202,7 @@ export class Search<T extends ParseSchema<any>, P extends ParseSearchSchema<T["d
                     doc.value[key] = <never>await Promise.all(temp);
                 }
             }
-            docs.push(new this.#docType(this.#schema, {
+            docs.push(new this.#docType(<never>this.#schema, {
                 globalPrefix: this.#information.globalPrefix,
                 prefix: this.#information.prefix,
                 name: this.#information.modelName
@@ -208,10 +212,12 @@ export class Search<T extends ParseSchema<any>, P extends ParseSearchSchema<T["d
         return <never>docs;
     }
 
-    public async allIds(idOnly: boolean = false): Promise<Array<string>> {
-        const docs: Array<string> = [];
+    public async allIds(idOnly: boolean = false): Promise<Array<string> | undefined> {
+        const { total } = await this.#search({ LIMIT: { from: 0, size: 0 } });
+        if (total === 0) return void 0;
 
-        const { documents } = await this.#search({ LIMIT: { from: 0, size: (await this.#search({ LIMIT: { from: 0, size: 0 } })).total } });
+        const { documents } = await this.#search({ LIMIT: { from: 0, size: total } });
+        const docs: Array<string> = [];
 
         for (let i = 0, len = documents.length; i < len; i++) {
             const doc = documents[i];
@@ -225,43 +231,43 @@ export class Search<T extends ParseSchema<any>, P extends ParseSearchSchema<T["d
         return this.count();
     }
 
-    public async returnAll<F extends boolean = false>(autoFetch?: F): Promise<Array<ReturnDocument<T, F>>> {
+    public async returnAll<F extends boolean = false>(autoFetch?: F): Promise<Array<ReturnDocument<T, F>> | undefined> {
         return await this.all(autoFetch);
     }
 
-    public async returnAllIds(withKey: boolean = false): Promise<Array<string>> {
+    public async returnAllIds(withKey: boolean = false): Promise<Array<string> | undefined> {
         return await this.allIds(withKey);
     }
 
-    public async returnPage<F extends boolean = false>(offset: number, count: number, autoFetch?: F): Promise<Array<ReturnDocument<T, F>>> {
-        return <never>await this.page(offset, count, autoFetch);
+    public async returnPage<F extends boolean = false>(offset: number, count: number, autoFetch?: F): Promise<Array<ReturnDocument<T, F>> | undefined> {
+        return await this.page(offset, count, autoFetch);
     }
 
-    public async returnPageOfIds(offset: number, count: number, withKey: boolean = false): Promise<Array<string>> {
+    public async returnPageOfIds(offset: number, count: number, withKey: boolean = false): Promise<Array<string> | undefined> {
         return await this.pageOfIds(offset, count, withKey);
     }
 
-    public async returnFirst<F extends boolean = false>(autoFetch?: F): Promise<ReturnDocument<T, F>> {
+    public async returnFirst<F extends boolean = false>(autoFetch?: F): Promise<ReturnDocument<T, F> | undefined> {
         return await this.first(autoFetch);
     }
 
-    public async returnFirstId(withKey: boolean = false): Promise<string> {
+    public async returnFirstId(withKey: boolean = false): Promise<string | undefined> {
         return await this.firstId(withKey);
     }
 
-    public async returnMin<F extends keyof P, AF extends boolean = false>(field: F, autoFetch?: AF): Promise<ReturnDocument<T, AF>> {
+    public async returnMin<F extends keyof P, AF extends boolean = false>(field: F, autoFetch?: AF): Promise<ReturnDocument<T, AF> | undefined> {
         return await this.min(field, autoFetch);
     }
 
-    public async returnMinId<F extends keyof P>(field: F): Promise<string> {
+    public async returnMinId<F extends keyof P>(field: F): Promise<string | undefined> {
         return await this.minId(field);
     }
 
-    public async returnMax<F extends keyof P, AF extends boolean = false>(field: F, autoFetch?: AF): Promise<ReturnDocument<T, AF>> {
+    public async returnMax<F extends keyof P, AF extends boolean = false>(field: F, autoFetch?: AF): Promise<ReturnDocument<T, AF> | undefined> {
         return await this.max(field, autoFetch);
     }
 
-    public async returnMaxId<F extends keyof P>(field: F): Promise<string> {
+    public async returnMaxId<F extends keyof P>(field: F): Promise<string | undefined> {
         return await this.maxId(field);
     }
 
@@ -277,7 +283,7 @@ export class Search<T extends ParseSchema<any>, P extends ParseSearchSchema<T["d
 
         if (data === null) return null;
 
-        return <never>new this.#docType(this.#schema, {
+        return <never>new this.#docType(<never>this.#schema, {
             globalPrefix: this.#information.globalPrefix,
             prefix: this.#information.prefix,
             name: this.#information.modelName
@@ -319,20 +325,24 @@ export class Search<T extends ParseSchema<any>, P extends ParseSearchSchema<T["d
         const parsedField = this.#parsedSchema.get(field);
         if (!parsedField) throw new PrettyError(`'${field}' doesn't exist on the schema`);
 
-        const { path, value } = parsedField;
+        const { type, searchPath } = parsedField;
 
-        return <never>this.#defineReturn(path, value.type === "array" ? <never>value.elements : value.type);
+        return <never>this.#defineReturn(searchPath, type);
     }
 
-    #defineReturn(field: string, type: Exclude<FieldTypes["type"], "tuple" | "array" | "reference">): BaseField {
+    #defineReturn(field: string, type: Exclude<FieldType["type"], "tuple" | "array" | "reference">): BaseField {
         switch (type) {
             case "string": {
                 this.#workingType = "string";
-                return <never>new StringField<T>(this, field);
+                return <never>new StringField<T, string>(this, field);
             }
             case "number": {
                 this.#workingType = "number";
-                return <never>new NumberField<T>(this, field);
+                return <never>new NumberField<T, number>(this, field);
+            }
+            case "bigint": {
+                this.#workingType = "bigint";
+                return <never>new BigIntField<T, bigint>(this, field);
             }
             case "boolean": {
                 this.#workingType = "boolean";

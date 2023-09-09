@@ -1,2 +1,2 @@
 export * from "./reference-array";
-export * from "./parse";
+export * from "./parse-to-search-index";

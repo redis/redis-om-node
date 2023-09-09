@@ -1,14 +1,20 @@
 import type { ExtractParsedSchemaDefinition } from "./extract-generic";
+import type { Schema } from "../schema";
+
 import type {
+    SchemaDefinition,
+    ReferenceField,
+    ObjectField,
+    StringField,
+    NumberField,
+    VectorField,
     ArrayField,
-    BaseField,
+    TupleField,
     FlatVector,
     HNSWVector,
-    ObjectField,
-    ReferenceField,
-    SchemaDefinition,
-    TupleField,
-    VectorField
+    BaseField,
+    FieldType,
+    BigIntField
 } from "./schema-definition";
 
 export type ParseSchema<T extends SchemaDefinition> = {
@@ -16,7 +22,13 @@ export type ParseSchema<T extends SchemaDefinition> = {
         [K in keyof T as T[K] extends ReferenceField ? never : K]: T[K] extends ObjectField
         ? {
             [P in keyof Required<ObjectField>]: P extends "properties"
-            ? T[K][P] extends {} ? ParseSchema<T[K][P]>["data"] : undefined
+            ? T[K][P] extends {}
+            ? T[K][P] extends Schema<any, any, infer U>
+            ? U
+            : T[K][P] extends SchemaDefinition
+            ? ParseSchema<T[K][P]>["data"]
+            : never
+            : undefined
             : T[K][P] extends {} ? T[K][P] : Fill<P>
         }
         : T[K] extends ArrayField
@@ -33,8 +45,8 @@ export type ParseSchema<T extends SchemaDefinition> = {
             ? {
                 [U in keyof V]: V[U] extends string
                 ? CreateDefinitionFromString<V[U]>
-                : V[U] extends SchemaDefinition
-                ? ParseSchema<{ $: { type: "object", properties: V[U] } }>["data"]["$"]
+                : V[U] extends FieldType
+                ? GetTupleObject<V[U]>
                 : never
             }
             : never
@@ -50,6 +62,18 @@ export type ParseSchema<T extends SchemaDefinition> = {
             [P in keyof Required<HNSWVector>]: T[K][P] extends {} ? T[K][P] : Fill<P>
         }
         : never
+        : T[K] extends StringField
+        ? {
+            [P in keyof Required<StringField>]: T[K][P] extends {} ? T[K][P] : Fill<P>
+        }
+        : T[K] extends NumberField
+        ? {
+            [P in keyof Required<NumberField>]: T[K][P] extends {} ? T[K][P] : Fill<P>
+        }
+        : T[K] extends BigIntField
+        ? {
+            [P in keyof Required<BigIntField>]: T[K][P] extends {} ? T[K][P] : Fill<P>
+        }
         : T[K] extends BaseField
         ? {
             [P in keyof Required<BaseField>]: T[K][P] extends {} ? T[K][P] : Fill<P>
@@ -83,6 +107,24 @@ export type CreateDefinitionFromString<T extends string> = T extends "vector"
         ? "L2"
         : Fill<K>
     }
+    : T extends "string"
+    ? {
+        [K in keyof Required<StringField>]: K extends "type"
+        ? T
+        : Fill<K>
+    }
+    : T extends "number"
+    ? {
+        [K in keyof Required<NumberField>]: K extends "type"
+        ? T
+        : Fill<K>
+    }
+    : T extends "bigint"
+    ? {
+        [K in keyof Required<BigIntField>]: K extends "type"
+        ? T
+        : Fill<K>
+    }
     : {
         [K in keyof Required<BaseField>]: K extends "type"
         ? T
@@ -97,5 +139,7 @@ export type Fill<T> = T extends "optional"
     : T extends "sortable"
     ? false
     : T extends "index"
-    ? true
+    ? false
     : undefined;
+
+type GetTupleObject<T extends FieldType, P = ParseSchema<{ $: T }>["data"]> = P extends { $: unknown } ? P["$"] : never;

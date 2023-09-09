@@ -1,24 +1,14 @@
-import { schemaData } from "../../src/utils";
+import { schemaData } from "../../src/utils/symbols";
 import { stringSchema } from "../constants";
 
 describe("string fields", () => {
-    test("raw data", () => {
-        expect(stringSchema.rawData).toStrictEqual({
-            stringField1: "string",
-            stringField2: { type: "string" },
-            stringField3: { type: "string", default: "S" },
-            stringField4: { type: "string", required: true },
-            stringField5: { type: "string", default: "SS", required: true }
-        });
-    });
-
     test("formatted data", () => {
-        expect(stringSchema[schemaData]).toStrictEqual({
-            stringField1: { type: "string", default: undefined, required: false },
-            stringField2: { type: "string", default: undefined, required: false },
-            stringField3: { type: "string", default: "S", required: false },
-            stringField4: { type: "string", default: undefined, required: true },
-            stringField5: { type: "string", default: "SS", required: true }
+        expect(stringSchema[schemaData].data).toStrictEqual({
+            stringField1: { type: "string", default: undefined, optional: false, sortable: false, index: true, literal: undefined },
+            stringField2: { type: "string", default: undefined, optional: false, sortable: false, index: true, literal: undefined },
+            stringField3: { type: "string", default: "S", optional: false, sortable: false, index: true, literal: undefined },
+            stringField4: { type: "string", default: undefined, optional: true, sortable: false, index: true, literal: undefined },
+            stringField5: { type: "string", default: "SS", optional: true, sortable: false, index: true, literal: undefined }
         });
     });
 })

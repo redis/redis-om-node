@@ -7,6 +7,7 @@ import type { Point } from "./point";
 export interface FieldMap<T = string> {
     string: string;
     number: number;
+    bigint: bigint;
     boolean: boolean;
     text: string;
     date: Date | number;

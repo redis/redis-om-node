@@ -4,33 +4,28 @@ import { randomUUID } from "node:crypto";
 import { ReferenceArray } from "../utils";
 import {
     validateSchemaReferences,
-    validateSchemaData,
-    objectToHashString,
-    getLastKeyInSchema,
-    tupleToObjStrings,
-    hashFieldToString,
-    stringToHashField,
-    stringToHashArray,
-    stringsToObject,
-    deepMerge
+    documentFieldToHASHValue,
+    HASHValueToDocumentField,
+    validateSchemaData
 } from "./document-helpers";
 
-import type { DocumentShared, ObjectField, ParseSchema } from "../typings";
+import type { DocumentShared, ParsedSchemaDefinition } from "../typings";
+import { PrettyError } from "@infinite-fansub/logger";
 
 export class HASHDocument implements DocumentShared {
 
-    readonly #schema: ParseSchema<any>;
+    readonly #schema: ParsedSchemaDefinition;
     readonly #validate: boolean;
     readonly #autoFetch: boolean;
     #validateSchemaReferences = validateSchemaReferences;
     #validateSchemaData = validateSchemaData;
 
-    public readonly $global_prefix: string;
-    public readonly $prefix: string;
-    public readonly $model_name: string;
-    public readonly $suffix: string | undefined;
-    public readonly $id: string;
-    public readonly $record_id: string;
+    readonly #global_prefix: string;
+    readonly #prefix: string;
+    readonly #model_name: string;
+    readonly #suffix: string | undefined;
+    readonly #id: string;
+    readonly #record_id: string;
 
     /*
     * Using any so everything works as intended
@@ -40,7 +35,7 @@ export class HASHDocument implements DocumentShared {
     [key: string]: any;
 
     public constructor(
-        schema: ParseSchema<any>,
+        schema: ParsedSchemaDefinition,
         record: {
             globalPrefix: string,
             prefix: string,
@@ -53,12 +48,12 @@ export class HASHDocument implements DocumentShared {
         validate: boolean = true,
         wasAutoFetched: boolean = false
     ) {
-        this.$global_prefix = record.globalPrefix;
-        this.$prefix = record.prefix;
-        this.$model_name = record.name;
-        this.$suffix = data?.$suffix ?? (typeof record.suffix === "function" ? record.suffix() : record.suffix);
-        this.$id = data?.$id ?? record.id ?? randomUUID();
-        this.$record_id = `${this.$global_prefix}:${this.$prefix}:${this.$model_name}:${this.$suffix ? `${this.$suffix}:` : ""}${this.$id}`;
+        this.#global_prefix = record.globalPrefix;
+        this.#prefix = record.prefix;
+        this.#model_name = record.name;
+        this.#suffix = data?.$suffix ?? (typeof record.suffix === "function" ? record.suffix() : record.suffix);
+        this.#id = data?.$id?.toString() ?? record.id ?? randomUUID();
+        this.#record_id = `${this.#global_prefix}:${this.#prefix}:${this.#model_name}:${this.#suffix ? `${this.#suffix}:` : ""}${this.#id}`;
         this.#schema = schema;
         this.#validate = validate;
         this.#autoFetch = wasAutoFetched;
@@ -72,51 +67,65 @@ export class HASHDocument implements DocumentShared {
                     if (key.startsWith("$")) continue;
                     const arr = key.split(".");
 
-                    if (arr.length > 1) /* This is an object or tuple */ {
-                        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-                        if (schema.data[arr[0]]?.type === "tuple") {
-                            // var name
-                            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-                            const temp = arr.shift()!;
+                    if (arr.length > 1) {
+                        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                        const keyName = arr.shift()!;
+                        const workingField = schema.data[keyName];
 
-                            if (arr.length === 1) {
-                                this[temp].push(stringToHashField(
-                                    //@ts-expect-error Type overload
-                                    schema.data[temp].elements[arr[0]],
-                                    <string>value
+                        if (typeof workingField !== "undefined") {
+                            if (workingField.type === "tuple") {
+                                if (!Array.isArray(this[keyName])) this[keyName] = [];
+                                if (workingField.elements[+arr[0]].type === "object") {
+                                    this[keyName][+arr[0]] = (<never>HASHValueToDocumentField(
+                                        workingField.elements[+arr[0]],
+                                        value,
+                                        this[keyName][+arr[0]],
+                                        arr
+                                    ))[+arr[0]];
+                                } else {
+                                    this[keyName][+arr[0]] = HASHValueToDocumentField(
+                                        workingField.elements[+arr[0]],
+                                        value,
+                                        this[keyName][+arr[0]],
+                                        arr
+                                    );
+                                }
+                            } else if (workingField.type === "object") {
+                                if (workingField.properties === null) throw new PrettyError("Something went terribly wrong");
+                                if (typeof this[keyName] === "undefined") this[keyName] = {};
+                                this[keyName][arr[0]] = HASHValueToDocumentField(
+                                    workingField.properties[arr[0]],
+                                    value,
+                                    this[keyName][arr[0]],
+                                    arr
+                                );
+                            } else if (workingField.type === "array") {
+                                if (!Array.isArray(this[keyName])) this[keyName] = [];
+                                if (typeof workingField.elements !== "object") throw new PrettyError("Something went terribly wrong processing an array");
+                                this[keyName] = Object.values(<never>HASHValueToDocumentField(
+                                    { type: "object", properties: workingField.elements },
+                                    value,
+                                    this[keyName],
+                                    arr
                                 ));
-
-                                continue;
                             }
-
-                            //@ts-expect-error Type overload
-                            this[temp].push(stringToHashArray(arr, schema.data[temp].elements, value));
-                        } else /*we assume its an object*/ {
-                            this[arr[0]] = deepMerge(
-                                this[arr[0]],
-                                stringsToObject(
-                                    arr,
-                                    stringToHashField(
-                                        getLastKeyInSchema(<Required<ObjectField>>schema.data[arr[0]], <string>arr.at(-1)) ?? { type: "string" },
-                                        <string>value
-                                    )
-                                )[arr[0]]
-                            );
+                            continue;
                         }
-                        continue;
                     }
 
+                    if (typeof schema.data[key] !== "undefined") {
+                        this[key] = HASHValueToDocumentField(schema.data[key], value);
+                        continue;
+                    }
                     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
                     if (schema.references[key] === null) {
                         if (!this.#autoFetch) {
-                            this[key] = new ReferenceArray(...<Array<string>>stringToHashField({ type: "array" }, <string>value));
+                            this[key] = new ReferenceArray(value.split(" | "));
                             continue;
                         }
-                        this[key] = value;
-                        continue;
                     }
 
-                    this[key] = stringToHashField(<never>schema.data[key], <string>value);
+                    this[key] = value;
                 }
             } else {
                 for (let i = 0, entries = Object.entries(data), len = entries.length; i < len; i++) {
@@ -133,16 +142,12 @@ export class HASHDocument implements DocumentShared {
             const [key, value] = entries[i];
             this[key] = value.default ?? (value.type === "object"
                 ? {}
-                : value.type === "tuple"
+                : value.type === "tuple" || value.type === "array"
                     ? []
                     : value.type === "vector"
-                        //@ts-expect-error Type overload
                         ? value.vecType === "FLOAT32"
                             ? new Float32Array()
-                            //@ts-expect-error Type overload
-                            : value.vecType === "FLOAT64"
-                                ? new Float64Array()
-                                : []
+                            : new Float64Array()
                         : void 0);
         }
 
@@ -152,8 +157,9 @@ export class HASHDocument implements DocumentShared {
         }
     }
 
-    public toString(): string {
-        if (this.#validate) this.#validateSchemaData(this.#schema.data);
+    /** This is actually and array... eventually i change it */
+    public toString(): Array<string> {
+        if (this.#validate) this.#validateSchemaData(this.#schema.data, this);
 
         const arr = [
             "$id",
@@ -162,48 +168,51 @@ export class HASHDocument implements DocumentShared {
 
         if (this.$suffix) arr.push("$suffix", this.$suffix);
 
-        for (let i = 0, entries = Object.entries(this.#schema.data), len = entries.length; i < len; i++) {
+        for (let i = 0, entries = Object.entries(this), length = entries.length; i < length; i++) {
             const [key, val] = entries[i];
+            const schema = this.#schema.data[key];
 
-            if (typeof this[key] === "undefined") continue;
-
-            if (val.type === "object") {
-                //@ts-expect-error Typescript is getting confused due to the union of array and object
-                arr.push(...objectToHashString(this[key], key, val.properties));
-                continue;
-            } else if (val.type === "tuple") {
-                const temp = tupleToObjStrings(<never>this[key], key);
-                for (let j = 0, le = temp.length; j < le; j++) {
-                    const [k, value] = Object.entries(temp[j])[0];
-
-                    //@ts-expect-error Type Overload
-                    if (val.elements[j].type === "object") {
-                        //@ts-expect-error Type Overload
-                        arr.push(...objectToHashString(value, k, val.elements[j].properties));
-                        continue;
-                    }
-
-                    arr.push(k, hashFieldToString(<never>val, value));
-                }
+            if (typeof schema !== "undefined") {
+                arr.push(...documentFieldToHASHValue(schema, val, key));
                 continue;
             }
 
-            arr.push(key, hashFieldToString(<never>val, this[key]));
-
+            if (typeof this.#schema.references[key] === "undefined") arr.push(val);
         }
 
         if (!this.#autoFetch) {
-            if (this.#validate) this.#validateSchemaReferences(this.#schema.references);
+            if (this.#validate) this.#validateSchemaReferences(this.#schema.references, this);
             for (let i = 0, keys = Object.keys(this.#schema.references), len = keys.length; i < len; i++) {
                 const key = keys[i];
 
-                if (!this[key]?.length) continue;
-                arr.push(key, hashFieldToString({ type: "array" }, this[key]));
+                if (this[key].length > 0) arr.push(key, this[key].join(" | "));
             }
         }
 
-        //@ts-expect-error pls dont question it
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
         return arr;
+    }
+
+    public get $globalPrefix(): string {
+        return this.#global_prefix;
+    }
+
+    public get $prefix(): string {
+        return this.#prefix;
+    }
+
+    public get $model_name(): string {
+        return this.#model_name;
+    }
+
+    public get $suffix(): string | undefined {
+        return this.#suffix;
+    }
+
+    public get $id(): string {
+        return this.#id;
+    }
+
+    public get $record_id(): string {
+        return this.#record_id;
     }
 }
