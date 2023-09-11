@@ -4,7 +4,7 @@ import clone from 'just-clone'
 import { Field, Schema } from "../schema"
 import { RedisJsonData } from "../client"
 
-import { convertDateToEpoch, convertIsoDateToEpoch, convertKnownValueToString, convertPointToString, isArray, isBoolean, isDate, isDateString, isDefined, isNull, isNumber, isObject, isPoint, isString, isUndefined, stringifyError } from "./transformer-common"
+import { convertDateToEpoch, convertIsoDateToEpoch, convertPointToString, isArray, isBoolean, isDate, isDateString, isDefined, isNull, isNumber, isObject, isPoint, isString, isUndefined, stringifyError } from "./transformer-common"
 import { EntityData } from '../entity'
 import { InvalidJsonInput, NullJsonInput } from '../error'
 
@@ -19,7 +19,7 @@ function convertToRedisJsonKnown(schema: Schema, json: RedisJsonData) {
 
     const results = JSONPath({ resultType: 'all', path: field.jsonPath, json })
 
-    if (field.type === 'string[]') {
+    if (field.isArray) {
       convertKnownResultsToJson(field, results)
       return
     }
@@ -58,7 +58,7 @@ function convertKnownResultsToJson(field: Field, results: any[]): any {
     const { value, parent, parentProperty } = result
     if (isNull(value)) throw new NullJsonInput(field)
     if (isUndefined(value) && isArray(parent)) throw new NullJsonInput(field)
-    if (isDefined(value)) parent[parentProperty] = convertKnownValueToString(value)
+    if (isDefined(value)) parent[parentProperty] = convertKnownArrayValueToJson(field, value)
   })
 }
 
@@ -86,6 +86,19 @@ function convertKnownValueToJson(field: Field, value: any): any {
       if (isBoolean(value)) return value.toString()
       if (isNumber(value)) return value.toString()
       if (isString(value)) return value
+      throw new InvalidJsonInput(field)
+  }
+}
+
+function convertKnownArrayValueToJson(field: Field, value: any) {
+  switch (field.type) {
+    case 'string[]':
+      if (isBoolean(value)) return value.toString()
+      if (isNumber(value)) return value.toString()
+      if (isString(value)) return value
+      throw new InvalidJsonInput(field)
+    case 'number[]':
+      if (isNumber(value)) return value
       throw new InvalidJsonInput(field)
   }
 }

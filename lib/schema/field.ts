@@ -38,7 +38,7 @@ export class Field {
   get jsonPath(): string {
     if (this.#definition.path) return this.#definition.path
     const alias = (this.#definition.alias ?? this.name).replace(/"/g, '\\"')
-    return this.type === 'string[]' ? `$["${alias}"][*]` : `$["${alias}"]`
+    return this.isArray ? `$["${alias}"][*]` : `$["${alias}"]`
   }
 
   /** The separator for string[] fields when stored in Hashes. */
@@ -79,5 +79,10 @@ export class Field {
   /** The phonetic matcher for the field. */
   get matcher(): string | null {
     return this.#definition.matcher ?? null
+  }
+
+  /** Is this type an array or not. */
+  get isArray(): boolean {
+    return this.type.endsWith('[]')
   }
 }

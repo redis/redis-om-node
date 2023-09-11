@@ -20,7 +20,7 @@ export type EntityData = {
 }
 
 /** Valid types for values in an {@link Entity}. */
-export type EntityDataValue = string | number | boolean | Date | Point | null | undefined
+export type EntityDataValue = string | number | boolean | Date | Point | null | undefined | Array<EntityDataValue | EntityData>
 
 /** Defines a point on the globe using longitude and latitude. */
 export type Point = {

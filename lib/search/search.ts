@@ -602,6 +602,7 @@ export class Search extends AbstractSearch {
     if (field.type === 'boolean' && this.schema.dataStructure === 'JSON') return new WhereJsonBoolean(this, field)
     if (field.type === 'date') return new WhereDate(this, field)
     if (field.type === 'number') return new WhereNumber(this, field)
+    if (field.type === 'number[]') return new WhereNumber(this, field)
     if (field.type === 'point') return new WherePoint(this, field)
     if (field.type === 'text') return new WhereText(this, field)
     if (field.type === 'string') return new WhereString(this, field)

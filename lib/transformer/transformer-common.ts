@@ -58,7 +58,7 @@ export function convertKnownValueToString(value: any) {
   if (isBoolean(value)) return value.toString()
   if (isNumber(value)) return value.toString()
   if (isString(value)) return value
-  throw new RedisOmError(`Expected a string but received: ${stringifyError(value)}`)
+  throw new RedisOmError(`Expected a string but received a non-string`)
 }
 
 export const stringifyError = (value: any) => JSON.stringify(value, null, 1)

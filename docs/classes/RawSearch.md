@@ -82,7 +82,7 @@ AbstractSearch.return
 
 #### Defined in
 
-[lib/search/search.ts:308](https://github.com/redis/redis-om-node/blob/660c639/lib/search/search.ts#L308)
+[lib/search/search.ts:308](https://github.com/redis/redis-om-node/blob/4f5798b/lib/search/search.ts#L308)
 
 ## Methods
 
@@ -118,7 +118,7 @@ An array of [Entities](../README.md#entity) matching the query.
 
 #### Defined in
 
-[lib/search/search.ts:264](https://github.com/redis/redis-om-node/blob/660c639/lib/search/search.ts#L264)
+[lib/search/search.ts:264](https://github.com/redis/redis-om-node/blob/4f5798b/lib/search/search.ts#L264)
 
 ___
 
@@ -154,7 +154,7 @@ An array of entity IDs matching the query.
 
 #### Defined in
 
-[lib/search/search.ts:282](https://github.com/redis/redis-om-node/blob/660c639/lib/search/search.ts#L282)
+[lib/search/search.ts:282](https://github.com/redis/redis-om-node/blob/4f5798b/lib/search/search.ts#L282)
 
 ___
 
@@ -190,7 +190,7 @@ An array of key names matching the query.
 
 #### Defined in
 
-[lib/search/search.ts:300](https://github.com/redis/redis-om-node/blob/660c639/lib/search/search.ts#L300)
+[lib/search/search.ts:300](https://github.com/redis/redis-om-node/blob/4f5798b/lib/search/search.ts#L300)
 
 ___
 
@@ -210,7 +210,7 @@ Returns the number of [Entities](../README.md#entity) that match this query.
 
 #### Defined in
 
-[lib/search/search.ts:188](https://github.com/redis/redis-om-node/blob/660c639/lib/search/search.ts#L188)
+[lib/search/search.ts:188](https://github.com/redis/redis-om-node/blob/4f5798b/lib/search/search.ts#L188)
 
 ___
 
@@ -230,7 +230,7 @@ Returns the first [Entity](../README.md#entity) that matches this query.
 
 #### Defined in
 
-[lib/search/search.ts:229](https://github.com/redis/redis-om-node/blob/660c639/lib/search/search.ts#L229)
+[lib/search/search.ts:229](https://github.com/redis/redis-om-node/blob/4f5798b/lib/search/search.ts#L229)
 
 ___
 
@@ -250,7 +250,7 @@ Returns the first entity ID that matches this query.
 
 #### Defined in
 
-[lib/search/search.ts:237](https://github.com/redis/redis-om-node/blob/660c639/lib/search/search.ts#L237)
+[lib/search/search.ts:237](https://github.com/redis/redis-om-node/blob/4f5798b/lib/search/search.ts#L237)
 
 ___
 
@@ -270,7 +270,7 @@ Returns the first key name that matches this query.
 
 #### Defined in
 
-[lib/search/search.ts:245](https://github.com/redis/redis-om-node/blob/660c639/lib/search/search.ts#L245)
+[lib/search/search.ts:245](https://github.com/redis/redis-om-node/blob/4f5798b/lib/search/search.ts#L245)
 
 ___
 
@@ -298,7 +298,7 @@ The entity ID [Entity](../README.md#entity) with the maximal value
 
 #### Defined in
 
-[lib/search/search.ts:162](https://github.com/redis/redis-om-node/blob/660c639/lib/search/search.ts#L162)
+[lib/search/search.ts:162](https://github.com/redis/redis-om-node/blob/4f5798b/lib/search/search.ts#L162)
 
 ___
 
@@ -326,7 +326,7 @@ The entity ID with the maximal value
 
 #### Defined in
 
-[lib/search/search.ts:171](https://github.com/redis/redis-om-node/blob/660c639/lib/search/search.ts#L171)
+[lib/search/search.ts:171](https://github.com/redis/redis-om-node/blob/4f5798b/lib/search/search.ts#L171)
 
 ___
 
@@ -354,7 +354,7 @@ The key name with the maximal value
 
 #### Defined in
 
-[lib/search/search.ts:180](https://github.com/redis/redis-om-node/blob/660c639/lib/search/search.ts#L180)
+[lib/search/search.ts:180](https://github.com/redis/redis-om-node/blob/4f5798b/lib/search/search.ts#L180)
 
 ___
 
@@ -382,7 +382,7 @@ The [Entity](../README.md#entity) with the minimal value
 
 #### Defined in
 
-[lib/search/search.ts:135](https://github.com/redis/redis-om-node/blob/660c639/lib/search/search.ts#L135)
+[lib/search/search.ts:135](https://github.com/redis/redis-om-node/blob/4f5798b/lib/search/search.ts#L135)
 
 ___
 
@@ -410,7 +410,7 @@ The entity ID with the minimal value
 
 #### Defined in
 
-[lib/search/search.ts:144](https://github.com/redis/redis-om-node/blob/660c639/lib/search/search.ts#L144)
+[lib/search/search.ts:144](https://github.com/redis/redis-om-node/blob/4f5798b/lib/search/search.ts#L144)
 
 ___
 
@@ -438,7 +438,7 @@ The key name with the minimal value
 
 #### Defined in
 
-[lib/search/search.ts:153](https://github.com/redis/redis-om-node/blob/660c639/lib/search/search.ts#L153)
+[lib/search/search.ts:153](https://github.com/redis/redis-om-node/blob/4f5798b/lib/search/search.ts#L153)
 
 ___
 
@@ -467,7 +467,7 @@ An array of [Entities](../README.md#entity) matching the query.
 
 #### Defined in
 
-[lib/search/search.ts:199](https://github.com/redis/redis-om-node/blob/660c639/lib/search/search.ts#L199)
+[lib/search/search.ts:199](https://github.com/redis/redis-om-node/blob/4f5798b/lib/search/search.ts#L199)
 
 ___
 
@@ -496,7 +496,7 @@ An array of strings matching the query.
 
 #### Defined in
 
-[lib/search/search.ts:210](https://github.com/redis/redis-om-node/blob/660c639/lib/search/search.ts#L210)
+[lib/search/search.ts:210](https://github.com/redis/redis-om-node/blob/4f5798b/lib/search/search.ts#L210)
 
 ___
 
@@ -525,7 +525,7 @@ An array of strings matching the query.
 
 #### Defined in
 
-[lib/search/search.ts:221](https://github.com/redis/redis-om-node/blob/660c639/lib/search/search.ts#L221)
+[lib/search/search.ts:221](https://github.com/redis/redis-om-node/blob/4f5798b/lib/search/search.ts#L221)
 
 ___
 
@@ -552,7 +552,7 @@ Alias for [all](Search.md#all).
 
 #### Defined in
 
-[lib/search/search.ts:406](https://github.com/redis/redis-om-node/blob/660c639/lib/search/search.ts#L406)
+[lib/search/search.ts:406](https://github.com/redis/redis-om-node/blob/4f5798b/lib/search/search.ts#L406)
 
 ___
 
@@ -579,7 +579,7 @@ Alias for [allIds](Search.md#allids).
 
 #### Defined in
 
-[lib/search/search.ts:413](https://github.com/redis/redis-om-node/blob/660c639/lib/search/search.ts#L413)
+[lib/search/search.ts:413](https://github.com/redis/redis-om-node/blob/4f5798b/lib/search/search.ts#L413)
 
 ___
 
@@ -606,7 +606,7 @@ Alias for [allKeys](Search.md#allkeys).
 
 #### Defined in
 
-[lib/search/search.ts:420](https://github.com/redis/redis-om-node/blob/660c639/lib/search/search.ts#L420)
+[lib/search/search.ts:420](https://github.com/redis/redis-om-node/blob/4f5798b/lib/search/search.ts#L420)
 
 ___
 
@@ -626,7 +626,7 @@ Alias for [count](Search.md#count).
 
 #### Defined in
 
-[lib/search/search.ts:357](https://github.com/redis/redis-om-node/blob/660c639/lib/search/search.ts#L357)
+[lib/search/search.ts:357](https://github.com/redis/redis-om-node/blob/4f5798b/lib/search/search.ts#L357)
 
 ___
 
@@ -646,7 +646,7 @@ Alias for [first](Search.md#first).
 
 #### Defined in
 
-[lib/search/search.ts:385](https://github.com/redis/redis-om-node/blob/660c639/lib/search/search.ts#L385)
+[lib/search/search.ts:385](https://github.com/redis/redis-om-node/blob/4f5798b/lib/search/search.ts#L385)
 
 ___
 
@@ -666,7 +666,7 @@ Alias for [firstId](Search.md#firstid).
 
 #### Defined in
 
-[lib/search/search.ts:392](https://github.com/redis/redis-om-node/blob/660c639/lib/search/search.ts#L392)
+[lib/search/search.ts:392](https://github.com/redis/redis-om-node/blob/4f5798b/lib/search/search.ts#L392)
 
 ___
 
@@ -686,7 +686,7 @@ Alias for [firstKey](Search.md#firstkey).
 
 #### Defined in
 
-[lib/search/search.ts:399](https://github.com/redis/redis-om-node/blob/660c639/lib/search/search.ts#L399)
+[lib/search/search.ts:399](https://github.com/redis/redis-om-node/blob/4f5798b/lib/search/search.ts#L399)
 
 ___
 
@@ -712,7 +712,7 @@ Alias for [max](Search.md#max).
 
 #### Defined in
 
-[lib/search/search.ts:336](https://github.com/redis/redis-om-node/blob/660c639/lib/search/search.ts#L336)
+[lib/search/search.ts:336](https://github.com/redis/redis-om-node/blob/4f5798b/lib/search/search.ts#L336)
 
 ___
 
@@ -738,7 +738,7 @@ Alias for [maxId](Search.md#maxid).
 
 #### Defined in
 
-[lib/search/search.ts:343](https://github.com/redis/redis-om-node/blob/660c639/lib/search/search.ts#L343)
+[lib/search/search.ts:343](https://github.com/redis/redis-om-node/blob/4f5798b/lib/search/search.ts#L343)
 
 ___
 
@@ -764,7 +764,7 @@ Alias for [maxKey](Search.md#maxkey).
 
 #### Defined in
 
-[lib/search/search.ts:350](https://github.com/redis/redis-om-node/blob/660c639/lib/search/search.ts#L350)
+[lib/search/search.ts:350](https://github.com/redis/redis-om-node/blob/4f5798b/lib/search/search.ts#L350)
 
 ___
 
@@ -790,7 +790,7 @@ Alias for [min](Search.md#min).
 
 #### Defined in
 
-[lib/search/search.ts:315](https://github.com/redis/redis-om-node/blob/660c639/lib/search/search.ts#L315)
+[lib/search/search.ts:315](https://github.com/redis/redis-om-node/blob/4f5798b/lib/search/search.ts#L315)
 
 ___
 
@@ -816,7 +816,7 @@ Alias for [minId](Search.md#minid).
 
 #### Defined in
 
-[lib/search/search.ts:322](https://github.com/redis/redis-om-node/blob/660c639/lib/search/search.ts#L322)
+[lib/search/search.ts:322](https://github.com/redis/redis-om-node/blob/4f5798b/lib/search/search.ts#L322)
 
 ___
 
@@ -842,7 +842,7 @@ Alias for [minKey](Search.md#minkey).
 
 #### Defined in
 
-[lib/search/search.ts:329](https://github.com/redis/redis-om-node/blob/660c639/lib/search/search.ts#L329)
+[lib/search/search.ts:329](https://github.com/redis/redis-om-node/blob/4f5798b/lib/search/search.ts#L329)
 
 ___
 
@@ -869,7 +869,7 @@ Alias for [page](Search.md#page).
 
 #### Defined in
 
-[lib/search/search.ts:364](https://github.com/redis/redis-om-node/blob/660c639/lib/search/search.ts#L364)
+[lib/search/search.ts:364](https://github.com/redis/redis-om-node/blob/4f5798b/lib/search/search.ts#L364)
 
 ___
 
@@ -896,7 +896,7 @@ Alias for [pageOfIds](Search.md#pageofids).
 
 #### Defined in
 
-[lib/search/search.ts:371](https://github.com/redis/redis-om-node/blob/660c639/lib/search/search.ts#L371)
+[lib/search/search.ts:371](https://github.com/redis/redis-om-node/blob/4f5798b/lib/search/search.ts#L371)
 
 ___
 
@@ -923,7 +923,7 @@ Alias for [pageOfKeys](Search.md#pageofkeys).
 
 #### Defined in
 
-[lib/search/search.ts:378](https://github.com/redis/redis-om-node/blob/660c639/lib/search/search.ts#L378)
+[lib/search/search.ts:378](https://github.com/redis/redis-om-node/blob/4f5798b/lib/search/search.ts#L378)
 
 ___
 
@@ -949,7 +949,7 @@ Alias for [sortAscending](Search.md#sortascending).
 
 #### Defined in
 
-[lib/search/search.ts:86](https://github.com/redis/redis-om-node/blob/660c639/lib/search/search.ts#L86)
+[lib/search/search.ts:86](https://github.com/redis/redis-om-node/blob/4f5798b/lib/search/search.ts#L86)
 
 ___
 
@@ -977,7 +977,7 @@ this
 
 #### Defined in
 
-[lib/search/search.ts:63](https://github.com/redis/redis-om-node/blob/660c639/lib/search/search.ts#L63)
+[lib/search/search.ts:63](https://github.com/redis/redis-om-node/blob/4f5798b/lib/search/search.ts#L63)
 
 ___
 
@@ -1006,7 +1006,7 @@ this
 
 #### Defined in
 
-[lib/search/search.ts:96](https://github.com/redis/redis-om-node/blob/660c639/lib/search/search.ts#L96)
+[lib/search/search.ts:96](https://github.com/redis/redis-om-node/blob/4f5798b/lib/search/search.ts#L96)
 
 ___
 
@@ -1032,7 +1032,7 @@ Alias for [sortDescending](Search.md#sortdescending).
 
 #### Defined in
 
-[lib/search/search.ts:70](https://github.com/redis/redis-om-node/blob/660c639/lib/search/search.ts#L70)
+[lib/search/search.ts:70](https://github.com/redis/redis-om-node/blob/4f5798b/lib/search/search.ts#L70)
 
 ___
 
@@ -1060,4 +1060,4 @@ this
 
 #### Defined in
 
-[lib/search/search.ts:79](https://github.com/redis/redis-om-node/blob/660c639/lib/search/search.ts#L79)
+[lib/search/search.ts:79](https://github.com/redis/redis-om-node/blob/4f5798b/lib/search/search.ts#L79)

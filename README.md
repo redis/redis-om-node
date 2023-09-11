@@ -52,6 +52,7 @@
       - [Searching on Booleans](#searching-on-booleans)
       - [Searching on Dates](#searching-on-dates)
       - [Searching String Arrays](#searching-string-arrays)
+      - [Searching Arrays of Numbers](#searching-arrays-of-numbers)
       - [Full-Text Search](#full-text-search)
       - [Searching on Points](#searching-on-points)
       - [Chaining Searches](#chaining-searches)
@@ -110,7 +111,7 @@ Pretty cool, right? Read on for details.
 >
 > Of course, you don't have to upgrade. If this is you, you'll want to check out [the README for that version](https://www.npmjs.com/package/redis-om/v/0.3.6) over on NPM.
 >
-> However, I hope you choose to try to try the new version. It has many changes that have been frequently requested that are documented in the [CHANGELOG](CHANGELOG). And more, *non-breaking* changes will follow these.
+> However, I hope you choose to try the new version. It has many changes that have been frequently requested that are documented in the [CHANGELOG](CHANGELOG). And more, *non-breaking* changes will follow these.
 >
 
 
@@ -195,6 +196,7 @@ const albumSchema = new Schema('album', {
   title: { type: 'text' },
   year: { type: 'number' },
   genres: { type: 'string[]' },
+  songDurations: { type: 'number[]' },
   outOfPublication: { type: 'boolean' }
 })
 
@@ -209,9 +211,9 @@ const studioSchema = new Schema('studio', {
 
 The *first argument* is the `Schema` name. It defines the key name prefix that entities stored in Redis will have. It should be unique for your particular instance of Redis and probably meaningful to what you're doing. Here we have selected `album` for our album data and `studio` for data on recording studios. Imaginative, I know.
 
-The *second argument* defines fields that might be stored in that key. The property name is the name of the field that you'll be referencing in your Redis OM queries. The type property tells Redis OM what sort of data is in that field. Valid types are: `string`, `number`, `boolean`, `string[]`, `date`, `point`, and `text`.
+The *second argument* defines fields that might be stored in that key. The property name is the name of the field that you'll be referencing in your Redis OM queries. The type property tells Redis OM what sort of data is in that field. Valid types are: `string`, `number`, `boolean`, `string[]`, `number[]`, `date`, `point`, and `text`.
 
-The first three types do exactly what you think—they define a field that is a [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String), a [Number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number), or a [Boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean). `string[]` does what you'd think as well, specifically describing an [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array) of Strings.
+The first three types do exactly what you think—they define a field that is a [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String), a [Number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number), or a [Boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean). `string[]` and `number[]` do what you'd think as well, specifically describing an [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array) of Strings or Numbers respectively.
 
 `date` is a little different, but still more or less what you'd expect. It describes a property that contains a [Date](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date) and can be set using not only a Date but also a String containing an [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) date or a number with the [UNIX epoch time](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date#the_ecmascript_epoch_and_timestamps) in *seconds* (NOTE: the JavaScript Date object is specified in *milliseconds*).
 
@@ -233,6 +235,7 @@ const albumSchema = new Schema('album', {
   title: { type: 'string' },
   year: { type: 'number' },
   genres: { type: 'string[]' },
+  songDurations: { type: 'number[]' },
   outOfPublication: { type: 'boolean' }
 }, {
   dataStructure: 'JSON'
@@ -257,6 +260,8 @@ And that's it.
 
 Of course, Hashes and JSON are somewhat different data structures. Hashes are flat with fields containing values. JSON documents, however, are trees and can have depth and—most excitingly—can be nested. This difference is reflected in how Redis OM maps data to entities and how you configure your Schema.
 
+> Note that I have not included the `songDurations` in the Hash. This is because `number[]` is only possible when working with JSON, it will generate an error if you try to use it with Hashes.
+
 #### Configuring JSON
 
 When you store your entities as JSON, the path to the properties in your JSON document and your JavaScript object default to the name of your property in the schema. In the above example, this would result in a document that looks like this:
@@ -267,6 +272,7 @@ When you store your entities as JSON, the path to the properties in your JSON do
   "title": "The Righteous & The Butterfly",
   "year": 2014,
   "genres": [ "metal" ],
+  "songDurations": [ 204, 290, 196, 210, 211, 105, 244, 245, 209, 252, 259, 200, 215, 219 ],
   "outOfPublication": true
 }
 ```
@@ -279,7 +285,8 @@ However, you might not want your JavaScript object and your JSON to map this way
     "artist": "Mushroomhead",
     "title": "The Righteous & The Butterfly",
     "year": 2014,
-    "genres": [ "metal" ]
+    "genres": [ "metal" ],
+    "songDurations": [ 204, 290, 196, 210, 211, 105, 244, 245, 209, 252, 259, 200, 215, 219 ]
   },
   "outOfPublication": true
 }
@@ -293,6 +300,7 @@ const albumSchema = new Schema('album', {
   title: { type: 'string', path: '$.album.title' },
   year: { type: 'number', path: '$.album.year' },
   genres: { type: 'string[]', path: '$.album.genres[*]' },
+  songDurations: { type: 'number[]', path: '$.album.songDurations[*]' },
   outOfPublication: { type: 'boolean' }
 })
 ```
@@ -300,7 +308,8 @@ const albumSchema = new Schema('album', {
 There are two things to note here:
 
   1. We haven't specified a path for `outOfPublication` as it's still in the root of the document. It defaults to `$.outOfPublication`.
-  2. Our `genres` field points to a `string[]`. When using a `string[]`, the JSONPath must return an array. If it doesn't, an error will be generated.
+  2. Our `genres` field points to a `string[]`. When using a `string[]` the JSONPath must return an array. If it doesn't, an error will be generated.
+  3. Same for our `songDurations`.
 
 #### Configuring Hashes
 
@@ -385,6 +394,7 @@ let album = {
   title: "The Righteous & The Butterfly",
   year: 2014,
   genres: [ 'metal' ],
+  songDurations: [ 204, 290, 196, 210, 211, 105, 244, 245, 209, 252, 259, 200, 215, 219 ],
   outOfPublication: true
 }
 
@@ -420,6 +430,7 @@ album.artist // "Mushroomhead"
 album.title // "The Righteous & The Butterfly"
 album.year // 2014
 album.genres // [ 'metal' ]
+album.songDurations // [ 204, 290, 196, 210, 211, 105, 244, 245, 209, 252, 259, 200, 215, 219 ]
 album.outOfPublication // true
 ```
 
@@ -815,6 +826,25 @@ Wildcards work here too:
 albums = await albumRepository.search().where('genres').contain('*rock*').return.all()
 ```
 
+### Searching Arrays of Numbers
+
+If you have a field of type `number[]`, you can search on it just like a `number`. If any number in the array matches your criteria, then it'll match and the document will be returned.
+
+```javascript
+let albums
+
+// find all albums where at least one song is at least 3 minutes long
+albums = await albumRepository.search().where('songDuration').gte(180).return.all()
+
+// find all albums where at least one song is at exactly 3 minutes long
+albums = await albumRepository.search().where('songDuration').eq(180).return.all()
+
+// find all albums where at least one song is between 3 and 4 minutes long
+albums = await albumRepository.search().where('songDuration').between(180, 240).return.all()
+```
+
+I'm not going to include all the examples again. Just go check out the section on [searching on numbers](#searching-on-numbers).
+
 #### Full-Text Search
 
 If you've defined a field with a type of `text` in your schema, you can store text in it and perform full-text searches against it. Full-text search is different from how a `string` is searched. With full-text search, you can look for words, partial words, fuzzy matches, and exact phrases within a body of text.
@@ -996,7 +1026,7 @@ So far we've been doing searches that match on a single field. However, we often
 
 ```javascript
 const albums = await albumRepository.search()
-  .where('artist').equals('Mushroomhread')
+  .where('artist').equals('Mushroomhead')
   .or('title').matches('butterfly')
   .and('year').is.greaterThan(1990).return.all()
 ```
@@ -1036,11 +1066,11 @@ RediSearch provides a basic mechanism for sorting your search results and Redis 
 
 ```javascript
 const albumsByYear = await albumRepository.search()
-  .where('artist').equals('Mushroomhread')
+  .where('artist').equals('Mushroomhead')
     .sortAscending('year').return.all()
 
 const albumsByTitle = await albumRepository.search()
-  .where('artist').equals('Mushroomhread')
+  .where('artist').equals('Mushroomhead')
     .sortBy('title', 'DESC').return.all()
 ```
 
@@ -1078,6 +1108,7 @@ Additional field options can be set depending on the field type. These correspon
 | `number`       |     NUMERIC     |    yes    |    yes     |       -      |      -     |      -     |     -    |      -      |         -       |
 | `boolean`      |       TAG       |    yes    |  HASH Only |       -      |      -     |      -     |     -    |      -      |         -       |
 | `string[]`     |       TAG       |    yes    |  HASH Only |   HASH Only  |      -     |      -     |     -    |     yes     |        yes      |
+| `number[]`     |     NUMERIC     |    yes    |    yes     |       -      |      -     |      -     |     -    |      -      |         -       |
 | `date`         |     NUMERIC     |    yes    |    yes     |       -      |            |      -     |     -    |      -      |         -       |
 | `point`        |       GEO       |    yes    |     -      |       -      |            |      -     |     -    |      -      |         -       |
 | `text`         |       TEXT      |    yes    |    yes     |      yes     |     yes    |     yes    |    yes   |      -      |         -       |

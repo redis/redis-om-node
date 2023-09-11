@@ -11,10 +11,7 @@ type BigfootSighting = Entity & {
     state?: string,
     latlng?: Point
   },
-  temperature?: EntityData & {
-    high?: number,
-    low?: number
-  },
+  temperatures?: number[],
   fullMoon?: boolean
 }
 
@@ -39,8 +36,7 @@ describe("Demo", () => {
         county: { type: 'string', path: '$.location.county' },
         state: { type: 'string', path: '$.location.state' },
         latlng: { type: 'point', path: '$.location.latlng'  },
-        highTemp: { type: 'number', path: '$.temperature.high' },
-        lowTemp: { type: 'number', path: '$.temperature.low' },
+        temps: { type: 'number[]', path: '$.temperatures[*]' },
         fullMoon: { type: 'boolean' }
       }, {
         useStopWords: 'OFF'
@@ -64,12 +60,8 @@ describe("Demo", () => {
       location: {
         latlong: { longitude: 12.34, latitude: 56.78 },
       },
-      temperature: {
-        high: 53,
-        average: 47,
-        low: 42
-      },
-      fullMoon: false,
+      temperatures: [ 53, 47, 42 ],
+      fullMoon: false
     }
 
     entity = await repository.save(entity)
@@ -87,12 +79,8 @@ describe("Demo", () => {
       location: {
         latlong: { longitude: 12.34, latitude: 56.78 },
       },
-      temperature: {
-        high: 53,
-        average: 47,
-        low: 42
-      },
-      fullMoon: false,
+      temperatures: [ 53, 47, 42 ],
+      fullMoon: false
     }
 
     entity = await repository.save(entity)
@@ -109,12 +97,8 @@ describe("Demo", () => {
       location: {
         latlong: { longitude: 12.34, latitude: 56.78 },
       },
-      temperature: {
-        high: 53,
-        average: 47,
-        low: 42
-      },
-      fullMoon: false,
+      temperatures: [ 53, 47, 42 ],
+      fullMoon: false
     }
 
     entity = await repository.save('8087', entity)
@@ -127,7 +111,7 @@ describe("Demo", () => {
 
     // update an entity
     entity.date = new Date('1978-10-09T00:00:00.000Z')
-    entity.temperature!.low = 29
+    entity.temperatures![0] = 29
     entity.location!.county = "Athens"
     entity.location!.state = "Ohio"
     entity.location!.latlng = { longitude: 23.45, latitude: 67.89 }
@@ -150,6 +134,7 @@ describe("Demo", () => {
       .and('latlng').inCircle(circle => circle.origin(23.45, 67.89).radius(50).miles)
       .and('date').before(new Date('2000-01-01T00:00:00.000Z'))
       .and('title').matchesExactly('the walmart')
+      .and('temps').is.lessThan(50)
       .and('fullMoon').is.true().returnAll()
 
 

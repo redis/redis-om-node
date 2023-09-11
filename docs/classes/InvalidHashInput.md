@@ -50,7 +50,7 @@
 
 #### Defined in
 
-[lib/error/invalid-input.ts:40](https://github.com/redis/redis-om-node/blob/660c639/lib/error/invalid-input.ts#L40)
+[lib/error/invalid-input.ts:40](https://github.com/redis/redis-om-node/blob/4f5798b/lib/error/invalid-input.ts#L40)
 
 ## Properties
 
@@ -169,7 +169,7 @@ node_modules/@types/node/globals.d.ts:13
 
 #### Defined in
 
-[lib/error/invalid-input.ts:46](https://github.com/redis/redis-om-node/blob/660c639/lib/error/invalid-input.ts#L46)
+[lib/error/invalid-input.ts:46](https://github.com/redis/redis-om-node/blob/4f5798b/lib/error/invalid-input.ts#L46)
 
 ___
 
@@ -183,7 +183,7 @@ ___
 
 #### Defined in
 
-[lib/error/invalid-input.ts:47](https://github.com/redis/redis-om-node/blob/660c639/lib/error/invalid-input.ts#L47)
+[lib/error/invalid-input.ts:47](https://github.com/redis/redis-om-node/blob/4f5798b/lib/error/invalid-input.ts#L47)
 
 ## Methods
 

@@ -52,8 +52,7 @@ export class WhereText extends WhereField {
   equalTo(_: string | number | boolean): Search { return this.throwEqualsExcpetion() }
 
   toString(): string {
-    const matchPunctuation = /[,.<>{}[\]"':;!@#$%^&()\-+=~|]/g
-    const escapedValue = this.value.replace(matchPunctuation, '\\$&')
+    const escapedValue = this.escapePunctuation(this.value)
 
     if (this.exactValue) {
       return this.buildQuery(`"${escapedValue}"`)
