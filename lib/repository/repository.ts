@@ -279,19 +279,15 @@ export class Repository {
   
   async expireAt(idOrIds: string | string[], expirationDate: Date) {
     const ids = typeof idOrIds === 'string' ? [idOrIds] : idOrIds;
-    const timeNow: number = Date.now();
     if (Date.now() >= expirationDate.getTime()) {
       throw new Error(
         `${expirationDate.toString()} is invalid. Expiration date must be in the future.`
       );
     }
-    const ttlInSeconds: number = Math.round(
-      (expirationDate.getTime() - timeNow) / 1000
-    );
     await Promise.all(
       ids.map((id) => {
         const key = this.makeKey(id);
-        return this.client.expire(key, ttlInSeconds);
+        return this.client.expireAt(key, expirationDate);
       })
     );
   }

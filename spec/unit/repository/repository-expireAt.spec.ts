@@ -25,35 +25,29 @@ describe('Repository', () => {
     });
 
     it('expires a single entity', async () => {
-      const ttlInSeconds: number = Math.round(
-        (tomorrow.getTime() - Date.now()) / 1000
-      );
       await repository.expireAt('foo', tomorrow);
-      expect(client.expire).toHaveBeenCalledWith(
+      expect(client.expireAt).toHaveBeenCalledWith(
         'SimpleEntity:foo',
-        ttlInSeconds
+        tomorrow
       );
     });
 
     it('expires multiple entities', async () => {
-      const ttlInSeconds: number = Math.round(
-        (tomorrow.getTime() - Date.now()) / 1000
-      );
       await repository.expireAt(['foo', 'bar', 'baz'], tomorrow);
-      expect(client.expire).toHaveBeenNthCalledWith(
+      expect(client.expireAt).toHaveBeenNthCalledWith(
         1,
         'SimpleEntity:foo',
-        ttlInSeconds
+        tomorrow
       );
-      expect(client.expire).toHaveBeenNthCalledWith(
+      expect(client.expireAt).toHaveBeenNthCalledWith(
         2,
         'SimpleEntity:bar',
-        ttlInSeconds
+        tomorrow
       );
-      expect(client.expire).toHaveBeenNthCalledWith(
+      expect(client.expireAt).toHaveBeenNthCalledWith(
         3,
         'SimpleEntity:baz',
-        ttlInSeconds
+        tomorrow
       );
     });
 
@@ -62,7 +56,7 @@ describe('Repository', () => {
       await repository.expireAt('foo', yesterday).catch((error) => {
         caughtError = error;
       });
-      expect(client.expire).toHaveBeenCalledTimes(0);
+      expect(client.expireAt).toHaveBeenCalledTimes(0);
       expect(caughtError).toBeDefined();
       expect(caughtError!.message).toEqual(
         `${yesterday.toString()} is invalid. Expiration date must be in the future.`
