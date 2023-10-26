@@ -72,7 +72,7 @@ describe("create and drop index on JSON", () => {
 
       it("the index no longer exists", () => {
         expect(async () => await fetchIndexInfo(redis, 'create-drop-json:index'))
-          .rejects.toThrow("Unknown Index name")
+          .rejects.toThrow("Unknown index name")
       })
 
       it("the index hash no longer exists", async () => {
