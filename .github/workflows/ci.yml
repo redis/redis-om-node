@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [14, 16, 18]
+        node-version: [18, 20]
     services:
       redis:
         image: redis/redis-stack-server:latest
@@ -43,6 +43,6 @@ jobs:
 
       - name: Run all tests
         run: npm run test:coverage
-        
+
       - name: Upload to Codecov
         uses: codecov/codecov-action@v3
