@@ -12,6 +12,7 @@ jobs:
     name: Test All
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         node-version: [18, 20]
     services:
@@ -26,17 +27,16 @@ jobs:
           --health-retries 5
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v2.3.0
+        uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
-      - name: Cache dependencies
-        uses: c-hive/gha-npm-cache@v1
 
       - name: Update npm
         run: npm install --global npm
+        if: ${{ matrix.node-version <= 14 }}
 
       - name: Install packages
         run: npm ci
