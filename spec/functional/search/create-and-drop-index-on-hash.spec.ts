@@ -8,10 +8,10 @@ import { fetchIndexHash, fetchIndexInfo, removeKeys } from '../helpers/redis-hel
 const expected = [
   { identifier: 'root_aString', attribute: 'aString', type: 'TAG', SEPARATOR: '|' },
   { identifier: 'root_someText', attribute: 'someText', type: 'TEXT', WEIGHT: '1', SORTABLE: undefined },
-  { identifier: 'root_aNumber', attribute: 'aNumber', type: 'NUMERIC', SORTABLE: undefined },
+  { identifier: 'root_aNumber', attribute: 'aNumber', type: 'NUMERIC', SORTABLE: 'UNF' },
   { identifier: 'root_aBoolean', attribute: 'aBoolean', type: 'TAG', SEPARATOR: ',' },
   { identifier: 'root_aPoint', attribute: 'aPoint', type: 'GEO' },
-  { identifier: 'root_aDate', attribute: 'aDate', type: 'NUMERIC', SORTABLE: undefined },
+  { identifier: 'root_aDate', attribute: 'aDate', type: 'NUMERIC', SORTABLE: 'UNF' },
   { identifier: 'root_someStrings', attribute: 'someStrings', type: 'TAG', SEPARATOR: '|' },
 ]
 
@@ -71,7 +71,7 @@ describe("create and drop index on hash", () => {
 
       it("the index no longer exists", async () => {
         expect(async () => await fetchIndexInfo(redis, 'create-drop-hash:index'))
-          .rejects.toThrow("Unknown Index name")
+          .rejects.toThrow("Unknown index name")
       })
 
       it("the index hash no longer exists", async () => {

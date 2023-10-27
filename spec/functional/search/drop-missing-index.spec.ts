@@ -30,7 +30,7 @@ describe("drop missing index on hash", () => {
 
     it("the index still doesn't exists", () => {
       expect(async () => await fetchIndexInfo(redis, 'drop-missing:index'))
-        .rejects.toThrow("Unknown Index name")
+        .rejects.toThrow("Unknown index name")
     })
   })
 })
