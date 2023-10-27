@@ -159,6 +159,12 @@ export class Client {
     this.#validateRedisOpen()
     await this.redis.expire(key, ttl)
   }
+  
+  /** @internal */
+  async expireAt(key: string, timestamp: Date) {
+    this.#validateRedisOpen()
+    await this.redis.expireAt(key, timestamp)
+  }
 
   /** @internal */
   async get(key: string): Promise<string | null> {

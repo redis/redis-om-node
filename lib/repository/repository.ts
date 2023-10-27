@@ -260,6 +260,39 @@ export class Repository {
   }
 
   /**
+   * Use Date object to set the {@link Entity}'s time to live. If the {@link Entity}
+   * is not found, does nothing.
+   *
+   * @param id The ID of the {@link Entity} to set an expiration date for.
+   * @param expirationDate The time the data should expire.
+   */
+  async expireAt(id: string, expirationDate: Date): Promise<void>;
+
+  /**
+   * Use Date object to set the {@link Entity | Entities} in Redis with the given
+   * ids. If a particular {@link Entity} is not found, does nothing.
+   *
+   * @param ids The IDs of the {@link Entity | Entities} to set an expiration date for.
+   * @param expirationDate The time the data should expire.
+   */
+  async expireAt(ids: string[], expirationDate: Date): Promise<void>;
+  
+  async expireAt(idOrIds: string | string[], expirationDate: Date) {
+    const ids = typeof idOrIds === 'string' ? [idOrIds] : idOrIds;
+    if (Date.now() >= expirationDate.getTime()) {
+      throw new Error(
+        `${expirationDate.toString()} is invalid. Expiration date must be in the future.`
+      );
+    }
+    await Promise.all(
+      ids.map((id) => {
+        const key = this.makeKey(id);
+        return this.client.expireAt(key, expirationDate);
+      })
+    );
+  }
+
+  /**
    * Kicks off the process of building a query. Requires that RediSearch (and optionally
    * RedisJSON) be installed on your instance of Redis.
    *
