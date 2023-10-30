@@ -31,7 +31,7 @@ describe("search for hashes", () => {
     repository = new Repository(schema, redis)
 
     await repository.createIndex()
-    await sleep(50) // Yuck! Gotta wait for RediSearch to index everything.
+    await sleep(1000) // Yuck! Gotta wait for RediSearch to index everything.
   })
 
   afterAll(async () => {

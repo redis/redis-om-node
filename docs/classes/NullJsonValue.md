@@ -51,7 +51,7 @@
 
 #### Defined in
 
-[lib/error/invalid-value.ts:10](https://github.com/redis/redis-om-node/blob/4f5798b/lib/error/invalid-value.ts#L10)
+[lib/error/invalid-value.ts:10](https://github.com/redis/redis-om-node/blob/d8438f7/lib/error/invalid-value.ts#L10)
 
 ## Properties
 
@@ -170,7 +170,7 @@ node_modules/@types/node/globals.d.ts:13
 
 #### Defined in
 
-[lib/error/invalid-value.ts:16](https://github.com/redis/redis-om-node/blob/4f5798b/lib/error/invalid-value.ts#L16)
+[lib/error/invalid-value.ts:16](https://github.com/redis/redis-om-node/blob/d8438f7/lib/error/invalid-value.ts#L16)
 
 ___
 
@@ -184,7 +184,7 @@ ___
 
 #### Defined in
 
-[lib/error/invalid-value.ts:17](https://github.com/redis/redis-om-node/blob/4f5798b/lib/error/invalid-value.ts#L17)
+[lib/error/invalid-value.ts:17](https://github.com/redis/redis-om-node/blob/d8438f7/lib/error/invalid-value.ts#L17)
 
 ___
 
@@ -198,7 +198,7 @@ ___
 
 #### Defined in
 
-[lib/error/invalid-value.ts:18](https://github.com/redis/redis-om-node/blob/4f5798b/lib/error/invalid-value.ts#L18)
+[lib/error/invalid-value.ts:18](https://github.com/redis/redis-om-node/blob/d8438f7/lib/error/invalid-value.ts#L18)
 
 ## Methods
 
