@@ -52,16 +52,20 @@ export interface WhereField extends Where {
   /**
    * Adds a full-text search comparison to the query.
    * @param value The word or phrase sought.
+   * @param options.fuzzyMatching Whether to use fuzzy matching to find the sought word or phrase. Defaults to `false`.
+   * @param options.levenshteinDistance The levenshtein distance to use for fuzzy matching. Supported values are `1`, `2`, and `3`. Defaults to `1`.
    * @returns The {@link Search} that was called to create this {@link WhereField}.
    */
-  match(value: string | number | boolean): Search
+  match(value: string | number | boolean, options?: { fuzzyMatching?: boolean; levenshteinDistance?: 1 | 2 | 3 }): Search
 
   /**
    * Adds a full-text search comparison to the query.
    * @param value The word or phrase sought.
+   * @param options.fuzzyMatching Whether to use fuzzy matching to find the sought word or phrase. Defaults to `false`.
+   * @param options.levenshteinDistance The levenshtein distance to use for fuzzy matching. Supported values are `1`, `2`, and `3`. Defaults to `1`.
    * @returns The {@link Search} that was called to create this {@link WhereField}.
    */
-  matches(value: string | number | boolean): Search
+  matches(value: string | number | boolean, options?: { fuzzyMatching?: boolean; levenshteinDistance?: 1 | 2 | 3 }): Search
 
   /**
    * Adds a full-text search comparison to the query that matches an exact word or phrase.

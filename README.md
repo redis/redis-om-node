@@ -847,7 +847,7 @@ I'm not going to include all the examples again. Just go check out the section o
 
 #### Full-Text Search
 
-If you've defined a field with a type of `text` in your schema, you can store text in it and perform full-text searches against it. Full-text search is different from how a `string` is searched. With full-text search, you can look for words, partial words, and exact phrases within a body of text.
+If you've defined a field with a type of `text` in your schema, you can store text in it and perform full-text searches against it. Full-text search is different from how a `string` is searched. With full-text search, you can look for words, partial words, fuzzy matches, and exact phrases within a body of text.
 
 Full-text search is optimized for human-readable text and it's pretty clever. It understands that certain words (like *a*, *an*, or *the*) are common and ignores them. It understands how words relate to each other and so if you search for *give*, it matches *gives*, *given*, *giving*, and *gave* too. It ignores punctuation and whitespace.
 
@@ -858,6 +858,9 @@ let albums
 
 // finds all albums where the title contains the word 'butterfly'
 albums = await albumRepository.search().where('title').match('butterfly').return.all()
+
+// finds all albums using fuzzy matching where the title contains a word which is within 3 Levenshtein distance of the word 'buterfly'
+albums = await albumRepository.search().where('title').match('buterfly', { fuzzyMatching: true, levenshteinDistance: 3 }).return.all()
 
 // finds all albums where the title contains the words 'beautiful' and 'children'
 albums = await albumRepository.search().where('title').match('beautiful children').return.all()
@@ -873,11 +876,12 @@ If you want to search for a part of a word. To do it, just tack a `*` on the beg
 albums = await albumRepository.search().where('title').match('*right*').return.all()
 ```
 
-Do not combine partial-word searches with exact matches. Partial-word searches and exact matches are not compatible in RediSearch. If you try to exactly match a partial-word search, you'll get an error.
+Do not combine partial-word searches or fuzzy matches with exact matches. Partial-word searches and fuzzy matches with exact matches are not compatible in RediSearch. If you try to exactly match a partial-word search or fuzzy match a partial-word search, you'll get an error.
 
 ```javascript
-// THIS WILL ERROR
+// THESE WILL ERROR
 albums = await albumRepository.search().where('title').matchExact('beautiful sto*').return.all()
+albums = await albumRepository.search().where('title').matchExact('*buterfly', { fuzzyMatching: true, levenshteinDistance: 3 }).return.all()
 ```
 
 As always, there are several alternatives to make this a bit more fluent and, of course, negation is available:

@@ -19,32 +19,38 @@ describe("Search", () => {
     const A_NEGATED_TEXT_QUERY = `(-@someText:'${A_STRING}')`
     const AN_EXACT_TEXT_QUERY = `(@someText:"${A_STRING}")`
     const A_NEGATED_EXACT_TEXT_QUERY = `(-@someText:"${A_STRING}")`
+    const A_TEXT_QUERY_WITH_FUZZY_MATCHING = `(@someText:%${A_STRING}%)`;
 
     const A_NUMBER_TEXT_QUERY = `(@someText:'${A_NUMBER}')`
     const A_NEGATED_NUMBER_TEXT_QUERY = `(-@someText:'${A_NUMBER}')`
     const A_NUMBER_EXACT_TEXT_QUERY = `(@someText:"${A_NUMBER}")`
     const A_NEGATED_NUMBER_EXACT_TEXT_QUERY = `(-@someText:"${A_NUMBER}")`
+    const A_NUMBER_TEXT_QUERY_WITH_FUZZY_MATCHING = `(@someText:%${A_NUMBER}%)`
 
     const A_BOOLEAN_TEXT_QUERY = `(@someText:'true')`
     const A_NEGATED_BOOLEAN_TEXT_QUERY = `(-@someText:'true')`
     const A_BOOLEAN_EXACT_TEXT_QUERY = `(@someText:"true")`
     const A_NEGATED_BOOLEAN_EXACT_TEXT_QUERY = `(-@someText:"true")`
+    const A_BOOLEAN_TEXT_QUERY_WITH_FUZZY_MATCHING = `(@someText:%true%)`
 
     type StringChecker = (search: Search) => void
     const expectToBeTextQuery: StringChecker = search => expect(search.query).toBe(A_TEXT_QUERY)
     const expectToBeNegatedTextQuery: StringChecker = search => expect(search.query).toBe(A_NEGATED_TEXT_QUERY)
     const expectToBeExactTextQuery: StringChecker = search => expect(search.query).toBe(AN_EXACT_TEXT_QUERY)
     const expectToBeNegatedExactTextQuery: StringChecker = search => expect(search.query).toBe(A_NEGATED_EXACT_TEXT_QUERY)
+    const expectToBeTextQueryWithFuzzyMatching: StringChecker = search => expect(search.query).toBe(A_TEXT_QUERY_WITH_FUZZY_MATCHING)
 
     const expectToBeNumberTextQuery: StringChecker = search => expect(search.query).toBe(A_NUMBER_TEXT_QUERY)
     const expectToBeNegatedNumberTextQuery: StringChecker = search => expect(search.query).toBe(A_NEGATED_NUMBER_TEXT_QUERY)
     const expectToBeNumberExactTextQuery: StringChecker = search => expect(search.query).toBe(A_NUMBER_EXACT_TEXT_QUERY)
     const expectToBeNegatedNumberExactTextQuery: StringChecker = search => expect(search.query).toBe(A_NEGATED_NUMBER_EXACT_TEXT_QUERY)
+    const expectToBeNumberTextQueryWithFuzzyMatching: StringChecker = search => expect(search.query).toBe(A_NUMBER_TEXT_QUERY_WITH_FUZZY_MATCHING)
 
     const expectToBeBooleanTextQuery: StringChecker = search => expect(search.query).toBe(A_BOOLEAN_TEXT_QUERY)
     const expectToBeNegatedBooleanTextQuery: StringChecker = search => expect(search.query).toBe(A_NEGATED_BOOLEAN_TEXT_QUERY)
     const expectToBeBooleanExactTextQuery: StringChecker = search => expect(search.query).toBe(A_BOOLEAN_EXACT_TEXT_QUERY)
     const expectToBeNegatedBooleanExactTextQuery: StringChecker = search => expect(search.query).toBe(A_NEGATED_BOOLEAN_EXACT_TEXT_QUERY)
+    const expectToBeBooleanTextQueryWithFuzzyMatching: StringChecker = search => expect(search.query).toBe(A_BOOLEAN_TEXT_QUERY_WITH_FUZZY_MATCHING)
 
     beforeAll(() => {
       client = new Client()
@@ -57,8 +63,10 @@ describe("Search", () => {
 
     describe("when generating for a query with a string", () => {
       it("generates a query with .match", () => expectToBeTextQuery(where.match(A_STRING)))
+      it("generates a query with .match with fuzzyMatching enabled", () => expectToBeTextQueryWithFuzzyMatching(where.match(A_STRING, { fuzzyMatching: true })))
       it("generates a query with .not.match", () => expectToBeNegatedTextQuery(where.not.match(A_STRING)))
       it("generates a query with .matches", () => expectToBeTextQuery(where.matches(A_STRING)))
+      it("generates a query with .matches with fuzzyMatching enabled", () => expectToBeTextQueryWithFuzzyMatching(where.matches(A_STRING, { fuzzyMatching: true })))
       it("generates a query with .does.match", () => expectToBeTextQuery(where.does.match(A_STRING)))
       it("generates a query with .does.not.match", () => expectToBeNegatedTextQuery(where.does.not.match(A_STRING)))
 
@@ -77,8 +85,10 @@ describe("Search", () => {
 
     describe("when generating a query with a number as a string", () => {
       it("generates a query with .match", () => expectToBeNumberTextQuery(where.match(A_NUMBER)))
+      it("generates a query with .match with fuzzyMatching enabled", () => expectToBeNumberTextQueryWithFuzzyMatching(where.match(A_NUMBER, { fuzzyMatching: true })))
       it("generates a query with .not.match", () => expectToBeNegatedNumberTextQuery(where.not.match(A_NUMBER)))
       it("generates a query with .matches", () => expectToBeNumberTextQuery(where.matches(A_NUMBER)))
+      it("generates a query with .matches with fuzzyMatching enabled", () => expectToBeNumberTextQueryWithFuzzyMatching(where.matches(A_NUMBER, { fuzzyMatching: true })))
       it("generates a query with .does.match", () => expectToBeNumberTextQuery(where.does.match(A_NUMBER)))
       it("generates a query with .does.not.match", () => expectToBeNegatedNumberTextQuery(where.does.not.match(A_NUMBER)))
 
@@ -97,8 +107,10 @@ describe("Search", () => {
 
     describe("when generating a query with a boolean as a string", () => {
       it("generates a query with .match", () => expectToBeBooleanTextQuery(where.match(true)))
+      it("generates a query with .match with fuzzyMatching enabled", () => expectToBeBooleanTextQueryWithFuzzyMatching(where.match(true, { fuzzyMatching: true })))
       it("generates a query with .not.match", () => expectToBeNegatedBooleanTextQuery(where.not.match(true)))
       it("generates a query with .matches", () => expectToBeBooleanTextQuery(where.matches(true)))
+      it("generates a query with .match with fuzzyMatching enabled", () => expectToBeBooleanTextQueryWithFuzzyMatching(where.match(true, { fuzzyMatching: true })))
       it("generates a query with .does.match", () => expectToBeBooleanTextQuery(where.does.match(true)))
       it("generates a query with .does.not.match", () => expectToBeNegatedBooleanTextQuery(where.does.not.match(true)))
 
