@@ -4,6 +4,14 @@
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and Redis OM adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 0.4.3 - 2023-10-30
+### Fixed
+- Fixed issue with change of casing in error message in RediSearch when calling `.dropIndex` on *Repository*
+
+### Added
+- Add `.expireAt` method to *Repository*
+- Add fuzz matching for 'text' type
+
 ## 0.4.2 - 2023-07-26
 ### Fixed
 - Fixed issue with TAGs not properl;y escaping question marks
