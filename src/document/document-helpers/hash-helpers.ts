@@ -4,11 +4,15 @@ import { dateToNumber, numberToDate } from "./general-helpers";
 
 import type { ParsedFieldType, ParsedSchemaDefinition } from "../../typings";
 
-export function documentFieldToHASHValue(field: ParsedFieldType | { type: ParsedFieldType["type"] }, value: any, key?: string): Array<string> {
+export function documentFieldToHASHValue(field: ParsedFieldType | { type: ParsedFieldType["type"] }, value: any, key?: string): Array<string | Buffer> {
     if (field.type === "boolean") return keyExists(booleanToString(value), key);
     if (field.type === "date") return keyExists(dateToNumber(value).toString(), key);
-    if (field.type === "point") return keyExists(`${value.longitude},${value.latitude}`, key);
-    if (field.type === "vector") return keyExists(Buffer.from(value).toString(), key);
+    if (field.type === "point") return keyExists(`"${value.longitude},${value.latitude}"`, key);
+    if (field.type === "vector") {
+        if (value.length === 0) return [];
+        return keyExists(Buffer.from(Array.isArray(value) ? new Float64Array(value).buffer : value.buffer), key);
+    }
+
     if (field.type === "object") {
         if (!("properties" in field) || field.properties === null) return keyExists(JSON.stringify(value), key);
         if (!key) throw new PrettyError("Something went terribly wrong");
@@ -17,7 +21,7 @@ export function documentFieldToHASHValue(field: ParsedFieldType | { type: Parsed
 
     if (field.type === "array") {
         if (!("elements" in field)) return keyExists(value.toString(), key);
-        const temp: Array<string> = [];
+        const temp: Array<string | Buffer> = [];
 
         if (typeof field.elements === "object") {
             for (let i = 0, length = value.length; i < length; i++) {
@@ -47,8 +51,8 @@ export function documentFieldToHASHValue(field: ParsedFieldType | { type: Parsed
     return keyExists(value.toString(), key);
 }
 
-function flatten(field: ParsedSchemaDefinition["data"], value: any, key?: string): Array<string> {
-    const temp: Array<string> = [];
+function flatten(field: ParsedSchemaDefinition["data"], value: any, key?: string): Array<string | Buffer> {
+    const temp: Array<string | Buffer> = [];
 
     for (let i = 0, entries = Object.entries(field), length = entries.length; i < length; i++) {
         const [k, val] = entries[i];
@@ -59,7 +63,7 @@ function flatten(field: ParsedSchemaDefinition["data"], value: any, key?: string
     return temp;
 }
 
-function keyExists(value: string, key: string | undefined): Array<string> {
+function keyExists(value: string | Buffer, key: string | undefined): Array<string | Buffer> {
     return key ? [key, value] : [value];
 }
 
@@ -79,8 +83,9 @@ export function HASHValueToDocumentField(
     }
 
     if (field.type === "vector") {
-        if (!("vecType" in field) || field.vecType === "FLOAT32") return new Float32Array(Buffer.from(value));
-        return new Float64Array(Buffer.from(value));
+        const buff = Buffer.from(value, "latin1");
+        if (!("vecType" in field) || field.vecType === "FLOAT32") return new Float32Array(buff.buffer, buff.byteOffset, buff.byteLength / Float32Array.BYTES_PER_ELEMENT);
+        return new Float64Array(buff.buffer, buff.byteOffset, buff.byteLength / Float64Array.BYTES_PER_ELEMENT);
     }
 
     if (field.type === "object") {

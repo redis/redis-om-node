@@ -6,7 +6,11 @@ export function documentFieldToJSONValue(field: ParsedFieldType | { type: Parsed
     if (field.type === "bigint") return value.toString();
     if (field.type === "date") return dateToNumber(value);
     if (field.type === "point") return `${value.longitude},${value.latitude}`;
-    if (field.type === "vector") return Array.from(value);
+    if (field.type === "vector") {
+        if (value.length === 0) return undefined;
+        return Array.from(value);
+    }
+
     if (field.type === "object") {
         if (!("properties" in field) || field.properties === null) return value;
         return transformParsedDefinition(field.properties, value, documentFieldToJSONValue);

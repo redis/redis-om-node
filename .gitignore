@@ -4,3 +4,4 @@ bench-dist/
 coverage/
 .DS_Store
 .dccache
+*v8.log

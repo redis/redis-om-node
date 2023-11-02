@@ -1,4 +1,7 @@
+import { createHash } from "node:crypto";
+
 import type {
+    ParsedRelationsToSearch,
     ParsedSchemaDefinition,
     ParsedSchemaToSearch,
     ParsedArrayField,
@@ -12,8 +15,8 @@ export function parseSchemaToSearchIndex(
     structure: "JSON" | "HASH",
     { previousKey, previousPath, arrayKey }: { previousKey?: string, previousPath?: string, arrayKey?: string } = {}
 ): ParsedSchemaToSearch {
+    const index: Array<string> = [];
     let objs: ParsedMap = new Map();
-    let index: Array<string> = [];
 
     for (let i = 0, entries = Object.entries(schema), len = entries.length; i < len; i++) {
         const [key, value] = entries[i];
@@ -32,6 +35,7 @@ export function parseSchemaToSearchIndex(
             );
 
             objs = new Map([...objs, ...parsed.map]);
+            index.push(...parsed.index);
             continue;
         }
 
@@ -49,10 +53,9 @@ export function parseSchemaToSearchIndex(
                     }
                 );
                 objs = new Map([...objs, ...parsed.map]);
+                index.push(...parsed.index);
                 continue;
             }
-
-            arrayKey = `${arrayKey ? `${arrayKey}.${key}` : withPreviousKey}${getArrayModifier(value.elements)}`;
         }
 
         if (value.type === "tuple") {
@@ -69,7 +72,7 @@ export function parseSchemaToSearchIndex(
                 );
 
                 objs = new Map([...objs, ...parsed.map]);
-
+                index.push(...parsed.index);
             }
             continue;
         }
@@ -87,7 +90,7 @@ export function parseSchemaToSearchIndex(
         const prefix = structure === "JSON" ? "$." : "";
 
         index.push(
-            `${prefix}${arrayKey ? arrayKey : withPreviousKey}`,
+            `${prefix}${arrayKey ? `${arrayKey}.${key}` : withPreviousKey}`,
             "AS",
             withPreviousPath,
             getSearchType(actualType)
@@ -117,7 +120,7 @@ export function parseSchemaToSearchIndex(
             }
         }
 
-        if (value.sortable) index.push("SORTABLE");
+        if ("sortable" in value && value.sortable) index.push("SORTABLE");
         if (value.type === "string" && value.caseSensitive) index.push("CASESENSITIVE");
         if (value.type === "text") {
             if (typeof value.phonetic !== "undefined") index.push("PHONETIC", value.phonetic);
@@ -128,9 +131,32 @@ export function parseSchemaToSearchIndex(
     return { map: objs, index };
 }
 
-function getArrayModifier(elements: ParsedArrayField["elements"]): "*" | "[*]" | "" {
-    if (typeof elements === "object" || elements === "vector") return "[*]";
-    if (elements === "string" || elements === "boolean") return "*";
+export function parseRelationsToSearchIndex(
+    schema: ParsedSchemaDefinition["relations"],
+    structure: "JSON" | "HASH",
+    initialKey: string
+): ParsedRelationsToSearch {
+    const relations: ParsedRelationsToSearch = {};
+
+    for (let i = 0, entries = Object.entries(schema), len = entries.length; i < len; i++) {
+        const [key, value] = entries[i];
+
+        relations[key] = {
+            key: `${initialKey}-relation-${key}`,
+            hash: createHash("sha1").update(JSON.stringify({
+                structure: structure,
+                definition: value.meta
+            })).digest("base64"),
+            data: parseSchemaToSearchIndex(value.meta, structure)
+        };
+    }
+
+    return relations;
+}
+
+function getArrayModifier(elements: ParsedArrayField["elements"]): ".*" | ".[*]" | "" {
+    if (typeof elements === "object" || elements === "vector") return ".[*]";
+    if (elements === "string" || elements === "boolean") return ".*";
     return "";
 }
 

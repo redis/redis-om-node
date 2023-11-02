@@ -1,8 +1,6 @@
 import { PrettyError } from "@infinite-fansub/logger";
 
-import { Client, Model } from "../src";
-import { ModelOptions } from "../src/typings";
-
+import { Client, Model, ModelOptions } from "../src";
 /*
 This module allows you to define tables to use with normal redis operations
 However it doesn't affect the `Search` functionality since it doesn't have suffix constrains
@@ -41,7 +39,7 @@ class Table<T extends Model<any>> {
 type TableFunction = ((table: Table<any>) => Table<any> | Promise<Table<any>>) | Table<any>;
 
 const client = new Client({
-    inject: {
+    base: {
         schema: {
             methods: {
                 withTable: async function (name: string, table: TableFunction) {
@@ -79,17 +77,12 @@ const client = new Client({
     /*
     Expected Redis log:
     
-    "JSON.GET" "redis-om:V1:test:1"
+    "JSON.GET" "Nekdis:V1:test:1"
     
     Expected result:
      
     JSONDocument {
-        '$global_prefix': 'redis-om',
-        '$prefix': 'V1',
-        '$model_name': 'test',
-        '$suffix': undefined,
         '$id': '1',
-        '$record_id': 'redis-om:V1:test:1',
         name: 'DidaS',
         age: 18
     }
@@ -118,17 +111,12 @@ const client = new Client({
         /*
         Expected Redis log:
         
-        "JSON.GET" "redis-om:V1:test:table1:1"
+        "JSON.GET" "Nekdis:V1:test:table1:1"
         
         Expected result:
         
         JSONDocument {
-            '$global_prefix': 'redis-om',
-            '$prefix': 'V1',
-            '$model_name': 'test',
-            '$suffix': 'table1',
             '$id': '1',
-            '$record_id': 'redis-om:V1:test:table1:1',
             name: undefined,
             age: 21
         }

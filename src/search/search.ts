@@ -1,8 +1,8 @@
 import { PrettyError } from "@infinite-fansub/logger";
 
-import { JSONDocument, HASHDocument } from "../document";
-
 import type { SearchOptions, SearchReply } from "redis";
+
+import type { JSONDocument, HASHDocument } from "../document";
 
 import {
     type SearchField,
@@ -17,9 +17,10 @@ import {
 } from "./search-builders";
 
 import type {
-    ParseSearchSchema,
     SearchInformation,
+    ParseSearchSchema,
     NodeRedisClient,
+    FieldStringType,
     MapSearchField,
     ReturnDocument,
     ParseSchema,
@@ -36,8 +37,7 @@ export class Search<T extends ParseSchema<any>, P extends ParseSearchSchema<T["d
     readonly #schema: T;
     readonly #parsedSchema: ParsedMap;
     readonly #information: SearchInformation;
-    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
-    readonly #docType: typeof JSONDocument | typeof HASHDocument;
+    readonly #doc: typeof JSONDocument | typeof HASHDocument;
     #workingType!: FieldType["type"];
 
     /**
@@ -55,16 +55,15 @@ export class Search<T extends ParseSchema<any>, P extends ParseSearchSchema<T["d
     public constructor(
         client: NodeRedisClient,
         schema: T,
+        doc: typeof JSONDocument | typeof HASHDocument,
         parsedSchema: ParsedMap,
         information: SearchInformation
     ) {
         this.#client = client;
         this.#schema = schema;
+        this.#doc = doc;
         this.#parsedSchema = parsedSchema;
         this.#information = information;
-
-        if (information.dataStructure === "HASH") this.#docType = HASHDocument;
-        else this.#docType = JSONDocument;
     }
 
     public where<F extends keyof P>(field: F): MapSearchField<F, T, P> {
@@ -111,7 +110,7 @@ export class Search<T extends ParseSchema<any>, P extends ParseSearchSchema<T["d
 
     public async page<F extends boolean = false>(offset: number, count: number, autoFetch?: F): Promise<Array<ReturnDocument<T, F>> | undefined> {
         const { total, documents } = await this.#search({ LIMIT: { from: offset, size: count } });
-        if (total === 0) return void 0;
+        if (total === 0) return undefined;
 
         const docs = [];
 
@@ -131,10 +130,11 @@ export class Search<T extends ParseSchema<any>, P extends ParseSearchSchema<T["d
                 }
             }
 
-            docs.push(new this.#docType(<never>this.#schema, {
+            docs.push(new this.#doc(<never>this.#schema, {
                 globalPrefix: this.#information.globalPrefix,
                 prefix: this.#information.prefix,
-                name: this.#information.modelName
+                name: this.#information.modelName,
+                suffix: this.#information.suffix
             }, doc.value, true, this.#information.skipDocumentValidation, autoFetch));
         }
 
@@ -143,7 +143,7 @@ export class Search<T extends ParseSchema<any>, P extends ParseSearchSchema<T["d
 
     public async pageOfIds(offset: number, count: number, idOnly: boolean = false): Promise<Array<string> | undefined> {
         const { total, documents } = await this.#search({ LIMIT: { from: offset, size: count } }, true);
-        if (total === 0) return void 0;
+        if (total === 0) return undefined;
 
         const docs: Array<string> = [];
 
@@ -181,7 +181,7 @@ export class Search<T extends ParseSchema<any>, P extends ParseSearchSchema<T["d
 
     public async all<F extends boolean = false>(autoFetch?: F): Promise<Array<ReturnDocument<T, F>> | undefined> {
         const { total } = await this.#search({ LIMIT: { from: 0, size: 0 } });
-        if (total === 0) return void 0;
+        if (total === 0) return undefined;
 
         const { documents } = await this.#search({ LIMIT: { from: 0, size: total } });
         const docs = [];
@@ -202,10 +202,11 @@ export class Search<T extends ParseSchema<any>, P extends ParseSearchSchema<T["d
                     doc.value[key] = <never>await Promise.all(temp);
                 }
             }
-            docs.push(new this.#docType(<never>this.#schema, {
+            docs.push(new this.#doc(<never>this.#schema, {
                 globalPrefix: this.#information.globalPrefix,
                 prefix: this.#information.prefix,
-                name: this.#information.modelName
+                name: this.#information.modelName,
+                suffix: this.#information.suffix
             }, doc.value, true, this.#information.skipDocumentValidation, autoFetch));
         }
 
@@ -214,7 +215,7 @@ export class Search<T extends ParseSchema<any>, P extends ParseSearchSchema<T["d
 
     public async allIds(idOnly: boolean = false): Promise<Array<string> | undefined> {
         const { total } = await this.#search({ LIMIT: { from: 0, size: 0 } });
-        if (total === 0) return void 0;
+        if (total === 0) return undefined;
 
         const { documents } = await this.#search({ LIMIT: { from: 0, size: total } });
         const docs: Array<string> = [];
@@ -281,12 +282,13 @@ export class Search<T extends ParseSchema<any>, P extends ParseSearchSchema<T["d
     async #get(id: string): Promise<ReturnDocument<T> | null> {
         const data = this.#information.dataStructure === "JSON" ? await this.#client.json.get(id) : await this.#client.hGetAll(id);
 
-        if (data === null) return null;
+        if (data === null || Object.keys(data).length === 0) return null;
 
-        return <never>new this.#docType(<never>this.#schema, {
+        return <never>new this.#doc(<never>this.#schema, {
             globalPrefix: this.#information.globalPrefix,
             prefix: this.#information.prefix,
-            name: this.#information.modelName
+            name: this.#information.modelName,
+            suffix: this.#information.suffix
         }, <never>data, true, this.#information.skipDocumentValidation, false);
     }
 
@@ -312,7 +314,7 @@ export class Search<T extends ParseSchema<any>, P extends ParseSearchSchema<T["d
                 this.#options.DIALECT = 2;
                 this.#options.PARAMS = { BLOB: queryPart._vector._buffer };
             }
-            //@ts-expect-error This looks like something that should be reported
+            // @ts-expect-error This looks like something that should be reported
             query += `${queryPart.toString()} `;
         }
 
@@ -330,7 +332,7 @@ export class Search<T extends ParseSchema<any>, P extends ParseSearchSchema<T["d
         return <never>this.#defineReturn(searchPath, type);
     }
 
-    #defineReturn(field: string, type: Exclude<FieldType["type"], "tuple" | "array" | "reference">): BaseField {
+    #defineReturn(field: string, type: Exclude<FieldStringType, "array">): BaseField {
         switch (type) {
             case "string": {
                 this.#workingType = "string";
@@ -364,7 +366,6 @@ export class Search<T extends ParseSchema<any>, P extends ParseSearchSchema<T["d
                 this.#workingType = "vector";
                 return <never>new VectorField<T>(this, field);
             }
-            case "object": { throw new PrettyError("This should not be possible"); }
         }
     }
 

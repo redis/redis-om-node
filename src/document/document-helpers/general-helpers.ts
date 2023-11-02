@@ -1,3 +1,4 @@
+/* eslint-disable array-element-newline */
 import { PrettyError } from "@infinite-fansub/logger";
 import { inspect } from "node:util";
 import { Color } from "colours.js";
@@ -63,13 +64,13 @@ function validate(
         reference: "redis-om"
     });
 
-    if (value.length === 0 || Object.keys(value).length === 0) {
-        if (typeof value !== "undefined") return;
+    if (typeof value === "undefined"
+        || typeof value === "object" && !(value instanceof Date) && (value.length === 0 || Object.keys(value).length === 0)
+    ) {
         if (field.optional) return;
         if (typeof field.default === "undefined") throw new PrettyError(`'${workingKey}' is required but was not given a value`, {
             reference: "redis-om"
         });
-
     }
 
     if (field.type === "object") {

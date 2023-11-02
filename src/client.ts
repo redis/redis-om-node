@@ -1,5 +1,7 @@
 import { PrettyError } from "@infinite-fansub/logger";
+import { readFile } from "node:fs/promises";
 import { createClient } from "redis";
+import { join } from "node:path";
 
 import { Schema } from "./schema";
 import { Model } from "./model";
@@ -22,40 +24,35 @@ export class Client<SD extends SchemaDefinition = {}, MD extends MethodsDefiniti
     #client!: NodeRedisClient;
     #models: Map<string, Model<any>> = new Map();
     #open: boolean = false;
-    #prefix: string = "redis-om";
     #options: ClientOptions<SD, MD>;
 
     public constructor(options?: ClientOptions<SD, MD>) {
         this.#options = options ?? <ClientOptions<SD, MD>>{};
-
-        if (this.#options.modules) {
-            for (let i = 0, len = this.#options.modules.length; i < len; i++) {
-                const module = this.#options.modules[i];
-                //@ts-expect-error shenanigans
-                this[module.name] = new module.ctor(this);
-            }
-        }
     }
 
     public async connect(url: string | URLObject = this.#options.url ?? "redis://localhost:6379"): Promise<Client> {
-        if (this.#open) return this;
+        return new Promise((resolve, reject) => {
+            if (this.#open) resolve(this);
 
-        if (typeof url === "object") {
+            if (typeof url === "object") {
+                const { username, password, entrypoint, port } = url;
+                url = `redis://${username}:${password}@${(/:\d$/).exec(entrypoint) ? entrypoint : `${entrypoint}:${port}`}`;
+            }
 
-            const { username, password, entrypoint, port } = url;
-            url = `${username}:${password}@${(/:\d$/).exec(entrypoint) ? entrypoint : `${entrypoint}:${port}`}`;
-        }
+            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+            this.#client ??= createClient({ url });
 
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-        this.#client ??= createClient({ url });
-        try {
-            await this.#client.connect();
-            this.#open = true;
-        } catch (e) {
-            Promise.reject(e);
-        }
+            this.#client.connect().then(async () => {
+                this.#open = true;
+                if (this.#options.enableInjections) {
+                    await this.#client.functionLoad((
+                        await readFile(join(__dirname, "scripts/create-relation.lua"))
+                    ).toString("utf8"), { REPLACE: true });
+                }
 
-        return this;
+                resolve(this);
+            }).catch((e) => reject(e));
+        });
     }
 
     public async disconnect(): Promise<Client> {
@@ -72,18 +69,18 @@ export class Client<SD extends SchemaDefinition = {}, MD extends MethodsDefiniti
         return this;
     }
 
-    public schema<T extends Narrow<SchemaDefinition>, M extends MethodsDefinition<(T & SD)>>(definition: T, methods?: M, options?: SchemaOptions): Schema<
+    public schema<T extends Narrow<SchemaDefinition>, M extends MethodsDefinition<(T & SD)> = {}>(definition: T, methods?: M, options?: SchemaOptions): Schema<
         { [K in keyof (T & SD)]: (T & SD)[K] },
         { [K in keyof (M & MD)]: (M & MD)[K] }
     > {
         return <never>new Schema({
-            ...this.#options.inject?.schema?.definition,
+            ...this.#options.base?.schema?.definition,
             ...definition
         }, <never>{
-            ...this.#options.inject?.schema?.methods,
+            ...this.#options.base?.schema?.methods,
             ...methods
         }, {
-            ...this.#options.inject?.schema?.options,
+            ...this.#options.base?.schema?.options,
             ...options
         });
     }
@@ -96,7 +93,7 @@ export class Client<SD extends SchemaDefinition = {}, MD extends MethodsDefiniti
             reference: "redis-om"
         });
 
-        model = new Model(this.#client, this.#prefix, "V1", name, schema);
+        model = new Model(this.#client, this.#options.globalPrefix ?? "Redis-OM", "V1", name, this.#options.enableInjections ?? false, schema);
         this.#models.set(name, model);
         return <never>model;
     }
@@ -137,10 +134,6 @@ export class Client<SD extends SchemaDefinition = {}, MD extends MethodsDefiniti
         if (!this.#open) {
             this.#client = client;
         }
-    }
-
-    public set globalPrefix(str: string) {
-        this.#prefix = str;
     }
 }
 

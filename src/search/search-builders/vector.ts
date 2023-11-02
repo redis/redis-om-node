@@ -1,6 +1,6 @@
 import { SearchField } from "./base";
 
-import type { ParseSchema } from "../../typings";
+import type { FloatArray, ParseSchema } from "../../typings";
 import type { Search } from "../search";
 
 export type VectorFunction = (vector: Vector) => Vector;
@@ -11,7 +11,7 @@ export class Vector {
     public _type!: "RANGE" | "KNN";
 
     /** @internal */
-    public _buffer!: string;
+    public _buffer!: Buffer;
 
     /** @internal */
     public _range?: number;
@@ -30,8 +30,8 @@ export class Vector {
         return this;
     }
 
-    public from(data: Array<number> | Float32Array | Float64Array): Vector {
-        this._buffer = Buffer.from(<never>data).toString();
+    public from(data: Array<number> | FloatArray): Vector {
+        this._buffer = Buffer.from(Array.isArray(data) ? new Float32Array(data).buffer : data.buffer);
         return this;
     }
 

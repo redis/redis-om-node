@@ -39,7 +39,7 @@ export class JSONDocument implements DocumentShared {
             globalPrefix: string,
             prefix: string,
             name: string,
-            suffix?: string | (() => string) | undefined,
+            suffix: string | (() => string) | undefined,
             id?: string | undefined
         },
         data?: Record<string, any>,
@@ -96,10 +96,10 @@ export class JSONDocument implements DocumentShared {
                 : value.type === "tuple" || value.type === "array"
                     ? []
                     : value.type === "vector"
-                        ? value.vecType === "FLOAT32"
-                            ? new Float32Array()
-                            : new Float64Array()
-                        : void 0);
+                        ? value.vecType === "FLOAT64"
+                            ? new Float64Array()
+                            : new Float32Array()
+                        : undefined);
         }
 
         for (let i = 0, keys = Object.keys(this.#schema.references), len = keys.length; i < len; i++) {
@@ -118,6 +118,8 @@ export class JSONDocument implements DocumentShared {
 
         for (let i = 0, entries = Object.entries(this), length = entries.length; i < length; i++) {
             const [key, val] = entries[i];
+            if (key.startsWith("$") || key.startsWith("_")) continue;
+
             const schema = this.#schema.data[key];
 
             if (typeof schema !== "undefined") {
@@ -125,8 +127,7 @@ export class JSONDocument implements DocumentShared {
                 continue;
             }
 
-            if (typeof this.#schema.references[key] === "undefined") obj[key] = val;
-
+            if (typeof this.#schema.references[key] === "undefined" && typeof this.#schema.relations[key] === "undefined") obj[key] = val;
         }
 
         if (!this.#autoFetch) {
@@ -148,7 +149,7 @@ export class JSONDocument implements DocumentShared {
         return this.#prefix;
     }
 
-    public get $model_name(): string {
+    public get $modelName(): string {
         return this.#model_name;
     }
 
@@ -160,7 +161,7 @@ export class JSONDocument implements DocumentShared {
         return this.#id;
     }
 
-    public get $record_id(): string {
+    public get $recordId(): string {
         return this.#record_id;
     }
 }

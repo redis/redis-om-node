@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/naming-convention */
+import { PrettyError } from "@infinite-fansub/logger";
 import { randomUUID } from "node:crypto";
 
 import { ReferenceArray } from "../utils";
@@ -10,7 +11,6 @@ import {
 } from "./document-helpers";
 
 import type { DocumentShared, ParsedSchemaDefinition } from "../typings";
-import { PrettyError } from "@infinite-fansub/logger";
 
 export class HASHDocument implements DocumentShared {
 
@@ -40,7 +40,7 @@ export class HASHDocument implements DocumentShared {
             globalPrefix: string,
             prefix: string,
             name: string,
-            suffix?: string | (() => string) | undefined,
+            suffix: string | (() => string) | undefined,
             id?: string | undefined
         },
         data?: Record<string, any>,
@@ -145,10 +145,10 @@ export class HASHDocument implements DocumentShared {
                 : value.type === "tuple" || value.type === "array"
                     ? []
                     : value.type === "vector"
-                        ? value.vecType === "FLOAT32"
-                            ? new Float32Array()
-                            : new Float64Array()
-                        : void 0);
+                        ? value.vecType === "FLOAT64"
+                            ? new Float64Array()
+                            : new Float32Array()
+                        : undefined);
         }
 
         for (let i = 0, keys = Object.keys(this.#schema.references), len = keys.length; i < len; i++) {
@@ -157,8 +157,7 @@ export class HASHDocument implements DocumentShared {
         }
     }
 
-    /** This is actually and array... eventually i change it */
-    public toString(): Array<string> {
+    public toString(): string {
         if (this.#validate) this.#validateSchemaData(this.#schema.data, this);
 
         const arr = [
@@ -170,14 +169,17 @@ export class HASHDocument implements DocumentShared {
 
         for (let i = 0, entries = Object.entries(this), length = entries.length; i < length; i++) {
             const [key, val] = entries[i];
+            if (key.startsWith("$") || key.startsWith("_")) continue;
+
             const schema = this.#schema.data[key];
 
             if (typeof schema !== "undefined") {
+                //@ts-expect-error This can return a Buffer but it has to be like this until i find out a better way to pass in buffers
                 arr.push(...documentFieldToHASHValue(schema, val, key));
                 continue;
             }
 
-            if (typeof this.#schema.references[key] === "undefined") arr.push(val);
+            if (typeof this.#schema.references[key] === "undefined" && typeof this.#schema.relations[key] === "undefined") arr.push(val);
         }
 
         if (!this.#autoFetch) {
@@ -189,7 +191,7 @@ export class HASHDocument implements DocumentShared {
             }
         }
 
-        return arr;
+        return arr.join(" ");
     }
 
     public get $globalPrefix(): string {
@@ -200,7 +202,7 @@ export class HASHDocument implements DocumentShared {
         return this.#prefix;
     }
 
-    public get $model_name(): string {
+    public get $modelName(): string {
         return this.#model_name;
     }
 
@@ -212,7 +214,7 @@ export class HASHDocument implements DocumentShared {
         return this.#id;
     }
 
-    public get $record_id(): string {
+    public get $recordId(): string {
         return this.#record_id;
     }
 }

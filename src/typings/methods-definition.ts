@@ -1,4 +1,4 @@
-import type { SchemaDefinition } from "./schema-definition";
+import type { SchemaDefinition } from "./schema-and-fields-definition";
 import type { Schema } from "../schema";
 import type { Model } from "../model";
 
