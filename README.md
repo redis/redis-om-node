@@ -1116,7 +1116,7 @@ Additional field options can be set depending on the field type. These correspon
 * `indexed`: true | false, whether this field is indexed by RediSearch (default true)
 * `sortable`: true | false, whether to create an additional index to optimize sorting (default false)
 * `normalized`: true | false, whether to apply normalization for sorting (default true)
-* `matcher`: string defining phonetic matcher which can be one of: 'dm:en' for English, 'dm:fr' for French, 'dm:pt' for Portugese, 'dm:es' for Spanish (default none)
+* `phonetic`: string defining phonetic matcher which can be one of: 'dm:en' for English, 'dm:fr' for French, 'dm:pt' for Portugese, 'dm:es' for Spanish (default none)
 * `stemming`: true | false, whether word-stemming is applied to text fields (default true)
 * `weight`: number, the importance weighting to use when ranking results (default 1)
 * `separator`: string, the character to delimit multiple tags (default '|')
