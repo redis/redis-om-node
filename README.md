@@ -1102,7 +1102,7 @@ This is a bit of a catch-all for some of the more advanced stuff you can do with
 
 Additional field options can be set depending on the field type. These correspond to the [Field Options](https://redis.io/commands/ft.create/#field-options) available when creating a RediSearch full-text index. Other than the `separator` option, these only affect how content is indexed and searched.
 
-|  schema type   | RediSearch type | `indexed` | `sortable` | `normalized` | `stemming` | `phonetic` | `weight` | `separator` | `caseSensitive` |
+|  schema type   | RediSearch type | `indexed` | `sortable` | `normalized` | `stemming` | `matcher` | `weight` | `separator` | `caseSensitive` |
 | -------------- | :-------------: | :-------: | :--------: | :----------: | :--------: | :--------: | :------: | :---------: | :-------------: |
 | `string`       |       TAG       |    yes    |  HASH Only |   HASH Only  |      -     |      -     |     -    |     yes     |        yes      |
 | `number`       |     NUMERIC     |    yes    |    yes     |       -      |      -     |      -     |     -    |      -      |         -       |
@@ -1116,7 +1116,7 @@ Additional field options can be set depending on the field type. These correspon
 * `indexed`: true | false, whether this field is indexed by RediSearch (default true)
 * `sortable`: true | false, whether to create an additional index to optimize sorting (default false)
 * `normalized`: true | false, whether to apply normalization for sorting (default true)
-* `phonetic`: string defining phonetic matcher which can be one of: 'dm:en' for English, 'dm:fr' for French, 'dm:pt' for Portugese, 'dm:es' for Spanish (default none)
+* `matcher`: string defining phonetic matcher which can be one of: 'dm:en' for English, 'dm:fr' for French, 'dm:pt' for Portugese, 'dm:es' for Spanish (default none)
 * `stemming`: true | false, whether word-stemming is applied to text fields (default true)
 * `weight`: number, the importance weighting to use when ranking results (default 1)
 * `separator`: string, the character to delimit multiple tags (default '|')
