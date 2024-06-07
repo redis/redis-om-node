@@ -1102,7 +1102,7 @@ This is a bit of a catch-all for some of the more advanced stuff you can do with
 
 Additional field options can be set depending on the field type. These correspond to the [Field Options](https://redis.io/commands/ft.create/#field-options) available when creating a RediSearch full-text index. Other than the `separator` option, these only affect how content is indexed and searched.
 
-|  schema type   | RediSearch type | `indexed` | `sortable` | `normalized` | `stemming` | `phonetic` | `weight` | `separator` | `caseSensitive` |
+|  schema type   | RediSearch type | `indexed` | `sortable` | `normalized` | `stemming` | `matcher` | `weight` | `separator` | `caseSensitive` |
 | -------------- | :-------------: | :-------: | :--------: | :----------: | :--------: | :--------: | :------: | :---------: | :-------------: |
 | `string`       |       TAG       |    yes    |  HASH Only |   HASH Only  |      -     |      -     |     -    |     yes     |        yes      |
 | `number`       |     NUMERIC     |    yes    |    yes     |       -      |      -     |      -     |     -    |      -      |         -       |
