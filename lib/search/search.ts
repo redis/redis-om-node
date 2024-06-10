@@ -1,23 +1,28 @@
-import { SearchOptions } from "redis"
+import {SearchOptions} from "redis"
 
-import { Client, SearchResults } from "../client"
-import { Entity, EntityKeys } from '../entity'
-import { Schema } from "../schema"
+import {Client, SearchResults} from "../client"
+import {Entity, EntityKeys} from '../entity'
+import {Schema} from "../schema"
 
-import { Where } from './where'
-import { WhereAnd } from './where-and'
-import { WhereOr } from './where-or'
-import { WhereField } from './where-field'
-import { WhereStringArray } from './where-string-array'
-import { WhereHashBoolean, WhereJsonBoolean } from './where-boolean'
-import { WhereNumber } from './where-number'
-import { WherePoint } from './where-point'
-import { WhereString } from './where-string'
-import { WhereText } from './where-text'
+import {Where} from './where'
+import {WhereAnd} from './where-and'
+import {WhereOr} from './where-or'
+import {WhereField} from './where-field'
+import {WhereStringArray} from './where-string-array'
+import {WhereHashBoolean, WhereJsonBoolean} from './where-boolean'
+import {WhereNumber} from './where-number'
+import {WherePoint} from './where-point'
+import {WhereString} from './where-string'
+import {WhereText} from './where-text'
 
-import { extractCountFromSearchResults, extractEntitiesFromSearchResults, extractEntityIdsFromSearchResults, extractKeyNamesFromSearchResults } from "./results-converter"
-import { FieldNotInSchema, RedisOmError, SearchError } from "../error"
-import { WhereDate } from "./where-date"
+import {
+  extractCountFromSearchResults,
+  extractEntitiesFromSearchResults,
+  extractEntityIdsFromSearchResults,
+  extractKeyNamesFromSearchResults
+} from "./results-converter"
+import {FieldNotInSchema, RedisOmError, SearchError} from "../error"
+import {WhereDate} from "./where-date"
 
 /**
  * A function that takes a {@link Search} and returns a {@link Search}. Used in nested queries.
@@ -98,7 +103,7 @@ export abstract class AbstractSearch<T extends Entity = Record<string, any>> {
     const dataStructure = this.schema.dataStructure
 
     if (!field) {
-      const message = `'sortBy' was called on field '${fieldName}' which is not defined in the Schema.`
+      const message = `'sortBy' was called on field '${String(fieldName)}' which is not defined in the Schema.`
       console.error(message)
       throw new RedisOmError(message)
     }
@@ -557,10 +562,10 @@ export class Search<T extends Entity = Record<string, any>> extends AbstractSear
   }
 
   private anyWhere(ctor: AndOrConstructor, fieldOrFn: EntityKeys<T> | SubSearchFunction<T>): WhereField<T> | Search<T> {
-    if (typeof fieldOrFn === 'string') {
-      return this.anyWhereForField(ctor, fieldOrFn)
-    } else {
+    if (typeof fieldOrFn === 'function') {
       return this.anyWhereForFunction(ctor, fieldOrFn)
+    } else {
+      return this.anyWhereForField(ctor, fieldOrFn)
     }
   }
 
@@ -596,7 +601,7 @@ export class Search<T extends Entity = Record<string, any>> extends AbstractSear
   private createWhere(fieldName: EntityKeys<T>): WhereField<T> {
     const field = this.schema.fieldByName(fieldName)
 
-    if (field === null) throw new FieldNotInSchema(fieldName)
+    if (field === null) throw new FieldNotInSchema(String(fieldName))
 
     if (field.type === 'boolean' && this.schema.dataStructure === 'HASH') return new WhereHashBoolean(this, field)
     if (field.type === 'boolean' && this.schema.dataStructure === 'JSON') return new WhereJsonBoolean(this, field)

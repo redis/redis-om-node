@@ -1,13 +1,13 @@
-import { createHash } from 'crypto'
-import { ulid } from 'ulid'
+import {createHash} from 'crypto'
+import {ulid} from 'ulid'
 
-import { Entity, EntityKeys } from "../entity"
+import {Entity, EntityKeys} from "../entity"
 
-import { IdStrategy, DataStructure, StopWordOptions, SchemaOptions } from './options'
+import {DataStructure, IdStrategy, SchemaOptions, StopWordOptions} from './options'
 
-import { FieldDefinition, SchemaDefinition } from './definitions'
-import { Field } from './field'
-import { InvalidSchema } from '../error'
+import {FieldDefinition, SchemaDefinition} from './definitions'
+import {Field} from './field'
+import {InvalidSchema} from '../error'
 
 
 /**
@@ -85,7 +85,7 @@ export class Schema<T extends Entity = Record<string, any>> {
    * @param name The name of the {@link Field} in this Schema.
    * @returns The {@link Field}, or null of not found.
    */
-  fieldByName(name: string): Field | null {
+  fieldByName(name: EntityKeys<T>): Field | null {
     return this.#fieldsByName[name] ?? null
   }
 
@@ -145,7 +145,7 @@ export class Schema<T extends Entity = Record<string, any>> {
   #createFields() {
     const entries = Object.entries(this.#definition) as [EntityKeys<T>, FieldDefinition][];
     return entries.forEach(([fieldName, fieldDef]) => {
-      const field = new Field(fieldName, fieldDef)
+      const field = new Field(String(fieldName), fieldDef)
       this.#validateField(field)
       this.#fieldsByName[fieldName] = field
     })
