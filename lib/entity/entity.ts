@@ -14,7 +14,7 @@ export type EntityInternal = {
 
 /** Defines the objects returned from calls to {@link Repository | repositories }. */
 export type Entity = EntityData & EntityInternal
-export type EntityKeys<T extends Entity> = Exclude<keyof T, symbol | number>
+export type EntityKeys<T extends Entity> = Exclude<keyof T, keyof EntityInternal>;
 
 /** The free-form data associated with an {@link Entity}. */
 export type EntityData = {
@@ -22,7 +22,7 @@ export type EntityData = {
 }
 
 /** Valid types for values in an {@link Entity}. */
-export type EntityDataValue = string | number | boolean | Date | Point | null | undefined | Array<EntityDataValue | EntityData>
+export type EntityDataValue = string | number | boolean | Date | Point | null | undefined | Array<EntityDataValue | EntityData>
 
 /** Defines a point on the globe using longitude and latitude. */
 export type Point = {
