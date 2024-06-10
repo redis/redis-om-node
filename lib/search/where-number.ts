@@ -1,54 +1,55 @@
 import { Search } from "./search"
 import { WhereField } from "./where-field"
+import {Entity} from "$lib/entity";
 
-export class WhereNumber extends WhereField {
+export class WhereNumber<T extends Entity> extends WhereField<T> {
   private lower: number = Number.NEGATIVE_INFINITY
   private upper: number = Number.POSITIVE_INFINITY
   private lowerExclusive: boolean = false
   private upperExclusive: boolean = false
 
-  eq(value: number): Search {
+  eq(value: number): Search<T> {
     this.lower = value
     this.upper = value
     return this.search
   }
 
-  gt(value: number): Search {
+  gt(value: number): Search<T> {
     this.lower = value
     this.lowerExclusive = true
     return this.search
   }
 
-  gte(value: number): Search {
+  gte(value: number): Search<T> {
     this.lower = value
     return this.search
   }
 
-  lt(value: number): Search {
+  lt(value: number): Search<T> {
     this.upper = value
     this.upperExclusive = true
     return this.search
   }
 
-  lte(value: number): Search {
+  lte(value: number): Search<T> {
     this.upper = value
     return this.search
   }
 
-  between(lower: number, upper: number): Search {
+  between(lower: number, upper: number): Search<T> {
     this.lower = lower
     this.upper = upper
     return this.search
   }
 
-  equal(value: number): Search { return this.eq(value) }
-  equals(value: number): Search { return this.eq(value) }
-  equalTo(value: number): Search { return this.eq(value) }
+  equal(value: number): Search<T> { return this.eq(value) }
+  equals(value: number): Search<T> { return this.eq(value) }
+  equalTo(value: number): Search<T> { return this.eq(value) }
 
-  greaterThan(value: number): Search { return this.gt(value) }
-  greaterThanOrEqualTo(value: number): Search { return this.gte(value) }
-  lessThan(value: number): Search { return this.lt(value) }
-  lessThanOrEqualTo(value: number): Search { return this.lte(value) }
+  greaterThan(value: number): Search<T> { return this.gt(value) }
+  greaterThanOrEqualTo(value: number): Search<T> { return this.gte(value) }
+  lessThan(value: number): Search<T> { return this.lt(value) }
+  lessThanOrEqualTo(value: number): Search<T> { return this.lte(value) }
 
   toString(): string {
     const lower = this.makeLowerString()

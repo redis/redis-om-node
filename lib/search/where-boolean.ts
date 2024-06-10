@@ -1,31 +1,32 @@
 import { Search } from "./search"
 import { WhereField } from "./where-field"
+import {Entity} from "$lib/entity";
 
-export abstract class WhereBoolean extends WhereField {
+export abstract class WhereBoolean<T extends Entity> extends WhereField<T> {
   protected value!: boolean
 
-  eq(value: boolean): Search {
+  eq(value: boolean): Search<T> {
     this.value = value
     return this.search
   }
 
-  equal(value: boolean): Search { return this.eq(value) }
-  equals(value: boolean): Search { return this.eq(value) }
-  equalTo(value: boolean): Search { return this.eq(value) }
+  equal(value: boolean): Search<T> { return this.eq(value) }
+  equals(value: boolean): Search<T> { return this.eq(value) }
+  equalTo(value: boolean): Search<T> { return this.eq(value) }
 
-  true(): Search { return this.eq(true) }
-  false(): Search { return this.eq(false) }
+  true(): Search<T> { return this.eq(true) }
+  false(): Search<T> { return this.eq(false) }
 
   abstract toString(): string
 }
 
-export class WhereHashBoolean extends WhereBoolean {
+export class WhereHashBoolean<T extends Entity> extends WhereBoolean<T> {
   toString(): string {
     return this.buildQuery(`{${this.value ? '1' : '0'}}`)
   }
 }
 
-export class WhereJsonBoolean extends WhereBoolean {
+export class WhereJsonBoolean<T extends Entity> extends WhereBoolean<T> {
   toString(): string {
     return this.buildQuery(`{${this.value}}`)
   }

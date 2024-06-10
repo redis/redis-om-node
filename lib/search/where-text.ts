@@ -2,8 +2,9 @@ import { Search } from "./search"
 import { WhereField } from "./where-field"
 
 import { SemanticSearchError } from "../error"
+import {Entity} from "$lib/entity";
 
-export class WhereText extends WhereField {
+export class WhereText<T extends Entity> extends WhereField<T> {
   private value!: string
   private exactValue = false
   private fuzzyMatching!: boolean
@@ -15,14 +16,14 @@ export class WhereText extends WhereField {
       fuzzyMatching: false,
       levenshteinDistance: 1,
     }
-  ): Search {
+  ): Search<T> {
     this.value = value.toString()
     this.fuzzyMatching = options.fuzzyMatching ?? false
     this.levenshteinDistance = options.levenshteinDistance ?? 1
     return this.search
   }
 
-  matchExact(value: string | number | boolean): Search {
+  matchExact(value: string | number | boolean): Search<T> {
     this.exact.value = value.toString()
     return this.search
   }
@@ -33,9 +34,9 @@ export class WhereText extends WhereField {
       fuzzyMatching: false,
       levenshteinDistance: 1,
     }
-  ): Search { return this.match(value, options) }
-  matchExactly(value: string | number | boolean): Search { return this.matchExact(value) }
-  matchesExactly(value: string | number | boolean): Search { return this.matchExact(value) }
+  ): Search<T> { return this.match(value, options) }
+  matchExactly(value: string | number | boolean): Search<T> { return this.matchExact(value) }
+  matchesExactly(value: string | number | boolean): Search<T> { return this.matchExact(value) }
 
   get exact() {
     this.exactValue = true
@@ -46,10 +47,10 @@ export class WhereText extends WhereField {
     return this.exact
   }
 
-  eq(_: string | number | boolean): Search { return this.throwEqualsExcpetion() }
-  equal(_: string | number | boolean): Search { return this.throwEqualsExcpetion() }
-  equals(_: string | number | boolean): Search { return this.throwEqualsExcpetion() }
-  equalTo(_: string | number | boolean): Search { return this.throwEqualsExcpetion() }
+  eq(_: string | number | boolean): Search<T> { return this.throwEqualsExcpetion() }
+  equal(_: string | number | boolean): Search<T> { return this.throwEqualsExcpetion() }
+  equals(_: string | number | boolean): Search<T> { return this.throwEqualsExcpetion() }
+  equalTo(_: string | number | boolean): Search<T> { return this.throwEqualsExcpetion() }
 
   toString(): string {
     const escapedValue = this.escapePunctuation(this.value)
@@ -63,7 +64,7 @@ export class WhereText extends WhereField {
     }
   }
 
-  private throwEqualsExcpetion(): Search {
+  private throwEqualsExcpetion(): Search<T> {
     throw new SemanticSearchError("Cannot call .equals on a field of type 'text', either use .match to perform full-text search or change the type to 'string' in the Schema.")
   }
 }
