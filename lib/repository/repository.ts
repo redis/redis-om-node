@@ -1,9 +1,9 @@
-import { Client, CreateOptions, RedisConnection, RedisHashData, RedisJsonData } from '../client'
-import { Entity, EntityId, EntityKeyName } from '../entity'
-import { buildRediSearchSchema } from '../indexer'
-import { Schema } from '../schema'
-import { Search, RawSearch } from '../search'
-import { fromRedisHash, fromRedisJson, toRedisHash, toRedisJson } from '../transformer'
+import {Client, CreateOptions, RedisConnection, RedisHashData, RedisJsonData} from '../client'
+import {Entity, EntityId, EntityKeyName} from '../entity'
+import {buildRediSearchSchema} from '../indexer'
+import {Schema} from '../schema'
+import {RawSearch, Search} from '../search'
+import {fromRedisHash, fromRedisJson, toRedisHash, toRedisJson} from '../transformer'
 
 /**
  * A repository is the main interaction point for reading, writing, and
@@ -41,19 +41,19 @@ import { fromRedisHash, fromRedisJson, toRedisHash, toRedisJson } from '../trans
  *   .and('aBoolean').is.false().returnAll()
  * ```
  */
-export class Repository {
+export class Repository<T extends Entity = Record<string, any>> {
 
   // NOTE: Not using "#" private as the spec needs to check calls on this class. Will be resolved when Client class is removed.
-  private client: Client
-  #schema: Schema
+  private readonly client: Client
+  readonly #schema: Schema<T>
 
   /**
    * Creates a new {@link Repository}.
    *
    * @param schema The schema defining that data in the repository.
-   * @param client A client to talk to Redis.
+   * @param clientOrConnection A client to talk to Redis.
    */
-  constructor(schema: Schema, clientOrConnection: Client | RedisConnection) {
+  constructor(schema: Schema<T>, clientOrConnection: Client | RedisConnection) {
     this.#schema = schema
     if (clientOrConnection instanceof Client) {
       this.client = clientOrConnection
@@ -131,7 +131,7 @@ export class Repository {
    * @param entity The Entity to save.
    * @returns A copy of the provided Entity with EntityId and EntityKeyName properties added.
    */
-  async save(entity: Entity): Promise<Entity>
+  async save(entity: T): Promise<T>
 
   /**
    * Insert or update the {@link Entity} to Redis using the provided entityId.
@@ -140,10 +140,10 @@ export class Repository {
    * @param entity The Entity to save.
    * @returns A copy of the provided Entity with EntityId and EntityKeyName properties added.
    */
-  async save(id: string, entity: Entity): Promise<Entity>
+  async save(id: string, entity: T): Promise<T>
 
-  async save(entityOrId: Entity | string, maybeEntity?: Entity): Promise<Entity> {
-    let entity: Entity | undefined
+  async save(entityOrId: T | string, maybeEntity?: T): Promise<Entity> {
+    let entity: T | undefined
     let entityId: string | undefined
 
     if (typeof entityOrId !== 'string') {
@@ -155,7 +155,7 @@ export class Repository {
     }
 
     const keyName = `${this.#schema.schemaName}:${entityId}`
-    const clonedEntity = { ...entity, [EntityId]: entityId, [EntityKeyName]: keyName }
+    const clonedEntity = { ...entity, [EntityId]: entityId, [EntityKeyName]: keyName } as T
     await this.writeEntity(clonedEntity)
 
     return clonedEntity
@@ -168,7 +168,7 @@ export class Repository {
    * @param id The ID of the {@link Entity} you seek.
    * @returns The matching Entity.
    */
-  async fetch(id: string): Promise<Entity>
+  async fetch(id: string): Promise<T>
 
   /**
    * Read and return the {@link Entity | Entities} from Redis with the given IDs. If
@@ -177,7 +177,7 @@ export class Repository {
    * @param ids The IDs of the {@link Entity | Entities} you seek.
    * @returns The matching Entities.
    */
-  async fetch(...ids: string[]): Promise<Entity[]>
+  async fetch(...ids: string[]): Promise<T[]>
 
   /**
    * Read and return the {@link Entity | Entities} from Redis with the given IDs. If
@@ -186,9 +186,9 @@ export class Repository {
    * @param ids The IDs of the {@link Entity | Entities} you seek.
    * @returns The matching Entities.
    */
-  async fetch(ids: string[]): Promise<Entity[]>
+  async fetch(ids: string[]): Promise<T[]>
 
-  async fetch(ids: string | string[]): Promise<Entity | Entity[]> {
+  async fetch(ids: string | string[]): Promise<T | T[]> {
     if (arguments.length > 1) return this.readEntities([...arguments])
     if (Array.isArray(ids)) return this.readEntities(ids)
 
@@ -246,6 +246,7 @@ export class Repository {
    * ids. If a particular {@link Entity} is not found, does nothing.
    *
    * @param ids The IDs of the {@link Entity | Entities} you wish to delete.
+   * @param ttlInSeconds The time to live in seconds.
    */
   async expire(ids: string[], ttlInSeconds: number): Promise<void>
 
@@ -298,7 +299,7 @@ export class Repository {
    *
    * @returns A {@link Search} object.
    */
-  search(): Search {
+  search(): Search<T> {
     return new Search(this.#schema, this.client)
   }
 
@@ -313,20 +314,19 @@ export class Repository {
    * @query The raw RediSearch query you want to rune.
    * @returns A {@link RawSearch} object.
    */
-  searchRaw(query: string): RawSearch {
+  searchRaw(query: string): RawSearch<T> {
     return new RawSearch(this.#schema, this.client, query)
   }
 
-  private async writeEntity(entity: Entity): Promise<void> {
-    return this.#schema.dataStructure === 'HASH' ? this.writeEntityToHash(entity) : this.writeEntityToJson(entity)
+  private async writeEntity(entity: T): Promise<void> {
+    return this.#schema.dataStructure === 'HASH' ? this.#writeEntityToHash(entity) : this.writeEntityToJson(entity)
   }
 
-  private async readEntities(ids: string[]): Promise<Entity[]> {
+  private async readEntities(ids: string[]): Promise<T[]> {
     return this.#schema.dataStructure === 'HASH' ? this.readEntitiesFromHash(ids) : this.readEntitiesFromJson(ids)
   }
 
-  // TODO: make this actually private... like with #
-  private async writeEntityToHash(entity: Entity): Promise<void> {
+  async #writeEntityToHash(entity: Entity): Promise<void> {
     const keyName = entity[EntityKeyName]!
     const hashData: RedisHashData = toRedisHash(this.#schema, entity)
     if (Object.keys(hashData).length === 0) {
@@ -336,14 +336,13 @@ export class Repository {
     }
   }
 
-  private async readEntitiesFromHash(ids: string[]): Promise<Entity[]> {
+  private async readEntitiesFromHash(ids: string[]): Promise<T[]> {
     return Promise.all(
-      ids.map(async (entityId) => {
+      ids.map(async (entityId): Promise<T> => {
         const keyName = this.makeKey(entityId)
         const hashData = await this.client.hgetall(keyName)
         const entityData = fromRedisHash(this.#schema, hashData)
-        const entity = { ...entityData, [EntityId]: entityId, [EntityKeyName]: keyName }
-        return entity
+        return {...entityData, [EntityId]: entityId, [EntityKeyName]: keyName} as T
       }))
   }
 
@@ -353,14 +352,13 @@ export class Repository {
     await this.client.jsonset(keyName, jsonData)
   }
 
-  private async readEntitiesFromJson(ids: string[]): Promise<Entity[]> {
+  private async readEntitiesFromJson(ids: string[]): Promise<T[]> {
     return Promise.all(
-      ids.map(async (entityId) => {
+      ids.map(async (entityId): Promise<T> => {
         const keyName = this.makeKey(entityId)
         const jsonData = await this.client.jsonget(keyName) ?? {}
         const entityData = fromRedisJson(this.#schema, jsonData)
-        const entity = {...entityData, [EntityId]: entityId, [EntityKeyName]: keyName }
-        return entity
+        return {...entityData, [EntityId]: entityId, [EntityKeyName]: keyName} as T
       }))
   }
 

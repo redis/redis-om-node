@@ -1,3 +1,5 @@
+import {Entity, EntityKeys} from "$lib/entity";
+
 /** Valid field types for a {@link FieldDefinition}. */
 export type FieldType = 'boolean' | 'date' | 'number' | 'number[]' | 'point' | 'string' | 'string[]' | 'text'
 
@@ -120,4 +122,4 @@ export type FieldDefinition =
   TextFieldDefinition
 
 /** Group of {@link FieldDefinition}s that define the schema for an {@link Entity}. */
-export type SchemaDefinition = Record<string, FieldDefinition>
+export type SchemaDefinition<T extends Entity = Record<string, any>> = Record<EntityKeys<T>, FieldDefinition>

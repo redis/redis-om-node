@@ -4,15 +4,17 @@ export const EntityId = Symbol('entityId')
 /** The Symbol used to access the keyname of an {@link Entity}. */
 export const EntityKeyName = Symbol('entityKeyName')
 
-/** Defines the objects returned from calls to {@link Repository | repositories }. */
-export type Entity = EntityData & {
-
+export type EntityInternal = {
   /** The unique ID of the {@link Entity}. Access using the {@link EntityId} Symbol. */
   [EntityId]?: string
 
   /** The key the {@link Entity} is stored under inside of Redis. Access using the {@link EntityKeyName} Symbol. */
   [EntityKeyName]?: string
 }
+
+/** Defines the objects returned from calls to {@link Repository | repositories }. */
+export type Entity = EntityData & EntityInternal
+export type EntityKeys<T extends Entity> = Exclude<keyof T, symbol | number>
 
 /** The free-form data associated with an {@link Entity}. */
 export type EntityData = {

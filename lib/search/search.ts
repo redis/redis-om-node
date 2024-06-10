@@ -1,7 +1,7 @@
 import { SearchOptions } from "redis"
 
-import { Client } from "../client"
-import { Entity } from '../entity'
+import { Client, SearchResults } from "../client"
+import { Entity, EntityKeys } from '../entity'
 import { Schema } from "../schema"
 
 import { Where } from './where'
@@ -23,7 +23,7 @@ import { WhereDate } from "./where-date"
  * A function that takes a {@link Search} and returns a {@link Search}. Used in nested queries.
  * @template TEntity The type of {@link Entity} being sought.
  */
-export type SubSearchFunction = (search: Search) => Search
+export type SubSearchFunction<T extends Entity> = (search: Search<T>) => Search<T>
 
 type AndOrConstructor = new (left: Where, right: Where) => Where
 
@@ -35,10 +35,10 @@ type SortOptions = { BY: string, DIRECTION: 'ASC' | 'DESC' }
  * contains methods to return search results.
  * @template TEntity The type of {@link Entity} being sought.
  */
-export abstract class AbstractSearch {
+export abstract class AbstractSearch<T extends Entity = Record<string, any>> {
 
   /** @internal */
-  protected schema: Schema
+  protected schema: Schema<T>
 
   /** @internal */
   protected client: Client
@@ -47,7 +47,7 @@ export abstract class AbstractSearch {
   protected sortOptions?: SortOptions
 
   /** @internal */
-  constructor(schema: Schema, client: Client) {
+  constructor(schema: Schema<T>, client: Client) {
     this.schema = schema
     this.client = client
   }
@@ -60,14 +60,14 @@ export abstract class AbstractSearch {
    * @param field The field to sort by.
    * @returns this
    */
-  sortAscending(field: string): AbstractSearch {
+  sortAscending(field: EntityKeys<T>): AbstractSearch<T> {
     return this.sortBy(field, 'ASC')
   }
 
   /**
    * Alias for {@link Search.sortDescending}.
    */
-  sortDesc(field: string): AbstractSearch {
+  sortDesc(field: EntityKeys<T>): AbstractSearch<T> {
     return this.sortDescending(field)
   }
 
@@ -76,24 +76,24 @@ export abstract class AbstractSearch {
    * @param field The field to sort by.
    * @returns this
    */
-  sortDescending(field: string): AbstractSearch {
+  sortDescending(field: EntityKeys<T>): AbstractSearch<T> {
     return this.sortBy(field, 'DESC')
   }
 
   /**
    * Alias for {@link Search.sortAscending}.
    */
-  sortAsc(field: string): AbstractSearch {
+  sortAsc(field: EntityKeys<T>): AbstractSearch<T> {
     return this.sortAscending(field)
   }
 
   /**
      * Applies sorting for the query.
-     * @param field The field to sort by.
+     * @param fieldName The field to sort by.
      * @param order The order of returned {@link Entity | Entities} Defaults to `ASC` (ascending) if not specified
      * @returns this
      */
-  sortBy(fieldName: string, order: 'ASC' | 'DESC' = 'ASC'): AbstractSearch {
+  sortBy(fieldName: EntityKeys<T>, order: 'ASC' | 'DESC' = 'ASC'): AbstractSearch<T> {
     const field = this.schema.fieldByName(fieldName)
     const dataStructure = this.schema.dataStructure
 
@@ -132,7 +132,7 @@ export abstract class AbstractSearch {
    * @param field The field with the minimal value.
    * @returns The {@link Entity} with the minimal value
    */
-  async min(field: string): Promise<Entity | null> {
+  async min(field: EntityKeys<T>): Promise<T | null> {
     return await this.sortBy(field, 'ASC').first()
   }
 
@@ -141,7 +141,7 @@ export abstract class AbstractSearch {
    * @param field The field with the minimal value.
    * @returns The entity ID with the minimal value
    */
-  async minId(field: string): Promise<string | null> {
+  async minId(field: EntityKeys<T>): Promise<string | null> {
     return await this.sortBy(field, 'ASC').firstId()
   }
 
@@ -150,7 +150,7 @@ export abstract class AbstractSearch {
    * @param field The field with the minimal value.
    * @returns The key name with the minimal value
    */
-  async minKey(field: string): Promise<string | null> {
+  async minKey(field: EntityKeys<T>): Promise<string | null> {
     return await this.sortBy(field, 'ASC').firstKey()
   }
 
@@ -159,7 +159,7 @@ export abstract class AbstractSearch {
    * @param field The field with the maximal value.
    * @returns The entity ID {@link Entity} with the maximal value
    */
-  async max(field: string): Promise<Entity | null> {
+  async max(field: EntityKeys<T>): Promise<T | null> {
     return await this.sortBy(field, 'DESC').first()
   }
 
@@ -168,7 +168,7 @@ export abstract class AbstractSearch {
    * @param field The field with the maximal value.
    * @returns The entity ID with the maximal value
    */
-  async maxId(field: string): Promise<string | null>{
+  async maxId(field: EntityKeys<T>): Promise<string | null>{
     return await this.sortBy(field, 'DESC').firstId()
   }
 
@@ -177,7 +177,7 @@ export abstract class AbstractSearch {
    * @param field The field with the maximal value.
    * @returns The key name with the maximal value
    */
-  async maxKey(field: string): Promise<string | null> {
+  async maxKey(field: EntityKeys<T>): Promise<string | null> {
     return await this.sortBy(field, 'DESC').firstKey()
   }
 
@@ -196,7 +196,7 @@ export abstract class AbstractSearch {
    * @param count The number of {@link Entity | Entities} to return.
    * @returns An array of {@link Entity | Entities} matching the query.
    */
-  async page(offset: number, count: number): Promise<Entity[]> {
+  async page(offset: number, count: number): Promise<T[]> {
     const searchResults = await this.callSearch(offset, count)
     return extractEntitiesFromSearchResults(this.schema, searchResults)
   }
@@ -226,7 +226,7 @@ export abstract class AbstractSearch {
   /**
    * Returns the first {@link Entity} that matches this query.
    */
-  async first(): Promise<Entity | null> {
+  async first(): Promise<T | null> {
     const foundEntity = await this.page(0, 1)
     return foundEntity[0] ?? null
   }
@@ -240,7 +240,7 @@ export abstract class AbstractSearch {
   }
 
   /**
-   * Returns the first key name that matches this query.
+   * Returns the first key name that matches this query.
    */
    async firstKey(): Promise<string | null> {
     const foundKeys = await this.pageOfKeys(0, 1)
@@ -261,8 +261,8 @@ export abstract class AbstractSearch {
    * @param options.pageSize Number of {@link Entity | Entities} returned per batch.
    * @returns An array of {@link Entity | Entities} matching the query.
    */
-  async all(options = { pageSize: 10 }): Promise<Entity[]> {
-    return this.allThings(this.page, options) as Promise<Entity[]>
+  async all(options = { pageSize: 10 }): Promise<T[]> {
+    return this.allThings(this.page, options) as Promise<T[]>
   }
 
   /**
@@ -298,56 +298,56 @@ export abstract class AbstractSearch {
    * @returns An array of key names matching the query.
    */
   async allKeys(options = { pageSize: 10 }): Promise<string[]> {
-    return this.allThings(this.pageOfKeys, options) as Promise<string[]>
+    return await this.allThings(this.pageOfKeys, options) as string[]
   }
 
   /**
    * Returns the current instance. Syntactic sugar to make your code more fluent.
    * @returns this
    */
-  get return(): AbstractSearch {
+  get return(): AbstractSearch<T> {
     return this
   }
 
   /**
    * Alias for {@link Search.min}.
    */
-  async returnMin(field: string): Promise<Entity | null> {
+  async returnMin(field: EntityKeys<T>): Promise<T | null> {
     return await this.min(field)
   }
 
   /**
    * Alias for {@link Search.minId}.
    */
-  async returnMinId(field: string): Promise<string | null> {
+  async returnMinId(field: EntityKeys<T>): Promise<string | null> {
     return await this.minId(field)
   }
 
   /**
    * Alias for {@link Search.minKey}.
    */
-  async returnMinKey(field: string): Promise<string | null> {
+  async returnMinKey(field: EntityKeys<T>): Promise<string | null> {
     return await this.minKey(field)
   }
 
   /**
    * Alias for {@link Search.max}.
    */
-  async returnMax(field: string): Promise<Entity | null> {
+  async returnMax(field: EntityKeys<T>): Promise<T | null> {
     return await this.max(field)
   }
 
   /**
    * Alias for {@link Search.maxId}.
    */
-  async returnMaxId(field: string): Promise<string | null> {
+  async returnMaxId(field: EntityKeys<T>): Promise<string | null> {
     return await this.maxId(field)
   }
 
   /**
    * Alias for {@link Search.maxKey}.
    */
-  async returnMaxKey(field: string): Promise<string | null> {
+  async returnMaxKey(field: EntityKeys<T>): Promise<string | null> {
     return await this.maxKey(field)
   }
 
@@ -361,7 +361,7 @@ export abstract class AbstractSearch {
   /**
    * Alias for {@link Search.page}.
    */
-  async returnPage(offset: number, count: number): Promise<Entity[]> {
+  async returnPage(offset: number, count: number): Promise<T[]> {
     return await this.page(offset, count)
   }
 
@@ -382,7 +382,7 @@ export abstract class AbstractSearch {
   /**
    * Alias for {@link Search.first}.
    */
-  async returnFirst(): Promise<Entity | null> {
+  async returnFirst(): Promise<T | null> {
     return await this.first()
   }
 
@@ -403,7 +403,7 @@ export abstract class AbstractSearch {
   /**
    * Alias for {@link Search.all}.
    */
-   async returnAll(options = { pageSize: 10 }): Promise<Entity[]> {
+   async returnAll(options = { pageSize: 10 }): Promise<T[]> {
     return await this.all(options)
   }
 
@@ -421,7 +421,7 @@ export abstract class AbstractSearch {
     return await this.allKeys(options)
   }
 
-  private async allThings(pageFn: Function, options = { pageSize: 10 }): Promise<Entity[] | string[]> {
+  private async allThings(pageFn: Function, options = { pageSize: 10 }): Promise<T[] | string[]> {
     const things = []
     let offset = 0
     const pageSize = options.pageSize
@@ -436,7 +436,7 @@ export abstract class AbstractSearch {
     return things
   }
 
-  private async callSearch(offset = 0, count = 0, keysOnly = false) {
+  private async callSearch(offset = 0, count = 0, keysOnly = false): Promise<SearchResults> {
 
     const dataStructure = this.schema.dataStructure
     const indexName = this.schema.indexName
@@ -473,11 +473,11 @@ export abstract class AbstractSearch {
  * installed.
  * @template TEntity The type of {@link Entity} being sought.
  */
-export class RawSearch extends AbstractSearch {
-  private rawQuery: string
+export class RawSearch<T extends Entity = Record<string, any>> extends AbstractSearch<T> {
+  private readonly rawQuery: string
 
   /** @internal */
-  constructor(schema: Schema, client: Client, query: string = '*') {
+  constructor(schema: Schema<T>, client: Client, query: string = '*') {
     super(schema, client)
     this.rawQuery = query
   }
@@ -494,7 +494,7 @@ export class RawSearch extends AbstractSearch {
  * Requires that RediSearch (and optionally RedisJSON) be installed.
  * @template TEntity The type of {@link Entity} being sought.
  */
-export class Search extends AbstractSearch {
+export class Search<T extends Entity = Record<string, any>> extends AbstractSearch<T> {
   private rootWhere?: Where
 
   /** @internal */
@@ -509,7 +509,7 @@ export class Search extends AbstractSearch {
    * @param field The field to filter on.
    * @returns A subclass of {@link WhereField} matching the type of the field.
    */
-  where(field: string): WhereField
+  where(field: EntityKeys<T>): WhereField<T>
 
   /**
    * Sets up a nested search. If there are multiple calls to {@link Search.where},
@@ -517,8 +517,8 @@ export class Search extends AbstractSearch {
    * @param subSearchFn A function that takes a {@link Search} and returns another {@link Search}.
    * @returns `this`.
    */
-  where(subSearchFn: SubSearchFunction): Search
-  where(fieldOrFn: string | SubSearchFunction): WhereField | Search {
+  where(subSearchFn: SubSearchFunction<T>): Search<T>
+  where(fieldOrFn: EntityKeys<T> | SubSearchFunction<T>): WhereField<T> | Search<T> {
     return this.anyWhere(WhereAnd, fieldOrFn)
   }
 
@@ -527,15 +527,15 @@ export class Search extends AbstractSearch {
    * @param field The field to filter on.
    * @returns A subclass of {@link WhereField} matching the type of the field.
    */
-  and(field: string): WhereField
+  and(field: EntityKeys<T>): WhereField<T>
 
   /**
    * Sets up a nested search as a logical AND.
    * @param subSearchFn A function that takes a {@link Search} and returns another {@link Search}.
    * @returns `this`.
    */
-  and(subSearchFn: SubSearchFunction): Search
-  and(fieldOrFn: string | SubSearchFunction): WhereField | Search {
+  and(subSearchFn: SubSearchFunction<T>): Search<T>
+  and(fieldOrFn: EntityKeys<T> | SubSearchFunction<T>): WhereField<T> | Search<T> {
     return this.anyWhere(WhereAnd, fieldOrFn)
   }
 
@@ -544,19 +544,19 @@ export class Search extends AbstractSearch {
    * @param field The field to filter on.
    * @returns A subclass of {@link WhereField} matching the type of the field.
    */
-  or(field: string): WhereField
+  or(field: EntityKeys<T>): WhereField<T>
 
   /**
    * Sets up a nested search as a logical OR.
    * @param subSearchFn A function that takes a {@link Search} and returns another {@link Search}.
    * @returns `this`.
    */
-  or(subSearchFn: SubSearchFunction): Search
-  or(fieldOrFn: string | SubSearchFunction): WhereField | Search {
+  or(subSearchFn: SubSearchFunction<T>): Search<T>
+  or(fieldOrFn: EntityKeys<T> | SubSearchFunction<T>): WhereField<T> | Search<T> {
     return this.anyWhere(WhereOr, fieldOrFn)
   }
 
-  private anyWhere(ctor: AndOrConstructor, fieldOrFn: string | SubSearchFunction): WhereField | Search {
+  private anyWhere(ctor: AndOrConstructor, fieldOrFn: EntityKeys<T> | SubSearchFunction<T>): WhereField<T> | Search<T> {
     if (typeof fieldOrFn === 'string') {
       return this.anyWhereForField(ctor, fieldOrFn)
     } else {
@@ -564,7 +564,7 @@ export class Search extends AbstractSearch {
     }
   }
 
-  private anyWhereForField(ctor: AndOrConstructor, field: string): WhereField {
+  private anyWhereForField(ctor: AndOrConstructor, field: EntityKeys<T>): WhereField<T> {
     const where = this.createWhere(field)
 
     if (this.rootWhere === undefined) {
@@ -576,7 +576,7 @@ export class Search extends AbstractSearch {
     return where
   }
 
-  private anyWhereForFunction(ctor: AndOrConstructor, subSearchFn: SubSearchFunction): Search {
+  private anyWhereForFunction(ctor: AndOrConstructor, subSearchFn: SubSearchFunction<T>): Search<T> {
     const search = new Search(this.schema, this.client)
     const subSearch = subSearchFn(search)
 
@@ -593,7 +593,7 @@ export class Search extends AbstractSearch {
     return this
   }
 
-  private createWhere(fieldName: string): WhereField {
+  private createWhere(fieldName: EntityKeys<T>): WhereField<T> {
     const field = this.schema.fieldByName(fieldName)
 
     if (field === null) throw new FieldNotInSchema(fieldName)
