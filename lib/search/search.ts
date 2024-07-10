@@ -319,7 +319,7 @@ export abstract class AbstractSearch<T extends Entity = Record<string, any>> {
    * @returns An array of key names matching the query.
    */
   async allKeys(options = { pageSize: 10 }): Promise<string[]> {
-    return (await this.allThings(this.pageOfKeys, options)) as string[];
+    return this.allThings(this.pageOfKeys, options);
   }
 
   /**
@@ -442,22 +442,24 @@ export abstract class AbstractSearch<T extends Entity = Record<string, any>> {
     return await this.allKeys(options);
   }
 
-  private async allThings(
-    pageFn: Function,
+  private async allThings<R extends T[] | string[]>(
+    pageFn: (offset: number, pageSide: number) => Promise<R>,
     options = { pageSize: 10 },
-  ): Promise<T[] | string[]> {
-    const things = [];
+  ): Promise<R> {
+    // TypeScript is just being mean in this function. The internal logic will be fine in runtime,
+    // However, it is important during future changes to double check your work.
+    let things: unknown[] = [];
     let offset = 0;
     const pageSize = options.pageSize;
 
     while (true) {
       const foundThings = await pageFn.call(this, offset, pageSize);
-      things.push(...foundThings);
+      things.push(...(foundThings as unknown[]));
       if (foundThings.length < pageSize) break;
       offset += pageSize;
     }
 
-    return things;
+    return things as R;
   }
 
   private async callSearch(
