@@ -120,7 +120,7 @@ export class Schema<T extends Entity = Record<string, any>> {
    */
   async generateId(): Promise<string> {
     const ulidStrategy = () => ulid()
-    return (this.#options?.idStrategy ?? ulidStrategy)();
+    return await (this.#options?.idStrategy ?? ulidStrategy)();
   }
 
   /**

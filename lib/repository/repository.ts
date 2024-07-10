@@ -142,7 +142,7 @@ export class Repository<T extends Entity = Record<string, any>> {
    */
   async save(id: string, entity: T): Promise<T>
 
-  async save(entityOrId: T | string, maybeEntity?: T): Promise<Entity> {
+  async save(entityOrId: T | string, maybeEntity?: T): Promise<T> {
     let entity: T | undefined
     let entityId: string | undefined
 
