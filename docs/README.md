@@ -44,9 +44,12 @@ redis-om
 - [Entity](README.md#entity)
 - [EntityData](README.md#entitydata)
 - [EntityDataValue](README.md#entitydatavalue)
+- [EntityInternal](README.md#entityinternal)
+- [EntityKeys](README.md#entitykeys)
 - [FieldDefinition](README.md#fielddefinition)
 - [FieldType](README.md#fieldtype)
 - [IdStrategy](README.md#idstrategy)
+- [InferSchema](README.md#inferschema)
 - [NumberArrayFieldDefinition](README.md#numberarrayfielddefinition)
 - [NumberFieldDefinition](README.md#numberfielddefinition)
 - [Point](README.md#point)
@@ -94,7 +97,7 @@ All configuration properties that any field might have, regardless of type.
 
 #### Defined in
 
-[lib/schema/definitions.ts:5](https://github.com/redis/redis-om-node/blob/d8438f7/lib/schema/definitions.ts#L5)
+[lib/schema/definitions.ts:7](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/schema/definitions.ts#L7)
 
 ___
 
@@ -106,7 +109,7 @@ A field representing a boolean.
 
 #### Defined in
 
-[lib/schema/definitions.ts:78](https://github.com/redis/redis-om-node/blob/d8438f7/lib/schema/definitions.ts#L78)
+[lib/schema/definitions.ts:80](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/schema/definitions.ts#L80)
 
 ___
 
@@ -132,7 +135,7 @@ A function that defines a circle for `.inCircle` searches.
 
 #### Defined in
 
-[lib/search/where-point.ts:8](https://github.com/redis/redis-om-node/blob/d8438f7/lib/search/where-point.ts#L8)
+[lib/search/where-point.ts:8](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/search/where-point.ts#L8)
 
 ___
 
@@ -144,7 +147,7 @@ The configuration properties that all fields have in common.
 
 #### Defined in
 
-[lib/schema/definitions.ts:75](https://github.com/redis/redis-om-node/blob/d8438f7/lib/schema/definitions.ts#L75)
+[lib/schema/definitions.ts:77](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/schema/definitions.ts#L77)
 
 ___
 
@@ -156,7 +159,7 @@ The type of data structure in Redis to map objects to.
 
 #### Defined in
 
-[lib/schema/options.ts:2](https://github.com/redis/redis-om-node/blob/d8438f7/lib/schema/options.ts#L2)
+[lib/schema/options.ts:2](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/schema/options.ts#L2)
 
 ___
 
@@ -168,19 +171,19 @@ A field representing a date/time.
 
 #### Defined in
 
-[lib/schema/definitions.ts:83](https://github.com/redis/redis-om-node/blob/d8438f7/lib/schema/definitions.ts#L83)
+[lib/schema/definitions.ts:85](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/schema/definitions.ts#L85)
 
 ___
 
 ### Entity
 
-Ƭ **Entity**: [`EntityData`](README.md#entitydata) & { `[EntityId]?`: `string` ; `[EntityKeyName]?`: `string`  }
+Ƭ **Entity**: [`EntityData`](README.md#entitydata) & [`EntityInternal`](README.md#entityinternal)
 
 Defines the objects returned from calls to [repositories](classes/Repository.md).
 
 #### Defined in
 
-[lib/entity/entity.ts:8](https://github.com/redis/redis-om-node/blob/d8438f7/lib/entity/entity.ts#L8)
+[lib/entity/entity.ts:16](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/entity/entity.ts#L16)
 
 ___
 
@@ -196,7 +199,7 @@ The free-form data associated with an [Entity](README.md#entity).
 
 #### Defined in
 
-[lib/entity/entity.ts:18](https://github.com/redis/redis-om-node/blob/d8438f7/lib/entity/entity.ts#L18)
+[lib/entity/entity.ts:20](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/entity/entity.ts#L20)
 
 ___
 
@@ -208,7 +211,40 @@ Valid types for values in an [Entity](README.md#entity).
 
 #### Defined in
 
-[lib/entity/entity.ts:23](https://github.com/redis/redis-om-node/blob/d8438f7/lib/entity/entity.ts#L23)
+[lib/entity/entity.ts:25](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/entity/entity.ts#L25)
+
+___
+
+### EntityInternal
+
+Ƭ **EntityInternal**: `Object`
+
+#### Type declaration
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `[EntityId]?` | `string` | The unique ID of the [Entity](README.md#entity). Access using the [EntityId](README.md#entityid) Symbol. |
+| `[EntityKeyName]?` | `string` | The key the [Entity](README.md#entity) is stored under inside of Redis. Access using the [EntityKeyName](README.md#entitykeyname) Symbol. |
+
+#### Defined in
+
+[lib/entity/entity.ts:7](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/entity/entity.ts#L7)
+
+___
+
+### EntityKeys
+
+Ƭ **EntityKeys**<`T`\>: `Exclude`<keyof `T`, keyof [`EntityInternal`](README.md#entityinternal)\>
+
+#### Type parameters
+
+| Name | Type |
+| :------ | :------ |
+| `T` | extends [`Entity`](README.md#entity) |
+
+#### Defined in
+
+[lib/entity/entity.ts:17](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/entity/entity.ts#L17)
 
 ___
 
@@ -220,7 +256,7 @@ Contains instructions telling how to map a property on an [Entity](README.md#ent
 
 #### Defined in
 
-[lib/schema/definitions.ts:117](https://github.com/redis/redis-om-node/blob/d8438f7/lib/schema/definitions.ts#L117)
+[lib/schema/definitions.ts:119](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/schema/definitions.ts#L119)
 
 ___
 
@@ -232,7 +268,7 @@ Valid field types for a [FieldDefinition](README.md#fielddefinition).
 
 #### Defined in
 
-[lib/schema/definitions.ts:2](https://github.com/redis/redis-om-node/blob/d8438f7/lib/schema/definitions.ts#L2)
+[lib/schema/definitions.ts:4](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/schema/definitions.ts#L4)
 
 ___
 
@@ -252,7 +288,23 @@ A function that generates random entityIds.
 
 #### Defined in
 
-[lib/schema/options.ts:5](https://github.com/redis/redis-om-node/blob/d8438f7/lib/schema/options.ts#L5)
+[lib/schema/options.ts:5](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/schema/options.ts#L5)
+
+___
+
+### InferSchema
+
+Ƭ **InferSchema**<`T`\>: `T` extends [`Schema`](classes/Schema.md)<infer R\> ? `R` : `never`
+
+#### Type parameters
+
+| Name |
+| :------ |
+| `T` |
+
+#### Defined in
+
+[lib/schema/schema.ts:181](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/schema/schema.ts#L181)
 
 ___
 
@@ -264,7 +316,7 @@ A field representing an array of numbers.
 
 #### Defined in
 
-[lib/schema/definitions.ts:93](https://github.com/redis/redis-om-node/blob/d8438f7/lib/schema/definitions.ts#L93)
+[lib/schema/definitions.ts:95](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/schema/definitions.ts#L95)
 
 ___
 
@@ -276,7 +328,7 @@ A field representing a number.
 
 #### Defined in
 
-[lib/schema/definitions.ts:88](https://github.com/redis/redis-om-node/blob/d8438f7/lib/schema/definitions.ts#L88)
+[lib/schema/definitions.ts:90](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/schema/definitions.ts#L90)
 
 ___
 
@@ -295,7 +347,7 @@ Defines a point on the globe using longitude and latitude.
 
 #### Defined in
 
-[lib/entity/entity.ts:26](https://github.com/redis/redis-om-node/blob/d8438f7/lib/entity/entity.ts#L26)
+[lib/entity/entity.ts:28](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/entity/entity.ts#L28)
 
 ___
 
@@ -307,7 +359,7 @@ A field representing a point on the globe.
 
 #### Defined in
 
-[lib/schema/definitions.ts:98](https://github.com/redis/redis-om-node/blob/d8438f7/lib/schema/definitions.ts#L98)
+[lib/schema/definitions.ts:100](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/schema/definitions.ts#L100)
 
 ___
 
@@ -319,7 +371,7 @@ A conventional Redis connection.
 
 #### Defined in
 
-[lib/client/client.ts:8](https://github.com/redis/redis-om-node/blob/d8438f7/lib/client/client.ts#L8)
+[lib/client/client.ts:8](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/client/client.ts#L8)
 
 ___
 
@@ -331,7 +383,7 @@ A clustered Redis connection.
 
 #### Defined in
 
-[lib/client/client.ts:11](https://github.com/redis/redis-om-node/blob/d8438f7/lib/client/client.ts#L11)
+[lib/client/client.ts:11](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/client/client.ts#L11)
 
 ___
 
@@ -343,19 +395,25 @@ A Redis connection, clustered or conventional.
 
 #### Defined in
 
-[lib/client/client.ts:14](https://github.com/redis/redis-om-node/blob/d8438f7/lib/client/client.ts#L14)
+[lib/client/client.ts:14](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/client/client.ts#L14)
 
 ___
 
 ### SchemaDefinition
 
-Ƭ **SchemaDefinition**: `Record`<`string`, [`FieldDefinition`](README.md#fielddefinition)\>
+Ƭ **SchemaDefinition**<`T`\>: `Record`<[`EntityKeys`](README.md#entitykeys)<`T`\>, [`FieldDefinition`](README.md#fielddefinition)\>
 
 Group of [FieldDefinition](README.md#fielddefinition)s that define the schema for an [Entity](README.md#entity).
 
+#### Type parameters
+
+| Name | Type |
+| :------ | :------ |
+| `T` | extends [`Entity`](README.md#entity) = `Record`<`string`, `any`\> |
+
 #### Defined in
 
-[lib/schema/definitions.ts:123](https://github.com/redis/redis-om-node/blob/d8438f7/lib/schema/definitions.ts#L123)
+[lib/schema/definitions.ts:125](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/schema/definitions.ts#L125)
 
 ___
 
@@ -378,7 +436,7 @@ Configuration options for a [Schema](classes/Schema.md).
 
 #### Defined in
 
-[lib/schema/options.ts:11](https://github.com/redis/redis-om-node/blob/d8438f7/lib/schema/options.ts#L11)
+[lib/schema/options.ts:11](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/schema/options.ts#L11)
 
 ___
 
@@ -390,7 +448,7 @@ Valid values for how to use stop words for a given [Schema](classes/Schema.md).
 
 #### Defined in
 
-[lib/schema/options.ts:8](https://github.com/redis/redis-om-node/blob/d8438f7/lib/schema/options.ts#L8)
+[lib/schema/options.ts:8](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/schema/options.ts#L8)
 
 ___
 
@@ -402,7 +460,7 @@ A field representing an array of strings.
 
 #### Defined in
 
-[lib/schema/definitions.ts:107](https://github.com/redis/redis-om-node/blob/d8438f7/lib/schema/definitions.ts#L107)
+[lib/schema/definitions.ts:109](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/schema/definitions.ts#L109)
 
 ___
 
@@ -414,17 +472,23 @@ A field representing a whole string.
 
 #### Defined in
 
-[lib/schema/definitions.ts:102](https://github.com/redis/redis-om-node/blob/d8438f7/lib/schema/definitions.ts#L102)
+[lib/schema/definitions.ts:104](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/schema/definitions.ts#L104)
 
 ___
 
 ### SubSearchFunction
 
-Ƭ **SubSearchFunction**: (`search`: [`Search`](classes/Search.md)) => [`Search`](classes/Search.md)
+Ƭ **SubSearchFunction**<`T`\>: (`search`: [`Search`](classes/Search.md)<`T`\>) => [`Search`](classes/Search.md)<`T`\>
+
+#### Type parameters
+
+| Name | Type |
+| :------ | :------ |
+| `T` | extends [`Entity`](README.md#entity) |
 
 #### Type declaration
 
-▸ (`search`): [`Search`](classes/Search.md)
+▸ (`search`): [`Search`](classes/Search.md)<`T`\>
 
 A function that takes a [Search](classes/Search.md) and returns a [Search](classes/Search.md). Used in nested queries.
 
@@ -432,15 +496,15 @@ A function that takes a [Search](classes/Search.md) and returns a [Search](class
 
 | Name | Type |
 | :------ | :------ |
-| `search` | [`Search`](classes/Search.md) |
+| `search` | [`Search`](classes/Search.md)<`T`\> |
 
 ##### Returns
 
-[`Search`](classes/Search.md)
+[`Search`](classes/Search.md)<`T`\>
 
 #### Defined in
 
-[lib/search/search.ts:26](https://github.com/redis/redis-om-node/blob/d8438f7/lib/search/search.ts#L26)
+[lib/search/search.ts:31](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/search/search.ts#L31)
 
 ___
 
@@ -452,7 +516,7 @@ A field representing searchable text.
 
 #### Defined in
 
-[lib/schema/definitions.ts:112](https://github.com/redis/redis-om-node/blob/d8438f7/lib/schema/definitions.ts#L112)
+[lib/schema/definitions.ts:114](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/schema/definitions.ts#L114)
 
 ## Variables
 
@@ -464,7 +528,7 @@ The Symbol used to access the entity ID of an [Entity](README.md#entity).
 
 #### Defined in
 
-[lib/entity/entity.ts:2](https://github.com/redis/redis-om-node/blob/d8438f7/lib/entity/entity.ts#L2)
+[lib/entity/entity.ts:2](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/entity/entity.ts#L2)
 
 ___
 
@@ -476,4 +540,4 @@ The Symbol used to access the keyname of an [Entity](README.md#entity).
 
 #### Defined in
 
-[lib/entity/entity.ts:5](https://github.com/redis/redis-om-node/blob/d8438f7/lib/entity/entity.ts#L5)
+[lib/entity/entity.ts:5](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/entity/entity.ts#L5)

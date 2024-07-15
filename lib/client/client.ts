@@ -1,7 +1,7 @@
 import { createClient, createCluster, RediSearchSchema, SearchOptions } from 'redis'
 
 import { Repository } from '../repository'
-import {InferSchema, Schema} from '../schema'
+import { InferSchema, Schema } from '../schema'
 import { RedisOmError } from '../error'
 
 /** A conventional Redis connection. */
@@ -159,7 +159,7 @@ export class Client {
     this.#validateRedisOpen()
     await this.redis.expire(key, ttl)
   }
-  
+
   /** @internal */
   async expireAt(key: string, timestamp: Date) {
     this.#validateRedisOpen()

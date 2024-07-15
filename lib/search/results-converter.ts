@@ -1,7 +1,7 @@
-import {RedisHashData, RedisJsonData, SearchDocument, SearchResults} from "../client"
-import {Entity, EntityData, EntityId, EntityKeyName} from "../entity"
-import {Schema} from "../schema"
-import {fromRedisHash, fromRedisJson} from "../transformer"
+import { RedisHashData, RedisJsonData, SearchDocument, SearchResults } from "../client"
+import { Entity, EntityData, EntityId, EntityKeyName } from "../entity"
+import { Schema } from "../schema"
+import { fromRedisHash, fromRedisJson } from "../transformer"
 
 export function extractCountFromSearchResults(results: SearchResults): number {
   return results.total

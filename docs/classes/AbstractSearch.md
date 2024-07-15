@@ -1,6 +1,6 @@
 [redis-om](../README.md) / AbstractSearch
 
-# Class: AbstractSearch
+# Class: AbstractSearch<T\>
 
 Abstract base class for [Search](Search.md) and [RawSearch](RawSearch.md) that
 contains methods to return search results.
@@ -8,6 +8,12 @@ contains methods to return search results.
 **`Template`**
 
 The type of [Entity](../README.md#entity) being sought.
+
+## Type parameters
+
+| Name | Type |
+| :------ | :------ |
+| `T` | extends [`Entity`](../README.md#entity) = `Record`<`string`, `any`\> |
 
 ## Hierarchy
 
@@ -67,25 +73,25 @@ The type of [Entity](../README.md#entity) being sought.
 
 ### return
 
-• `get` **return**(): [`AbstractSearch`](AbstractSearch.md)
+• `get` **return**(): [`AbstractSearch`](AbstractSearch.md)<`T`\>
 
 Returns the current instance. Syntactic sugar to make your code more fluent.
 
 #### Returns
 
-[`AbstractSearch`](AbstractSearch.md)
+[`AbstractSearch`](AbstractSearch.md)<`T`\>
 
 this
 
 #### Defined in
 
-[lib/search/search.ts:308](https://github.com/redis/redis-om-node/blob/d8438f7/lib/search/search.ts#L308)
+[lib/search/search.ts:329](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/search/search.ts#L329)
 
 ## Methods
 
 ### all
 
-▸ **all**(`options?`): `Promise`<[`Entity`](../README.md#entity)[]\>
+▸ **all**(`options?`): `Promise`<`T`[]\>
 
 Returns all the [Entities](../README.md#entity) that match this query. This method
 makes multiple calls to Redis until all the [Entities](../README.md#entity) are returned.
@@ -105,13 +111,13 @@ const entities = await repository.search().returnAll({ pageSize: 100 })
 
 #### Returns
 
-`Promise`<[`Entity`](../README.md#entity)[]\>
+`Promise`<`T`[]\>
 
 An array of [Entities](../README.md#entity) matching the query.
 
 #### Defined in
 
-[lib/search/search.ts:264](https://github.com/redis/redis-om-node/blob/d8438f7/lib/search/search.ts#L264)
+[lib/search/search.ts:285](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/search/search.ts#L285)
 
 ___
 
@@ -143,7 +149,7 @@ An array of entity IDs matching the query.
 
 #### Defined in
 
-[lib/search/search.ts:282](https://github.com/redis/redis-om-node/blob/d8438f7/lib/search/search.ts#L282)
+[lib/search/search.ts:303](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/search/search.ts#L303)
 
 ___
 
@@ -175,7 +181,7 @@ An array of key names matching the query.
 
 #### Defined in
 
-[lib/search/search.ts:300](https://github.com/redis/redis-om-node/blob/d8438f7/lib/search/search.ts#L300)
+[lib/search/search.ts:321](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/search/search.ts#L321)
 
 ___
 
@@ -191,23 +197,23 @@ Returns the number of [Entities](../README.md#entity) that match this query.
 
 #### Defined in
 
-[lib/search/search.ts:188](https://github.com/redis/redis-om-node/blob/d8438f7/lib/search/search.ts#L188)
+[lib/search/search.ts:209](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/search/search.ts#L209)
 
 ___
 
 ### first
 
-▸ **first**(): `Promise`<``null`` \| [`Entity`](../README.md#entity)\>
+▸ **first**(): `Promise`<``null`` \| `T`\>
 
 Returns the first [Entity](../README.md#entity) that matches this query.
 
 #### Returns
 
-`Promise`<``null`` \| [`Entity`](../README.md#entity)\>
+`Promise`<``null`` \| `T`\>
 
 #### Defined in
 
-[lib/search/search.ts:229](https://github.com/redis/redis-om-node/blob/d8438f7/lib/search/search.ts#L229)
+[lib/search/search.ts:250](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/search/search.ts#L250)
 
 ___
 
@@ -223,7 +229,7 @@ Returns the first entity ID that matches this query.
 
 #### Defined in
 
-[lib/search/search.ts:237](https://github.com/redis/redis-om-node/blob/d8438f7/lib/search/search.ts#L237)
+[lib/search/search.ts:258](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/search/search.ts#L258)
 
 ___
 
@@ -231,7 +237,7 @@ ___
 
 ▸ **firstKey**(): `Promise`<``null`` \| `string`\>
 
-Returns the first key name that matches this query.
+Returns the first key name that matches this query.
 
 #### Returns
 
@@ -239,13 +245,13 @@ Returns the first key name that matches this query.
 
 #### Defined in
 
-[lib/search/search.ts:245](https://github.com/redis/redis-om-node/blob/d8438f7/lib/search/search.ts#L245)
+[lib/search/search.ts:266](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/search/search.ts#L266)
 
 ___
 
 ### max
 
-▸ **max**(`field`): `Promise`<``null`` \| [`Entity`](../README.md#entity)\>
+▸ **max**(`field`): `Promise`<``null`` \| `T`\>
 
 Finds the [Entity](../README.md#entity) with the maximal value for a field.
 
@@ -253,17 +259,17 @@ Finds the [Entity](../README.md#entity) with the maximal value for a field.
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `field` | `string` | The field with the maximal value. |
+| `field` | `Exclude`<keyof `T`, keyof [`EntityInternal`](../README.md#entityinternal)\> | The field with the maximal value. |
 
 #### Returns
 
-`Promise`<``null`` \| [`Entity`](../README.md#entity)\>
+`Promise`<``null`` \| `T`\>
 
 The entity ID [Entity](../README.md#entity) with the maximal value
 
 #### Defined in
 
-[lib/search/search.ts:162](https://github.com/redis/redis-om-node/blob/d8438f7/lib/search/search.ts#L162)
+[lib/search/search.ts:183](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/search/search.ts#L183)
 
 ___
 
@@ -277,7 +283,7 @@ Finds the entity ID with the maximal value for a field.
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `field` | `string` | The field with the maximal value. |
+| `field` | `Exclude`<keyof `T`, keyof [`EntityInternal`](../README.md#entityinternal)\> | The field with the maximal value. |
 
 #### Returns
 
@@ -287,7 +293,7 @@ The entity ID with the maximal value
 
 #### Defined in
 
-[lib/search/search.ts:171](https://github.com/redis/redis-om-node/blob/d8438f7/lib/search/search.ts#L171)
+[lib/search/search.ts:192](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/search/search.ts#L192)
 
 ___
 
@@ -301,7 +307,7 @@ Finds the key name in Redis with the maximal value for a field.
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `field` | `string` | The field with the maximal value. |
+| `field` | `Exclude`<keyof `T`, keyof [`EntityInternal`](../README.md#entityinternal)\> | The field with the maximal value. |
 
 #### Returns
 
@@ -311,13 +317,13 @@ The key name with the maximal value
 
 #### Defined in
 
-[lib/search/search.ts:180](https://github.com/redis/redis-om-node/blob/d8438f7/lib/search/search.ts#L180)
+[lib/search/search.ts:201](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/search/search.ts#L201)
 
 ___
 
 ### min
 
-▸ **min**(`field`): `Promise`<``null`` \| [`Entity`](../README.md#entity)\>
+▸ **min**(`field`): `Promise`<``null`` \| `T`\>
 
 Finds the [Entity](../README.md#entity) with the minimal value for a field.
 
@@ -325,17 +331,17 @@ Finds the [Entity](../README.md#entity) with the minimal value for a field.
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `field` | `string` | The field with the minimal value. |
+| `field` | `Exclude`<keyof `T`, keyof [`EntityInternal`](../README.md#entityinternal)\> | The field with the minimal value. |
 
 #### Returns
 
-`Promise`<``null`` \| [`Entity`](../README.md#entity)\>
+`Promise`<``null`` \| `T`\>
 
 The [Entity](../README.md#entity) with the minimal value
 
 #### Defined in
 
-[lib/search/search.ts:135](https://github.com/redis/redis-om-node/blob/d8438f7/lib/search/search.ts#L135)
+[lib/search/search.ts:156](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/search/search.ts#L156)
 
 ___
 
@@ -349,7 +355,7 @@ Finds the entity ID with the minimal value for a field.
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `field` | `string` | The field with the minimal value. |
+| `field` | `Exclude`<keyof `T`, keyof [`EntityInternal`](../README.md#entityinternal)\> | The field with the minimal value. |
 
 #### Returns
 
@@ -359,7 +365,7 @@ The entity ID with the minimal value
 
 #### Defined in
 
-[lib/search/search.ts:144](https://github.com/redis/redis-om-node/blob/d8438f7/lib/search/search.ts#L144)
+[lib/search/search.ts:165](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/search/search.ts#L165)
 
 ___
 
@@ -373,7 +379,7 @@ Finds the key name in Redis with the minimal value for a field.
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `field` | `string` | The field with the minimal value. |
+| `field` | `Exclude`<keyof `T`, keyof [`EntityInternal`](../README.md#entityinternal)\> | The field with the minimal value. |
 
 #### Returns
 
@@ -383,13 +389,13 @@ The key name with the minimal value
 
 #### Defined in
 
-[lib/search/search.ts:153](https://github.com/redis/redis-om-node/blob/d8438f7/lib/search/search.ts#L153)
+[lib/search/search.ts:174](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/search/search.ts#L174)
 
 ___
 
 ### page
 
-▸ **page**(`offset`, `count`): `Promise`<[`Entity`](../README.md#entity)[]\>
+▸ **page**(`offset`, `count`): `Promise`<`T`[]\>
 
 Returns a page of [Entities](../README.md#entity) that match this query.
 
@@ -402,13 +408,13 @@ Returns a page of [Entities](../README.md#entity) that match this query.
 
 #### Returns
 
-`Promise`<[`Entity`](../README.md#entity)[]\>
+`Promise`<`T`[]\>
 
 An array of [Entities](../README.md#entity) matching the query.
 
 #### Defined in
 
-[lib/search/search.ts:199](https://github.com/redis/redis-om-node/blob/d8438f7/lib/search/search.ts#L199)
+[lib/search/search.ts:220](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/search/search.ts#L220)
 
 ___
 
@@ -433,7 +439,7 @@ An array of strings matching the query.
 
 #### Defined in
 
-[lib/search/search.ts:210](https://github.com/redis/redis-om-node/blob/d8438f7/lib/search/search.ts#L210)
+[lib/search/search.ts:231](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/search/search.ts#L231)
 
 ___
 
@@ -458,13 +464,13 @@ An array of strings matching the query.
 
 #### Defined in
 
-[lib/search/search.ts:221](https://github.com/redis/redis-om-node/blob/d8438f7/lib/search/search.ts#L221)
+[lib/search/search.ts:242](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/search/search.ts#L242)
 
 ___
 
 ### returnAll
 
-▸ **returnAll**(`options?`): `Promise`<[`Entity`](../README.md#entity)[]\>
+▸ **returnAll**(`options?`): `Promise`<`T`[]\>
 
 Alias for [all](Search.md#all).
 
@@ -477,11 +483,11 @@ Alias for [all](Search.md#all).
 
 #### Returns
 
-`Promise`<[`Entity`](../README.md#entity)[]\>
+`Promise`<`T`[]\>
 
 #### Defined in
 
-[lib/search/search.ts:406](https://github.com/redis/redis-om-node/blob/d8438f7/lib/search/search.ts#L406)
+[lib/search/search.ts:427](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/search/search.ts#L427)
 
 ___
 
@@ -504,7 +510,7 @@ Alias for [allIds](Search.md#allids).
 
 #### Defined in
 
-[lib/search/search.ts:413](https://github.com/redis/redis-om-node/blob/d8438f7/lib/search/search.ts#L413)
+[lib/search/search.ts:434](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/search/search.ts#L434)
 
 ___
 
@@ -527,7 +533,7 @@ Alias for [allKeys](Search.md#allkeys).
 
 #### Defined in
 
-[lib/search/search.ts:420](https://github.com/redis/redis-om-node/blob/d8438f7/lib/search/search.ts#L420)
+[lib/search/search.ts:441](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/search/search.ts#L441)
 
 ___
 
@@ -543,23 +549,23 @@ Alias for [count](Search.md#count).
 
 #### Defined in
 
-[lib/search/search.ts:357](https://github.com/redis/redis-om-node/blob/d8438f7/lib/search/search.ts#L357)
+[lib/search/search.ts:378](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/search/search.ts#L378)
 
 ___
 
 ### returnFirst
 
-▸ **returnFirst**(): `Promise`<``null`` \| [`Entity`](../README.md#entity)\>
+▸ **returnFirst**(): `Promise`<``null`` \| `T`\>
 
 Alias for [first](Search.md#first).
 
 #### Returns
 
-`Promise`<``null`` \| [`Entity`](../README.md#entity)\>
+`Promise`<``null`` \| `T`\>
 
 #### Defined in
 
-[lib/search/search.ts:385](https://github.com/redis/redis-om-node/blob/d8438f7/lib/search/search.ts#L385)
+[lib/search/search.ts:406](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/search/search.ts#L406)
 
 ___
 
@@ -575,7 +581,7 @@ Alias for [firstId](Search.md#firstid).
 
 #### Defined in
 
-[lib/search/search.ts:392](https://github.com/redis/redis-om-node/blob/d8438f7/lib/search/search.ts#L392)
+[lib/search/search.ts:413](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/search/search.ts#L413)
 
 ___
 
@@ -591,13 +597,13 @@ Alias for [firstKey](Search.md#firstkey).
 
 #### Defined in
 
-[lib/search/search.ts:399](https://github.com/redis/redis-om-node/blob/d8438f7/lib/search/search.ts#L399)
+[lib/search/search.ts:420](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/search/search.ts#L420)
 
 ___
 
 ### returnMax
 
-▸ **returnMax**(`field`): `Promise`<``null`` \| [`Entity`](../README.md#entity)\>
+▸ **returnMax**(`field`): `Promise`<``null`` \| `T`\>
 
 Alias for [max](Search.md#max).
 
@@ -605,15 +611,15 @@ Alias for [max](Search.md#max).
 
 | Name | Type |
 | :------ | :------ |
-| `field` | `string` |
+| `field` | `Exclude`<keyof `T`, keyof [`EntityInternal`](../README.md#entityinternal)\> |
 
 #### Returns
 
-`Promise`<``null`` \| [`Entity`](../README.md#entity)\>
+`Promise`<``null`` \| `T`\>
 
 #### Defined in
 
-[lib/search/search.ts:336](https://github.com/redis/redis-om-node/blob/d8438f7/lib/search/search.ts#L336)
+[lib/search/search.ts:357](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/search/search.ts#L357)
 
 ___
 
@@ -627,7 +633,7 @@ Alias for [maxId](Search.md#maxid).
 
 | Name | Type |
 | :------ | :------ |
-| `field` | `string` |
+| `field` | `Exclude`<keyof `T`, keyof [`EntityInternal`](../README.md#entityinternal)\> |
 
 #### Returns
 
@@ -635,7 +641,7 @@ Alias for [maxId](Search.md#maxid).
 
 #### Defined in
 
-[lib/search/search.ts:343](https://github.com/redis/redis-om-node/blob/d8438f7/lib/search/search.ts#L343)
+[lib/search/search.ts:364](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/search/search.ts#L364)
 
 ___
 
@@ -649,7 +655,7 @@ Alias for [maxKey](Search.md#maxkey).
 
 | Name | Type |
 | :------ | :------ |
-| `field` | `string` |
+| `field` | `Exclude`<keyof `T`, keyof [`EntityInternal`](../README.md#entityinternal)\> |
 
 #### Returns
 
@@ -657,13 +663,13 @@ Alias for [maxKey](Search.md#maxkey).
 
 #### Defined in
 
-[lib/search/search.ts:350](https://github.com/redis/redis-om-node/blob/d8438f7/lib/search/search.ts#L350)
+[lib/search/search.ts:371](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/search/search.ts#L371)
 
 ___
 
 ### returnMin
 
-▸ **returnMin**(`field`): `Promise`<``null`` \| [`Entity`](../README.md#entity)\>
+▸ **returnMin**(`field`): `Promise`<``null`` \| `T`\>
 
 Alias for [min](Search.md#min).
 
@@ -671,15 +677,15 @@ Alias for [min](Search.md#min).
 
 | Name | Type |
 | :------ | :------ |
-| `field` | `string` |
+| `field` | `Exclude`<keyof `T`, keyof [`EntityInternal`](../README.md#entityinternal)\> |
 
 #### Returns
 
-`Promise`<``null`` \| [`Entity`](../README.md#entity)\>
+`Promise`<``null`` \| `T`\>
 
 #### Defined in
 
-[lib/search/search.ts:315](https://github.com/redis/redis-om-node/blob/d8438f7/lib/search/search.ts#L315)
+[lib/search/search.ts:336](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/search/search.ts#L336)
 
 ___
 
@@ -693,7 +699,7 @@ Alias for [minId](Search.md#minid).
 
 | Name | Type |
 | :------ | :------ |
-| `field` | `string` |
+| `field` | `Exclude`<keyof `T`, keyof [`EntityInternal`](../README.md#entityinternal)\> |
 
 #### Returns
 
@@ -701,7 +707,7 @@ Alias for [minId](Search.md#minid).
 
 #### Defined in
 
-[lib/search/search.ts:322](https://github.com/redis/redis-om-node/blob/d8438f7/lib/search/search.ts#L322)
+[lib/search/search.ts:343](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/search/search.ts#L343)
 
 ___
 
@@ -715,7 +721,7 @@ Alias for [minKey](Search.md#minkey).
 
 | Name | Type |
 | :------ | :------ |
-| `field` | `string` |
+| `field` | `Exclude`<keyof `T`, keyof [`EntityInternal`](../README.md#entityinternal)\> |
 
 #### Returns
 
@@ -723,13 +729,13 @@ Alias for [minKey](Search.md#minkey).
 
 #### Defined in
 
-[lib/search/search.ts:329](https://github.com/redis/redis-om-node/blob/d8438f7/lib/search/search.ts#L329)
+[lib/search/search.ts:350](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/search/search.ts#L350)
 
 ___
 
 ### returnPage
 
-▸ **returnPage**(`offset`, `count`): `Promise`<[`Entity`](../README.md#entity)[]\>
+▸ **returnPage**(`offset`, `count`): `Promise`<`T`[]\>
 
 Alias for [page](Search.md#page).
 
@@ -742,11 +748,11 @@ Alias for [page](Search.md#page).
 
 #### Returns
 
-`Promise`<[`Entity`](../README.md#entity)[]\>
+`Promise`<`T`[]\>
 
 #### Defined in
 
-[lib/search/search.ts:364](https://github.com/redis/redis-om-node/blob/d8438f7/lib/search/search.ts#L364)
+[lib/search/search.ts:385](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/search/search.ts#L385)
 
 ___
 
@@ -769,7 +775,7 @@ Alias for [pageOfIds](Search.md#pageofids).
 
 #### Defined in
 
-[lib/search/search.ts:371](https://github.com/redis/redis-om-node/blob/d8438f7/lib/search/search.ts#L371)
+[lib/search/search.ts:392](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/search/search.ts#L392)
 
 ___
 
@@ -792,13 +798,13 @@ Alias for [pageOfKeys](Search.md#pageofkeys).
 
 #### Defined in
 
-[lib/search/search.ts:378](https://github.com/redis/redis-om-node/blob/d8438f7/lib/search/search.ts#L378)
+[lib/search/search.ts:399](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/search/search.ts#L399)
 
 ___
 
 ### sortAsc
 
-▸ **sortAsc**(`field`): [`AbstractSearch`](AbstractSearch.md)
+▸ **sortAsc**(`field`): [`AbstractSearch`](AbstractSearch.md)<`T`\>
 
 Alias for [sortAscending](Search.md#sortascending).
 
@@ -806,21 +812,21 @@ Alias for [sortAscending](Search.md#sortascending).
 
 | Name | Type |
 | :------ | :------ |
-| `field` | `string` |
+| `field` | `Exclude`<keyof `T`, keyof [`EntityInternal`](../README.md#entityinternal)\> |
 
 #### Returns
 
-[`AbstractSearch`](AbstractSearch.md)
+[`AbstractSearch`](AbstractSearch.md)<`T`\>
 
 #### Defined in
 
-[lib/search/search.ts:86](https://github.com/redis/redis-om-node/blob/d8438f7/lib/search/search.ts#L86)
+[lib/search/search.ts:92](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/search/search.ts#L92)
 
 ___
 
 ### sortAscending
 
-▸ **sortAscending**(`field`): [`AbstractSearch`](AbstractSearch.md)
+▸ **sortAscending**(`field`): [`AbstractSearch`](AbstractSearch.md)<`T`\>
 
 Applies an ascending sort to the query.
 
@@ -828,23 +834,23 @@ Applies an ascending sort to the query.
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `field` | `string` | The field to sort by. |
+| `field` | `Exclude`<keyof `T`, keyof [`EntityInternal`](../README.md#entityinternal)\> | The field to sort by. |
 
 #### Returns
 
-[`AbstractSearch`](AbstractSearch.md)
+[`AbstractSearch`](AbstractSearch.md)<`T`\>
 
 this
 
 #### Defined in
 
-[lib/search/search.ts:63](https://github.com/redis/redis-om-node/blob/d8438f7/lib/search/search.ts#L63)
+[lib/search/search.ts:69](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/search/search.ts#L69)
 
 ___
 
 ### sortBy
 
-▸ **sortBy**(`fieldName`, `order?`): [`AbstractSearch`](AbstractSearch.md)
+▸ **sortBy**(`fieldName`, `order?`): [`AbstractSearch`](AbstractSearch.md)<`T`\>
 
 Applies sorting for the query.
 
@@ -852,24 +858,24 @@ Applies sorting for the query.
 
 | Name | Type | Default value | Description |
 | :------ | :------ | :------ | :------ |
-| `fieldName` | `string` | `undefined` | - |
-| `order` | ``"ASC"`` \| ``"DESC"`` | `'ASC'` | The order of returned [Entities](../README.md#entity) Defaults to `ASC` (ascending) if not specified |
+| `fieldName` | `Exclude`<keyof `T`, keyof [`EntityInternal`](../README.md#entityinternal)\> | `undefined` | The field to sort by. |
+| `order` | ``"ASC"`` \| ``"DESC"`` | `"ASC"` | The order of returned [Entities](../README.md#entity) Defaults to `ASC` (ascending) if not specified |
 
 #### Returns
 
-[`AbstractSearch`](AbstractSearch.md)
+[`AbstractSearch`](AbstractSearch.md)<`T`\>
 
 this
 
 #### Defined in
 
-[lib/search/search.ts:96](https://github.com/redis/redis-om-node/blob/d8438f7/lib/search/search.ts#L96)
+[lib/search/search.ts:102](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/search/search.ts#L102)
 
 ___
 
 ### sortDesc
 
-▸ **sortDesc**(`field`): [`AbstractSearch`](AbstractSearch.md)
+▸ **sortDesc**(`field`): [`AbstractSearch`](AbstractSearch.md)<`T`\>
 
 Alias for [sortDescending](Search.md#sortdescending).
 
@@ -877,21 +883,21 @@ Alias for [sortDescending](Search.md#sortdescending).
 
 | Name | Type |
 | :------ | :------ |
-| `field` | `string` |
+| `field` | `Exclude`<keyof `T`, keyof [`EntityInternal`](../README.md#entityinternal)\> |
 
 #### Returns
 
-[`AbstractSearch`](AbstractSearch.md)
+[`AbstractSearch`](AbstractSearch.md)<`T`\>
 
 #### Defined in
 
-[lib/search/search.ts:70](https://github.com/redis/redis-om-node/blob/d8438f7/lib/search/search.ts#L70)
+[lib/search/search.ts:76](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/search/search.ts#L76)
 
 ___
 
 ### sortDescending
 
-▸ **sortDescending**(`field`): [`AbstractSearch`](AbstractSearch.md)
+▸ **sortDescending**(`field`): [`AbstractSearch`](AbstractSearch.md)<`T`\>
 
 Applies a descending sort to the query.
 
@@ -899,14 +905,14 @@ Applies a descending sort to the query.
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `field` | `string` | The field to sort by. |
+| `field` | `Exclude`<keyof `T`, keyof [`EntityInternal`](../README.md#entityinternal)\> | The field to sort by. |
 
 #### Returns
 
-[`AbstractSearch`](AbstractSearch.md)
+[`AbstractSearch`](AbstractSearch.md)<`T`\>
 
 this
 
 #### Defined in
 
-[lib/search/search.ts:79](https://github.com/redis/redis-om-node/blob/d8438f7/lib/search/search.ts#L79)
+[lib/search/search.ts:85](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/search/search.ts#L85)
