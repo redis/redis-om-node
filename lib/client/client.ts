@@ -1,7 +1,7 @@
 import { createClient, createCluster, RediSearchSchema, SearchOptions } from 'redis'
 
 import { Repository } from '../repository'
-import { Schema } from '../schema'
+import {InferSchema, Schema} from '../schema'
 import { RedisOmError } from '../error'
 
 /** A conventional Redis connection. */
@@ -116,7 +116,7 @@ export class Client {
    * @param schema The schema.
    * @returns A repository for the provided schema.
    */
-  fetchRepository(schema: Schema): Repository {
+  fetchRepository<T extends Schema<any>>(schema: T): Repository<InferSchema<T>> {
     this.#validateRedisOpen()
     return new Repository(schema, this)
   }

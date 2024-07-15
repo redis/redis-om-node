@@ -1,62 +1,63 @@
 import { Search } from "./search"
 import { WhereField } from "./where-field"
+import {Entity} from "$lib/entity";
 
-export class WhereDate extends WhereField {
+export class WhereDate<T extends Entity> extends WhereField<T> {
   private lower: number = Number.NEGATIVE_INFINITY
   private upper: number = Number.POSITIVE_INFINITY
   private lowerExclusive: boolean = false
   private upperExclusive: boolean = false
 
-  eq(value: Date | number | string): Search {
+  eq(value: Date | number | string): Search<T> {
     const epoch = this.coerceDateToEpoch(value)
     this.lower = epoch
     this.upper = epoch
     return this.search
   }
 
-  gt(value: Date | number | string): Search {
+  gt(value: Date | number | string): Search<T> {
     const epoch = this.coerceDateToEpoch(value)
     this.lower = epoch
     this.lowerExclusive = true
     return this.search
   }
 
-  gte(value: Date | number | string): Search {
+  gte(value: Date | number | string): Search<T> {
     this.lower = this.coerceDateToEpoch(value)
     return this.search
   }
 
-  lt(value: Date | number | string): Search {
+  lt(value: Date | number | string): Search<T> {
     this.upper = this.coerceDateToEpoch(value)
     this.upperExclusive = true
     return this.search
   }
 
-  lte(value: Date | number | string): Search {
+  lte(value: Date | number | string): Search<T> {
     this.upper = this.coerceDateToEpoch(value)
     return this.search
   }
 
-  between(lower: Date | number | string, upper: Date | number | string): Search {
+  between(lower: Date | number | string, upper: Date | number | string): Search<T> {
     this.lower = this.coerceDateToEpoch(lower)
     this.upper = this.coerceDateToEpoch(upper)
     return this.search
   }
 
-  equal(value: Date | number | string): Search { return this.eq(value) }
-  equals(value: Date | number | string): Search { return this.eq(value) }
-  equalTo(value: Date | number | string): Search { return this.eq(value) }
+  equal(value: Date | number | string): Search<T> { return this.eq(value) }
+  equals(value: Date | number | string): Search<T> { return this.eq(value) }
+  equalTo(value: Date | number | string): Search<T> { return this.eq(value) }
 
-  greaterThan(value: Date | number | string): Search { return this.gt(value) }
-  greaterThanOrEqualTo(value: Date | number | string): Search { return this.gte(value) }
-  lessThan(value: Date | number | string): Search { return this.lt(value) }
-  lessThanOrEqualTo(value: Date | number | string): Search { return this.lte(value) }
+  greaterThan(value: Date | number | string): Search<T> { return this.gt(value) }
+  greaterThanOrEqualTo(value: Date | number | string): Search<T> { return this.gte(value) }
+  lessThan(value: Date | number | string): Search<T> { return this.lt(value) }
+  lessThanOrEqualTo(value: Date | number | string): Search<T> { return this.lte(value) }
 
-  on(value: Date | number | string): Search { return this.eq(value) }
-  after(value: Date | number | string): Search { return this.gt(value) }
-  before(value: Date | number | string): Search { return this.lt(value) }
-  onOrAfter(value: Date | number | string): Search { return this.gte(value) }
-  onOrBefore(value: Date | number | string): Search { return this.lte(value) }
+  on(value: Date | number | string): Search<T> { return this.eq(value) }
+  after(value: Date | number | string): Search<T> { return this.gt(value) }
+  before(value: Date | number | string): Search<T> { return this.lt(value) }
+  onOrAfter(value: Date | number | string): Search<T> { return this.gte(value) }
+  onOrBefore(value: Date | number | string): Search<T> { return this.lte(value) }
 
   toString(): string {
     const lower = this.makeLowerString()

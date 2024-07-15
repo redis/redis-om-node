@@ -1,13 +1,13 @@
-import { createHash } from 'crypto'
-import { ulid } from 'ulid'
+import {createHash} from 'crypto'
+import {ulid} from 'ulid'
 
-import { Entity } from "../entity"
+import {Entity, EntityKeys} from "../entity"
 
-import { IdStrategy, DataStructure, StopWordOptions, SchemaOptions } from './options'
+import {DataStructure, IdStrategy, SchemaOptions, StopWordOptions} from './options'
 
-import { SchemaDefinition } from './definitions'
-import { Field } from './field'
-import { InvalidSchema } from '../error'
+import {FieldDefinition, SchemaDefinition} from './definitions'
+import {Field} from './field'
+import {InvalidSchema} from '../error'
 
 
 /**
@@ -16,7 +16,17 @@ import { InvalidSchema } from '../error'
  * a {@link SchemaDefinition}, and optionally {@link SchemaOptions}:
  *
  * ```typescript
- * const schema = new Schema('foo', {
+ * interface Foo extends Entity {
+ *   aString: string,
+ *   aNumber: number,
+ *   aBoolean: boolean,
+ *   someText: string,
+ *   aPoint: Point,
+ *   aDate: Date,
+ *   someStrings: string[],
+ * }
+ *
+ * const schema = new Schema<Foo>('foo', {
  *   aString: { type: 'string' },
  *   aNumber: { type: 'number' },
  *   aBoolean: { type: 'boolean' },
@@ -32,11 +42,11 @@ import { InvalidSchema } from '../error'
  * A Schema is primarily used by a {@link Repository} which requires a Schema in
  * its constructor.
  */
-export class Schema {
+export class Schema<T extends Entity = Record<string, any>> {
 
-  #schemaName: string
-  #fieldsByName: Record<string, Field> = {}
-  #definition: SchemaDefinition
+  readonly #schemaName: string
+  #fieldsByName = {} as Record<EntityKeys<T>, Field>;
+  readonly #definition: SchemaDefinition<T>
   #options?: SchemaOptions
 
   /**
@@ -46,7 +56,7 @@ export class Schema {
    * @param schemaDef Defines all of the fields for the Schema and how they are mapped to Redis.
    * @param options Additional options for this Schema.
    */
-  constructor(schemaName: string, schemaDef: SchemaDefinition, options?: SchemaOptions) {
+  constructor(schemaName: string, schemaDef: SchemaDefinition<T>, options?: SchemaOptions) {
     this.#schemaName = schemaName
     this.#definition = schemaDef
     this.#options = options
@@ -75,7 +85,7 @@ export class Schema {
    * @param name The name of the {@link Field} in this Schema.
    * @returns The {@link Field}, or null of not found.
    */
-  fieldByName(name: string): Field | null {
+  fieldByName(name: EntityKeys<T>): Field | null {
     return this.#fieldsByName[name] ?? null
   }
 
@@ -110,7 +120,7 @@ export class Schema {
    */
   async generateId(): Promise<string> {
     const ulidStrategy = () => ulid()
-    return await (this.#options?.idStrategy ?? ulidStrategy)()
+    return await (this.#options?.idStrategy ?? ulidStrategy)();
   }
 
   /**
@@ -133,8 +143,9 @@ export class Schema {
   }
 
   #createFields() {
-    return Object.entries(this.#definition).forEach(([fieldName, fieldDef]) => {
-      const field = new Field(fieldName, fieldDef)
+    const entries = Object.entries(this.#definition) as [EntityKeys<T>, FieldDefinition][];
+    return entries.forEach(([fieldName, fieldDef]) => {
+      const field = new Field(String(fieldName), fieldDef)
       this.#validateField(field)
       this.#fieldsByName[fieldName] = field
     })
@@ -166,3 +177,5 @@ export class Schema {
       throw new InvalidSchema(`The field '${field.name}' is configured with a type of '${field.type}'. This type is only valid with a data structure of 'JSON'.`)
   }
 }
+
+export type InferSchema<T> = T extends Schema<infer R> ? R : never;

@@ -5,7 +5,7 @@ import { AllFieldDefinition, FieldDefinition, FieldType } from './definitions'
  */
 export class Field {
 
-  #name: string
+  readonly #name: string
   #definition: AllFieldDefinition
 
   /**
