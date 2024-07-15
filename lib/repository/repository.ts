@@ -1,9 +1,9 @@
-import {Client, CreateOptions, RedisConnection, RedisHashData, RedisJsonData} from '../client'
-import {Entity, EntityId, EntityKeyName} from '../entity'
-import {buildRediSearchSchema} from '../indexer'
-import {Schema} from '../schema'
-import {RawSearch, Search} from '../search'
-import {fromRedisHash, fromRedisJson, toRedisHash, toRedisJson} from '../transformer'
+import { Client, CreateOptions, RedisConnection, RedisHashData, RedisJsonData } from '../client'
+import { Entity, EntityId, EntityKeyName } from '../entity'
+import { buildRediSearchSchema } from '../indexer'
+import { Schema } from '../schema'
+import { RawSearch, Search } from '../search'
+import { fromRedisHash, fromRedisJson, toRedisHash, toRedisJson } from '../transformer'
 
 /**
  * A repository is the main interaction point for reading, writing, and
@@ -277,7 +277,7 @@ export class Repository<T extends Entity = Record<string, any>> {
    * @param expirationDate The time the data should expire.
    */
   async expireAt(ids: string[], expirationDate: Date): Promise<void>;
-  
+
   async expireAt(idOrIds: string | string[], expirationDate: Date) {
     const ids = typeof idOrIds === 'string' ? [idOrIds] : idOrIds;
     if (Date.now() >= expirationDate.getTime()) {

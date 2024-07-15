@@ -1,13 +1,13 @@
-import {createHash} from 'crypto'
-import {ulid} from 'ulid'
+import { createHash } from 'crypto'
+import { ulid } from 'ulid'
 
-import {Entity, EntityKeys} from "../entity"
+import { Entity, EntityKeys } from "../entity"
 
-import {DataStructure, IdStrategy, SchemaOptions, StopWordOptions} from './options'
+import { DataStructure, IdStrategy, SchemaOptions, StopWordOptions } from './options'
 
-import {FieldDefinition, SchemaDefinition} from './definitions'
-import {Field} from './field'
-import {InvalidSchema} from '../error'
+import { FieldDefinition, SchemaDefinition } from './definitions'
+import { Field } from './field'
+import { InvalidSchema } from '../error'
 
 
 /**
@@ -45,7 +45,7 @@ import {InvalidSchema} from '../error'
 export class Schema<T extends Entity = Record<string, any>> {
 
   readonly #schemaName: string
-  #fieldsByName = {} as Record<EntityKeys<T>, Field>;
+  #fieldsByName = {} as Record<EntityKeys<T>, Field>
   readonly #definition: SchemaDefinition<T>
   #options?: SchemaOptions
 
@@ -120,7 +120,7 @@ export class Schema<T extends Entity = Record<string, any>> {
    */
   async generateId(): Promise<string> {
     const ulidStrategy = () => ulid()
-    return await (this.#options?.idStrategy ?? ulidStrategy)();
+    return await (this.#options?.idStrategy ?? ulidStrategy)()
   }
 
   /**
@@ -143,7 +143,7 @@ export class Schema<T extends Entity = Record<string, any>> {
   }
 
   #createFields() {
-    const entries = Object.entries(this.#definition) as [EntityKeys<T>, FieldDefinition][];
+    const entries = Object.entries(this.#definition) as [EntityKeys<T>, FieldDefinition][]
     return entries.forEach(([fieldName, fieldDef]) => {
       const field = new Field(String(fieldName), fieldDef)
       this.#validateField(field)
@@ -178,4 +178,4 @@ export class Schema<T extends Entity = Record<string, any>> {
   }
 }
 
-export type InferSchema<T> = T extends Schema<infer R> ? R : never;
+export type InferSchema<T> = T extends Schema<infer R> ? R : never

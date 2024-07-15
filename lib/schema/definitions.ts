@@ -1,4 +1,4 @@
-import {Entity, EntityKeys} from "$lib/entity";
+import { Entity, EntityKeys } from "../entity"
 
 /** Valid field types for a {@link FieldDefinition}. */
 export type FieldType = 'boolean' | 'date' | 'number' | 'number[]' | 'point' | 'string' | 'string[]' | 'text'

@@ -43,7 +43,7 @@ Creates a Field.
 
 #### Defined in
 
-[lib/schema/field.ts:17](https://github.com/redis/redis-om-node/blob/d8438f7/lib/schema/field.ts#L17)
+[lib/schema/field.ts:17](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/schema/field.ts#L17)
 
 ## Accessors
 
@@ -59,7 +59,7 @@ The case-sensitivity of the field.
 
 #### Defined in
 
-[lib/schema/field.ts:55](https://github.com/redis/redis-om-node/blob/d8438f7/lib/schema/field.ts#L55)
+[lib/schema/field.ts:55](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/schema/field.ts#L55)
 
 ___
 
@@ -75,7 +75,7 @@ The field name used to store this [Field](Field.md) in a Hash.
 
 #### Defined in
 
-[lib/schema/field.ts:33](https://github.com/redis/redis-om-node/blob/d8438f7/lib/schema/field.ts#L33)
+[lib/schema/field.ts:33](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/schema/field.ts#L33)
 
 ___
 
@@ -91,7 +91,7 @@ Indicates the field as being indexed—and thus queryable—by RediSearch.
 
 #### Defined in
 
-[lib/schema/field.ts:60](https://github.com/redis/redis-om-node/blob/d8438f7/lib/schema/field.ts#L60)
+[lib/schema/field.ts:60](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/schema/field.ts#L60)
 
 ___
 
@@ -107,7 +107,7 @@ Is this type an array or not.
 
 #### Defined in
 
-[lib/schema/field.ts:85](https://github.com/redis/redis-om-node/blob/d8438f7/lib/schema/field.ts#L85)
+[lib/schema/field.ts:85](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/schema/field.ts#L85)
 
 ___
 
@@ -123,7 +123,7 @@ The JSONPath used to store this [Field](Field.md) in a JSON document.
 
 #### Defined in
 
-[lib/schema/field.ts:38](https://github.com/redis/redis-om-node/blob/d8438f7/lib/schema/field.ts#L38)
+[lib/schema/field.ts:38](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/schema/field.ts#L38)
 
 ___
 
@@ -139,7 +139,7 @@ The phonetic matcher for the field.
 
 #### Defined in
 
-[lib/schema/field.ts:80](https://github.com/redis/redis-om-node/blob/d8438f7/lib/schema/field.ts#L80)
+[lib/schema/field.ts:80](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/schema/field.ts#L80)
 
 ___
 
@@ -155,7 +155,7 @@ The name of the field.
 
 #### Defined in
 
-[lib/schema/field.ts:23](https://github.com/redis/redis-om-node/blob/d8438f7/lib/schema/field.ts#L23)
+[lib/schema/field.ts:23](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/schema/field.ts#L23)
 
 ___
 
@@ -171,7 +171,7 @@ Indicates that the field is normalized. Ignored if sortable is false.
 
 #### Defined in
 
-[lib/schema/field.ts:70](https://github.com/redis/redis-om-node/blob/d8438f7/lib/schema/field.ts#L70)
+[lib/schema/field.ts:70](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/schema/field.ts#L70)
 
 ___
 
@@ -187,7 +187,7 @@ The separator for string[] fields when stored in Hashes.
 
 #### Defined in
 
-[lib/schema/field.ts:45](https://github.com/redis/redis-om-node/blob/d8438f7/lib/schema/field.ts#L45)
+[lib/schema/field.ts:45](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/schema/field.ts#L45)
 
 ___
 
@@ -203,7 +203,7 @@ Indicates that the field as sortable.
 
 #### Defined in
 
-[lib/schema/field.ts:50](https://github.com/redis/redis-om-node/blob/d8438f7/lib/schema/field.ts#L50)
+[lib/schema/field.ts:50](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/schema/field.ts#L50)
 
 ___
 
@@ -219,7 +219,7 @@ Indicates that the field as indexed with stemming support.
 
 #### Defined in
 
-[lib/schema/field.ts:65](https://github.com/redis/redis-om-node/blob/d8438f7/lib/schema/field.ts#L65)
+[lib/schema/field.ts:65](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/schema/field.ts#L65)
 
 ___
 
@@ -235,7 +235,7 @@ The [type](../README.md#fieldtype) of the field.
 
 #### Defined in
 
-[lib/schema/field.ts:28](https://github.com/redis/redis-om-node/blob/d8438f7/lib/schema/field.ts#L28)
+[lib/schema/field.ts:28](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/schema/field.ts#L28)
 
 ___
 
@@ -251,4 +251,4 @@ The search weight of the field.
 
 #### Defined in
 
-[lib/schema/field.ts:75](https://github.com/redis/redis-om-node/blob/d8438f7/lib/schema/field.ts#L75)
+[lib/schema/field.ts:75](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/schema/field.ts#L75)

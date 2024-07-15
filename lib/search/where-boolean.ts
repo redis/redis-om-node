@@ -1,6 +1,6 @@
+import { Entity } from "../entity"
 import { Search } from "./search"
 import { WhereField } from "./where-field"
-import {Entity} from "$lib/entity";
 
 export abstract class WhereBoolean<T extends Entity> extends WhereField<T> {
   protected value!: boolean

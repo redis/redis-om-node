@@ -54,7 +54,7 @@ This instance.
 
 #### Defined in
 
-[lib/search/where-point.ts:149](https://github.com/redis/redis-om-node/blob/d8438f7/lib/search/where-point.ts#L149)
+[lib/search/where-point.ts:149](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/search/where-point.ts#L149)
 
 ___
 
@@ -72,7 +72,7 @@ This instance.
 
 #### Defined in
 
-[lib/search/where-point.ts:143](https://github.com/redis/redis-om-node/blob/d8438f7/lib/search/where-point.ts#L143)
+[lib/search/where-point.ts:143](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/search/where-point.ts#L143)
 
 ___
 
@@ -90,7 +90,7 @@ This instance.
 
 #### Defined in
 
-[lib/search/where-point.ts:137](https://github.com/redis/redis-om-node/blob/d8438f7/lib/search/where-point.ts#L137)
+[lib/search/where-point.ts:137](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/search/where-point.ts#L137)
 
 ___
 
@@ -108,7 +108,7 @@ This instance.
 
 #### Defined in
 
-[lib/search/where-point.ts:122](https://github.com/redis/redis-om-node/blob/d8438f7/lib/search/where-point.ts#L122)
+[lib/search/where-point.ts:122](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/search/where-point.ts#L122)
 
 ___
 
@@ -126,7 +126,7 @@ This instance.
 
 #### Defined in
 
-[lib/search/where-point.ts:128](https://github.com/redis/redis-om-node/blob/d8438f7/lib/search/where-point.ts#L128)
+[lib/search/where-point.ts:128](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/search/where-point.ts#L128)
 
 ___
 
@@ -144,7 +144,7 @@ This instance.
 
 #### Defined in
 
-[lib/search/where-point.ts:116](https://github.com/redis/redis-om-node/blob/d8438f7/lib/search/where-point.ts#L116)
+[lib/search/where-point.ts:116](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/search/where-point.ts#L116)
 
 ___
 
@@ -162,7 +162,7 @@ This instance.
 
 #### Defined in
 
-[lib/search/where-point.ts:95](https://github.com/redis/redis-om-node/blob/d8438f7/lib/search/where-point.ts#L95)
+[lib/search/where-point.ts:95](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/search/where-point.ts#L95)
 
 ___
 
@@ -180,7 +180,7 @@ This instance.
 
 #### Defined in
 
-[lib/search/where-point.ts:101](https://github.com/redis/redis-om-node/blob/d8438f7/lib/search/where-point.ts#L101)
+[lib/search/where-point.ts:101](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/search/where-point.ts#L101)
 
 ___
 
@@ -198,7 +198,7 @@ This instance.
 
 #### Defined in
 
-[lib/search/where-point.ts:107](https://github.com/redis/redis-om-node/blob/d8438f7/lib/search/where-point.ts#L107)
+[lib/search/where-point.ts:107](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/search/where-point.ts#L107)
 
 ___
 
@@ -216,7 +216,7 @@ This instance.
 
 #### Defined in
 
-[lib/search/where-point.ts:158](https://github.com/redis/redis-om-node/blob/d8438f7/lib/search/where-point.ts#L158)
+[lib/search/where-point.ts:158](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/search/where-point.ts#L158)
 
 ___
 
@@ -234,7 +234,7 @@ This instance.
 
 #### Defined in
 
-[lib/search/where-point.ts:164](https://github.com/redis/redis-om-node/blob/d8438f7/lib/search/where-point.ts#L164)
+[lib/search/where-point.ts:164](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/search/where-point.ts#L164)
 
 ___
 
@@ -252,7 +252,7 @@ This instance.
 
 #### Defined in
 
-[lib/search/where-point.ts:170](https://github.com/redis/redis-om-node/blob/d8438f7/lib/search/where-point.ts#L170)
+[lib/search/where-point.ts:170](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/search/where-point.ts#L170)
 
 ## Methods
 
@@ -276,7 +276,7 @@ This instance.
 
 #### Defined in
 
-[lib/search/where-point.ts:42](https://github.com/redis/redis-om-node/blob/d8438f7/lib/search/where-point.ts#L42)
+[lib/search/where-point.ts:42](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/search/where-point.ts#L42)
 
 ___
 
@@ -300,7 +300,7 @@ This instance.
 
 #### Defined in
 
-[lib/search/where-point.ts:31](https://github.com/redis/redis-om-node/blob/d8438f7/lib/search/where-point.ts#L31)
+[lib/search/where-point.ts:31](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/search/where-point.ts#L31)
 
 ___
 
@@ -325,7 +325,7 @@ This instance.
 
 #### Defined in
 
-[lib/search/where-point.ts:54](https://github.com/redis/redis-om-node/blob/d8438f7/lib/search/where-point.ts#L54)
+[lib/search/where-point.ts:54](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/search/where-point.ts#L54)
 
 ▸ **origin**(`longitude`, `latitude`): [`Circle`](Circle.md)
 
@@ -347,7 +347,7 @@ This instance.
 
 #### Defined in
 
-[lib/search/where-point.ts:64](https://github.com/redis/redis-om-node/blob/d8438f7/lib/search/where-point.ts#L64)
+[lib/search/where-point.ts:64](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/search/where-point.ts#L64)
 
 ___
 
@@ -372,4 +372,4 @@ This instance.
 
 #### Defined in
 
-[lib/search/where-point.ts:86](https://github.com/redis/redis-om-node/blob/d8438f7/lib/search/where-point.ts#L86)
+[lib/search/where-point.ts:86](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/search/where-point.ts#L86)

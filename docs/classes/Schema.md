@@ -1,13 +1,23 @@
 [redis-om](../README.md) / Schema
 
-# Class: Schema
+# Class: Schema<T\>
 
 Defines a schema that determines how an [Entity](../README.md#entity) is mapped
 to Redis data structures. Construct by passing in a schema name,
 a [SchemaDefinition](../README.md#schemadefinition), and optionally [SchemaOptions](../README.md#schemaoptions):
 
 ```typescript
-const schema = new Schema('foo', {
+interface Foo extends Entity {
+  aString: string,
+  aNumber: number,
+  aBoolean: boolean,
+  someText: string,
+  aPoint: Point,
+  aDate: Date,
+  someStrings: string[],
+}
+
+const schema = new Schema<Foo>('foo', {
   aString: { type: 'string' },
   aNumber: { type: 'number' },
   aBoolean: { type: 'boolean' },
@@ -22,6 +32,12 @@ const schema = new Schema('foo', {
 
 A Schema is primarily used by a [Repository](Repository.md) which requires a Schema in
 its constructor.
+
+## Type parameters
+
+| Name | Type |
+| :------ | :------ |
+| `T` | extends [`Entity`](../README.md#entity) = `Record`<`string`, `any`\> |
 
 ## Table of contents
 
@@ -49,21 +65,27 @@ its constructor.
 
 ### constructor
 
-• **new Schema**(`schemaName`, `schemaDef`, `options?`)
+• **new Schema**<`T`\>(`schemaName`, `schemaDef`, `options?`)
 
 Constructs a Schema.
+
+#### Type parameters
+
+| Name | Type |
+| :------ | :------ |
+| `T` | extends [`Entity`](../README.md#entity) = `Record`<`string`, `any`\> |
 
 #### Parameters
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
 | `schemaName` | `string` | The name of the schema. Prefixes the ID when creating Redis keys. |
-| `schemaDef` | [`SchemaDefinition`](../README.md#schemadefinition) | Defines all of the fields for the Schema and how they are mapped to Redis. |
+| `schemaDef` | [`SchemaDefinition`](../README.md#schemadefinition)<`T`\> | Defines all of the fields for the Schema and how they are mapped to Redis. |
 | `options?` | [`SchemaOptions`](../README.md#schemaoptions) | Additional options for this Schema. |
 
 #### Defined in
 
-[lib/schema/schema.ts:49](https://github.com/redis/redis-om-node/blob/d8438f7/lib/schema/schema.ts#L49)
+[lib/schema/schema.ts:59](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/schema/schema.ts#L59)
 
 ## Accessors
 
@@ -80,7 +102,7 @@ that this Schema uses to store [Entities](../README.md#entity) in Redis.
 
 #### Defined in
 
-[lib/schema/schema.ts:92](https://github.com/redis/redis-om-node/blob/d8438f7/lib/schema/schema.ts#L92)
+[lib/schema/schema.ts:102](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/schema/schema.ts#L102)
 
 ___
 
@@ -96,7 +118,7 @@ The [Fields](Field.md) defined by this Schema.
 
 #### Defined in
 
-[lib/schema/schema.ts:68](https://github.com/redis/redis-om-node/blob/d8438f7/lib/schema/schema.ts#L68)
+[lib/schema/schema.ts:78](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/schema/schema.ts#L78)
 
 ___
 
@@ -113,7 +135,7 @@ changed when calling [createIndex](Repository.md#createindex).
 
 #### Defined in
 
-[lib/schema/schema.ts:120](https://github.com/redis/redis-om-node/blob/d8438f7/lib/schema/schema.ts#L120)
+[lib/schema/schema.ts:130](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/schema/schema.ts#L130)
 
 ___
 
@@ -129,7 +151,7 @@ The configured name for the RediSearch index hash for this Schema.
 
 #### Defined in
 
-[lib/schema/schema.ts:86](https://github.com/redis/redis-om-node/blob/d8438f7/lib/schema/schema.ts#L86)
+[lib/schema/schema.ts:96](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/schema/schema.ts#L96)
 
 ___
 
@@ -145,7 +167,7 @@ The configured name for the RediSearch index for this Schema.
 
 #### Defined in
 
-[lib/schema/schema.ts:83](https://github.com/redis/redis-om-node/blob/d8438f7/lib/schema/schema.ts#L83)
+[lib/schema/schema.ts:93](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/schema/schema.ts#L93)
 
 ___
 
@@ -163,7 +185,7 @@ idStrategy returns `12345` then the generated key would be `foo:12345`.
 
 #### Defined in
 
-[lib/schema/schema.ts:63](https://github.com/redis/redis-om-node/blob/d8438f7/lib/schema/schema.ts#L63)
+[lib/schema/schema.ts:73](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/schema/schema.ts#L73)
 
 ___
 
@@ -180,7 +202,7 @@ than `CUSTOM`.
 
 #### Defined in
 
-[lib/schema/schema.ts:104](https://github.com/redis/redis-om-node/blob/d8438f7/lib/schema/schema.ts#L104)
+[lib/schema/schema.ts:114](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/schema/schema.ts#L114)
 
 ___
 
@@ -197,7 +219,7 @@ or `CUSTOM`. See [SchemaOptions](../README.md#schemaoptions) for more details.
 
 #### Defined in
 
-[lib/schema/schema.ts:98](https://github.com/redis/redis-om-node/blob/d8438f7/lib/schema/schema.ts#L98)
+[lib/schema/schema.ts:108](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/schema/schema.ts#L108)
 
 ## Methods
 
@@ -211,7 +233,7 @@ Gets a single [Field](Field.md) defined by this Schema.
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `name` | `string` | The name of the [Field](Field.md) in this Schema. |
+| `name` | `Exclude`<keyof `T`, keyof [`EntityInternal`](../README.md#entityinternal)\> | The name of the [Field](Field.md) in this Schema. |
 
 #### Returns
 
@@ -221,7 +243,7 @@ The [Field](Field.md), or null of not found.
 
 #### Defined in
 
-[lib/schema/schema.ts:78](https://github.com/redis/redis-om-node/blob/d8438f7/lib/schema/schema.ts#L78)
+[lib/schema/schema.ts:88](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/schema/schema.ts#L88)
 
 ___
 
@@ -239,4 +261,4 @@ The generated id.
 
 #### Defined in
 
-[lib/schema/schema.ts:111](https://github.com/redis/redis-om-node/blob/d8438f7/lib/schema/schema.ts#L111)
+[lib/schema/schema.ts:121](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/schema/schema.ts#L121)

@@ -1,8 +1,8 @@
+import { Entity } from "../entity"
 import { Field } from "../schema"
 import { Search } from "./search"
 import { Where } from "./where"
 import { CircleFunction } from "./where-point"
-import { Entity } from "$lib/entity";
 
 /**
  * Interface with all the methods from all the concrete

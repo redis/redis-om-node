@@ -1,6 +1,6 @@
+import { Entity } from "../entity"
 import { Search } from "./search"
 import { WhereField } from "./where-field"
-import {Entity} from "$lib/entity";
 
 export class WhereStringArray<T extends Entity> extends WhereField<T> {
   private value!: Array<string>

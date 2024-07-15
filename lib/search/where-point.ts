@@ -1,4 +1,4 @@
-import {Entity, Point} from "../entity"
+import { Entity, Point } from "../entity"
 import { Search } from "./search"
 import { WhereField } from "./where-field"
 

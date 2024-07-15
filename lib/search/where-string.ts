@@ -1,7 +1,7 @@
+import { Entity } from "../entity"
 import { Search } from "./search"
 import { WhereField } from "./where-field"
 import { SemanticSearchError } from "../error"
-import {Entity} from "$lib/entity";
 
 export class WhereString<T extends Entity> extends WhereField<T> {
   private value!: string
