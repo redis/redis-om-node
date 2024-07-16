@@ -1,6 +1,6 @@
 {
   "name": "redis-om",
-  "version": "0.4.4",
+  "version": "0.4.6",
   "description": "Object mapping, and more, for Redis and Node.js. Written in TypeScript.",
   "main": "dist/index.js",
   "types": "./dist/index.d.ts",
@@ -9,8 +9,8 @@
     "CHANGELOG",
     "LICENSE",
     "logo.svg",
-    "dist/**/*",
-    "docs/**/*"
+    "dist",
+    "docs"
   ],
   "scripts": {
     "build": "tsup",
