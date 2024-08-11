@@ -16,7 +16,7 @@ its constructor.
 
 **`Deprecated`**
 
-Just used Node Redis client directly and pass it to the Repository.
+Just use Node Redis client directly and pass it to the Repository.
 
 ## Table of contents
 
