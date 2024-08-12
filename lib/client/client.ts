@@ -60,7 +60,7 @@ export type CreateOptions = {
  * A Client is primarily used by a {@link Repository} which requires a client in
  * its constructor.
  *
- * @deprecated Just used Node Redis client directly and pass it to the Repository.
+ * @deprecated Just use Node Redis client directly and pass it to the Repository.
  */
 export class Client {
   /** @internal */
