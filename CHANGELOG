@@ -1,8 +1,12 @@
 # Changelog
 
-*Functional* changes to the public interface of Redis OM for Node.js will be listed here, by version. *Non-functional* changes may also be included, if they are particulary noteworthy or might impact developers using Redis OM.
+*Functional* changes to the public interface of Redis OM for Node.js will be listed here, by version. *Non-functional* changes may also be included, if they are particularly noteworthy or might impact developers using Redis OM.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and Redis OM adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## 0.4.7 - 2024-10-25
+### Fixed
+- Fixed all CVE issues and updated `jsonpath-plus` package to latest version
 
 ## 0.4.4 - 2024-07-15
 ### Added
@@ -18,7 +22,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## 0.4.2 - 2023-07-26
 ### Fixed
-- Fixed issue with TAGs not properl;y escaping question marks
+- Fixed issue with TAGs not properly escaping question marks
 
 ## 0.4.1 - 2023-07-26
 ### Added
@@ -59,7 +63,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## 0.3.5 - 2022-06-21
 ### Added
 - Added additional field attributes to control RediSearch indexing behavior.
-- Added search methods to retreive just key name or just *entityIds* instead of the entire entity. Methods include: `.returnAllKeys`, `.returnAllIds`, `.returnFirstKey`, `.returnFirstId`, `.returnPageOfKeys`, `.returnPageOfIds`, `.returnMinKey`, `.returnMinId`, `.returnMaxKey`, `.returnMaxId`
+- Added search methods to retrieve just key name or just *entityIds* instead of the entire entity. Methods include: `.returnAllKeys`, `.returnAllIds`, `.returnFirstKey`, `.returnFirstId`, `.returnPageOfKeys`, `.returnPageOfIds`, `.returnMinKey`, `.returnMinId`, `.returnMaxKey`, `.returnMaxId`
 - Added `.fetchMany` to *Repository* which variadicly takes multiple *entityIds* and returns an array of fetch entities.
 
 ### Changed
