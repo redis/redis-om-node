@@ -13,6 +13,7 @@
 </p>
 
 ---
+
 [![Discord][discord-shield]][discord-url]
 [![Twitch][twitch-shield]][twitch-url]
 [![YouTube][youtube-shield]][youtube-url]
@@ -29,40 +30,40 @@
 <details>
   <summary><strong>Table of contents</strong></summary>
 
-  - [Redis OM for Node.js](#redis-om-for-nodejs)
-  - [Getting Started](#getting-started)
-  - [Connect to Redis with Node Redis](#connect-to-redis-with-node-redis)
-    - [Redis Connection Strings](#redis-connection-strings)
-  - [Entities and Schemas](#entities-and-schemas)
-    - [JSON and Hashes](#json-and-hashes)
-      - [Configuring JSON](#configuring-json)
-      - [Configuring Hashes](#configuring-hashes)
-  - [Reading, Writing, and Removing with Repository](#reading-writing-and-removing-with-repository)
-    - [Creating Entities](#creating-entities)
-    - [Missing Entities and Null Values](#missing-entities-and-null-values)
-  - [Searching](#searching)
-    - [Build the Index](#build-the-index)
-    - [Finding All The Things (and Returning Them)](#finding-all-the-things-and-returning-them)
-      - [Pagination](#pagination)
-      - [First Things First](#first-things-first)
-      - [Counting](#counting)
-    - [Finding Specific Things](#finding-specific-things)
-      - [Searching on Strings](#searching-on-strings)
-      - [Searching on Numbers](#searching-on-numbers)
-      - [Searching on Booleans](#searching-on-booleans)
-      - [Searching on Dates](#searching-on-dates)
-      - [Searching String Arrays](#searching-string-arrays)
-      - [Searching Arrays of Numbers](#searching-arrays-of-numbers)
-      - [Full-Text Search](#full-text-search)
-      - [Searching on Points](#searching-on-points)
-      - [Chaining Searches](#chaining-searches)
-      - [Running Raw Searches](#running-raw-searches)
-    - [Sorting Search Results](#sorting-search-results)
-  - [Advanced Stuff](#advanced-stuff)
-    - [Schema Options](#schema-options)
-  - [Documentation](#documentation)
-  - [Troubleshooting](#troubleshooting)
-  - [Contributing](#contributing)
+- [Redis OM for Node.js](#redis-om-for-nodejs)
+- [Getting Started](#getting-started)
+- [Connect to Redis with Node Redis](#connect-to-redis-with-node-redis)
+  - [Redis Connection Strings](#redis-connection-strings)
+- [Entities and Schemas](#entities-and-schemas)
+  - [JSON and Hashes](#json-and-hashes)
+    - [Configuring JSON](#configuring-json)
+    - [Configuring Hashes](#configuring-hashes)
+- [Reading, Writing, and Removing with Repository](#reading-writing-and-removing-with-repository)
+  - [Creating Entities](#creating-entities)
+  - [Missing Entities and Null Values](#missing-entities-and-null-values)
+- [Searching](#searching)
+  - [Build the Index](#build-the-index)
+  - [Finding All The Things (and Returning Them)](#finding-all-the-things-and-returning-them)
+    - [Pagination](#pagination)
+    - [First Things First](#first-things-first)
+    - [Counting](#counting)
+  - [Finding Specific Things](#finding-specific-things)
+    - [Searching on Strings](#searching-on-strings)
+    - [Searching on Numbers](#searching-on-numbers)
+    - [Searching on Booleans](#searching-on-booleans)
+    - [Searching on Dates](#searching-on-dates)
+    - [Searching String Arrays](#searching-string-arrays)
+    - [Searching Arrays of Numbers](#searching-arrays-of-numbers)
+    - [Full-Text Search](#full-text-search)
+    - [Searching on Points](#searching-on-points)
+    - [Chaining Searches](#chaining-searches)
+    - [Running Raw Searches](#running-raw-searches)
+  - [Sorting Search Results](#sorting-search-results)
+- [Advanced Stuff](#advanced-stuff)
+  - [Schema Options](#schema-options)
+- [Documentation](#documentation)
+- [Troubleshooting](#troubleshooting)
+- [Contributing](#contributing)
 </details>
 
 ## Redis OM for Node.js
@@ -83,8 +84,8 @@ Create a JavaScript object and save it:
 
 ```javascript
 const album = {
-  artist: "Mushroomhead",
-  title: "The Righteous & The Butterfly",
+  artist: 'Mushroomhead',
+  title: 'The Righteous & The Butterfly',
   year: 2014
 }
 
@@ -94,11 +95,15 @@ await repository.save(album)
 Search for matching entities:
 
 ```javascript
-const albums = await repository.search()
-  .where('artist').equals('Mushroomhead')
-  .and('title').matches('butterfly')
-  .and('year').is.greaterThan(2000)
-    .return.all()
+const albums = await repository
+  .search()
+  .where('artist')
+  .equals('Mushroomhead')
+  .and('title')
+  .matches('butterfly')
+  .and('year')
+  .is.greaterThan(2000)
+  .return.all()
 ```
 
 Pretty cool, right? Read on for details.
@@ -111,9 +116,7 @@ Pretty cool, right? Read on for details.
 >
 > Of course, you don't have to upgrade. If this is you, you'll want to check out [the README for that version](https://www.npmjs.com/package/redis-om/v/0.3.6) over on NPM.
 >
-> However, I hope you choose to try the new version. It has many changes that have been frequently requested that are documented in the [CHANGELOG](CHANGELOG). And more, *non-breaking* changes will follow these.
->
-
+> However, I hope you choose to try the new version. It has many changes that have been frequently requested that are documented in the [CHANGELOG](CHANGELOG). And more, _non-breaking_ changes will follow these.
 
 ## Getting Started
 
@@ -143,16 +146,15 @@ Before you can use Redis OM, you need to connect to Redis with Node Redis. Here'
 import { createClient } from 'redis'
 
 const redis = createClient()
-redis.on('error', (err) => console.log('Redis Client Error', err));
+redis.on('error', err => console.log('Redis Client Error', err))
 await redis.connect()
 ```
 
-Node Redis is a powerful piece of software with lots and lots of capabilities. Its details are *way* beyond the scope of this README. But, if you're curious—or if you need that power—you can find all the info in the Node Redis [documentation](https://github.com/redis/node-redis).
+Node Redis is a powerful piece of software with lots and lots of capabilities. Its details are _way_ beyond the scope of this README. But, if you're curious—or if you need that power—you can find all the info in the Node Redis [documentation](https://github.com/redis/node-redis).
 
 Regardless, once you have a connection to Redis you can use it to execute Redis commands:
 
 ```javascript
-
 const aString = await redis.ping() // 'PONG'
 const aNumber = await redis.hSet('foo', 'alfa', '42', 'bravo', '23') // 2
 const aHash = await redis.hGetAll('foo') // { alfa: '42', bravo: '23' }
@@ -166,7 +168,7 @@ await redis.quit()
 
 ### Redis Connection Strings
 
-By default, Node Redis connects to `localhost` on port `6379`. This is, of course, configurable. Just pass in a *url* with the hostname and port that you want to use:
+By default, Node Redis connects to `localhost` on port `6379`. This is, of course, configurable. Just pass in a _url_ with the hostname and port that you want to use:
 
 ```javascript
 const redis = createClient({ url: 'redis://alice:foobared@awesome.redis.server:6380' })
@@ -182,7 +184,7 @@ Node Redis has lots of other ways you can create a connection. You can use discr
 
 ## Entities and Schemas
 
-Redis OM is all about saving, reading, and deleting *entities*. An [Entity](docs/README.md#entity) is just data in a JavaScript object that you want to save or retrieve from Redis. Almost any JavaScript object is a valid `Entity`.
+Redis OM is all about saving, reading, and deleting _entities_. An [Entity](docs/README.md#entity) is just data in a JavaScript object that you want to save or retrieve from Redis. Almost any JavaScript object is a valid `Entity`.
 
 [Schemas](docs/classes/Schema.md) define fields that might be on an `Entity`. It includes a field's type, how it is stored internally in Redis, and how to search on it if you are using RediSearch. By default, they are mapped to JSON documents using RedisJSON, but you can change it to use Hashes if want (more on that later).
 
@@ -209,13 +211,13 @@ const studioSchema = new Schema('studio', {
 })
 ```
 
-The *first argument* is the `Schema` name. It defines the key name prefix that entities stored in Redis will have. It should be unique for your particular instance of Redis and probably meaningful to what you're doing. Here we have selected `album` for our album data and `studio` for data on recording studios. Imaginative, I know.
+The _first argument_ is the `Schema` name. It defines the key name prefix that entities stored in Redis will have. It should be unique for your particular instance of Redis and probably meaningful to what you're doing. Here we have selected `album` for our album data and `studio` for data on recording studios. Imaginative, I know.
 
-The *second argument* defines fields that might be stored in that key. The property name is the name of the field that you'll be referencing in your Redis OM queries. The type property tells Redis OM what sort of data is in that field. Valid types are: `string`, `number`, `boolean`, `string[]`, `number[]`, `date`, `point`, and `text`.
+The _second argument_ defines fields that might be stored in that key. The property name is the name of the field that you'll be referencing in your Redis OM queries. The type property tells Redis OM what sort of data is in that field. Valid types are: `string`, `number`, `boolean`, `string[]`, `number[]`, `date`, `point`, and `text`.
 
 The first three types do exactly what you think—they define a field that is a [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String), a [Number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number), or a [Boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean). `string[]` and `number[]` do what you'd think as well, specifically describing an [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array) of Strings or Numbers respectively.
 
-`date` is a little different, but still more or less what you'd expect. It describes a property that contains a [Date](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date) and can be set using not only a Date but also a String containing an [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) date or a number with the [UNIX epoch time](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date#the_ecmascript_epoch_and_timestamps) in *seconds* (NOTE: the JavaScript Date object is specified in *milliseconds*).
+`date` is a little different, but still more or less what you'd expect. It describes a property that contains a [Date](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date) and can be set using not only a Date but also a String containing an [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) date or a number with the [UNIX epoch time](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date#the_ecmascript_epoch_and_timestamps) in _seconds_ (NOTE: the JavaScript Date object is specified in _milliseconds_).
 
 A `point` defines a point somewhere on the globe as a longitude and a latitude. It is expressed as a simple object with `longitude` and `latitude` properties. Like this:
 
@@ -223,37 +225,45 @@ A `point` defines a point somewhere on the globe as a longitude and a latitude. 
 const point = { longitude: 12.34, latitude: 56.78 }
 ```
 
-A `text` field is a lot like a `string`. If you're just reading and writing objects, they are identical. But if you want to *search* on them, **they are very, very different**. I'll cover that in detail when I talk about [searching](#searching) but the tl;dr is that `string` fields can only be matched on their exact value and are best for keys and discrete data—like postal codes or status indicators—while `text` fields have full-text search enabled on them, are optimized for human-readable text, and can take advantage of [stemming](https://redis.io/docs/stack/search/reference/stemming/) and [stop words](https://redis.io/docs/stack/search/reference/stopwords/).
+A `text` field is a lot like a `string`. If you're just reading and writing objects, they are identical. But if you want to _search_ on them, **they are very, very different**. I'll cover that in detail when I talk about [searching](#searching) but the tl;dr is that `string` fields can only be matched on their exact value and are best for keys and discrete data—like postal codes or status indicators—while `text` fields have full-text search enabled on them, are optimized for human-readable text, and can take advantage of [stemming](https://redis.io/docs/stack/search/reference/stemming/) and [stop words](https://redis.io/docs/stack/search/reference/stopwords/).
 
 ### JSON and Hashes
 
 As I mentioned earlier, by default Redis OM stores your entities in JSON documents using RedisJSON. You can make this explicit in code if you like:
 
 ```javascript
-const albumSchema = new Schema('album', {
-  artist: { type: 'string' },
-  title: { type: 'string' },
-  year: { type: 'number' },
-  genres: { type: 'string[]' },
-  songDurations: { type: 'number[]' },
-  outOfPublication: { type: 'boolean' }
-}, {
-  dataStructure: 'JSON'
-})
+const albumSchema = new Schema(
+  'album',
+  {
+    artist: { type: 'string' },
+    title: { type: 'string' },
+    year: { type: 'number' },
+    genres: { type: 'string[]' },
+    songDurations: { type: 'number[]' },
+    outOfPublication: { type: 'boolean' }
+  },
+  {
+    dataStructure: 'JSON'
+  }
+)
 ```
 
 But you can also store your entities as Hashes instead. Just change the `dataStructure` property to reflect it:
 
 ```javascript
-const albumSchema = new Schema('album', {
-  artist: { type: 'string' },
-  title: { type: 'string' },
-  year: { type: 'number' },
-  genres: { type: 'string[]' },
-  outOfPublication: { type: 'boolean' }
-}, {
-  dataStructure: 'HASH'
-})
+const albumSchema = new Schema(
+  'album',
+  {
+    artist: { type: 'string' },
+    title: { type: 'string' },
+    year: { type: 'number' },
+    genres: { type: 'string[]' },
+    outOfPublication: { type: 'boolean' }
+  },
+  {
+    dataStructure: 'HASH'
+  }
+)
 ```
 
 And that's it.
@@ -271,13 +281,13 @@ When you store your entities as JSON, the path to the properties in your JSON do
   "artist": "Mushroomhead",
   "title": "The Righteous & The Butterfly",
   "year": 2014,
-  "genres": [ "metal" ],
-  "songDurations": [ 204, 290, 196, 210, 211, 105, 244, 245, 209, 252, 259, 200, 215, 219 ],
+  "genres": ["metal"],
+  "songDurations": [204, 290, 196, 210, 211, 105, 244, 245, 209, 252, 259, 200, 215, 219],
   "outOfPublication": true
 }
 ```
 
-However, you might not want your JavaScript object and your JSON to map this way. So, you can provide a `path` option in your schema that contains a [JSONPath](https://redis.io/docs/stack/json/path/#jsonpath-syntax) pointing to where that field *actually* exists in the JSON and your entity. For example, we might want to store some of the album's data inside of an album property like this:
+However, you might not want your JavaScript object and your JSON to map this way. So, you can provide a `path` option in your schema that contains a [JSONPath](https://redis.io/docs/stack/json/path/#jsonpath-syntax) pointing to where that field _actually_ exists in the JSON and your entity. For example, we might want to store some of the album's data inside of an album property like this:
 
 ```json
 {
@@ -285,8 +295,8 @@ However, you might not want your JavaScript object and your JSON to map this way
     "artist": "Mushroomhead",
     "title": "The Righteous & The Butterfly",
     "year": 2014,
-    "genres": [ "metal" ],
-    "songDurations": [ 204, 290, 196, 210, 211, 105, 244, 245, 209, 252, 259, 200, 215, 219 ]
+    "genres": ["metal"],
+    "songDurations": [204, 290, 196, 210, 211, 105, 244, 245, 209, 252, 259, 200, 215, 219]
   },
   "outOfPublication": true
 }
@@ -307,24 +317,28 @@ const albumSchema = new Schema('album', {
 
 There are two things to note here:
 
-  1. We haven't specified a path for `outOfPublication` as it's still in the root of the document. It defaults to `$.outOfPublication`.
-  2. Our `genres` field points to a `string[]`. When using a `string[]` the JSONPath must return an array. If it doesn't, an error will be generated.
-  3. Same for our `songDurations`.
+1. We haven't specified a path for `outOfPublication` as it's still in the root of the document. It defaults to `$.outOfPublication`.
+2. Our `genres` field points to a `string[]`. When using a `string[]` the JSONPath must return an array. If it doesn't, an error will be generated.
+3. Same for our `songDurations`.
 
 #### Configuring Hashes
 
 When you store your entities as Hashes there is no nesting—all the entities are flat. In Redis, the properties on your entity are stored in fields inside a Hash. The default name for each field is the name of the property in your schema and this is the name that will be used in your entities. So, for the following schema:
 
 ```javascript
-const albumSchema = new Schema('album', {
-  artist: { type: 'string' },
-  title: { type: 'string' },
-  year: { type: 'number' },
-  genres: { type: 'string[]' },
-  outOfPublication: { type: 'boolean' }
-}, {
-  dataStructure: 'HASH'
-})
+const albumSchema = new Schema(
+  'album',
+  {
+    artist: { type: 'string' },
+    title: { type: 'string' },
+    year: { type: 'number' },
+    genres: { type: 'string[]' },
+    outOfPublication: { type: 'boolean' }
+  },
+  {
+    dataStructure: 'HASH'
+  }
+)
 ```
 
 In your code, your entities would look like this:
@@ -341,43 +355,47 @@ In your code, your entities would look like this:
 
 Inside Redis, your Hash would be stored like this:
 
-| Field            | Value                                   |
-|------------------|:----------------------------------------|
-| artist           | Mushroomhead                            |
-| title            | The Righteous & The Butterfly           |
-| year             | 2014                                    |
-| genres           | metal                                   |
-| outOfPublication | 1                                       |
+| Field            | Value                         |
+| ---------------- | :---------------------------- |
+| artist           | Mushroomhead                  |
+| title            | The Righteous & The Butterfly |
+| year             | 2014                          |
+| genres           | metal                         |
+| outOfPublication | 1                             |
 
 However, you might not want the names of your fields and the names of the properties on your entity to be exactly the same. Maybe you've got some existing data with existing names or something.
 
 Fear not! You can change the name of the field used by Redis with the `field` property:
 
 ```javascript
-const albumSchema = new Schema('album', {
-  artist: { type: 'string', field: 'album_artist' },
-  title: { type: 'string', field: 'album_title' },
-  year: { type: 'number', field: 'album_year' },
-  genres: { type: 'string[]' },
-  outOfPublication: { type: 'boolean' }
-}, {
-  dataStructure: 'HASH'
-})
+const albumSchema = new Schema(
+  'album',
+  {
+    artist: { type: 'string', field: 'album_artist' },
+    title: { type: 'string', field: 'album_title' },
+    year: { type: 'number', field: 'album_year' },
+    genres: { type: 'string[]' },
+    outOfPublication: { type: 'boolean' }
+  },
+  {
+    dataStructure: 'HASH'
+  }
+)
 ```
 
 With this configuration, your entities will remain unchanged and will still have properties for `artist`, `title`, `year`, `genres`, and `outOfPublication`. But inside Redis, the field will have changed:
 
-| Field            | Value                                   |
-|------------------|:----------------------------------------|
-| album_artist     | Mushroomhead                            |
-| album_title      | The Righteous & The Butterfly           |
-| album_year       | 2014                                    |
-| genres           | metal                                   |
-| outOfPublication | 1                                       |
+| Field            | Value                         |
+| ---------------- | :---------------------------- |
+| album_artist     | Mushroomhead                  |
+| album_title      | The Righteous & The Butterfly |
+| album_year       | 2014                          |
+| genres           | metal                         |
+| outOfPublication | 1                             |
 
 ## Reading, Writing, and Removing with Repository
 
-Now that we have a client and a schema, we have what we need to make a [*repository*](docs/classes/Repository.md). A repository provides the means to write, read, and remove entities. Creating a repository is pretty straightforward—just instantiate one with a schema and a client:
+Now that we have a client and a schema, we have what we need to make a [_repository_](docs/classes/Repository.md). A repository provides the means to write, read, and remove entities. Creating a repository is pretty straightforward—just instantiate one with a schema and a client:
 
 ```javascript
 import { Repository } from 'redis-om'
@@ -390,11 +408,11 @@ Once we have a repository, we can use `.save` to, well, save entities:
 
 ```javascript
 let album = {
-  artist: "Mushroomhead",
-  title: "The Righteous & The Butterfly",
+  artist: 'Mushroomhead',
+  title: 'The Righteous & The Butterfly',
   year: 2014,
-  genres: [ 'metal' ],
-  songDurations: [ 204, 290, 196, 210, 211, 105, 244, 245, 209, 252, 259, 200, 215, 219 ],
+  genres: ['metal'],
+  songDurations: [204, 290, 196, 210, 211, 105, 244, 245, 209, 252, 259, 200, 215, 219],
   outOfPublication: true
 }
 
@@ -434,11 +452,11 @@ album.songDurations // [ 204, 290, 196, 210, 211, 105, 244, 245, 209, 252, 259, 
 album.outOfPublication // true
 ```
 
-If you call `.save` with an entity that *already* has an entity ID, probably because you *fetched* it, `.save` will update it instead of creating a new `Entity`:
+If you call `.save` with an entity that _already_ has an entity ID, probably because you _fetched_ it, `.save` will update it instead of creating a new `Entity`:
 
 ```javascript
 let album = await albumRepository.fetch('01FJYWEYRHYFT8YTEGQBABJ43J')
-album.genres = [ 'metal', 'nu metal', 'avantgarde' ]
+album.genres = ['metal', 'nu metal', 'avantgarde']
 album.outOfPublication = false
 
 album = await albumRepository.save(album)
@@ -448,7 +466,7 @@ You can even use `.save` to clone an `Entity`. Just pass in a new entity ID to `
 
 ```javascript
 const album = await albumRepository.fetch('01FJYWEYRHYFT8YTEGQBABJ43J')
-album.genres = [ 'metal', 'nu metal', 'avantgarde' ]
+album.genres = ['metal', 'nu metal', 'avantgarde']
 album.outOfPublication = false
 
 const clonedEntity = await albumRepository.save('BWOMP', album)
@@ -463,7 +481,7 @@ await albumRepository.remove('01FJYWEYRHYFT8YTEGQBABJ43J')
 You can also set an entity to expire after a certain number of seconds. Redis will automatically remove that entity when the time's up. Use the `.expire` method to do this:
 
 ```javascript
-const ttlInSeconds = 12 * 60 * 60  // 12 hours
+const ttlInSeconds = 12 * 60 * 60 // 12 hours
 await albumRepository.expire('01FJYWEYRHYFT8YTEGQBABJ43J', ttlInSeconds)
 ```
 
@@ -496,18 +514,22 @@ const entityId = await albumRepository.save(album)
 const exists = await redis.exists('album:01FJYWEYRHYFT8YTEGQBABJ43J') // 0
 ```
 
-It does this because Redis doesn't distinguish between missing and null. You could have an entity that is empty. Or you could not have an entity at all. Redis doesn't know which is your intention, and so always returns *something* when you call `.fetch`.
+It does this because Redis doesn't distinguish between missing and null. You could have an entity that is empty. Or you could not have an entity at all. Redis doesn't know which is your intention, and so always returns _something_ when you call `.fetch`.
 
 ## Searching
 
 Using [RediSearch][redisearch-url] with Redis OM is where the power of this fully armed and operational battle station starts to become apparent. If you have RediSearch installed on your Redis server you can use the search capabilities of Redis OM. This enables commands like:
 
 ```javascript
-const albums = await albumRepository.search()
-  .where('artist').equals('Mushroomhead')
-  .and('title').matches('butterfly')
-  .and('year').is.greaterThan(2000)
-    .return.all()
+const albums = await albumRepository
+  .search()
+  .where('artist')
+  .equals('Mushroomhead')
+  .and('title')
+  .matches('butterfly')
+  .and('year')
+  .is.greaterThan(2000)
+  .return.all()
 ```
 
 Let's explore this in full.
@@ -517,15 +539,15 @@ Let's explore this in full.
 To use search you have to build an index. If you don't, you'll get errors. To build an index, just call `.createIndex` on your repository:
 
 ```javascript
-await albumRepository.createIndex();
+await albumRepository.createIndex()
 ```
 
-If you change your schema, no worries. Redis OM will automatically rebuild the index for you. Just call `.createIndex` again. And don't worry if you call `.createIndex` when your schema *hasn't* changed. Redis OM will only rebuild your index if the schema has changed. So, you can safely use it in your startup code.
+If you change your schema, no worries. Redis OM will automatically rebuild the index for you. Just call `.createIndex` again. And don't worry if you call `.createIndex` when your schema _hasn't_ changed. Redis OM will only rebuild your index if the schema has changed. So, you can safely use it in your startup code.
 
-However, if you have a *lot* of data, rebuilding an index can take some time. So, you might want to explicitly manage the building and rebuilding of your indices in some sort of deployment code script thing. To support those devops sorts of things, Redis OM includes a `.dropIndex` method to explicitly remove an index without rebuilding it:
+However, if you have a _lot_ of data, rebuilding an index can take some time. So, you might want to explicitly manage the building and rebuilding of your indices in some sort of deployment code script thing. To support those devops sorts of things, Redis OM includes a `.dropIndex` method to explicitly remove an index without rebuilding it:
 
 ```javascript
-await albumRepository.dropIndex();
+await albumRepository.dropIndex()
 ```
 
 You probably won't use this in your application, but if you come up with a cool use for it, I'd love to hear about it!
@@ -540,7 +562,7 @@ const albums = await albumRepository.search().return.all()
 
 #### Pagination
 
-It's possible you have a *lot* of albums; I know I do. In that case, you can page through the results. Just pass in the zero-based offset and the number of results you want:
+It's possible you have a _lot_ of albums; I know I do. In that case, you can page through the results. Just pass in the zero-based offset and the number of results you want:
 
 ```javascript
 const offset = 100
@@ -550,15 +572,26 @@ const albums = await albumRepository.search().return.page(offset, count)
 
 Don't worry if your offset is greater than the number of entities. If it is, you just get an empty array back. No harm, no foul.
 
+#### Iterators
+
+If you're one of the cool kids, you might want to fetch all of your albums using an [AsyncGenerator](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/AsyncGenerator):
+
+```javascript
+const albumIterator = albumRepository.search().return.iterator()
+for await (const album of albumIterator) {
+  // do something with the album
+}
+```
+
 #### First Things First
 
 Sometimes you only have one album. Or maybe you only care about the first album you find. You can easily grab the first result of your search with `.first`:
 
 ```javascript
-const firstAlbum = await albumRepository.search().return.first();
+const firstAlbum = await albumRepository.search().return.first()
 ```
 
-Note: If you have *no* albums, this will return `null`. And I feel sorry for you.
+Note: If you have _no_ albums, this will return `null`. And I feel sorry for you.
 
 #### Counting
 
@@ -570,7 +603,7 @@ const count = await albumRepository.search().return.count()
 
 ### Finding Specific Things
 
-It's fine and dandy to return all the things. But that's not what you usually want to do. You want to find *specific* things. Redis OM will let you find those specific things by [strings](#searching-on-strings), [numbers](#searching-on-numbers), and [booleans](#searching-on-booleans). You can also search for strings that are in an [array](#searching-string-arrays), perform [full-text search](#full-text-search) within strings, search by [date](#searching-on-dates), and search for [points](#searching-on-points) on the globe within a particular area.
+It's fine and dandy to return all the things. But that's not what you usually want to do. You want to find _specific_ things. Redis OM will let you find those specific things by [strings](#searching-on-strings), [numbers](#searching-on-numbers), and [booleans](#searching-on-booleans). You can also search for strings that are in an [array](#searching-string-arrays), perform [full-text search](#full-text-search) within strings, search by [date](#searching-on-dates), and search for [points](#searching-on-points) on the globe within a particular area.
 
 And it does it with a fluent interface that allows—but does not demand—code that reads like a sentence. See below for exhaustive examples of all the syntax available to you.
 
@@ -625,7 +658,7 @@ albums = await albumRepository.search().where('year').not.lt(1984).return.all()
 albums = await albumRepository.search().where('year').not.lte(1984).return.all()
 
 // find all albums where year is *not* between 1980 and 1989 inclusive
-albums = await albumRepository.search().where('year').not.between(1980, 1989);
+albums = await albumRepository.search().where('year').not.between(1980, 1989)
 
 // fluent alternatives that do the same thing
 albums = await albumRepository.search().where('year').equals(1984).return.all()
@@ -700,7 +733,7 @@ albums = await albumRepository.search().where('outOfPublication').is.not.false()
 
 #### Searching on Dates
 
-If you have a field type of `date` in your schema, you can search on it using [Dates](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date), [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) formatted strings, or the [UNIX epoch time](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date#the_ecmascript_epoch_and_timestamps) in *seconds*:
+If you have a field type of `date` in your schema, you can search on it using [Dates](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date), [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) formatted strings, or the [UNIX epoch time](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date#the_ecmascript_epoch_and_timestamps) in _seconds_:
 
 ```javascript
 studios = await studioRepository.search().where('established').on(new Date('2010-12-27')).return.all()
@@ -794,7 +827,7 @@ studios = await studioRepository.search().where('established').is.not.lessThanOr
 
 #### Searching String Arrays
 
-If you have a field type of `string[]` you can search for *whole strings* that are in that array:
+If you have a field type of `string[]` you can search for _whole strings_ that are in that array:
 
 ```javascript
 let albums
@@ -849,7 +882,7 @@ I'm not going to include all the examples again. Just go check out the section o
 
 If you've defined a field with a type of `text` in your schema, you can store text in it and perform full-text searches against it. Full-text search is different from how a `string` is searched. With full-text search, you can look for words, partial words, fuzzy matches, and exact phrases within a body of text.
 
-Full-text search is optimized for human-readable text and it's pretty clever. It understands that certain words (like *a*, *an*, or *the*) are common and ignores them. It understands how words relate to each other and so if you search for *give*, it matches *gives*, *given*, *giving*, and *gave* too. It ignores punctuation and whitespace.
+Full-text search is optimized for human-readable text and it's pretty clever. It understands that certain words (like _a_, _an_, or _the_) are common and ignores them. It understands how words relate to each other and so if you search for _give_, it matches _gives_, _given_, _giving_, and _gave_ too. It ignores punctuation and whitespace.
 
 Here are some examples of doing full-text search against some album titles:
 
@@ -860,7 +893,11 @@ let albums
 albums = await albumRepository.search().where('title').match('butterfly').return.all()
 
 // finds all albums using fuzzy matching where the title contains a word which is within 3 Levenshtein distance of the word 'buterfly'
-albums = await albumRepository.search().where('title').match('buterfly', { fuzzyMatching: true, levenshteinDistance: 3 }).return.all()
+albums = await albumRepository
+  .search()
+  .where('title')
+  .match('buterfly', { fuzzyMatching: true, levenshteinDistance: 3 })
+  .return.all()
 
 // finds all albums where the title contains the words 'beautiful' and 'children'
 albums = await albumRepository.search().where('title').match('beautiful children').return.all()
@@ -881,7 +918,11 @@ Do not combine partial-word searches or fuzzy matches with exact matches. Partia
 ```javascript
 // THESE WILL ERROR
 albums = await albumRepository.search().where('title').matchExact('beautiful sto*').return.all()
-albums = await albumRepository.search().where('title').matchExact('*buterfly', { fuzzyMatching: true, levenshteinDistance: 3 }).return.all()
+albums = await albumRepository
+  .search()
+  .where('title')
+  .matchExact('*buterfly', { fuzzyMatching: true, levenshteinDistance: 3 })
+  .return.all()
 ```
 
 As always, there are several alternatives to make this a bit more fluent and, of course, negation is available:
@@ -912,112 +953,187 @@ RediSearch, and therefore Redis OM, both support searching by geographic locatio
 let studios
 
 // finds all the studios with 50 miles of downtown Cleveland
-studios = await studioRepository.search().where('location').inRadius(
-  circle => circle.origin(-81.7758995, 41.4976393).radius(50).miles).return.all()
+studios = await studioRepository
+  .search()
+  .where('location')
+  .inRadius(circle => circle.origin(-81.7758995, 41.4976393).radius(50).miles)
+  .return.all()
 ```
 
-Note that coordinates are specified with the longitude *first*, and then the latitude. This might be the opposite of what you expect but is consistent with how Redis implements coordinates in [RediSearch](https://oss.redis.com/redisearch/Query_Syntax/) and with [GeoSets](https://redis.io/commands#geo).
+Note that coordinates are specified with the longitude _first_, and then the latitude. This might be the opposite of what you expect but is consistent with how Redis implements coordinates in [RediSearch](https://oss.redis.com/redisearch/Query_Syntax/) and with [GeoSets](https://redis.io/commands#geo).
 
 If you don't want to rely on argument order, you can also specify longitude and latitude more explicitly:
 
 ```javascript
 // finds all the studios within 50 miles of downtown Cleveland using a point
-studios = await studioRepository.search().where('location').inRadius(
-  circle => circle.origin({ longitude: -81.7758995, latitude: 41.4976393 }).radius(50).miles).return.all()
+studios = await studioRepository
+  .search()
+  .where('location')
+  .inRadius(circle => circle.origin({ longitude: -81.7758995, latitude: 41.4976393 }).radius(50).miles)
+  .return.all()
 
 // finds all the studios within 50 miles of downtown Cleveland using longitude and latitude
-studios = await studioRepository.search().where('location').inRadius(
-  circle => circle.longitude(-81.7758995).latitude(41.4976393).radius(50).miles).return.all()
+studios = await studioRepository
+  .search()
+  .where('location')
+  .inRadius(circle => circle.longitude(-81.7758995).latitude(41.4976393).radius(50).miles)
+  .return.all()
 ```
 
-Radius can be in *miles*, *feet*, *kilometers*, and *meters* in all the spelling variations you could ever want:
+Radius can be in _miles_, _feet_, _kilometers_, and _meters_ in all the spelling variations you could ever want:
 
 ```javascript
 // finds all the studios within 50 miles
-studios = await studioRepository.search().where('location').inRadius(
-  circle => circle.origin(-81.7758995, 41.4976393).radius(50).miles).return.all()
+studios = await studioRepository
+  .search()
+  .where('location')
+  .inRadius(circle => circle.origin(-81.7758995, 41.4976393).radius(50).miles)
+  .return.all()
 
-studios = await studioRepository.search().where('location').inRadius(
-  circle => circle.origin(-81.7758995, 41.4976393).radius(50).mile).return.all()
+studios = await studioRepository
+  .search()
+  .where('location')
+  .inRadius(circle => circle.origin(-81.7758995, 41.4976393).radius(50).mile)
+  .return.all()
 
-studios = await studioRepository.search().where('location').inRadius(
-  circle => circle.origin(-81.7758995, 41.4976393).radius(50).mi).return.all()
+studios = await studioRepository
+  .search()
+  .where('location')
+  .inRadius(circle => circle.origin(-81.7758995, 41.4976393).radius(50).mi)
+  .return.all()
 
 // finds all the studios within 50 feet
-studios = await studioRepository.search().where('location').inRadius(
-  circle => circle.origin(-81.7758995, 41.4976393).radius(50).feet).return.all()
+studios = await studioRepository
+  .search()
+  .where('location')
+  .inRadius(circle => circle.origin(-81.7758995, 41.4976393).radius(50).feet)
+  .return.all()
 
-studios = await studioRepository.search().where('location').inRadius(
-  circle => circle.origin(-81.7758995, 41.4976393).radius(50).foot).return.all()
+studios = await studioRepository
+  .search()
+  .where('location')
+  .inRadius(circle => circle.origin(-81.7758995, 41.4976393).radius(50).foot)
+  .return.all()
 
-studios = await studioRepository.search().where('location').inRadius(
-  circle => circle.origin(-81.7758995, 41.4976393).radius(50).ft).return.all()
+studios = await studioRepository
+  .search()
+  .where('location')
+  .inRadius(circle => circle.origin(-81.7758995, 41.4976393).radius(50).ft)
+  .return.all()
 
 // finds all the studios within 50 kilometers
-studios = await studioRepository.search().where('location').inRadius(
-  circle => circle.origin(-81.7758995, 41.4976393).radius(50).kilometers).return.all()
+studios = await studioRepository
+  .search()
+  .where('location')
+  .inRadius(circle => circle.origin(-81.7758995, 41.4976393).radius(50).kilometers)
+  .return.all()
 
-studios = await studioRepository.search().where('location').inRadius(
-  circle => circle.origin(-81.7758995, 41.4976393).radius(50).kilometer).return.all()
+studios = await studioRepository
+  .search()
+  .where('location')
+  .inRadius(circle => circle.origin(-81.7758995, 41.4976393).radius(50).kilometer)
+  .return.all()
 
-studios = await studioRepository.search().where('location').inRadius(
-  circle => circle.origin(-81.7758995, 41.4976393).radius(50).km).return.all()
+studios = await studioRepository
+  .search()
+  .where('location')
+  .inRadius(circle => circle.origin(-81.7758995, 41.4976393).radius(50).km)
+  .return.all()
 
 // finds all the studios within 50 meters
-studios = await studioRepository.search().where('location').inRadius(
-  circle => circle.origin(-81.7758995, 41.4976393).radius(50).meters).return.all()
+studios = await studioRepository
+  .search()
+  .where('location')
+  .inRadius(circle => circle.origin(-81.7758995, 41.4976393).radius(50).meters)
+  .return.all()
 
-studios = await studioRepository.search().where('location').inRadius(
-  circle => circle.origin(-81.7758995, 41.4976393).radius(50).meter).return.all()
+studios = await studioRepository
+  .search()
+  .where('location')
+  .inRadius(circle => circle.origin(-81.7758995, 41.4976393).radius(50).meter)
+  .return.all()
 
-studios = await studioRepository.search().where('location').inRadius(
-  circle => circle.origin(-81.7758995, 41.4976393).radius(50).m).return.all()
+studios = await studioRepository
+  .search()
+  .where('location')
+  .inRadius(circle => circle.origin(-81.7758995, 41.4976393).radius(50).m)
+  .return.all()
 ```
 
 If you don't specify the origin, Redis OM will use a longitude 0.0 and a latitude 0.0, also known as [Null Island](https://en.wikipedia.org/wiki/Null_Island):
 
 ```javascript
 // finds all the studios within 50 miles of Null Island (probably ain't much there)
-studios = await studioRepository.search().where('location').inRadius(
-  circle => circle.radius(50).miles).return.all()
+studios = await studioRepository
+  .search()
+  .where('location')
+  .inRadius(circle => circle.radius(50).miles)
+  .return.all()
 ```
 
-If you don't specify the radius, it defaults to *1* and if you don't provide units, it defaults to *meters*:
+If you don't specify the radius, it defaults to _1_ and if you don't provide units, it defaults to _meters_:
 
 ```javascript
 // finds all the studios within 1 meter of downtown Cleveland
-studios = await studioRepository.search().where('location').inRadius(
-  circle => circle.origin(-81.7758995, 41.4976393)).return.all()
+studios = await studioRepository
+  .search()
+  .where('location')
+  .inRadius(circle => circle.origin(-81.7758995, 41.4976393))
+  .return.all()
 
 // finds all the studios within 1 kilometer of downtown Cleveland
-studios = await studioRepository.search().where('location').inRadius(
-  circle => circle.origin(-81.7758995, 41.4976393).kilometers).return.all()
+studios = await studioRepository
+  .search()
+  .where('location')
+  .inRadius(circle => circle.origin(-81.7758995, 41.4976393).kilometers)
+  .return.all()
 
 // finds all the studios within 50 meters of downtown Cleveland
-studios = await studioRepository.search().where('location').inRadius(
-  circle => circle.origin(-81.7758995, 41.4976393).radius(50)).return.all()
+studios = await studioRepository
+  .search()
+  .where('location')
+  .inRadius(circle => circle.origin(-81.7758995, 41.4976393).radius(50))
+  .return.all()
 ```
 
 And there are plenty of fluent variations to help make your code pretty:
 
 ```javascript
-studios = await studioRepository.search().where('location').not.inRadius(
-  circle => circle.longitude(-81.7758995).latitude(41.4976393).radius(50).miles).return.all()
+studios = await studioRepository
+  .search()
+  .where('location')
+  .not.inRadius(circle => circle.longitude(-81.7758995).latitude(41.4976393).radius(50).miles)
+  .return.all()
 
-studios = await studioRepository.search().where('location').is.inRadius(
-  circle => circle.longitude(-81.7758995).latitude(41.4976393).radius(50).miles).return.all()
+studios = await studioRepository
+  .search()
+  .where('location')
+  .is.inRadius(circle => circle.longitude(-81.7758995).latitude(41.4976393).radius(50).miles)
+  .return.all()
 
-studios = await studioRepository.search().where('location').is.not.inRadius(
-  circle => circle.longitude(-81.7758995).latitude(41.4976393).radius(50).miles).return.all()
+studios = await studioRepository
+  .search()
+  .where('location')
+  .is.not.inRadius(circle => circle.longitude(-81.7758995).latitude(41.4976393).radius(50).miles)
+  .return.all()
 
-studios = await studioRepository.search().where('location').not.inCircle(
-  circle => circle.longitude(-81.7758995).latitude(41.4976393).radius(50).miles).return.all()
+studios = await studioRepository
+  .search()
+  .where('location')
+  .not.inCircle(circle => circle.longitude(-81.7758995).latitude(41.4976393).radius(50).miles)
+  .return.all()
 
-studios = await studioRepository.search().where('location').is.inCircle(
-  circle => circle.longitude(-81.7758995).latitude(41.4976393).radius(50).miles).return.all()
+studios = await studioRepository
+  .search()
+  .where('location')
+  .is.inCircle(circle => circle.longitude(-81.7758995).latitude(41.4976393).radius(50).miles)
+  .return.all()
 
-studios = await studioRepository.search().where('location').is.not.inCircle(
-  circle => circle.longitude(-81.7758995).latitude(41.4976393).radius(50).miles).return.all()
+studios = await studioRepository
+  .search()
+  .where('location')
+  .is.not.inCircle(circle => circle.longitude(-81.7758995).latitude(41.4976393).radius(50).miles)
+  .return.all()
 ```
 
 #### Chaining Searches
@@ -1025,10 +1141,15 @@ studios = await studioRepository.search().where('location').is.not.inCircle(
 So far we've been doing searches that match on a single field. However, we often want to query on multiple fields. Not a problem:
 
 ```javascript
-const albums = await albumRepository.search()
-  .where('artist').equals('Mushroomhead')
-  .or('title').matches('butterfly')
-  .and('year').is.greaterThan(1990).return.all()
+const albums = await albumRepository
+  .search()
+  .where('artist')
+  .equals('Mushroomhead')
+  .or('title')
+  .matches('butterfly')
+  .and('year')
+  .is.greaterThan(1990)
+  .return.all()
 ```
 
 These are executed in order from left to right, and ignore any order of operations. So this query will match an artist of "Mushroomhead" OR a title matching "butterfly" before it goes on to match that the year is greater than 1990.
@@ -1036,12 +1157,13 @@ These are executed in order from left to right, and ignore any order of operatio
 If you'd like to change this you can nest your queries:
 
 ```javascript
-const albums = await albumRepository.search()
-  .where('title').matches('butterfly').return.all()
-  .or(search => search
-    .where('artist').equals('Mushroomhead')
-    .and('year').is.greaterThan(1990)
-  ).return.all()
+const albums = await albumRepository
+  .search()
+  .where('title')
+  .matches('butterfly')
+  .return.all()
+  .or(search => search.where('artist').equals('Mushroomhead').and('year').is.greaterThan(1990))
+  .return.all()
 ```
 
 This query finds all Mushroomhead albums after 1990 or albums that have "butterfly" in the title.
@@ -1054,8 +1176,8 @@ To execute a raw search, just call `.searchRaw` on the repository with your quer
 
 ```javascript
 // finds all the Mushroomhead albums with the word 'beautiful' in the title from 1990 and beyond
-const query = "@artist:{Mushroomhead} @title:beautiful @year:[1990 +inf]"
-const albums = albumRepository.searchRaw(query).return.all();
+const query = '@artist:{Mushroomhead} @title:beautiful @year:[1990 +inf]'
+const albums = albumRepository.searchRaw(query).return.all()
 ```
 
 The nice thing here is that it returns the same entities that you've been using for everything else. It's just a lower-level way of executing a query for when you need that extra bit of power.
@@ -1065,16 +1187,22 @@ The nice thing here is that it returns the same entities that you've been using 
 RediSearch provides a basic mechanism for sorting your search results and Redis OM exposes it. You can sort on a single field and can sort on the following types: `string`, `number`, `boolean`, `date`, and `text`. To sort, simply call `.sortBy`, `.sortAscending`, or `.sortDescending`:
 
 ```javascript
-const albumsByYear = await albumRepository.search()
-  .where('artist').equals('Mushroomhead')
-    .sortAscending('year').return.all()
+const albumsByYear = await albumRepository
+  .search()
+  .where('artist')
+  .equals('Mushroomhead')
+  .sortAscending('year')
+  .return.all()
 
-const albumsByTitle = await albumRepository.search()
-  .where('artist').equals('Mushroomhead')
-    .sortBy('title', 'DESC').return.all()
+const albumsByTitle = await albumRepository
+  .search()
+  .where('artist')
+  .equals('Mushroomhead')
+  .sortBy('title', 'DESC')
+  .return.all()
 ```
 
-You can also tell RediSearch to preload the sorting index to improve performance when you sort. This doesn't work with *all* of the types that you can sort by, but it's still pretty useful. To preload the index, mark the field in the `Schema` with the `sortable` property:
+You can also tell RediSearch to preload the sorting index to improve performance when you sort. This doesn't work with _all_ of the types that you can sort by, but it's still pretty useful. To preload the index, mark the field in the `Schema` with the `sortable` property:
 
 ```javascript
 const albumSchema = new Schema(Album, {
@@ -1092,7 +1220,7 @@ If your schema is for a Hash, you can mark `string`, `number`, `boolean`, `date`
 
 Fields of the types `point` and `string[]` are never sortable.
 
-If this seems like a confusing flowchart to parse, don't worry. If you call `.sortBy` on a field in the Schema that's not marked as `sortable` and it *could* be, Redis OM will log a warning to let you know.
+If this seems like a confusing flowchart to parse, don't worry. If you call `.sortBy` on a field in the Schema that's not marked as `sortable` and it _could_ be, Redis OM will log a warning to let you know.
 
 ## Advanced Stuff
 
@@ -1102,38 +1230,38 @@ This is a bit of a catch-all for some of the more advanced stuff you can do with
 
 Additional field options can be set depending on the field type. These correspond to the [Field Options](https://redis.io/commands/ft.create/#field-options) available when creating a RediSearch full-text index. Other than the `separator` option, these only affect how content is indexed and searched.
 
-|  schema type   | RediSearch type | `indexed` | `sortable` | `normalized` | `stemming` | `matcher` | `weight` | `separator` | `caseSensitive` |
-| -------------- | :-------------: | :-------: | :--------: | :----------: | :--------: | :--------: | :------: | :---------: | :-------------: |
-| `string`       |       TAG       |    yes    |  HASH Only |   HASH Only  |      -     |      -     |     -    |     yes     |        yes      |
-| `number`       |     NUMERIC     |    yes    |    yes     |       -      |      -     |      -     |     -    |      -      |         -       |
-| `boolean`      |       TAG       |    yes    |  HASH Only |       -      |      -     |      -     |     -    |      -      |         -       |
-| `string[]`     |       TAG       |    yes    |  HASH Only |   HASH Only  |      -     |      -     |     -    |     yes     |        yes      |
-| `number[]`     |     NUMERIC     |    yes    |    yes     |       -      |      -     |      -     |     -    |      -      |         -       |
-| `date`         |     NUMERIC     |    yes    |    yes     |       -      |            |      -     |     -    |      -      |         -       |
-| `point`        |       GEO       |    yes    |     -      |       -      |            |      -     |     -    |      -      |         -       |
-| `text`         |       TEXT      |    yes    |    yes     |      yes     |     yes    |     yes    |    yes   |      -      |         -       |
+| schema type | RediSearch type | `indexed` | `sortable` | `normalized` | `stemming` | `matcher` | `weight` | `separator` | `caseSensitive` |
+| ----------- | :-------------: | :-------: | :--------: | :----------: | :--------: | :-------: | :------: | :---------: | :-------------: |
+| `string`    |       TAG       |    yes    | HASH Only  |  HASH Only   |     -      |     -     |    -     |     yes     |       yes       |
+| `number`    |     NUMERIC     |    yes    |    yes     |      -       |     -      |     -     |    -     |      -      |        -        |
+| `boolean`   |       TAG       |    yes    | HASH Only  |      -       |     -      |     -     |    -     |      -      |        -        |
+| `string[]`  |       TAG       |    yes    | HASH Only  |  HASH Only   |     -      |     -     |    -     |     yes     |       yes       |
+| `number[]`  |     NUMERIC     |    yes    |    yes     |      -       |     -      |     -     |    -     |      -      |        -        |
+| `date`      |     NUMERIC     |    yes    |    yes     |      -       |            |     -     |    -     |      -      |        -        |
+| `point`     |       GEO       |    yes    |     -      |      -       |            |     -     |    -     |      -      |        -        |
+| `text`      |      TEXT       |    yes    |    yes     |     yes      |    yes     |    yes    |   yes    |      -      |        -        |
 
-* `indexed`: true | false, whether this field is indexed by RediSearch (default true)
-* `sortable`: true | false, whether to create an additional index to optimize sorting (default false)
-* `normalized`: true | false, whether to apply normalization for sorting (default true)
-* `matcher`: string defining phonetic matcher which can be one of: 'dm:en' for English, 'dm:fr' for French, 'dm:pt' for Portugese, 'dm:es' for Spanish (default none)
-* `stemming`: true | false, whether word-stemming is applied to text fields (default true)
-* `weight`: number, the importance weighting to use when ranking results (default 1)
-* `separator`: string, the character to delimit multiple tags (default '|')
-* `caseSensitive`: true | false, whether original letter casing is kept for search (default false)
+- `indexed`: true | false, whether this field is indexed by RediSearch (default true)
+- `sortable`: true | false, whether to create an additional index to optimize sorting (default false)
+- `normalized`: true | false, whether to apply normalization for sorting (default true)
+- `matcher`: string defining phonetic matcher which can be one of: 'dm:en' for English, 'dm:fr' for French, 'dm:pt' for Portugese, 'dm:es' for Spanish (default none)
+- `stemming`: true | false, whether word-stemming is applied to text fields (default true)
+- `weight`: number, the importance weighting to use when ranking results (default 1)
+- `separator`: string, the character to delimit multiple tags (default '|')
+- `caseSensitive`: true | false, whether original letter casing is kept for search (default false)
 
 Example showing additional options:
 
 ```javascript
 const commentSchema = new Schema(Comment, {
   name: { type: 'text', stemming: false, matcher: 'dm:en' },
-  email: { type: 'string', normalized: false, },
+  email: { type: 'string', normalized: false },
   posted: { type: 'date', sortable: true },
   title: { type: 'text', weight: 2 },
   comment: { type: 'text', weight: 1 },
   approved: { type: 'boolean', indexed: false },
   iphash: { type: 'string', caseSensitive: true },
-  notes: { type: 'string', indexed: false },
+  notes: { type: 'string', indexed: false }
 })
 ```
 
@@ -1163,7 +1291,6 @@ Contributions are always appreciated. I take PayPal and Bitcoin. Just kidding, I
 [twitch-shield]: https://img.shields.io/twitch/status/redisinc?style=social
 [twitter-shield]: https://img.shields.io/twitter/follow/redisinc?style=social
 [youtube-shield]: https://img.shields.io/youtube/channel/views/UCD78lHSwYqMlyetR0_P4Vig?style=social
-
 [package-url]: https://www.npmjs.com/package/redis-om
 [build-url]: https://github.com/redis/redis-om-node/actions/workflows/ci.yml
 [license-url]: LICENSE
@@ -1171,7 +1298,6 @@ Contributions are always appreciated. I take PayPal and Bitcoin. Just kidding, I
 [twitch-url]: https://www.twitch.tv/redisinc
 [twitter-url]: https://twitter.com/redisinc
 [youtube-url]: https://www.youtube.com/redisinc
-
 [redis-cloud-url]: https://redis.com/try-free/
 [redis-stack-url]: https://redis.io/docs/stack/
 [redisearch-url]: https://oss.redis.com/redisearch/

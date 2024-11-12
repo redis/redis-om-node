@@ -310,6 +310,51 @@ export abstract class AbstractSearch<T extends Entity = Record<string, any>> {
   }
 
   /**
+   * Returns an async generator that yields {@link Entity | Entities} matching
+   * the query. Internally, this method makes multiple calls to Redis as you
+   * consume the iterator until all the {@link Entity | Entities} are returned.
+   * You can specify the batch size for these calls by setting the `pageSize`
+   * property on the options:
+   *
+   * @param options Options for the call.
+   * @param options.pageSize Number of search results in a batch.
+   * @returns An async generator that yields {@link Entity | Entities} matching the query.
+   */
+  iterator(options = { pageSize: 10 }): AsyncGenerator<T> {
+    return this.iteratorOfThings(this.page, options)
+  }
+
+  /**
+   * Returns an async generator that yields entity IDs matching the query.
+   * Internally, this method makes multiple calls to Redis as you consume the
+   * iterator until all the {@link Entity | Entities} are returned. You can
+   * specify the batch size for these calls by setting the `pageSize` property
+   * on the options:
+   *
+   * @param options Options for the call.
+   * @param options.pageSize Number of search results in a batch.
+   * @returns An async generator that yields entity IDs matching the query.
+   */
+  iteratorOfIds(options = { pageSize: 10 }): AsyncGenerator<string> {
+    return this.iteratorOfThings(this.pageOfIds, options)
+  }
+
+  /**
+   * Returns an async generator that yields key names in Redis matching the
+   * query. Internally, this method makes multiple calls to Redis as you
+   * consume the iterator until all the {@link Entity | Entities} are returned.
+   * You can specify the batch size for these calls by setting the `pageSize`
+   * property on the options:
+   *
+   * @param options Options for the call.
+   * @param options.pageSize Number of search results in a batch.
+   * @returns An async generator that yields key names matching the query.
+   */
+  iteratorOfKeys(options = { pageSize: 10 }): AsyncGenerator<string> {
+    return this.iteratorOfThings(this.pageOfKeys, options)
+  }
+
+  /**
    * Returns the current instance. Syntactic sugar to make your code more fluent.
    * @returns this
    */
@@ -429,8 +474,29 @@ export abstract class AbstractSearch<T extends Entity = Record<string, any>> {
     return await this.allKeys(options)
   }
 
+  /**
+   * Alias for {@link Search.iterator}.
+   */
+  returnIterator(options = { pageSize: 10 }): AsyncGenerator<T> {
+    return this.iterator(options)
+  }
+
+  /**
+   * Alias for {@link Search.iteratorOfIds}.
+   */
+  returnIteratorOfIds(options = { pageSize: 10 }): AsyncGenerator<string> {
+    return this.iteratorOfIds(options)
+  }
+
+  /**
+   * Alias for {@link Search.iteratorOfKeys}.
+   */
+  returnIteratorOfKeys(options = { pageSize: 10 }): AsyncGenerator<string> {
+    return this.iteratorOfKeys(options)
+  }
+
   private async allThings<R extends T[] | string[]>(
-    pageFn: (offset: number, pageSide: number) => Promise<R>,
+    pageFn: (offset: number, pageSize: number) => Promise<R>,
     options = { pageSize: 10 }
   ): Promise<R> {
     // TypeScript is just being mean in this function. The internal logic will be fine in runtime,
@@ -447,6 +513,21 @@ export abstract class AbstractSearch<T extends Entity = Record<string, any>> {
     }
 
     return things as R
+  }
+
+  private async *iteratorOfThings<R extends T | string>(
+    pageFn: (offset: number, pageSize: number) => Promise<R[]>,
+    options = { pageSize: 10 }
+  ): AsyncGenerator<R> {
+    let offset = 0
+    const pageSize = options.pageSize
+
+    while (true) {
+      const foundThings = await pageFn.call(this, offset, pageSize)
+      for (const thing of foundThings) yield thing as R
+      if (foundThings.length < pageSize) break
+      offset += pageSize
+    }
   }
 
   private async callSearch(offset = 0, count = 0, keysOnly = false): Promise<SearchResults> {
