@@ -1,15 +1,14 @@
-import { Entity } from "../entity"
-import { Field } from "../schema"
-import { Search } from "./search"
-import { Where } from "./where"
-import { CircleFunction } from "./where-point"
+import { Entity } from '../entity'
+import { Field } from '../schema'
+import { Search } from './search'
+import { Where } from './where'
+import { CircleFunction } from './where-point'
 
 /**
  * Interface with all the methods from all the concrete
  * classes under {@link WhereField}.
  */
 export interface WhereField<T extends Entity = Record<string, any>> extends Where {
-
   /**
    * Adds an equals comparison to the query.
    *
@@ -58,7 +57,10 @@ export interface WhereField<T extends Entity = Record<string, any>> extends Wher
    * @param options.levenshteinDistance The levenshtein distance to use for fuzzy matching. Supported values are `1`, `2`, and `3`. Defaults to `1`.
    * @returns The {@link Search} that was called to create this {@link WhereField}.
    */
-  match(value: string | number | boolean, options?: { fuzzyMatching?: boolean; levenshteinDistance?: 1 | 2 | 3 }): Search<T>
+  match(
+    value: string | number | boolean,
+    options?: { fuzzyMatching?: boolean; levenshteinDistance?: 1 | 2 | 3 }
+  ): Search<T>
 
   /**
    * Adds a full-text search comparison to the query.
@@ -68,7 +70,10 @@ export interface WhereField<T extends Entity = Record<string, any>> extends Wher
    * @param options.levenshteinDistance The levenshtein distance to use for fuzzy matching. Supported values are `1`, `2`, and `3`. Defaults to `1`.
    * @returns The {@link Search} that was called to create this {@link WhereField}.
    */
-  matches(value: string | number | boolean, options?: { fuzzyMatching?: boolean; levenshteinDistance?: 1 | 2 | 3 }): Search<T>
+  matches(
+    value: string | number | boolean,
+    options?: { fuzzyMatching?: boolean; levenshteinDistance?: 1 | 2 | 3 }
+  ): Search<T>
 
   /**
    * Adds a full-text search comparison to the query that matches an exact word or phrase.
@@ -317,18 +322,27 @@ export abstract class WhereField<T extends Entity> {
   /** @internal */
   protected buildQuery(valuePortion: string): string {
     const negationPortion = this.negated ? '-' : ''
-    const fieldPortion = this.escapePunctuationAndSpaces(this.field.name)
+    const fieldPortion = this.escapePunctuationAndSpacesForField(this.field.name)
     return `(${negationPortion}@${fieldPortion}:${valuePortion})`
   }
 
   /** @internal */
-  protected escapePunctuation(value: string): string {
+  protected escapePunctuationForValue(value: string): string {
     const matchPunctuation = /[,.?<>{}[\]"':;!@#$%^&()\-+=~|/\\]/g
     return value.replace(matchPunctuation, '\\$&')
   }
 
   /** @internal */
-  protected escapePunctuationAndSpaces(value: string): string {
+  protected escapePunctuationAndSpacesForField(field: string): string {
+    const matchPunctuation = /[,.?<>{}[\]"':;!@#$%^&()\-+=~|/\\ ]/g
+    return field.replace(matchPunctuation, '\\$&')
+  }
+
+  /** @internal */
+  protected escapePunctuationAndSpacesForValue(value: string): string {
+    // a pure underscore search for a TAG generates a syntax error from Redis and must be eascaped
+    if (value === '_') return '\\_'
+
     const matchPunctuation = /[,.?<>{}[\]"':;!@#$%^&()\-+=~|/\\ ]/g
     return value.replace(matchPunctuation, '\\$&')
   }

@@ -8,6 +8,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### Fixed
 
+- Resolved issue #250 where searching on an underscore for a string or string[] generated an error.
+
 ### Added
 
 - Added prettier to developer dependencies
