@@ -46,6 +46,7 @@
     "@types/node": "^18.0.0",
     "@vitest/ui": "^0.17.1",
     "c8": "^7.11.3",
+    "prettier": "^3.3.3",
     "tsup": "^6.1.2",
     "typedoc": "^0.23.2",
     "typedoc-plugin-markdown": "^3.13.1",
