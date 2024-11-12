@@ -49,7 +49,7 @@
 
 #### Defined in
 
-[lib/error/invalid-input.ts:67](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/error/invalid-input.ts#L67)
+[lib/error/invalid-input.ts:67](https://github.com/redis/redis-om-node/blob/24eacdb/lib/error/invalid-input.ts#L67)
 
 ## Properties
 
@@ -168,7 +168,7 @@ node_modules/@types/node/globals.d.ts:13
 
 #### Defined in
 
-[lib/error/invalid-input.ts:73](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/error/invalid-input.ts#L73)
+[lib/error/invalid-input.ts:73](https://github.com/redis/redis-om-node/blob/24eacdb/lib/error/invalid-input.ts#L73)
 
 ## Methods
 

@@ -51,7 +51,7 @@
 
 #### Defined in
 
-[lib/error/invalid-input.ts:10](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/error/invalid-input.ts#L10)
+[lib/error/invalid-input.ts:10](https://github.com/redis/redis-om-node/blob/24eacdb/lib/error/invalid-input.ts#L10)
 
 ## Properties
 
@@ -170,7 +170,7 @@ node_modules/@types/node/globals.d.ts:13
 
 #### Defined in
 
-[lib/error/invalid-input.ts:16](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/error/invalid-input.ts#L16)
+[lib/error/invalid-input.ts:16](https://github.com/redis/redis-om-node/blob/24eacdb/lib/error/invalid-input.ts#L16)
 
 ___
 
@@ -184,7 +184,7 @@ ___
 
 #### Defined in
 
-[lib/error/invalid-input.ts:17](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/error/invalid-input.ts#L17)
+[lib/error/invalid-input.ts:17](https://github.com/redis/redis-om-node/blob/24eacdb/lib/error/invalid-input.ts#L17)
 
 ___
 
@@ -198,7 +198,7 @@ ___
 
 #### Defined in
 
-[lib/error/invalid-input.ts:18](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/error/invalid-input.ts#L18)
+[lib/error/invalid-input.ts:18](https://github.com/redis/redis-om-node/blob/24eacdb/lib/error/invalid-input.ts#L18)
 
 ## Methods
 

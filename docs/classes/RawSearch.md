@@ -37,6 +37,9 @@ The type of [Entity](../README.md#entity) being sought.
 - [first](RawSearch.md#first)
 - [firstId](RawSearch.md#firstid)
 - [firstKey](RawSearch.md#firstkey)
+- [iterator](RawSearch.md#iterator)
+- [iteratorOfIds](RawSearch.md#iteratorofids)
+- [iteratorOfKeys](RawSearch.md#iteratorofkeys)
 - [max](RawSearch.md#max)
 - [maxId](RawSearch.md#maxid)
 - [maxKey](RawSearch.md#maxkey)
@@ -53,6 +56,9 @@ The type of [Entity](../README.md#entity) being sought.
 - [returnFirst](RawSearch.md#returnfirst)
 - [returnFirstId](RawSearch.md#returnfirstid)
 - [returnFirstKey](RawSearch.md#returnfirstkey)
+- [returnIterator](RawSearch.md#returniterator)
+- [returnIteratorOfIds](RawSearch.md#returniteratorofids)
+- [returnIteratorOfKeys](RawSearch.md#returniteratorofkeys)
 - [returnMax](RawSearch.md#returnmax)
 - [returnMaxId](RawSearch.md#returnmaxid)
 - [returnMaxKey](RawSearch.md#returnmaxkey)
@@ -88,7 +94,7 @@ AbstractSearch.return
 
 #### Defined in
 
-[lib/search/search.ts:329](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/search/search.ts#L329)
+[lib/search/search.ts:361](https://github.com/redis/redis-om-node/blob/24eacdb/lib/search/search.ts#L361)
 
 ## Methods
 
@@ -124,7 +130,7 @@ An array of [Entities](../README.md#entity) matching the query.
 
 #### Defined in
 
-[lib/search/search.ts:285](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/search/search.ts#L285)
+[lib/search/search.ts:272](https://github.com/redis/redis-om-node/blob/24eacdb/lib/search/search.ts#L272)
 
 ___
 
@@ -160,7 +166,7 @@ An array of entity IDs matching the query.
 
 #### Defined in
 
-[lib/search/search.ts:303](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/search/search.ts#L303)
+[lib/search/search.ts:290](https://github.com/redis/redis-om-node/blob/24eacdb/lib/search/search.ts#L290)
 
 ___
 
@@ -196,7 +202,7 @@ An array of key names matching the query.
 
 #### Defined in
 
-[lib/search/search.ts:321](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/search/search.ts#L321)
+[lib/search/search.ts:308](https://github.com/redis/redis-om-node/blob/24eacdb/lib/search/search.ts#L308)
 
 ___
 
@@ -216,7 +222,7 @@ Returns the number of [Entities](../README.md#entity) that match this query.
 
 #### Defined in
 
-[lib/search/search.ts:209](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/search/search.ts#L209)
+[lib/search/search.ts:196](https://github.com/redis/redis-om-node/blob/24eacdb/lib/search/search.ts#L196)
 
 ___
 
@@ -236,7 +242,7 @@ Returns the first [Entity](../README.md#entity) that matches this query.
 
 #### Defined in
 
-[lib/search/search.ts:250](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/search/search.ts#L250)
+[lib/search/search.ts:237](https://github.com/redis/redis-om-node/blob/24eacdb/lib/search/search.ts#L237)
 
 ___
 
@@ -256,7 +262,7 @@ Returns the first entity ID that matches this query.
 
 #### Defined in
 
-[lib/search/search.ts:258](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/search/search.ts#L258)
+[lib/search/search.ts:245](https://github.com/redis/redis-om-node/blob/24eacdb/lib/search/search.ts#L245)
 
 ___
 
@@ -276,7 +282,106 @@ Returns the first key name that matches this query.
 
 #### Defined in
 
-[lib/search/search.ts:266](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/search/search.ts#L266)
+[lib/search/search.ts:253](https://github.com/redis/redis-om-node/blob/24eacdb/lib/search/search.ts#L253)
+
+___
+
+### iterator
+
+▸ **iterator**(`options?`): `AsyncGenerator`<`T`, `any`, `unknown`\>
+
+Returns an async generator that yields [Entities](../README.md#entity) matching
+the query. Internally, this method makes multiple calls to Redis as you
+consume the iterator until all the [Entities](../README.md#entity) are returned.
+You can specify the batch size for these calls by setting the `pageSize`
+property on the options:
+
+#### Parameters
+
+| Name | Type | Default value | Description |
+| :------ | :------ | :------ | :------ |
+| `options` | `Object` | `undefined` | Options for the call. |
+| `options.pageSize` | `number` | `10` | Number of search results in a batch. |
+
+#### Returns
+
+`AsyncGenerator`<`T`, `any`, `unknown`\>
+
+An async generator that yields [Entities](../README.md#entity) matching the query.
+
+#### Inherited from
+
+[AbstractSearch](AbstractSearch.md).[iterator](AbstractSearch.md#iterator)
+
+#### Defined in
+
+[lib/search/search.ts:323](https://github.com/redis/redis-om-node/blob/24eacdb/lib/search/search.ts#L323)
+
+___
+
+### iteratorOfIds
+
+▸ **iteratorOfIds**(`options?`): `AsyncGenerator`<`string`, `any`, `unknown`\>
+
+Returns an async generator that yields entity IDs matching the query.
+Internally, this method makes multiple calls to Redis as you consume the
+iterator until all the [Entities](../README.md#entity) are returned. You can
+specify the batch size for these calls by setting the `pageSize` property
+on the options:
+
+#### Parameters
+
+| Name | Type | Default value | Description |
+| :------ | :------ | :------ | :------ |
+| `options` | `Object` | `undefined` | Options for the call. |
+| `options.pageSize` | `number` | `10` | Number of search results in a batch. |
+
+#### Returns
+
+`AsyncGenerator`<`string`, `any`, `unknown`\>
+
+An async generator that yields entity IDs matching the query.
+
+#### Inherited from
+
+[AbstractSearch](AbstractSearch.md).[iteratorOfIds](AbstractSearch.md#iteratorofids)
+
+#### Defined in
+
+[lib/search/search.ts:338](https://github.com/redis/redis-om-node/blob/24eacdb/lib/search/search.ts#L338)
+
+___
+
+### iteratorOfKeys
+
+▸ **iteratorOfKeys**(`options?`): `AsyncGenerator`<`string`, `any`, `unknown`\>
+
+Returns an async generator that yields key names in Redis matching the
+query. Internally, this method makes multiple calls to Redis as you
+consume the iterator until all the [Entities](../README.md#entity) are returned.
+You can specify the batch size for these calls by setting the `pageSize`
+property on the options:
+
+#### Parameters
+
+| Name | Type | Default value | Description |
+| :------ | :------ | :------ | :------ |
+| `options` | `Object` | `undefined` | Options for the call. |
+| `options.pageSize` | `number` | `10` | Number of search results in a batch. |
+
+#### Returns
+
+`AsyncGenerator`<`string`, `any`, `unknown`\>
+
+An async generator that yields key names matching the query.
+
+#### Inherited from
+
+[AbstractSearch](AbstractSearch.md).[iteratorOfKeys](AbstractSearch.md#iteratorofkeys)
+
+#### Defined in
+
+[lib/search/search.ts:353](https://github.com/redis/redis-om-node/blob/24eacdb/lib/search/search.ts#L353)
 
 ___
 
@@ -304,7 +409,7 @@ The entity ID [Entity](../README.md#entity) with the maximal value
 
 #### Defined in
 
-[lib/search/search.ts:183](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/search/search.ts#L183)
+[lib/search/search.ts:170](https://github.com/redis/redis-om-node/blob/24eacdb/lib/search/search.ts#L170)
 
 ___
 
@@ -332,7 +437,7 @@ The entity ID with the maximal value
 
 #### Defined in
 
-[lib/search/search.ts:192](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/search/search.ts#L192)
+[lib/search/search.ts:179](https://github.com/redis/redis-om-node/blob/24eacdb/lib/search/search.ts#L179)
 
 ___
 
@@ -360,7 +465,7 @@ The key name with the maximal value
 
 #### Defined in
 
-[lib/search/search.ts:201](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/search/search.ts#L201)
+[lib/search/search.ts:188](https://github.com/redis/redis-om-node/blob/24eacdb/lib/search/search.ts#L188)
 
 ___
 
@@ -388,7 +493,7 @@ The [Entity](../README.md#entity) with the minimal value
 
 #### Defined in
 
-[lib/search/search.ts:156](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/search/search.ts#L156)
+[lib/search/search.ts:143](https://github.com/redis/redis-om-node/blob/24eacdb/lib/search/search.ts#L143)
 
 ___
 
@@ -416,7 +521,7 @@ The entity ID with the minimal value
 
 #### Defined in
 
-[lib/search/search.ts:165](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/search/search.ts#L165)
+[lib/search/search.ts:152](https://github.com/redis/redis-om-node/blob/24eacdb/lib/search/search.ts#L152)
 
 ___
 
@@ -444,7 +549,7 @@ The key name with the minimal value
 
 #### Defined in
 
-[lib/search/search.ts:174](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/search/search.ts#L174)
+[lib/search/search.ts:161](https://github.com/redis/redis-om-node/blob/24eacdb/lib/search/search.ts#L161)
 
 ___
 
@@ -473,7 +578,7 @@ An array of [Entities](../README.md#entity) matching the query.
 
 #### Defined in
 
-[lib/search/search.ts:220](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/search/search.ts#L220)
+[lib/search/search.ts:207](https://github.com/redis/redis-om-node/blob/24eacdb/lib/search/search.ts#L207)
 
 ___
 
@@ -502,7 +607,7 @@ An array of strings matching the query.
 
 #### Defined in
 
-[lib/search/search.ts:231](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/search/search.ts#L231)
+[lib/search/search.ts:218](https://github.com/redis/redis-om-node/blob/24eacdb/lib/search/search.ts#L218)
 
 ___
 
@@ -531,7 +636,7 @@ An array of strings matching the query.
 
 #### Defined in
 
-[lib/search/search.ts:242](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/search/search.ts#L242)
+[lib/search/search.ts:229](https://github.com/redis/redis-om-node/blob/24eacdb/lib/search/search.ts#L229)
 
 ___
 
@@ -558,7 +663,7 @@ Alias for [all](Search.md#all).
 
 #### Defined in
 
-[lib/search/search.ts:427](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/search/search.ts#L427)
+[lib/search/search.ts:459](https://github.com/redis/redis-om-node/blob/24eacdb/lib/search/search.ts#L459)
 
 ___
 
@@ -585,7 +690,7 @@ Alias for [allIds](Search.md#allids).
 
 #### Defined in
 
-[lib/search/search.ts:434](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/search/search.ts#L434)
+[lib/search/search.ts:466](https://github.com/redis/redis-om-node/blob/24eacdb/lib/search/search.ts#L466)
 
 ___
 
@@ -612,7 +717,7 @@ Alias for [allKeys](Search.md#allkeys).
 
 #### Defined in
 
-[lib/search/search.ts:441](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/search/search.ts#L441)
+[lib/search/search.ts:473](https://github.com/redis/redis-om-node/blob/24eacdb/lib/search/search.ts#L473)
 
 ___
 
@@ -632,7 +737,7 @@ Alias for [count](Search.md#count).
 
 #### Defined in
 
-[lib/search/search.ts:378](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/search/search.ts#L378)
+[lib/search/search.ts:410](https://github.com/redis/redis-om-node/blob/24eacdb/lib/search/search.ts#L410)
 
 ___
 
@@ -652,7 +757,7 @@ Alias for [first](Search.md#first).
 
 #### Defined in
 
-[lib/search/search.ts:406](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/search/search.ts#L406)
+[lib/search/search.ts:438](https://github.com/redis/redis-om-node/blob/24eacdb/lib/search/search.ts#L438)
 
 ___
 
@@ -672,7 +777,7 @@ Alias for [firstId](Search.md#firstid).
 
 #### Defined in
 
-[lib/search/search.ts:413](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/search/search.ts#L413)
+[lib/search/search.ts:445](https://github.com/redis/redis-om-node/blob/24eacdb/lib/search/search.ts#L445)
 
 ___
 
@@ -692,7 +797,88 @@ Alias for [firstKey](Search.md#firstkey).
 
 #### Defined in
 
-[lib/search/search.ts:420](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/search/search.ts#L420)
+[lib/search/search.ts:452](https://github.com/redis/redis-om-node/blob/24eacdb/lib/search/search.ts#L452)
+
+___
+
+### returnIterator
+
+▸ **returnIterator**(`options?`): `AsyncGenerator`<`T`, `any`, `unknown`\>
+
+Alias for [iterator](Search.md#iterator).
+
+#### Parameters
+
+| Name | Type | Default value |
+| :------ | :------ | :------ |
+| `options` | `Object` | `undefined` |
+| `options.pageSize` | `number` | `10` |
+
+#### Returns
+
+`AsyncGenerator`<`T`, `any`, `unknown`\>
+
+#### Inherited from
+
+[AbstractSearch](AbstractSearch.md).[returnIterator](AbstractSearch.md#returniterator)
+
+#### Defined in
+
+[lib/search/search.ts:480](https://github.com/redis/redis-om-node/blob/24eacdb/lib/search/search.ts#L480)
+
+___
+
+### returnIteratorOfIds
+
+▸ **returnIteratorOfIds**(`options?`): `AsyncGenerator`<`string`, `any`, `unknown`\>
+
+Alias for [iteratorOfIds](Search.md#iteratorofids).
+
+#### Parameters
+
+| Name | Type | Default value |
+| :------ | :------ | :------ |
+| `options` | `Object` | `undefined` |
+| `options.pageSize` | `number` | `10` |
+
+#### Returns
+
+`AsyncGenerator`<`string`, `any`, `unknown`\>
+
+#### Inherited from
+
+[AbstractSearch](AbstractSearch.md).[returnIteratorOfIds](AbstractSearch.md#returniteratorofids)
+
+#### Defined in
+
+[lib/search/search.ts:487](https://github.com/redis/redis-om-node/blob/24eacdb/lib/search/search.ts#L487)
+
+___
+
+### returnIteratorOfKeys
+
+▸ **returnIteratorOfKeys**(`options?`): `AsyncGenerator`<`string`, `any`, `unknown`\>
+
+Alias for [iteratorOfKeys](Search.md#iteratorofkeys).
+
+#### Parameters
+
+| Name | Type | Default value |
+| :------ | :------ | :------ |
+| `options` | `Object` | `undefined` |
+| `options.pageSize` | `number` | `10` |
+
+#### Returns
+
+`AsyncGenerator`<`string`, `any`, `unknown`\>
+
+#### Inherited from
+
+[AbstractSearch](AbstractSearch.md).[returnIteratorOfKeys](AbstractSearch.md#returniteratorofkeys)
+
+#### Defined in
+
+[lib/search/search.ts:494](https://github.com/redis/redis-om-node/blob/24eacdb/lib/search/search.ts#L494)
 
 ___
 
@@ -718,7 +904,7 @@ Alias for [max](Search.md#max).
 
 #### Defined in
 
-[lib/search/search.ts:357](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/search/search.ts#L357)
+[lib/search/search.ts:389](https://github.com/redis/redis-om-node/blob/24eacdb/lib/search/search.ts#L389)
 
 ___
 
@@ -744,7 +930,7 @@ Alias for [maxId](Search.md#maxid).
 
 #### Defined in
 
-[lib/search/search.ts:364](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/search/search.ts#L364)
+[lib/search/search.ts:396](https://github.com/redis/redis-om-node/blob/24eacdb/lib/search/search.ts#L396)
 
 ___
 
@@ -770,7 +956,7 @@ Alias for [maxKey](Search.md#maxkey).
 
 #### Defined in
 
-[lib/search/search.ts:371](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/search/search.ts#L371)
+[lib/search/search.ts:403](https://github.com/redis/redis-om-node/blob/24eacdb/lib/search/search.ts#L403)
 
 ___
 
@@ -796,7 +982,7 @@ Alias for [min](Search.md#min).
 
 #### Defined in
 
-[lib/search/search.ts:336](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/search/search.ts#L336)
+[lib/search/search.ts:368](https://github.com/redis/redis-om-node/blob/24eacdb/lib/search/search.ts#L368)
 
 ___
 
@@ -822,7 +1008,7 @@ Alias for [minId](Search.md#minid).
 
 #### Defined in
 
-[lib/search/search.ts:343](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/search/search.ts#L343)
+[lib/search/search.ts:375](https://github.com/redis/redis-om-node/blob/24eacdb/lib/search/search.ts#L375)
 
 ___
 
@@ -848,7 +1034,7 @@ Alias for [minKey](Search.md#minkey).
 
 #### Defined in
 
-[lib/search/search.ts:350](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/search/search.ts#L350)
+[lib/search/search.ts:382](https://github.com/redis/redis-om-node/blob/24eacdb/lib/search/search.ts#L382)
 
 ___
 
@@ -875,7 +1061,7 @@ Alias for [page](Search.md#page).
 
 #### Defined in
 
-[lib/search/search.ts:385](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/search/search.ts#L385)
+[lib/search/search.ts:417](https://github.com/redis/redis-om-node/blob/24eacdb/lib/search/search.ts#L417)
 
 ___
 
@@ -902,7 +1088,7 @@ Alias for [pageOfIds](Search.md#pageofids).
 
 #### Defined in
 
-[lib/search/search.ts:392](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/search/search.ts#L392)
+[lib/search/search.ts:424](https://github.com/redis/redis-om-node/blob/24eacdb/lib/search/search.ts#L424)
 
 ___
 
@@ -929,7 +1115,7 @@ Alias for [pageOfKeys](Search.md#pageofkeys).
 
 #### Defined in
 
-[lib/search/search.ts:399](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/search/search.ts#L399)
+[lib/search/search.ts:431](https://github.com/redis/redis-om-node/blob/24eacdb/lib/search/search.ts#L431)
 
 ___
 
@@ -955,7 +1141,7 @@ Alias for [sortAscending](Search.md#sortascending).
 
 #### Defined in
 
-[lib/search/search.ts:92](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/search/search.ts#L92)
+[lib/search/search.ts:90](https://github.com/redis/redis-om-node/blob/24eacdb/lib/search/search.ts#L90)
 
 ___
 
@@ -983,7 +1169,7 @@ this
 
 #### Defined in
 
-[lib/search/search.ts:69](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/search/search.ts#L69)
+[lib/search/search.ts:67](https://github.com/redis/redis-om-node/blob/24eacdb/lib/search/search.ts#L67)
 
 ___
 
@@ -998,7 +1184,7 @@ Applies sorting for the query.
 | Name | Type | Default value | Description |
 | :------ | :------ | :------ | :------ |
 | `fieldName` | `Exclude`<keyof `T`, keyof [`EntityInternal`](../README.md#entityinternal)\> | `undefined` | The field to sort by. |
-| `order` | ``"ASC"`` \| ``"DESC"`` | `"ASC"` | The order of returned [Entities](../README.md#entity) Defaults to `ASC` (ascending) if not specified |
+| `order` | ``"ASC"`` \| ``"DESC"`` | `'ASC'` | The order of returned [Entities](../README.md#entity) Defaults to `ASC` (ascending) if not specified |
 
 #### Returns
 
@@ -1012,7 +1198,7 @@ this
 
 #### Defined in
 
-[lib/search/search.ts:102](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/search/search.ts#L102)
+[lib/search/search.ts:100](https://github.com/redis/redis-om-node/blob/24eacdb/lib/search/search.ts#L100)
 
 ___
 
@@ -1038,7 +1224,7 @@ Alias for [sortDescending](Search.md#sortdescending).
 
 #### Defined in
 
-[lib/search/search.ts:76](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/search/search.ts#L76)
+[lib/search/search.ts:74](https://github.com/redis/redis-om-node/blob/24eacdb/lib/search/search.ts#L74)
 
 ___
 
@@ -1066,4 +1252,4 @@ this
 
 #### Defined in
 
-[lib/search/search.ts:85](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/search/search.ts#L85)
+[lib/search/search.ts:83](https://github.com/redis/redis-om-node/blob/24eacdb/lib/search/search.ts#L83)

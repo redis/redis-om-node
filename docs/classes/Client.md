@@ -57,7 +57,7 @@ Returns the underlying Node Redis connection being used.
 
 #### Defined in
 
-[lib/client/client.ts:70](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/client/client.ts#L70)
+[lib/client/client.ts:70](https://github.com/redis/redis-om-node/blob/24eacdb/lib/client/client.ts#L70)
 
 ## Methods
 
@@ -73,7 +73,7 @@ Close the connection to Redis.
 
 #### Defined in
 
-[lib/client/client.ts:127](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/client/client.ts#L127)
+[lib/client/client.ts:127](https://github.com/redis/redis-om-node/blob/24eacdb/lib/client/client.ts#L127)
 
 ___
 
@@ -103,7 +103,7 @@ A repository for the provided schema.
 
 #### Defined in
 
-[lib/client/client.ts:119](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/client/client.ts#L119)
+[lib/client/client.ts:119](https://github.com/redis/redis-om-node/blob/24eacdb/lib/client/client.ts#L119)
 
 ___
 
@@ -119,7 +119,7 @@ Whether a connection is already open.
 
 #### Defined in
 
-[lib/client/client.ts:213](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/client/client.ts#L213)
+[lib/client/client.ts:213](https://github.com/redis/redis-om-node/blob/24eacdb/lib/client/client.ts#L213)
 
 ___
 
@@ -143,7 +143,7 @@ This [Client](Client.md) instance.
 
 #### Defined in
 
-[lib/client/client.ts:104](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/client/client.ts#L104)
+[lib/client/client.ts:104](https://github.com/redis/redis-om-node/blob/24eacdb/lib/client/client.ts#L104)
 
 ___
 
@@ -168,7 +168,7 @@ This [Client](Client.md) instance.
 
 #### Defined in
 
-[lib/client/client.ts:81](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/client/client.ts#L81)
+[lib/client/client.ts:81](https://github.com/redis/redis-om-node/blob/24eacdb/lib/client/client.ts#L81)
 
 ___
 
@@ -193,4 +193,4 @@ This [Client](Client.md) instance.
 
 #### Defined in
 
-[lib/client/client.ts:93](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/client/client.ts#L93)
+[lib/client/client.ts:93](https://github.com/redis/redis-om-node/blob/24eacdb/lib/client/client.ts#L93)

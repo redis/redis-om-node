@@ -85,7 +85,7 @@ Constructs a Schema.
 
 #### Defined in
 
-[lib/schema/schema.ts:59](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/schema/schema.ts#L59)
+[lib/schema/schema.ts:59](https://github.com/redis/redis-om-node/blob/24eacdb/lib/schema/schema.ts#L59)
 
 ## Accessors
 
@@ -102,7 +102,7 @@ that this Schema uses to store [Entities](../README.md#entity) in Redis.
 
 #### Defined in
 
-[lib/schema/schema.ts:102](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/schema/schema.ts#L102)
+[lib/schema/schema.ts:102](https://github.com/redis/redis-om-node/blob/24eacdb/lib/schema/schema.ts#L102)
 
 ___
 
@@ -118,7 +118,7 @@ The [Fields](Field.md) defined by this Schema.
 
 #### Defined in
 
-[lib/schema/schema.ts:78](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/schema/schema.ts#L78)
+[lib/schema/schema.ts:78](https://github.com/redis/redis-om-node/blob/24eacdb/lib/schema/schema.ts#L78)
 
 ___
 
@@ -135,7 +135,7 @@ changed when calling [createIndex](Repository.md#createindex).
 
 #### Defined in
 
-[lib/schema/schema.ts:130](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/schema/schema.ts#L130)
+[lib/schema/schema.ts:130](https://github.com/redis/redis-om-node/blob/24eacdb/lib/schema/schema.ts#L130)
 
 ___
 
@@ -151,7 +151,7 @@ The configured name for the RediSearch index hash for this Schema.
 
 #### Defined in
 
-[lib/schema/schema.ts:96](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/schema/schema.ts#L96)
+[lib/schema/schema.ts:96](https://github.com/redis/redis-om-node/blob/24eacdb/lib/schema/schema.ts#L96)
 
 ___
 
@@ -167,7 +167,7 @@ The configured name for the RediSearch index for this Schema.
 
 #### Defined in
 
-[lib/schema/schema.ts:93](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/schema/schema.ts#L93)
+[lib/schema/schema.ts:93](https://github.com/redis/redis-om-node/blob/24eacdb/lib/schema/schema.ts#L93)
 
 ___
 
@@ -185,7 +185,7 @@ idStrategy returns `12345` then the generated key would be `foo:12345`.
 
 #### Defined in
 
-[lib/schema/schema.ts:73](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/schema/schema.ts#L73)
+[lib/schema/schema.ts:73](https://github.com/redis/redis-om-node/blob/24eacdb/lib/schema/schema.ts#L73)
 
 ___
 
@@ -202,7 +202,7 @@ than `CUSTOM`.
 
 #### Defined in
 
-[lib/schema/schema.ts:114](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/schema/schema.ts#L114)
+[lib/schema/schema.ts:114](https://github.com/redis/redis-om-node/blob/24eacdb/lib/schema/schema.ts#L114)
 
 ___
 
@@ -219,7 +219,7 @@ or `CUSTOM`. See [SchemaOptions](../README.md#schemaoptions) for more details.
 
 #### Defined in
 
-[lib/schema/schema.ts:108](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/schema/schema.ts#L108)
+[lib/schema/schema.ts:108](https://github.com/redis/redis-om-node/blob/24eacdb/lib/schema/schema.ts#L108)
 
 ## Methods
 
@@ -243,7 +243,7 @@ The [Field](Field.md), or null of not found.
 
 #### Defined in
 
-[lib/schema/schema.ts:88](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/schema/schema.ts#L88)
+[lib/schema/schema.ts:88](https://github.com/redis/redis-om-node/blob/24eacdb/lib/schema/schema.ts#L88)
 
 ___
 
@@ -261,4 +261,4 @@ The generated id.
 
 #### Defined in
 
-[lib/schema/schema.ts:121](https://github.com/redis/redis-om-node/blob/1acd1cf/lib/schema/schema.ts#L121)
+[lib/schema/schema.ts:121](https://github.com/redis/redis-om-node/blob/24eacdb/lib/schema/schema.ts#L121)
