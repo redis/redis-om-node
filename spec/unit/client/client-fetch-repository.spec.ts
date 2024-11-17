@@ -7,55 +7,60 @@ import { Schema } from '$lib/schema/schema'
 
 vi.mock('$lib/repository')
 
-describe("Client", () => {
-
+describe('Client', () => {
   let client: Client
 
-  beforeEach(() => { client = new Client() })
-  afterEach(() => { client.close() })
+  beforeEach(() => {
+    client = new Client()
+  })
+  afterEach(() => {
+    client.close()
+  })
 
-  it("passes", () => expect(true).toBe(true))
+  it('passes', () => expect(true).toBe(true))
 
-  describe("#fetchRepository", () => {
-
+  describe('#fetchRepository', () => {
     let repository: Repository
     let schema: Schema
 
-    describe("when fetching a Repository", () => {
+    describe('when fetching a Repository', () => {
       beforeAll(() => {
-        schema = new Schema("TestEntity", {})
+        schema = new Schema('TestEntity', {})
       })
 
-      describe("when called on an open client", () => {
-
+      describe('when called on an open client', () => {
         beforeEach(async () => {
           await client.open()
           repository = client.fetchRepository(schema)
         })
 
-        it("creates a repository with the schema and client", () => {
-          expect(Repository).toHaveBeenCalledWith(schema, client)
+        it('creates a repository with the schema and client', () => {
+          expect(Repository).toHaveBeenCalledWith(schema, client.redis)
         })
 
-        it("returns a repository", async () => {
+        it('returns a repository', async () => {
           expect(repository).toBeInstanceOf(Repository)
         })
       })
 
-      describe("when called on a closed client", () => {
+      describe('when called on a closed client', () => {
         beforeEach(async () => {
           await client.open()
           await client.close()
         })
 
-        it("errors when called on a closed client", () =>
-          expect(() => client.fetchRepository(schema))
-            .toThrowErrorOfType(RedisOmError, "Redis connection needs to be open."))
+        it('errors when called on a closed client', () =>
+          expect(() => client.fetchRepository(schema)).toThrowErrorOfType(
+            RedisOmError,
+            'Redis connection needs to be open.'
+          ))
       })
 
-      it("errors when called on a new client", () =>
-        expect(() => client.fetchRepository(schema))
-          .toThrowErrorOfType(RedisOmError, "Redis connection needs to be open."))
+      it('errors when called on a new client', () =>
+        expect(() => client.fetchRepository(schema)).toThrowErrorOfType(
+          RedisOmError,
+          'Redis connection needs to be open.'
+        ))
     })
   })
 })

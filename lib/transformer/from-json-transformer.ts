@@ -1,13 +1,23 @@
 import { JSONPath } from 'jsonpath-plus'
 import clone from 'just-clone'
 
-import { Field, Schema } from "../schema"
-import { RedisJsonData } from "../client"
+import { Field, Schema } from '../schema'
+import { RedisJsonData } from '../client'
 
-import { convertEpochToDate, convertKnownValueToString, convertStringToPoint, isArray, isBoolean, isNull, isNumber, isPointString, isString, stringifyError } from "./transformer-common"
+import {
+  convertEpochToDate,
+  convertKnownValueToString,
+  convertStringToPoint,
+  isArray,
+  isBoolean,
+  isNull,
+  isNumber,
+  isPointString,
+  isString,
+  stringifyError
+} from './transformer-common'
 import { EntityData } from '../entity'
 import { InvalidJsonValue, NullJsonValue } from '../error'
-
 
 export function fromRedisJson(schema: Schema, json: RedisJsonData): EntityData {
   const data: EntityData = clone(json)
@@ -17,7 +27,6 @@ export function fromRedisJson(schema: Schema, json: RedisJsonData): EntityData {
 
 function convertFromRedisJsonKnown(schema: Schema, data: EntityData) {
   schema.fields.forEach(field => {
-
     const path = field.jsonPath
     const results = JSONPath({ resultType: 'all', path, json: data })
 
@@ -73,7 +82,6 @@ function convertKnownValueFromJson(field: Field, value: any): any {
 }
 
 function convertKnownArrayValueFromJson(field: Field, value: any) {
-
   if (isNull(value)) throw new NullJsonValue(field)
 
   switch (field.type) {

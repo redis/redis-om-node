@@ -1,36 +1,32 @@
 import { vi } from 'vitest'
 
-export const ft = {
-  create: vi.fn(),
-  search: vi.fn(),
-  dropIndex: vi.fn()
-}
+export const ft: any = {}
+ft.create = vi.fn()
+ft.search = vi.fn()
+ft.dropIndex = vi.fn()
 
-export const json = {
-  get: vi.fn(),
-  set: vi.fn()
-}
+export const json: any = {}
+json.get = vi.fn()
+json.set = vi.fn()
 
-export const redis = {
-  ft,
-  json,
-  connect: vi.fn(),
-  quit: vi.fn(),
-  get: vi.fn(),
-  set: vi.fn(),
-  hGetAll: vi.fn(),
-  expire: vi.fn(),
-  expireAt: vi.fn(),
-  sendCommand: vi.fn(),
-  unlink: vi.fn(),
-  multi: vi.fn().mockImplementation(() => multi)
-}
+export const multi: any = {}
+multi.unlink = vi.fn().mockImplementation(() => multi)
+multi.hSet = vi.fn().mockImplementation(() => multi)
+multi.exec = vi.fn()
 
-export const multi = {
-  unlink: vi.fn().mockImplementation(() => multi),
-  hSet: vi.fn().mockImplementation(() => multi),
-  exec: vi.fn().mockImplementation(() => redis)
-}
+export const redis: any = {}
+redis.ft = ft
+redis.json = json
+redis.connect = vi.fn().mockResolvedValue(redis)
+redis.quit = vi.fn()
+redis.get = vi.fn()
+redis.set = vi.fn()
+redis.hGetAll = vi.fn()
+redis.expire = vi.fn()
+redis.expireAt = vi.fn()
+redis.sendCommand = vi.fn()
+redis.unlink = vi.fn()
+redis.multi = vi.fn().mockImplementation(() => multi)
 
 export const createClient = vi.fn(() => redis)
 

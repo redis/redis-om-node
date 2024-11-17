@@ -1,30 +1,34 @@
-import '../helpers/mock-client'
+import { createClient } from '../helpers/mock-redis'
 
-import { Client } from '$lib/client'
+import { RedisConnection } from '$lib/client'
 import { Repository } from '$lib/repository'
 import { Schema } from '$lib/schema'
 
-const simpleSchema = new Schema("SimpleEntity", {}, { dataStructure: 'HASH' })
+const simpleSchema = new Schema('SimpleEntity', {}, { dataStructure: 'HASH' })
 
-describe("Repository", () => {
-  describe("#expire", () => {
-
-    let client: Client
+describe('Repository', () => {
+  describe('#expire', () => {
+    let redis: RedisConnection
     let repository: Repository
 
-    beforeAll(() => { client = new Client() })
-    beforeEach(() => { repository = new Repository(simpleSchema, client) })
-
-    it("expires a single entity", async () => {
-      await repository.expire('foo', 60)
-      expect(client.expire).toHaveBeenCalledWith('SimpleEntity:foo', 60)
+    beforeAll(async () => {
+      redis = await createClient().connect()
     })
 
-    it("expires a multiple entities", async () => {
+    beforeEach(() => {
+      repository = new Repository(simpleSchema, redis)
+    })
+
+    it('expires a single entity', async () => {
+      await repository.expire('foo', 60)
+      expect(redis.expire).toHaveBeenCalledWith('SimpleEntity:foo', 60)
+    })
+
+    it('expires a multiple entities', async () => {
       await repository.expire(['foo', 'bar', 'baz'], 60)
-      expect(client.expire).toHaveBeenNthCalledWith(1, 'SimpleEntity:foo', 60)
-      expect(client.expire).toHaveBeenNthCalledWith(2, 'SimpleEntity:bar', 60)
-      expect(client.expire).toHaveBeenNthCalledWith(3, 'SimpleEntity:baz', 60)
+      expect(redis.expire).toHaveBeenNthCalledWith(1, 'SimpleEntity:foo', 60)
+      expect(redis.expire).toHaveBeenNthCalledWith(2, 'SimpleEntity:bar', 60)
+      expect(redis.expire).toHaveBeenNthCalledWith(3, 'SimpleEntity:baz', 60)
     })
   })
 })

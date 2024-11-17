@@ -19,6 +19,8 @@ export type SearchResults = {
   documents: SearchDocument[]
 }
 
+// TODO: Complete removing this type from Search class
+
 /** @internal This is a defintion for the return type of calls to ft.search in Node Redis.  */
 export type SearchDocument = {
   id: string
@@ -67,8 +69,9 @@ export class Client {
   #redis?: RedisConnection
 
   /** Returns the underlying Node Redis connection being used. */
-  get redis() {
-    return this.#redis
+  get redis(): RedisConnection {
+    this.#validateRedisOpen() // validates connection defined
+    return this.#redis as RedisConnection
   }
 
   /**
@@ -117,8 +120,7 @@ export class Client {
    * @returns A repository for the provided schema.
    */
   fetchRepository<T extends Schema<any>>(schema: T): Repository<InferSchema<T>> {
-    this.#validateRedisOpen()
-    return new Repository(schema, this)
+    return new Repository(schema, this.redis)
   }
 
   /**
@@ -130,81 +132,9 @@ export class Client {
   }
 
   /** @internal */
-  async createIndex(indexName: string, schema: RediSearchSchema, options: CreateOptions) {
-    this.#validateRedisOpen()
-    await this.redis.ft.create(indexName, schema, options)
-  }
-
-  /** @internal */
-  async dropIndex(indexName: string) {
-    this.#validateRedisOpen()
-    await this.redis.ft.dropIndex(indexName)
-  }
-
-  /** @internal */
   async search(indexName: string, query: string, options?: SearchOptions): Promise<SearchResults> {
-    this.#validateRedisOpen()
     if (options) return await this.redis.ft.search(indexName, query, options)
     return await this.redis.ft.search(indexName, query)
-  }
-
-  /** @internal */
-  async unlink(...keys: string[]) {
-    this.#validateRedisOpen()
-    if (keys.length > 0) await this.redis.unlink(keys)
-  }
-
-  /** @internal */
-  async expire(key: string, ttl: number) {
-    this.#validateRedisOpen()
-    await this.redis.expire(key, ttl)
-  }
-
-  /** @internal */
-  async expireAt(key: string, timestamp: Date) {
-    this.#validateRedisOpen()
-    await this.redis.expireAt(key, timestamp)
-  }
-
-  /** @internal */
-  async get(key: string): Promise<string | null> {
-    this.#validateRedisOpen()
-    return this.redis.get(key)
-  }
-
-  /** @internal */
-  async set(key: string, value: string) {
-    this.#validateRedisOpen()
-    await this.redis.set(key, value)
-  }
-
-  /** @internal */
-  async hgetall(key: string): Promise<RedisHashData> {
-    this.#validateRedisOpen()
-    return this.redis.hGetAll(key)
-  }
-
-  /** @internal */
-  async hsetall(key: string, data: RedisHashData) {
-    this.#validateRedisOpen()
-    await this.redis
-      .multi()
-        .unlink(key)
-        .hSet(key, data)
-      .exec()
-  }
-
-  /** @internal */
-  async jsonget(key: string): Promise<RedisJsonData | null> {
-    this.#validateRedisOpen()
-    const json = await this.redis.json.get(key, { path: '$' })
-    return json === null ? null : (json as RedisJsonData)[0]
-  }
-
-  /** @internal */
-  async jsonset(key: string, data: RedisJsonData) {
-    this.#validateRedisOpen()
-    await this.redis.json.set(key, '$', data)
   }
 
   /**
@@ -215,6 +145,6 @@ export class Client {
   }
 
   #validateRedisOpen(): asserts this is { redis: RedisConnection } {
-    if (!this.redis) throw new RedisOmError("Redis connection needs to be open.")
+    if (!this.#redis) throw new RedisOmError('Redis connection needs to be open.')
   }
 }

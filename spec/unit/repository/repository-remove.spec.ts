@@ -1,42 +1,42 @@
-import '../helpers/mock-client'
+import { createClient } from '../helpers/mock-redis'
 
-import { Client } from '$lib/client'
+import { RedisConnection } from '$lib/client'
 import { Repository } from '$lib/repository'
 import { Schema } from '$lib/schema'
 
-const simpleSchema = new Schema("SimpleEntity", {}, { dataStructure: 'HASH' })
+const simpleSchema = new Schema('SimpleEntity', {}, { dataStructure: 'HASH' })
 
-describe("Repository", () => {
-  describe("#remove", () => {
-
-    let client: Client
+describe('Repository', () => {
+  describe('#remove', () => {
+    let redis: RedisConnection
     let repository: Repository
 
-    beforeAll(() => { client = new Client() })
-    beforeEach(() => { repository = new Repository(simpleSchema, client) })
+    beforeAll(async () => {
+      redis = await createClient().connect()
+    })
 
-    it("removes no entities", async () => {
+    beforeEach(() => {
+      repository = new Repository(simpleSchema, redis)
+    })
+
+    it('removes no entities', async () => {
       await repository.remove()
-      expect(client.unlink).not.toHaveBeenCalled()
+      expect(redis.unlink).not.toHaveBeenCalled()
     })
 
-    it("removes a single entity", async () => {
+    it('removes a single entity', async () => {
       await repository.remove('foo')
-      expect(client.unlink).toHaveBeenCalledWith('SimpleEntity:foo')
+      expect(redis.unlink).toHaveBeenCalledWith(['SimpleEntity:foo'])
     })
 
-    it("removes multiple entities", async () => {
+    it('removes multiple entities', async () => {
       await repository.remove('foo', 'bar', 'baz')
-      expect(client.unlink).toHaveBeenCalledWith(
-        'SimpleEntity:foo', 'SimpleEntity:bar', 'SimpleEntity:baz'
-      )
+      expect(redis.unlink).toHaveBeenCalledWith(['SimpleEntity:foo', 'SimpleEntity:bar', 'SimpleEntity:baz'])
     })
 
-    it("removes multiple entities discretely", async () => {
+    it('removes multiple entities discretely', async () => {
       await repository.remove(['foo', 'bar', 'baz'])
-      expect(client.unlink).toHaveBeenCalledWith(
-        'SimpleEntity:foo', 'SimpleEntity:bar', 'SimpleEntity:baz'
-      )
+      expect(redis.unlink).toHaveBeenCalledWith(['SimpleEntity:foo', 'SimpleEntity:bar', 'SimpleEntity:baz'])
     })
   })
 })

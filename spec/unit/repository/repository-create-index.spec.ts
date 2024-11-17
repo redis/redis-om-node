@@ -1,9 +1,10 @@
-import '../helpers/mock-client'
+import '../../helpers/custom-matchers'
 import '../helpers/mock-indexer'
 
 import { RediSearchSchema, SchemaFieldTypes } from 'redis'
+import { createClient } from '../helpers/mock-redis'
 
-import { Client } from '$lib/client'
+import { RedisConnection } from '$lib/client'
 import { buildRediSearchSchema } from '$lib/indexer'
 import { Repository } from '$lib/repository'
 
@@ -14,110 +15,108 @@ const bogusSchema: RediSearchSchema = {
   bar: { type: SchemaFieldTypes.TEXT }
 }
 
-describe("Repository", () => {
-
-  let client: Client
+describe('Repository', () => {
+  let redis: RedisConnection
   let repository: Repository
 
-  beforeAll(() => { client = new Client() })
+  beforeAll(async () => {
+    redis = await createClient().connect()
+  })
 
-  describe("#createIndex", () => {
-    describe("with a simple schema", () => {
-
-      beforeEach(() => { repository = new Repository(simpleSchema, client) })
+  describe('#createIndex', () => {
+    describe('with a simple schema', () => {
+      beforeEach(() => {
+        repository = new Repository(simpleSchema, redis)
+      })
 
       describe("and an index that doesn't exist", () => {
         beforeEach(async () => {
-          vi.mocked(client.get).mockResolvedValue(null)
+          vi.mocked(redis.get).mockResolvedValue(null)
           vi.mocked(buildRediSearchSchema).mockReturnValue(bogusSchema)
           await repository.createIndex()
         })
 
-        it("asks the client for the index hash", () =>
-          expect(client.get).toHaveBeenCalledWith(simpleSchema.indexHashName))
+        it('asks the redis for the index hash', () =>
+          expect(redis.get).toHaveBeenCalledWith(simpleSchema.indexHashName))
 
-        it("asks the index builder to build the index", () =>
+        it('asks the index builder to build the index', () =>
           expect(buildRediSearchSchema).toHaveBeenCalledWith(simpleSchema))
 
-        it("asks the client to create the index with data from the schema", () => {
+        it('asks the redis to create the index with data from the schema', () => {
           const { indexName, dataStructure, schemaName: prefix } = simpleSchema
-          expect(client.createIndex).toHaveBeenCalledWith(indexName, bogusSchema, {
+          expect(redis.ft.create).toHaveBeenCalledWith(indexName, bogusSchema, {
             ON: dataStructure,
             PREFIX: `${prefix}:`
           })
         })
 
-        it("asks the client to write the index hash", () =>
-          expect(client.set).toHaveBeenCalledWith(simpleSchema.indexHashName, simpleSchema.indexHash))
+        it('asks the redis to write the index hash', () =>
+          expect(redis.set).toHaveBeenCalledWith(simpleSchema.indexHashName, simpleSchema.indexHash))
       })
 
-      describe("and an index that exists and is the same", () => {
+      describe('and an index that exists and is the same', () => {
         beforeEach(async () => {
-          vi.mocked(client.get).mockResolvedValue(simpleSchema.indexHash)
+          vi.mocked(redis.get).mockResolvedValue(simpleSchema.indexHash)
           await repository.createIndex()
         })
 
-        it("asks the client for the index hash", () =>
-          expect(client.get).toHaveBeenCalledWith(simpleSchema.indexHashName))
+        it('asks the redis for the index hash', () =>
+          expect(redis.get).toHaveBeenCalledWith(simpleSchema.indexHashName))
 
-        it("doesn't ask the client to remove the current index", () =>
-          expect(client.dropIndex).not.toHaveBeenCalled())
+        it("doesn't ask the redis to remove the current index", () => expect(redis.ft.dropIndex).not.toHaveBeenCalled())
 
-        it("doesn't ask the client to remove the index hash", async () =>
-          expect(client.unlink).not.toHaveBeenCalled())
+        it("doesn't ask the redis to remove the index hash", async () => expect(redis.unlink).not.toHaveBeenCalled())
 
         it("doesn't ask the index builder to build the index", () =>
           expect(buildRediSearchSchema).not.toHaveBeenCalledWith())
 
-        it("does not ask the client to create the index with data from the schema", () =>
-          expect(client.createIndex).not.toHaveBeenCalled())
+        it('does not ask the redis to create the index with data from the schema', () =>
+          expect(redis.ft.create).not.toHaveBeenCalled())
 
-        it("does not asks the client to write the index hash", () =>
-          expect(client.set).not.toHaveBeenCalled())
+        it('does not asks the redis to write the index hash', () => expect(redis.set).not.toHaveBeenCalled())
       })
 
-      describe("and an index that exists and is different", () => {
+      describe('and an index that exists and is different', () => {
         beforeEach(async () => {
-          vi.mocked(client.get).mockResolvedValue('A_MISMATCHED_INDEX_HASH')
+          vi.mocked(redis.get).mockResolvedValue('A_MISMATCHED_INDEX_HASH')
           vi.mocked(buildRediSearchSchema).mockReturnValue(bogusSchema)
           await repository.createIndex()
         })
 
-        it("asks the client for the index hash", () =>
-          expect(client.get).toHaveBeenCalledWith(simpleSchema.indexHashName))
+        it('asks the redis for the index hash', () =>
+          expect(redis.get).toHaveBeenCalledWith(simpleSchema.indexHashName))
 
-        it("asks the client to remove the current index", () =>
-          expect(client.dropIndex).toHaveBeenCalledWith(simpleSchema.indexName))
+        it('asks the redis to remove the current index', () =>
+          expect(redis.ft.dropIndex).toHaveBeenCalledWith(simpleSchema.indexName))
 
-        it("asks the client to remove the index hash", async () =>
-          expect(client.unlink).toHaveBeenCalledWith(simpleSchema.indexHashName))
+        it('asks the redis to remove the index hash', async () =>
+          expect(redis.unlink).toHaveBeenCalledWith(simpleSchema.indexHashName))
 
-        it("asks the index builder to build the index", () =>
+        it('asks the index builder to build the index', () =>
           expect(buildRediSearchSchema).toHaveBeenCalledWith(simpleSchema))
 
-        it("asks the client to create a new index with data from the schema", () => {
+        it('asks the redis to create a new index with data from the schema', () => {
           const { indexName, dataStructure, schemaName: prefix } = simpleSchema
-          expect(client.createIndex).toHaveBeenCalledWith(indexName, bogusSchema, {
+          expect(redis.ft.create).toHaveBeenCalledWith(indexName, bogusSchema, {
             ON: dataStructure,
             PREFIX: `${prefix}:`
           })
         })
 
-        it("asks the client to write the index hash", () =>
-          expect(client.set).toHaveBeenCalledWith(simpleSchema.indexHashName, simpleSchema.indexHash))
+        it('asks the redis to write the index hash', () =>
+          expect(redis.set).toHaveBeenCalledWith(simpleSchema.indexHashName, simpleSchema.indexHash))
       })
     })
 
-    describe("with stop words turned off", () => {
-
+    describe('with stop words turned off', () => {
       beforeEach(async () => {
-        repository = new Repository(stopWordsOffSchema, client)
+        repository = new Repository(stopWordsOffSchema, redis)
         await repository.createIndex()
       })
 
-      it("asks the client to create the index with data from the schema", () => {
+      it('asks the redis to create the index with data from the schema', () => {
         const { indexName, dataStructure, schemaName: prefix, stopWords } = stopWordsOffSchema
-        expect(client.createIndex).toHaveBeenCalledWith(indexName, bogusSchema, {
+        expect(redis.ft.create).toHaveBeenCalledWith(indexName, bogusSchema, {
           ON: dataStructure,
           PREFIX: `${prefix}:`,
           STOPWORDS: stopWords
@@ -125,16 +124,15 @@ describe("Repository", () => {
       })
     })
 
-    describe("with custom stop words", () => {
-
+    describe('with custom stop words', () => {
       beforeEach(async () => {
-        repository = new Repository(customStopWordsSchema, client)
+        repository = new Repository(customStopWordsSchema, redis)
         await repository.createIndex()
       })
 
-      it("asks the client to create the index with data from the schema", () => {
+      it('asks the redis to create the index with data from the schema', () => {
         const { indexName, dataStructure, schemaName: prefix, stopWords } = customStopWordsSchema
-        expect(client.createIndex).toHaveBeenCalledWith(indexName, bogusSchema, {
+        expect(redis.ft.create).toHaveBeenCalledWith(indexName, bogusSchema, {
           ON: dataStructure,
           PREFIX: `${prefix}:`,
           STOPWORDS: stopWords
