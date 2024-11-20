@@ -2,7 +2,7 @@ import '../../helpers/custom-matchers'
 import '../helpers/mock-indexer'
 
 import { RediSearchSchema, SchemaFieldTypes } from 'redis'
-import { createClient } from '../helpers/mock-redis'
+import { mockRedis } from '../helpers/mock-redis'
 
 import { RedisConnection } from '$lib/client'
 import { buildRediSearchSchema } from '$lib/indexer'
@@ -19,8 +19,8 @@ describe('Repository', () => {
   let redis: RedisConnection
   let repository: Repository
 
-  beforeAll(async () => {
-    redis = await createClient().connect()
+  beforeEach(() => {
+    redis = mockRedis()
   })
 
   describe('#createIndex', () => {

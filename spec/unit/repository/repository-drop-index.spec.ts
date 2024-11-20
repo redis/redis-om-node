@@ -1,5 +1,5 @@
 import '../../helpers/custom-matchers'
-import { createClient } from '../helpers/mock-redis'
+import { mockRedis } from '../helpers/mock-redis'
 
 import { RedisConnection } from '$lib/client'
 import { Repository } from '$lib/repository'
@@ -12,11 +12,8 @@ describe('Repository', () => {
   let repository: Repository
 
   describe('#dropIndex', () => {
-    beforeAll(async () => {
-      redis = await createClient().connect()
-    })
-
     beforeEach(() => {
+      redis = mockRedis()
       repository = new Repository(simpleSchema, redis)
     })
 

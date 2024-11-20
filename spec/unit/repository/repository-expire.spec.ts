@@ -1,4 +1,4 @@
-import { createClient } from '../helpers/mock-redis'
+import { mockRedis } from '../helpers/mock-redis'
 
 import { RedisConnection } from '$lib/client'
 import { Repository } from '$lib/repository'
@@ -11,11 +11,8 @@ describe('Repository', () => {
     let redis: RedisConnection
     let repository: Repository
 
-    beforeAll(async () => {
-      redis = await createClient().connect()
-    })
-
     beforeEach(() => {
+      redis = mockRedis()
       repository = new Repository(simpleSchema, redis)
     })
 

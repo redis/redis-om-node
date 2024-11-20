@@ -1,6 +1,7 @@
 import '../../helpers/custom-matchers'
+import { RedisConnection } from '$lib/client'
 
-import { Client } from '$lib/client'
+import { mockRedis } from '../helpers/mock-redis'
 import { SemanticSearchError } from '$lib/error'
 import { Search, WhereField } from '$lib/search'
 
@@ -9,7 +10,7 @@ import { simpleSchema } from '../helpers/test-entity-and-schema'
 
 describe('Search', () => {
   describe('#query', () => {
-    let client: Client
+    let redis: RedisConnection
     let search: Search
     let where: WhereField
 
@@ -31,11 +32,11 @@ describe('Search', () => {
       expect(search.query).toBe(A_NEGATED_BOOLEAN_STRING_QUERY)
 
     beforeAll(() => {
-      client = new Client()
+      redis = mockRedis()
     })
 
     beforeEach(() => {
-      search = new Search(simpleSchema, client)
+      search = new Search(simpleSchema, redis)
       where = search.where('aString')
     })
 

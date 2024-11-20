@@ -1,4 +1,4 @@
-import { Client, CreateOptions, RedisConnection, RedisHashData, RedisJsonData } from '../client'
+import { CreateOptions, RedisConnection, RedisHashData, RedisJsonData } from '../client'
 import { Entity, EntityId, EntityKeyName } from '../entity'
 import { buildRediSearchSchema } from '../indexer'
 import { Schema } from '../schema'
@@ -32,24 +32,18 @@ import { fromRedisHash, fromRedisJson, toRedisHash, toRedisJson } from '../trans
  * ```
  */
 export class Repository<T extends Entity = Record<string, any>> {
-  // NOTE: Not using "#" private as the spec needs to check calls on this class. Will be resolved when Client class is removed.
-  private readonly client: Client
   readonly #schema: Schema<T>
+  #redis: RedisConnection
 
   /**
    * Creates a new {@link Repository}.
    *
    * @param schema The schema defining that data in the repository.
-   * @param clientOrConnection A client to talk to Redis.
+   * @param redis A connected Redis client.
    */
-  constructor(schema: Schema<T>, clientOrConnection: Client | RedisConnection) {
+  constructor(schema: Schema<T>, redis: RedisConnection) {
     this.#schema = schema
-    if (clientOrConnection instanceof Client) {
-      this.client = clientOrConnection
-    } else {
-      this.client = new Client()
-      this.client.useNoClose(clientOrConnection)
-    }
+    this.#redis = redis
   }
 
   /**
@@ -61,7 +55,7 @@ export class Repository<T extends Entity = Record<string, any>> {
     const incomingIndexHash = this.#schema.indexHash
 
     // TODO: use a transaction to getset the current index hash and get the indexing status
-    const currentIndexHash = await this.client.redis!.get(this.#schema.indexHashName)
+    const currentIndexHash = await this.#redis.get(this.#schema.indexHashName)
 
     // if there is no hash change, return
     // if there is a hash change and the index is building, return an error
@@ -87,8 +81,8 @@ export class Repository<T extends Entity = Record<string, any>> {
       }
 
       await Promise.all([
-        this.client.redis!.ft.create(indexName, schema, options),
-        this.client.redis!.set(indexHashName, incomingIndexHash)
+        this.#redis.ft.create(indexName, schema, options),
+        this.#redis.set(indexHashName, incomingIndexHash)
       ])
     }
   }
@@ -101,8 +95,8 @@ export class Repository<T extends Entity = Record<string, any>> {
   async dropIndex() {
     try {
       await Promise.all([
-        this.client.redis!.unlink(this.#schema.indexHashName),
-        this.client.redis!.ft.dropIndex(this.#schema.indexName)
+        this.#redis.unlink(this.#schema.indexHashName),
+        this.#redis.ft.dropIndex(this.#schema.indexName)
       ])
     } catch (e) {
       /* NOTE: It would be better if this error handler was only around the call
@@ -224,7 +218,7 @@ export class Repository<T extends Entity = Record<string, any>> {
             : []
 
     if (keys.length === 0) return
-    await this.client.redis!.unlink(keys)
+    await this.#redis.unlink(keys)
   }
 
   /**
@@ -250,7 +244,7 @@ export class Repository<T extends Entity = Record<string, any>> {
     await Promise.all(
       ids.map(id => {
         const key = this.makeKey(id)
-        return this.client.redis!.expire(key, ttlInSeconds)
+        return this.#redis.expire(key, ttlInSeconds)
       })
     )
   }
@@ -281,7 +275,7 @@ export class Repository<T extends Entity = Record<string, any>> {
     await Promise.all(
       ids.map(id => {
         const key = this.makeKey(id)
-        return this.client.redis!.expireAt(key, expirationDate)
+        return this.#redis.expireAt(key, expirationDate)
       })
     )
   }
@@ -293,7 +287,7 @@ export class Repository<T extends Entity = Record<string, any>> {
    * @returns A {@link Search} object.
    */
   search(): Search<T> {
-    return new Search(this.#schema, this.client)
+    return new Search(this.#schema, this.#redis)
   }
 
   /**
@@ -308,7 +302,7 @@ export class Repository<T extends Entity = Record<string, any>> {
    * @returns A {@link RawSearch} object.
    */
   searchRaw(query: string): RawSearch<T> {
-    return new RawSearch(this.#schema, this.client, query)
+    return new RawSearch(this.#schema, this.#redis, query)
   }
 
   private async writeEntity(entity: T): Promise<void> {
@@ -323,9 +317,9 @@ export class Repository<T extends Entity = Record<string, any>> {
     const keyName = entity[EntityKeyName]!
     const hashData: RedisHashData = toRedisHash(this.#schema, entity)
     if (Object.keys(hashData).length === 0) {
-      await this.client.redis!.unlink(keyName)
+      await this.#redis.unlink(keyName)
     } else {
-      await this.client.redis!.multi().unlink(keyName).hSet(keyName, hashData).exec()
+      await this.#redis.multi().unlink(keyName).hSet(keyName, hashData).exec()
     }
   }
 
@@ -333,7 +327,7 @@ export class Repository<T extends Entity = Record<string, any>> {
     return Promise.all(
       ids.map(async (entityId): Promise<T> => {
         const keyName = this.makeKey(entityId)
-        const hashData = await this.client.redis!.hGetAll(keyName)
+        const hashData = await this.#redis.hGetAll(keyName)
         const entityData = fromRedisHash(this.#schema, hashData)
         return { ...entityData, [EntityId]: entityId, [EntityKeyName]: keyName } as T
       })
@@ -343,14 +337,14 @@ export class Repository<T extends Entity = Record<string, any>> {
   private async writeEntityToJson(entity: Entity): Promise<void> {
     const keyName = entity[EntityKeyName]!
     const jsonData: RedisJsonData = toRedisJson(this.#schema, entity)
-    await this.client.redis!.json.set(keyName, '$', jsonData)
+    await this.#redis.json.set(keyName, '$', jsonData)
   }
 
   private async readEntitiesFromJson(ids: string[]): Promise<T[]> {
     return Promise.all(
       ids.map(async (entityId): Promise<T> => {
         const keyName = this.makeKey(entityId)
-        const jsonData = (await this.client.redis!.json.get(keyName)) ?? {}
+        const jsonData = (await this.#redis.json.get(keyName)) ?? {}
         const entityData = fromRedisJson(this.#schema, jsonData as RedisJsonData)
         return { ...entityData, [EntityId]: entityId, [EntityKeyName]: keyName } as T
       })

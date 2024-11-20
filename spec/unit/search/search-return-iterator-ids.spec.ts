@@ -38,7 +38,7 @@ describe('Search', () => {
           for await (const id of search.return.iteratorOfIds()) ids.push(id)
         })
 
-        it('askes the client for a single page of results', () => {
+        it('asks the client for a single page of results', () => {
           expect(client.search).toHaveBeenCalledTimes(1)
           expect(client.search).toHaveBeenCalledWith(indexName, query, {
             LIMIT: { from: 0, size: 10 },
@@ -55,7 +55,7 @@ describe('Search', () => {
           for await (const id of search.return.iteratorOfIds()) ids.push(id)
         })
 
-        it('askes the client for a a single page of results', () => {
+        it('asks the client for a a single page of results', () => {
           expect(client.search).toHaveBeenCalledTimes(1)
           expect(client.search).toHaveBeenCalledWith(indexName, query, {
             LIMIT: { from: 0, size: 10 },
@@ -75,7 +75,7 @@ describe('Search', () => {
           for await (const id of search.return.iteratorOfIds()) ids.push(id)
         })
 
-        it('askes the client for a single page of results', () => {
+        it('asks the client for a single page of results', () => {
           expect(client.search).toHaveBeenCalledTimes(1)
           expect(client.search).toHaveBeenCalledWith(indexName, query, {
             LIMIT: { from: 0, size: 10 },
@@ -97,7 +97,7 @@ describe('Search', () => {
           for await (const id of search.return.iteratorOfIds({ pageSize: 2 })) ids.push(id)
         })
 
-        it('askes the client for multiple pages of results', () => {
+        it('asks the client for multiple pages of results', () => {
           expect(client.search).toHaveBeenCalledTimes(3)
           expect(client.search).toHaveBeenCalledWith(indexName, query, {
             LIMIT: { from: 0, size: 2 },

@@ -1,6 +1,6 @@
 import { SearchOptions } from 'redis'
 
-import { Client, SearchResults } from '../client'
+import { RedisConnection, SearchResults } from '../client'
 import { Entity, EntityKeys } from '../entity'
 import { Schema } from '../schema'
 
@@ -45,15 +45,15 @@ export abstract class AbstractSearch<T extends Entity = Record<string, any>> {
   protected schema: Schema<T>
 
   /** @internal */
-  protected client: Client
+  protected redis: RedisConnection
 
   /** @internal */
   protected sortOptions?: SortOptions
 
   /** @internal */
-  constructor(schema: Schema<T>, client: Client) {
+  constructor(schema: Schema<T>, redis: RedisConnection) {
     this.schema = schema
-    this.client = client
+    this.redis = redis
   }
 
   /** @internal */
@@ -540,7 +540,9 @@ export abstract class AbstractSearch<T extends Entity = Record<string, any>> {
 
     if (this.sortOptions !== undefined) options.SORTBY = this.sortOptions
 
-    if (keysOnly) {
+    if (count === 0) {
+      // don't set return if we're not returning values
+    } else if (keysOnly) {
       options.RETURN = []
     } else if (dataStructure === 'JSON') {
       options.RETURN = '$'
@@ -548,7 +550,7 @@ export abstract class AbstractSearch<T extends Entity = Record<string, any>> {
 
     let searchResults
     try {
-      searchResults = await this.client.search(indexName, query, options)
+      searchResults = await this.redis.ft.search(indexName, query, options)
     } catch (error) {
       const message = (error as Error).message
       if (message.startsWith('Syntax error')) {
@@ -570,8 +572,8 @@ export class RawSearch<T extends Entity = Record<string, any>> extends AbstractS
   private readonly rawQuery: string
 
   /** @internal */
-  constructor(schema: Schema<T>, client: Client, query: string = '*') {
-    super(schema, client)
+  constructor(schema: Schema<T>, redis: RedisConnection, query: string = '*') {
+    super(schema, redis)
     this.rawQuery = query
   }
 
@@ -669,7 +671,7 @@ export class Search<T extends Entity = Record<string, any>> extends AbstractSear
   }
 
   private anyWhereForFunction(ctor: AndOrConstructor, subSearchFn: SubSearchFunction<T>): Search<T> {
-    const search = new Search(this.schema, this.client)
+    const search = new Search(this.schema, this.redis)
     const subSearch = subSearchFn(search)
 
     if (subSearch.rootWhere === undefined) {

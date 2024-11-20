@@ -1,116 +1,119 @@
-import { client } from '../helpers/mock-client'
-import { Client } from "$lib/client"
+import { RedisConnection } from '$lib/client'
 import { EntityId } from '$lib/entity'
-import { Search, RawSearch } from "$lib/search"
+import { Search } from '$lib/search'
 
-import { simpleHashSchema } from "../helpers/test-entity-and-schema"
-import { mockClientSearchToReturnNothing, mockClientSearchToReturnSingleKey, mockClientSearchToReturnMultipleKeys,
-  mockClientSearchToReturnPaginatedKeys,
-  SIMPLE_ENTITY_1, SIMPLE_ENTITY_2, SIMPLE_ENTITY_3, SIMPLE_ENTITY_4, SIMPLE_ENTITY_5 } from '../helpers/search-helpers'
+import { mockRedis } from '../helpers/mock-redis'
+import { simpleHashSchema } from '../helpers/test-entity-and-schema'
+import {
+  mockSearchToReturnNothing,
+  mockSearchToReturnSingleKey,
+  mockSearchToReturnMultipleKeys,
+  mockSearchToReturnPaginatedKeys,
+  SIMPLE_ENTITY_1,
+  SIMPLE_ENTITY_2,
+  SIMPLE_ENTITY_3,
+  SIMPLE_ENTITY_4,
+  SIMPLE_ENTITY_5
+} from '../helpers/search-helpers'
 
+describe('Search', () => {
+  describe('#returnAllIds', () => {
+    const indexName = 'SimpleHashEntity:index'
+    const query = '*'
 
-type HashSearch = Search | RawSearch
+    let redis: RedisConnection
+    let search: Search
+    let ids: string[]
 
-describe("Search", () => {
+    beforeEach(() => {
+      redis = mockRedis()
+      search = new Search(simpleHashSchema, redis)
+    })
 
-  describe.each([
-    [ "FluentSearch",
-      new Search(simpleHashSchema, new Client()) ],
-    [ "RawSearch",
-      new RawSearch(simpleHashSchema, new Client()) ]
-  ])("%s", (_, search: HashSearch) => {
-
-    describe("#returnAllIds", () => {
-      let ids: string[]
-      let indexName = 'SimpleHashEntity:index', query = '*'
-
-      describe("when querying no results", () => {
-        beforeEach(async () => {
-          mockClientSearchToReturnNothing()
-          ids = await search.return.allIds()
-        })
-
-        it("askes the client for a single page of results", () => {
-          expect(client.search).toHaveBeenCalledTimes(1)
-          expect(client.search).toHaveBeenCalledWith(indexName, query, {
-            LIMIT: { from: 0, size: 10 },
-            RETURN: []
-          })
-        })
-
-        it("returns no results", () => expect(ids).toHaveLength(0))
+    describe('when querying no results', () => {
+      beforeEach(async () => {
+        mockSearchToReturnNothing(redis)
+        ids = await search.return.allIds()
       })
 
-      describe("when querying a single result", () => {
-        beforeEach(async () => {
-          mockClientSearchToReturnSingleKey()
-          ids = await search.return.allIds()
-        })
-
-        it("askes the client for a a single page of results", () => {
-          expect(client.search).toHaveBeenCalledTimes(1)
-          expect(client.search).toHaveBeenCalledWith(indexName, query, {
-            LIMIT: { from: 0, size: 10 },
-            RETURN: []
-          })
-        })
-
-        it("returns the expected single result", () => {
-          expect(ids).toHaveLength(1)
-          expect(ids).toEqual(expect.arrayContaining([
-            SIMPLE_ENTITY_1[EntityId]
-          ]))
+      it('asks redis for a single page of results', () => {
+        expect(redis.ft.search).toHaveBeenCalledTimes(1)
+        expect(redis.ft.search).toHaveBeenCalledWith(indexName, query, {
+          LIMIT: { from: 0, size: 10 },
+          RETURN: []
         })
       })
 
-      describe("when querying multiple results", () => {
-        beforeEach(async () => {
-          mockClientSearchToReturnMultipleKeys()
-          ids = await search.return.allIds()
-        })
+      it('returns no results', () => expect(ids).toHaveLength(0))
+    })
 
-        it("askes the client for a single page of results", () => {
-          expect(client.search).toHaveBeenCalledTimes(1)
-          expect(client.search).toHaveBeenCalledWith(indexName, query, {
-            LIMIT: { from: 0, size: 10 },
-            RETURN: []
-          })
-        })
+    describe('when querying a single result', () => {
+      beforeEach(async () => {
+        mockSearchToReturnSingleKey(redis)
+        ids = await search.return.allIds()
+      })
 
-        it("returns all the results", async () => {
-          expect(ids).toHaveLength(3)
-          expect(ids).toEqual(expect.arrayContaining([
-            SIMPLE_ENTITY_1[EntityId],
-            SIMPLE_ENTITY_2[EntityId],
-            SIMPLE_ENTITY_3[EntityId]
-          ]))
+      it('asks redis for a a single page of results', () => {
+        expect(redis.ft.search).toHaveBeenCalledTimes(1)
+        expect(redis.ft.search).toHaveBeenCalledWith(indexName, query, {
+          LIMIT: { from: 0, size: 10 },
+          RETURN: []
         })
       })
 
-      describe("when querying multiple results that cross the page boundry", () => {
-        beforeEach(async () => {
-          mockClientSearchToReturnPaginatedKeys()
-          ids = await search.return.allIds({ pageSize: 2 })
-        })
+      it('returns the expected single result', () => {
+        expect(ids).toHaveLength(1)
+        expect(ids).toEqual(expect.arrayContaining([SIMPLE_ENTITY_1[EntityId]]))
+      })
+    })
 
-        it("askes the client for multiple pages of results", () => {
-          expect(client.search).toHaveBeenCalledTimes(3)
-          expect(client.search).toHaveBeenCalledWith(indexName, query, {
-            LIMIT: { from: 0, size: 2 },
-            RETURN: []
-          })
-        })
+    describe('when querying multiple results', () => {
+      beforeEach(async () => {
+        mockSearchToReturnMultipleKeys(redis)
+        ids = await search.return.allIds()
+      })
 
-        it("returns all the results", async () => {
-          expect(ids).toHaveLength(5)
-          expect(ids).toEqual(expect.arrayContaining([
+      it('asks redis for a single page of results', () => {
+        expect(redis.ft.search).toHaveBeenCalledTimes(1)
+        expect(redis.ft.search).toHaveBeenCalledWith(indexName, query, {
+          LIMIT: { from: 0, size: 10 },
+          RETURN: []
+        })
+      })
+
+      it('returns all the results', async () => {
+        expect(ids).toHaveLength(3)
+        expect(ids).toEqual(
+          expect.arrayContaining([SIMPLE_ENTITY_1[EntityId], SIMPLE_ENTITY_2[EntityId], SIMPLE_ENTITY_3[EntityId]])
+        )
+      })
+    })
+
+    describe('when querying multiple results that cross the page boundry', () => {
+      beforeEach(async () => {
+        mockSearchToReturnPaginatedKeys(redis)
+        ids = await search.return.allIds({ pageSize: 2 })
+      })
+
+      it('asks redis for multiple pages of results', () => {
+        expect(redis.ft.search).toHaveBeenCalledTimes(3)
+        expect(redis.ft.search).toHaveBeenCalledWith(indexName, query, {
+          LIMIT: { from: 0, size: 2 },
+          RETURN: []
+        })
+      })
+
+      it('returns all the results', async () => {
+        expect(ids).toHaveLength(5)
+        expect(ids).toEqual(
+          expect.arrayContaining([
             SIMPLE_ENTITY_1[EntityId],
             SIMPLE_ENTITY_2[EntityId],
             SIMPLE_ENTITY_3[EntityId],
             SIMPLE_ENTITY_4[EntityId],
             SIMPLE_ENTITY_5[EntityId]
-          ]))
-        })
+          ])
+        )
       })
     })
   })

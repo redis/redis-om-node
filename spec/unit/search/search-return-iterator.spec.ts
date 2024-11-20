@@ -42,7 +42,7 @@ describe('Search', () => {
             for await (const entity of hashSearch.return.iterator()) entities.push(entity)
           })
 
-          it('askes the client for a single page of results', () => {
+          it('asks the client for a single page of results', () => {
             expect(client.search).toHaveBeenCalledTimes(1)
             expect(client.search).toHaveBeenCalledWith(indexName, query, {
               LIMIT: { from: 0, size: 10 }
@@ -58,7 +58,7 @@ describe('Search', () => {
             for await (const entity of hashSearch.return.iterator()) entities.push(entity)
           })
 
-          it('askes the client for a a single page of results', () => {
+          it('asks the client for a a single page of results', () => {
             expect(client.search).toHaveBeenCalledTimes(1)
             expect(client.search).toHaveBeenCalledWith(indexName, query, {
               LIMIT: { from: 0, size: 10 }
@@ -77,7 +77,7 @@ describe('Search', () => {
             for await (const entity of hashSearch.return.iterator()) entities.push(entity)
           })
 
-          it('askes the client for a single page of results', () => {
+          it('asks the client for a single page of results', () => {
             expect(client.search).toHaveBeenCalledTimes(1)
             expect(client.search).toHaveBeenCalledWith(indexName, query, {
               LIMIT: { from: 0, size: 10 }
@@ -102,7 +102,7 @@ describe('Search', () => {
             for await (const entity of hashSearch.return.iterator({ pageSize: 2 })) entities.push(entity)
           })
 
-          it('askes the client for multiple pages of results', () => {
+          it('asks the client for multiple pages of results', () => {
             expect(client.search).toHaveBeenCalledTimes(3)
             expect(client.search).toHaveBeenCalledWith(indexName, query, {
               LIMIT: { from: 0, size: 2 }
@@ -139,7 +139,7 @@ describe('Search', () => {
             for await (const entity of jsonSearch.return.iterator()) entities.push(entity)
           })
 
-          it('askes the client for a single page of results', () => {
+          it('asks the client for a single page of results', () => {
             expect(client.search).toHaveBeenCalledTimes(1)
             expect(client.search).toHaveBeenCalledWith(indexName, query, {
               LIMIT: { from: 0, size: 10 },
@@ -156,7 +156,7 @@ describe('Search', () => {
             for await (const entity of jsonSearch.return.iterator()) entities.push(entity)
           })
 
-          it('askes the client for a single page of results', () => {
+          it('asks the client for a single page of results', () => {
             expect(client.search).toHaveBeenCalledTimes(1)
             expect(client.search).toHaveBeenCalledWith(indexName, query, {
               LIMIT: { from: 0, size: 10 },
@@ -176,7 +176,7 @@ describe('Search', () => {
             for await (const entity of jsonSearch.return.iterator()) entities.push(entity)
           })
 
-          it('askes the client for a single page of results', () => {
+          it('asks the client for a single page of results', () => {
             expect(client.search).toHaveBeenCalledTimes(1)
             expect(client.search).toHaveBeenCalledWith(indexName, query, {
               LIMIT: { from: 0, size: 10 },
@@ -202,7 +202,7 @@ describe('Search', () => {
             for await (const entity of jsonSearch.return.iterator({ pageSize: 2 })) entities.push(entity)
           })
 
-          it('askes the client for a multiple pages of results', () => {
+          it('asks the client for a multiple pages of results', () => {
             expect(client.search).toHaveBeenCalledTimes(3)
             expect(client.search).toHaveBeenCalledWith(indexName, query, {
               LIMIT: { from: 0, size: 2 },

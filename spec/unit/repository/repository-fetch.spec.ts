@@ -1,4 +1,4 @@
-import { createClient } from '../helpers/mock-redis'
+import { mockRedis } from '../helpers/mock-redis'
 
 import { RedisConnection } from '$lib/client'
 import { Entity, EntityId, EntityKeyName } from '$lib/entity'
@@ -63,8 +63,8 @@ describe('Repository', () => {
   let entity: Entity, entities: Entity[]
 
   describe('#fetch', () => {
-    beforeAll(async () => {
-      redis = await createClient().connect()
+    beforeEach(() => {
+      redis = mockRedis()
     })
 
     describe('when fetching a single entity from a hash', () => {
