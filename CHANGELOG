@@ -4,7 +4,7 @@ _Functional_ changes to the public interface of Redis OM for Node.js will be lis
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and Redis OM adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## 0.4.8 - 2024-11-12
+## 0.5.0 - 2024-11-22
 
 ### Fixed
 
@@ -17,6 +17,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### Changed
 
+- _Breaking Change_ Removed deprecated _Client_ class
 - Removed stopword messaging from Redis Syntax Error messaging.
 
 ## 0.4.7 - 2024-10-25
