@@ -1154,6 +1154,11 @@ Contributions are always appreciated. I take PayPal and Bitcoin. Just kidding, I
 - **Bug reports**: This is a new project. You're gonna find them. Open an issue and I'll look into it. Or hunt down the problem and send me a pull request.
 - **Documentation**: You can improve the life of a lot of developers by fixing typos, grammar, and bad jokes. Or by just pointing out where a little more detail would help. Again, open an issue or send a pull request.
 
+## Using Redis OM with Azure Managed Redis
+
+Azure Managed Redis(AMR) supports Microsoft Entra ID (formerly Azure AD) authentication. You can use Redis OM with Entra ID to authenticate to an AMR database.
+For a tutorial of how to use Entra ID with Redis OM Node, refer to the [@redis/entraid](https://github.com/redis/node-redis/tree/master/packages/entraid) package docs.
+
 <!-- Links, Badges, and Whatnot -->
 
 [package-shield]: https://img.shields.io/npm/v/redis-om?logo=npm
